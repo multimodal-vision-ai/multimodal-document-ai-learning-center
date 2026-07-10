@@ -1,295 +1,242 @@
-
-# Paper Library
+# Papers
 
 > **Multimodal Document AI Learning Center**
 >
-> This page provides a curated reading roadmap for graduate students and researchers working on **Multimodal Document AI**, **Vision-Language Models (VLMs)**, **Document Parsing**, **DocTags**, and **Document Benchmarks**.
+> **Version:** v3.2
 >
 > **Last Updated:** July 2026
 
+本目录收录 **Multimodal Document AI** 方向最值得阅读的论文、官方项目和开源资源。
+
+所有论文均按照学习路线组织，建议按照顺序阅读。
+
 ---
 
-# Reading Roadmap
-
-建议所有实验室成员按照下面的顺序阅读论文。
+# Learning Roadmap
 
 ```text
 Foundation Models
         │
         ▼
-Document AI
-        │
-        ▼
 Vision-Language Models
         │
         ▼
-Structured Document Representation (DocTags)
+Document AI
         │
         ▼
-Benchmarks & Evaluation
+DocTags & Docling
         │
         ▼
-Research Papers
+Benchmark
+        │
+        ▼
+Research Projects
 ```
 
 ---
 
-# Top 20 Recommended Papers
-
-| Priority | Paper                       | Category                | Difficulty |
-| -------- | --------------------------- | ----------------------- | ---------- |
-| ⭐⭐⭐⭐⭐    | Attention Is All You Need   | Foundation              | ⭐⭐         |
-| ⭐⭐⭐⭐⭐    | BERT                        | Foundation              | ⭐⭐         |
-| ⭐⭐⭐⭐⭐    | CLIP                        | Vision-Language         | ⭐⭐         |
-| ⭐⭐⭐⭐⭐    | LayoutLM                    | Document AI             | ⭐⭐         |
-| ⭐⭐⭐⭐⭐    | LayoutLMv2                  | Document AI             | ⭐⭐         |
-| ⭐⭐⭐⭐⭐    | LayoutLMv3                  | Document AI             | ⭐⭐         |
-| ⭐⭐⭐⭐⭐    | DocFormer                   | Document AI             | ⭐⭐⭐        |
-| ⭐⭐⭐⭐⭐    | DiT                         | Document AI             | ⭐⭐⭐        |
-| ⭐⭐⭐⭐⭐    | PaddleOCR                   | OCR                     | ⭐          |
-| ⭐⭐⭐⭐⭐    | TrOCR                       | OCR                     | ⭐⭐         |
-| ⭐⭐⭐⭐⭐    | Florence-2                  | Vision Foundation Model | ⭐⭐         |
-| ⭐⭐⭐⭐⭐    | InternVL                    | Vision-Language Model   | ⭐⭐⭐        |
-| ⭐⭐⭐⭐⭐    | Qwen2.5-VL Technical Report | Vision-Language Model   | ⭐⭐⭐        |
-| ⭐⭐⭐⭐⭐    | DeepSeek-VL2                | Vision-Language Model   | ⭐⭐⭐        |
-| ⭐⭐⭐⭐⭐    | Docling Technical Report    | Structured Documents    | ⭐⭐         |
-| ⭐⭐⭐⭐⭐    | OmniDocBench                | Benchmark               | ⭐⭐         |
-| ⭐⭐⭐⭐     | PubTabNet                   | Benchmark               | ⭐⭐         |
-| ⭐⭐⭐⭐     | DocVQA                      | Benchmark               | ⭐⭐         |
-| ⭐⭐⭐⭐     | FUNSD                       | Benchmark               | ⭐          |
-| ⭐⭐⭐⭐     | BLIP-2                      | Vision-Language Model   | ⭐⭐⭐        |
-
----
-
-# Reading Categories
-
-## 1. Foundation Models
-
-学习现代大模型的基础理论。
-
-建议阅读：
-
-* Attention Is All You Need
-* BERT
-* CLIP
-* BLIP-2
-
-📄 Foundation Papers
-
-👉 foundation.md
-
----
-
-## 2. Document AI
-
-学习现代 Document AI 的核心模型。
-
-建议阅读：
-
-* LayoutLM
-* LayoutLMv2
-* LayoutLMv3
-* DocFormer
-* DiT
-
-📄 Document AI Papers
-
-👉 document_ai.md
-
----
-
-## 3. Vision-Language Models (VLM)
-
-学习当前主流多模态模型。
-
-建议阅读：
-
-* Qwen3.5-VL Technical Report
-* Florence-2
-* InternVL
-* DeepSeek-VL2
-* SmolDocling（Model Card）
-
-📄 Vision-Language Papers
-
-👉 vlm.md
-
----
-
-## 4. Structured Document Representation (DocTags)
-
-这是实验室当前重点研究方向。
-
-重点关注：
-
-* Semantic Document Representation
-* Markdown Generation
-* Structured Parsing
-* Reading Order
-* Table Parsing
-* Formula Parsing
-* DocTags
-
-推荐资料：
-
-* Docling Technical Report
-* Docling GitHub
-* MinerU
-* MarkItDown
-* SmolDocling
-* OmniDocBench
-
-📄 DocTags Papers
-
-👉 doctags.md
-
----
-
-## 5. Benchmarks
-
-Document AI Benchmark 是实验室科研工作的基础。
-
-建议阅读：
-
-* OmniDocBench（CVPR 2025）
-* DocVQA
-* PubTabNet
-* FUNSD
-* OCRBench
-* CC-OCR
-
-📄 Benchmark Papers
-
-👉 benchmarks.md
-
----
-
-# Papers Closely Related to Our Research
-
-以下论文与实验室研究方向高度相关，建议优先阅读。
-
-| Paper                       | Importance |
-| --------------------------- | ---------- |
-| Qwen3.5-VL Technical Report | ⭐⭐⭐⭐⭐      |
-| LayoutLMv3                  | ⭐⭐⭐⭐⭐      |
-| Docling Technical Report    | ⭐⭐⭐⭐⭐      |
-| OmniDocBench                | ⭐⭐⭐⭐⭐      |
-| Florence-2                  | ⭐⭐⭐⭐       |
-| InternVL                    | ⭐⭐⭐⭐       |
-| DeepSeek-VL2                | ⭐⭐⭐⭐       |
-| PaddleOCR                   | ⭐⭐⭐⭐       |
-| MinerU                      | ⭐⭐⭐⭐       |
-| SmolDocling                 | ⭐⭐⭐⭐       |
-
----
-
-# Suggested Reading Plan
-
-## Week 1
-
-Foundation
-
-* Attention Is All You Need
-* BERT
-* CLIP
-
----
-
-## Week 2
-
-Document AI
-
-* LayoutLM
-* LayoutLMv2
-* LayoutLMv3
-
----
-
-## Week 3
-
-Vision-Language Models
-
-* Florence-2
-* InternVL
-* Qwen2.5-VL Technical Report
-
----
-
-## Week 4
-
-Structured Document Representation
-
-* Docling Technical Report
-* MinerU
-* SmolDocling
-* MarkItDown
-
----
-
-## Week 5
-
-Benchmarks
-
-* OmniDocBench
-* DocVQA
-* PubTabNet
-
----
-
-# Reading Requirements
-
-实验室建议采用统一论文阅读规范。
-
-对于每篇论文，至少完成以下内容：
-
-* Research Background
-* Problem Statement
-* Main Contributions
-* Model Architecture
-* Dataset
-* Experimental Results
-* Advantages
-* Limitations
-* Future Work
-* Personal Notes
-
-建议每篇论文整理为一份 Markdown 阅读笔记，并提交到实验室 GitHub。
-
----
-
-# Related Learning Chapters
-
-本课程建议结合以下章节一起学习：
-
-| Chapter       | Topic                   |
-| ------------- | ----------------------- |
-| Chapter 06    | Qwen3.5-VL              |
-| Chapter 07    | SmolDocling             |
-| Chapter 08    | Document AI             |
-| Chapter 09    | DocTags                 |
-| Experiment 01 | First Inference         |
-| Experiment 02 | OmniDocBench Evaluation |
-
----
-
-# Paper Library Structure
+# Directory Structure
 
 ```text
 papers/
-
-README.md
-
-foundation.md
-
-document_ai.md
-
-vlm.md
-
-doctags.md
-
-benchmarks.md
-
-surveys.md
+├── README.md          ← 当前文档（论文导航）
+├── foundation.md      ← Foundation Models
+├── document_ai.md     ← Document AI
+├── vlm.md             ← Vision-Language Models
+├── doctags.md         ← DocTags / Docling
+├── benchmarks.md      ← Benchmarks
+└── surveys.md         ← Survey Papers
 ```
 
-每个专题文档均持续更新，与实验室研究方向保持同步。
+---
+
+# Reading Guide
+
+| Module                 | Difficulty | Priority |
+| ---------------------- | :--------: | :------: |
+| Foundation Models      |     ⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
+| Vision-Language Models |    ⭐⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
+| Document AI            |    ⭐⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
+| DocTags / Docling      |    ⭐⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
+| Benchmarks             |     ⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
+| Survey Papers          |     ⭐⭐     |   ⭐⭐⭐⭐   |
+
+---
+
+# 1. Foundation Models
+
+现代多模态模型的理论基础。
+
+| Paper                     | Venue   | Year |
+| ------------------------- | ------- | ---- |
+| Attention Is All You Need | NeurIPS | 2017 |
+| BERT                      | NAACL   | 2019 |
+| RoBERTa                   | arXiv   | 2019 |
+| Vision Transformer (ViT)  | ICLR    | 2021 |
+| CLIP                      | ICML    | 2021 |
+| BLIP-2                    | ICML    | 2023 |
+| SigLIP                    | ICCV    | 2023 |
+| SigLIP 2                  | arXiv   | 2025 |
+| FlashAttention            | NeurIPS | 2022 |
+| FlashAttention-2          | ICLR    | 2024 |
+
+📖 阅读入口：
+
+> `foundation.md`
+
+---
+
+# 2. Vision-Language Models
+
+重点学习现代多模态基础模型。
+
+| Model        | Organization | Year |
+| ------------ | ------------ | ---- |
+| BLIP-2       | Salesforce   | 2023 |
+| LLaVA        | Wisconsin    | 2023 |
+| Florence-2   | Microsoft    | 2024 |
+| Molmo        | Allen AI     | 2024 |
+| Qwen2-VL     | Alibaba      | 2024 |
+| InternVL2    | OpenGVLab    | 2024 |
+| PaddleOCR-VL | Baidu        | 2025 |
+| Qwen3-VL     | Alibaba      | 2025 |
+| SmolDocling  | IBM Research | 2025 |
+
+📖 阅读入口：
+
+> `vlm.md`
+
+---
+
+# 3. Document AI
+
+重点学习文档理解领域经典工作。
+
+| Paper                    | Venue  | Year |
+| ------------------------ | ------ | ---- |
+| LayoutLM                 | KDD    | 2020 |
+| LayoutLMv2               | ACL    | 2021 |
+| LayoutLMv3               | ACM MM | 2022 |
+| DocFormer                | ICCV   | 2021 |
+| DiT                      | ACM MM | 2022 |
+| MinerU                   | arXiv  | 2024 |
+| Docling Technical Report | arXiv  | 2024 |
+| Docling                  | arXiv  | 2025 |
+
+📖 阅读入口：
+
+> `document_ai.md`
+
+---
+
+# 4. DocTags & Structured Documents
+
+建议重点阅读。
+
+| Resource                 | Type                   |
+| ------------------------ | ---------------------- |
+| Docling Technical Report | Technical Report       |
+| Docling                  | Research Paper         |
+| SmolDocling              | Foundation Model       |
+| Docling Documentation    | Official Documentation |
+| Docling GitHub           | Official Code          |
+
+官方资源：
+
+* Docling 官方主页：https://docling.ai
+* Docling 官方文档：https://docling-project.github.io/docling/
+* Docling GitHub：https://github.com/docling-project/docling
+* Docling Papers：https://www.docling.ai/papers/
+
+📖 阅读入口：
+
+> `doctags.md`
+
+---
+
+# 5. Benchmarks
+
+建议全部阅读。
+
+| Benchmark              | Focus                           |
+| ---------------------- | ------------------------------- |
+| OmniDocBench           | End-to-End Document Parsing     |
+| DocLayNet              | Layout Analysis                 |
+| OCRBench / OCRBench v2 | OCR & VLM Evaluation            |
+| PubTabNet              | Table Recognition               |
+| DocVQA                 | Document Question Answering     |
+| ChartQA                | Chart Understanding             |
+| FUNSD                  | Form Understanding              |
+| XFUND                  | Multilingual KIE                |
+| CORD                   | Receipt Understanding           |
+| SROIE                  | Receipt OCR                     |
+| MMDocBench             | OCR-free Document Understanding |
+
+官方资源：
+
+* OmniDocBench：https://github.com/opendatalab/OmniDocBench
+* MMDocBench：https://mmdocbench.github.io/
+
+📖 阅读入口：
+
+> `benchmarks.md`
+
+---
+
+# 6. Recommended Survey Papers
+
+建议首先阅读综述，再阅读代表性论文。
+
+| Topic                  | Recommended                |
+| ---------------------- | -------------------------- |
+| Vision-Language Models | Recent VLM Surveys         |
+| Document AI            | Recent Document AI Surveys |
+| OCR                    | OCR Survey                 |
+| Layout Analysis        | Layout Analysis Survey     |
+| Document Parsing       | Docling Technical Report   |
+
+📖 阅读入口：
+
+> `surveys.md`
+
+---
+
+# Official Resources
+
+| Resource            | Link                          |
+| ------------------- | ----------------------------- |
+| Papers With Code    | https://paperswithcode.com    |
+| Hugging Face Papers | https://huggingface.co/papers |
+| arXiv               | https://arxiv.org             |
+| CVF Open Access     | https://openaccess.thecvf.com |
+| ACL Anthology       | https://aclanthology.org      |
+| OpenReview          | https://openreview.net        |
+
+---
+
+# Recommended Reading Order
+
+| Week    | Content                              |
+| ------- | ------------------------------------ |
+| Week 1  | Foundation Models                    |
+| Week 2  | Vision-Language Models               |
+| Week 3  | Document AI                          |
+| Week 4  | DocTags & Docling                    |
+| Week 5  | Benchmarks                           |
+| Week 6  | Survey Papers                        |
+| Week 7+ | Reproduce Baselines & Start Research |
+
+---
+
+# Learning Objectives
+
+完成全部内容后，应能够：
+
+* 理解现代 Foundation Models 的发展路线；
+* 掌握主流 Vision-Language Models 的模型设计思想；
+* 熟悉 Document AI 的核心任务与技术路线；
+* 掌握 Docling、DocTags 等结构化文档表示方法；
+* 能够独立完成 OmniDocBench、OCRBench、DocVQA 等主流 Benchmark 的实验与评测；
+* 具备阅读 CVPR、ICCV、ECCV、ACL、EMNLP、ICML 等顶级会议 Document AI 论文的能力，并能够开展相关科研工作。
+
+
