@@ -558,7 +558,7 @@ data/samples/
 
 ---
 
-# 十八、导师检查（Supervisor Checklist）
+# 十八、自我检查列表（Checklist）
 
 | 检查项        | 状态 |
 | ---------- | -- |
