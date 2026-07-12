@@ -2,7 +2,7 @@
 
 > **Multimodal Document AI Learning Center**
 >
-> **Module:** Kaggle Examples
+> **Module:** Kaggle Tutorials
 >
 > **Version:** v1.0
 >

@@ -1,180 +1,267 @@
 # 📚 Multimodal Document AI Learning Center
 
-欢迎加入 **Multimodal Document AI Laboratory**。
+> **An Open Learning Platform for Multimodal Document AI**
+>
+> 面向本科生、研究生和科研人员的开放学习平台，系统介绍 **Document AI、Vision-Language Models（VLM）、OCR、DocTags、Benchmark、Multimodal AI** 等相关理论、实践与科研方法。
 
-本 Learning Center 是实验室统一的学习平台，用于指导新加入实验室的本科生、硕士生和博士生快速掌握多模态文档智能（Multimodal Document AI）相关知识与开发技能。
+---
 
-本课程坚持 **"理论 + 实践 + 科研"** 的培养模式，以 GitHub 为学习平台，以官方文档为主要学习资料，以代码实践为主要学习方式。
+## 🎯 项目简介
+
+**Multimodal Document AI Learning Center** 是河海大学计算机与软件学院谭国平教授团队建设的开放学习平台，旨在帮助学生建立完整的 **多模态文档智能（Multimodal Document AI）** 知识体系，并逐步具备开展科研工作的能力。
+
+本项目坚持 **"理论 + 实践 + 科研"** 的培养理念，以 **GitHub** 为学习平台，以 **官方文档** 为主要学习资料，以 **代码实践** 为主要学习方式，形成一套适用于实验室人才培养的学习体系。
+
+课程内容涵盖：
+
+- 📄 Document AI
+- 👁️ Vision-Language Models (VLM)
+- 🤖 Foundation Models
+- 🏷️ DocTags
+- 📊 Benchmark Evaluation
+- 🔬 Scientific Research Practice
 
 ---
 
 # 🎯 学习目标
 
-完成本课程后，应具备以下能力：
+完成本 Learning Center 后，应能够：
 
-* 理解多模态大模型（Vision Language Model）的基本原理
-* 熟悉 Git 与 GitHub 的科研开发流程
-* 熟悉 Hugging Face 的模型与数据集管理
-* 熟悉 Kaggle Notebook 的开发环境
-* 掌握 Transformers 基本使用方法
-* 能够独立运行 Qwen3.5-VL 模型
-* 能够独立运行 SmolDocling 文档解析模型
-* 理解现代 Document AI 系统整体架构
-* 能够独立完成第一个科研实验
-
----
-
-# 🗺️ 学习路线
-
-请严格按照以下顺序学习，不建议跳跃学习。
-
-| Chapter | 内容                      | 状态 |
-| ------- | ----------------------- | -- |
-| 00      | 实验室介绍（Lab Introduction） | ⬜  |
-| 01      | Git 与 GitHub            | ⬜  |
-| 02      | Python 开发环境             | ⬜  |
-| 03      | Hugging Face            | ⬜  |
-| 04      | Kaggle                  | ⬜  |
-| 05      | Transformers            | ⬜  |
-| 06      | Qwen3.5-VL-0.8B         | ⬜  |
-| 07      | SmolDocling             | ⬜  |
-| 08      | Document AI 基础          | ⬜  |
-| 09      | 第一个项目（First Project）    | ⬜  |
-| 10      | 第一个实验（First Experiment） | ⬜  |
-| 11      | FAQ                     | ⬜  |
+- 理解现代 Foundation Models 的发展脉络
+- 掌握 Vision-Language Models 的基本原理
+- 理解现代 Document AI 系统架构
+- 熟悉主流开源模型及开发生态
+- 独立完成模型部署与推理实验
+- 掌握 Benchmark 评测方法
+- 阅读并复现最新科研论文
+- 独立开展科研项目
 
 ---
 
-# 📖 课程目录
+# 🗺️ Learning Roadmap
+
+建议按照以下路线逐步学习。
 
 ```text
-learning/
-
-├── README.md
-├── 00_Lab_Introduction.md
-├── 01_Git_and_GitHub.md
-├── 02_Python_Environment.md
-├── 03_HuggingFace.md
-├── 04_Kaggle.md
-├── 05_Transformers.md
-├── 06_Qwen3.5_VL_0.8B.md
-├── 07_SmolDocling.md
-├── 08_Document_AI.md
-├── 09_First_Project.md
-├── 10_First_Experiment.md
-└── 11_FAQ.md
+Git & GitHub
+        │
+        ▼
+Python Environment
+        │
+        ▼
+Hugging Face
+        │
+        ▼
+Kaggle
+        │
+        ▼
+Transformers
+        │
+        ▼
+Foundation Models
+        │
+        ▼
+Vision-Language Models
+        │
+        ▼
+Document AI
+        │
+        ▼
+DocTags
+        │
+        ▼
+Benchmark
+        │
+        ▼
+Research Projects
 ```
 
 ---
 
-# 💻 配套目录
+# 📚 Repository Structure
 
-整个课程配套以下资源。
+整个 Learning Center 由六个模块组成。
 
-```text
-examples/
-```
-
-示例代码。
-
-```text
-notebooks/
-```
-
-Kaggle Notebook 与实验代码。
-
-```text
-resources/
-```
-
-学习资料、论文、GitHub、Hugging Face、Kaggle 等资源汇总。
-
-```text
-assets/
-```
-
-图片、流程图、课程配图等资源。
+| Module | Description |
+|----------|-------------|
+| **learning/** | 系统课程与学习路线 |
+| **reading/** | 论文阅读与技术文档 |
+| **tutorials/** | 实践教程与案例 |
+| **resources/** | 学习资源导航 |
+| **notebooks/** | Kaggle / Jupyter Notebook |
+| **assets/** | 图片、流程图等静态资源 |
 
 ---
 
-# 📅 建议学习计划
+# 📖 Learning Modules
 
-| Week   | 学习内容                             |
-| ------ | -------------------------------- |
-| Week 1 | Git、GitHub、Python 环境             |
-| Week 2 | Hugging Face、Kaggle、Transformers |
-| Week 3 | Qwen3.5-VL、SmolDocling           |
-| Week 4 | Document AI、第一个项目、第一个实验          |
+## 📘 Learning
 
-建议每天学习 **1~2 小时**，每完成一章后进行实践操作。
+系统课程，帮助新成员快速完成开发环境搭建和基础知识学习。
 
----
+主要包括：
 
-# 📌 学习要求
+- Lab Introduction
+- Git & GitHub
+- Python Environment
+- Hugging Face
+- Kaggle
+- Transformers
+- Foundation Models
+- Document AI
+- First Project
 
-完成每一章学习后，应达到以下要求：
-
-* 阅读课程内容
-* 阅读官方文档
-* 完成官方 Demo
-* 独立运行示例代码
-* 完成课后实践
-* 提交学习笔记（可选）
+➡️ **Start Here:** `learning/`
 
 ---
 
-# 🌐 官方学习资源
+## 📑 Reading Center
 
-## GitHub
+论文阅读中心。
 
-* QwenLM：https://github.com/QwenLM
-* Docling：https://github.com/docling-project/docling
-* Hugging Face Transformers：https://github.com/huggingface/transformers
-* vLLM：https://github.com/vllm-project/vllm
+围绕现代 Document AI 构建系统的论文阅读路线。
 
----
+主要专题包括：
 
-## Hugging Face
+- Foundation Models
+- Document AI
+- Vision-Language Models
+- DocTags
+- Benchmarks
+- Survey Papers
 
-* https://huggingface.co/
-* https://huggingface.co/models
-* https://huggingface.co/datasets
-* https://huggingface.co/Qwen
-* https://huggingface.co/docling-project
+➡️ **Start Here:** `reading/`
 
 ---
 
-## Kaggle
+## 💻 Tutorials
 
-* https://www.kaggle.com/
-* https://www.kaggle.com/code
-* https://www.kaggle.com/datasets
+实践教程中心。
+
+通过完整案例学习模型部署、推理、评测与开发。
+
+包括：
+
+- Qwen3-VL
+- SmolDocling
+- PaddleOCR
+- Florence-2
+- OmniDocBench
+- Kaggle Practice
+
+➡️ **Start Here:** `tutorials/`
 
 ---
 
-# 🎓 学习原则
+## 📚 Resources
 
-本课程遵循以下原则：
+学习资源导航。
 
-* 官方资料优先（Official First）
-* 动手实践优先（Practice First）
-* 阅读源码优先（Read the Code）
-* 小步迭代（Learn by Doing）
-* 科研导向（Research Oriented）
+收录高质量学习资料，包括：
+
+- Books
+- GitHub Projects
+- Hugging Face
+- Datasets
+- Videos
+- Official Documentation
+
+➡️ **Start Here:** `resources/`
 
 ---
 
-# 🚀 学习完成后
+## 📓 Notebooks
 
-完成全部课程后，应能够：
+Notebook 实践中心。
 
-* 独立完成开发环境配置
-* 独立运行主流 Document AI 模型
-* 阅读模型源码
-* 修改模型推理流程
-* 开展科研实验
-* 参与实验室科研项目
+包括：
 
-欢迎开始你的 **Multimodal Document AI** 学习之旅！
+- Kaggle Notebook
+- Jupyter Notebook
+- Benchmark Evaluation
+- Model Inference Demo
 
-Last Updated: 2026-07-10
+➡️ **Start Here:** `notebooks/`
+
+---
+
+# 🌟 Featured Topics
+
+Learning Center 将持续围绕以下方向建设。
+
+- Foundation Models
+- Vision-Language Models
+- Document AI
+- OCR
+- DocTags
+- Layout Analysis
+- Benchmark Evaluation
+- Multimodal AI
+- AI Agents
+
+---
+
+# 💡 Learning Philosophy
+
+本 Learning Center 坚持以下原则：
+
+- ✅ Official First（官方资料优先）
+- ✅ Practice First（实践优先）
+- ✅ Read the Paper（阅读经典论文）
+- ✅ Read the Code（阅读源码）
+- ✅ Learn by Doing（边学边做）
+- ✅ Research Oriented（科研导向）
+
+---
+
+# 🚀 Who Is This Repository For?
+
+本项目适合以下学习者：
+
+- 本科生（AI、计算机相关专业）
+- 硕士研究生
+- 博士研究生
+- AI 研究人员
+- Document AI 开发者
+- Vision-Language Model 学习者
+
+---
+
+# 🌱 Future Roadmap
+
+未来将持续增加以下内容：
+
+- Medical Document AI
+- Scientific Document Understanding
+- Multimodal Reasoning
+- Video Understanding
+- Vision Agents
+- GUI Agents
+- Large Vision Models
+- AI4Science Applications
+
+---
+
+# ⭐ Contributing
+
+欢迎提出建议、提交 Issue 或参与课程建设，共同完善本 Learning Center。
+
+如果本项目对你的学习或科研有所帮助，欢迎点亮 ⭐ Star 支持本项目的发展。
+
+---
+
+# 📄 License
+
+本项目采用 **Apache License Version 2.0** 开源协议。
+
+---
+
+<div align="center">
+
+**Multimodal Document AI Learning Center**
+
+*Learning · Practice · Research*
+
+Last Updated: July 2026
+
+</div>

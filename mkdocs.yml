@@ -1,0 +1,105 @@
+site_name: Multimodal Vision AI Learning Center
+site_description: Open Learning Platform for Multimodal Vision AI
+site_author: Guoping Tan
+site_url: https://apple75.github.io/multimodal-document-ai-learning-center/
+
+repo_name: apple75/multimodal-document-ai-learning-center
+repo_url: https://github.com/apple75/multimodal-document-ai-learning-center
+
+theme:
+  name: material
+  language: zh
+
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - toc.follow
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+
+  - 首页:
+      - 欢迎: index.md
+
+  - About:
+      - 平台介绍: about/README.md
+      - 平台架构: about/architecture.md
+      - 建设路线图: about/roadmap.md
+
+  - Learning:
+
+      - 概览: learning/README.md
+
+      - 实验室介绍:
+          - 实验室简介: learning/00_Lab_Introduction.md
+
+      - 基础开发环境:
+          - Git 与 GitHub: learning/01_Git_and_GitHub.md
+          - Python 开发环境: learning/02_Python_Environment.md
+          - Hugging Face: learning/03_HuggingFace.md
+          - Kaggle: learning/04_Kaggle.md
+          - Transformers: learning/05_Transformers.md
+
+      - Foundation Models:
+          - 概览: learning/06_Foundation_Models/README.md
+          - Qwen3.5-vl-0.8B: learning/06_Foundation_Models/Qwen3.5-vl-0.8B.md
+
+      - Document AI:
+          - 概览: learning/07_Document_AI/README.md
+
+      - Projects:
+          - 概览: learning/08_Projects/README.md
+
+      - FAQ:
+          - 常见问题: learning/09_FAQ.md
+
+  - Reading:
+
+      - 概览: reading/README.md
+
+      - Foundation Models:
+          - Foundation Models: reading/foundation.md
+
+      - Vision Language Models:
+          - Vision Language Models: reading/vlm.md
+
+      - Document AI:
+          - Document AI: reading/document-AI.md
+          - DocTags: reading/doctags.md
+
+      - Benchmarks:
+          - Benchmarks: reading/benchmark.md
+
+      - Surveys:
+          - Survey Papers: reading/surveys.md
+
+  - Tutorials:
+
+      - 概览: tutorials/README.md
+      - Qwen3-VL 教程: tutorials/kaggle-tutorial-01.md
+
+  - Resources:
+
+      - 概览: resources/README.md
