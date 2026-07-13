@@ -6,8 +6,6 @@
 >
 > **Version:** v3.0
 >
-> **Part:** 1 / 4
->
 > **Last Updated:** July 2026
 
 ---
@@ -137,9 +135,7 @@ https://github.com/harvardnlp/annotated-transformer
 
 ## Background
 
-2017 年以前，
-
-主流 NLP 模型主要包括：
+2017 年以前，主流 NLP 模型主要包括：
 
 * RNN
 * LSTM
@@ -274,9 +270,7 @@ BERT 则进一步提出：
 
 > 可以首先训练一个通用语言模型，
 
-再进行 Fine-tuning。
-
-这一思想彻底改变了 NLP。
+再进行 Fine-tuning。这一思想彻底改变了 NLP。
 
 ---
 
@@ -296,9 +290,7 @@ Language Pre-training。
 
 ## Why Read in 2026
 
-虽然 GPT 已成为主流，
-
-但是：
+虽然 GPT 已成为主流，但是：
 
 Document AI
 
@@ -308,19 +300,9 @@ Biomedical AI
 
 Legal AI
 
-等方向，
+等方向，仍然大量采用：Encoder-only Architecture。
 
-仍然大量采用：
-
-Encoder-only Architecture。
-
-LayoutLM 系列、
-
-DocFormer、
-
-大量 Document Foundation Models
-
-都直接继承了 BERT 的思想。
+LayoutLM 系列、DocFormer、大量 Document Foundation Models 都直接继承了 BERT 的思想。
 
 ---
 
@@ -345,11 +327,7 @@ Document AI 中最重要的：
 
 LayoutLM
 
-直接建立在 BERT 基础上。
-
-理解 LayoutLM，
-
-必须先理解 BERT。
+直接建立在 BERT 基础上。理解 LayoutLM，必须先理解 BERT。
 
 ---
 
@@ -381,9 +359,7 @@ https://github.com/facebookresearch/fairseq
 
 ## Main Contributions
 
-RoBERTa 并没有重新设计模型。
-
-它证明：
+RoBERTa 并没有重新设计模型; 它证明：
 
 很多性能提升来自：
 
@@ -406,9 +382,7 @@ RoBERTa 并没有重新设计模型。
 * Qwen
 * DeepSeek
 
-等大模型，
-
-Scaling Law 思想具有重要影响。
+等大模型，Scaling Law 思想具有重要影响。
 
 ---
 
@@ -431,18 +405,6 @@ Foundation Models
 
 这是现代人工智能的第一阶段，也是后续 Vision Foundation Models 和 Vision-Language Models 的理论起点。
 
-
-# Foundation Models
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Foundation Models
->
-> **Version:** v3.0
->
-> **Part:** 2 / 4
->
-> **Last Updated:** July 2026
 
 ---
 
@@ -701,9 +663,7 @@ BLIP-2
 
 Qwen-VL
 
-的重要桥梁。
-
-也是现代 Vision-Language Pre-training 的代表工作。
+的重要桥梁, 也是现代 Vision-Language Pre-training 的代表工作。
 
 ---
 
@@ -782,18 +742,6 @@ Modern Vision-Language Models
 
 完成本部分后，应能够理解现代视觉编码器的基本原理，并为下一部分 **BLIP-2、SigLIP、FlashAttention** 等关键基础模型做好准备。
 
-
-# Foundation Models
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Foundation Models
->
-> **Version:** v3.0
->
-> **Part:** 3 / 4
->
-> **Last Updated:** July 2026
 
 ---
 
@@ -954,9 +902,7 @@ SigLIP（Sigmoid Loss for Language Image Pre-training）提出：
 
 ## Why Read
 
-SigLIP 已成为 Google 新一代 Vision Encoder 的基础。
-
-许多后续模型都采用了其训练思想。
+SigLIP 已成为 Google 新一代 Vision Encoder 的基础, 许多后续模型都采用了其训练思想。
 
 ---
 
@@ -1025,9 +971,7 @@ SigLIP 2 在 SigLIP 基础上进一步融合：
 
 ## Why Read in 2026
 
-SigLIP 2 已成为 Google 新一代视觉编码器的重要方向。
-
-其 NaFlex（Native Flexible Resolution）设计，对于：
+SigLIP 2 已成为 Google 新一代视觉编码器的重要方向, 其 NaFlex（Native Flexible Resolution）设计，对于：
 
 * OCR
 * Document Parsing
@@ -1260,19 +1204,6 @@ Modern Vision-Language Models
 下一部分 **`foundation.md (Part 4)`** 将总结 Foundation Models 的发展趋势，并介绍 **Scaling Law、Mixture of Experts（MoE）、长上下文（Long Context）** 等现代基础模型的重要方向，以及它们与实验室 **Document AI → DocTags → AI Agent** 研究路线之间的联系。
 
 
-
-# Foundation Models
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Foundation Models
->
-> **Version:** v3.0
->
-> **Part:** 4 / 4
->
-> **Last Updated:** July 2026
-
 ---
 
 # Part 4. Modern Foundation Models
@@ -1330,9 +1261,7 @@ https://arxiv.org/abs/2001.08361
 
 > **Scaling Law**
 
-即：
-
-模型性能与以下三个因素之间存在稳定的幂律关系：
+即：模型性能与以下三个因素之间存在稳定的幂律关系：
 
 * Model Size
 * Dataset Size
@@ -1403,9 +1332,7 @@ EMNLP 2024
 
 https://aclanthology.org/2024.emnlp-main.319/
 
-该工作证明：
-
-Scaling Law 同样适用于 MoE 架构，并分析了 Dense Model 与 MoE Model 的扩展规律。
+该工作证明：Scaling Law 同样适用于 MoE 架构，并分析了 Dense Model 与 MoE Model 的扩展规律。
 
 ---
 
@@ -1678,6 +1605,8 @@ AI Agent
 * Document Foundation Models
 
 进一步理解 Foundation Models 如何演进为现代 **Document AI** 技术体系。
+
+[上一章](00_surveys.md){ .md-button }    [下一章](02_document-ai.md){ .md-button }
 
 
 

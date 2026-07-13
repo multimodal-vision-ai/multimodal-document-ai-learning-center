@@ -299,3 +299,4 @@ Kaggle 用于实验，GitHub 用于管理。
 
 完成后，你将掌握当前主流 AI 模型的加载与推理方式，为运行 Qwen3.5-VL、SmolDocling 等模型打下坚实基础。
 
+[上一章](03_HuggingFace.md){ .md-button }    [下一章](05_Transformers.md){ .md-button }

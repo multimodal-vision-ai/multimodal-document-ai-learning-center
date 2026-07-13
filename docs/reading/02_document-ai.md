@@ -6,8 +6,6 @@
 >
 > **Version:** v3.0
 >
-> **Part:** 1 / 4
->
 > **Last Updated:** July 2026
 
 ---
@@ -203,9 +201,7 @@ LayoutLM 首次提出：
 * Bounding Box
 * 2D Position Embedding
 
-使模型能够理解：
-
-文本内容 + 页面布局。
+使模型能够理解：文本内容 + 页面布局。
 
 ---
 
@@ -390,19 +386,6 @@ LayoutLMv3
 ```
 
 LayoutLM 系列建立了现代 **Document Foundation Model** 的基础框架，也为后续 **DocFormer、DiT、Docling、MinerU、Qwen2.5-VL** 等模型的发展奠定了理论基础。
-
-
-# Document AI
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Document AI
->
-> **Version:** v3.0
->
-> **Part:** 2 / 4
->
-> **Last Updated:** July 2026
 
 ---
 
@@ -673,7 +656,7 @@ LayoutXLM 是：
 
 # Part 4. Evolution of Document Foundation Models
 
-```text id="2wfh2p"
+```text
 LayoutLM
       │
       ▼
@@ -739,7 +722,7 @@ Modern Document AI
 
 Document Foundation Models 的发展路线如下：
 
-```text id="qv0eop"
+```text
 Layout-aware Models
         │
         ▼
@@ -755,19 +738,6 @@ Vision-Language Models
 完成本部分后，应理解：
 
 现代 **Document AI** 已不再局限于 OCR，而是逐步发展为融合 **视觉、文本、布局和语义** 的统一 Foundation Model，为后续 **Docling、MinerU、OmniDocBench、Qwen2.5-VL、Qwen3-VL** 等系统奠定了理论基础。
-
-
-# Document AI
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Document AI
->
-> **Version:** v3.0
->
-> **Part:** 3 / 4
->
-> **Last Updated:** July 2026
 
 ---
 
@@ -972,9 +942,7 @@ MinerU 已成为 Document AI 的重要开源基线。
 
 ★★★★★
 
-建议每位研究生：
-
-至少完整实践一次 MinerU。
+建议每位研究生：至少完整实践一次 MinerU。
 
 后续：
 
@@ -1157,19 +1125,6 @@ Document Agent
 ```
 
 完成本部分后，学生应能够熟悉当前国际主流的 Document AI 开源工具链，并具备开展文档解析、模型评测和科研实验的基础能力。
-
-
-# Document AI
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Document AI
->
-> **Version:** v3.0
->
-> **Part:** 4 / 4
->
-> **Last Updated:** July 2026
 
 ---
 
@@ -1530,4 +1485,5 @@ AI Research Agent
 
 进一步理解现代 **Vision-Language Model** 如何成为 Document AI 的核心基础模型。
 
+[上一章](01_foundation.md){ .md-button }    [下一章](03_vlm.md){ .md-button }
 

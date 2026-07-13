@@ -1,180 +1,333 @@
-# 📚 Multimodal Document AI Learning Center
+# 📚 Learning Center
 
-欢迎加入 **Multimodal Document AI Laboratory**。
+欢迎进入 **Multimodal Vision AI Learning Center 学习中心**。
 
-本 Learning Center 是实验室统一的学习平台，用于指导新加入实验室的本科生、硕士生和博士生快速掌握多模态文档智能（Multimodal Document AI）相关知识与开发技能。
+本学习中心面向实验室本科生、硕士生和博士生，目标是帮助学生系统掌握：
 
-本课程坚持 **"理论 + 实践 + 科研"** 的培养模式，以 GitHub 为学习平台，以官方文档为主要学习资料，以代码实践为主要学习方式。
+- 多模态大模型（Vision Language Models）
+- 文档智能（Document AI）
+- 视觉人工智能（Vision AI）
+- 大模型工程实践
+- 科研实验方法
+
+
+本学习路线采用：
+
+> **理论学习 + 工程实践 + 科研实验**
+
+三位一体培养模式。
+
 
 ---
 
 # 🎯 学习目标
 
-完成本课程后，应具备以下能力：
 
-* 理解多模态大模型（Vision Language Model）的基本原理
-* 熟悉 Git 与 GitHub 的科研开发流程
-* 熟悉 Hugging Face 的模型与数据集管理
-* 熟悉 Kaggle Notebook 的开发环境
-* 掌握 Transformers 基本使用方法
-* 能够独立运行 Qwen3.5-VL 模型
-* 能够独立运行 SmolDocling 文档解析模型
-* 理解现代 Document AI 系统整体架构
-* 能够独立完成第一个科研实验
+完成 Learning Center 学习后，你应该能够：
 
----
 
-# 🗺️ 学习路线
+✅ 理解多模态视觉大模型基本原理
 
-请严格按照以下顺序学习，不建议跳跃学习。
+✅ 掌握 GitHub 科研开发流程
 
-| Chapter | 内容                      | 状态 |
-| ------- | ----------------------- | -- |
-| 00      | 实验室介绍（Lab Introduction） | ⬜  |
-| 01      | Git 与 GitHub            | ⬜  |
-| 02      | Python 开发环境             | ⬜  |
-| 03      | Hugging Face            | ⬜  |
-| 04      | Kaggle                  | ⬜  |
-| 05      | Transformers            | ⬜  |
-| 06      | Qwen3.5-VL-0.8B         | ⬜  |
-| 07      | SmolDocling             | ⬜  |
-| 08      | Document AI 基础          | ⬜  |
-| 09      | 第一个项目（First Project）    | ⬜  |
-| 10      | 第一个实验（First Experiment） | ⬜  |
-| 11      | FAQ                     | ⬜  |
+✅ 熟悉 Python / Transformers / Hugging Face
+
+✅ 使用主流 Vision Language Models
+
+✅ 开展 Document AI 实验
+
+✅ 完成模型测试、评测和分析
+
+✅ 独立开展 AI 科研实验
+
 
 ---
 
-# 📖 课程目录
+# 🗺️ 推荐学习路线
 
-```text
-learning/
 
-├── README.md
-├── 00_Lab_Introduction.md
-├── 01_Git_and_GitHub.md
-├── 02_Python_Environment.md
-├── 03_HuggingFace.md
-├── 04_Kaggle.md
-├── 05_Transformers.md
-├── 06_Qwen3.5_VL_0.8B.md
-├── 07_SmolDocling.md
-├── 08_Document_AI.md
-├── 09_First_Project.md
-├── 10_First_Experiment.md
-└── 11_FAQ.md
-```
+请按照以下顺序学习。
+
+
+
 
 ---
 
-# 💻 配套目录
+# 🚀 Stage 0：实验室介绍
 
-整个课程配套以下资源。
 
-```text
-examples/
-```
+了解实验室研究方向、培养模式和科研规范。
 
-示例代码。
 
-```text
-notebooks/
-```
+📖 学习入口：
 
-Kaggle Notebook 与实验代码。
+➡️ [实验室介绍](00_Lab_Introduction.md)
 
-```text
-resources/
-```
 
-学习资料、论文、GitHub、Hugging Face、Kaggle 等资源汇总。
-
-```text
-assets/
-```
-
-图片、流程图、课程配图等资源。
 
 ---
 
-# 📅 建议学习计划
+# 🛠️ Stage 1：AI开发基础环境
 
-| Week   | 学习内容                             |
-| ------ | -------------------------------- |
-| Week 1 | Git、GitHub、Python 环境             |
-| Week 2 | Hugging Face、Kaggle、Transformers |
-| Week 3 | Qwen3.5-VL、SmolDocling           |
-| Week 4 | Document AI、第一个项目、第一个实验          |
 
-建议每天学习 **1~2 小时**，每完成一章后进行实践操作。
+学习人工智能研究必须掌握的基础工具。
 
----
 
-# 📌 学习要求
+## Git 与 GitHub
 
-完成每一章学习后，应达到以下要求：
+学习：
 
-* 阅读课程内容
-* 阅读官方文档
-* 完成官方 Demo
-* 独立运行示例代码
-* 完成课后实践
-* 提交学习笔记（可选）
+- Git 基础操作
+- GitHub代码管理
+- 科研项目协作
+
+
+➡️ [Git 与 GitHub](01_Git_and_GitHub.md)
+
+
 
 ---
 
-# 🌐 官方学习资源
+## Python 开发环境
 
-## GitHub
 
-* QwenLM：https://github.com/QwenLM
-* Docling：https://github.com/docling-project/docling
-* Hugging Face Transformers：https://github.com/huggingface/transformers
-* vLLM：https://github.com/vllm-project/vllm
+学习：
+
+- Python环境配置
+- Conda管理
+- AI开发环境搭建
+
+
+➡️ [Python 开发环境](02_Python_Environment.md)
+
+
 
 ---
 
 ## Hugging Face
 
-* https://huggingface.co/
-* https://huggingface.co/models
-* https://huggingface.co/datasets
-* https://huggingface.co/Qwen
-* https://huggingface.co/docling-project
+
+学习：
+
+- Model Hub
+- Dataset Hub
+- Transformers生态
+
+
+➡️ [Hugging Face](03_HuggingFace.md)
+
+
 
 ---
 
 ## Kaggle
 
-* https://www.kaggle.com/
-* https://www.kaggle.com/code
-* https://www.kaggle.com/datasets
+
+学习：
+
+- GPU Notebook
+- 数据分析
+- AI实验环境
+
+
+➡️ [Kaggle实践环境](04_Kaggle.md)
+
+
+
+---
+
+## Transformers
+
+
+学习：
+
+- Transformers框架
+- 模型加载
+- 推理流程
+
+
+➡️ [Transformers基础](05_Transformers.md)
+
+
+
+---
+
+# 🧠 Stage 2：Foundation Models
+
+
+学习现代人工智能基础模型。
+
+
+进入模块：
+
+➡️ [Foundation Models 学习模块](06_Foundation_Models/README.md)
+
+
+主要内容：
+
+| 内容 | 说明 |
+|-|-|
+| Vision Language Models | 多模态大模型基础 |
+| Qwen-VL | 通用视觉语言模型 |
+| Docling | 文档解析模型 |
+
+
+
+当前课程：
+
+- [Qwen3.5-VL-0.8B模型实践](06_Foundation_Models/Qwen3.5-VL-0.8B.md)
+
+- [Docling文档解析模型](06_Foundation_Models/Docling.md)
+
+
+
+---
+
+# 📄 Stage 3：Document AI
+
+
+学习多模态文档智能技术。
+
+
+进入模块：
+
+➡️ [Document AI学习模块](07_Document_AI/README.md)
+
+
+
+主要内容：
+
+- 文档理解
+- OCR
+- 文档解析
+- Layout Analysis
+- 表格理解
+- Document VLM
+
+
+
+课程：
+
+➡️ [Document AI简介](07_Document_AI/00_Introduction.md)
+
+
+
+---
+
+# 🔬 Stage 4：科研项目实践
+
+
+通过完整项目训练科研能力。
+
+---
+
+## First Experiment
+
+
+第一个完整科研项目实验流程：
+
+包括：
+
+- 数据准备
+- 模型部署
+- 实验设计
+- Benchmark评测
+
+
+---
+
+# 🧪 Experiment 01
+
+
+完整实验案例：
+
+
+➡️ [Experiment 01](08_Projects/Experiment_01/readme.md)
+
+
+
+---
+
+# ❓ FAQ
+
+
+学习过程中常见问题：
+
+
+➡️ [FAQ](09_FAQ.md)
+
+
+
+---
+
+# 📅 推荐学习计划
+
+
+| 周次 | 内容 |
+|-|-|
+| Week 1 | GitHub + Python环境 |
+| Week 2 | Hugging Face + Transformers |
+| Week 3 | Foundation Models |
+| Week 4 | Document AI |
+| Week 5 | 第一个科研实验 |
+| Week 6+ | 独立科研项目 |
+
+
 
 ---
 
 # 🎓 学习原则
 
-本课程遵循以下原则：
 
-* 官方资料优先（Official First）
-* 动手实践优先（Practice First）
-* 阅读源码优先（Read the Code）
-* 小步迭代（Learn by Doing）
-* 科研导向（Research Oriented）
+本学习中心坚持：
+
+
+## Official First
+
+优先学习官方文档。
+
+
+## Practice First
+
+所有知识必须通过代码验证。
+
+
+## Research Oriented
+
+最终目标：
+
+> 从学习者成长为人工智能科研人员。
+
+
 
 ---
 
-# 🚀 学习完成后
+# 🚀 下一步
 
-完成全部课程后，应能够：
 
-* 独立完成开发环境配置
-* 独立运行主流 Document AI 模型
-* 阅读模型源码
-* 修改模型推理流程
-* 开展科研实验
-* 参与实验室科研项目
+完成 Learning 模块后，建议进入：
 
-欢迎开始你的 **Multimodal Document AI** 学习之旅！
 
-Last Updated: 2026-07-10
+📖 Reading
+
+阅读经典论文和技术报告
+
+
+↓
+
+💻 Tutorials
+
+完成模型实验
+
+
+↓
+
+🔬 Research Projects
+
+开展科研工作
+
+
+
+---
+
+Last Updated: 2026-07-12

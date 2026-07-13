@@ -1,6 +1,6 @@
-# Chapter 7：SmolDocling
+# Chapter 7：Docling
 
-# SmolDocling for Multimodal Document AI
+# Docling for Multimodal Document AI
 
 ---
 
@@ -8,21 +8,21 @@
 
 完成本章学习后，你应该能够：
 
-* 了解 SmolDocling 的定位与特点
-* 熟悉 SmolDocling 官方资源
+* 了解 Docling 的定位与特点
+* 熟悉 Docling 官方资源
 * 成功运行官方 Demo
 * 理解文档解析流程
 * 掌握 Markdown 文档生成
-* 理解 SmolDocling 与 Qwen3.5-VL 的区别
-* 熟悉实验室中 SmolDocling 的应用场景
+* 理解 Docling 与 Qwen3.5-VL 的区别
+* 熟悉实验室中 Docling 的应用场景
 
 ---
 
-# 2. SmolDocling 简介（Introduction）
+# 2. Docling 简介（Introduction）
 
-SmolDocling 是 Docling 项目推出的轻量级文档理解模型，专注于 Document AI 场景。
+Docling 是 Docling 项目推出的轻量级文档理解模型，专注于 Document AI 场景。
 
-相比通用视觉语言模型，SmolDocling 更关注：
+相比通用视觉语言模型，Docling 更关注：
 
 * PDF 文档解析
 * OCR
@@ -32,7 +32,7 @@ SmolDocling 是 Docling 项目推出的轻量级文档理解模型，专注于 D
 
 其目标是将复杂文档转换为适合大模型处理的结构化文本，为后续问答、检索和 Agent 应用提供高质量输入。
 
-对于实验室而言，SmolDocling 是文档预处理的重要工具，可与 Qwen3.5-VL 等模型协同使用。
+对于实验室而言，Docling 是文档预处理的重要工具，可与 Deepseek 等大模型协同使用。
 
 ---
 
@@ -76,7 +76,7 @@ https://huggingface.co/docling-project
 
 1. 阅读官方 README。
 2. 按照官方说明安装依赖。
-3. 下载 SmolDocling 模型。
+3. 下载 Docling 模型。
 4. 运行官方 Demo。
 5. 使用一份 PDF 文档进行测试。
 
@@ -86,7 +86,7 @@ https://huggingface.co/docling-project
 
 # 5. 模型推理（Inference）
 
-SmolDocling 的基本处理流程如下：
+Docling 的基本处理流程如下：
 
 ```text
 PDF / 图片
@@ -107,7 +107,7 @@ OCR
 结构恢复
       │
       ▼
-Markdown 输出
+Doctags 输出
 ```
 
 重点理解：
@@ -115,7 +115,7 @@ Markdown 输出
 * 文档输入
 * 页面解析
 * 结构恢复
-* Markdown 输出
+* Doctags 输出
 
 这些步骤构成了现代 Document AI 系统的重要基础。
 
@@ -123,7 +123,7 @@ Markdown 输出
 
 # 6. Document AI 应用（Applications）
 
-SmolDocling 适用于以下任务：
+Docling 适用于以下任务：
 
 ## PDF 转 Markdown
 
@@ -198,9 +198,9 @@ Models
 
 ---
 
-# 8. Qwen3.5-VL 与 SmolDocling 对比
+# 8. Qwen3.5-VL 与 Docling 对比
 
-| 项目   | Qwen3.5-VL            | SmolDocling            |
+| 项目   | Qwen3.5-VL            | Docling            |
 | ---- | --------------------- | ---------------------- |
 | 模型类型 | Vision Language Model | Document Parsing Model |
 | 主要能力 | 图像理解、多模态推理            | 文档解析、Markdown 生成       |
@@ -218,7 +218,7 @@ Models
 
 ## 任务一
 
-安装 SmolDocling。
+安装 Docling。
 
 ---
 
@@ -260,7 +260,7 @@ Models
 ```text
 experiments/
 
-└── smoldocling/
+└── Docling/
 
     ├── pdf/
     ├── markdown/
@@ -274,15 +274,15 @@ experiments/
 
 # 10. 本章总结（Summary）
 
-本章介绍了 SmolDocling 的定位及实验室中的主要应用。
+本章介绍了 Docling 的定位及实验室中的主要应用。
 
 完成本章后，你应该能够：
 
-* 独立运行 SmolDocling
+* 独立运行 Docling
 * 使用模型解析 PDF
 * 生成 Markdown 文档
 * 理解文档解析流程
-* 比较 SmolDocling 与 Qwen3.5-VL 的特点
+* 比较 Docling 与 Qwen3.5-VL 的特点
 * 将其应用于实验室 Document AI 项目
 
 ---

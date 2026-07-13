@@ -311,7 +311,7 @@ https://huggingface.co/docs
 
 下一章学习：
 
-> **Chapter 6：Qwen3.5-VL-0.8B**
+> **Chapter 6：Foundation Models**
 
 主要内容：
 

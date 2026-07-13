@@ -375,3 +375,5 @@ https://huggingface.co/docs/peft
 
 完成后，你将能够利用 Kaggle 快速完成模型验证和实验开发，为后续学习 Qwen3.5-VL 和 SmolDocling 做好准备。
 
+[上一章](02_Python_Environment.md){ .md-button }       [下一章](04_Kaggle.md){ .md-button }
+

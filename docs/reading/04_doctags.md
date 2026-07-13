@@ -6,8 +6,6 @@
 >
 > **Version:** v3.0
 >
-> **Part:** 1 / 4
->
 > **Last Updated:** July 2026
 
 ---
@@ -171,9 +169,7 @@ DocTags 可以理解为：
 * Reading Order
 * 页面位置
 
-相比 Markdown：
-
-信息更加完整。
+相比 Markdown：信息更加完整。
 
 ---
 
@@ -398,18 +394,6 @@ AI-ready Structured Document
 DocTags 代表了现代 **Document AI** 从"文本提取"向"语义理解"发展的重要方向，也是构建 **Document AI Agent**、**RAG** 和 **AI Research Agent** 的关键基础表示。
 
 
-# DocTags
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** DocTags
->
-> **Version:** v3.0
->
-> **Part:** 2 / 4
->
-> **Last Updated:** July 2026
-
 ---
 
 # Part 5. DocTags Architecture
@@ -437,9 +421,7 @@ Document
     └── Spatial Information
 ```
 
-相比传统 Markdown：
-
-DocTags 增加了：
+相比传统 Markdown, DocTags 增加了：
 
 > **Document Structure + Semantic Layout**
 
@@ -530,9 +512,7 @@ Document
 | Footnote  | 脚注          |
 | Reference | 参考文献        |
 
-相比 OCR，
-
-这些元素具有明确的语义边界。
+相比 OCR，这些元素具有明确的语义边界。
 
 ---
 
@@ -616,9 +596,7 @@ Figure
 Caption
 ```
 
-DocTags 将阅读顺序作为独立信息保存，
-
-避免多栏论文、杂志和报告出现阅读错误。
+DocTags 将阅读顺序作为独立信息保存，避免多栏论文、杂志和报告出现阅读错误。
 
 ---
 
@@ -794,19 +772,6 @@ AI-ready Structured Document
 
 DocTags 不只是新的文档格式，更代表了 **Document AI 从文本提取（Text Extraction）向语义表达（Semantic Representation）** 的演进方向，为后续 **RAG、Document Agent、AI Research Agent** 提供统一的数据基础。
 
-
-# DocTags
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** DocTags
->
-> **Version:** v3.0
->
-> **Part:** 3 / 4
->
-> **Last Updated:** July 2026
-
 ---
 
 # Part 7. How Are DocTags Generated?
@@ -972,9 +937,7 @@ Semantics
 Reasoning
 ```
 
-因此，
-
-DocTags 更像是：
+因此，DocTags 更像是：
 
 > **Vision-Language Model 对文档理解结果的结构化表达。**
 
@@ -996,9 +959,7 @@ DocTags 通常保存以下信息：
 | Code Block         | 编程语言与内容                       |
 | Metadata           | 标题、作者、语言等                     |
 
-相比 Markdown，
-
-DocTags 能够完整保留：
+相比 Markdown，DocTags 能够完整保留：
 
 > **Document Semantics + Layout + Provenance**
 
@@ -1022,9 +983,7 @@ DoclingDocument
  └── DocLang
 ```
 
-DocTags 并不是独立解析器，
-
-而是：
+DocTags 并不是独立解析器，而是：
 
 > **DoclingDocument 的一种高语义导出格式。**
 
@@ -1064,9 +1023,7 @@ Caption
 * RAG 检索失败
 * Agent 推理错误
 
-因此，
-
-Reading Order 是现代 Document AI 的核心能力之一，也是 DocTags 保存的重要属性。
+因此，Reading Order 是现代 Document AI 的核心能力之一，也是 DocTags 保存的重要属性。
 
 ---
 
@@ -1218,18 +1175,6 @@ AI Agent
 ```
 
 DocTags 不仅是文档解析的输出格式，更是连接 **Vision-Language Models、Document AI、RAG 和 AI Agent** 的统一中间表示，为未来构建高质量 Document Intelligence 系统提供了坚实的数据基础。
-
-# DocTags
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** DocTags
->
-> **Version:** v3.1
->
-> **Part:** 4 / 4
->
-> **Last Updated:** July 2026
 
 ---
 
@@ -1597,3 +1542,5 @@ AI Agent
 * Document Parsing Evaluation
 * Reading Order Evaluation
 * Structure-aware Benchmark
+
+[上一章](03_vlm.md){ .md-button }    [下一章](05_benchmark-2026.md){ .md-button }

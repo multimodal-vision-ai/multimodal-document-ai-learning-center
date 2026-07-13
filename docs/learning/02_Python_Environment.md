@@ -49,7 +49,7 @@
 
 建议严格按照以下顺序安装：
 
-```text id="y7m7nr"
+```text
 Git
 
 ↓
@@ -123,11 +123,11 @@ https://code.visualstudio.com/
 
 ---
 
-# 6. 创建实验室统一环境
+# 6. 创建统一环境
 
-建议环境名称：
+例如统一环境名称：
 
-```text id="s9rjvd"
+```text
 mdai
 ```
 
@@ -174,7 +174,7 @@ print(torch.cuda.is_available())
 
 建议在本地建立统一开发目录。
 
-```text id="qv3frx"
+```text
 AI_Workspace/
 
 ├── Projects/
@@ -342,3 +342,5 @@ https://code.visualstudio.com/
 * 实验室模型管理规范
 
 完成后，你将能够熟练使用 Hugging Face 平台获取和管理 AI 模型与数据集。
+
+[上一章](01_Git_and_GitHub.md){ .md-button }    [下一章](03_HuggingFace.md){ .md-button }

@@ -1,250 +1,276 @@
-# Experiment 01：Qwen3.5-VL Document Understanding
+# 🧪 Experiment 01：Multimodal Vision AI 基础实验
 
-> **Multimodal Document AI Laboratory - Lab Manual**
+本实验是 **Multimodal Vision AI Learning Center** 第一个科研实践项目。
 
----
+通过本实验，学生将完成一次完整的人工智能实验流程：
 
-## Introduction
-
-欢迎来到 **Experiment 01**。
-
-这是 **Multimodal Document AI Laboratory** 的第一个正式实验，也是所有新成员进入实验室后必须完成的基础实验。
-
-本实验将带领你完成一个完整的 Document AI 科研项目，从项目创建、环境配置、数据集准备，到模型推理、Prompt Engineering、实验记录和 Benchmark 初步评测，帮助你建立规范的科研开发流程。
-
-完成本实验后，你将具备独立开展后续科研项目的基础能力。
+> 项目创建 → 环境配置 → 数据准备 → 模型推理 → 实验分析 → Benchmark评测
 
 ---
 
-## Learning Objectives
+# 🎯 实验目标
 
-完成本实验后，你应该能够：
+完成本实验后，学生能够：
 
-* 创建标准 GitHub 科研项目；
-* 建立统一的科研项目目录；
-* 配置 Python 与开发环境；
-* 下载并管理公开数据集；
-* 下载并运行 Qwen3.5-VL-0.8B 模型；
-* 完成第一次模型推理；
-* 设计并测试不同 Prompt；
-* 保存实验结果与实验日志；
-* 完成 Benchmark 初步评测；
-* 编写规范的实验总结。
+* 掌握 AI 科研项目基本流程
+* 熟悉 GitHub 项目管理方法
+* 学习 Vision Language Model 使用方法
+* 完成一次完整模型实验
+* 掌握实验结果分析方法
 
 ---
 
-## Prerequisites
+# 🗺️ 实验流程
 
-开始本实验前，请确保已经完成以下学习内容。
+本实验包含 7 个阶段：
 
-* Chapter 01：Git & GitHub Basics
-* Chapter 02：Python Development Environment
-* Chapter 03：Hugging Face Fundamentals
-* Chapter 04：Kaggle Basics
-* Chapter 05：Transformers Quick Start
-* Chapter 06：Qwen3.5-VL-0.8B Introduction
-* Chapter 07：SmolDocling Introduction
-* Chapter 08：Document AI Fundamentals
-
----
-
-## Experiment Structure
-
-本实验共包含 **7 个 Part**。
-
-| Part   | Title                                          | Status |
-| ------ | ---------------------------------------------- | ------ |
-| Part 1 | Experiment Preparation                         | ☐      |
-| Part 2 | Create Your First Research Repository          | ☐      |
-| Part 3 | Build a Standard Research Project Structure    | ☐      |
-| Part 4 | Dataset Preparation                            | ☐      |
-| Part 5 | Model Preparation and First Inference          | ☐      |
-| Part 6 | Prompt Engineering and Comparative Experiments | ☐      |
-| Part 7 | Benchmark Evaluation and Project Summary       | ☐      |
-
-建议严格按照顺序完成，不要跳过任何章节。
+| 阶段      | 内容             | 学习目标         |
+| ------- | -------------- | ------------ |
+| Part 01 | 实验准备           | 完成人工智能实验环境配置 |
+| Part 02 | 创建 GitHub 科研项目 | 掌握科研项目管理方法   |
+| Part 03 | 构建项目目录结构       | 学习 AI 工程组织方式 |
+| Part 04 | 数据集准备          | 掌握数据管理流程     |
+| Part 05 | 模型准备与推理        | 完成大模型运行实验    |
+| Part 06 | Prompt设计与实验分析  | 学习实验设计方法     |
+| Part 07 | Benchmark评测与总结 | 掌握模型评价方法     |
 
 ---
 
-## Expected Project Structure
+# 📚 实验步骤
 
-完成本实验后，你的项目目录应如下所示：
+## [Part 01：实验准备](Part01-实验准备.md)
+
+### 学习目标
+
+完成人工智能实验基础环境配置。
+
+### 主要内容
+
+* GitHub账号配置
+* Git基础操作
+* Python开发环境
+* GPU实验环境
+* AI开发工具安装
+
+---
+
+## [Part 02：创建 GitHub 科研项目](Part02-创建Github科研项目仓库.md)
+
+### 学习目标
+
+建立规范的 AI 科研项目仓库。
+
+### 主要内容
+
+* 创建 GitHub Repository
+* README 文件设计
+* License 配置
+* Git 版本管理
+* 项目协作流程
+
+---
+
+## [Part 03：构建项目目录结构](Part03-构建项目目录.md)
+
+### 学习目标
+
+掌握 AI 项目的标准工程组织方式。
+
+### 推荐项目结构
 
 ```text
-qwen3vl-first-project/
+project/
 
 ├── README.md
-├── LICENSE
-├── requirements.txt
-├── environment.yml
-│
-├── assets/
+
+├── configs/
+
 ├── data/
-├── docs/
-├── experiments/
+
 ├── models/
+
 ├── notebooks/
-├── outputs/
-└── scripts/
+
+├── scripts/
+
+├── src/
+
+├── results/
+
+└── docs/
 ```
 
-所有后续实验均将在此基础上继续开展。
+### 主要内容
+
+* 代码组织
+* 配置文件管理
+* 实验结果保存
+* 文档管理
 
 ---
 
-## Experiment Workflow
+## [Part 04：数据集准备](Part04-数据集准备.md)
+
+### 学习目标
+
+掌握人工智能实验的数据管理流程。
+
+### 主要内容
+
+* 数据集选择
+* 数据下载
+* 数据格式分析
+* 数据预处理
+* 数据划分
+
+### 典型数据结构
 
 ```text
-Experiment Preparation
-          │
-          ▼
-Create GitHub Repository
-          │
-          ▼
-Build Project Structure
-          │
-          ▼
-Prepare Dataset
-          │
-          ▼
-Download Model
-          │
-          ▼
-Run First Inference
-          │
-          ▼
-Prompt Engineering
-          │
-          ▼
-Benchmark Evaluation
-          │
-          ▼
-Experiment Summary
+dataset/
+
+├── images/
+
+├── annotations/
+
+├── train.json
+
+└── test.json
 ```
 
 ---
 
-## Deliverables
+## [Part 05：模型准备与推理](Part05-模型准备与推理.md)
 
-完成本实验后，应提交以下成果。
+### 学习目标
 
-### Project
+完成第一个 Vision Language Model 推理实验。
 
-* GitHub Repository
-* 标准科研项目目录
-* README.md
+### 主要内容
 
-### Environment
+* Hugging Face模型加载
+* 模型推理
+* GPU运行
+* 输出结果保存
 
-* requirements.txt
-* environment.yml
+### 示例模型
 
-### Dataset
-
-* 数据目录
-* Dataset Description
-
-### Model
-
-* Model Information
-* 第一次推理程序
-
-### Experiments
-
-* Experiment Log
-* Prompt Records
-* Experiment Analysis
-
-### Outputs
-
-* Markdown Results
-* JSON Results
-* Log Files
-
-### Documents
-
-* Benchmark Report
-* Benchmark Summary
-* Project Summary
+| 模型          | 类型                    |
+| ----------- | --------------------- |
+| Qwen-VL     | Vision Language Model |
+| Qwen2.5-VL  | Vision Language Model |
+| Docling     | Document AI           |
+| SmolDocling | Document Parsing      |
 
 ---
 
-## Checklist
+## [Part 06：Prompt设计与实验分析](Part06-提示词管理与对比分析.md)
 
-实验完成验收时，应重点检查以下内容。
+### 学习目标
 
-| Item                          | Status |
-| ----------------------------- | ------ |
-| GitHub Repository Created     | □      |
-| Standard Project Structure    | □      |
-| Development Environment Ready | □      |
-| Dataset Prepared              | □      |
-| Model Downloaded              | □      |
-| First Inference Completed     | □      |
-| Prompt Experiments Completed  | □      |
-| Benchmark Completed           | □      |
-| Experiment Report Completed   | □      |
-| Git Commit History Complete   | □      |
+掌握大模型实验中的 Prompt 设计方法。
 
-全部完成后，Experiment 01 验收通过。
+### 主要内容
 
----
+* Prompt模板设计
+* Zero-shot Prompt
+* Few-shot Prompt
+* 输出格式控制
+* 实验结果比较
 
-## Learning Outcomes
+### 实验流程
 
-完成本实验后，你将掌握以下能力。
+```text
+设计Prompt
 
-* 科研项目规范管理
-* Git 与 GitHub 使用
-* Python 开发环境配置
-* Hugging Face 模型管理
-* Document AI 数据管理
-* Vision Language Model 基本使用
-* Prompt Engineering
-* 实验记录与实验复现
-* Benchmark 初步评测
-* 科研文档撰写
+↓
 
-这些能力将作为后续所有实验的基础。
+运行模型
+
+↓
+
+保存结果
+
+↓
+
+分析结果
+
+↓
+
+优化Prompt
+```
 
 ---
 
-## Next Experiment
+## [Part 07：Benchmark评测与总结](Part07-Bechmark评测与总结.md)
 
-完成本实验后，请继续学习：
+### 学习目标
 
-> **Experiment 02：Qwen3.5-VL Document Benchmark Evaluation**
+学习标准化模型评价方法。
 
-主要内容包括：
+### 主要内容
 
-* 完整数据集推理
-* OmniDocBench 官方评测
-* OCR 指标分析
-* Layout 指标分析
-* Reading Order 分析
-* Markdown 质量分析
-* Benchmark 可视化
+* Benchmark选择
+* Evaluation Metric
+* 实验结果分析
 * 实验报告撰写
-* GitHub Release 发布
+
+### 常用评价指标
+
+| 任务                        | 指标            |
+| ------------------------- | ------------- |
+| OCR                       | Edit Distance |
+| 表格理解                      | TEDS          |
+| 文档解析                      | CDM           |
+| Visual Question Answering | ANLS          |
 
 ---
 
-## Laboratory Rules
+# 📂 实验最终成果
 
-实验室统一规定：
+完成实验后，应形成完整实验项目：
 
-1. 所有项目必须使用 GitHub 管理。
-2. 所有实验必须保留完整实验记录。
-3. 所有代码必须进行版本管理。
-4. 所有实验结果必须可复现。
-5. 不得修改实验室统一项目目录结构。
-6. 每完成一个 Part，必须提交一次 Git Commit。
-7. 所有实验文档统一采用 Markdown 编写。
-8. 所有大型模型和数据集统一存放于 Hugging Face，不提交至 GitHub。
+```text
+Experiment_Result/
+
+├── README.md
+
+├── code/
+
+├── data/
+
+├── models/
+
+├── results/
+
+├── figures/
+
+└── report.md
+```
 
 ---
 
-## License
+# ✅ 实验完成标准
 
-This Lab Manual is maintained by the **Multimodal Document AI Laboratory** for research and educational purposes.
+完成 Experiment 01 后，应达到：
 
+* 能够独立创建 AI 实验项目
+* 能够运行开源模型
+* 能够完成基础实验设计
+* 能够分析实验结果
+* 能够形成实验总结
+
+---
+
+# 🚀 后续实验方向
+
+完成 Experiment 01 后，可以继续开展：
+
+* Vision Language Model 微调实验
+* Document AI 实验
+* OCR Benchmark评测实验
+* 多模态 Agent 实验
+* 垂直领域 AI 应用实验
+
+---
+
+Last Updated: 2026-07-12

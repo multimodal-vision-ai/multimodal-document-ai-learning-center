@@ -423,3 +423,5 @@ Research Projects
 * 理解 Docling、DocTags 等新一代结构化文档技术；
 * 熟悉主流 Benchmark 与评价体系；
 * 能够快速定位高质量论文，并独立阅读 CVPR、ICCV、ECCV、ACL、EMNLP、ICML、NeurIPS 等顶级会议的最新研究成果。
+
+[返回上一级](readme.md){ .md-button }    [下一章](01_foundation.md){ .md-button }

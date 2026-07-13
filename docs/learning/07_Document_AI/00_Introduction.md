@@ -60,7 +60,7 @@ Document AI 的目标不仅是识别文字，更重要的是**理解文档的结
 
 一个典型的 Document AI 系统通常包含以下流程：
 
-```text id="jlblqx"
+```text
 文档输入
       │
       ▼
@@ -187,7 +187,7 @@ OCR
 
 实验室主要采用以下技术路线：
 
-```text id="xq1p3q"
+```text
 公开数据集
       │
       ▼

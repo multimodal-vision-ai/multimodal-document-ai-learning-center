@@ -1,5 +1,3 @@
-# Papers
-
 > **Multimodal Document AI Learning Center**
 >
 > **Version:** v3.2
@@ -12,25 +10,25 @@
 
 ---
 
-# Learning Roadmap
+# Reading Roadmap
 
 ```text
+Survey Papers
+        │
+        ▼
 Foundation Models
         │
         ▼
-Vision-Language Models
+Document AI
         │
         ▼
-Document AI
+Vision-Language Models
         │
         ▼
 DocTags & Docling
         │
         ▼
 Benchmark
-        │
-        ▼
-Research Projects
 ```
 
 ---
@@ -38,7 +36,7 @@ Research Projects
 # Directory Structure
 
 ```text
-papers/
+readings/
 ├── README.md          ← 当前文档（论文导航）
 ├── foundation.md      ← Foundation Models
 ├── document_ai.md     ← Document AI
@@ -54,16 +52,32 @@ papers/
 
 | Module                 | Difficulty | Priority |
 | ---------------------- | :--------: | :------: |
-| Foundation Models      |     ⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
-| Vision-Language Models |    ⭐⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
+| Survey Papers          |     ⭐⭐     |   ⭐⭐⭐⭐⭐  |
+| Foundation Models      |     ⭐⭐⭐    |   ⭐⭐⭐  |
+| Vision-Language Models |    ⭐⭐⭐⭐    |   ⭐⭐⭐  |
 | Document AI            |    ⭐⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
-| DocTags / Docling      |    ⭐⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
+| DocTags / Docling      |    ⭐⭐⭐⭐    |   ⭐⭐⭐⭐  |
 | Benchmarks             |     ⭐⭐⭐    |   ⭐⭐⭐⭐⭐  |
-| Survey Papers          |     ⭐⭐     |   ⭐⭐⭐⭐   |
+
+
+---
+# 1. Recommended Survey Papers
+
+建议首先阅读综述，再阅读代表性论文。
+
+| Topic                  | Recommended                |
+| ---------------------- | -------------------------- |
+| Vision-Language Models | Recent VLM Surveys         |
+| Document AI            | Recent Document AI Surveys |
+| OCR                    | OCR Survey                 |
+| Layout Analysis        | Layout Analysis Survey     |
+| Document Parsing       | Docling Technical Report   |
+
+📖 阅读入口：[综述论文](00_surveys.md)
 
 ---
 
-# 1. Foundation Models
+# 2. Foundation Models
 
 现代多模态模型的理论基础。
 
@@ -80,31 +94,7 @@ papers/
 | FlashAttention            | NeurIPS | 2022 |
 | FlashAttention-2          | ICLR    | 2024 |
 
-📖 阅读入口：
-
-> `foundation.md`
-
----
-
-# 2. Vision-Language Models
-
-重点学习现代多模态基础模型。
-
-| Model        | Organization | Year |
-| ------------ | ------------ | ---- |
-| BLIP-2       | Salesforce   | 2023 |
-| LLaVA        | Wisconsin    | 2023 |
-| Florence-2   | Microsoft    | 2024 |
-| Molmo        | Allen AI     | 2024 |
-| Qwen2-VL     | Alibaba      | 2024 |
-| InternVL2    | OpenGVLab    | 2024 |
-| PaddleOCR-VL | Baidu        | 2025 |
-| Qwen3-VL     | Alibaba      | 2025 |
-| SmolDocling  | IBM Research | 2025 |
-
-📖 阅读入口：
-
-> `vlm.md`
+📖 阅读入口：[Foundation Models 基础知识](01_foundation.md)
 
 ---
 
@@ -123,13 +113,32 @@ papers/
 | Docling Technical Report | arXiv  | 2024 |
 | Docling                  | arXiv  | 2025 |
 
-📖 阅读入口：
-
-> `document_ai.md`
+📖 阅读入口：[Document-AI 基础知识](02_document-AI.md)
 
 ---
 
-# 4. DocTags & Structured Documents
+# 4. Vision-Language Models
+
+重点学习现代多模态基础模型。
+
+| Model        | Organization | Year |
+| ------------ | ------------ | ---- |
+| BLIP-2       | Salesforce   | 2023 |
+| LLaVA        | Wisconsin    | 2023 |
+| Florence-2   | Microsoft    | 2024 |
+| Molmo        | Allen AI     | 2024 |
+| Qwen2-VL     | Alibaba      | 2024 |
+| InternVL2    | OpenGVLab    | 2024 |
+| PaddleOCR-VL | Baidu        | 2025 |
+| Qwen3-VL     | Alibaba      | 2025 |
+| SmolDocling  | IBM Research | 2025 |
+
+📖 阅读入口：[Vision-Language Models 基础知识](03_vlm.md)
+
+
+---
+
+# 5. DocTags & Structured Documents
 
 建议重点阅读。
 
@@ -148,13 +157,12 @@ papers/
 * Docling GitHub：https://github.com/docling-project/docling
 * Docling Papers：https://www.docling.ai/papers/
 
-📖 阅读入口：
+📖 阅读入口：[Doctags 基础知识](04_doctags.md)
 
-> `doctags.md`
 
 ---
 
-# 5. Benchmarks
+# 6. Benchmarks
 
 建议全部阅读。
 
@@ -177,29 +185,11 @@ papers/
 * OmniDocBench：https://github.com/opendatalab/OmniDocBench
 * MMDocBench：https://mmdocbench.github.io/
 
-📖 阅读入口：
-
-> `benchmarks.md`
+📖 阅读入口：[2026-Benchmarks](05_benchmark-2026.md)
 
 ---
 
-# 6. Recommended Survey Papers
 
-建议首先阅读综述，再阅读代表性论文。
-
-| Topic                  | Recommended                |
-| ---------------------- | -------------------------- |
-| Vision-Language Models | Recent VLM Surveys         |
-| Document AI            | Recent Document AI Surveys |
-| OCR                    | OCR Survey                 |
-| Layout Analysis        | Layout Analysis Survey     |
-| Document Parsing       | Docling Technical Report   |
-
-📖 阅读入口：
-
-> `surveys.md`
-
----
 
 # Official Resources
 
@@ -218,12 +208,12 @@ papers/
 
 | Week    | Content                              |
 | ------- | ------------------------------------ |
-| Week 1  | Foundation Models                    |
-| Week 2  | Vision-Language Models               |
-| Week 3  | Document AI                          |
-| Week 4  | DocTags & Docling                    |
-| Week 5  | Benchmarks                           |
-| Week 6  | Survey Papers                        |
+| Week 1  | Survey Papers                    |
+| Week 2  | Foundation Models                    |
+| Week 3  | Vision-Language Models               |
+| Week 4  | Document AI                          |
+| Week 5  | DocTags & Docling                    |
+| Week 6  | Benchmarks                           |
 | Week 7+ | Reproduce Baselines & Start Research |
 
 ---

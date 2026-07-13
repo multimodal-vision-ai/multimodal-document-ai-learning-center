@@ -6,8 +6,6 @@
 >
 > **Version:** v3.1
 >
-> **Part:** 1 / 4
->
 > **Last Updated:** July 2026
 
 ---
@@ -140,9 +138,7 @@ OmniDocBench 的目标不是评测某一个模块，而是评价：
 | End-to-End Parsing   |     ✓     |
 | Attribute Evaluation |     ✓     |
 
-相比传统 Benchmark，
-
-OmniDocBench 更强调：
+相比传统 Benchmark，OmniDocBench 更强调：
 
 > **Document Intelligence**
 
@@ -304,11 +300,7 @@ OCRBench v2 在此基础上进一步增加了：
 
 # Recommended Next Reading
 
-继续学习：
-
-> **benchmarks.md（Part 2）**
-
-重点内容：
+下一节重点内容：
 
 * PubTabNet
 * DocVQA
@@ -317,18 +309,6 @@ OCRBench v2 在此基础上进一步增加了：
 * DocBank
 * RVL-CDIP
 * Benchmark Selection Strategy
-
-# Benchmarks
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Benchmarks
->
-> **Version:** v3.1
->
-> **Part:** 2 / 4
->
-> **Last Updated:** July 2026
 
 ---
 
@@ -472,9 +452,7 @@ DocVQA 是目前最具影响力的 **Document Question Answering** Benchmark。
 
 > 给定文档页面和自然语言问题，自动生成正确答案。
 
-与传统 OCR 不同，
-
-DocVQA 要求模型同时理解：
+与传统 OCR 不同，DocVQA 要求模型同时理解：
 
 * 文本内容
 * 页面布局
@@ -652,9 +630,7 @@ RVL-CDIP 是文档分类领域最经典的数据集之一。
 * Scientific Report
 * Advertisement
 
-共 16 类文档。
-
-虽然发布时间较早，但仍广泛用于文档分类模型的基准评测。
+共 16 类文档, 虽然发布时间较早，但仍广泛用于文档分类模型的基准评测。
 
 ---
 
@@ -688,11 +664,7 @@ RVL-CDIP 是文档分类领域最经典的数据集之一。
 
 # Recommended Next Reading
 
-继续学习：
-
-> **benchmarks.md（Part 3）**
-
-重点内容：
+下一节重点内容：
 
 * FUNSD
 * CORD
@@ -702,17 +674,6 @@ RVL-CDIP 是文档分类领域最经典的数据集之一。
 * 信息抽取（KIE）Benchmark
 * 多语言 Document AI Benchmark
 
-# Benchmarks
-
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Benchmarks
->
-> **Version:** v3.1
->
-> **Part:** 3 / 4
->
-> **Last Updated:** July 2026
 
 ---
 
@@ -1123,11 +1084,7 @@ https://arxiv.org/abs/2407.06904
 
 # Recommended Next Reading
 
-继续学习：
-
-> **benchmarks.md（Part 4）**
-
-重点内容：
+下一节重点内容：
 
 * 最新 OCRBench v2
 * MMDocBench
@@ -1500,7 +1457,7 @@ https://arxiv.org/abs/2412.07626
 
 # Chapter Summary
 
-建议实验室采用如下 Benchmark 体系：
+Benchmark 体系：
 
 ```text
 OCRBench v2
@@ -1526,5 +1483,5 @@ Research Papers
 
 该体系覆盖 OCR、版面分析、表格识别、文档解析、视觉语言理解和智能体应用等核心研究方向，可作为实验室开展 **Qwen3-VL、Docling、DocTags、OmniDocBench** 等相关科研工作的统一评测框架。
 
-
+[上一章](04_doctags.md){ .md-button } 
 
