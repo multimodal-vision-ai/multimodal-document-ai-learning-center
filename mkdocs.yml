@@ -197,42 +197,36 @@ nav:
     - Surveys:
 
         - Survey Papers:
-            reading/surveys.md
+            reading/00_surveys.md
 
     - Foundation Models:
 
         - Foundation Models:
-            reading/foundation.md
+            reading/01_foundation.md
 
 
 
     - Vision Language Models:
 
         - VLM:
-            reading/vlm.md
+            reading/03_vlm.md
 
 
 
     - Document AI:
 
         - Document AI:
-            reading/document-AI.md
+            reading/02_document-ai.md
 
         - DocTags:
-            reading/doctags.md
+            reading/04_doctags.md
 
 
 
     - Benchmarks:
 
         - Benchmark:
-            reading/benchmark.md
-
-
-
-
-
-
+            reading/05_benchmark-2026.md
 
 
 # ==========================

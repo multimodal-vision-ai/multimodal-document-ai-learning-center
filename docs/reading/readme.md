@@ -113,7 +113,7 @@ readings/
 | Docling Technical Report | arXiv  | 2024 |
 | Docling                  | arXiv  | 2025 |
 
-📖 阅读入口：[Document-AI 基础知识](02_document-AI.md)
+📖 阅读入口：[Document-AI 基础知识](02_document-ai.md)
 
 ---
 
