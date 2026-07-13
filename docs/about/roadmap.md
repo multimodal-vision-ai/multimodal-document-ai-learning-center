@@ -1,11 +1,3 @@
-我建议**不要直接把现在的个人 GitHub 当成实验室平台继续扩展**。
-
-最佳实践是：
-
-> **先创建 GitHub Organization，再把现有仓库迁移进去。**
-
-这样以后无论增加 **Medical AI Learning Center、Benchmark、Datasets**，还是以后博士生加入，都不会混乱。这也是 GitHub 官方推荐的协作方式。([GitHub Docs][1])
-
 ---
 
 # 第一阶段目标
