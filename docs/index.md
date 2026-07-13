@@ -1,172 +1,294 @@
 # 🎓 Multimodal Vision AI Learning Center
 
-欢迎来到 **Multimodal Vision AI Learning Center**。
+> 🚀 Explore AI. Build AI. Create the Future.
 
-本平台是实验室统一的学习、科研与工程实践平台，围绕 **多模态视觉智能（Multimodal Vision AI）** 构建系统化学习体系，帮助本科生、硕士生和博士生逐步完成从基础学习到科研创新的能力培养。
+欢迎来到 **Multimodal Vision AI Learning Center**！
 
----
+这里是一个面向 AI 爱好者的学习与实践空间。
 
-# 🚀 学习路线
+如果你对下面这些问题感兴趣：
 
-建议按照以下顺序学习。
+- 🤖 AI 是如何看懂图片和视频的？
+- 📄 为什么大模型可以阅读复杂文档？
+- 🧠 GPT、Qwen、LLaVA 这些模型到底是怎么工作的？
+- 🚀 如何自己训练一个 AI 模型？
+- 🔬 如何从一个想法开始做 AI 科研？
 
-```text
-Learning
-      │
-      ▼
-Reading
-      │
-      ▼
-Tutorials
-      │
-      ▼
-Projects
-      │
-      ▼
-Research
-```
+那么，你来到了正确的地方。
 
 ---
 
-# 📚 Learning Center
+# 🌟 Why Multimodal AI?
 
-系统课程。
+人工智能正在快速改变世界。
 
-主要内容包括：
+未来的 AI 不只是聊天机器人，而是能够：
 
-- Git 与 GitHub
-- Python 开发环境
+- 👀 看见世界
+- 📖 阅读知识
+- 🧠 理解复杂信息
+- 🎥 分析视频内容
+- 🤝 与人和环境交互
+
+
+多模态 AI（Multimodal AI）正在成为下一代人工智能的重要方向。
+
+---
+
+# 🛠 What Can You Build?
+
+在这里，你不仅学习 AI，还可以亲手创造真实的 AI 系统。
+
+---
+
+## 📷 Vision AI
+
+让计算机理解视觉世界：
+
+- 图像分类
+- 目标检测
+- 图像理解
+- 视频分析
+- 视觉推理
+
+你将学习：
+
+> 如何让机器拥有“视觉”。
+
+---
+
+## 📄 Document AI
+
+让 AI 阅读真实世界的信息：
+
+- PDF 智能解析
+- OCR 文档识别
+- 表格理解
+- 文档问答
+- 知识抽取
+
+你将探索：
+
+> 如何让 AI 理解人类创造的复杂文档。
+
+---
+
+## 🧠 Vision Language Models
+
+探索最新一代多模态大模型：
+
+- Qwen-VL
+- LLaVA
+- DeepSeek-VL
+- GPT-4V 类模型
+
+学习：
+
+- 图像与语言融合
+- 多模态理解
+- Prompt Engineering
+- 模型推理与优化
+
+---
+
+## 🤖 AI Applications
+
+构建面向真实世界的智能应用：
+
+- AI 助手
+- 智能知识库
+- AI Agent
+- 行业智能系统
+- 垂直领域 AI 应用
+
+---
+
+# 🗺 Your AI Adventure Map
+
+AI 学习不是记忆知识，而是一场探索之旅。
+
+
+---
+
+# 📚 Level 1  
+# Become an AI Explorer
+
+## 学习基础能力
+
+你将掌握：
+
+- Python Programming
+- Git & GitHub
+- Linux Environment
+- GPU Computing
+- Deep Learning
 - Hugging Face
-- Kaggle
 - Transformers
 - Foundation Models
-- Document AI
+
+目标：
+
+> 能够打开一个开源 AI 项目，并成功运行它。
+
+---
+
+# 📖 Level 2  
+# Become an AI Reader
+
+## 阅读并理解现代 AI
+
+优秀 AI 研究者首先是优秀阅读者。
+
+一起探索：
+
+- 最新论文
+- 技术博客
+- 开源项目
+- Benchmark 报告
+
+理解：
+
+- 为什么设计这个模型？
+- 它解决了什么问题？
+- 还有哪些改进空间？
+
+目标：
+
+> 从“会调用模型”走向“理解模型”。
+
+---
+
+# 💻 Level 3  
+# Become an AI Builder
+
+## 动手创造 AI
+
+AI 的能力来自实践。
+
+你将尝试：
+
+🔥 跑通开源模型
+
+🔥 修改模型代码
+
+🔥 制作数据集
+
+🔥 训练自己的模型
+
+🔥 完成 AI 项目
+
+
+学习 AI 最好的方式：
+
+> **Build something.**
+
+---
+
+# 🔬 Level 4  
+# Become an AI Researcher
+
+## 探索 AI 前沿问题
+
+进一步进入科研阶段：
+
+研究方向包括：
+
+- Multimodal Foundation Models
 - Vision Language Models
+- Document Intelligence
+- Efficient AI
+- AI for Vertical Applications
 
-👉 从 **Learning** 开始学习。
+训练能力：
 
----
+- 阅读论文
+- 复现实验
+- 设计方法
+- 分析结果
+- 撰写论文
 
-# 📖 Reading Center
+目标：
 
-论文阅读与技术综述。
-
-包括：
-
-- Foundation Models
-- Vision Language Models
-- Document AI
-- Benchmarks
-- DocTags
-- Survey Papers
-
-建议：
-
-每完成一个 Learning 模块，再阅读对应 Reading 内容。
+> 从 AI 使用者成长为 AI 创造者。
 
 ---
 
-# 💻 Tutorials
+# 🌍 AI Open Source World
 
-实践教程。
+本平台连接全球 AI 开源生态。
 
-包括：
+| Platform | Purpose |
+|----------|---------|
+| GitHub | Code & Collaboration |
+| Hugging Face | Models & Datasets |
+| Kaggle | Cloud Experiments |
+| arXiv | Latest Research |
 
-- 官方 Demo
-- 环境配置
-- 模型推理
-- Benchmark
-- 模型训练
-- 数据处理
-
-坚持：
-
-> Learn by Doing.
 
 ---
 
-# 🔬 Research
+# 🏆 After This Journey
 
-科研训练。
+完成学习路线后，你将不再只是：
 
-主要包括：
+❌ 使用 AI 工具的人
 
-- Research Roadmap
-- Benchmark
-- Paper Reproduction
-- Scientific Writing
-- Project Guidance
+而是：
 
-帮助学生逐步开展科研工作。
+✅ 能运行 AI 模型的人
 
----
+✅ 能理解 AI 技术的人
 
-# 🌍 Platform Ecosystem
+✅ 能开发 AI 应用的人
 
-整个 Learning Center 基于 GitHub 构建，并与国际开源平台协同工作。
-
-| 平台 | 作用 |
-|------|------|
-| GitHub | 学习、开发与项目管理 |
-| MkDocs | 在线知识库 |
-| Kaggle | 在线实验平台 |
-| Hugging Face | 模型与数据集 |
+✅ 能开展 AI 科研的人
 
 ---
 
-# 🎯 培养目标
+# 🚀 Ready?
 
-完成全部课程后，应具备以下能力：
+AI 时代已经开始。
 
-- 独立配置开发环境
-- 阅读官方文档
-- 理解主流 Vision AI 模型
-- 运行 Benchmark
-- 阅读科研论文
-- 完成模型微调
-- 独立开展科研实验
-- 参与实验室科研项目
+不要只是等待 AI 改变世界。
 
----
+尝试成为创造 AI 的人。
 
-# 📈 推荐学习路径
 
-| 阶段 | 内容 |
-|------|------|
-| Stage 1 | Learning |
-| Stage 2 | Reading |
-| Stage 3 | Tutorials |
-| Stage 4 | Engineering Practice |
-| Stage 5 | Research |
+欢迎访问：
 
----
+# Multimodal Vision AI Learning Center
 
-# 🌐 External Resources
 
-## GitHub Repository
-
-https://github.com/apple75/multimodal-document-ai-learning-center
-
-## Kaggle
-
-https://www.kaggle.com/code/guopingtan
-
-## Hugging Face
-
-https://huggingface.co/
+> Learn · Build · Experiment · Research
 
 ---
 
 # 💡 Learning Principles
 
-本平台坚持以下理念：
+我们坚持：
 
-- Documentation First
-- Official First
-- Practice First
-- Research First
-- Open Source First
+## 📚 Learn from the Best
+
+学习优秀论文、官方文档和开源项目。
+
+
+## 🌍 Build with Open Source
+
+拥抱全球 AI 开源生态。
+
+
+## 🧪 Experiment Continuously
+
+通过实验真正理解 AI。
+
+
+## 🔬 Research Deeply
+
+从实践走向创新。
+
 
 ---
+
+# ❤️ Start Your AI Journey
 
 > **Learn · Build · Experiment · Research**
