@@ -94,15 +94,7 @@ nav:
 - About:
 
     - 平台介绍:
-        - 关于 Learning Center: about/readme.md
-
-    - 平台架构:
-        - Architecture: about/architecture.md
-
-    - 建设路线:
-        - Roadmap: about/roadmap.md
-
-
+        - 关于 Learning Center: about/README.md
 
 # ==========================
 # 学习中心

@@ -1,345 +1,98 @@
----
+# About
 
-# 推荐权限体系（适合高校实验室）
-
-建议只建立下面 5 个 Team：
-
-```text
-Multimodal Vision AI Lab
-│
-├── Owners
-├── Faculty
-├── PhD
-├── Master
-└── Undergraduate
-```
-
-以后增加学生，只需要加入对应 Team。
+> **Multimodal Vision AI Learning Center**  
+>
+> An Open Learning Platform for Multimodal Vision AI
 
 ---
 
-# 第一步：创建 Team
+## 🌟 Overview
 
-进入你的 Organization：
+Multimodal Vision AI Learning Center 是一个面向人工智能学习者和研究人员的开放学习平台。
 
-```
-Multimodal Vision AI Lab
-```
+本平台围绕 **Vision Language Models、Document AI、多模态大模型和智能应用**，系统整理：
 
-左侧：
+- 理论知识
+- 开源模型
+- 实践教程
+- 论文阅读
+- 科研项目
 
-```
-Teams
-```
-
-↓
-
-点击：
-
-```
-New Team
-```
-
-依次创建：
-
-```
-Owners
-Faculty
-PhD
-Master
-Undergraduate
-```
-
-建议 Team 设置：
-
-| Team          | Privacy |
-| ------------- | ------- |
-| Owners        | Secret  |
-| Faculty       | Closed  |
-| PhD           | Closed  |
-| Master        | Closed  |
-| Undergraduate | Closed  |
-
-> `Secret` 只有组织 Owner 能看到，适合管理团队；`Closed` 是实验室成员可见、可申请加入的普通团队。([GitHub Docs][2])
+帮助学习者从 **学习（Learn） → 实践（Practice） → 研究（Research）**，逐步进入多模态人工智能领域。
 
 ---
 
-# 第二步：邀请成员
+## 🎯 Vision
 
-例如：
+我们的目标是构建一个：
 
-```
-Team
+> **连接知识、代码和科研实践的多模态 AI 学习生态。**
 
-↓
+通过开放的学习路线、真实的实验案例和持续更新的技术内容，帮助学生掌握：
 
-Members
-
-↓
-
-Add member
-```
-
-输入 GitHub 用户名即可。
-
-例如：
-
-```
-Owners
-
-GuopingTan
-```
-
-以后：
-
-```
-Master
-
-张三
-李四
-王五
-```
+- 如何理解现代 AI 模型；
+- 如何使用开源工具进行实验；
+- 如何阅读最新科研论文；
+- 如何开展自己的人工智能研究。
 
 ---
 
-# 第三步：Repository 权限配置
+## 📚 Platform
 
-例如：
+平台主要包含：
 
-```
-learning-document-ai
-```
-
-进入：
-
-```
-Repository
-
-↓
-
-Settings
-
-↓
-
-Collaborators and teams
-
-↓
-
-Add Teams
-```
-
-GitHub 会让你选择：
-
-```
-Owners
-
-Faculty
-
-PhD
-
-Master
-
-Undergraduate
-```
-
-选择之后，
-
-再设置 Role。
+| Module | Description |
+|---|---|
+| 📖 Learning | 系统课程与基础知识 |
+| 📑 Reading | 论文、技术报告与前沿追踪 |
+| 💻 Tutorials | 模型部署与实验实践 |
+| 🔬 Experiments | 科研项目实验案例 |
+| 🌐 Resources | 高质量开源资源汇总 |
 
 ---
 
-# Role 有哪些？
+## 🚀 Learning Philosophy
 
-GitHub 官方定义如下：
+本平台坚持：
 
-| Role     | 能力                          | 推荐对象               |                    |
-| -------- | --------------------------- | ------------------ | ------------------ |
-| Read     | 只能查看、Clone、提交 Issue         | 学习者                |                    |
-| Triage   | 可管理 Issue/Discussion，但不能改代码 | 助教、课程管理员           |                    |
-| Write    | 可 Push、提交 PR、修改代码           | 博士、硕士              |                    |
-| Maintain | 可管理仓库（不含危险操作）               | 导师、项目负责人           |                    |
-| Admin    | 完全控制（删除仓库、修改权限等）            | Organization Owner | ([GitHub Docs][1]) |
+- **Official First** —— 优先学习官方资料
+- **Practice First** —— 通过实践掌握技术
+- **Open Source Driven** —— 拥抱开源生态
+- **Research Oriented** —— 面向科研创新
 
----
-
-# 推荐配置（Learning Center）
-
-例如：
-
-```
-learning-document-ai
-```
-
-建议：
-
-| Team          | Repository Role |
-| ------------- | --------------- |
-| Owners        | Admin           |
-| Faculty       | Maintain        |
-| PhD           | Write           |
-| Master        | Write           |
-| Undergraduate | Read            |
-
-这样：
-
-本科：
-
-```
-只能学习
-```
-
-硕士：
-
-```
-可以提交教程
-
-可以修改文档
-
-可以上传 Notebook
-```
-
-博士：
-
-```
-可以维护课程
-
-Review PR
-
-修改代码
-```
-
-导师：
-
-```
-维护仓库
-
-Merge PR
-
-修改 Branch
-
-配置 Actions
-```
-
-只有你：
-
-```
-Admin
-```
-
-可以：
-
-```
-删除仓库
-
-修改权限
-
-Transfer
-
-Security
-```
+学习路径：
 
 ---
 
-# Private 仓库如何设置？
+## 🔭 Future Directions
 
-例如：
+未来将持续建设：
 
-```
-lab-docs
-```
+- Multimodal Document AI
+- Medical Vision AI
+- Vision Language Models
+- AI Agents
+- Multimodal Reasoning
+- AI for Science
 
-建议：
-
-| Team          | Repository Role |
-| ------------- | --------------- |
-| Owners        | Admin           |
-| Faculty       | Maintain        |
-| PhD           | Write           |
-| Master        | Read            |
-| Undergraduate | 无权限（不添加）        |
-
-这样：
-
-本科甚至看不到这个仓库。
+打造面向未来人工智能研究的开放学习平台。
 
 ---
 
-# 再例如：
+## 🚀 Start Exploring
 
-```
-research-projects
-```
+推荐学习路线：
 
-建议：
+👉 [Learning Center](learning/README.md)
 
-| Team          | Role         |
-| ------------- | ------------ |
-| Owners        | Admin        |
-| Faculty       | Maintain     |
-| PhD           | Write        |
-| Master        | Write（仅参与项目） |
-| Undergraduate | Read（按需）     |
+👉 [Reading Center](reading/README.md)
+
+👉 [Tutorials](tutorials/README.md)
+
+👉 [Experiments](learning/08_Experiments/README.md)
 
 ---
 
-# Organization 的 Base Permission（非常重要）
+**Learn · Practice · Research**
 
-很多实验室容易忽略这一点。
-
-进入：
-
-```
-Organization
-
-↓
-
-Settings
-
-↓
-
-Member privileges
-
-↓
-
-Base permissions
-```
-
-**建议设置为：**
-
-```
-No permission
-```
-
-不要设置成：
-
-```
-Read
-```
-
-否则以后所有加入 Organization 的成员都会自动看到所有允许基础权限访问的仓库，违背最小权限原则。GitHub 官方支持将基础权限设置为 `No permission`，然后通过 Team 精确授权。([GitHub Docs][1])
-
----
-
-# 推荐最终权限矩阵
-
-| Repository                 | Owners |  Faculty |  PhD  |   Master   | Undergraduate |
-| -------------------------- | :----: | :------: | :---: | :--------: | :-----------: |
-| learning-document-ai       |  Admin | Maintain | Write |    Write   |      Read     |
-| learning-medical-ai        |  Admin | Maintain | Write |    Write   |      Read     |
-| learning-foundation-models |  Admin | Maintain | Write |    Write   |      Read     |
-| awesome-resources          |  Admin | Maintain | Write |    Write   |      Read     |
-| benchmarks                 |  Admin | Maintain | Write |    Write   |      Read     |
-| datasets（Private）          |  Admin | Maintain | Write |    Read    |       无       |
-| research-projects（Private） |  Admin | Maintain | Write | Write（按项目） |       无       |
-| lab-docs（Private）          |  Admin | Maintain | Write |    Read    |       无       |
-
----
-
-## 我对你实验室还有一个建议
-
-**不要给学生 `Admin` 权限。**
-
-即使是博士生，也建议最多授予 **Write**；如果以后有负责维护某个仓库的博士，可以单独将该仓库提升为 **Maintain**。这样既方便协作，又能避免误删仓库、误改权限或修改安全配置等高风险操作。**整个 Organization 中长期保持只有你（以及未来如有联合负责人）拥有 `Owner/Admin` 权限，是最稳妥的管理方式。**
-
-[1]: https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization?utm_source=chatgpt.com "Repository roles for an organization - GitHub Docs"
-[2]: https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/managing-team-access-to-an-organization-repository?apiVersion=2022-11-28&utm_source=chatgpt.com "Managing team access to an organization repository - GitHub Docs"
+*Multimodal Vision AI Learning Center*
