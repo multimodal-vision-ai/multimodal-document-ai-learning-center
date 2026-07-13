@@ -206,7 +206,7 @@
 
 课程：
 
-➡️ [Document AI简介](07_Document_AI/00_Introduction.md)
+➡️ [Document AI简介](07_Doc_AI.md)
 
 
 
@@ -237,10 +237,10 @@
 # 🧪 Experiment 01
 
 
-完整实验案例：
+完整实验案例指导：
 
 
-➡️ [Experiment 01](08_Experiments/Experiment_01/README.md)
+➡️ [Experiment 01](Experiments/Experiment_01/README.md)
 
 
 

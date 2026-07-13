@@ -158,13 +158,6 @@ nav:
 
 
 
-    - Experiments:
-
-
-        - 项目概览:
-            learning/08_Experiments/README.md
-
-
 
     - FAQ:
 
@@ -236,8 +229,13 @@ nav:
         - Kaggle Notebook:
             tutorials/kaggle-tutorial-01.md
 
+- Experiments:
+    - 实验概览:
+        Experiments/README.md
 
-
+    - 实验一:
+        - Experiment 01:
+            Experiments/Experiment_01/README.md
 
 # ==========================
 # 科研资源
