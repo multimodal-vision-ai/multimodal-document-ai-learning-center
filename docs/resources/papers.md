@@ -20,7 +20,7 @@ https://paperswithcode.com/
 
 ## CVF Open Access
 
-https://openaccess.thecvf.com/
+https://www.cv-foundation.org/openaccess/
 
 CVPR / ICCV / ECCV 论文。
 

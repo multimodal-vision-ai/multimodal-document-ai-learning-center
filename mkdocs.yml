@@ -215,8 +215,8 @@ nav:
 
     - Resources Overview:
         resources/README.md
-    - Open Sources:
-        resources/open-sources.md
+    - Official Sources:
+        resources/official-sources.md
     - Papers:
         resources/papers.md
     - Datasets:
