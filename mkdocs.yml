@@ -215,6 +215,14 @@ nav:
 
     - Resources Overview:
         resources/README.md
+    - Open Sources:
+        resources/open-sources.md
+    - Papers:
+        resources/papers.md
+    - Datasets:
+        resources/datasets.md
+    - Tools:
+        resources/tools.md
 
 
 copyright: |
