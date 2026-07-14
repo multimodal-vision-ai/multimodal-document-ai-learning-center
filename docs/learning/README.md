@@ -153,11 +153,6 @@
 学习现代人工智能基础模型。
 
 
-进入模块：
-
-➡️ [Foundation Models 学习模块](06_Foundation_Models/README.md)
-
-
 主要内容：
 
 | 内容 | 说明 |
@@ -192,8 +187,6 @@
 - Layout Analysis
 - 表格理解
 - Document VLM
-
-
 
 课程：
 
