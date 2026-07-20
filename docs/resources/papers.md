@@ -18,11 +18,11 @@ https://paperswithcode.com/
 
 ------------------------------------------------------------------------
 
-## CVF Open Access
+## AMiner / 智谱 AI (国内学术平台)
 
-https://www.cv-foundation.org/openaccess/
+https://www.aminer.cn/
 
-CVPR / ICCV / ECCV 论文。
+CVPR / ICCV / ECCV 等计算机视觉顶会论文。
 
 ------------------------------------------------------------------------
 
