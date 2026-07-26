@@ -43,15 +43,19 @@
 
 <div align="center">
 
-<iframe
-    src="https://player.bilibili.com/player.html?bvid=BV1vT3E66EZ5&page=1"
+<video 
     width="960"
     height="540"
-    frameborder="0"
-    scrolling="no"
-    allowfullscreen
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-</iframe>
+    controls
+    preload="metadata">
+
+    <source 
+        src="../assets/videos/MVAI-Doc-AI-Demo-V1.0-compressed.mp4"
+        type="video/mp4">
+
+    Your browser does not support the video tag.
+
+</video>
 
 </div>
 
@@ -94,15 +98,19 @@
 
 <div align="center">
 
-<iframe
-    src="https://player.bilibili.com/player.html?bvid=BV1vT3E66EY6&page=1"
+<video 
     width="960"
     height="540"
-    frameborder="0"
-    scrolling="no"
-    allowfullscreen
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-</iframe>
+    controls
+    preload="metadata">
+
+    <source 
+        src="../assets/videos/MVAI-LNN-Demo-V1.0-compressed.mp4"
+        type="video/mp4">
+
+    Your browser does not support the video tag.
+
+</video>
 
 </div>
 
