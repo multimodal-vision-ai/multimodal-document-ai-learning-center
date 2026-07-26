@@ -1,37 +1,59 @@
-function loadStatistics() {
+function todayKey() {
 
-    fetch("https://mv-ai-lab-counter.guoping-tan.workers.dev/counter")
-        .then(response => response.json())
-        .then(data => {
+    const d = new Date();
 
-            const visitors = Number(data.visitors ?? 0);
-            const stars = Number(data.stars ?? 0);
-            const forks = Number(data.forks ?? 0);
-
-            document.getElementById("visitor-count").textContent =
-                visitors.toLocaleString();
-
-            document.getElementById("github-stars").textContent =
-                stars.toLocaleString();
-
-            document.getElementById("github-forks").textContent =
-                forks.toLocaleString();
-
-        })
-        .catch(error => {
-
-            console.error(error);
-
-            document.getElementById("visitor-count").textContent = "--";
-            document.getElementById("github-stars").textContent = "--";
-            document.getElementById("github-forks").textContent = "--";
-
-        });
+    return d.getFullYear() + "-" +
+           (d.getMonth()+1) + "-" +
+           d.getDate();
 
 }
 
-document.addEventListener("DOMContentLoaded", loadStatistics);
+function loadStatistics() {
 
-if (typeof document$ !== "undefined") {
+    const key = "mv-ai-lab-last-visit";
+
+    const today = todayKey();
+
+    const firstVisitToday =
+        localStorage.getItem(key) !== today;
+
+    const method = firstVisitToday ? "POST" : "GET";
+
+    fetch(
+        "https://mv-ai-lab-counter.guoping-tan.workers.dev/counter",
+        {
+            method: method
+        }
+    )
+    .then(r => r.json())
+    .then(data => {
+
+        document.getElementById("visitor-count").textContent =
+            Number(data.visitors).toLocaleString();
+
+        document.getElementById("github-stars").textContent =
+            Number(data.stars).toLocaleString();
+
+        document.getElementById("github-forks").textContent =
+            Number(data.forks).toLocaleString();
+
+        if(firstVisitToday){
+
+            localStorage.setItem(key, today);
+
+        }
+
+    })
+    .catch(console.error);
+
+}
+
+if(typeof document$ !== "undefined"){
+
     document$.subscribe(loadStatistics);
+
+}else{
+
+    loadStatistics();
+
 }
