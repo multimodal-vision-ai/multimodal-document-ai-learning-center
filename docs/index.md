@@ -16,38 +16,17 @@
    <b>🚀 Explore AI. Build AI. Create the Future.</b>
 
  <!-- 3. 计数器与反馈 -->
-<!-- ==========================================
-     Visitor Counter (CountAPI)
-========================================== -->
+<div align="center">
 
-<div style="margin:16px 0;display:flex;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap;">
+👥 Visitors: <span id="visitor-count">0</span>
 
-    <!-- Visitor Counter -->
-    <span style="font-size:14px;color:#555;">
-        👥 Visitors:
-        <span id="visitor-count">0</span>
-    </span>
+&nbsp;&nbsp;
 
-    <!-- Feedback -->
-    <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new"
-       target="_blank">
-        <img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github"
-             alt="Feedback">
-    </a>
+<a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new">
+<img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github">
+</a>
 
 </div>
-
-<script>
-fetch("https://api.countapi.xyz/hit/mv-ai-lab/learning-center")
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("visitor-count").innerText = data.value;
-    })
-    .catch(error => {
-        console.log(error);
-    });
-</script>
-
 
 </div>
 <hr>

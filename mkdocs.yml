@@ -73,7 +73,9 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
 
-
+extra_javascript:
+  - js/visitor.js
+  
 
 nav:
 
