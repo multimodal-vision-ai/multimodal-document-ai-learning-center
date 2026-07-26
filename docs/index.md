@@ -1,6 +1,6 @@
 <div align="center">
   <!-- 1. Logo -->
-  <img src="assets/figs/prism_brain_logo.svg" width="550" alt="Logo">
+  <img src="assets/figs/prism_brain_logo_animated.svg" width="550" alt="Logo">
 
   <!-- 2. 古代哲思：增加出处 -->
   <p style="margin-top: 12px; margin-bottom: 12px;">
