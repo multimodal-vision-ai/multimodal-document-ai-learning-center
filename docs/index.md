@@ -1,37 +1,100 @@
 <div align="center">
-  <!-- 1. Logo -->
-  <img src="assets/figs/prism_brain_logo_animated.svg" width="550" alt="Logo">
 
-  <!-- 2. 古代哲思：增加出处 -->
-  <p style="margin-top: 12px; margin-bottom: 12px;">
-    <i style="font-family: '楷体', serif; color: #444; font-size: 1.15em;">
-      “目贵明，耳贵聪，心贵智。”
-    </i>
-    <br>
-    <span style="color: #777; font-size: 0.85em;">
-      —— <b>《管子·九守》</b> | 赋予机器明辨之目、聪慧之耳与思考之魂
-    </span>
-  </p>
+<!-- ========================================================= -->
+<!-- Logo -->
+<!-- ========================================================= -->
 
-   <b>🚀 Explore AI. Build AI. Create the Future.</b>
+<img src="assets/figs/prism_brain_logo_animated.svg"
+     width="560"
+     alt="MV-AI Lab Logo">
 
- <!-- 3. 计数器与反馈 -->
-<div align="center">
+<br><br>
 
-👥 Visitors: <span id="visitor-count">0</span>
+<!-- ========================================================= -->
+<!-- Motto -->
+<!-- ========================================================= -->
 
-&nbsp;&nbsp;
+<p style="margin:0;line-height:1.6;">
+  <i style="font-family:'KaiTi','STKaiti',serif;
+            color:#444;
+            font-size:1.15em;">
+    “目贵明，耳贵聪，心贵智。”
+  </i>
+  <br>
+  <span style="color:#777;font-size:0.90em;">
+    —— <b>《管子·九守》</b> ｜ 赋予机器明辨之目、聪慧之耳与思考之魂
+  </span>
+</p>
 
-<a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new">
-<img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github">
+<br>
+
+<!-- ========================================================= -->
+<!-- Slogan -->
+<!-- ========================================================= -->
+
+<p style="margin:0;font-size:1.08em;">
+<b>🚀 Explore AI · Build AI · Create the Future</b>
+</p>
+
+<br>
+
+<!-- ========================================================= -->
+<!-- Visitor -->
+<!-- ========================================================= -->
+
+<p style="margin:0;font-size:0.95em;">
+
+👥 <b>Visitors:</b>
+<span id="visitor-count">...</span>
+
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+
+<a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new"
+   target="_blank">
+
+<img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github"
+     alt="Feedback">
+
 </a>
 
-</div>
+</p>
+
+<script>
+fetch("https://mv-ai-lab-counter.guoping-tan.workers.dev/counter")
+.then(r=>r.json())
+.then(data=>{
+    document.getElementById("visitor-count").textContent=data.value;
+})
+.catch(()=>{
+    document.getElementById("visitor-count").textContent="--";
+});
+</script>
+
+<br>
+
+<!-- ========================================================= -->
+<!-- Navigation -->
+<!-- ========================================================= -->
+
+<p style="margin:0;">
+
+<a href="learning/"
+   style="font-weight:600;text-decoration:none;">
+📖 Start Learning
+</a>
+
+&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
+
+<a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new"
+   target="_blank"
+   style="font-weight:600;text-decoration:none;">
+💬 Feedback
+</a>
+
+</p>
 
 </div>
-<hr>
-  <!-- 4. 导航部分：切换为 Markdown 格式 (注意上下空行) -->
-[**📖 开始 AI 之旅**](learning/README.md) &nbsp; | &nbsp; [**🛠️ 提交建议**](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new)
+
 
 ---
 
@@ -82,12 +145,26 @@
 
 > <b>Learn from the Best</b> · <b>Build with Open Source</b> · <b>Experiment Continuously</b> · <b>Research Deeply</b>
 
+
 <hr>
 
 <div align="center">
-  <h2>🏁 准备好了吗？</h2>
-  <p><b>不要只是等待 AI 改变世界，尝试成为创造 AI 的人。</b></p>
-</div>
 
-[**📖 开始 AI 之旅**](learning/README.md)
----
+<h2>🏁 Ready to Begin?</h2>
+
+<p style="font-size:1.05em;">
+<b>不要只是等待 AI 改变世界，尝试成为创造 AI 的人。</b>
+</p>
+
+<br>
+
+<a href="learning/"
+   style="font-size:1.1em;
+          font-weight:bold;
+          text-decoration:none;">
+
+🚀 Start Your AI Journey
+
+</a>
+
+</div>
