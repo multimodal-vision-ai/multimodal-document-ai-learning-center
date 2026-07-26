@@ -1,27 +1,39 @@
-function loadVisitorCounter() {
+function loadStatistics() {
 
-    const counter = document.getElementById("visitor-count");
-
-    if (!counter) return;
+    const visitor = document.getElementById("visitor-count");
+    const stars = document.getElementById("github-stars");
+    const forks = document.getElementById("github-forks");
 
     fetch("https://mv-ai-lab-counter.guoping-tan.workers.dev/counter")
         .then(response => response.json())
         .then(data => {
-            counter.textContent =
-                Number(data.value).toLocaleString();
+
+            if (visitor)
+                visitor.textContent = Number(data.visitors).toLocaleString();
+
+            if (stars)
+                stars.textContent = Number(data.stars).toLocaleString();
+
+            if (forks)
+                forks.textContent = Number(data.forks).toLocaleString();
+
         })
-        .catch(() => {
-            counter.textContent = "--";
+        .catch(error => {
+
+            console.error(error);
+
+            if (visitor) visitor.textContent = "--";
+            if (stars) stars.textContent = "--";
+            if (forks) forks.textContent = "--";
+
         });
 
 }
 
-/* 首次加载 */
-document.addEventListener("DOMContentLoaded", loadVisitorCounter);
+/* 页面首次加载 */
+document.addEventListener("DOMContentLoaded", loadStatistics);
 
 /* Material Instant Navigation */
 if (typeof document$ !== "undefined") {
-    document$.subscribe(() => {
-        loadVisitorCounter();
-    });
+    document$.subscribe(loadStatistics);
 }

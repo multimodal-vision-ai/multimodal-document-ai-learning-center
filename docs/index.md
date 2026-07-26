@@ -62,33 +62,34 @@
 <br>
 
 <!-- ========================================================= -->
-<!-- Visitor -->
+<!-- Statistics -->
 <!-- ========================================================= -->
 
-<p style="margin:0;font-size:0.95em;">
+<p style="margin:0;font-size:0.95em;line-height:1.8;">
 
 👥 <b>Visitors</b>
 
-<span id="visitor-count">...</span>
+<span id="visitor-count">Loading...</span>
 
 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 
 ⭐ <b>Stars</b>
 
-<span id="github-stars">...</span>
+<span id="github-stars">Loading...</span>
 
 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 
 🍴 <b>Forks</b>
 
-<span id="github-forks">...</span>
+<span id="github-forks">Loading...</span>
 
 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 
 <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new"
-target="_blank">
+   target="_blank">
 
-<img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github">
+<img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github"
+     alt="Feedback">
 
 </a>
 
