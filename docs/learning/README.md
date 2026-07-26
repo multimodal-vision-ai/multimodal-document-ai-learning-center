@@ -49,6 +49,13 @@
 
 ---
 
+# 🛠️ Stage 0：掌握必备技能
+
+
+➡️ [官网学习必备技能](../resources/official-sources.md)
+
+---
+
 # 🛠️ Stage 1：AI开发基础环境
 
 
@@ -66,8 +73,6 @@
 
 ➡️ [Git 与 GitHub](01_Git_and_GitHub.md)
 
-
-
 ---
 
 ## Python 开发环境
@@ -81,8 +86,6 @@
 
 
 ➡️ [Python 开发环境](02_Python_Environment.md)
-
-
 
 ---
 
@@ -130,8 +133,6 @@
 
 ➡️ [Transformers基础](05_Transformers.md)
 
-
-
 ---
 
 # 🧠 Stage 2：Foundation Models
@@ -149,14 +150,11 @@
 | Docling | 文档解析模型 |
 
 
-
 课程：
 
 - [Qwen3.5-VL-0.8B模型实践](06-1_Qwen3.5-VL-0.8B.md)
 
 - [Docling文档解析模型](06-2_Docling.md)
-
-
 
 ---
 
@@ -179,6 +177,7 @@
 
 ➡️ [Document AI简介](07_Doc_AI.md)
 
+---
 
 # 📄 Stage 4：Qwen3.5-VL 后训练（Post-Training）
 
@@ -197,8 +196,6 @@
 课程：
 
 ➡️ [Qwen3.5-VL 后训练学习](08_Post-Training.md)
-
-
 
 ---
 
@@ -262,7 +259,6 @@
 | Week 6+ | 第一个科研实验 |
 
 
-
 ---
 
 # 🎓 学习原则
@@ -286,7 +282,6 @@
 最终目标：
 
 > 从学习者成长为人工智能科研人员。
-
 
 
 ---

@@ -162,10 +162,6 @@ Resources 将持续扩展更多学习资源，包括：
 
 ---
 
-<div align="center">
+**Learn · Practice · Research**
 
-### 🌟 Explore · Learn · Build · Research
-
-**Multimodal Vision AI Learning Center**
-
-</div>
+*Multimodal Vision AI Learning Center*

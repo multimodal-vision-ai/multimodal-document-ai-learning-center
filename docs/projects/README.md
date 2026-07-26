@@ -120,26 +120,21 @@
 
 | Technology | Description |
 | :--- | :--- |
-| 🧠 Liquid Neural Networks (LNN) | 连续时间液态神经网络，实现动态环境下的持续建模与自适应控制 |
-| ⚡ Spiking Neural Networks (SNN) | 类脑脉冲神经网络，实现事件驱动的信息处理与低功耗智能计算 |
-| 📡 Wireless Federated Learning | 无线联邦学习，实现车路协同、多智能体分布式协同学习 |
-| 🎯 Deep Reinforcement Learning | 深度强化学习，实现复杂环境下的自主决策与智能控制 |
+| 🧠 Liquid Neural Networks (LNN) | 液态神经网络，实现动态环境下持续自适应控制 |
+| 📡 Wireless Federated Learning | 无线联邦学习，实现多智能体分布式协同学习 |
+| 🎯 Deep Reinforcement Learning | 深度强化学习，实现复杂环境下自主决策与控制 |
 
 ---
 
 ## 🌍 Application Scenarios
 
-本项目涵盖多个典型 AI 应用场景：
+本演示涵盖多个典型 AI 应用场景：
 
 | Application | Description |
 | :--- | :--- |
-| 🚁 UAV Flight Control | 无人机自主飞行控制 |
 | 🤖 Robot Motion Control | 机器人姿态与运动控制 |
-| 🚗 Autonomous Driving | 自动驾驶环境感知与决策 |
-| 🚦 Cooperative Vehicle-Infrastructure | 车路协同智能交通系统 |
 | 🚙 Highway Ramp Merging | 匝道汇流车辆协同调度 |
 | ⚠️ Collision Warning | 车辆碰撞预警与风险预测 |
-| 🌍 Multi-Agent Intelligent Systems | 多智能体持续协同决策 |
 
 ---
 
@@ -157,12 +152,9 @@
 | :--- | :--- |
 | 👁️ Vision AI | 图像理解、目标检测、多模态视觉推理 |
 | 📄 Document AI | OCR、文档解析、知识抽取、文档智能 |
-| 🧠 Brain-Inspired Intelligence | Liquid Neural Networks、SNN、持续学习 |
-| 🤖 AI Agents | 智能体、MCP、Tool Calling、多智能体协作 |
-| 🚗 Intelligent Transportation | 车路协同、自动驾驶、无线联邦学习 |
+| 🧠 Brain-Inspired Intelligence | LNN、SNN、持续学习 |
 | ⚖️ Legal AI | 智慧司法、法律大模型 |
 | 🏥 Medical AI | 医学影像分析与智能诊断 |
-| 💧 Smart Water Conservancy | 智慧水利与行业智能应用 |
 
 ---
 

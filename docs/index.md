@@ -44,7 +44,7 @@
 
 <p style="margin:0;">
 
-<a href="learning/"
+<a href="resources/official-sources"
    style="font-weight:600;text-decoration:none;">
 📖 Start Learning
 </a>
@@ -158,7 +158,7 @@
 
 <br>
 
-<a href="learning/"
+<a href="resources/official-sources"
    style="font-size:1.1em;
           font-weight:bold;
           text-decoration:none;">
