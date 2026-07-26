@@ -221,17 +221,17 @@ nav:
 - Resources:
 
 
-    - Resources Overview:
+    - 资源总览:
         resources/README.md
-    - Official Resources:
+    - 官方资源:
         resources/official-sources.md
-    - Recommended Courses:
+    - 推荐课程:
         resources/courses.md    
-    - Papers:
+    - 开源论文:
         resources/papers.md
-    - Datasets:
+    - 数据集:
         resources/datasets.md
-    - Tools:
+    - 工具软件:
         resources/tools.md
 
 
