@@ -5,7 +5,7 @@
 <!-- ========================================================= -->
 
 <img src="assets/figs/prism_brain_logo_animated.svg"
-     width="560"
+     width="520"
      alt="MV-AI Lab Logo">
 
 <br><br>
@@ -39,40 +39,6 @@
 <br>
 
 <!-- ========================================================= -->
-<!-- Visitor -->
-<!-- ========================================================= -->
-
-<p style="margin:0;font-size:0.95em;">
-
-👥 <b>Visitors:</b>
-<span id="visitor-count">...</span>
-
-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-
-<a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new"
-   target="_blank">
-
-<img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github"
-     alt="Feedback">
-
-</a>
-
-</p>
-
-<script>
-fetch("https://mv-ai-lab-counter.guoping-tan.workers.dev/counter")
-.then(r=>r.json())
-.then(data=>{
-    document.getElementById("visitor-count").textContent=data.value;
-})
-.catch(()=>{
-    document.getElementById("visitor-count").textContent="--";
-});
-</script>
-
-<br>
-
-<!-- ========================================================= -->
 <!-- Navigation -->
 <!-- ========================================================= -->
 
@@ -93,9 +59,42 @@ fetch("https://mv-ai-lab-counter.guoping-tan.workers.dev/counter")
 
 </p>
 
+<br>
+
+<!-- ========================================================= -->
+<!-- Visitor -->
+<!-- ========================================================= -->
+
+<p style="margin:0;font-size:0.95em;">
+
+👥 <b>Visitors</b>
+
+<span id="visitor-count">...</span>
+
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+
+⭐ <b>Stars</b>
+
+<span id="github-stars">...</span>
+
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+
+🍴 <b>Forks</b>
+
+<span id="github-forks">...</span>
+
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+
+<a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new"
+target="_blank">
+
+<img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github">
+
+</a>
+
+</p>
+
 </div>
-
-
 ---
 
 ## 🎯 核心聚焦 (Core Pillars)

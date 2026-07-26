@@ -1,13 +1,33 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const el = document.getElementById("visitor-count");
-    if (!el) return;
+function loadStatistics(){
 
-    fetch("https://api.countapi.xyz/hit/mv-ai-lab/learning-center")
-        .then(r => r.json())
-        .then(data => {
-            el.textContent = data.value;
-        })
-        .catch(() => {
-            el.textContent = "--";
-        });
-});
+    fetch("https://mv-ai-lab-counter.guoping-tan.workers.dev/counter")
+
+    .then(r=>r.json())
+
+    .then(data=>{
+
+        document.getElementById("visitor-count").textContent =
+            Number(data.visitors).toLocaleString();
+
+        document.getElementById("github-stars").textContent =
+            Number(data.stars).toLocaleString();
+
+        document.getElementById("github-forks").textContent =
+            Number(data.forks).toLocaleString();
+
+    })
+
+    .catch(console.error);
+
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadStatistics
+);
+
+if(typeof document$!=="undefined"){
+
+    document$.subscribe(loadStatistics);
+
+}
