@@ -168,3 +168,17 @@
 </a>
 
 </div>
+
+---
+
+## 👨‍🏫 Research Mentor
+
+This learning center is developing under the guidance of:
+
+**Prof. Dr. Ing. - Guoping Tan**
+
+Hohai University, Nanjing, China
+
+🔗 [Academic Homepage](https://jszy.hhu.edu.cn/tgp/)
+
+---
