@@ -14,19 +14,31 @@
   </p>
 
   <!-- 3. 计数器与反馈 -->
-  <div style="margin-bottom: 12px;">
-    <img src="https://komarev.com/ghpvc/?username=multimodal-document-ai-learning-center&label=VISITS&color=0172ad&style=flat-square">
-    &nbsp;
-    <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new" target="_blank">
-      <img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github">
-    </a>
-  </div>
+<div style="margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+
+  <span id="busuanzi_container_site_uv">
+    👥 Visitors:
+    <span id="busuanzi_value_site_uv"></span>
+  </span>
+
+  <span id="busuanzi_container_site_pv">
+    👁 Views:
+    <span id="busuanzi_value_site_pv"></span>
+  </span>
+
+  <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new" target="_blank">
+    <img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github">
+  </a>
+
+</div>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
   <b>🚀 Explore AI. Build AI. Create the Future.</b>
 </div>
 <hr>
   <!-- 4. 导航部分：切换为 Markdown 格式 (注意上下空行) -->
-[**📖 开始 AI 之旅**](learning/README.md) &nbsp; | &nbsp; [**🛠️ 快速提交建议**](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new)
+[**📖 开始 AI 之旅**](learning/README.md) &nbsp; | &nbsp; [**🛠️ 提交建议**](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new)
 
 ---
 
