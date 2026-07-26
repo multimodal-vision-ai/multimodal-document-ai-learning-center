@@ -13,28 +13,42 @@
     </span>
   </p>
 
-  <!-- 3. 计数器与反馈 -->
-<div style="margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+   <b>🚀 Explore AI. Build AI. Create the Future.</b>
 
-  <span id="busuanzi_container_site_uv">
-    👥 Visitors:
-    <span id="busuanzi_value_site_uv"></span>
-  </span>
+ <!-- 3. 计数器与反馈 -->
+<!-- ==========================================
+     Visitor Counter (CountAPI)
+========================================== -->
 
-  <span id="busuanzi_container_site_pv">
-    👁 Views:
-    <span id="busuanzi_value_site_pv"></span>
-  </span>
+<div style="margin:16px 0;display:flex;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap;">
 
-  <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new" target="_blank">
-    <img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github">
-  </a>
+    <!-- Visitor Counter -->
+    <span style="font-size:14px;color:#555;">
+        👥 Visitors:
+        <span id="visitor-count">0</span>
+    </span>
+
+    <!-- Feedback -->
+    <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new"
+       target="_blank">
+        <img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github"
+             alt="Feedback">
+    </a>
 
 </div>
 
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script>
+fetch("https://api.countapi.xyz/hit/mv-ai-lab/learning-center")
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("visitor-count").innerText = data.value;
+    })
+    .catch(error => {
+        console.log(error);
+    });
+</script>
 
-  <b>🚀 Explore AI. Build AI. Create the Future.</b>
+
 </div>
 <hr>
   <!-- 4. 导航部分：切换为 Markdown 格式 (注意上下空行) -->
