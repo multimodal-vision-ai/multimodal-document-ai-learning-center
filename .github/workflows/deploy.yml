@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -32,11 +33,10 @@ jobs:
 
       - name: Install MkDocs
         run: |
-          pip install mkdocs
-          pip install mkdocs-material
+          python -m pip install -r requirements.txt
 
       - name: Build site
-        run: mkdocs build
+        run: mkdocs build --strict
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3

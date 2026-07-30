@@ -82,6 +82,13 @@
 逐步进入 AI 前沿研究。
 
 ---
+
+## 🛠 GitHub Development Flow
+
+本项目使用轻量双分支流程：`dev` 用于日常开发，`main` 用于正式发布。Codex 修改 Markdown 或 MkDocs 配置时，建议从 `dev` 创建短分支，提交 PR 回 `dev`；内容稳定后再由 `dev` 发布到 `main`。
+
+详细流程见：[GitHub 开发流程](docs/development-workflow.md)。
+
 # 🌍 AI Open Source Ecosystem
 
 本项目连接全球人工智能开源生态。
