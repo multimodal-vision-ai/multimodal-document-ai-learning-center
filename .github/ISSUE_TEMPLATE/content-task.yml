@@ -1,0 +1,28 @@
+name: Content task
+description: Plan a small documentation update for Codex or manual editing.
+title: "docs: "
+labels:
+  - documentation
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should be added, updated, or fixed?
+      placeholder: "更新某个学习笔记 / 添加论文摘要 / 修复导航"
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Which files or sections are likely involved?
+      placeholder: "docs/learning/... 或 docs/reading/..."
+  - type: checkboxes
+    id: done
+    attributes:
+      label: Done checklist
+      options:
+        - label: Markdown content is clear and concise
+        - label: MkDocs navigation is updated if a new page was added
+        - label: "`mkdocs build --strict` passes locally or in GitHub Actions"

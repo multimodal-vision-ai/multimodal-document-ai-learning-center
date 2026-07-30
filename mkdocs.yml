@@ -93,6 +93,7 @@ nav:
 - About:
 
     - 关于 Learning Center: about.md
+    - GitHub 开发流程: development-workflow.md
 
 - Projects:
 
