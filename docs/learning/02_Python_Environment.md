@@ -1,346 +1,151 @@
-# Chapter 2：Python 开发环境
+# Python 环境：让实验能够重建
 
-# Python Development Environment
+> **对应课程**：[Week 1](00_12_Week_Bootcamp.md)<br>
+> **目标**：从空环境执行一条安装命令和一条运行命令，得到与 README 一致的结果。
 
----
+“在我的电脑上能运行”不是可复现。每个实验都应使用独立环境，记录解释器、依赖、硬件和关键配置。
 
-# 1. 学习目标
+## 学习目标
 
-完成本章学习后，你应该能够：
+- 创建并激活隔离环境；
+- 区分 Python 版本、包版本与 CUDA/PyTorch 兼容性；
+- 使用依赖文件声明项目所需包；
+- 从空环境复现并记录结果。
 
-* 理解 Python 开发环境组成
-* 安装 Miniconda
-* 创建 Conda 虚拟环境
-* 使用 VS Code 开发 Python 项目
-* 安装 PyTorch
-* 配置 CUDA（可选）
-* 独立搭建实验室统一开发环境
+## 官方学习入口
 
----
+- [Python virtual environments and packages](https://docs.python.org/3/tutorial/venv.html)（`venv` 与 `pip`）
+- [Installing Python modules](https://docs.python.org/3/installing/index.html)（官方安装说明）
+- [pip user guide](https://pip.pypa.io/en/stable/user_guide/)（requirements 与依赖管理）
+- [Conda managing environments](https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html)（使用 Conda 时）
+- [PyTorch Start Locally](https://pytorch.org/get-started/locally/)（按系统和 CUDA 选择安装方式）
 
-# 2. 为什么需要统一开发环境？
+## 选择一种环境方式
 
-统一开发环境能够：
+### Python `venv`
 
-* 减少环境配置问题
-* 保证代码可复现
-* 方便团队协作
-* 提高开发效率
+适合 CPU 工具、小型脚本和依赖简单的项目：
 
-实验室所有项目均建议使用统一的软件版本。
-
----
-
-# 3. 推荐开发环境
-
-| 软件                        | 推荐版本         | 是否必须   |
-| ------------------------- | ------------ | ------ |
-| Windows 11 / Ubuntu 22.04 | 最新稳定版        | ✓      |
-| Python                    | 3.11         | ✓      |
-| Miniconda                 | 最新版          | ✓      |
-| Git                       | 最新版          | ✓      |
-| VS Code                   | 最新版          | ✓      |
-| CUDA Toolkit              | 与 PyTorch 对应 | GPU 用户 |
-| PyTorch                   | 官方稳定版        | ✓      |
-
----
-
-# 4. 软件安装顺序
-
-建议严格按照以下顺序安装：
-
-```text
-Git
-
-↓
-
-Miniconda
-
-↓
-
-Python Environment
-
-↓
-
-VS Code
-
-↓
-
-PyTorch
-
-↓
-
-CUDA（GPU 用户）
+```bash
+python -m venv .venv
 ```
 
----
+激活命令因系统而异，以 Python 官方文档为准。激活后确认：
 
-# 5. 必装软件
-
-## Git
-
-官方网站：
-
-https://git-scm.com/
-
-作用：
-
-* 管理源码
-* 下载 GitHub 项目
-* 版本控制
-
----
-
-## Miniconda
-
-官方网站：
-
-https://docs.conda.io/
-
-作用：
-
-* Python 环境管理
-* 包管理
-* 虚拟环境管理
-
-建议优先使用 Miniconda，而不是 Anaconda。
-
----
-
-## VS Code
-
-官方网站：
-
-https://code.visualstudio.com/
-
-推荐安装插件：
-
-* Python
-* Pylance
-* Jupyter
-* GitHub Copilot（可选）
-* Markdown All in One
-
----
-
-# 6. 创建统一环境
-
-例如统一环境名称：
-
-```text
-mdai
+```bash
+python --version
+python -m pip --version
 ```
 
-创建环境：
+### Conda
+
+适合需要特定 Python、CUDA 或原生依赖的 AI 实验：
 
 ```bash
 conda create -n mdai python=3.11
-```
-
-激活环境：
-
-```bash
 conda activate mdai
 ```
 
-查看环境：
+课程不要求同时使用两套工具。选择一种并在 README 写清楚即可。
 
-```bash
-conda env list
-```
+## 声明依赖
 
----
-
-# 7. 安装 PyTorch
-
-请访问官方安装页面：
-
-https://pytorch.org/get-started/locally/
-
-根据自己的操作系统和 CUDA 版本生成安装命令。
-
-安装完成后验证：
-
-```python
-import torch
-
-print(torch.__version__)
-print(torch.cuda.is_available())
-```
-
----
-
-# 8. 推荐目录结构
-
-建议在本地建立统一开发目录。
+对于简单项目，可以使用：
 
 ```text
-AI_Workspace/
-
-├── Projects/
-├── Datasets/
-├── Models/
-├── Learning/
-├── Papers/
-└── Tools/
+requirements.txt
 ```
 
-其中：
+对于 Conda 项目，可以使用：
 
-* Projects：GitHub 项目
-* Datasets：数据集
-* Models：模型文件
-* Learning：学习资料
-* Papers：论文
-* Tools：工具软件
-
----
-
-# 9. Python 包管理
-
-建议优先使用：
-
-```bash
-conda install
+```text
+environment.yml
 ```
 
-其次使用：
+依赖文件应表达“项目运行所需内容”，不是把整个个人环境无限制导出。模型课程还需要记录：
 
-```bash
-pip install
+- Python；
+- PyTorch；
+- Transformers；
+- CUDA runtime/driver（如适用）；
+- 模型 revision；
+- 数据版本。
+
+!!! warning "版本策略"
+    “全部使用最新版”不可复现；“永远锁死所有间接依赖”又难以维护。课程至少固定 Python 与关键直接依赖，并在每次成功运行后保存完整环境快照作为证据。
+
+## 环境自检脚本
+
+创建 `check_environment.py`：
+
+```python
+import platform
+import sys
+
+print("python:", sys.version)
+print("platform:", platform.platform())
+
+try:
+    import torch
+
+    print("torch:", torch.__version__)
+    print("cuda_available:", torch.cuda.is_available())
+    if torch.cuda.is_available():
+        print("gpu:", torch.cuda.get_device_name(0))
+except ImportError:
+    print("torch: not installed (acceptable for Week 1 CPU task)")
 ```
 
-避免混合安装导致依赖冲突。
+该脚本只负责报告环境，不应自动安装或修改系统。
 
-安装新包前，建议先查看官方文档。
+## Week 1 必做任务
 
----
+1. 创建一个独立环境；
+2. 安装 Week 1 工具所需的最少依赖；
+3. 保存 `requirements.txt` 或 `environment.yml`；
+4. 运行环境自检脚本并保存输出；
+5. 删除并重建环境，按 README 从头复现；
+6. 请同学在另一台电脑或独立环境复现一次。
 
-# 10. 常用开发工具
+## 提交物
 
-建议熟悉以下工具：
-
-| 工具                 | 用途       |
-| ------------------ | -------- |
-| VS Code            | 代码开发     |
-| Jupyter Notebook   | 实验验证     |
-| GitHub Desktop（可选） | Git 图形界面 |
-| Terminal           | 命令行操作    |
-
----
-
-# 11. 环境导出与共享
-
-导出当前环境：
-
-```bash
-conda env export > environment.yml
+```text
+week01/
+├── README.md
+├── requirements.txt          # 或 environment.yml
+├── check_environment.py
+├── environment-output.txt
+└── reproduction-notes.md
 ```
 
-恢复环境：
+`reproduction-notes.md` 应记录复现日期、平台、成功命令、失败信息、解决方法和仍存在的限制。
 
-```bash
-conda env create -f environment.yml
-```
+## 验收清单
 
-建议所有科研项目均提供 `environment.yml` 文件。
+- [ ] 项目没有依赖系统全局 Python 的隐式状态；
+- [ ] README 写明支持的 Python 版本；
+- [ ] 一条安装命令可建立依赖；
+- [ ] 一条运行命令可得到结果；
+- [ ] PyTorch/CUDA 安装来自官方兼容选择页；
+- [ ] 环境快照不含用户名、token 或私人路径；
+- [ ] 至少完成一次从空环境复现。
 
----
+## 常见问题
 
-# 12. 推荐学习资源
+### `pip` 安装到了错误的 Python
 
-## Python 官方
+优先使用 `python -m pip`，并同时检查 `python --version` 与 `python -m pip --version` 指向的环境。
 
-https://www.python.org/
+### CUDA available 为 False
 
----
+先确认课程任务是否真的需要 GPU。需要时按 PyTorch 官方选择页检查驱动、PyTorch build 和硬件，不要反复随机安装 CUDA 包。
 
-## Miniconda
+### Notebook 使用了不同 kernel
 
-https://docs.conda.io/
+在 Notebook 中打印 `sys.executable`，确认它与预期环境一致，并在提交前 Restart & Run All。
 
----
+## 下一步
 
-## PyTorch
+进入[Hugging Face Hub](03_HuggingFace.md)，学习如何记录模型和数据的准确版本。
 
-https://pytorch.org/
-
----
-
-## VS Code
-
-https://code.visualstudio.com/
-
----
-
-# 13. 本章实践
-
-请完成以下任务：
-
-## 任务一
-
-安装 Git。
-
----
-
-## 任务二
-
-安装 Miniconda。
-
----
-
-## 任务三
-
-创建 `mdai` 虚拟环境。
-
----
-
-## 任务四
-
-安装 VS Code，并安装推荐插件。
-
----
-
-## 任务五
-
-安装 PyTorch，并验证 GPU 是否可用。
-
----
-
-## 任务六
-
-建立本地 `AI_Workspace` 工作目录。
-
----
-
-# 14. 本章总结
-
-完成本章后，你应该已经能够：
-
-* 独立搭建 AI 开发环境
-* 管理 Python 虚拟环境
-* 使用 VS Code 编写 Python 程序
-* 安装和使用 PyTorch
-* 为后续课程做好准备
-
----
-
-# 下一章
-
-下一章学习：
-
-> **Chapter 3：Hugging Face**
-
-主要内容：
-
-* Hugging Face 平台介绍
-* Model Hub
-* Dataset Hub
-* Spaces
-* Transformers
-* 模型下载与使用
-* 实验室模型管理规范
-
-完成后，你将能够熟练使用 Hugging Face 平台获取和管理 AI 模型与数据集。
-
-[上一章](01_Git_and_GitHub.md){ .md-button }    [下一章](03_HuggingFace.md){ .md-button }
+最后更新：2026-08-07
