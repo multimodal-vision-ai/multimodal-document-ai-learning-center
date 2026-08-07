@@ -10,6 +10,17 @@ hide:
 !!! success "本页最小任务"
     只选一篇与当前问题最接近的综述，画出 3 个研究方向、记录 5 个检索词，并写下 1 个可以被实验验证的问题。
 
+## 本页快速定位
+
+| 想了解的主题 | 直接进入 | 建议停在这里 |
+| --- | --- | --- |
+| VLM 的模型、训练与评测全景 | [Vision-Language Models](#part-1-vision-language-models) | 能列出模型的 3 个核心组件 |
+| 文档智能的任务边界 | [Document AI](#part-2-document-ai) | 能区分 OCR、版面与文档理解 |
+| 文档解析与结构化输出 | [Docling & Structured Documents](#part-3-docling-structured-documents) | 能说明结构化输出比纯文本多保留什么 |
+| 评测方法与挑战 | [Benchmark Surveys](#part-4-benchmark-surveys) | 能指出一个指标可能遗漏的能力 |
+| 继续检索论文 | [Recommended Resource Collections](#part-5-recommended-resource-collections) | 记录 5 个可复用检索词 |
+| 安排阅读顺序 | [Recommended Reading Plan](#recommended-reading-plan) | 选定下一篇精读论文 |
+
 ---
 
 ## 建议路线
@@ -64,9 +75,9 @@ AI Agent
 
 Information Fusion
 
-### Official Paper
+### Author Manuscript
 
-https://www.sciencedirect.com/science/article/pii/S1566253525006955
+https://minhdl93.github.io/public/papers/if_25.pdf
 
 ### Why Read
 
@@ -100,7 +111,7 @@ https://arxiv.org/abs/2501.02189
 
 ### GitHub
 
-https://github.com/zli12321/Awesome-VLM-Papers-And-Models
+https://github.com/zli12321/Vision-Language-Models-Overview
 
 ### Why Read
 
@@ -270,7 +281,7 @@ https://arxiv.org/abs/2503.11576
 
 ### Official Papers
 
-https://www.docling.ai/papers/
+https://docling.ai/papers/
 
 ### Why Read
 
@@ -346,10 +357,10 @@ https://mmdocbench.github.io/
 
 | Resource                       | URL                                                       |
 | ------------------------------ | --------------------------------------------------------- |
-| Awesome Vision-Language Models | https://github.com/zli12321/Awesome-VLM-Papers-And-Models |
-| Docling Papers                 | https://www.docling.ai/papers/                            |
-| Papers with Code               | https://paperswithcode.com                                |
-| Hugging Face Papers            | https://huggingface.co/papers                             |
+| Awesome Vision-Language Models | https://github.com/zli12321/Vision-Language-Models-Overview |
+| Docling Papers                 | https://docling.ai/papers/                                  |
+| AMiner / 智谱 AI               | https://www.aminer.cn/                                      |
+| Hugging Face Papers            | https://huggingface.co/papers                               |
 
 ---
 
@@ -357,8 +368,7 @@ https://mmdocbench.github.io/
 
 | Conference          | URL                           |
 | ------------------- | ----------------------------- |
-| CVPR Open Access    | https://openaccess.thecvf.com |
-| ICCV Open Access    | https://openaccess.thecvf.com |
+| AMiner / 智谱 AI    | https://www.aminer.cn/        |
 | ECCV Proceedings    | https://eccv.ecva.net         |
 | ACL Anthology       | https://aclanthology.org      |
 | NeurIPS Proceedings | https://papers.nips.cc        |

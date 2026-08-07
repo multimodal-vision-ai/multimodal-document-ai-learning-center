@@ -3,30 +3,40 @@ hide:
   - toc
 ---
 
-# 成果展厅：把好奇心做成可验证作品
+<div class="mv-showcase" markdown>
 
-> **看见真实问题 · 拆开可信证据 · 找到自己的下一步**
+<div class="mv-showcase-hero" markdown>
 
-这里展示的不只是“做成了什么”，更重要的是一个想法怎样经过问题定义、实验设计、失败分析和结果表达，最终成为可以复现、可以质疑、也可以继续生长的研究作品。
+<p class="mv-showcase-kicker">成果展厅</p>
 
-<div class="grid cards" markdown>
+# 把好奇心做成可验证作品
 
--   **看演示，不只看效果**
+> **看证据 · 找问题 · 做作品**
 
-    追问输入是什么、系统改变了什么、结果由什么证据支持。
+<div class="grid cards mv-showcase-principles" markdown>
 
--   **看失败，不只看最好结果**
+-   **验证效果**
 
-    找到尚未解决的场景、指标遗漏的问题和可以继续验证的假设。
+    追溯结果依据
 
--   **带走问题，不只带走项目名**
+-   **分析失败**
 
-    把一次参观转化成一个范围清楚、能够动手验证的 Capstone。
+    发现改进空间
+
+-   **形成问题**
+
+    启动自己的 Capstone
 
 </div>
 
+<div class="mv-showcase-actions" markdown>
+
 [浏览精选项目](#featured-projects){ .md-button .md-button--primary }
 [设计自己的 Capstone](#design-capstone){ .md-button }
+
+</div>
+
+</div>
 
 ## 选择你的下一次挑战
 
@@ -100,6 +110,8 @@ Capstone 不是 Week 12 临时开始的新项目，而是从前 11 周已经跑�
 
 系统具备以下核心能力：
 
+<div class="mv-capability-grid" markdown>
+
 - 📑 OCR Text Recognition
 - 📄 Document Parsing
 - 📰 Layout Analysis
@@ -108,11 +120,13 @@ Capstone 不是 Week 12 临时开始的新项目，而是从前 11 周已经跑�
 - 💬 Document Question Answering
 - 🧠 Multimodal Reasoning
 
+</div>
+
 ---
 
 ### 项目演示
 
-<div align="center">
+<div class="mv-showcase-video">
 
 <video 
     width="960"
@@ -160,6 +174,8 @@ Capstone 不是 Week 12 临时开始的新项目，而是从前 11 周已经跑�
 
 典型应用包括：
 
+<div class="mv-capability-grid" markdown>
+
 - 🚁 Autonomous UAV Control
 - 🤖 Intelligent Robotics
 - 🚗 Autonomous Driving
@@ -168,11 +184,13 @@ Capstone 不是 Week 12 临时开始的新项目，而是从前 11 周已经跑�
 - ⚠️ Collision Warning
 - 🌍 Adaptive Intelligent Systems
 
+</div>
+
 ---
 
 ### 项目演示
 
-<div align="center">
+<div class="mv-showcase-video">
 
 <video 
     width="960"
@@ -199,24 +217,6 @@ Capstone 不是 Week 12 临时开始的新项目，而是从前 11 周已经跑�
 | 🧠 Liquid Neural Networks (LNN) | 液态神经网络，实现动态环境下持续自适应控制 |
 | 📡 Wireless Federated Learning | 无线联邦学习，实现多智能体分布式协同学习 |
 | 🎯 Deep Reinforcement Learning | 深度强化学习，实现复杂环境下自主决策与控制 |
-
----
-
-### 应用场景
-
-本演示涵盖多个典型 AI 应用场景：
-
-| Application | Description |
-| :--- | :--- |
-| 🤖 Robot Motion Control | 机器人姿态与运动控制 |
-| 🚙 Highway Ramp Merging | 匝道汇流车辆协同调度 |
-| ⚠️ Collision Warning | 车辆碰撞预警与风险预测 |
-
----
-
-### 研究愿景
-
-本项目聚焦下一代自主智能系统，探索类脑智能、自适应学习与协同决策技术，为未来机器人、自主驾驶、智慧交通及智能控制等领域提供新的技术范式。
 
 !!! question "如果由你继续"
     - “自适应”应当用平均性能、极端场景还是长期稳定性来衡量？
@@ -297,10 +297,12 @@ Capstone 不是 Week 12 临时开始的新项目，而是从前 11 周已经跑�
 
 ---
 
-<div align="center">
+<div class="mv-showcase__closing">
 
 <p><strong>下一件作品，可以从你今天带走的问题开始。</strong></p>
 
 <p><a href="#design-capstone">开始设计 Capstone →</a></p>
+
+</div>
 
 </div>

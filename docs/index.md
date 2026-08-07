@@ -3,37 +3,43 @@ hide:
   - toc
 ---
 
-# 多模态视觉智能学习中心
+<div class="mv-home" markdown>
 
-<div align="center">
-  <img src="assets/figs/prism_brain_logo_animated.svg" width="360" alt="Multimodal Vision AI Learning Center">
+<div class="mv-hero" markdown>
+
+# 多模态视觉AI学习中心
+
+<div class="mv-hero__media">
+  <img src="assets/figs/prism_brain_logo_square_animated.svg" width="360" alt="Multimodal Vision AI Learning Center">
   <p><strong>Learn · Build · Measure · Improve · Explain</strong></p>
   <p>从文档理解出发，探索图像、视频与多模态智能</p>
 </div>
 
-<div class="grid cards" markdown>
+</div>
+
+<div class="grid cards mv-entry-grid" markdown>
 
 -   **从课程主线开始**
 
-    用 12 周建立可复现研究、文档理解、模型评测与自主探索能力。
+    12 周掌握文档理解、模型评测与可复现研究。
 
     [进入入门课程 →](learning/README.md)
 
 -   **了解建设团队**
 
-    查看谭国平教授的研究方向、科研工作与人才培养信息。
+    了解谭国平教授的研究方向、科研工作与人才培养。
 
     [访问教授官方主页 ↗](https://jszy.hhu.edu.cn/tgp/)
 
 -   **完成第一个研究项目**
 
-    沿着七关路线，把数据、推理、评测和报告组织成可复现作品。
+    沿七关路线，把数据、推理、评测与报告做成可复现作品。
 
     [进入项目实战 →](experiments/README.md)
 
 -   **先看一件完整作品**
 
-    从真实项目的演示、证据与失败问题中，找到自己的 Capstone 灵感。
+    从真实演示、证据与失败案例中寻找 Capstone 灵感。
 
     [参观成果展厅 →](projects/README.md)
 
@@ -124,7 +130,7 @@ hide:
 
 ---
 
-<div align="center">
+<div class="mv-home__closing">
   <p><strong>准备好了吗？从 Week 1 建立你的第一份可复现实验证据。</strong></p>
   <p><a href="learning/">进入课程 →</a></p>
   <p>
@@ -135,3 +141,5 @@ hide:
 </div>
 
 最后更新：2026-08-07
+
+</div>

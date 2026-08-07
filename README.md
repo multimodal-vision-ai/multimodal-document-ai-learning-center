@@ -1,4 +1,4 @@
-# 多模态视觉智能学习中心
+# 多模态视觉AI学习中心
 
 > **Multimodal Vision AI Learning Center**
 

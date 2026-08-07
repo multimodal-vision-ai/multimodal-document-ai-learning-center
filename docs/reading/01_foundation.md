@@ -10,6 +10,17 @@ hide:
 !!! success "本页最小任务"
     画出 Transformer、ViT、CLIP 到 VLM 的关系图，并能解释每个组件为文档理解解决了什么问题、仍留下什么限制。
 
+## 本页快速定位
+
+| 当前问题 | 必读节点 | 读完应能回答 |
+| --- | --- | --- |
+| 文本为什么能被统一建模 | [Transformer](#attention-is-all-you-need) | Self-Attention 如何建立 token 之间的关系 |
+| 图像如何进入 Transformer | [ViT](#an-image-is-worth-1616-words-vision-transformer-vit) | Patch 如何变成视觉 token |
+| 图像与文本如何对齐 | [CLIP](#clip-contrastive-languageimage-pre-training) | 对比学习如何形成共享表示 |
+| 视觉模型如何连接 LLM | [BLIP-2](#blip-2) | Q-Former 在视觉与语言之间做了什么 |
+| 如何提升训练与推理效率 | [SigLIP 2](#siglip-2) · [FlashAttention](#flashattention) | 表示学习与 Attention 分别如何提效 |
+| 为什么模型越做越大 | [Scaling Laws](#scaling-laws-for-neural-language-models) · [MoE](#mixture-of-experts-moe) · [Long Context](#effective-long-context-scaling-of-foundation-models) | 规模、稀疏激活与上下文长度的主要取舍 |
+
 ---
 
 ## 为什么要学

@@ -10,6 +10,19 @@ hide:
 !!! success "本页最小任务"
     为当前项目写出“研究问题—数据集—指标—失败案例”四项选择，并解释为什么这个指标比单纯查看模型输出更有说服力。
 
+## 本页快速定位
+
+| 要评测的能力 | 直接进入 | 重点检查 |
+| --- | --- | --- |
+| 端到端文档解析 | [OmniDocBench](#part-1-omnidocbench) | 文字、公式、表格与阅读顺序是否分别评测 |
+| 版面分析 | [DocLayNet](#part-2-doclaynet) | 类别、标注粒度与文档来源 |
+| OCR 与细粒度感知 | [OCRBench](#part-3-ocrbench) · [OCRBench v2](#part-15-ocrbench-v2) | 任务覆盖与错误类型是否匹配项目 |
+| 表格识别 | [PubTabNet](#part-4-pubtabnet) | 结构指标是否反映单元格关系 |
+| 文档与图表问答 | [DocVQA](#part-5-docvqa) · [ChartQA](#part-6-chartqa) | 答案准确率是否掩盖证据定位错误 |
+| 关键信息抽取 | [FUNSD](#part-9-funsd) · [XFUND](#part-10-xfund) · [CORD](#part-11-cord) | 领域、语言和实体类别是否适用 |
+| 综合多模态理解 | [MMDocBench](#part-14-mmdocbench) | 感知、推理和生成能力如何拆分 |
+| 完成评测设计 | [Selection Strategy](#part-17-benchmark-selection-strategy) · [Benchmark Pipeline](#part-18-laboratory-benchmark-pipeline) | 数据、指标、基线、失败案例和复现记录 |
+
 ---
 
 ## 为什么要学
@@ -60,7 +73,7 @@ End-to-End Document Intelligence
 
 ---
 
-## 按任务选择
+## 按任务选择 { #task-selector }
 
 建议按照研究目标理解不同 Benchmark。
 
@@ -187,7 +200,7 @@ https://github.com/DS4SD/DocLayNet
 
 ### Dataset
 
-https://huggingface.co/datasets/ds4sd/DocLayNet
+https://huggingface.co/datasets/docling-project/DocLayNet
 
 ---
 
@@ -609,11 +622,11 @@ Document Classification
 
 ### Paper
 
-https://www.cs.cmu.edu/~aharley/rvl-cdip/
+https://arxiv.org/abs/1502.07058
 
 ### Dataset
 
-https://www.cs.cmu.edu/~aharley/rvl-cdip/
+https://huggingface.co/datasets/aharley/rvl_cdip
 
 ---
 
@@ -1365,12 +1378,11 @@ Leaderboard
 
 ## Benchmark Collections
 
-| Resource                                   | URL                                                           |
-| ------------------------------------------ | ------------------------------------------------------------- |
-| Papers With Code（OCR）                      | https://paperswithcode.com/task/optical-character-recognition |
-| Papers With Code（Document Layout Analysis） | https://paperswithcode.com/task/document-layout-analysis      |
-| Hugging Face Datasets                      | https://huggingface.co/datasets                               |
-| OpenDataLab                                | https://opendatalab.com                                       |
+| Resource              | URL                             |
+| --------------------- | ------------------------------- |
+| AMiner / 智谱 AI      | https://www.aminer.cn/          |
+| Hugging Face Datasets | https://huggingface.co/datasets |
+| OpenDataLab           | https://opendatalab.com         |
 
 ---
 

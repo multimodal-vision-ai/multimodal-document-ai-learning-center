@@ -10,6 +10,18 @@ hide:
 !!! success "本页最小任务"
     选择一个 VLM，画出“图像输入—视觉表示—语言模型—输出”的流程，并用一个成功案例和一个失败案例说明其能力边界。
 
+## 本页快速定位
+
+| 当前问题 | 直接进入 | 阅读目标 |
+| --- | --- | --- |
+| VLM 由哪些组件构成 | [VLM 基本结构](#part-1-what-is-a-vision-language-model) | 说清视觉编码、跨模态连接与语言生成 |
+| 经典模型如何建立能力 | [LLaVA](#llava) · [Florence-2](#florence-2) | 比较对话式 VLM 与通用视觉基础模型 |
+| 主流开源模型如何演进 | [InternVL](#internvl) · [Qwen2.5-VL](#qwen25-vl) | 找出动态分辨率、OCR 与 Agent 能力的变化 |
+| 查看当前 Qwen 多模态模型 | [Qwen3.5 官方模型集合](#qwen35-models) | 根据规模、任务和算力选择模型 |
+| 理解下一代 VLM | [Qwen3-VL](#qwen3-vl) · [Kimi-VL](#kimi-vl) | 关注长上下文、MoE、视频与 Agent |
+| 设计可执行实验 | [Recommended Laboratory Experiments](#recommended-laboratory-experiments) | 确定变量、数据、指标和成功标准 |
+| 寻找研究方向 | [Current Research Trends](#current-research-trends) · [Research Roadmap](#laboratory-research-roadmap) | 把趋势转成一个最小验证问题 |
+
 ---
 
 ## 为什么要学
@@ -245,7 +257,7 @@ https://arxiv.org/abs/2311.06242
 
 ## Official GitHub
 
-https://huggingface.co/collections/microsoft/florence-6669f44df0d87d9c3bfb76de
+https://huggingface.co/collections/microsoft/florence
 
 ---
 
@@ -402,10 +414,6 @@ CVPR 2024（InternVL 1.0）
 
 https://arxiv.org/abs/2312.14238
 
-CVPR 2024
-
-https://openaccess.thecvf.com/content/CVPR2024/html/Chen_InternVL_Scaling_up_Vision_Foundation_Models_and_Aligning_for_Generic_CVPR_2024_paper.html
-
 ---
 
 ## Official Website
@@ -503,12 +511,6 @@ https://arxiv.org/abs/2409.12191
 
 ---
 
-## Official GitHub
-
-https://github.com/QwenLM/Qwen2-VL
-
----
-
 ## Main Contributions
 
 Qwen2-VL 提出了两项关键创新：
@@ -598,9 +600,9 @@ https://qwenlm.github.io/blog/qwen2.5-vl/
 
 ---
 
-## Official GitHub
+## 最新官方多模态模型集合 { #qwen35-models }
 
-https://github.com/QwenLM/Qwen2.5-VL
+[Qwen3.5（原生多模态）](https://huggingface.co/collections/Qwen/qwen35)
 
 ---
 

@@ -1,12 +1,49 @@
-# 论文导读：把论文读成可验证问题
+# 论文导读：先找到问题，再选择论文
 
-论文不是需要从头读到尾的清单。本模块只训练一项核心能力：**判断一篇论文的主张是否被证据支持，并把它转化为自己可以继续验证的问题。**
+这里不是需要从头读到尾的论文清单。先明确自己要解决的问题，再直接进入相关章节；每次阅读只需形成一条 **主张—证据—限制—下一步** 的证据链。
 
-[从综述地图开始](00_surveys.md){ .md-button .md-button--primary }
-[查看评测基准](05_benchmark-2026.md){ .md-button }
+[按问题快速定位](#question-router){ .md-button .md-button--primary }
+[选择评测基准](05_benchmark-2026.md#task-selector){ .md-button }
 
 !!! success "完成本模块后"
     你能够用一页笔记说清楚论文研究了什么、证据是否充分、哪里仍不确定，以及下一步最值得验证什么。
+
+## 1 分钟使用方法
+
+1. 在下表选择最接近当前任务的问题。
+2. 点击具体模型、方法或评测入口，不必先浏览整篇长文档。
+3. 阅读到能够完成“本次输出”时停止，再决定是否继续精读。
+
+## 按问题快速定位 { #question-router }
+
+| 你现在想解决什么 | 直接阅读 | 本次输出 |
+| --- | --- | --- |
+| 快速了解领域版图 | [VLM 综述](00_surveys.md#part-1-vision-language-models) · [Document AI 综述](00_surveys.md#part-2-document-ai) | 3 个方向、5 个检索词、1 个问题 |
+| 补齐 VLM 架构基础 | [Transformer](01_foundation.md#attention-is-all-you-need) · [ViT](01_foundation.md#an-image-is-worth-1616-words-vision-transformer-vit) · [CLIP](01_foundation.md#clip-contrastive-languageimage-pre-training) | 一张“图像 token 如何进入语言模型”的结构图 |
+| 选择视觉语言模型 | [VLM 基本结构](03_vlm.md#part-1-what-is-a-vision-language-model) · [Qwen3-VL](03_vlm.md#qwen3-vl) · [Qwen3.5 官方模型](03_vlm.md#qwen35-models) | 模型选择理由及一个能力边界 |
+| 开展文档解析实验 | [Docling](02_document-ai.md#docling) · [MinerU](02_document-ai.md#mineru) · [OmniDocBench](02_document-ai.md#omnidocbench) | 输入、输出、指标和一个失败样例 |
+| 理解结构化文档 | [DocTags 核心结构](04_doctags.md#core-structure) · [Reading Order](04_doctags.md#reading-order) · [Provenance](04_doctags.md#provenance) | 一页文档的信息损失对照表 |
+| 为项目选择评测 | [按任务选择](05_benchmark-2026.md#task-selector) · [选择策略](05_benchmark-2026.md#part-17-benchmark-selection-strategy) · [评测流程](05_benchmark-2026.md#part-18-laboratory-benchmark-pipeline) | 研究问题、数据集、指标、失败案例 |
+
+## 三条推荐路线
+
+=== "第一次进入"
+
+    [综述地图](00_surveys.md) → [基础模型](01_foundation.md) → [视觉语言模型](03_vlm.md)
+
+    目标：知道领域在研究什么，并能画出一个 VLM 的基本结构。
+
+=== "正在做实验"
+
+    [文档智能](02_document-ai.md) → [评测基准](05_benchmark-2026.md) → [动手教程](../tutorials/README.md)
+
+    目标：选定模型、数据、指标和失败案例，不再只看主观输出。
+
+=== "准备研究选题"
+
+    [综述地图](00_surveys.md) → [DocTags](04_doctags.md) → [现代 VLM 趋势](03_vlm.md#current-research-trends)
+
+    目标：找到现有方法仍未解决的问题，并设计一个最小验证实验。
 
 ## 重点只学三件事
 
@@ -16,7 +53,7 @@
 
 如果一次阅读没有留下“主张—证据—限制—下一步”，它暂时还只是浏览。
 
-## 第一次阅读按这条路线
+## 完整学习路线
 
 1. **建立地图**：阅读[综述地图](00_surveys.md)，写下 3 个关键词和 1 个真正想知道的问题。
 2. **理解方法**：根据问题进入[文档智能](02_document-ai.md)或[视觉语言模型](03_vlm.md)，找出方法相对 baseline 的关键变化。

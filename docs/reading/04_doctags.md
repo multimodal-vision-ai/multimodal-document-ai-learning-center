@@ -10,6 +10,17 @@ hide:
 !!! success "本页最小任务"
     选择一页含标题、段落和表格的文档，对比纯文本、Markdown 与结构化表示，指出至少 3 项信息损失及其对下游任务的影响。
 
+## 本页快速定位
+
+| 当前问题 | 直接进入 | 阅读目标 |
+| --- | --- | --- |
+| 纯文本为什么不够 | [Why Do We Need DocTags?](#part-1-why-do-we-need-doctags) · [Plain Text 的限制](#limitations-of-plain-text) | 找出至少 3 类信息损失 |
+| DocTags 与 Markdown 有何区别 | [DocTags vs Markdown](#doctags-vs-markdown) | 比较结构、空间位置与语义表达 |
+| DocTags 如何组织数据 | [Architecture](#part-5-doctags-architecture) · [Core Structure](#core-structure) | 画出核心层级关系 |
+| 哪些字段决定可追溯性 | [Spatial Information](#spatial-information) · [Reading Order](#reading-order) · [Provenance](#provenance) | 解释证据如何定位回原页面 |
+| DocTags 如何生成 | [Generation](#part-7-how-are-doctags-generated) · [Generation Pipeline](#part-8-doctags-generation-pipeline) | 比较传统 OCR 与现代 VLM Pipeline |
+| 如何用于项目和研究 | [Practical Applications](#part-10-practical-applications) · [Suggested Research](#part-12-suggested-laboratory-research) | 选出一个下游任务和验证指标 |
+
 ---
 
 ## 为什么要学

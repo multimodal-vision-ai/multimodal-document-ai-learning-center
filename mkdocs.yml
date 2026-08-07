@@ -1,4 +1,4 @@
-site_name: 多模态视觉智能学习中心
+site_name: 多模态视觉AI学习中心
 site_description: Multimodal Vision AI Learning Center — 从文档理解出发，探索图像、视频与多模态智能
 site_author: 谭国平教授团队 · Multimodal Vision AI Lab
 site_url: https://multimodal-vision-ai.github.io/multimodal-document-ai-learning-center/
@@ -47,6 +47,9 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
 
+extra_css:
+  - stylesheets/extra.css
+
 extra_javascript:
   - js/visitor.js
 
@@ -90,13 +93,15 @@ nav:
           - Part 06：完成受控对比: experiments/Experiment_01/Part06-提示词管理与对比分析.md
           - Part 07：评测与项目总结: experiments/Experiment_01/Part07-Bechmark评测与总结.md
   - 论文导读:
-      - 先读这里: reading/README.md
-      - 综述地图: reading/00_surveys.md
-      - 基础模型: reading/01_foundation.md
-      - 文档智能: reading/02_document-ai.md
-      - 视觉语言模型: reading/03_vlm.md
-      - DocTags: reading/04_doctags.md
-      - 评测基准: reading/05_benchmark-2026.md
+      - 快速选读: reading/README.md
+      - 领域地图: reading/00_surveys.md
+      - 核心原理:
+          - 模型基石: reading/01_foundation.md
+          - 视觉语言: reading/03_vlm.md
+      - 文档研究:
+          - 文档智能: reading/02_document-ai.md
+          - 结构表示: reading/04_doctags.md
+          - 评测选型: reading/05_benchmark-2026.md
   - 学习资源:
       - 按问题找资源: resources/README.md
       - 官方文档与平台: resources/official-sources.md
