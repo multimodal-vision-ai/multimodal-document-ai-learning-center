@@ -520,10 +520,11 @@ hide:
 
 **本周价值**：把 12 周形成的仓库、数据、模型、评测和研究判断整理为一个完整作品，并确定下一阶段自主探索方向。
 
-**学习入口**：[自主评估与证据指南](10_Assessment_and_Submission.md) · [项目实战](../experiments/README.md) · [成果展厅](../projects/README.md)
+**学习入口**：[Capstone 设计与展厅发布指南](../projects/README.md#design-capstone) · [自主评估与证据指南](10_Assessment_and_Submission.md) · [项目实战](../experiments/README.md)
 
 ### 主线任务（16–18 小时）
 
+- [ ] 完成一页 Capstone 设计卡，明确问题、baseline、唯一核心变量、判断方式与停止条件。
 - [ ] 整理唯一开始入口、环境说明、配置和一键复现命令。
 - [ ] 移除密钥、私人文档、未授权数据和不必要的大文件。
 - [ ] 汇总 baseline、改进方法、统一评测、错误分析和资源成本。

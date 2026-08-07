@@ -1,13 +1,43 @@
+---
+hide:
+  - toc
+---
+
 # 多模态视觉智能学习中心
 
 <div align="center">
-  <img src="assets/figs/prism_brain_logo_animated.svg" width="420" alt="Multimodal Vision AI Learning Center">
+  <img src="assets/figs/prism_brain_logo_animated.svg" width="360" alt="Multimodal Vision AI Learning Center">
   <p><strong>Learn · Build · Measure · Improve · Explain</strong></p>
   <p>从文档理解出发，探索图像、视频与多模态智能</p>
 </div>
 
-[谭国平教授官方主页](https://jszy.hhu.edu.cn/tgp/){ .md-button }
-[开始入门课程](learning/README.md){ .md-button .md-button--primary }
+<div class="grid cards" markdown>
+
+-   **从课程主线开始**
+
+    用 12 周建立可复现研究、文档理解、模型评测与自主探索能力。
+
+    [进入入门课程 →](learning/README.md)
+
+-   **了解建设团队**
+
+    查看谭国平教授的研究方向、科研工作与人才培养信息。
+
+    [访问教授官方主页 ↗](https://jszy.hhu.edu.cn/tgp/)
+
+-   **完成第一个研究项目**
+
+    沿着七关路线，把数据、推理、评测和报告组织成可复现作品。
+
+    [进入项目实战 →](experiments/README.md)
+
+-   **先看一件完整作品**
+
+    从真实项目的演示、证据与失败问题中，找到自己的 Capstone 灵感。
+
+    [参观成果展厅 →](projects/README.md)
+
+</div>
 
 本学习中心由河海大学计算机与软件学院谭国平教授团队建设。当前课程聚焦 **Multimodal Document Understanding**，未来将逐步扩展到 **Video Understanding、Multimodal Reasoning** 与视觉智能应用。
 
@@ -15,11 +45,11 @@
 
 ## 从这里开始
 
-如果你是第一次进入实验室或首次系统学习 Multimodal Document AI，请直接进入必修路径：
+如果你是第一次进入实验室或首次系统学习 Multimodal Document AI，依次完成三个动作：
 
-[开始 12 周自主学习](learning/README.md){ .md-button .md-button--primary }
-[查看每周计划](learning/00_12_Week_Bootcamp.md){ .md-button }
-[查看自主评估](learning/10_Assessment_and_Submission.md){ .md-button }
+1. 打开[入门课程](learning/README.md)，理解 12 周要形成的能力与作品；
+2. 查看[每周计划](learning/00_12_Week_Bootcamp.md)，从 Week 1 的最小任务开始；
+3. 复制学习记录，并用[自主评估指南](learning/10_Assessment_and_Submission.md)检查证据是否充分。
 
 课程以中文为主，关键术语保留英文；每周建议投入约 24 小时，由学生自主安排主线、探索与复盘，并明确回答：
 
