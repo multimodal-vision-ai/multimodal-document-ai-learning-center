@@ -1,16 +1,18 @@
-# DocTags
+---
+hide:
+  - toc
+---
 
-> **Multimodal Vision AI Learning Center**
->
-> **Module:** DocTags
->
-> **Version:** v3.0
->
-> **Last Updated:** July 2026
+# DocTags：保留文档结构与证据位置
+
+本页重点不是记标签语法，而是理解纯文本或 Markdown 会丢失哪些版面信息，以及结构、阅读顺序、空间位置和来源信息怎样支持后续检索与推理。
+
+!!! success "本页最小任务"
+    选择一页含标题、段落和表格的文档，对比纯文本、Markdown 与结构化表示，指出至少 3 项信息损失及其对下游任务的影响。
 
 ---
 
-# Overview
+## 为什么要学
 
 DocTags 是近年来提出的一种面向 **Document AI** 的新型结构化文档表示格式（Structured Document Representation）。
 
@@ -22,7 +24,7 @@ DocTags 已成为 Docling、SmolDocling 等新一代 Document AI 系统的重要
 
 ---
 
-# Learning Objectives
+## 学习目标
 
 完成本章节后，应能够：
 
@@ -33,7 +35,7 @@ DocTags 已成为 Docling、SmolDocling 等新一代 Document AI 系统的重要
 
 ---
 
-# Learning Roadmap
+## 建议路线
 
 ```text
 PDF

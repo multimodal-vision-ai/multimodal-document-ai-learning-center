@@ -104,7 +104,7 @@ week02/
 
 Notebook 必须 Restart & Run All，并避免把 token、缓存路径或私人文件写入输出。
 
-## 验收清单
+## 自主检查
 
 - [ ] 模型和数据使用准确的 `organization/name`；
 - [ ] revision、license 和限制均被记录；

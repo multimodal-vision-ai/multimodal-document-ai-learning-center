@@ -7,17 +7,17 @@
 
 由河海大学计算机与软件学院[谭国平教授团队](https://jszy.hhu.edu.cn/tgp/)建设，面向高年级本科生、研究生与实验室新成员。
 
-当前以 **12 周多模态文档智能入门课程**为主线，未来将继续扩展图像理解、视频理解、多模态推理与智能应用。
+当前以 **12 周多模态视觉智能自主学习课程**为主线，以文档理解作为训练场，未来继续扩展图像理解、视频理解、多模态推理与智能应用。
 
-课程以中文讲解为主，保留必要的 English terminology；技术细节优先链接官方文档，仓库负责维护学习路径、任务、实验规范和考核证据。
+课程以中文讲解为主，保留必要的 English terminology；技术细节优先链接官方文档，仓库负责维护学习路径、任务、实验规范和自主学习证据。
 
 ## 快速入口
 
 - [在线学习中心](https://multimodal-vision-ai.github.io/multimodal-document-ai-learning-center/)
-- [12 周课程入口](docs/learning/README.md)
+- [入门课程](docs/learning/README.md)
 - [课程总览与每周计划](docs/learning/00_12_Week_Bootcamp.md)
-- [提交规范与评分量表](docs/learning/10_Assessment_and_Submission.md)
-- [学习记录模板](docs/learning/11_Learning_Log_Template.md)
+- [自主评估与证据指南](docs/learning/10_Assessment_and_Submission.md)
+- [自主学习记录模板](docs/learning/11_Learning_Log_Template.md)
 
 ## 课程成果
 
@@ -64,7 +64,7 @@ mkdocs build --strict
 
 1. 从 `dev` 创建工作分支或在约定的 `dev` 实验流程中修改；
 2. 只改动任务相关文件；
-3. 检查内部链接、官方链接和课程验收项；
+3. 检查内部链接、官方链接和课程自主检查项；
 4. 通过文档质量检查；
 5. 发起 `dev → main` PR，review 通过后再发布。
 

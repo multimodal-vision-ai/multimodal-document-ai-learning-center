@@ -15,7 +15,7 @@
 
 | 入口 | 适合解决的问题 | 典型产出 |
 | --- | --- | --- |
-| [12 周入门课程](learning/README.md) | 我应该按什么顺序学习？每周交什么？ | 12 周学习记录与 Capstone |
+| [入门课程](learning/README.md) | 我应该按什么顺序学习？每周做什么？ | 12 周学习记录与 Capstone |
 | [动手教程](tutorials/README.md) | 我想快速跟做一个可运行案例 | Notebook、结果与简短分析 |
 | [项目实战](experiments/README.md) | 我想完成一个端到端研究作品 | 代码、配置、Benchmark 与报告 |
 | [论文导读](reading/README.md) | 我需要理解基础概念或进入前沿研究 | 阅读笔记与复现问题 |
@@ -30,7 +30,7 @@
 
 ### Official First
 
-技术细节优先指向模型、框架、数据集和平台的官方文档。站内页面负责解释学习顺序、实践任务与验收标准，降低重复维护成本。
+技术细节优先指向模型、框架、数据集和平台的官方文档。站内页面负责解释学习顺序、实践任务与自主检查，降低重复维护成本。
 
 ### Evidence First
 
@@ -42,6 +42,6 @@
 
 ## 推荐入口
 
-第一次访问，请从[12 周入门课程](learning/README.md)开始；只想体验一个具体任务，可以选择[动手教程](tutorials/README.md)；准备形成完整作品时，再进入[项目实战](experiments/README.md)。
+第一次访问，请从[入门课程](learning/README.md)开始；只想体验一个具体任务，可以选择[动手教程](tutorials/README.md)；准备形成完整作品时，再进入[项目实战](experiments/README.md)。
 
 最后更新：2026-08-07

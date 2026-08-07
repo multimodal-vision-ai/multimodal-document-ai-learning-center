@@ -95,7 +95,7 @@ week06/
 
 `run-manifest.csv` 至少包含 `sample_id,input_hash,status,duration,markdown_path,json_path,error`。
 
-## 验收清单
+## 自主检查
 
 - [ ] 使用当前官方 `DocumentConverter` API；
 - [ ] Docling 版本和 pipeline options 被记录；

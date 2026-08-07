@@ -89,7 +89,7 @@ week02/
 └── failure-case.md
 ```
 
-## 验收清单
+## 自主检查
 
 - [ ] 加载类与输入格式来自目标模型官方 Model Card；
 - [ ] 模型 ID 和 revision 准确；

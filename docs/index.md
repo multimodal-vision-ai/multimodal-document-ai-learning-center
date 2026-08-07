@@ -7,7 +7,7 @@
 </div>
 
 [谭国平教授官方主页](https://jszy.hhu.edu.cn/tgp/){ .md-button }
-[开始 12 周课程](learning/README.md){ .md-button .md-button--primary }
+[开始入门课程](learning/README.md){ .md-button .md-button--primary }
 
 本学习中心由河海大学计算机与软件学院谭国平教授团队建设。当前课程聚焦 **Multimodal Document Understanding**，未来将逐步扩展到 **Video Understanding、Multimodal Reasoning** 与视觉智能应用。
 
@@ -17,18 +17,18 @@
 
 如果你是第一次进入实验室或首次系统学习 Multimodal Document AI，请直接进入必修路径：
 
-[开始 12 周入门课程](learning/README.md){ .md-button .md-button--primary }
+[开始 12 周自主学习](learning/README.md){ .md-button .md-button--primary }
 [查看每周计划](learning/00_12_Week_Bootcamp.md){ .md-button }
-[查看评分标准](learning/10_Assessment_and_Submission.md){ .md-button }
+[查看自主评估](learning/10_Assessment_and_Submission.md){ .md-button }
 
-课程以中文为主，关键术语保留英文；每周都明确回答：
+课程以中文为主，关键术语保留英文；每周建议投入约 24 小时，由学生自主安排主线、探索与复盘，并明确回答：
 
 | 你需要知道什么 | 课程如何回答 |
 | --- | --- |
 | 学什么？ | 学习目标与官方材料 |
 | 做什么？ | 可执行的必做任务 |
-| 交什么？ | 明确的文件与实验证据 |
-| 如何评分？ | 统一量表与验收清单 |
+| 留下什么？ | 明确的文件与实验证据 |
+| 如何自查？ | 自主阶段与证据清单 |
 | 下一步是什么？ | 进阶阅读、实验与项目入口 |
 
 ## 从当前主线走向未来
@@ -53,7 +53,7 @@
 | Research Communicator | Week 11–12 | 论文复现、Capstone、Model Card 与答辩 |
 
 !!! tip "没有独立 GPU？"
-    仍可开始。Week 1–7 可在普通电脑或小规模云端环境完成；Week 8–10 可使用 Kaggle/Colab、小模型和小数据。评分看方法与证据，不看模型规模。
+    仍可开始。Week 1–7 可在普通电脑或小规模云端环境完成；Week 8–10 可使用 Kaggle/Colab、小模型和小数据。自主检查关注方法与证据，不比较模型规模。
 
 ## 你最终会完成什么
 
@@ -82,7 +82,7 @@
 
 ### Official First
 
-技术细节优先链接模型、框架和数据集的官方文档。课程页面负责说明学习路线、任务和验收，不重复维护容易过时的长篇 API 教程。
+技术细节优先链接模型、框架和数据集的官方文档。课程页面负责说明学习路线、任务和自主检查，不重复维护容易过时的长篇 API 教程。
 
 ### Evidence First
 
@@ -96,7 +96,7 @@
 
 <div align="center">
   <p><strong>准备好了吗？从 Week 1 建立你的第一份可复现实验证据。</strong></p>
-  <p><a href="learning/README.md">进入课程 →</a></p>
+  <p><a href="learning/">进入课程 →</a></p>
   <p>
     👥 Visitors <span id="visitor-count">—</span>
     &nbsp;·&nbsp; ⭐ Stars <span id="github-stars">—</span>

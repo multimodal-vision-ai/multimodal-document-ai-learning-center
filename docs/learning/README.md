@@ -1,62 +1,83 @@
-# 12 周多模态文档智能入门课程
+# 12 周多模态视觉智能自主学习课程
 
-这是一条面向高年级本科生与研究生新手的必修学习路径。课程以中文讲解为主，保留必要的 English terminology；正文只保留路线、任务与检查点，技术细节优先链接到持续更新的官方文档。
+这是一条面向高年级本科生与研究生新手的自主学习路径。课程以多模态文档理解为当前训练主线，同时为图像、视频和更广泛的视觉智能研究建立共同基础。
 
 [从 Week 1 开始](00_12_Week_Bootcamp.md#week-1){ .md-button .md-button--primary }
 [查看完整 12 周路线](00_12_Week_Bootcamp.md){ .md-button }
-[查看评分标准](10_Assessment_and_Submission.md){ .md-button }
+[打开自主评估指南](10_Assessment_and_Submission.md){ .md-button }
 
-## 12 周进度导航
+!!! success "学习方式"
+    每周建议投入约 24 小时：完成一条可复现主线，再从给出的方向中选择一个自主探索。学生自己判断证据是否充分；导师只在每周例会听取进展、困难和下一步，不评分、不验收。
 
-| 阶段 | 直接进入 | 核心能力 | 阶段里程碑 |
+## 12 周能力路线
+
+| 阶段 | 周次 | 核心能力 | 阶段成果 |
 | --- | --- | --- | --- |
-| 1. Reproducible Builder | [Week 1](00_12_Week_Bootcamp.md#week-1) · [Week 2](00_12_Week_Bootcamp.md#week-2) · [Week 3](00_12_Week_Bootcamp.md#week-3) | Git、模型调用、AI 辅助编程与验证 | 可复现脚本、首次 PR、测试与 AI 使用记录 |
-| 2. Document AI Explorer | [Week 4](00_12_Week_Bootcamp.md#week-4) · [Week 5](00_12_Week_Bootcamp.md#week-5) · [Week 6](00_12_Week_Bootcamp.md#week-6) · [Week 7](00_12_Week_Bootcamp.md#week-7) | VLM、文档解析、Dataset 与 Benchmark | 可运行 pipeline、固定测试集与 baseline |
-| 3. Model Experimenter | [Week 8](00_12_Week_Bootcamp.md#week-8) · [Week 9](00_12_Week_Bootcamp.md#week-9) · [Week 10](00_12_Week_Bootcamp.md#week-10) | LoRA/SFT、W&B、统一评测与消融 | 可比较 runs、Report 与错误分析 |
-| 4. Research Communicator | [Week 11](00_12_Week_Bootcamp.md#week-11) · [Week 12](00_12_Week_Bootcamp.md#week-12) | 论文复现、项目表达与答辩 | Reproduction report 与 Capstone |
+| Reproducible Builder | Week 1–3 | Git、模型调用、AI 辅助编程与验证 | 可复现脚本、PR、测试与 AI 使用记录 |
+| Document AI Explorer | Week 4–7 | VLM、文档解析、Dataset 与 Benchmark | Pipeline、固定测试集与 baseline |
+| Model Experimenter | Week 8–10 | LoRA/PEFT、W&B、统一评测与消融 | 可比较 runs、Report 与错误分析 |
+| Research Communicator | Week 11–12 | 论文复现、项目表达与自主答辩 | Reproduction report 与 Capstone |
 
-!!! tip "已经开始课程？"
-    直接点击当前周次，先阅读“本周问题”和“提交与验收”；需要技术细节时再进入对应专题页，不必从头浏览全部文档。
+## 每周怎样学习
+
+- **4 小时｜理解**：只读本周任务直接需要的课程说明和官方材料。
+- **10 小时｜建设**：把代码、数据或模型能力加入贯穿 12 周的同一个项目。
+- **4 小时｜验证**：保存配置、原始输出、指标、测试和失败案例。
+- **4 小时｜探索**：从工程、模型、数据、评测或未来视频方向中选择一个继续追问。
+- **2 小时｜复盘**：更新学习记录、自主评估并准备例会进展。
+
+所有周次遵循同一闭环：
+
+> Learn → Run → Measure → Improve → Explain
 
 ## 你将获得什么
 
 完成课程后，你应能：
 
-- 用 GitHub 管理一个可复现的 AI 实验项目；
-- 安全、透明地使用 AI-assisted coding，并验证 AI 生成代码；
-- 调用开源 Vision-Language Model（VLM）处理真实文档；
-- 构建 PDF → 结构化数据的 Document AI pipeline；
-- 用 LoRA/PEFT 进行一次小规模微调；
-- 用 Weights & Biases（W&B）记录、比较微调实验；
-- 设计 baseline、指标与 error analysis；
-- 完成并答辩一个可复现的小型研究项目。
+- 用 GitHub 管理一个可复现的 AI 研究项目；
+- 透明使用 AI-assisted coding，并验证 AI 生成代码；
+- 调用 Vision-Language Model 处理真实图像和文档；
+- 构建 PDF → 结构化数据的 Document AI Pipeline；
+- 设计固定测试集、baseline、指标和 error analysis；
+- 用 LoRA/PEFT 完成一次小规模微调；
+- 用 W&B 记录、比较和解释实验；
+- 阅读论文并复现一个最小主张；
+- 完成一个可复现、可评测、能说明限制的研究作品。
 
-## 每周节奏
+## 自主学习不是独自摸索
 
-建议每周投入 **6–8 小时**：官方材料 1–2 小时、动手实验 3–4 小时、记录与复盘 1–2 小时。所有周次都遵循同一闭环：
+每周页面都会明确提供：
 
-> Learn → Run → Measure → Improve → Explain
+- 一个核心问题；
+- 16–18 小时的主线任务；
+- 必须留下的研究证据；
+- 三个左右的自主探索方向；
+- 一组自主检查问题；
+- 例会前应准备的进展摘要；
+- 直接相关的官方学习入口。
+
+完成主线后只选一个方向深入。若证据仍不完整，应先补齐复现记录和失败分析，而不是盲目增加模型、数据或工具。
 
 ## 开始前
 
-1. 打开[课程总览与每周计划](00_12_Week_Bootcamp.md)，先阅读“通关规则”。
-2. 按[提交规范与评分量表](10_Assessment_and_Submission.md)创建个人学习仓库。
-3. 复制[学习记录模板](11_Learning_Log_Template.md)，每周留下证据。
-4. 从 Week 1 开始；不要跳过环境、复现和 AI 使用披露。
+1. 打开[12 周路线](00_12_Week_Bootcamp.md)，阅读自主学习规则和 Week 1。
+2. 根据[自主评估与证据指南](10_Assessment_and_Submission.md)创建个人学习仓库。
+3. 复制[学习记录模板](11_Learning_Log_Template.md)，从第一周开始记录选择与证据。
+4. 每周例会前准备“完成了什么、证据在哪里、最大困难、探索方向和下一步”。
 
-!!! tip "设备不足也能完成"
-    Week 1–7 可在普通电脑上完成。Week 8–10 推荐使用 Kaggle/Colab GPU，并选择小模型或小数据集；评分看实验设计与证据，不看参数规模。
+!!! tip "设备不足也能继续"
+    Week 1–7 可以使用普通电脑或小规模云端环境。Week 8–10 可使用 Kaggle/Colab、小模型、小数据或更短训练。自主检查关注问题、方法、证据和解释，不比较 GPU 时长或模型规模。
 
 ## 快速入口
 
-| 我想做什么 | 入口 |
+| 当前需要 | 入口 |
 | --- | --- |
-| 查看 12 周路线 | [课程总览](00_12_Week_Bootcamp.md) |
-| 确认本周交什么 | [提交规范](10_Assessment_and_Submission.md) |
-| 记录实验与 AI 协作过程 | [学习记录模板](11_Learning_Log_Template.md) |
-| 解决环境与常见问题 | [FAQ](09_FAQ.md) |
-| 深入阅读专题 | [论文导读](../reading/README.md) |
-| 跟做一个短时可运行案例 | [动手教程](../tutorials/README.md) |
-| 完成一个端到端研究作品 | [项目实战](../experiments/README.md) |
+| 查看每周任务和探索方向 | [12 周路线](00_12_Week_Bootcamp.md) |
+| 判断成果处于哪个阶段 | [自主评估指南](10_Assessment_and_Submission.md) |
+| 记录实验、AI 协作和例会准备 | [学习记录模板](11_Learning_Log_Template.md) |
+| 解决常见问题 | [FAQ](09_FAQ.md) |
+| 补充研究背景 | [论文导读](../reading/README.md) |
+| 跑通一个短时案例 | [动手教程](../tutorials/README.md) |
+| 完成端到端作品 | [项目实战](../experiments/README.md) |
 
 最后更新：2026-08-07

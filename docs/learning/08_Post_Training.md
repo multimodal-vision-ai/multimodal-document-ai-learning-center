@@ -78,7 +78,7 @@ W&B 的作用不是“画一条 loss 曲线”，而是把 config、metrics、�
 
 - 使用 `wandb login`、环境变量或平台 Secret；
 - 不把 API key 写入 notebook、YAML、截图或 Git 历史；
-- 使用私有项目时，向导师授权或提交脱敏 report 导出。
+- 使用私有项目时，保留可核对的 run ID，并在例会中只展示脱敏 report 导出。
 
 ### 每个 Run 必须记录
 
@@ -137,7 +137,7 @@ Run B: learning_rate = 2e-4
 
 不要使用 W&B 页面中“最好看”的单次 run 直接作为结论。
 
-## Week 8–10 验收清单
+## Week 8–10 自主检查
 
 - [ ] 有训练前 baseline 和固定 test set；
 - [ ] 数据来源、许可、划分和版本清楚；

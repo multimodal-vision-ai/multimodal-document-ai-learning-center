@@ -1,6 +1,6 @@
 # AI 辅助编程：生成只是开始，验证才算完成
 
-> **对应课程**：[Week 3｜AI-assisted Coding](00_12_Week_Bootcamp.md#week-3) · **建议投入**：2–3 小时 · **最终产出**：可测试的代码、Prompt 记录与人工审查
+> **对应课程**：[Week 3｜AI-assisted Coding](00_12_Week_Bootcamp.md#week-3) · **专题最小练习**：2–3 小时 · **完整 Week 3**：约 24 小时 · **最终产出**：可测试的代码、Prompt 记录与人工审查
 
 AI coding assistant 可以帮助解释代码、生成草稿、补充测试和发现边界条件，但不能替你确认需求、数据授权、安全性与结论。课程采用同一个闭环：
 

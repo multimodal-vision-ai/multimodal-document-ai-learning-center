@@ -1,16 +1,18 @@
-# Benchmarks
+---
+hide:
+  - toc
+---
 
-> **Multimodal Vision AI Learning Center**
->
-> **Module:** Benchmarks
->
-> **Version:** v3.1
->
-> **Last Updated:** July 2026
+# 评测基准：用指标回答研究问题
+
+本页收录的数据集很多，第一次不要逐个浏览。先确定要评测的能力，再选择一个数据集、一个主指标和一组失败案例。
+
+!!! success "本页最小任务"
+    为当前项目写出“研究问题—数据集—指标—失败案例”四项选择，并解释为什么这个指标比单纯查看模型输出更有说服力。
 
 ---
 
-# Overview
+## 为什么要学
 
 Benchmark 是 Document AI 研究中不可缺少的一部分。
 
@@ -20,7 +22,7 @@ Benchmark 是 Document AI 研究中不可缺少的一部分。
 
 ---
 
-# Learning Objectives
+## 学习目标
 
 完成本章节后，应能够：
 
@@ -31,7 +33,7 @@ Benchmark 是 Document AI 研究中不可缺少的一部分。
 
 ---
 
-# Benchmark Evolution
+## 评测如何演进
 
 Document AI Benchmark 的发展经历了以下几个阶段：
 
@@ -58,7 +60,7 @@ End-to-End Document Intelligence
 
 ---
 
-# Benchmark Taxonomy
+## 按任务选择
 
 建议按照研究目标理解不同 Benchmark。
 

@@ -1,16 +1,18 @@
-# Document AI
+---
+hide:
+  - toc
+---
 
-> **Multimodal Vision AI Learning Center**
->
-> **Module:** Document AI
->
-> **Version:** v3.0
->
-> **Last Updated:** July 2026
+# 文档智能：从识别文字到理解结构
+
+第一次阅读只抓住一条演进主线：**OCR → 版面分析 → 多模态预训练 → 端到端文档解析**。模型名称用于理解这条变化，不需要逐个背诵。
+
+!!! success "本页最小任务"
+    选择一个文档样例，标出文字识别、版面、阅读顺序、表格结构和问答分别属于什么任务，并说明当前项目重点评价哪一项。
 
 ---
 
-# Overview
+## 为什么要学
 
 Document AI（文档智能）是近年来人工智能发展最快的方向之一。
 
@@ -36,7 +38,7 @@ Document AI（文档智能）是近年来人工智能发展最快的方向之一
 
 ---
 
-# Learning Objectives
+## 学习目标
 
 完成本章节后，应能够：
 
@@ -47,7 +49,7 @@ Document AI（文档智能）是近年来人工智能发展最快的方向之一
 
 ---
 
-# Learning Roadmap
+## 建议路线
 
 ```text
 OCR
@@ -79,7 +81,7 @@ Vision-Language Document AI
 
 ---
 
-# Reading Strategy
+## 阅读策略
 
 | Priority | Description |
 | -------- | ----------- |

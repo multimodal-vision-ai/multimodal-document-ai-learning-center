@@ -571,7 +571,7 @@ benchmark_summary.md
 | Git Commit 完整      | □  |
 | GitHub 已同步         | □  |
 
-全部完成后，本实验通过验收。
+全部完成后，本实验达到自主完成标准。
 
 ---
 

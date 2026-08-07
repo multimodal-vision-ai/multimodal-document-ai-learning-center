@@ -609,7 +609,7 @@ Prompt 文件编码错误。
 * 模型推理结果整理；
 * 初步性能评测；
 * 项目总结；
-* 实验验收；
+* 实验自查；
 * Experiment 01 完整归档。
 
 ➡️ [进入 Part 07：Benchmark评测与总结](Part07-Bechmark评测与总结.md)

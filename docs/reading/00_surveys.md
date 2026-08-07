@@ -1,20 +1,18 @@
-# Survey Papers
+---
+hide:
+  - toc
+---
 
-> **Multimodal Vision AI Learning Center**
->
-> **Module:** Survey Papers
->
-> **Version:** v4.0
->
-> **Last Updated:** July 2026
+# 综述地图：先看清领域全景
 
-本目录整理 **Multimodal Document AI** 方向最值得阅读的综述论文（Survey Papers）。
+本页整理多模态文档智能方向的代表性综述。它的用途不是增加阅读数量，而是帮助你确定任务边界、关键词和一个值得继续追问的问题。
 
-建议所有研究生**优先阅读综述，再阅读经典论文和最新论文**，建立完整的知识体系。
+!!! success "本页最小任务"
+    只选一篇与当前问题最接近的综述，画出 3 个研究方向、记录 5 个检索词，并写下 1 个可以被实验验证的问题。
 
 ---
 
-# Learning Roadmap
+## 建议路线
 
 ```text
 Foundation Models
@@ -40,7 +38,7 @@ AI Agent
 
 ---
 
-# Reading Strategy
+## 阅读策略
 
 | Priority | Description |
 | -------- | ----------- |

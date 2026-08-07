@@ -1,36 +1,63 @@
-# 📊 Dataset Resources
+# 数据集索引：先按任务选择
 
-推荐学习和实验使用以下公开数据集：
+数据集不是越大越好。先确定要验证的能力，再检查样例、标注、划分、指标和 license 是否支持这个问题。
 
-| Dataset | Task | Description | Official Link |
-|---|---|---|---|
-| **OmniDocBench** | Document Parsing | 文档解析、OCR、表格、公式、阅读顺序综合评测 | https://github.com/opendatalab/OmniDocBench |
-| **DocLayNet** | Layout Analysis | 文档布局分析与页面元素检测 | https://github.com/DS4SD/DocLayNet |
-| **DocVQA** | Document Question Answering | 文档视觉问答（Document VQA） | https://www.docvqa.org/ |
-| **PubTabNet** | Table Recognition | 表格结构识别与HTML生成 | https://github.com/ibm-aur-nlp/PubTabNet |
-| **OCRBench** | OCR Evaluation | 多模态模型 OCR 能力评测 | https://github.com/Yuliang-Liu/MultimodalOCR |
+## 文档解析
 
----
+### [OmniDocBench](https://github.com/opendatalab/OmniDocBench)
 
-# 🚀 Recommended Usage
+覆盖文字、公式、表格、阅读顺序等文档解析能力，是项目 01 的主要评测参考。
 
-建议学习顺序：
+**先学什么**：数据格式、页面类别、官方指标分别评价什么，以及完整评测与课程小样例评测的区别。
 
-| Stage | Dataset | Purpose |
-|---|---|---|
-| 1 | OCRBench | 了解多模态模型 OCR 能力 |
-| 2 | DocLayNet | 学习文档布局分析 |
-| 3 | OmniDocBench | 开展 Document AI Benchmark |
-| 4 | DocVQA | 探索文档理解与推理 |
+## 版面分析
 
----
+### [DocLayNet](https://github.com/DS4SD/DocLayNet)
 
-# 🔗 More Dataset Resources
+用于文档布局分析和页面元素检测。
 
-| Platform | Description | Link |
-|---|---|---|
-| Hugging Face Datasets | 开源数据集平台 | https://huggingface.co/datasets |
-| Papers With Code Datasets | 数据集与 Benchmark 导航 | https://paperswithcode.com/datasets |
-| Kaggle Datasets | 在线数据集资源 | https://www.kaggle.com/datasets |
+**先学什么**：类别定义、标注格式、训练/验证/测试划分，以及版面检测结果如何影响后续阅读顺序和结构恢复。
 
-------------------------------------------------------------------------
+## 文档问答
+
+### [DocVQA](https://www.docvqa.org/)
+
+用于研究模型能否根据文档视觉内容回答问题。
+
+**先学什么**：问题类型、答案形式、ANLS 等指标，以及模型回答正确但证据定位不可靠的情况。
+
+## 表格结构
+
+### [PubTabNet](https://github.com/ibm-aur-nlp/PubTabNet)
+
+用于表格识别与 HTML 结构生成。
+
+**先学什么**：结构标注如何表示合并单元格，以及 TEDS 一类结构指标与人工可读性的差异。
+
+## 视觉文字能力
+
+### [OCRBench / OCRBench v2](https://github.com/Yuliang-Liu/MultimodalOCR)
+
+用于评测多模态模型的文字识别、定位与推理能力。
+
+**先学什么**：任务覆盖、公开与私有评测划分，以及总分是否掩盖不同场景的失败。
+
+## 下载前必须回答
+
+- 数据来自哪里，允许怎样使用和公开？
+- 哪个 split 用于开发，哪个只能用于最终评测？
+- 指标是否真的对应当前研究问题？
+- 先用哪 3–5 个样例检查格式与流程？
+- 是否记录数据版本、下载日期和必要校验信息？
+
+## 课程中的使用顺序
+
+1. 先浏览 3–5 个样例，理解输入、标注与困难点。
+2. 跑通一条数据读取和模型推理链路。
+3. 只选一个与问题匹配的指标。
+4. 解释至少一个失败案例，再决定是否扩大数据规模。
+
+!!! warning "不要直接提交数据"
+    原始数据通常不应直接放入课程仓库。优先提交来源、下载说明、manifest、处理脚本和小型合规样例，并遵守各数据集的 license 与访问要求。
+
+链接核对日期：2026-08-07

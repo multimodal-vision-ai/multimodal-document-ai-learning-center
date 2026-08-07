@@ -1,16 +1,18 @@
-# Foundation Models
+---
+hide:
+  - toc
+---
 
-> **Multimodal Vision AI Learning Center**
->
-> **Module:** Foundation Models
->
-> **Version:** v3.0
->
-> **Last Updated:** July 2026
+# 基础模型：理解 VLM 的三块基石
+
+本页材料很多，第一次不必全部阅读。优先理解 **Transformer 如何建模序列、ViT 如何把图像变成 token、CLIP 如何对齐图像与文本**。
+
+!!! success "本页最小任务"
+    画出 Transformer、ViT、CLIP 到 VLM 的关系图，并能解释每个组件为文档理解解决了什么问题、仍留下什么限制。
 
 ---
 
-# Overview
+## 为什么要学
 
 Foundation Model 是现代人工智能发展的基础。
 
@@ -32,7 +34,7 @@ Foundation Model 是现代人工智能发展的基础。
 
 ---
 
-# Learning Objectives
+## 学习目标
 
 完成本章节后，应能够：
 
@@ -43,7 +45,7 @@ Foundation Model 是现代人工智能发展的基础。
 
 ---
 
-# Learning Roadmap
+## 建议路线
 
 ```text
 Transformer
@@ -69,7 +71,7 @@ Modern Vision-Language Models
 
 ---
 
-# Reading Strategy
+## 阅读策略
 
 | Priority | Description |
 | -------- | ----------- |

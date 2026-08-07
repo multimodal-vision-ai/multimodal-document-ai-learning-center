@@ -1,16 +1,18 @@
-# Vision-Language Models (VLM)
+---
+hide:
+  - toc
+---
 
-> **Multimodal Vision AI Learning Center**
->
-> **Module:** Vision-Language Models (VLM)
->
-> **Version:** v3.0
->
-> **Last Updated:** July 2026
+# 视觉语言模型：看懂架构、能力与失败
+
+本页不要求记住所有模型。重点是理解视觉编码、跨模态连接与语言生成如何组成 VLM，以及模型为什么会在文字密集、复杂版面和细粒度定位任务上失败。
+
+!!! success "本页最小任务"
+    选择一个 VLM，画出“图像输入—视觉表示—语言模型—输出”的流程，并用一个成功案例和一个失败案例说明其能力边界。
 
 ---
 
-# Overview
+## 为什么要学
 
 Vision-Language Model（VLM）是当前多模态人工智能最重要的发展方向之一。
 
@@ -22,7 +24,7 @@ VLM 的目标是：
 
 ---
 
-# Learning Objectives
+## 学习目标
 
 完成本章节后，应能够：
 
@@ -33,7 +35,7 @@ VLM 的目标是：
 
 ---
 
-# Learning Roadmap
+## 建议路线
 
 ```text
 CLIP

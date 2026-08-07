@@ -1,19 +1,56 @@
-# 📖 Recommended Courses
+# 推荐课程：按缺口学习
 
-建议优先学习官方教材、经典开源课程和国际一流高校课程，逐步建立 **Deep Learning → Large Language Models → Multimodal AI → AI Agents** 的完整知识体系。
+不要按“收藏数量”或星级选择课程。先判断当前缺的是基础概念、模型使用、研究能力还是工程实践，再只学能解决这个缺口的章节。
 
-| Priority | Resource | Description | Official Website |
-|:---:|---|---|---|
-| ⭐⭐⭐⭐⭐ | 🤖 **Large Language Models & AI Agents** | **中文首选推荐。** 系统介绍大语言模型、Prompt Engineering、AI Agent、多模态模型等内容，实验室统一入门教材。 | https://github.com/nndl/llm-beginner |
-| ⭐⭐⭐⭐⭐ | 🤖 **Hello-Agents** | **AI Agent 实践首选。** 从零开始构建 AI Agent，涵盖 Memory、Tool Calling、MCP、LangGraph、多智能体等前沿内容。 | https://github.com/datawhalechina/hello-agents |
-| ⭐⭐⭐⭐⭐ | 🧠 **Dive into Deep Learning (D2L)** | **深度学习经典教材。** 从神经网络基础到 Transformer，兼顾理论与代码实践，是学习 AI 的基础课程。 | https://d2l.ai/ |
-| ⭐⭐⭐⭐☆ | 🤗 **Hugging Face Learn** | **官方学习平台。** 提供 Transformers、多模态模型、Diffusion、Computer Vision 等系列课程，是学习开源 AI 生态的重要入口。 | https://huggingface.co/learn |
-| ⭐⭐⭐⭐☆ | 🤗 **Hugging Face Agents Course** | **官方免费 Agent 课程。** 系统讲解 AI Agent 基础、smolagents、LangGraph、LlamaIndex、Agentic RAG，并提供实践项目与认证。 | https://huggingface.co/learn/agents-course |
-| ⭐⭐⭐⭐⭐ | 👨‍🏫 **Stanford CS146S – The Modern Software Developer** | **国际课程。** Stanford 最新现代AI辅助软件开发课程，适合作为进阶学习资源。 | https://themodernsoftware.dev/ |
-| ⭐⭐⭐⭐☆ | 👨‍🏫 **Stanford CS336 – Language Modeling** | **国际课程。** Stanford 最新大语言模型课程，深入讲解 LLM 的训练、推理、优化与系统设计，适合作为进阶学习资源。 | https://cs336.stanford.edu/ |
+## 第一步：补深度学习基础
 
-> **Recommended Learning Order**
->
-> **Dive into Deep Learning → Large Language Models & AI Agents → Hugging Face Learn → Hello-Agents → Hugging Face Agents Course → Stanford CS336**
+### [D2L：动手学深度学习](https://d2l.ai/)
 
-> More recommended books and learning resources will be continuously added to the Resource Center.
+**适合你，如果**：卷积、注意力、Transformer、训练与推理的关系还不清楚。
+
+**优先学习**：数据处理、计算机视觉、注意力与 Transformer；无需从第一页顺序读完。
+
+**完成标志**：能用自己的话解释 self-attention，并修改一个 Notebook 的输入或模型设置观察变化。
+
+## 第二步：建立大模型与开源生态概念
+
+### [LLM 与智能体中文教程](https://github.com/nndl/llm-beginner)
+
+**适合你，如果**：需要中文材料建立 LLM、Prompt、Agent 与多模态模型的总体认识。
+
+**完成标志**：画出“输入—模型—输出—评测”的流程，并列出当前项目真正用到的三个概念。
+
+### [Hugging Face Learn](https://huggingface.co/learn)
+
+**适合你，如果**：需要学习 Transformers、计算机视觉或开源模型的官方工作流。
+
+**完成标志**：跑通一个与课程项目直接相关的官方示例，并记录版本、配置和结果。
+
+## 第三步：提升研究与系统能力
+
+### [Stanford CS336](https://cs336.stanford.edu/)
+
+**适合你，如果**：已经能使用模型，希望理解训练、数据、系统优化与评测如何共同决定结果。
+
+**完成标志**：选择一个单元，写出它会怎样改变你当前实验的设计或解释。
+
+### [Stanford CS146S](https://themodernsoftware.dev/)
+
+**适合你，如果**：希望提升 AI 辅助开发、验证、测试与软件交付能力。
+
+**完成标志**：把一种开发方法用于当前仓库，并用测试或人工检查说明它是否真正改善了结果。
+
+## 扩展方向：智能体
+
+### [Hello-Agents](https://github.com/datawhalechina/hello-agents)
+
+只有在完成当前文档理解主线后，再用它探索工具调用、记忆、MCP 和多智能体。学习成果应是一个可运行的小 Agent，而不是概念摘抄。
+
+## 课程选择规则
+
+- 当前任务没有直接受益的章节，先不学。
+- 每次只选一个最小单元，并提前写下预期产出。
+- 看完必须留下代码、图解、实验结果或决策说明之一。
+- 两周后无法复述或复用的笔记，需要改成问题卡或小实验。
+
+链接核对日期：2026-08-07
