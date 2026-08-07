@@ -1,317 +1,45 @@
-# 📚 Learning Center
+# 12 周多模态文档智能入门课程
 
-欢迎进入 **Multimodal Vision AI Learning Center 学习中心**。
+这是一条面向高年级本科生与研究生新手的必修学习路径。课程以中文讲解为主，保留必要的 English terminology；正文只保留路线、任务与检查点，技术细节优先链接到持续更新的官方文档。
 
-本学习中心面向实验室本科生、硕士生和博士生，目标是帮助学生系统掌握：
+## 你将获得什么
 
-- 多模态大模型（Vision Language Models）
-- 文档智能（Document AI）
-- 视觉人工智能（Vision AI）
-- 大模型工程训练与评测实践
-- 科研实验方法
+完成课程后，你应能：
 
+- 用 GitHub 管理一个可复现的 AI 实验项目；
+- 安全、透明地使用 AI-assisted coding，并验证 AI 生成代码；
+- 调用开源 Vision-Language Model（VLM）处理真实文档；
+- 构建 PDF → 结构化数据的 Document AI pipeline；
+- 用 LoRA/PEFT 进行一次小规模微调；
+- 用 Weights & Biases（W&B）记录、比较微调实验；
+- 设计 baseline、指标与 error analysis；
+- 完成并答辩一个可复现的小型研究项目。
 
-本学习路线采用以下模式：
+## 每周节奏
 
-> **理论学习 + 工程实践 + 科研实验**
+建议每周投入 **6–8 小时**：官方材料 1–2 小时、动手实验 3–4 小时、记录与复盘 1–2 小时。所有周次都遵循同一闭环：
 
----
+> Learn → Run → Measure → Improve → Explain
 
-# 🎯 学习目标
+## 开始前
 
+1. 打开[课程总览与每周计划](00_12_Week_Bootcamp.md)，先阅读“通关规则”。
+2. 按[提交规范与评分量表](10_Assessment_and_Submission.md)创建个人学习仓库。
+3. 复制[学习记录模板](11_Learning_Log_Template.md)，每周留下证据。
+4. 从 Week 1 开始；不要跳过环境、复现和 AI 使用披露。
 
-完成 Learning Center 学习后，你应该能够：
+!!! tip "设备不足也能完成"
+    Week 1–7 可在普通电脑上完成。Week 8–10 推荐使用 Kaggle/Colab GPU，并选择小模型或小数据集；评分看实验设计与证据，不看参数规模。
 
+## 快速入口
 
-✅ 理解多模态视觉大模型基本原理
+| 我想做什么 | 入口 |
+| --- | --- |
+| 查看 12 周路线 | [课程总览](00_12_Week_Bootcamp.md) |
+| 确认本周交什么 | [提交规范](10_Assessment_and_Submission.md) |
+| 记录实验与 AI 协作过程 | [学习记录模板](11_Learning_Log_Template.md) |
+| 解决环境与常见问题 | [FAQ](09_FAQ.md) |
+| 深入阅读专题 | [Reading Center](../reading/README.md) |
+| 运行完整实验 | [Experiments](../experiments/README.md) |
 
-✅ 掌握 GitHub 科研开发流程
-
-✅ 熟悉 Python / Transformers / Hugging Face
-
-✅ 使用主流 Vision Language Models
-
-✅ 开展 Document AI 实验
-
-✅ 开展 AI 模型后训练(Post Training)实验
-
-✅ 完成 AI 模型测试、评测和分析
-
-✅ 独立开展 AI 科研实验
-
-
----
-
-# 🗺️ 推荐学习路线
-
-
-建议按照以下顺序学习。
-
----
-
-# 🛠️ Stage 0：掌握必备技能
-
-
-➡️ [官网学习必备技能](../resources/official-sources.md)
-
----
-
-# 🛠️ Stage 1：AI开发基础环境
-
-
-学习人工智能研究必须掌握的基础工具。
-
-
-## Git 与 GitHub
-
-学习：
-
-- Git 基础操作
-- GitHub代码管理
-- 科研项目协作
-
-
-➡️ [Git 与 GitHub](01_Git_and_GitHub.md)
-
----
-
-## Python 开发环境
-
-
-学习：
-
-- Python环境配置
-- Conda管理
-- AI开发环境搭建
-
-
-➡️ [Python 开发环境](02_Python_Environment.md)
-
----
-
-## Hugging Face
-
-
-学习：
-
-- Model Hub
-- Dataset Hub
-- Transformers生态
-
-
-➡️ [Hugging Face](03_HuggingFace.md)
-
-
-
----
-
-## Kaggle
-
-
-学习：
-
-- GPU Notebook
-- 数据分析
-- AI实验环境
-
-
-➡️ [Kaggle实践环境](04_Kaggle.md)
-
-
-
----
-
-## Transformers
-
-
-学习：
-
-- Transformers框架
-- 模型加载
-- 推理流程
-
-
-➡️ [Transformers基础](05_Transformers.md)
-
----
-
-# 🧠 Stage 2：Foundation Models
-
-
-学习现代人工智能基础模型。
-
-
-主要内容：
-
-| 内容 | 说明 |
-|-|-|
-| Vision Language Models | 多模态大模型基础 |
-| Qwen-VL | 通用视觉语言模型 |
-| Docling | 文档解析模型 |
-
-
-课程：
-
-- [Qwen3.5-VL-0.8B模型实践](06-1_Qwen3.5-VL-0.8B.md)
-
-- [Docling文档解析模型](06-2_Docling.md)
-
----
-
-# 📄 Stage 3：Document AI
-
-
-学习多模态文档智能技术。
-
-
-主要内容：
-
-- 文档理解
-- OCR
-- 文档解析
-- Layout Analysis
-- 表格理解
-- Document VLM
-
-课程：
-
-➡️ [Document AI简介](07_Doc_AI.md)
-
----
-
-# 📄 Stage 4：Qwen3.5-VL 后训练（Post-Training）
-
-学习 Qwen3.5-VL 多模态模型的后训练（Post-Training）技术，掌握实验室当前统一采用的训练框架、微调方法及实验管理工具。
-
-主要内容：
-
-- MS-SWIFT 训练框架
-- Qwen3.5 Best Practice
-- LoRA / QLoRA 微调
-- SFT（Supervised Fine-Tuning）
-- GRPO（Group Relative Policy Optimization）
-- Weights & Biases（实验管理）
-- Evaluation（模型评测）
-
-课程：
-
-➡️ [Qwen3.5-VL 后训练学习](08_Post-Training.md)
-
----
-
-
-# 🔬 Stage 5：科研项目实践
-
-
-通过完整项目训练科研能力。
-
----
-
-## First Experiment
-
-
-第一个完整科研项目实验流程：
-
-包括：
-
-- 数据准备
-- 模型部署
-- 实验设计
-- Benchmark评测
-
-
----
-
-# 🧪 Experiment 01
-
-
-完整实验案例指导：
-
-
-➡️ [Experiment 01](../experiments/Experiment_01/README.md)
-
-
-
----
-
-# ❓ FAQ
-
-
-学习过程中常见问题：
-
-
-➡️ [FAQ](09_FAQ.md)
-
-
-
----
-
-# 📅 推荐学习计划
-
-
-| 周次 | 内容 |
-|-|-|
-| Week 1 | GitHub + Python环境 |
-| Week 2 | Hugging Face + Transformers |
-| Week 3 | Foundation Models |
-| Week 4 | Document AI |
-| Week 5 | Post Training |
-| Week 6+ | 第一个科研实验 |
-
-
----
-
-# 🎓 学习原则
-
-
-本学习中心坚持：
-
-
-## Official First
-
-优先学习官方文档。
-
-
-## Practice First
-
-所有知识必须通过代码验证。
-
-
-## Research Oriented
-
-最终目标：
-
-> 从学习者成长为人工智能科研人员。
-
-
----
-
-# 🚀 下一步
-
-
-完成 Learning 模块后，建议进入：
-
-
-📖 [进入 Reading Center](../reading/README.md)
-
-阅读经典论文和技术报告
-
-
-↓
-
-💻  [进入 Tutorials](../tutorials/README.md)
-
-AI模型实验自学教程
-
-
-↓
-
-🔬  [进入 Experiments](08_Experiments/README.md)
-
-开展实验研究工作
-
-
-
----
-
-Last Updated: 2026-07-12
+最后更新：2026-08-07

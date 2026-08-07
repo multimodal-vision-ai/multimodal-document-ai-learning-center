@@ -382,5 +382,5 @@ Clone 到本地。
 
 完成后，你将拥有完整的 AI 开发环境。
 
-[上一章](00_Lab_Introduction.md){ .md-button }    [下一章](02_Python_Environment.md){ .md-button }
+[返回课程入口](README.md){ .md-button }    [下一章](02_Python_Environment.md){ .md-button }
 

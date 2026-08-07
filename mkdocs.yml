@@ -1,245 +1,97 @@
-site_name: Multimodal Vision AI Learning Center
-site_description: Open Learning Platform for Multimodal Vision AI
-site_author: Guoping Tan
-
+site_name: 多模态文档智能学习中心
+site_description: Multimodal Document AI Learning Center — 面向初学者的可复现学习平台
+site_author: Multimodal Vision AI Lab
 site_url: https://multimodal-vision-ai.github.io/multimodal-document-ai-learning-center/
 
 repo_name: multimodal-vision-ai/multimodal-document-ai-learning-center
 repo_url: https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center
-
+edit_uri: edit/dev/docs/
 
 theme:
-
   name: material
-
   language: zh
-
-
   features:
-
-    # 页面导航体验
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
     - navigation.sections
-    - navigation.expand
     - navigation.top
-
-    # 文档体验
     - toc.follow
     - search.highlight
     - search.suggest
-
-    # Github体验
     - content.code.copy
     - content.action.edit
-
-
   icon:
-
     repo: fontawesome/brands/github
 
-
-
 plugins:
-
-  - search
-
-
+  - search:
+      lang:
+        - zh
+        - en
 
 markdown_extensions:
-
   - admonition
-
   - tables
-
   - toc:
       permalink: true
-
   - attr_list
-
   - md_in_html
-
   - pymdownx.details
-
   - pymdownx.superfences
-
   - pymdownx.highlight
-
   - pymdownx.inlinehilite
-
   - pymdownx.magiclink
-
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
 extra_javascript:
   - js/visitor.js
 
 nav:
-
-
-# ==========================
-# 首页
-# ==========================
-
-- 首页:
-    - 欢迎: index.md
-
-# ==========================
-# 关于平台
-# ==========================
-
-- About:
-
-    - 关于 Learning Center: about.md
-
-- Projects:
-
-    - 项目展示: projects/README.md
-
-# ==========================
-# 学习中心
-# ==========================
-
-- Learning:
-
-
-    - 学习路线:
-        - Learning Overview: learning/README.md
-        - 12周入门训练营: learning/00_12_Week_Bootcamp.md
-
-    - 开发环境:
-
-        - Git 与 GitHub:
-            learning/01_Git_and_GitHub.md
-
-        - Python:
-            learning/02_Python_Environment.md
-
-        - Hugging Face:
-            learning/03_HuggingFace.md
-
-        - Kaggle:
-            learning/04_Kaggle.md
-
-        - Transformers:
-            learning/05_Transformers.md
-
-    - 基础模型:
-
-        - Qwen3-VL:
-            learning/06-1_Qwen3.5-VL-0.8B.md
-
-        - Docling:
-            learning/06-2_Docling.md
-    - 文档智能:
-
-        - Document AI:
-            learning/07_Doc_AI.md
-
-    - 模型微调:
-
-        - Post Training:
-            learning/08_Post_Training.md
-
-    - FAQ:
-
-        - 常见问题:
-            learning/09_FAQ.md
-
-
-
-# ==========================
-# 论文阅读
-# ==========================
-
-- Reading:
-
-
-    - 阅读指南:
-        reading/README.md
-
-    - Surveys:
-
-        - Survey Papers:
-            reading/00_surveys.md
-
-    - Foundation Models:
-
-        - Foundation Models:
-            reading/01_foundation.md
-
-
-
-    - Vision Language Models:
-
-        - VLM:
-            reading/03_vlm.md
-
-
-
-    - Document AI:
-
-        - Document AI:
-            reading/02_document-ai.md
-
-        - DocTags:
-            reading/04_doctags.md
-
-
-
-    - Benchmarks:
-
-        - Benchmark:
-            reading/05_benchmark-2026.md
-
-
-# ==========================
-# 实践教程
-# ==========================
-
-- Tutorials:
-
-    - Tutorial Overview:
-        tutorials/README.md
-
-
-    - Tutorials:
-
-        - Qwen2.5-OminiDocbench Kaggle Notebook:
-            tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.md
-        - Qwen3.5-VL-SFT-GRPO Official Tutorial:
-            tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.md
-
-- Experiments:
-    - 实验概览:
-        experiments/README.md
-
-    - 实验一 Multimodal Docs AI 实验: 
-        experiments/Experiment_01/README.md
-
-# ==========================
-# 科研资源
-# ==========================
-
-- Resources:
-
-
-    - 资源总览:
-        resources/README.md
-    - 官方资源:
-        resources/official-sources.md
-    - 推荐课程:
-        resources/courses.md    
-    - 开源论文:
-        resources/papers.md
-    - 数据集:
-        resources/datasets.md
-    - 工具软件:
-        resources/tools.md
-
-
-copyright: |
-  Copyright © 2026 Multimodal Vision AI Lab.
-  All rights reserved.
+  - 首页:
+      - 欢迎: index.md
+      - 关于学习中心: about.md
+  - 12 周入门课程:
+      - 从这里开始: learning/README.md
+      - 课程总览与每周计划: learning/00_12_Week_Bootcamp.md
+      - 提交规范与评分量表: learning/10_Assessment_and_Submission.md
+      - 学习记录模板: learning/11_Learning_Log_Template.md
+      - 基础参考:
+          - Git 与 GitHub: learning/01_Git_and_GitHub.md
+          - Python 环境: learning/02_Python_Environment.md
+          - Hugging Face: learning/03_HuggingFace.md
+          - Kaggle: learning/04_Kaggle.md
+          - Transformers: learning/05_Transformers.md
+          - Qwen3.5-VL: learning/06-1_Qwen3.5-VL-0.8B.md
+          - Docling: learning/06-2_Docling.md
+          - Document AI: learning/07_Doc_AI.md
+          - 模型后训练: learning/08_Post_Training.md
+          - 常见问题: learning/09_FAQ.md
+  - 实践教程:
+      - 教程概览: tutorials/README.md
+      - Qwen2.5 OmniDocBench: tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.md
+      - Qwen3.5-VL SFT/GRPO: tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.md
+  - 实验:
+      - 实验概览: experiments/README.md
+      - Experiment 01: experiments/Experiment_01/README.md
+  - 论文阅读:
+      - 阅读指南: reading/README.md
+      - 综述: reading/00_surveys.md
+      - Foundation Models: reading/01_foundation.md
+      - Document AI: reading/02_document-ai.md
+      - Vision Language Models: reading/03_vlm.md
+      - DocTags: reading/04_doctags.md
+      - Benchmarks: reading/05_benchmark-2026.md
+  - 资源:
+      - 资源总览: resources/README.md
+      - 官方资源: resources/official-sources.md
+      - 推荐课程: resources/courses.md
+      - 论文: resources/papers.md
+      - 数据集: resources/datasets.md
+      - 工具: resources/tools.md
+  - 项目展示: projects/README.md
+
+copyright: Copyright &copy; 2026 Multimodal Vision AI Lab.

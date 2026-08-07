@@ -30,13 +30,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install MkDocs
-        run: |
-          pip install mkdocs
-          pip install mkdocs-material
+      - name: Install documentation dependencies
+        run: pip install -r requirements-docs.txt
 
-      - name: Build site
-        run: mkdocs build
+      - name: Build site (strict)
+        run: mkdocs build --strict
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
