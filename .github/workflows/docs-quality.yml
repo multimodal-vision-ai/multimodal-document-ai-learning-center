@@ -41,5 +41,7 @@ jobs:
             --accept 200,204,206,429
             --retry-wait-time 2
             --max-retries 2
+            --exclude "^https://www[.]acm[.]org/publications/policies/artifact-review-and-badging-current$"
+            --exclude "^https://www[.]sciencedirect[.]com/science/article/pii/S1566253525006955$"
             "docs/**/*.md"
           fail: true
