@@ -1,302 +1,124 @@
-# Chapter 4：Kaggle
+# Kaggle Notebook：受限算力下的可复现实验
 
-# Kaggle for AI Research
+> **对应课程**：Week 2、Week 4、Week 8–10 的云端实验<br>
+> **目标**：创建一个可从头运行、无密钥泄漏、能导出结果的 GPU Notebook。
 
----
+Kaggle 提供托管 Notebook、数据挂载和有限 GPU 配额。它解决的是环境与算力入口，不会自动保证实验可复现。
 
-# 1. 学习目标
+## 官方学习入口
 
-完成本章学习后，你应该能够：
+- [Kaggle Notebooks](https://www.kaggle.com/docs/notebooks)（Notebook 基础）
+- [Efficient GPU usage](https://www.kaggle.com/docs/efficient-gpu-usage)（配额与资源管理）
+- [Kaggle API documentation](https://github.com/Kaggle/kaggle-api)（数据和 notebook CLI）
+- [Kaggle Models documentation](https://www.kaggle.com/docs/models)（模型资源）
 
-* 理解 Kaggle 在 AI 科研中的作用
-* 熟悉 Kaggle Notebook 开发环境
-* 使用免费 GPU 运行模型
-* 管理 Kaggle 数据集
-* 快速验证开源模型
-* 将 Kaggle 用作科研实验平台
+Kaggle 的 GPU 型号和配额可能随供给变化。课程只要求记录实际分配到的设备，不假定一定获得某个型号。
 
----
+## Notebook 最小结构
 
-# 2. 什么是 Kaggle？
+建议每个课程 Notebook 固定为以下段落：
 
-Kaggle 是全球最大的机器学习社区之一，也是 AI 研究人员常用的在线实验平台。
+1. **Objective**：本次只验证什么；
+2. **Environment**：Python、关键包、GPU 与 Git commit；
+3. **Configuration**：模型、数据 revision、seed 和参数；
+4. **Data check**：字段、样例、许可与 split；
+5. **Run**：最小推理或训练；
+6. **Evaluation**：指标和失败案例；
+7. **Export**：保存 prediction、metrics 与 metadata；
+8. **Limitations**：本次不能证明什么。
 
-官方网站：
+## 开始实验
 
-https://www.kaggle.com/
+### 1. 选择 Accelerator
 
-Kaggle 提供：
+仅在代码真正使用 GPU 时启用 accelerator。运行：
 
-* Notebook 在线开发环境
-* 免费 GPU 资源
-* 数据集托管
-* 机器学习竞赛
-* AI 社区交流
+```python
+import platform
+import sys
 
-对于实验室而言，Kaggle 的主要用途是**快速验证模型和开展实验**，而不是参加竞赛。
+import torch
 
----
-
-# 3. Kaggle 的主要组成
-
-Kaggle 包括以下几个核心模块。
-
-| 模块           | 功能     |
-| ------------ | ------ |
-| Notebooks    | 在线开发环境 |
-| Datasets     | 数据集管理  |
-| Models       | 模型共享   |
-| Competitions | 机器学习竞赛 |
-| Discussions  | 社区讨论   |
-
-本课程重点学习前三项。
-
----
-
-# 4. 为什么使用 Kaggle？
-
-相比本地环境，Kaggle 具有以下优势：
-
-* 无需配置复杂环境
-* 提供免费 GPU
-* 支持 Jupyter Notebook
-* 易于分享实验
-* 快速验证新模型
-* 方便开展 Benchmark
-
-对于科研初期，Kaggle 是验证想法的理想平台。
-
----
-
-# 5. Kaggle Notebook
-
-Notebook 是 Kaggle 最常用的功能。
-
-主要特点：
-
-* 在线运行 Python
-* 支持 GPU
-* 支持 Markdown
-* 支持可视化
-* 可直接加载 Dataset
-
-建议所有实验先在 Notebook 中验证，再迁移到本地。
-
----
-
-# 6. GPU 使用
-
-Kaggle 提供免费的 GPU 资源（具体型号可能随平台调整）。
-
-常见用途：
-
-* 模型推理
-* 模型微调
-* Benchmark
-* OCR 实验
-* Document AI 实验
-
-建议合理使用 GPU 时间，及时保存实验结果。
-
----
-
-# 7. Dataset 管理
-
-Kaggle Dataset 可用于：
-
-* 上传实验数据
-* 下载公开数据
-* 数据共享
-* Benchmark 数据管理
-
-建议数据保持清晰的目录结构，并附带说明文件。
-
----
-
-# 8. 实验室中的 Kaggle 使用方式
-
-Kaggle 主要承担以下任务：
-
-* 快速验证新模型
-* Benchmark 测试
-* OCR 推理
-* 多模型对比
-* 参数调优验证
-
-正式代码和文档仍统一管理在 GitHub。
-
----
-
-# 9. 推荐实验流程
-
-建议按照以下流程开展实验。
-
-```text
-阅读论文
-        │
-        ▼
-下载官方模型
-        │
-        ▼
-Kaggle Notebook 验证
-        │
-        ▼
-Benchmark 测试
-        │
-        ▼
-分析实验结果
-        │
-        ▼
-迁移到本地开发
+print("python:", sys.version)
+print("platform:", platform.platform())
+print("torch:", torch.__version__)
+print("cuda:", torch.cuda.is_available())
+if torch.cuda.is_available():
+    print("gpu:", torch.cuda.get_device_name(0))
 ```
 
-Kaggle 是实验验证平台，而不是长期开发平台。
+将输出保留在最终版本中，避免只写“T4/P100 等”。
 
----
+### 2. 安装最少依赖
 
-# 10. Notebook 编写规范
+把安装集中在一个 cell，并固定关键直接依赖。记录 Kaggle 镜像日期或 notebook version。不要反复升级整个环境。
 
-建议每个 Notebook 包含以下部分：
+### 3. 管理数据
 
-1. 实验目的
-2. 环境配置
-3. 数据准备
-4. 模型加载
-5. 推理过程
-6. 实验结果
-7. 结果分析
-8. 总结
+- 公开数据优先使用 Kaggle Dataset 或官方 Hub；
+- 记录 dataset ID、version、split 和 license；
+- 输入目录视为只读；
+- 输出写入工作目录并只保存必要结果；
+- 不上传私人文档或未授权材料。
 
-Notebook 应具有良好的可读性和可复现性。
+### 4. 管理 Secret
 
----
+Hugging Face、W&B 等 token 使用 Kaggle Secrets。代码只读取环境变量，不打印 token，不将 token 写入输出或 notebook metadata。
 
-# 11. 推荐实验目录
+### 5. 固定随机性
 
-建议建立如下 Notebook 分类：
+至少设置并记录 Python、NumPy 和 PyTorch seed。即使设置 seed，GPU 运算也可能不是完全确定的，应在报告中说明。
+
+## 必做任务
+
+将 Week 2 的模型 demo 迁移到 Kaggle：
+
+1. Restart Session；
+2. Run All；
+3. 保存模型 ID/revision 与实际环境；
+4. 运行 3 个正常样例和 1 个失败样例；
+5. 导出 `predictions.jsonl`、`run-metadata.yaml` 和简短报告；
+6. 生成只读分享链接，并确认未暴露 Secret。
+
+## 提交物
 
 ```text
-notebooks/
-
-├── qwen/
-├── smoldocling/
-├── benchmark/
-├── ocr/
-├── experiments/
-└── tutorials/
+week02/
+├── kaggle-notebook.ipynb
+├── kaggle-link.md
+├── run-metadata.yaml
+├── predictions.jsonl
+└── result.md
 ```
 
-便于统一管理实验。
+外部 Kaggle 链接不能替代仓库中的 notebook、配置和结果证据。
 
----
+## 验收清单
 
-# 12. 推荐学习资源
+- [ ] Restart & Run All 成功；
+- [ ] 实际 GPU、环境和 notebook version 可追溯；
+- [ ] 模型与数据 revision 明确；
+- [ ] Secret 未出现在代码、输出或 Git；
+- [ ] 输出文件可下载并由报告引用；
+- [ ] GPU 会话使用完毕后及时停止；
+- [ ] 失败案例和配额限制被记录。
 
-## Kaggle 官网
+## 常见问题
 
-https://www.kaggle.com/
+### GPU 配额不足
 
----
+先确认是否可以用 CPU、小模型或更小样本完成学习目标。课程评分不以 GPU 小时和模型规模为依据。
 
-## Kaggle Code
+### 安装包后必须重启 Session
 
-https://www.kaggle.com/code
+记录实际解决步骤，并在最终 Notebook 中把环境准备放在最前面；再次 Run All 验证不存在隐藏状态。
 
----
+### Notebook 链接可访问但无法复现
 
-## Kaggle Datasets
+通常缺少外部数据、Secret、固定 revision 或输出保存步骤。使用验收清单逐项补齐。
 
-https://www.kaggle.com/datasets
+## 下一步
 
----
+完成[Transformers 基础](05_Transformers.md)，再运行[Qwen3.5 多模态推理](06-1_Qwen3.5-VL-0.8B.md)。
 
-## Kaggle Learn
-
-https://www.kaggle.com/learn
-
----
-
-# 13. 本章实践
-
-请完成以下任务。
-
-## 任务一
-
-注册 Kaggle 账号。
-
----
-
-## 任务二
-
-创建第一个 Notebook。
-
----
-
-## 任务三
-
-开启 GPU。
-
----
-
-## 任务四
-
-运行官方示例代码。
-
----
-
-## 任务五
-
-下载一个公开数据集。
-
----
-
-## 任务六
-
-完成一次模型推理实验。
-
----
-
-# 14. 实验室规范
-
-实验室统一要求：
-
-* Notebook 命名规范
-* 每次实验记录目的
-* 保存关键结果
-* 实验结束及时备份
-* 正式代码同步至 GitHub
-
-Kaggle 用于实验，GitHub 用于管理。
-
----
-
-# 15. 本章总结
-
-完成本章后，你应该能够：
-
-* 熟练使用 Kaggle Notebook
-* 使用免费 GPU 开展实验
-* 管理数据集
-* 快速验证 AI 模型
-* 为后续课程做好实验准备
-
----
-
-# 下一章
-
-下一章学习：
-
-> **Chapter 5：Transformers**
-
-主要内容：
-
-* Hugging Face Transformers 框架
-* AutoModel、AutoTokenizer、AutoProcessor
-* Pipeline 使用
-* 模型加载流程
-* 多模态模型推理
-* 实验室统一推理框架
-
-完成后，你将掌握当前主流 AI 模型的加载与推理方式，为运行 Qwen3.5-VL、SmolDocling 等模型打下坚实基础。
-
-[上一章](03_HuggingFace.md){ .md-button }    [下一章](05_Transformers.md){ .md-button }
+最后更新：2026-08-07

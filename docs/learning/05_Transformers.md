@@ -1,332 +1,122 @@
-# Chapter 5：Transformers
+# Transformers：从 Model Card 到可复现推理
 
-# Hugging Face Transformers
+> **对应课程**：[Week 2–4](00_12_Week_Bootcamp.md)<br>
+> **目标**：理解 processor/tokenizer、model、generation 与 pipeline 的职责，并保存完整推理证据。
 
----
+Transformers 提供统一模型 API，但不同模型仍可能需要不同的加载类、chat template、输入格式和版本。代码应从目标模型的官方 Model Card 出发，而不是从随机博客复制。
 
-# 1. 学习目标
+## 官方学习入口
 
-完成本章学习后，你应该能够：
+- [Transformers installation](https://huggingface.co/docs/transformers/installation)（当前安装方式）
+- [Transformers quick tour](https://huggingface.co/docs/transformers/quicktour)（Auto classes、pipeline 与 Trainer）
+- [Pipeline tutorial](https://huggingface.co/docs/transformers/pipeline_tutorial)（快速推理）
+- [Auto Classes](https://huggingface.co/docs/transformers/model_doc/auto)（按 config 选择实现）
+- [Generation](https://huggingface.co/docs/transformers/main_classes/text_generation)（生成参数）
+- [Multimodal chat templates](https://huggingface.co/docs/transformers/chat_templating_multimodal)（视觉语言输入）
 
-* 理解 Transformers 框架的作用
-* 熟悉 Hugging Face Transformers 生态
-* 掌握模型加载与推理流程
-* 理解 Tokenizer 与 Processor 的区别
-* 独立运行主流开源模型
-* 为后续学习 Qwen3.5-VL 和 SmolDocling 做好准备
+## 核心组件
 
----
+| 组件 | 作用 | 常见错误 |
+| --- | --- | --- |
+| Tokenizer | 文本与 token 转换 | prompt/template 不匹配 |
+| Image Processor | 图像缩放、归一化等 | 输入格式或分辨率错误 |
+| Processor | 组合文本与多模态预处理 | 把别的模型示例直接套用 |
+| Model | 前向计算与生成 | 加载类、dtype、device 不匹配 |
+| Generation Config | 控制输出过程 | 多个参数同时变化导致不可解释 |
+| Pipeline | 高层任务接口 | 忽略底层输入和默认参数 |
 
-# 2. 什么是 Transformers？
+## 两种推理路径
 
-Transformers 是 Hugging Face 开源的深度学习框架，是目前 AI 模型开发和推理的事实标准。
+### Pipeline：先验证任务是否能跑通
 
-官方网站：
+适合最小 smoke test。使用目标 Model Card 当前给出的 pipeline task 和示例，保存输入、输出及默认配置。
 
-https://huggingface.co/docs/transformers
-
-支持：
-
-* 大语言模型（LLM）
-* 多模态模型（VLM）
-* 图像模型（Vision）
-* 语音模型（Speech）
-* 文档理解模型（Document AI）
-
----
-
-# 3. 为什么学习 Transformers？
-
-目前绝大多数开源 AI 模型均基于 Transformers 开发。
-
-例如：
-
-* Qwen
-* Llama
-* InternVL
-* Florence
-* SmolVLM
-* Molmo
-* Phi
-
-掌握 Transformers 后，可以快速上手大多数模型。
-
----
-
-# 4. Transformers 生态
-
-主要组件如下：
-
-| 组件                     | 功能      |
-| ---------------------- | ------- |
-| AutoTokenizer          | 文本编码    |
-| AutoProcessor          | 多模态输入处理 |
-| AutoModel              | 加载基础模型  |
-| AutoModelForCausalLM   | 文本生成模型  |
-| AutoModelForVision2Seq | 多模态模型   |
-| Pipeline               | 快速推理接口  |
-
----
-
-# 5. 模型加载流程
-
-典型流程如下：
+### Auto classes：理解并控制流程
 
 ```text
-下载模型
-    │
-    ▼
-加载 Processor
-    │
-    ▼
-加载 Model
-    │
-    ▼
-准备输入
-    │
-    ▼
-模型推理
-    │
-    ▼
-结果解码
+model ID + revision
+        ↓
+AutoProcessor / AutoTokenizer
+        ↓
+AutoModel* + device/dtype
+        ↓
+prepare inputs
+        ↓
+generate / forward
+        ↓
+decode + save raw output
 ```
 
-理解这一流程，是学习所有模型的基础。
+加载类必须来自目标模型官方示例。不要凭名称猜测 `AutoModelFor...`。
 
----
+## 推理实验规范
 
-# 6. Tokenizer 与 Processor
+每次运行记录：
 
-## Tokenizer
+```yaml
+model_id: organization/model-name
+revision: <commit hash>
+task: <pipeline task>
+python: <version>
+transformers: <version>
+torch: <version>
+device: <device>
+dtype: <dtype>
+seed: 42
+generation:
+  max_new_tokens: <value>
+  do_sample: <true/false>
+```
 
-主要用于文本模型。
+对于生成式模型，只解码新生成部分，并保存未经人工修饰的原始输出。
 
-负责：
+## 必做任务
 
-* 文本切分
-* Token 编码
-* Token 解码
+1. 选择一个小型官方模型；
+2. 先使用 pipeline 完成一次推理；
+3. 再使用官方 Auto classes 示例完成相同输入；
+4. 比较两种路径的输出和默认参数；
+5. 固定其他条件，只修改一个 generation 参数；
+6. 加入一个无效输入，记录错误处理；
+7. 保存环境、运行时间和模型 revision。
 
-适用于：
-
-* GPT
-* Qwen（文本）
-* Llama
-
----
-
-## Processor
-
-主要用于多模态模型。
-
-负责：
-
-* 图像处理
-* 文本处理
-* 多模态输入组织
-
-适用于：
-
-* Qwen-VL
-* SmolDocling
-* Florence
-* InternVL
-
-对于 Document AI，Processor 是重点。
-
----
-
-# 7. 常见模型加载方式
-
-文本模型：
-
-* AutoTokenizer
-* AutoModelForCausalLM
-
-多模态模型：
-
-* AutoProcessor
-* AutoModelForVision2Seq（或模型官方推荐接口）
-
-学习时应优先参考模型官方文档。
-
----
-
-# 8. Pipeline
-
-Transformers 提供 Pipeline 用于快速体验模型。
-
-常见任务包括：
-
-* 文本生成
-* 图像分类
-* OCR
-* 图像描述
-* 文档理解
-
-科研开发中，更推荐直接使用官方示例代码，以便灵活控制推理流程。
-
----
-
-# 9. 实验室统一推理流程
-
-实验室建议采用统一的模型推理流程。
+## 提交物
 
 ```text
-下载模型
-        │
-        ▼
-加载 Processor
-        │
-        ▼
-加载 Model
-        │
-        ▼
-读取图片
-        │
-        ▼
-构建 Prompt
-        │
-        ▼
-模型推理
-        │
-        ▼
-保存结果
-        │
-        ▼
-结果分析
+week02/
+├── transformers-demo.ipynb
+├── run-metadata.yaml
+├── predictions.jsonl
+├── comparison.md
+└── failure-case.md
 ```
 
-后续所有实验均遵循这一流程。
+## 验收清单
 
----
+- [ ] 加载类与输入格式来自目标模型官方 Model Card；
+- [ ] 模型 ID 和 revision 准确；
+- [ ] pipeline 与 Auto classes 都能从头运行；
+- [ ] processor、model、generation 和 decode 的职责解释正确；
+- [ ] 对照实验只改变一个因素；
+- [ ] 保存原始 prediction 与异常案例；
+- [ ] 不使用未解释的 `trust_remote_code=True`；必须使用时记录来源和风险。
 
-# 10. 推荐学习模型
+## 常见问题
 
-建议按以下顺序学习。
+### 模型加载成功但输入时报错
 
-1. Qwen3.5-VL
-2. SmolDocling
-3. Florence
-4. InternVL
-5. Molmo
+检查 processor/chat template 是否属于同一模型，消息中的字段类型是否符合 Model Card，而不是只检查 tensor shape。
 
-完成后，可进一步学习其他多模态模型。
+### 输出包含输入 prompt
 
----
+生成式模型常返回完整序列。根据官方示例用输入 token 长度切出新生成部分，再 decode。
 
-# 11. 推荐学习资源
+### dtype 或 device 设置导致报错
 
-## Transformers 官方文档
+从官方最小配置开始，根据实际硬件逐项修改。记录每次唯一改动，避免同时改变量化、dtype、device map 和 attention backend。
 
-https://huggingface.co/docs/transformers
+## 下一步
 
----
+进入[Qwen3.5-0.8B 多模态推理](06-1_Qwen3.5-VL-0.8B.md)，将相同记录规范应用到文档图像。
 
-## Transformers GitHub
-
-https://github.com/huggingface/transformers
-
----
-
-## Hugging Face Model Hub
-
-https://huggingface.co/models
-
----
-
-## Hugging Face Documentation
-
-https://huggingface.co/docs
-
----
-
-# 12. 本章实践
-
-请完成以下任务。
-
-## 任务一
-
-安装最新版 Transformers。
-
----
-
-## 任务二
-
-阅读 Transformers 官方文档首页。
-
----
-
-## 任务三
-
-阅读 AutoProcessor 文档。
-
----
-
-## 任务四
-
-阅读 AutoModel 文档。
-
----
-
-## 任务五
-
-运行一个官方示例模型。
-
----
-
-## 任务六
-
-总结模型加载流程，并绘制自己的流程图。
-
----
-
-# 13. 实验室规范
-
-实验室统一要求：
-
-* 优先阅读官方文档
-* 优先使用官方示例代码
-* 保持依赖版本一致
-* 记录模型版本
-* 记录实验环境
-
-保证实验具有良好的可复现性。
-
----
-
-# 14. 本章总结
-
-完成本章后，你应该能够：
-
-* 理解 Transformers 的整体架构
-* 区分 Tokenizer 与 Processor
-* 掌握模型加载流程
-* 熟悉多模态模型推理过程
-* 为学习 Qwen3.5-VL 做好准备
-
----
-
-# 下一章
-
-下一章学习：
-
-> **Chapter 6：Foundation Models**
-
-主要内容：
-
-* Qwen 模型家族
-* Qwen3.5-VL 架构
-* 模型下载
-* 官方 Demo
-* 图像理解
-* OCR 能力
-* 文档理解
-* Prompt 编写
-* 源码阅读
-* 实验室实践规范
-
-完成后，你将能够独立运行 Qwen3.5-VL-0.8B，并开展 Document AI 相关实验。
-
-[上一章](04_Kaggle.md){ .md-button }    [下一章](06-1_Qwen3.5-VL-0.8B.md){ .md-button }
-
+最后更新：2026-08-07
