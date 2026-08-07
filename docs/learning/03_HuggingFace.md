@@ -1,379 +1,135 @@
-# Chapter 3：Hugging Face
+# Hugging Face Hub：选择并记录模型与数据
 
-# Hugging Face for AI Research
+> **对应课程**：[Week 2](00_12_Week_Bootcamp.md#week-2)<br>
+> **目标**：不依赖“模型名称印象”，从官方页面判断一个模型或数据集是否适用于实验。
 
----
+Hugging Face Hub 承载模型、数据集、Spaces 和版本历史。课程重点不是浏览排行榜，而是阅读 card、确认来源、锁定 revision，并保存可复现实验元数据。
 
-# 1. 学习目标
+## 学习目标
 
-完成本章学习后，你应该能够：
+- 区分 model repository、dataset repository、Space 与 library documentation；
+- 阅读 Model Card 和 Dataset Card；
+- 检查模型 ID、revision、license、intended use 与 limitations；
+- 记录下载来源与缓存，而不是把大型权重提交到 Git。
 
-* 理解 Hugging Face 平台的作用
-* 熟悉 Hugging Face 生态系统
-* 下载和使用开源模型
-* 下载和管理数据集
-* 阅读 Model Card 与 Dataset Card
-* 使用 Transformers 加载模型
-* 掌握实验室模型管理方式
+## 官方学习入口
 
----
+- [Hugging Face Hub documentation](https://huggingface.co/docs/hub/)（Hub 总览）
+- [Model Cards](https://huggingface.co/docs/hub/model-cards)（用途、限制、训练与评测信息）
+- [Dataset Cards](https://huggingface.co/docs/hub/datasets-cards)（来源、许可、偏差与结构）
+- [Downloading files](https://huggingface.co/docs/huggingface_hub/guides/download)（下载与 revision）
+- [Transformers quick tour](https://huggingface.co/docs/transformers/quicktour)（调用模型）
+- [Datasets quickstart](https://huggingface.co/docs/datasets/quickstart)（加载数据）
 
-# 2. 什么是 Hugging Face？
+## Model Card 阅读清单
 
-Hugging Face 是目前全球最大的 AI 开源模型社区。
+打开一个模型页面，不运行代码，先回答：
 
-主要提供：
+| 字段 | 必须记录的内容 |
+| --- | --- |
+| Model ID | `organization/model-name` 的准确形式 |
+| Revision | commit hash 或明确 tag |
+| Task | 模型实际支持的 pipeline/task |
+| License | 是否允许课程、研究与再分发 |
+| Inputs/Outputs | 输入格式、prompt/template、输出形式 |
+| Requirements | library、版本、硬件与内存 |
+| Intended use | 推荐使用场景 |
+| Limitations | 偏差、语言、输入长度、失败风险 |
+| Evaluation | 数据集、指标和比较条件 |
 
-* 大模型（LLM）
-* 多模态模型（VLM）
-* 数据集（Datasets）
-* 模型演示（Spaces）
-* Transformers 开发框架
+没有 Model Card、来源不明或许可不清的模型，不作为课程默认模型。
 
-目前绝大多数 AI 模型都会首先发布到 Hugging Face。
+## Dataset Card 阅读清单
 
-官方网站：
+- 数据是谁创建的、来自哪里？
+- license 和使用限制是什么？
+- train/validation/test 如何划分？
+- 字段、语言、模态和样本数量是什么？
+- 是否包含个人信息或敏感内容？
+- 已知偏差和质量问题是什么？
+- 数据版本如何锁定？
 
-https://huggingface.co/
+!!! warning "Viewer 不是完整数据审计"
+    Dataset Viewer 适合快速理解字段和样例，但不能替代 license、数据生成过程、隐私和划分检查。
 
----
+## Week 2 必做任务
 
-# 3. Hugging Face 生态
+### 任务 A：模型选择
 
-Hugging Face 主要由以下几个部分组成。
+选择一个能在现有资源上运行的小模型，再选择一个视觉/多模态候选模型，分别填写 Model Card 阅读清单。只要求运行第一个模型；第二个模型用于比较输入形式、资源需求、license 与限制。
 
-| 模块           | 功能     |
-| ------------ | ------ |
-| Models       | 模型中心   |
-| Datasets     | 数据集中心  |
-| Spaces       | 在线演示   |
-| Transformers | 模型开发框架 |
-| PEFT         | 参数高效微调 |
-| Diffusers    | 图像生成模型 |
+### 任务 B：最小推理
 
-对于本课程，重点关注前三项。
+按照模型官方页面的当前示例完成推理。保存：
 
----
+- model ID 与 revision；
+- library 与版本；
+- 输入与原始输出；
+- generation config；
+- 运行时间和设备；
+- 一项失败或限制。
 
-# 4. Model Hub
+### 选做任务：数据集检查
 
-Model Hub 是 Hugging Face 最重要的功能。
+如果本周仍有时间，选择一个公开 Document AI 数据集，只读取小规模 split/sample，填写 Dataset Card 阅读清单。不要下载不必要的完整大型数据集。
 
-官方网站：
+## 实验元数据模板
 
-https://huggingface.co/models
-
-主要内容包括：
-
-* 大语言模型（LLM）
-* 多模态模型（VLM）
-* OCR 模型
-* Embedding 模型
-* Reranker 模型
-
-建议优先阅读官方发布的模型。
-
----
-
-# 5. Dataset Hub
-
-Dataset Hub 提供大量公开数据集。
-
-官方网站：
-
-https://huggingface.co/datasets
-
-主要包括：
-
-* OCR 数据集
-* 文档理解数据集
-* 图像数据集
-* NLP 数据集
-* 多模态数据集
-
-建议下载数据集时优先阅读 Dataset Card。
-
----
-
-# 6. Spaces
-
-Spaces 提供在线模型演示。
-
-官方网站：
-
-https://huggingface.co/spaces
-
-很多模型都可以直接在线体验，无需本地部署。
-
-建议先体验模型，再下载代码。
-
----
-
-# 7. Model Card
-
-每个模型都有对应的 Model Card。
-
-阅读顺序建议如下：
-
-1. 模型简介
-2. 模型能力
-3. 使用方法
-4. 推理示例
-5. 模型限制
-6. License
-
-阅读 Model Card 是学习新模型的第一步。
-
----
-
-# 8. Dataset Card
-
-每个数据集都有对应的 Dataset Card。
-
-重点关注：
-
-* 数据来源
-* 数据规模
-* 数据格式
-* License
-* 使用示例
-
-不要直接下载数据集而不阅读说明。
-
----
-
-# 9. 实验室重点关注模型
-
-建议重点关注以下组织。
-
-## Qwen
-
-https://huggingface.co/Qwen
-
-主要学习：
-
-* Qwen3
-* Qwen3-VL
-* Qwen 系列模型
-
----
-
-## docling-project
-
-https://huggingface.co/docling-project
-
-主要学习：
-
-* SmolDocling
-* Docling Models
-
----
-
-## Microsoft
-
-https://huggingface.co/microsoft
-
-重点关注：
-
-* Florence
-* Phi
-* Document Intelligence
-
----
-
-## Hugging Face
-
-https://huggingface.co/huggingface
-
-学习官方示例和工具。
-
----
-
-# 10. 实验室重点关注数据集
-
-建议重点学习：
-
-* DocLayNet
-* PubLayNet
-* OmniDocBench
-* DocVQA
-* OCRBench
-
-了解：
-
-* 数据格式
-* 标注方式
-* 下载方法
-
----
-
-# 11. Transformers
-
-官方文档：
-
-https://huggingface.co/docs/transformers
-
-主要学习：
-
-* AutoTokenizer
-* AutoProcessor
-* AutoModel
-* Pipeline
-
-后续课程将详细介绍。
-
----
-
-# 12. 推荐学习顺序
-
-建议按照以下顺序学习。
-
-```text
-Hugging Face 官网
-        │
-        ▼
-Model Hub
-        │
-        ▼
-Dataset Hub
-        │
-        ▼
-Model Card
-        │
-        ▼
-Transformers
-        │
-        ▼
-官方 Demo
+```yaml
+model:
+  id: organization/model-name
+  revision: <commit hash>
+  license: <license>
+dataset:
+  id: organization/dataset-name
+  revision: <commit hash>
+  split: validation
+runtime:
+  python: <version>
+  library: <name and version>
+  device: <CPU/GPU>
+  seed: 42
 ```
 
----
+## 提交物
 
-# 13. 实验室使用规范
+```text
+week02/
+├── model-comparison.md
+├── model-demo.ipynb
+├── dataset-review.md
+├── run-metadata.yaml
+└── result.md
+```
 
-实验室统一规定：
+Notebook 必须 Restart & Run All，并避免把 token、缓存路径或私人文件写入输出。
 
-GitHub：
+## 自主检查
 
-* 保存源码
-* 保存文档
+- [ ] 模型和数据使用准确的 `organization/name`；
+- [ ] revision、license 和限制均被记录；
+- [ ] 至少比较两个候选模型，而非只选择热门模型；
+- [ ] 推理输入和原始输出可对应；
+- [ ] Notebook 不依赖隐藏状态；
+- [ ] 大型权重和数据未进入 Git；
+- [ ] 学生能够说明 Model Card 与 Dataset Card 的作用。
 
-Hugging Face：
+## 常见问题
 
-* 下载模型
-* 下载数据集
-* 管理模型版本（后续课程）
+### 模型页面代码无法运行
 
-不要将大型模型文件上传至 GitHub。
+检查是否读取了当前 revision 的 Model Card、安装版本是否匹配、模型是否 gated，以及输入格式是否使用对应 processor/chat template。记录原始错误再排查。
 
----
+### 是否必须登录？
 
-# 14. 推荐学习资源
+公开资源通常可匿名访问；gated 或私有资源需要授权。Token 使用环境变量、CLI 登录或平台 Secret，不写入代码。
 
-## Hugging Face 官网
+### 为什么一定记录 revision？
 
-https://huggingface.co/
+同一个模型 ID 的默认分支可能更新。Revision 将实验绑定到明确文件状态，便于复现和解释后续差异。
 
----
+## 下一步
 
-## Models
+进入[Transformers 基础](05_Transformers.md)，再完成[Qwen3.5-0.8B 多模态推理](06-1_Qwen3.5-VL-0.8B.md)。
 
-https://huggingface.co/models
-
----
-
-## Datasets
-
-https://huggingface.co/datasets
-
----
-
-## Spaces
-
-https://huggingface.co/spaces
-
----
-
-## Transformers
-
-https://huggingface.co/docs/transformers
-
----
-
-## PEFT
-
-https://huggingface.co/docs/peft
-
----
-
-# 15. 本章实践
-
-请完成以下任务。
-
-## 任务一
-
-注册 Hugging Face 账号。
-
----
-
-## 任务二
-
-浏览 Qwen 官方主页。
-
----
-
-## 任务三
-
-浏览 Docling 官方主页。
-
----
-
-## 任务四
-
-阅读一个 Model Card。
-
----
-
-## 任务五
-
-阅读一个 Dataset Card。
-
----
-
-## 任务六
-
-体验一个 Hugging Face Space。
-
----
-
-# 16. 本章总结
-
-完成本章后，你应该能够：
-
-* 熟悉 Hugging Face 平台
-* 查找并下载模型
-* 查找并下载数据集
-* 阅读官方模型说明
-* 理解实验室模型管理方式
-
----
-
-# 下一章
-
-下一章学习：
-
-> **Chapter 4：Kaggle**
-
-主要内容：
-
-* Kaggle 平台介绍
-* Notebook 使用
-* GPU 使用
-* Dataset 管理
-* AI 模型快速验证
-* 实验室 Kaggle 开发规范
-
-完成后，你将能够利用 Kaggle 快速完成模型验证和实验开发，为后续学习 Qwen3.5-VL 和 SmolDocling 做好准备。
-
-[上一章](02_Python_Environment.md){ .md-button }       [下一章](04_Kaggle.md){ .md-button }
-
+最后更新：2026-08-07

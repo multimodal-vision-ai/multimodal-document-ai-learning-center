@@ -1,184 +1,145 @@
-<div align="center">
+---
+hide:
+  - toc
+---
 
-<!-- ========================================================= -->
-<!-- Logo -->
-<!-- ========================================================= -->
+<div class="mv-home" markdown>
 
-<img src="assets/figs/prism_brain_logo_animated.svg"
-     width="520"
-     alt="MV-AI Lab Logo">
+<div class="mv-hero" markdown>
 
-<br><br>
+# 多模态视觉AI学习中心
 
-<!-- ========================================================= -->
-<!-- Motto -->
-<!-- ========================================================= -->
-
-<p style="margin:0;line-height:1.6;">
-  <i style="font-family:'KaiTi','STKaiti',serif;
-            color:#444;
-            font-size:1.15em;">
-    “目贵明，耳贵聪，心贵智。”
-  </i>
-  <br>
-  <span style="color:#777;font-size:0.90em;">
-    —— <b>《管子·九守》</b> ｜ 赋予机器明辨之目、聪慧之耳与思考之魂
-  </span>
-</p>
-
-<br>
-
-<!-- ========================================================= -->
-<!-- Slogan -->
-<!-- ========================================================= -->
-
-<p style="margin:0;font-size:1.08em;">
-<b>🚀 Explore AI · Build AI · Create the Future</b>
-</p>
-
-<br>
-
-<!-- ========================================================= -->
-<!-- Navigation -->
-<!-- ========================================================= -->
-
-<p style="margin:0;">
-
-<a href="resources/official-sources"
-   style="font-weight:600;text-decoration:none;">
-📖 Start Learning
-</a>
-
-&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;
-
-<a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new"
-   target="_blank"
-   style="font-weight:600;text-decoration:none;">
-💬 Feedback
-</a>
-
-</p>
-
-<br>
-
-<!-- ========================================================= -->
-<!-- Statistics -->
-<!-- ========================================================= -->
-
-<p style="margin:0;font-size:0.95em;line-height:1.8;">
-
-👥 <b>Visitors</b>
-
-<span id="visitor-count">Loading...</span>
-
-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-
-⭐ <b>Stars</b>
-
-<span id="github-stars">Loading...</span>
-
-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-
-🍴 <b>Forks</b>
-
-<span id="github-forks">Loading...</span>
-
-&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-
-<a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues/new"
-   target="_blank">
-
-<img src="https://img.shields.io/badge/Feedback-Issues-blue?style=flat-square&logo=github"
-     alt="Feedback">
-
-</a>
-
-</p>
-
+<div class="mv-hero__media">
+  <img src="assets/figs/prism_brain_logo_square_animated.svg" width="360" alt="Multimodal Vision AI Learning Center">
+  <p><strong>Learn · Build · Measure · Improve · Explain</strong></p>
+  <p>从文档理解出发，探索图像、视频与多模态智能</p>
 </div>
----
-
-## 🎯 核心聚焦 (Core Pillars)
-
-| 📷 Vision AI | 📄 Document AI |
-| :--- | :--- |
-| **让机器拥有“视觉”：**<br>图像分类、目标检测、视觉推理及分析 | **理解人类创造的文档：**<br>文档解析、OCR 识别、表格理解与知识抽取等 |
-| **🧠 Vision Language Models** | **🤖 AI Applications** |
-| **探索新一代多模态大模型：**<br>Qwen-VL、DeepSeek-VL、Prompt Engineering等 | **构建真实场景应用：**<br>AI 助手、构建知识库、AI Agent 及垂直领域应用系统等 |
-
----
-
-## 🗺 学习探索路线图 (Roadmap)
-*从探索者成长为创造者的四个阶段*
-
-#### **📍Level 1: Explorer (基础)**
-- **掌握：** Python, Git, Linux, GPU 计算, Hugging Face, Transformers。
-- **目标：** 能够独立运行并调试开源 AI 项目。
-
-#### **📍Level 2: Reader (理解)**
-- **掌握：** 顶会论文阅读、技术博客分析、Benchmark 报告评估。
-- **目标：** 从“会调包”走向“懂原理”，理解模型设计初衷。
-
-#### **📍Level 3: Builder (创造)**
-- **掌握：** 数据集制作、模型微调 (Fine-tuning)、代码重构、项目实战。
-- **目标：** 训练出属于自己的模型并解决实际问题。
-
-#### **📍Level 4: Researcher (探索)**
-- **掌握：** 复现 SOTA 实验、设计创新方法、撰写科研论文。
-- **目标：** 从 AI 使用者成长为 AI 领域的研究贡献者。
-
----
-
-## 🌍 全球开源生态链接
-*本平台深度集成以下核心资源*
-
-| 资源平台 | 用途 | 访问 |
-| :--- | :--- | :--- |
-| **GitHub** | 代码实现与协作 | [访问](https://github.com/) |
-| **Hugging Face** | 模型权重与数据集 | [访问](https://huggingface.co/) |
-| **arXiv** | 获取最新科研动态 | [访问](https://arxiv.org/) |
-| **Kaggle** | 云端实验与算力 | [访问](https://www.kaggle.com/) |
-
----
-
-## 💡 核心原则 (Principles)
-
-> <b>Learn from the Best</b> · <b>Build with Open Source</b> · <b>Experiment Continuously</b> · <b>Research Deeply</b>
-
-
-<hr>
-
-<div align="center">
-
-<h2>🏁 Ready to Begin?</h2>
-
-<p style="font-size:1.05em;">
-<b>不要只是等待 AI 改变世界，尝试成为创造 AI 的人。</b>
-</p>
-
-<br>
-
-<a href="resources/official-sources"
-   style="font-size:1.1em;
-          font-weight:bold;
-          text-decoration:none;">
-
-🚀 Start Your AI Journey
-
-</a>
 
 </div>
 
+<div class="grid cards mv-entry-grid" markdown>
+
+-   **从课程主线开始**
+
+    12 周掌握文档理解、模型评测与可复现研究。
+
+    [进入入门课程 →](learning/README.md)
+
+-   **了解建设团队**
+
+    了解谭国平教授的研究方向、科研工作与人才培养。
+
+    [访问教授官方主页 ↗](https://jszy.hhu.edu.cn/tgp/)
+
+-   **完成第一个研究项目**
+
+    沿七关路线，把数据、推理、评测与报告做成可复现作品。
+
+    [进入项目实战 →](experiments/README.md)
+
+-   **先看一件完整作品**
+
+    从真实演示、证据与失败案例中寻找 Capstone 灵感。
+
+    [参观成果展厅 →](projects/README.md)
+
+</div>
+
+本学习中心由河海大学计算机与软件学院谭国平教授团队建设。当前课程聚焦 **Multimodal Document Understanding**，未来将逐步扩展到 **Video Understanding、Multimodal Reasoning** 与视觉智能应用。
+
 ---
 
-## 👨‍🏫 Research Mentor
+## 从这里开始
 
-This learning center is developing under the guidance of:
+如果你是第一次进入实验室或首次系统学习 Multimodal Document AI，依次完成三个动作：
 
-**Prof. Dr. Ing. - Guoping Tan**
+1. 打开[入门课程](learning/README.md)，理解 12 周要形成的能力与作品；
+2. 查看[每周计划](learning/00_12_Week_Bootcamp.md)，从 Week 1 的最小任务开始；
+3. 复制学习记录，并用[自主评估指南](learning/10_Assessment_and_Submission.md)检查证据是否充分。
 
-Hohai University, Nanjing, China
+课程以中文为主，关键术语保留英文；每周建议投入约 24 小时，由学生自主安排主线、探索与复盘，并明确回答：
 
-🔗 [Academic Homepage](https://jszy.hhu.edu.cn/tgp/)
+| 你需要知道什么 | 课程如何回答 |
+| --- | --- |
+| 学什么？ | 学习目标与官方材料 |
+| 做什么？ | 可执行的必做任务 |
+| 留下什么？ | 明确的文件与实验证据 |
+| 如何自查？ | 自主阶段与证据清单 |
+| 下一步是什么？ | 进阶阅读、实验与项目入口 |
+
+## 从当前主线走向未来
+
+| 学习方向 | 现在可以做什么 | 下一步可以追问什么 |
+| --- | --- | --- |
+| 文档理解 / Document Understanding | OCR、版面、表格、文档问答与结构化解析 | 模型能否理解更长、更复杂、更真实的文档？ |
+| 视觉语言模型 / VLM | 图像输入、Prompt、失败分析与小规模后训练 | 模型如何连接视觉证据、语言与推理？ |
+| 视频理解 / Video Understanding | 复用 VLM、评测和实验管理能力 | 如何理解时间、事件、动作和长视频上下文？ |
+| 多模态智能应用 | 构建可复现 pipeline 与可信 Benchmark | 如何把感知、推理和智能体连接到真实场景？ |
+
+!!! abstract "这里不是终点"
+    文档理解是当前课程的训练场。你在这里形成的数据、模型、评测和研究表达能力，可以继续迁移到图像、视频、机器人与行业智能问题。
+
+## 12 周能力路线
+
+| 阶段 | 周次 | 核心成果 |
+| --- | --- | --- |
+| Reproducible Builder | Week 1–3 | Git/Python 环境、模型调用、AI 辅助编程与验证 |
+| Document AI Explorer | Week 4–7 | VLM、文档解析、Dataset 与 Benchmark |
+| Model Experimenter | Week 8–10 | LoRA/PEFT、W&B runs、统一评测与消融 |
+| Research Communicator | Week 11–12 | 论文复现、Capstone、Model Card 与答辩 |
+
+!!! tip "没有独立 GPU？"
+    仍可开始。Week 1–7 可在普通电脑或小规模云端环境完成；Week 8–10 可使用 Kaggle/Colab、小模型和小数据。自主检查关注方法与证据，不比较模型规模。
+
+## 你最终会完成什么
+
+课程结束时，你将拥有一个可以由他人检查和复现的小型研究项目，其中包含：
+
+- 可重建的环境与明确运行入口；
+- 授权清晰的数据与固定 test set；
+- baseline、改进方法和自动评测；
+- AI-assisted coding 使用与人工验证记录；
+- LoRA/PEFT 微调配置；
+- 至少两个可比较的 W&B runs 与 Report；
+- 错误分析、限制、Model Card 和成果展示。
+
+## 按目标继续探索
+
+| 目标 | 入口 | 适合何时进入 |
+| --- | --- | --- |
+| 查阅基础专题 | [专题学习](learning/README.md) | 完成对应周次任务时 |
+| 跟做一个短时可运行案例 | [动手教程](tutorials/README.md) | Week 2 以后，需要代码参考时 |
+| 完成端到端研究作品 | [项目实战](experiments/README.md) | Week 4 以后，准备连续投入时 |
+| 阅读论文与综述 | [论文导读](reading/README.md) | Week 4 以后 |
+| 查找官方来源 | [官方文档与平台](resources/official-sources.md) | 遇到版本或 API 问题时 |
+| 查看往期成果 | [成果展厅](projects/README.md) | 设计 Capstone 时 |
+
+## 学习原则
+
+### Official First
+
+技术细节优先链接模型、框架和数据集的官方文档。课程页面负责说明学习路线、任务和自主检查，不重复维护容易过时的长篇 API 教程。
+
+### Evidence First
+
+“运行成功”只是起点。结论必须能够追溯到输入、版本、配置、原始输出、指标与失败案例。
+
+### Responsible AI
+
+不提交密钥、隐私数据或未授权材料；披露 AI 的参与范围；对 AI 生成代码与模型输出进行人工验证。
 
 ---
+
+<div class="mv-home__closing">
+  <p><strong>准备好了吗？从 Week 1 建立你的第一份可复现实验证据。</strong></p>
+  <p><a href="learning/">进入课程 →</a></p>
+  <p>
+    👥 Visitors <span id="visitor-count">—</span>
+    &nbsp;·&nbsp; ⭐ Stars <span id="github-stars">—</span>
+    &nbsp;·&nbsp; 🍴 Forks <span id="github-forks">—</span>
+  </p>
+</div>
+
+最后更新：2026-08-07
+
+</div>

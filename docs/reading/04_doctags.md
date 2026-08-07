@@ -1,16 +1,29 @@
-# DocTags
+---
+hide:
+  - toc
+---
 
-> **Multimodal Document AI Learning Center**
->
-> **Module:** DocTags
->
-> **Version:** v3.0
->
-> **Last Updated:** July 2026
+# DocTags：保留文档结构与证据位置
+
+本页重点不是记标签语法，而是理解纯文本或 Markdown 会丢失哪些版面信息，以及结构、阅读顺序、空间位置和来源信息怎样支持后续检索与推理。
+
+!!! success "本页最小任务"
+    选择一页含标题、段落和表格的文档，对比纯文本、Markdown 与结构化表示，指出至少 3 项信息损失及其对下游任务的影响。
+
+## 本页快速定位
+
+| 当前问题 | 直接进入 | 阅读目标 |
+| --- | --- | --- |
+| 纯文本为什么不够 | [Why Do We Need DocTags?](#part-1-why-do-we-need-doctags) · [Plain Text 的限制](#limitations-of-plain-text) | 找出至少 3 类信息损失 |
+| DocTags 与 Markdown 有何区别 | [DocTags vs Markdown](#doctags-vs-markdown) | 比较结构、空间位置与语义表达 |
+| DocTags 如何组织数据 | [Architecture](#part-5-doctags-architecture) · [Core Structure](#core-structure) | 画出核心层级关系 |
+| 哪些字段决定可追溯性 | [Spatial Information](#spatial-information) · [Reading Order](#reading-order) · [Provenance](#provenance) | 解释证据如何定位回原页面 |
+| DocTags 如何生成 | [Generation](#part-7-how-are-doctags-generated) · [Generation Pipeline](#part-8-doctags-generation-pipeline) | 比较传统 OCR 与现代 VLM Pipeline |
+| 如何用于项目和研究 | [Practical Applications](#part-10-practical-applications) · [Suggested Research](#part-12-suggested-laboratory-research) | 选出一个下游任务和验证指标 |
 
 ---
 
-# Overview
+## 为什么要学
 
 DocTags 是近年来提出的一种面向 **Document AI** 的新型结构化文档表示格式（Structured Document Representation）。
 
@@ -22,7 +35,7 @@ DocTags 已成为 Docling、SmolDocling 等新一代 Document AI 系统的重要
 
 ---
 
-# Learning Objectives
+## 学习目标
 
 完成本章节后，应能够：
 
@@ -33,7 +46,7 @@ DocTags 已成为 Docling、SmolDocling 等新一代 Document AI 系统的重要
 
 ---
 
-# Learning Roadmap
+## 建议路线
 
 ```text
 PDF
@@ -1244,8 +1257,8 @@ DocTags 的定位不是新的文档格式，而是 **AI Native Document Represen
 | ------------------------- | ------------------------------------------------------ |
 | Docling Documentation     | https://docling-project.github.io/docling/             |
 | Docling 中文文档              | https://docling.cn/docling/                            |
-| Docling API Reference     | https://docling-project.github.io/docling/reference/   |
-| DoclingDocument Reference | https://docling.cn/docling/reference/docling_document/ |
+| DoclingDocument Reference (EN) | https://docling-project.github.io/docling/reference/docling_document/ |
+| DoclingDocument Reference (ZH) | https://docling.cn/docling/reference/docling_document/ |
 
 ---
 
@@ -1254,8 +1267,8 @@ DocTags 的定位不是新的文档格式，而是 **AI Native Document Represen
 | Project          | URL                                                                |
 | ---------------- | ------------------------------------------------------------------ |
 | Docling          | https://github.com/docling-project/docling                         |
-| Docling Examples | https://github.com/docling-project/docling/tree/main/docs/examples |
-| Docling Recipes  | https://github.com/docling-project/docling/tree/main/docs/recipes  |
+| Examples Source  | https://github.com/docling-project/docling/tree/main/docs/examples |
+| Examples Guide   | https://docling-project.github.io/docling/examples/                |
 
 ---
 

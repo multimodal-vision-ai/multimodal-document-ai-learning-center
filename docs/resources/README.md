@@ -1,167 +1,79 @@
-# 🌐 Resources
+# 学习资源：从问题到结果
 
-> **Multimodal Vision AI Resource Center**
->
-> Official Resources · Courses · Datasets · Papers · Tools
+这里不是需要收藏完、读完的书单。**每次只带着一个当前问题进入，找到最权威的入口，完成一个最小行动，再带着结果离开。**
 
----
+[查官方文档与平台](official-sources.md){ .md-button .md-button--primary }
+[找数据集与评测](datasets.md){ .md-button }
 
-## 📖 Overview
+!!! success "完成本模块后"
+    你能够为当前任务找到可信来源，判断它是否适用，并把一次阅读转化为可运行结果、选择依据或新的研究问题。
 
-**Resources** 是 **Multimodal Vision AI Learning Center** 的学习资源中心，汇集多模态人工智能领域高质量、免费、持续更新的学习资源。
+## 重点只学三件事
 
-本模块优先推荐：
+1. **找到原始来源**：模型看 model card，工具看官方文档，论文看原文，数据看 dataset card。
+2. **完成最小行动**：运行一个 quickstart、核对一项设置，或用同一输入比较两个方案。
+3. **留下判断依据**：记录链接、版本、配置、结果与限制，让以后可以复查。
 
-- 🌍 官方学习资源（Official Learning Resources）
-- 📚 精品课程与教材（Courses）
-- 📊 数据集与 Benchmark（Datasets）
-- 📄 经典论文与技术报告（Papers）
-- 🛠️ AI 开发工具与平台（Tools）
+资源多不等于学得多。能解决当前问题、产生证据并帮助下一步决策的资源才值得保留。
 
-所有资源均围绕 **"Learn → Build → Research"** 的学习理念进行组织，帮助学生建立完整的 AI 学习与科研路径。
+## 先说清楚当前问题
 
----
+- **“模型或框架现在应该怎么用？”** 去[官方文档与平台](official-sources.md)，优先看 quickstart、reference 和 release notes。
+- **“我需要系统补一个概念。”** 去[推荐课程](courses.md)，只学习与本周任务直接相关的章节。
+- **“这个方法的主张和证据是什么？”** 去[论文索引](papers.md)，再按[论文导读](../reading/README.md)完成一页论文卡。
+- **“该用什么数据和指标评测？”** 去[数据集索引](datasets.md)，核对 license、数据卡、划分与官方评测脚本。
+- **“什么工具能帮助开发和记录实验？”** 去[工具清单](tools.md)，先说明需求和选择理由，再增加工具。
 
-# 🎯 Learning Objectives
+问题不够具体时，先把它改写成：
 
-通过 Resources 模块，你将能够：
+> 为了完成 __________，我需要确认 __________；我将通过 __________ 判断这个资源是否有用。
 
-- 📖 学习国际主流 AI 技术生态；
-- 🌍 获取官方学习资源与开发文档；
-- 📊 下载公开数据集与 Benchmark；
-- 📄 阅读经典论文与前沿研究；
-- 🛠️ 熟悉 AI 开发工具与平台；
-- 🚀 支撑课程学习、项目实践与科研创新。
+## 一次完整使用示例
 
----
+假设当前问题是：“怎样让文档模型稳定输出 Markdown 表格？”
 
-# 📚 Resource Categories
+1. 在[官方文档与平台](official-sources.md)找到模型的最新 model card 和输入格式说明。
+2. 选一个固定文档样例，先运行官方最小示例并保存原始输出。
+3. 只改变 Prompt 中的输出约束，再运行一次。
+4. 对照[数据集与评测](datasets.md)中的任务定义，比较结构完整度和失败案例。
+5. 记录采用的版本、Prompt、结果和限制，然后把问题带入[项目实战](../experiments/README.md)继续验证。
 
-Resources 模块包含五类核心学习资源：
+这次学习的成果不是“看过两个页面”，而是**一组可比较结果和一个有依据的下一步决定**。
 
-| Category | Description | Navigation |
-| :--- | :--- | :--- |
-| 🌍 **Official Resources** | 官方学习平台、官方文档与开源生态 | [Official Resources](official-sources.md) |
-| 🎓 **Courses** | AI 课程、教材与教学资源 | [Course Resources](courses.md) |
-| 📚 **Papers** | 经典论文、Survey 与技术报告 | [Paper Resources](papers.md) |
-| 📊 **Datasets** | 数据集、Benchmark 与评测资源 | [Dataset Resources](datasets.md) |
-| 🛠️ **Tools** | AI 开发工具、平台与软件 | [Tool Resources](tools.md) |
+## 每次离开前留下四项记录
 
----
-
-# 🌍 Recommended Learning Resources
-
-建议优先学习以下官方资源：
-
-| Platform | Purpose | Recommendation |
-| :--- | :--- | :---: |
-| 🐙 GitHub Docs | Git 与 GitHub 官方文档 | ⭐⭐⭐⭐⭐ |
-| 🤗 Hugging Face Learn | LLM、VLM、Agent 官方课程 | ⭐⭐⭐⭐⭐ |
-| 🏆 Kaggle Learn | 数据科学与 AI 实践课程 | ⭐⭐⭐⭐⭐ |
-| 💻 AI Coding Docs | Cursor、Copilot、Claude Code | ⭐⭐⭐⭐⭐ |
-
-> **Official First · Learn from the Best**
-
----
-
-# 🚀 Recommended Learning Workflow
-
-建议按照以下学习流程逐步深入：
-
-```text
-Official Resources
-        │
-        ▼
-Courses & Tutorials
-        │
-        ▼
-Run Official Examples
-        │
-        ▼
-Understand Source Code
-        │
-        ▼
-Modify & Reproduce
-        │
-        ▼
-Build Your Own Project
-        │
-        ▼
-Research & Innovation
+```markdown
+- 当前问题：
+- 官方 URL / version / access date：
+- 我完成的最小行动：
+- 得到的结果、限制与下一步：
 ```
 
----
+最低完成标准：另一位同学能够根据这四项记录找到同一来源，并理解你为什么采用或放弃它。
 
-# 🔬 Research-Oriented Learning Path
+## 按时间选择行动
 
-Resources 服务于完整的科研成长路径：
+- **20 分钟**：读一个官方 quickstart 或 model card，写下 3 个要点和 1 个待验证问题。
+- **2 小时**：跑通最小示例，只改变一个输入或参数，保存前后结果并解释差异。
+- **半天**：用两个官方方案处理同一个小任务，形成有证据的选择说明。
+- **1 周**：围绕一个问题整理小型 Benchmark 或公开学习笔记，让结果可复用、可核查。
 
-```text
-Learning Resources
-        │
-        ▼
-Knowledge Learning
-        │
-        ▼
-Hands-on Practice
-        │
-        ▼
-Open Source Projects
-        │
-        ▼
-Research Experiments
-        │
-        ▼
-Academic Papers
-        │
-        ▼
-Research Innovation
-```
+## 选择资源前检查
 
----
+- **权威**：能否追溯到维护方官网、官方 GitHub、正式论文或数据集主页？
+- **适用**：是否直接回答当前任务中的具体问题，而不是只因为“热门”而收藏？
+- **可维护**：版本、日期和入口是否清楚；易变化的命令是否交给官方页面维护？
+- **负责任**：是否检查 license、隐私、访问权限以及地域或账号限制？
 
-# 📌 Resource Principles
+## 它与其他模块的关系
 
-本资源中心坚持以下原则：
+- [12 周课程](../learning/README.md)告诉你按什么顺序学习。
+- [论文导读](../reading/README.md)训练你判断研究主张和证据。
+- **学习资源**帮助你在遇到具体问题时找到可靠依据。
+- [项目实战](../experiments/README.md)要求你把依据转化为可复现作品。
 
-- 🌍 **Official First** —— 官方资源优先；
-- 🔓 **Open Source First** —— 开源项目优先；
-- ⭐ **High Quality First** —— 高质量资源优先；
-- 🔄 **Continuously Updated** —— 持续维护与更新；
-- 🔬 **Research Oriented** —— 面向科研创新；
-- 🚀 **Practice Driven** —— 强调实践能力培养。
+## 链接失效怎么办
 
----
+先在同一官方域名或官方组织中寻找新地址，再提交 issue/PR 更新链接。不要用来源不明的转载页替代官方材料，也不要为了让自动检查通过而忽略所有 401/403 响应。
 
-# 🔭 Future Expansion
-
-Resources 将持续扩展更多学习资源，包括：
-
-- 🤖 AI Agent Ecosystem
-- 👁️ Vision Language Models (VLM)
-- 📄 Document AI
-- 🧠 Multimodal Foundation Models
-- 🔬 AI4Science
-- 🏥 Medical AI
-- 🚗 Autonomous Driving
-- 🌍 Embodied AI
-- 📡 Remote Sensing AI
-- 🏭 AI for Industry
-
----
-
-# 💡 Learning Philosophy
-
-> **Learn from Official Resources**
->
-> **Build with Open Source**
->
-> **Experiment with Real Projects**
->
-> **Create Research Innovation**
-
----
-
-**Learn · Practice · Research**
-
-*Multimodal Vision AI Learning Center*
+最后更新：2026-08-07

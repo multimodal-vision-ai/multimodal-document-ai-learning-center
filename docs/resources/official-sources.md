@@ -1,126 +1,54 @@
-# 🌍 Official Learning Resources
+# 官方文档：遇到问题先查这里
 
-学习 AI 最好的方式之一，就是直接阅读官方文档和官方教程。
+官方文档不是要顺序读完的教材。它最适合回答三类问题：**当前版本怎么用、输入输出有什么约束、哪些行为不能想当然。**
 
-下面推荐的资源均为：
+## 本周基础任务
 
-- ✅ 官方维护
-- ✅ 免费学习
-- ✅ 持续更新
-- ✅ 国际主流 AI 生态
+### Git 与 GitHub
 
-建议按照推荐顺序依次学习。
+- [GitHub 中文文档](https://docs.github.com/zh)：查账号、仓库、分支、Pull Request、Pages 和密钥保护。
+- [Pro Git 中文版](https://git-scm.com/book/zh/v2)：需要理解 Git 原理或命令行为时查阅。
 
----
+**完成动作**：能创建仓库、提交变更、查看历史，并说明本地 Git 与远程 GitHub 的区别。
 
-## 🐙 Git & GitHub
+### Python
 
-GitHub 是目前全球最大的开源社区，也是 AI 开发者最重要的平台。
+- [Python 官方教程](https://docs.python.org/zh-cn/3/tutorial/)：查语言语法、数据结构、模块、异常与虚拟环境。
 
-| Resource | Description | Recommendation |
-|---|---|:---:|
-| [GitHub Docs (中文)](https://docs.github.com/zh) | GitHub 官方中文文档，推荐首先学习 | ⭐⭐⭐⭐⭐ |
-| [Pro Git (中文版)](https://git-scm.com/book/zh/v2) | Git 经典教材，永久免费 | ⭐⭐⭐⭐⭐ |
+**完成动作**：把当前脚本中的一个报错缩小成最小示例，并在官方文档中找到相关规则。
 
-推荐学习内容：
+## 模型与推理
 
-- Git 基础
-- GitHub Workflow
-- Branch
-- Pull Request
-- Issues
-- GitHub Pages
-- GitHub Actions
+- [Hugging Face Learn](https://huggingface.co/learn)：按任务选择课程，不必全部学习。
+- [Transformers 文档](https://huggingface.co/docs/transformers/index)：查模型加载、推理 API、配置与版本行为。
+- [Qwen3.5-0.8B Model Card](https://huggingface.co/Qwen/Qwen3.5-0.8B)：本课程项目使用的模型 ID、用法、能力边界与 license。
 
----
+**重点查看**：示例适用的库版本、输入消息格式、模型 revision、设备和精度设置。
 
-## 🤗 Hugging Face
+**完成动作**：运行官方最小示例，并把模型 ID、revision、关键配置和原始输出写入实验记录。
 
-目前最完整的大模型学习平台。
+## 文档智能与评测
 
-| Resource | Description | Recommendation |
-|---|---|:---:|
-| [Hugging Face Learn（中文）](https://hugging-face.cn/learn) | 官方学习平台 | ⭐⭐⭐⭐⭐ |
-| [LLM Course（中文）](https://hugging-face.cn/learn/llm-course) | 大模型系统课程 | ⭐⭐⭐⭐⭐ |
-| [Agent Course（中文）](https://hugging-face.cn/learn/agents-course) | AI Agent 官方课程 | ⭐⭐⭐⭐⭐ |
-| [Cookbook（中文）](https://hugging-face.cn/learn/cookbook) | 官方 Notebook 与实践案例 | ⭐⭐⭐⭐⭐ |
+- [Docling 官方文档](https://docling-project.github.io/docling/)：查文档解析能力、支持格式、示例和 API。
+- [OmniDocBench 官方仓库](https://github.com/opendatalab/OmniDocBench)：查数据格式、评测配置、指标实现和使用限制。
 
-推荐学习顺序：
+**完成动作**：用一个公开样例跑通解析或评测入口，并说明输出结构和一个已知限制。
 
-1. LLM Course
-2. Cookbook
-3. Agent Course
+## 在线实验平台
 
----
+- [Kaggle Learn](https://www.kaggle.com/learn)：按当前技能缺口选择短课程。
+- [Kaggle Notebooks](https://www.kaggle.com/code)：运行 GPU Notebook、共享结果并保留版本。
 
-## 🏆 Kaggle
+**完成动作**：让另一个账号或匿名访问者能看懂 Notebook 的数据来源、运行顺序和最终结果。
 
-全球最大的 AI 数据科学学习平台。
+## 查官方文档的顺序
 
-| Resource | Description | Recommendation |
-|---|---|:---:|
-| [Kaggle Learn](https://www.kaggle.com/learn) | 官方免费课程 | ⭐⭐⭐⭐⭐ |
-| [Kaggle Datasets](https://www.kaggle.com/datasets) | 数据集下载 | ⭐⭐⭐⭐⭐ |
-| [Kaggle Notebooks](https://www.kaggle.com/code) | 在线 Notebook | ⭐⭐⭐⭐⭐ |
+1. 先确认产品、模型或数据的**准确名称**。
+2. 查看 quickstart 或 model card，运行未修改的最小示例。
+3. 再查 reference、dataset card 或 release notes，确认当前版本差异。
+4. 记录官方 URL、访问日期、版本和真正解决的问题。
 
-推荐学习路径：
+!!! warning "官方也不等于永远正确"
+    官方页面可能更新或存在缺口。课程记录必须保留访问日期和版本；遇到矛盾时，以当前 release、代码仓库和可复现实验共同判断。
 
-Python
-
-→ Pandas
-
-→ Machine Learning
-
-→ Deep Learning
-
-→ Computer Vision
-
-→ LLM
-
----
-
-## 💻 AI Coding
-
-推荐所有学生尽早学习 AI 辅助编程。
-
-| Resource | Description | Recommendation |
-|---|---|:---:|
-| [GitHub Copilot Docs（中文）](https://docs.github.com/zh/copilot) | GitHub Copilot 官方文档 | ⭐⭐⭐⭐⭐ |
-| [Cursor Docs](https://docs.cursor.com/) | Cursor 官方文档 | ⭐⭐⭐⭐⭐ |
-| [Claude Code Docs](https://docs.anthropic.com/en/docs/claude-code) | Claude Code 官方文档 | ⭐⭐⭐⭐⭐ |
-| [OpenAI Platform Docs](https://platform.openai.com/docs) | OpenAI 官方开发文档 | ⭐⭐⭐⭐⭐ |
-
-推荐学习内容：
-
-- Prompt Engineering
-- AI IDE
-- Agent Mode
-- MCP
-- Code Review
-- AI Pair Programming
-
----
-
-## 🚀 Recommended Learning Path
-
-建议按照下面顺序进行学习：
-
-```text
-Git & GitHub
-        ↓
-Hugging Face
-        ↓
-Kaggle
-        ↓
-AI Coding
-        ↓
-Open Source Projects
-        ↓
-Research Papers
-```
-
----
-
-> **Learning Philosophy**
-
-> **Learn from Official Resources. Build with Open Source. Create with AI.**
+链接核对日期：2026-08-07

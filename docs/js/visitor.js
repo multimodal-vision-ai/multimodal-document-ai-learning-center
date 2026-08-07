@@ -1,59 +1,46 @@
 function todayKey() {
-
-    const d = new Date();
-
-    return d.getFullYear() + "-" +
-           (d.getMonth()+1) + "-" +
-           d.getDate();
-
+  const date = new Date();
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }
 
-function loadStatistics() {
-
-    const key = "mv-ai-lab-last-visit";
-
-    const today = todayKey();
-
-    const firstVisitToday =
-        localStorage.getItem(key) !== today;
-
-    const method = firstVisitToday ? "POST" : "GET";
-
-    fetch(
-        "https://mv-ai-lab-counter.guoping-tan.workers.dev/counter",
-        {
-            method: method
-        }
-    )
-    .then(r => r.json())
-    .then(data => {
-
-        document.getElementById("visitor-count").textContent =
-            Number(data.visitors).toLocaleString();
-
-        document.getElementById("github-stars").textContent =
-            Number(data.stars).toLocaleString();
-
-        document.getElementById("github-forks").textContent =
-            Number(data.forks).toLocaleString();
-
-        if(firstVisitToday){
-
-            localStorage.setItem(key, today);
-
-        }
-
-    })
-    .catch(console.error);
-
+function renderCount(element, value) {
+  const number = Number(value);
+  element.textContent = Number.isFinite(number) ? number.toLocaleString() : "—";
 }
 
-if(typeof document$ !== "undefined"){
+async function loadStatistics() {
+  const visitors = document.getElementById("visitor-count");
+  const stars = document.getElementById("github-stars");
+  const forks = document.getElementById("github-forks");
 
-    document$.subscribe(loadStatistics);
+  // MkDocs loads this script on every page; only the homepage has these fields.
+  if (!visitors || !stars || !forks) return;
 
-}else{
+  const storageKey = "mv-ai-lab-last-visit";
+  const today = todayKey();
+  const firstVisitToday = localStorage.getItem(storageKey) !== today;
 
-    loadStatistics();
+  try {
+    const response = await fetch(
+      "https://mv-ai-lab-counter.guoping-tan.workers.dev/counter",
+      { method: firstVisitToday ? "POST" : "GET" },
+    );
 
+    if (!response.ok) throw new Error(`statistics request failed: ${response.status}`);
+
+    const data = await response.json();
+    renderCount(visitors, data.visitors);
+    renderCount(stars, data.stars);
+    renderCount(forks, data.forks);
+
+    if (firstVisitToday) localStorage.setItem(storageKey, today);
+  } catch (error) {
+    console.warn("Unable to load site statistics", error);
+  }
+}
+
+if (typeof document$ !== "undefined") {
+  document$.subscribe(loadStatistics);
+} else {
+  loadStatistics();
 }

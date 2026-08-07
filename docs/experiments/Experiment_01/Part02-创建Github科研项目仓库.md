@@ -1,8 +1,20 @@
 # Part 2：创建 GitHub 科研项目（Create Your First Research Repository）
 
+[上一关：确定目标与准备](Part01-实验准备.md){ .md-button }
+[返回项目控制台](README.md){ .md-button }
+[下一关：构建项目目录](Part03-构建项目目录.md){ .md-button .md-button--primary }
+
+> **本关核心产出**：可访问的 GitHub 仓库与首次 commit · **预计时间**：45 分钟
+
+!!! success "本关通过条件"
+    你可以在新目录中执行 `git status`，远程地址指向自己的仓库，README 已说明研究问题，并且 GitHub 上能看到至少一次由你完成的提交。
+
+!!! warning "不要提交敏感信息"
+    Access Token、API Key、私人文档、模型缓存和完整大型数据集都不应进入 Git。创建仓库后先准备 `.gitignore`，提交前始终检查 `git status`。
+
 ---
 
-# 一、本部分学习目标（Learning Objectives）
+## 一、本部分学习目标（Learning Objectives）
 
 完成本部分后，你应该能够：
 
@@ -16,7 +28,7 @@
 
 ---
 
-# 二、为什么要先创建 GitHub 项目？（Background）
+## 二、为什么要先创建 GitHub 项目？（Background）
 
 很多初学者习惯先在本地创建代码，再决定是否上传到 GitHub。
 
@@ -49,7 +61,7 @@ Clone 到本地
 
 ---
 
-# 三、项目命名规范（Project Naming Convention）
+## 三、项目命名规范（Project Naming Convention）
 
 项目名称应尽量简洁、准确，并能反映研究内容。
 
@@ -82,9 +94,9 @@ smoldocling-first-project
 
 ---
 
-# 四、创建 GitHub Repository（Operations）
+## 四、创建 GitHub Repository（Operations）
 
-## Step 1：登录 GitHub
+### Step 1：登录 GitHub
 
 打开浏览器，访问：
 
@@ -94,7 +106,7 @@ https://github.com
 
 ---
 
-## Step 2：创建新的 Repository
+### Step 2：创建新的 Repository
 
 登录成功后：
 
@@ -110,7 +122,7 @@ New repository
 
 ---
 
-## Step 3：填写 Repository 信息
+### Step 3：填写 Repository 信息
 
 请按照下表填写：
 
@@ -131,7 +143,7 @@ Create repository
 
 ---
 
-## Step 4：观察创建结果
+### Step 4：观察创建结果
 
 创建成功后，你应该能够看到如下内容：
 
@@ -149,9 +161,9 @@ LICENSE
 
 ---
 
-# 五、Clone 到本地（Operations）
+## 五、Clone 到本地（Operations）
 
-## Step 1：复制仓库地址
+### Step 1：复制仓库地址
 
 点击绿色按钮：
 
@@ -169,7 +181,7 @@ https://github.com/yourname/qwen3vl-first-project.git
 
 ---
 
-## Step 2：打开终端
+### Step 2：打开终端
 
 Windows 推荐：
 
@@ -187,7 +199,7 @@ D:\Research\
 
 ---
 
-## Step 3：执行 Clone
+### Step 3：执行 Clone
 
 输入：
 
@@ -199,7 +211,7 @@ git clone https://github.com/yourname/qwen3vl-first-project.git
 
 ---
 
-## Step 4：进入项目目录
+### Step 4：进入项目目录
 
 执行：
 
@@ -211,7 +223,7 @@ cd qwen3vl-first-project
 
 ---
 
-# 六、验证项目（Expected Results）
+## 六、验证项目（Expected Results）
 
 执行以下命令：
 
@@ -231,9 +243,9 @@ nothing to commit, working tree clean
 
 ---
 
-# 七、常见问题（Common Errors）
+## 七、常见问题（Common Errors）
 
-## 问题一：无法登录 GitHub
+### 问题一：无法登录 GitHub
 
 请检查：
 
@@ -243,7 +255,7 @@ nothing to commit, working tree clean
 
 ---
 
-## 问题二：Clone 失败
+### 问题二：Clone 失败
 
 可能原因：
 
@@ -255,7 +267,7 @@ nothing to commit, working tree clean
 
 ---
 
-## 问题三：Permission denied
+### 问题三：Permission denied
 
 如果使用 SSH，请确认：
 
@@ -267,7 +279,7 @@ nothing to commit, working tree clean
 
 ---
 
-## 问题四：Repository 名称填写错误
+### 问题四：Repository 名称填写错误
 
 不要删除仓库重新创建。
 
@@ -285,7 +297,7 @@ Repository name
 
 ---
 
-# 八、本部分成果（Deliverables）
+## 八、本部分成果（Deliverables）
 
 完成本部分后，你应该拥有以下内容：
 
@@ -313,9 +325,9 @@ LICENSE
 
 ---
 
-# 九、自我检查列表（Checklist）
+## 九、自我检查列表（Checklist）
 
-请导师逐项检查：
+请根据下面清单自主检查：
 
 | 检查项             | 状态 |
 | --------------- | -- |
@@ -330,7 +342,7 @@ LICENSE
 
 ---
 
-# 十、本部分小结
+## 十、本部分小结
 
 恭喜你！
 
@@ -342,7 +354,7 @@ LICENSE
 
 ---
 
-# 下一部分预告
+## 下一部分预告
 
 **Part 3：构建标准科研项目目录（Build a Standard Research Project Structure）**
 

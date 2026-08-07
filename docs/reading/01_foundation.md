@@ -1,16 +1,29 @@
-# Foundation Models
+---
+hide:
+  - toc
+---
 
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Foundation Models
->
-> **Version:** v3.0
->
-> **Last Updated:** July 2026
+# 基础模型：理解 VLM 的三块基石
+
+本页材料很多，第一次不必全部阅读。优先理解 **Transformer 如何建模序列、ViT 如何把图像变成 token、CLIP 如何对齐图像与文本**。
+
+!!! success "本页最小任务"
+    画出 Transformer、ViT、CLIP 到 VLM 的关系图，并能解释每个组件为文档理解解决了什么问题、仍留下什么限制。
+
+## 本页快速定位
+
+| 当前问题 | 必读节点 | 读完应能回答 |
+| --- | --- | --- |
+| 文本为什么能被统一建模 | [Transformer](#attention-is-all-you-need) | Self-Attention 如何建立 token 之间的关系 |
+| 图像如何进入 Transformer | [ViT](#an-image-is-worth-1616-words-vision-transformer-vit) | Patch 如何变成视觉 token |
+| 图像与文本如何对齐 | [CLIP](#clip-contrastive-languageimage-pre-training) | 对比学习如何形成共享表示 |
+| 视觉模型如何连接 LLM | [BLIP-2](#blip-2) | Q-Former 在视觉与语言之间做了什么 |
+| 如何提升训练与推理效率 | [SigLIP 2](#siglip-2) · [FlashAttention](#flashattention) | 表示学习与 Attention 分别如何提效 |
+| 为什么模型越做越大 | [Scaling Laws](#scaling-laws-for-neural-language-models) · [MoE](#mixture-of-experts-moe) · [Long Context](#effective-long-context-scaling-of-foundation-models) | 规模、稀疏激活与上下文长度的主要取舍 |
 
 ---
 
-# Overview
+## 为什么要学
 
 Foundation Model 是现代人工智能发展的基础。
 
@@ -32,7 +45,7 @@ Foundation Model 是现代人工智能发展的基础。
 
 ---
 
-# Learning Objectives
+## 学习目标
 
 完成本章节后，应能够：
 
@@ -43,7 +56,7 @@ Foundation Model 是现代人工智能发展的基础。
 
 ---
 
-# Learning Roadmap
+## 建议路线
 
 ```text
 Transformer
@@ -69,7 +82,7 @@ Modern Vision-Language Models
 
 ---
 
-# Reading Strategy
+## 阅读策略
 
 | Priority | Description |
 | -------- | ----------- |

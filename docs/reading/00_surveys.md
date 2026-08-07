@@ -1,20 +1,29 @@
-# Survey Papers
+---
+hide:
+  - toc
+---
 
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Survey Papers
->
-> **Version:** v4.0
->
-> **Last Updated:** July 2026
+# 综述地图：先看清领域全景
 
-本目录整理 **Multimodal Document AI** 方向最值得阅读的综述论文（Survey Papers）。
+本页整理多模态文档智能方向的代表性综述。它的用途不是增加阅读数量，而是帮助你确定任务边界、关键词和一个值得继续追问的问题。
 
-建议所有研究生**优先阅读综述，再阅读经典论文和最新论文**，建立完整的知识体系。
+!!! success "本页最小任务"
+    只选一篇与当前问题最接近的综述，画出 3 个研究方向、记录 5 个检索词，并写下 1 个可以被实验验证的问题。
+
+## 本页快速定位
+
+| 想了解的主题 | 直接进入 | 建议停在这里 |
+| --- | --- | --- |
+| VLM 的模型、训练与评测全景 | [Vision-Language Models](#part-1-vision-language-models) | 能列出模型的 3 个核心组件 |
+| 文档智能的任务边界 | [Document AI](#part-2-document-ai) | 能区分 OCR、版面与文档理解 |
+| 文档解析与结构化输出 | [Docling & Structured Documents](#part-3-docling-structured-documents) | 能说明结构化输出比纯文本多保留什么 |
+| 评测方法与挑战 | [Benchmark Surveys](#part-4-benchmark-surveys) | 能指出一个指标可能遗漏的能力 |
+| 继续检索论文 | [Recommended Resource Collections](#part-5-recommended-resource-collections) | 记录 5 个可复用检索词 |
+| 安排阅读顺序 | [Recommended Reading Plan](#recommended-reading-plan) | 选定下一篇精读论文 |
 
 ---
 
-# Learning Roadmap
+## 建议路线
 
 ```text
 Foundation Models
@@ -40,7 +49,7 @@ AI Agent
 
 ---
 
-# Reading Strategy
+## 阅读策略
 
 | Priority | Description |
 | -------- | ----------- |
@@ -66,9 +75,9 @@ AI Agent
 
 Information Fusion
 
-### Official Paper
+### Author Manuscript
 
-https://www.sciencedirect.com/science/article/pii/S1566253525006955
+https://minhdl93.github.io/public/papers/if_25.pdf
 
 ### Why Read
 
@@ -102,7 +111,7 @@ https://arxiv.org/abs/2501.02189
 
 ### GitHub
 
-https://github.com/zli12321/Awesome-VLM-Papers-And-Models
+https://github.com/zli12321/Vision-Language-Models-Overview
 
 ### Why Read
 
@@ -134,7 +143,7 @@ https://arxiv.org/abs/2504.09724
 
 ### GitHub
 
-https://github.com/MPSCUMBC/Efficient-Vision-Language-Models-A-Survey
+https://github.com/MPSC-UMBC/Efficient-Vision-Language-Models-A-Survey
 
 ### Why Read
 
@@ -272,7 +281,7 @@ https://arxiv.org/abs/2503.11576
 
 ### Official Papers
 
-https://www.docling.ai/papers/
+https://docling.ai/papers/
 
 ### Why Read
 
@@ -348,10 +357,10 @@ https://mmdocbench.github.io/
 
 | Resource                       | URL                                                       |
 | ------------------------------ | --------------------------------------------------------- |
-| Awesome Vision-Language Models | https://github.com/zli12321/Awesome-VLM-Papers-And-Models |
-| Docling Papers                 | https://www.docling.ai/papers/                            |
-| Papers with Code               | https://paperswithcode.com                                |
-| Hugging Face Papers            | https://huggingface.co/papers                             |
+| Awesome Vision-Language Models | https://github.com/zli12321/Vision-Language-Models-Overview |
+| Docling Papers                 | https://docling.ai/papers/                                  |
+| AMiner / 智谱 AI               | https://www.aminer.cn/                                      |
+| Hugging Face Papers            | https://huggingface.co/papers                               |
 
 ---
 
@@ -359,8 +368,7 @@ https://mmdocbench.github.io/
 
 | Conference          | URL                           |
 | ------------------- | ----------------------------- |
-| CVPR Open Access    | https://openaccess.thecvf.com |
-| ICCV Open Access    | https://openaccess.thecvf.com |
+| AMiner / 智谱 AI    | https://www.aminer.cn/        |
 | ECCV Proceedings    | https://eccv.ecva.net         |
 | ACL Anthology       | https://aclanthology.org      |
 | NeurIPS Proceedings | https://papers.nips.cc        |
@@ -424,4 +432,4 @@ Research Projects
 * 熟悉主流 Benchmark 与评价体系；
 * 能够快速定位高质量论文，并独立阅读 CVPR、ICCV、ECCV、ACL、EMNLP、ICML、NeurIPS 等顶级会议的最新研究成果。
 
-[返回上一级](readme.md){ .md-button }    [下一章](01_foundation.md){ .md-button }
+[返回上一级](README.md){ .md-button }    [下一章](01_foundation.md){ .md-button }

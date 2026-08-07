@@ -1,174 +1,75 @@
-<div align="center">
+# 多模态视觉AI学习中心
 
-<img src="assets/figs/prism_brain_logo.svg" width="600">
+> **Multimodal Vision AI Learning Center**
 
-# 🎓 Multimodal Vision AI Learning Center
+[![Documentation](https://img.shields.io/badge/docs-learning%20center-blue)](https://multimodal-vision-ai.github.io/multimodal-document-ai-learning-center/)
+[![Deploy MkDocs](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/workflows/deploy.yml/badge.svg)](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/workflows/deploy.yml)
 
-**An Open Research & Education Platform by MV-AI Lab**
+由河海大学计算机与软件学院[谭国平教授团队](https://jszy.hhu.edu.cn/tgp/)建设，面向高年级本科生、研究生与实验室新成员。
 
-**Learn · Build · Experiment · Research**
+当前以 **12 周多模态视觉智能自主学习课程**为主线，以文档理解作为训练场，未来继续扩展图像理解、视频理解、多模态推理与智能应用。
 
-</div>
+课程以中文讲解为主，保留必要的 English terminology；技术细节优先链接官方文档，仓库负责维护学习路径、任务、实验规范和自主学习证据。
 
----
+## 快速入口
 
-# 🌟 About This Platform
+- [在线学习中心](https://multimodal-vision-ai.github.io/multimodal-document-ai-learning-center/)
+- [入门课程](docs/learning/README.md)
+- [课程总览与每周计划](docs/learning/00_12_Week_Bootcamp.md)
+- [自主评估与证据指南](docs/learning/10_Assessment_and_Submission.md)
+- [自主学习记录模板](docs/learning/11_Learning_Log_Template.md)
 
-Multimodal Vision AI Learning Center 是一个面向 **多模态视觉智能（Multimodal Vision Intelligence）** 的开放学习与科研训练平台。
+## 课程成果
 
-本平台由 **MV-AI Lab** 建设，目标是帮助学生从：
+完成课程后，学生应能：
 
-> AI 使用者 → AI 工程实践者 → AI 研究者
+- 使用 GitHub 管理可复现 AI 实验；
+- 使用并验证 AI-assisted coding；
+- 调用 VLM 处理真实文档；
+- 构建 PDF → Markdown/JSON pipeline；
+- 使用 LoRA/PEFT 完成小规模微调；
+- 使用 Weights & Biases 追踪、比较和报告实验；
+- 设计 baseline、Benchmark、ablation 与 error analysis；
+- 完成并答辩一个可复现的 Document AI 项目。
 
-逐步成长。
+## 内容结构
 
----
-
-# 🎯 Mission
-
-未来人工智能不仅需要“看见”，更需要：
-
-- 理解世界
-- 融合知识
-- 进行推理
-- 辅助决策
-
-本 Learning Center 聚焦下一代 AI 核心技术：
-
-- 🧠 Multimodal Foundation Models
-- 👁 Vision Language Models
-- 📄 Document Intelligence
-- 🤖 AI Agents & Applications
-
----
-
-# 🚀 Learning Outcomes
-
-完成系统学习后，你应该能够：
-
-✓ 理解现代多模态大模型基本原理
-
-✓ 使用开源 VLM/Foundation Models
-
-✓ 完成模型推理、评测与微调实验
-
-✓ 构建 Dataset 与 Benchmark
-
-✓ 使用 AI Coding 工具提升研发效率
-
-✓ 开展面向论文的科研探索
-
----
-
-# 🧭 Learning Journey
-
-```
-Learn
-  ↓
-Build
-  ↓
-Experiment
-  ↓
-Benchmark
-  ↓
-Research
+```text
+docs/
+├── learning/       # 12 周必修课程与基础模块
+├── tutorials/      # 可运行教程与 Notebook 入口
+├── experiments/    # 完整科研实验流程
+├── reading/        # 论文与研究问题
+├── resources/      # 官方资源索引
+└── projects/       # 项目展示
 ```
 
-推荐学习路径：
+## 本地预览
 
-1. AI 基础与开发环境
-2. Multimodal Foundation Models
-3. Document AI
-4. Model Fine-tuning
-5. Research Projects
+项目使用 MkDocs Material。使用仓库已有的文档环境运行：
 
-详细路线请查看：
+```bash
+mkdocs serve
+```
 
-➡ Learning Roadmap
+严格检查：
 
----
+```bash
+mkdocs build --strict
+```
 
-# 🔬 Research Tracks
+依赖版本记录在 `requirements-docs.txt`。提交到 `dev` 或创建 PR 后，GitHub Actions 会执行严格构建和链接检查；合并到 `main` 后发布 GitHub Pages。
 
-## 1. Multimodal Vision Intelligence
+## 协作流程
 
-研究视觉、语言与知识融合的大模型：
+1. 从 `dev` 创建工作分支或在约定的 `dev` 实验流程中修改；
+2. 只改动任务相关文件；
+3. 检查内部链接、官方链接和课程自主检查项；
+4. 通过文档质量检查；
+5. 发起 `dev → main` PR，review 通过后再发布。
 
-- Qwen-VL
-- LLaVA
-- DeepSeek-VL
-- Multimodal LLM
+课程内容以学生体验、可复现证据和低维护成本为优先。欢迎通过 [Issues](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues) 报告失效链接或提出改进建议。
 
+## License
 
-## 2. Document Intelligence
-
-让 AI 理解复杂文档：
-
-- OCR
-- Document Parsing
-- Layout Understanding
-- Document Question Answering
-- Document Agents
-
-
-## 3. AI Engineering
-
-从模型到系统：
-
-- Dataset Construction
-- Benchmark Evaluation
-- Model Fine-tuning
-- AI System Development
-
-
-## 4. AI + Industry Applications
-
-探索人工智能在真实场景中的应用创新。
-
----
-
-# 👥 For Students
-
-## Undergraduate Students
-
-学习 AI 基础、模型使用与工程实践。
-
-## Master Students
-
-开展模型优化、实验复现与应用研究。
-
-## PhD Students
-
-探索新的科学问题，形成论文与开源成果。
-
----
-
-# 🌍 Open Source Ecosystem
-
-本平台连接全球人工智能开源生态：
-
-| Platform | Purpose |
-|---|---|
-| PyTorch | Deep Learning Framework |
-| Hugging Face | Models & Datasets |
-| OpenMMLab | Computer Vision Ecosystem |
-| arXiv | Research Papers |
-| Papers with Code | Benchmark & Code |
-| Kaggle | Cloud Experiments |
-| GitHub | Open Source Collaboration |
-
----
-
-# ⭐ Philosophy
-
-> **Build, Experiment, and Create.**
-
-学习 AI 最好的方式：
-
-不是只了解 AI，
-
-而是亲手构建 AI。
-
----
-
-**MV-AI Lab · Multimodal Vision AI Learning Center**
+代码与课程材料的使用以仓库 [LICENSE](LICENSE) 为准；外部模型、数据集、论文和工具分别遵循其原始许可。

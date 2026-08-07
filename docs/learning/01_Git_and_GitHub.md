@@ -1,386 +1,114 @@
-# Chapter 1：Git 与 GitHub
+# Git 与 GitHub：可复现科研协作
 
-# Git and GitHub for AI Research
+> **对应课程**：[Week 1](00_12_Week_Bootcamp.md#week-1)<br>
+> **目标**：使用 branch → commit → pull request 完成一次可审查的科研改动。
 
----
+Git 保存项目历史，GitHub 承载协作、审查和证据。课程不要求记住所有命令，但要求每项实验都能追溯到明确的 commit。
 
-# 1. 学习目标
+## 学习目标
 
-完成本章学习后，你应该能够：
+- 区分 repository、working tree、staging area、commit 与 remote；
+- 创建分支并编写有意义的 commit；
+- 通过 pull request（PR）说明改动、验证和限制；
+- 避免提交密钥、隐私数据、模型权重和大型生成文件。
 
-* 理解 Git 与 GitHub 的区别
-* 创建并管理 GitHub Repository
-* 使用 Git 管理科研代码
-* 阅读优秀的 GitHub 开源项目
-* 参与实验室项目开发
-* 养成规范的代码管理习惯
+## 官方学习入口
 
----
+按顺序完成：
 
-# 2. 什么是 Git？
+1. [Git tutorial](https://git-scm.com/docs/gittutorial)（Git 基本操作）
+2. [GitHub Hello World](https://docs.github.com/en/get-started/start-your-journey/hello-world)（repository、branch、commit、PR）
+3. [About Git](https://docs.github.com/en/get-started/using-git/about-git)（GitHub flow）
+4. [Ignoring files](https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files)（`.gitignore`）
+5. [About secret scanning](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning)（凭据安全）
 
-Git 是目前全球最流行的版本控制工具（Version Control System）。
+## 最小工作流
 
-Git 可以帮助我们：
+```bash
+git status
+git switch -c week01-research-workflow
 
-* 保存代码历史
-* 回退错误修改
-* 管理多个版本
-* 多人协同开发
-* 管理论文代码
-
-对于科研来说：
-
-> Git 记录的是科研过程，而不仅仅是代码。
-
----
-
-# 3. 什么是 GitHub？
-
-GitHub 是目前全球最大的开源代码托管平台。
-
-GitHub 不仅可以管理代码，还可以管理：
-
-* 文档
-* 图片
-* Notebook
-* 项目
-* Issue
-* Release
-* Wiki
-
-目前绝大多数 AI 开源项目均托管在 GitHub。
-
----
-
-# 4. 为什么科研必须使用 GitHub？
-
-现代 AI 科研几乎离不开 GitHub。
-
-主要原因：
-
-* 阅读开源代码
-* 学习优秀项目结构
-* 管理自己的科研代码
-* 与导师、同学协同开发
-* 开源科研成果
-* 提高科研影响力
-
-建议每位学生都建立自己的 GitHub 主页。
-
----
-
-# 5. GitHub 常见概念
-
-学习 GitHub 前，需要理解以下概念。
-
-| 名称           | 说明      |
-| ------------ | ------- |
-| Repository   | 一个项目    |
-| Branch       | 分支      |
-| Commit       | 一次修改记录  |
-| Clone        | 下载项目    |
-| Push         | 上传代码    |
-| Pull         | 获取最新代码  |
-| Fork         | 复制别人的项目 |
-| Issue        | 问题与任务   |
-| Pull Request | 合并代码请求  |
-| Release      | 项目版本发布  |
-
-这些概念将在后续实践中逐步掌握。
-
----
-
-# 6. GitHub 页面结构
-
-打开一个 GitHub Repository 后，应重点关注以下内容：
-
-* README
-* docs
-* src
-* examples
-* requirements
-* LICENSE
-* Issues
-* Pull Requests
-
-建议首先阅读 README，然后查看目录结构。
-
----
-
-# 7. 学会阅读 GitHub 项目
-
-阅读一个开源项目时，建议按照以下顺序：
-
-```text
-README
-    ↓
-项目目录
-    ↓
-安装方法
-    ↓
-快速运行 Demo
-    ↓
-examples
-    ↓
-核心源码
+# 编辑 README、代码和测试后
+git diff
+git add README.md src/ tests/
+git diff --staged
+git commit -m "add document inspection tool"
+git push -u origin week01-research-workflow
 ```
 
-不要一开始就阅读全部源码。
+然后在 GitHub 创建 PR。PR 描述至少包含：
 
----
+- **What**：改了什么；
+- **Why**：为什么需要；
+- **How to verify**：如何运行或检查；
+- **Limitations**：已知限制或未完成项。
 
-# 8. 推荐阅读的 GitHub 项目
+!!! warning "不要默认使用 `git add .`"
+    先用 `git status` 和 `git diff` 确认范围，再显式添加文件。科研目录常含数据、模型、token、缓存和本地路径，误提交后很难彻底清除。
 
-建议优先阅读以下项目。
+## Week 1 必做任务
 
-## QwenLM
+1. 创建个人课程仓库；
+2. 新建 `week01-research-workflow` 分支；
+3. 添加 README、环境说明和一个最小 Python 工具；
+4. 至少提交两次：第一次实现、第二次改进测试或文档；
+5. 推送分支并创建 PR，请同学完成一次 review；
+6. 根据 review 修改并记录处理结果。
 
-https://github.com/QwenLM
-
-学习内容：
-
-* 大模型推理
-* Vision Language Model
-* README 编写方式
-
----
-
-## Docling
-
-https://github.com/docling-project/docling
-
-学习内容：
-
-* Document AI
-* 文档解析流程
-* Pipeline 设计
-
----
-
-## Transformers
-
-https://github.com/huggingface/transformers
-
-学习内容：
-
-* 模型加载
-* 推理接口
-* Processor
-* Tokenizer
-
----
-
-## vLLM
-
-https://github.com/vllm-project/vllm
-
-学习内容：
-
-* 高性能推理
-* Batch Inference
-* GPU 推理优化
-
----
-
-# 9. GitHub 在实验室中的使用规范
-
-实验室所有科研项目统一使用 GitHub 管理。
-
-包括：
-
-* 源代码
-* Markdown 文档
-* Notebook
-* 技术文档
-* 示例代码
-
-所有正式开发工作均提交至 GitHub。
-
----
-
-# 10. Git 基本开发流程
-
-实验室统一采用以下开发流程。
+## 建议仓库结构
 
 ```text
-Clone Repository
-
-↓
-
-阅读 README
-
-↓
-
-创建开发分支
-
-↓
-
-修改代码
-
-↓
-
-更新文档
-
-↓
-
-Commit
-
-↓
-
-Push
-
-↓
-
-Pull Request
-
-↓
-
-Review
-
-↓
-
-Merge
+student-bootcamp/
+├── README.md
+├── .gitignore
+├── environment.yml          # 或 requirements.txt / pyproject.toml
+├── learning-log.md
+├── src/
+├── tests/
+└── week01/
 ```
 
-每一次开发都遵循相同流程。
+数据、模型和输出目录是否提交，应由 `.gitignore` 和项目文档明确说明，而不是依赖个人记忆。
 
----
+## Commit 与 PR 质量
 
-# 11. Commit 规范
-
-推荐使用以下格式：
+推荐 commit 信息使用动作开头，并描述结果：
 
 ```text
-feat: add qwen inference
-
-fix: resolve tokenizer bug
-
-docs: update README
-
-refactor: optimize pipeline
-
-test: add benchmark script
+add PDF page counter
+test invalid file handling
+document reproduction steps
+fix empty input crash
 ```
 
-每次 Commit 只完成一个明确任务。
+避免 `update`、`test`、`final`、`fix bug` 等无法说明范围的信息。一个 commit 应聚焦一个可以解释的变化。
 
----
+## 自主检查
 
-# 12. 如何学习 GitHub
+- [ ] `git status` 显示预期文件，无密钥或大文件；
+- [ ] 在独立分支完成工作，没有直接修改 `main`；
+- [ ] 至少两个内容明确的 commits；
+- [ ] PR 描述包含运行/验证方式；
+- [ ] 同伴 review 有一条具体反馈及处理记录；
+- [ ] README 能让陌生同学找到唯一开始命令；
+- [ ] 学生能根据 commit 找回任意一次实验状态。
 
-建议每天坚持：
+## 常见问题
 
-* 阅读一个优秀 Repository
-* 阅读一个 README
-* 阅读一个 examples
-* 阅读一个 Issue
-* 阅读一个 Pull Request
+### 文件已经被 Git 跟踪，加入 `.gitignore` 为什么无效？
 
-长期坚持，将快速提升科研能力。
+`.gitignore` 只影响未跟踪文件。先确认文件是否应从版本控制移除；不要在不理解影响时执行批量删除命令。
 
----
+### Push 被拒绝
 
-# 13. 推荐学习资源
+先阅读错误信息，检查远端分支是否更新、是否有权限以及认证方式。不要通过强制推送覆盖同学的提交。
 
-## Git 官方
+### 不小心提交了 token
 
-https://git-scm.com/
+立即在对应平台撤销并轮换 token，并通知仓库管理员或相关平台责任人。删除当前文件不足以让已泄漏凭据恢复安全。
 
----
+## 下一步
 
-## GitHub 官方
+继续完成[Python 环境](02_Python_Environment.md)，让 PR 中的代码可以在干净环境复现。
 
-https://docs.github.com/
-
----
-
-## GitHub Skills
-
-https://skills.github.com/
-
----
-
-## GitHub Explore
-
-https://github.com/explore
-
----
-
-# 14. 本章实践
-
-请完成以下任务。
-
-## 任务一
-
-注册 GitHub 账号。
-
----
-
-## 任务二
-
-完善个人主页。
-
-包括：
-
-* Avatar
-* Name
-* Bio
-* Organization
-
----
-
-## 任务三
-
-Fork 一个开源项目。
-
-推荐：
-
-QwenLM 或 Docling。
-
----
-
-## 任务四
-
-Clone 到本地。
-
----
-
-## 任务五
-
-成功运行项目 README 中提供的第一个 Demo。
-
----
-
-# 15. 本章总结
-
-完成本章后，你应该已经能够：
-
-* 理解 Git 与 GitHub 的作用
-* 阅读优秀开源项目
-* 管理自己的科研代码
-* 熟悉实验室 GitHub 开发流程
-
-这将成为后续所有课程的基础。
-
----
-
-# 下一章
-
-下一章学习：
-
-> **Chapter 2：Python 开发环境**
-
-主要内容：
-
-* Python 安装
-* Conda 环境管理
-* VS Code
-* CUDA
-* PyTorch
-* 开发环境配置
-
-完成后，你将拥有完整的 AI 开发环境。
-
-[上一章](00_Lab_Introduction.md){ .md-button }    [下一章](02_Python_Environment.md){ .md-button }
-
+最后更新：2026-08-07

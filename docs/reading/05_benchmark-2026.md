@@ -1,16 +1,31 @@
-# Benchmarks
+---
+hide:
+  - toc
+---
 
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Benchmarks
->
-> **Version:** v3.1
->
-> **Last Updated:** July 2026
+# 评测基准：用指标回答研究问题
+
+本页收录的数据集很多，第一次不要逐个浏览。先确定要评测的能力，再选择一个数据集、一个主指标和一组失败案例。
+
+!!! success "本页最小任务"
+    为当前项目写出“研究问题—数据集—指标—失败案例”四项选择，并解释为什么这个指标比单纯查看模型输出更有说服力。
+
+## 本页快速定位
+
+| 要评测的能力 | 直接进入 | 重点检查 |
+| --- | --- | --- |
+| 端到端文档解析 | [OmniDocBench](#part-1-omnidocbench) | 文字、公式、表格与阅读顺序是否分别评测 |
+| 版面分析 | [DocLayNet](#part-2-doclaynet) | 类别、标注粒度与文档来源 |
+| OCR 与细粒度感知 | [OCRBench](#part-3-ocrbench) · [OCRBench v2](#part-15-ocrbench-v2) | 任务覆盖与错误类型是否匹配项目 |
+| 表格识别 | [PubTabNet](#part-4-pubtabnet) | 结构指标是否反映单元格关系 |
+| 文档与图表问答 | [DocVQA](#part-5-docvqa) · [ChartQA](#part-6-chartqa) | 答案准确率是否掩盖证据定位错误 |
+| 关键信息抽取 | [FUNSD](#part-9-funsd) · [XFUND](#part-10-xfund) · [CORD](#part-11-cord) | 领域、语言和实体类别是否适用 |
+| 综合多模态理解 | [MMDocBench](#part-14-mmdocbench) | 感知、推理和生成能力如何拆分 |
+| 完成评测设计 | [Selection Strategy](#part-17-benchmark-selection-strategy) · [Benchmark Pipeline](#part-18-laboratory-benchmark-pipeline) | 数据、指标、基线、失败案例和复现记录 |
 
 ---
 
-# Overview
+## 为什么要学
 
 Benchmark 是 Document AI 研究中不可缺少的一部分。
 
@@ -20,7 +35,7 @@ Benchmark 是 Document AI 研究中不可缺少的一部分。
 
 ---
 
-# Learning Objectives
+## 学习目标
 
 完成本章节后，应能够：
 
@@ -31,7 +46,7 @@ Benchmark 是 Document AI 研究中不可缺少的一部分。
 
 ---
 
-# Benchmark Evolution
+## 评测如何演进
 
 Document AI Benchmark 的发展经历了以下几个阶段：
 
@@ -58,7 +73,7 @@ End-to-End Document Intelligence
 
 ---
 
-# Benchmark Taxonomy
+## 按任务选择 { #task-selector }
 
 建议按照研究目标理解不同 Benchmark。
 
@@ -185,7 +200,7 @@ https://github.com/DS4SD/DocLayNet
 
 ### Dataset
 
-https://huggingface.co/datasets/ds4sd/DocLayNet
+https://huggingface.co/datasets/docling-project/DocLayNet
 
 ---
 
@@ -440,7 +455,7 @@ https://www.docvqa.org/
 
 ### Challenge
 
-https://rrc.cvc.uab.es/?ch=17
+https://www.docvqa.org/challenges
 
 ---
 
@@ -607,11 +622,11 @@ Document Classification
 
 ### Paper
 
-https://www.cs.cmu.edu/~aharley/rvl-cdip/
+https://arxiv.org/abs/1502.07058
 
 ### Dataset
 
-https://www.cs.cmu.edu/~aharley/rvl-cdip/
+https://huggingface.co/datasets/aharley/rvl_cdip
 
 ---
 
@@ -805,13 +820,9 @@ Multilingual Form Understanding
 
 https://arxiv.org/abs/2104.08836
 
-### GitHub
+### Repository and Dataset
 
 https://github.com/doc-analysis/XFUND
-
-### Dataset
-
-https://huggingface.co/datasets/xfund/xfund
 
 ---
 
@@ -935,13 +946,9 @@ Scanned Receipt OCR and Information Extraction
 
 ## Official Resources
 
-### Competition
+### Competition Paper
 
-https://rrc.cvc.uab.es/?ch=13
-
-### ICDAR Competition
-
-https://rrc.cvc.uab.es/
+https://arxiv.org/abs/2103.10213
 
 ---
 
@@ -1094,7 +1101,7 @@ https://arxiv.org/abs/2407.06904
 
 # Benchmarks
 
-> **Multimodal Document AI Learning Center**
+> **Multimodal Vision AI Learning Center**
 >
 > **Module:** Benchmarks
 >
@@ -1172,10 +1179,6 @@ https://mmdocbench.github.io/
 ### Paper
 
 https://arxiv.org/abs/2410.21311
-
-### GitHub
-
-https://github.com/fb-zhu/MMDocBench
 
 ### Dataset
 
@@ -1375,12 +1378,11 @@ Leaderboard
 
 ## Benchmark Collections
 
-| Resource                                   | URL                                                           |
-| ------------------------------------------ | ------------------------------------------------------------- |
-| Papers With Code（OCR）                      | https://paperswithcode.com/task/optical-character-recognition |
-| Papers With Code（Document Layout Analysis） | https://paperswithcode.com/task/document-layout-analysis      |
-| Hugging Face Datasets                      | https://huggingface.co/datasets                               |
-| OpenDataLab                                | https://opendatalab.com                                       |
+| Resource              | URL                             |
+| --------------------- | ------------------------------- |
+| AMiner / 智谱 AI      | https://www.aminer.cn/          |
+| Hugging Face Datasets | https://huggingface.co/datasets |
+| OpenDataLab           | https://opendatalab.com         |
 
 ---
 

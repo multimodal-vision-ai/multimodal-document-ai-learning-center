@@ -1,8 +1,20 @@
 # Part 6：Prompt Engineering 与多组实验（Prompt Design and Comparative Experiments）
 
+[上一关：完成首次推理](Part05-模型准备与推理.md){ .md-button }
+[返回项目控制台](README.md){ .md-button }
+[下一关：评测与总结](Part07-Bechmark评测与总结.md){ .md-button .md-button--primary }
+
+> **本关核心产出**：三组受控运行、run manifest 与证据支持的观察 · **预计时间**：2–3 小时
+
+!!! success "本关通过条件"
+    三组实验使用相同模型 revision、相同样例和相同 generation config，只改变 Prompt 约束；每个 run 都能从 manifest 找到 Prompt、输入、metadata 和未经修改的原始输出。
+
+!!! warning "不同任务不等于受控对比"
+    “OCR、转 Markdown、找表格、总结”回答的是不同问题，不能直接比较哪个 Prompt 更好。本关的核心实验必须保持任务相同，只改变一个 Prompt 因素；后文五类 Prompt 可以作为完成核心实验后的任务覆盖扩展。
+
 ---
 
-# 一、本部分学习目标（Learning Objectives）
+## 一、本部分学习目标（Learning Objectives）
 
 完成本部分后，你应该能够：
 
@@ -15,7 +27,7 @@
 
 ---
 
-# 二、实验任务
+## 二、实验任务
 
 本部分需要完成以下任务：
 
@@ -29,7 +41,7 @@
 
 ---
 
-# 三、实验数据准备（Operations）
+## 三、实验数据准备（Operations）
 
 进入：
 
@@ -61,7 +73,30 @@ sample_03.jpg
 
 ---
 
-# 四、建立 Prompt 管理目录（Operations）
+## 四、先完成三组受控实验（Required Experiment）
+
+选择同一个任务，例如“将文档转写为 Markdown”，固定模型、3–5 个样例与 generation config，只改变 Prompt 约束：
+
+| Prompt version | 唯一变化 | 需要观察什么 |
+| --- | --- | --- |
+| P1｜基础指令 | 只说明任务 | 内容完整度与幻觉 |
+| P2｜结构约束 | 明确标题、段落、表格的输出格式 | 结构保持与格式遵循 |
+| P3｜证据约束 | 在 P2 基础上要求不确定时标记 `[UNCERTAIN]` | 无依据回答与漏项 |
+
+为每个样例运行 P1、P2、P3，并创建 `experiments/2026-Experiment01/run_manifest.csv`：
+
+```text
+run_id,sample_id,model_id,model_revision,prompt_version,generation_config_path,raw_output,status
+```
+
+推荐命名：`p1_sample_text_01`、`p2_sample_text_01`。这样 Part 07 可以直接按 `sample_id` 对齐三组结果。
+
+!!! tip "最小成功"
+    资源不足时，先用 1 个样例完成 P1/P2/P3，确认结果文件不会覆盖；再扩展到其余样例。
+
+---
+
+## 五、建立 Prompt 管理目录（Operations）
 
 进入：
 
@@ -101,7 +136,7 @@ analysis/
 
 ---
 
-# 五、设计第一组 Prompt（Operations）
+## 六、任务覆盖扩展：文档描述（Optional）
 
 创建文件：
 
@@ -131,7 +166,7 @@ result_prompt01.md
 
 ---
 
-# 六、设计第二组 Prompt（Operations）
+## 七、任务覆盖扩展：文字提取（Optional）
 
 创建：
 
@@ -159,7 +194,7 @@ result_prompt02.md
 
 ---
 
-# 七、设计第三组 Prompt（Operations）
+## 八、任务覆盖扩展：Markdown 转写（Optional）
 
 创建：
 
@@ -187,7 +222,7 @@ result_prompt03.md
 
 ---
 
-# 八、设计第四组 Prompt（Operations）
+## 九、任务覆盖扩展：表格识别（Optional）
 
 创建：
 
@@ -215,7 +250,7 @@ result_prompt04.md
 
 ---
 
-# 九、设计第五组 Prompt（Operations）
+## 十、任务覆盖扩展：内容总结（Optional）
 
 创建：
 
@@ -243,7 +278,7 @@ result_prompt05.md
 
 ---
 
-# 十、建立 Prompt 对照表（Operations）
+## 十一、建立 Prompt 对照表（Operations）
 
 进入：
 
@@ -264,24 +299,22 @@ prompt_comparison.md
 
 | Prompt | Objective | Output Quality | Notes |
 |----------|-----------|----------------|------|
-| Prompt 01 | Document Description | | |
-| Prompt 02 | OCR | | |
-| Prompt 03 | Markdown | | |
-| Prompt 04 | Table | | |
-| Prompt 05 | Summary | | |
+| P1 | 基础指令 | | |
+| P2 | 增加结构约束 | | |
+| P3 | 增加不确定性标记 | | |
 ```
 
 实验完成后补充内容。
 
 ---
 
-# 十一、比较实验结果（Operations）
+## 十二、比较实验结果（Operations）
 
-阅读五组实验结果。
+先按相同 `sample_id` 横向阅读 P1、P2、P3 的结果，再跨样例检查同一现象是否重复出现。
 
-重点比较以下内容。
+重点比较以下内容。任务覆盖扩展的五类输出单独分析，不与受控实验混在同一结论中。
 
-## 输出长度
+### 输出长度
 
 观察：
 
@@ -290,7 +323,7 @@ prompt_comparison.md
 
 ---
 
-## OCR 效果
+### OCR 效果
 
 观察：
 
@@ -299,7 +332,7 @@ prompt_comparison.md
 
 ---
 
-## Markdown 效果
+### Markdown 效果
 
 观察：
 
@@ -309,7 +342,7 @@ prompt_comparison.md
 
 ---
 
-## 表格识别
+### 表格识别
 
 观察：
 
@@ -318,7 +351,7 @@ prompt_comparison.md
 
 ---
 
-## 内容理解
+### 内容理解
 
 观察：
 
@@ -327,7 +360,7 @@ prompt_comparison.md
 
 ---
 
-# 十二、建立实验分析报告（Operations）
+## 十三、建立实验分析报告（Operations）
 
 进入：
 
@@ -356,40 +389,33 @@ OmniDocBench Sample
 
 ## Model
 
-Qwen3.5-VL-0.8B
+Qwen/Qwen3.5-0.8B
 
 ## Prompt Comparison
 
-### Prompt 01
+### P1 — 基础指令
 
 ...
 
-### Prompt 02
+### P2 — 结构约束
 
 ...
 
-### Prompt 03
-
-...
-
-### Prompt 04
-
-...
-
-### Prompt 05
+### P3 — 证据约束
 
 ...
 
 ## Conclusion
 
-Which prompt performs best?
-
-Why?
+- 哪个变化在多数样例上重复出现？
+- 哪些观察只有个例证据？
+- 结果支持或反驳了 project_plan.md 中的哪项预期？
+- 还不能得出什么结论？
 ```
 
 ---
 
-# 十三、更新实验日志（Operations）
+## 十四、更新实验日志（Operations）
 
 编辑：
 
@@ -416,14 +442,14 @@ results.md
 补充：
 
 ```markdown id="p6s031"
-Five prompts have been tested.
+P1/P2/P3 controlled runs have been completed.
 
 All outputs have been saved.
 ```
 
 ---
 
-# 十四、检查实验目录（Expected Results）
+## 十五、检查实验目录（Expected Results）
 
 实验目录应如下：
 
@@ -436,34 +462,28 @@ All outputs have been saved.
 
 │   ├── prompt_02.md
 
-│   ├── prompt_03.md
-
-│   ├── prompt_04.md
-
-│   └── prompt_05.md
+│   └── prompt_03.md
 
 ├── results/
 
-│   ├── result_prompt01.md
+│   ├── p1_sample_text_01.txt
 
-│   ├── result_prompt02.md
+│   ├── p2_sample_text_01.txt
 
-│   ├── result_prompt03.md
-
-│   ├── result_prompt04.md
-
-│   └── result_prompt05.md
+│   └── p3_sample_text_01.txt
 
 ├── analysis/
 
 │   ├── prompt_comparison.md
 
 │   └── experiment_analysis.md
+
+└── run_manifest.csv
 ```
 
 ---
 
-# 十五、Git 提交（Operations）
+## 十六、Git 提交（Operations）
 
 执行：
 
@@ -495,9 +515,9 @@ git push
 
 ---
 
-# 十六、常见问题（Common Errors）
+## 十七、常见问题（Common Errors）
 
-## 问题一
+### 问题一
 
 Prompt 修改后输出没有变化。
 
@@ -507,7 +527,7 @@ Prompt 修改后输出没有变化。
 
 ---
 
-## 问题二
+### 问题二
 
 Prompt 文件编码错误。
 
@@ -517,7 +537,7 @@ Prompt 文件编码错误。
 
 ---
 
-## 问题三
+### 问题三
 
 实验结果覆盖。
 
@@ -529,7 +549,7 @@ Prompt 文件编码错误。
 
 ---
 
-## 问题四
+### 问题四
 
 分析报告内容过少。
 
@@ -543,12 +563,13 @@ Prompt 文件编码错误。
 
 ---
 
-# 十七、本部分成果（Deliverables）
+## 十八、本部分成果（Deliverables）
 
 完成本部分后，应提交：
 
-* 五组 Prompt；
-* 五组实验结果；
+* 三组同任务、单变量 Prompt；
+* 每组 Prompt 在相同样例上的原始结果；
+* run_manifest.csv；
 * Prompt 对照表；
 * 实验分析报告；
 * 更新后的实验日志；
@@ -556,12 +577,13 @@ Prompt 文件编码错误。
 
 ---
 
-# 十八、自我检查列表（Checklist）
+## 十九、自我检查列表（Checklist）
 
 | 检查项          | 状态 |
 | ------------ | -- |
-| 五组 Prompt 完成 | □  |
-| 五组实验完成       | □  |
+| P1/P2/P3 Prompt 完成 | □  |
+| 同样例受控运行完成   | □  |
+| run_manifest.csv 完成 | □  |
 | 输出结果保存       | □  |
 | Prompt 对照表完成 | □  |
 | 实验分析报告完成     | □  |
@@ -571,15 +593,15 @@ Prompt 文件编码错误。
 
 ---
 
-# 十九、本部分小结
+## 二十、本部分小结
 
 本部分完成了第一次 Prompt Engineering 实验，并建立了 Prompt 管理、实验分析和结果对比的基本流程。
 
 ---
 
-# 下一部分
+## 下一部分
 
-**Part 7：Benchmark 初步评测与实验总结（Benchmark Evaluation and Project Summary）**
+**Part 7：小规模评测与实验总结（Evaluation and Project Summary）**
 
 下一部分将完成：
 
@@ -587,7 +609,7 @@ Prompt 文件编码错误。
 * 模型推理结果整理；
 * 初步性能评测；
 * 项目总结；
-* 实验验收；
+* 实验自查；
 * Experiment 01 完整归档。
 
 ➡️ [进入 Part 07：Benchmark评测与总结](Part07-Bechmark评测与总结.md)

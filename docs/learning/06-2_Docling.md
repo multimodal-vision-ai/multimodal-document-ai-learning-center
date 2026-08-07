@@ -1,307 +1,127 @@
-# Chapter 6.2：Docling
+# Docling：PDF 到 Markdown/JSON 的可检查流水线
 
-# Docling for Multimodal Document AI
+> **对应课程**：[Week 6](00_12_Week_Bootcamp.md#week-6)<br>
+> **目标**：把三类真实文档转换为结构化输出，并建立质量检查和失败记录。
 
----
+Docling 将 PDF、Office 文档、图像等转换为统一的 `DoclingDocument`，再导出 Markdown、JSON 等格式。它适合构建可检查的 modular pipeline，与生成式 VLM 形成对照。
 
-# 1. 学习目标（Learning Objectives）
+## 官方学习入口
 
-完成本章学习后，你应该能够：
+- [Installation](https://docling-project.github.io/docling/getting_started/installation/)（当前安装和可选 OCR 引擎）
+- [Quickstart](https://docling-project.github.io/docling/getting_started/quickstart/)（`DocumentConverter`）
+- [Supported formats](https://docling-project.github.io/docling/usage/supported_formats/)（输入与输出）
+- [CLI reference](https://docling-project.github.io/docling/reference/cli/)（批量转换和参数）
+- [DocumentConverter API](https://docling-project.github.io/docling/reference/document_converter/)（状态、限制与错误）
+- [Serialization](https://docling-project.github.io/docling/concepts/serialization/)（Markdown/JSON 的信息差异）
+- [Official GitHub repository](https://github.com/docling-project/docling)（源码、examples、issues）
 
-* 了解 Docling 的定位与特点
-* 熟悉 Docling 官方资源
-* 成功运行官方 Demo
-* 理解文档解析流程
-* 掌握 Markdown 文档生成
-* 理解 Docling 与 Qwen3.5-VL 的区别
-* 熟悉实验室中 Docling 的应用场景
+## 最小转换
 
----
+以官方 Quickstart 为准，核心过程是：
 
-# 2. Docling 简介（Introduction）
+```python
+from docling.document_converter import DocumentConverter
 
-Docling 是 Docling 项目推出的轻量级文档理解模型，专注于 Document AI 场景。
+source = "path/to/document.pdf"
+result = DocumentConverter().convert(source)
+document = result.document
 
-相比通用视觉语言模型，Docling 更关注：
-
-* PDF 文档解析
-* OCR
-* 页面版面理解
-* Markdown 转换
-* 文档结构恢复
-
-其目标是将复杂文档转换为适合大模型处理的结构化文本，为后续问答、检索和 Agent 应用提供高质量输入。
-
-对于实验室而言，Docling 是文档预处理的重要工具，可与 Deepseek 等大模型协同使用。
-
----
-
-# 3. 官方资源（Official Resources）
-
-## GitHub
-
-Docling Project
-
-https://github.com/docling-project/docling
-
----
-
-## Hugging Face
-
-Docling 官方主页
-
-https://huggingface.co/docling-project
-
----
-
-## 官方文档
-
-https://docling-project.github.io/docling/
-
----
-
-## Model Hub
-
-浏览 Docling 相关模型
-
-https://huggingface.co/docling-project
-
----
-
-# 4. 快速开始（Quick Start）
-
-建议继续使用实验室统一开发环境。
-
-推荐流程：
-
-1. 阅读官方 README。
-2. 按照官方说明安装依赖。
-3. 下载 Docling 模型。
-4. 运行官方 Demo。
-5. 使用一份 PDF 文档进行测试。
-
-建议优先验证官方示例，再开展自己的实验。
-
----
-
-# 5. 模型推理（Inference）
-
-Docling 的基本处理流程如下：
-
-```text
-PDF / 图片
-      │
-      ▼
-文档读取
-      │
-      ▼
-页面解析
-      │
-      ▼
-版面分析
-      │
-      ▼
-OCR
-      │
-      ▼
-结构恢复
-      │
-      ▼
-Doctags 输出
+markdown = document.export_to_markdown()
+structured = document.export_to_dict()
 ```
 
-重点理解：
+不要只打印输出。保存 Markdown、JSON、转换状态、耗时和输入文件的稳定标识。
 
-* 文档输入
-* 页面解析
-* 结构恢复
-* Doctags 输出
+!!! note "选择输出格式"
+    Markdown 便于阅读，但可能无法完整表达复杂表格和结构；需要保真中间表示时保存 Docling JSON。具体差异以官方 Serialization 文档为准。
 
-这些步骤构成了现代 Document AI 系统的重要基础。
-
----
-
-# 6. Document AI 应用（Applications）
-
-Docling 适用于以下任务：
-
-## PDF 转 Markdown
-
-将 PDF 转换为结构清晰的 Markdown 文档。
-
----
-
-## OCR
-
-识别文档中的文字内容。
-
----
-
-## Layout Analysis
-
-识别标题、正文、图片、表格等版面结构。
-
----
-
-## Table Extraction
-
-提取表格内容。
-
----
-
-## Reading Order
-
-恢复页面阅读顺序。
-
----
-
-## Document Parsing
-
-将复杂文档转换为结构化表示。
-
----
-
-## RAG 文档预处理
-
-作为知识库构建前的数据清洗与转换工具。
-
----
-
-# 7. 项目源码（Project Structure）
-
-阅读项目时建议按照以下顺序：
+## Pipeline 设计
 
 ```text
-README
-    │
-    ▼
-examples
-    │
-    ▼
-CLI
-    │
-    ▼
-Pipeline
-    │
-    ▼
-Models
+validate input
+      ↓
+convert with explicit options
+      ↓
+check conversion status/errors
+      ↓
+export Markdown + JSON
+      ↓
+run quality checks
+      ↓
+write manifest and report
 ```
 
-重点关注：
+程序必须限制输入类型、页数或文件大小，并为失败返回非零退出码。批量任务不能静默跳过失败文档。
 
-* 官方示例
-* 文档解析流程
-* Markdown 输出
-* Pipeline 设计
+## Week 6 必做任务
 
-理解整体流程即可，不必深入每个实现细节。
+选择与 Week 5 相同的三份文档：数字 PDF、扫描件、复杂表格文档。
 
----
+1. 使用默认 pipeline 转换并保存 Markdown/JSON；
+2. 记录 Docling 版本、处理选项、状态、耗时与错误；
+3. 对扫描件说明 OCR 是否启用、使用什么引擎和语言；
+4. 定义至少 5 条质量检查；
+5. 比较 Markdown 与 JSON 对标题、表格和阅读顺序的保留程度；
+6. 使用一个损坏或不支持的输入验证失败路径。
 
-# 8. Qwen3.5-VL 与 Docling 对比
+## 最小质量检查
 
-| 项目   | Qwen3.5-VL            | Docling            |
-| ---- | --------------------- | ---------------------- |
-| 模型类型 | Vision Language Model | Document Parsing Model |
-| 主要能力 | 图像理解、多模态推理            | 文档解析、Markdown 生成       |
-| 输入   | 图片、文档                 | PDF、图片                 |
-| 输出   | 文本回答                  | 结构化 Markdown           |
-| 适用场景 | 多模态理解                 | 文档预处理                  |
+| 检查 | 示例判定 |
+| --- | --- |
+| 文件完整性 | 输入存在、扩展名允许、大小在限制内 |
+| 转换状态 | 成功、部分成功或失败被明确记录 |
+| 内容非空 | 文本长度超过预设最低值 |
+| 页面对应 | 输出覆盖预期页数 |
+| 结构保留 | 标题、表格数量与人工检查一致 |
+| 阅读顺序 | 抽样段落顺序无明显错乱 |
+| JSON 有效性 | 可解析并满足预期顶层字段 |
 
-实验室通常将两者结合使用，而不是相互替代。
+这些检查用于发现异常，不等同于完整 Benchmark。模型质量评测在 Week 7 完成。
 
----
-
-# 9. 本章实践（Hands-on Practice）
-
-完成以下任务。
-
-## 任务一
-
-安装 Docling。
-
----
-
-## 任务二
-
-运行官方 Demo。
-
----
-
-## 任务三
-
-准备三份 PDF：
-
-* 学术论文
-* 技术报告
-* 包含表格的文档
-
-观察输出效果。
-
----
-
-## 任务四
-
-比较原始 PDF 与生成的 Markdown。
-
-分析：
-
-* 标题恢复情况
-* 表格恢复情况
-* 图片处理情况
-* 阅读顺序是否正确
-
----
-
-## 任务五
-
-建立实验记录：
+## 推荐输出结构
 
 ```text
-experiments/
-
-└── Docling/
-
-    ├── pdf/
-    ├── markdown/
-    ├── outputs/
-    └── notes.md
+week06/
+├── README.md
+├── parse_documents.py
+├── quality_checks.py
+├── inputs-manifest.csv
+├── results/
+│   ├── markdown/
+│   ├── json/
+│   └── run-manifest.csv
+└── quality-report.md
 ```
 
-记录实验过程与分析结果。
+`run-manifest.csv` 至少包含 `sample_id,input_hash,status,duration,markdown_path,json_path,error`。
 
----
+## 自主检查
 
-# 10. 本章总结（Summary）
+- [ ] 使用当前官方 `DocumentConverter` API；
+- [ ] Docling 版本和 pipeline options 被记录；
+- [ ] 三类文档均有输入—输出对应关系；
+- [ ] Markdown 与 JSON 都被保存并比较；
+- [ ] 至少 5 条质量检查能重复运行；
+- [ ] 损坏输入能得到清晰错误和非零退出码；
+- [ ] 原始文档来源、许可和隐私状态明确；
+- [ ] 没有把“转换成功”误写为“解析质量优秀”。
 
-本章介绍了 Docling 的定位及实验室中的主要应用。
+## 常见问题
 
-完成本章后，你应该能够：
+### 扫描 PDF 没有文本
 
-* 独立运行 Docling
-* 使用模型解析 PDF
-* 生成 Markdown 文档
-* 理解文档解析流程
-* 比较 Docling 与 Qwen3.5-VL 的特点
-* 将其应用于实验室 Document AI 项目
+确认 OCR 是否启用、OCR 引擎是否正确安装、语言数据是否可用，并记录实际配置。
 
----
+### 表格在 Markdown 中丢失结构
 
-# 11. 下一章（Next Chapter）
+对照 Docling JSON 或 HTML；复杂合并单元格不一定适合用 Markdown 表达。
 
-下一章学习：
+### 第一次运行很慢
 
-> **Chapter 7：Document AI**
+区分模型下载时间和稳定处理时间。报告中单独记录 warm-up，不把首次下载计入每页性能比较。
 
-主要内容包括：
+## 下一步
 
-* Document AI 基本概念
-* 文档处理流程
-* OCR、版面分析、表格识别等核心任务
-* 主流数据集与 Benchmark
-* 实验室整体技术路线
+进入[Document AI：从任务到评测](07_Doc_AI.md)，为 pipeline 建立固定 test set、质量指标和错误分类。
 
-完成后，你将建立完整的 Document AI 知识体系，为后续科研和项目开发奠定基础。
-
-[上一章](06-1_Qwen3.5-VL-0.8B.md){ .md-button }    [下一章](07_Doc_AI.md){ .md-button }
-
+最后更新：2026-08-07

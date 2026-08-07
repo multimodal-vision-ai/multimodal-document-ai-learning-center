@@ -1,0 +1,47 @@
+name: Documentation quality
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - ".github/workflows/docs-quality.yml"
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-docs.txt
+      - name: Install documentation dependencies
+        run: pip install -r requirements-docs.txt
+      - name: Validate navigation and internal links
+        run: mkdocs build --strict
+
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Markdown links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --accept 200,204,206,429
+            --retry-wait-time 2
+            --max-retries 2
+            --exclude "^https://www[.]acm[.]org/publications/policies/artifact-review-and-badging-current$"
+            --exclude "^https://www[.]sciencedirect[.]com/science/article/pii/S1566253525006955$"
+            "docs/**/*.md"
+          fail: true

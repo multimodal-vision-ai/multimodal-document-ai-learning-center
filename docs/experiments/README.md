@@ -1,145 +1,74 @@
-# 🔬 Experiments
+# 项目实战：独立完成一个研究项目
 
-> **Multimodal Vision AI Experiment Center**  
->
-> From Learning to Research
+这里不是零散代码示例，而是一条可以自己推进的 **project lab**。你会从一个明确问题出发，把数据、推理、受控实验、评测和报告组织成可复现作品。
 
----
+[开始项目 01](Experiment_01/README.md){ .md-button .md-button--primary }
+[先查看 12 周课程](../learning/00_12_Week_Bootcamp.md){ .md-button }
 
-## Overview
+!!! info "先选对入口"
+    只想快速跑通一个案例，请进入[动手教程](../tutorials/README.md)；希望形成可以提交、复现和答辩的完整作品，再从本页开始。
 
-Experiments 是 **Multimodal Vision AI Learning Center** 的科研实践模块。
+## 怎样独立完成
 
+每一关都按同一节奏推进：
 
-## 🎯 Experiment Goals
+1. 确认本关输入和唯一核心任务。
+2. 完成一个最小动作，保存原始证据。
+3. 对照“本关通过条件”自检。
+4. 提交一次 Git，再进入下一关。
 
-完成实验后，你将能够：
+你不需要一次理解全部内容。只要每关都留下可运行文件、原始结果或研究记录，七关结束时，它们会自然组成最终项目。
 
-- 搭建人工智能实验环境；
-- 使用主流开源 AI 模型；
-- 完成数据准备与模型推理；
-- 设计实验方案；
-- 使用 Benchmark 进行模型评价；
-- 撰写实验总结报告。
+!!! tip "卡住时"
+    先核对本关给出的官方入口、版本和输入格式；再缩小到 1 个样例、1 次运行；最后把错误信息、已尝试方法和当前环境写入实验日志。不要手工修改模型输出制造“成功结果”。
 
----
+## 当前项目
 
-## 📂 Experiment Structure
+### 项目 01：文档理解与评测
 
-每个实验采用统一的科研项目组织方式：
-```text
-Experiment_Name/
+- **状态**：可开始
+- **适合阶段**：Week 4–7
+- **项目最小路线**：12–18 小时（不等同于 Week 4–7 的全部学习时间）
+- **最终成果**：推理 pipeline、Prompt 对照、小规模评测与项目报告
 
-├── README.md          # 实验说明、运行方法、实验流程
+> 核心问题：同一个文档理解模型在不同输入与 Prompt 设置下表现如何？这些观察能否被固定样例、原始输出和评测结果支持？
 
-├── notebooks/         # Jupyter Notebook (Kaggle优先)实验代码
+[进入项目控制台](Experiment_01/README.md){ .md-button .md-button--primary }
 
-├── src/               # 核心 Python 代码
+目前只有项目 01 达到可学习状态。其他方向只有在指导书、代码入口、预期产出和自主检查齐全后，才会显示为可用项目。
 
-├── configs/           # 实验参数与配置文件
+## 七关路线
 
-├── data/              # 数据集说明、下载脚本与数据处理代码
+1. **[确定目标](Experiment_01/Part01-实验准备.md)**：写出研究问题、范围和成功标准。
+2. **[创建仓库](Experiment_01/Part02-创建Github科研项目仓库.md)**：建立可协作、可追踪的研究项目。
+3. **[组织目录](Experiment_01/Part03-构建项目目录.md)**：分开代码、配置、数据、输出和记录。
+4. **[准备数据](Experiment_01/Part04-数据集准备.md)**：选择 3–5 个有来源、有差异的公开样例。
+5. **[完成推理](Experiment_01/Part05-模型准备与推理.md)**：固定模型与配置，保存首次原始输出。
+6. **[受控对比](Experiment_01/Part06-提示词管理与对比分析.md)**：一次只改变一个变量，解释结果差异。
+7. **[评测总结](Experiment_01/Part07-Bechmark评测与总结.md)**：用合适指标和失败案例回答最初问题。
 
-├── models/            # 模型配置、权重说明与模型相关文件
+## 最终要交付什么
 
-├── results/           # 实验输出、日志、结果文件与可视化图片
+- 一个结构清晰、可从 README 启动的 GitHub 项目；
+- 可追溯的数据来源、模型 revision、配置与运行命令；
+- 至少两组可比较的 Prompt 或参数实验；
+- 原始输出、指标结果和代表性失败案例；
+- 一份区分事实、结果、解释与限制的项目报告。
 
-└── report/            # 实验分析报告与总结文档
-```
----
+## 真正练到的能力
 
-## 🧪 Planed Experiments
+- 不只是跑通模型，还能把版本、输入、配置与输出组成证据链。
+- 不只是尝试 Prompt，还能控制变量，完成可以解释的对照实验。
+- 不只是得到分数，还能判断指标是否回答了原来的问题。
+- 不只是写 README，还能让另一位同学复现并质疑你的结论。
 
+!!! success "完成标准"
+    陌生同学能够按 README 复现至少一组结果；报告中的关键结论能回到具体输入、配置和原始输出；仓库中没有密钥、私人文档或未授权数据。
 
-| Experiment | Topic | Description |
-|------------|-------|-------------|
-| Experiment 01 | Multimodal Vision AI 基础实验 | 完成第一个多模态模型实验 |
-| Experiment 02 | Document AI 实验 | 文档理解与解析 |
-| Experiment 03 | VLM Evaluation | 多模态模型评测 |
-| Experiment 04 | Model Fine-tuning | 大模型微调实验 |
+## 课程中的位置
 
----
+项目 01 可以作为 Week 4–7 的主线成果，并继续扩展为 Week 12 Capstone。证据整理与自主判断以[自主评估与证据指南](../learning/10_Assessment_and_Submission.md)为准。
 
-# 🚀 Recommended Workflow
+后续项目将围绕 Document AI pipeline、VLM evaluation、模型后训练与视频理解逐步建设。
 
-所有实验建议遵循统一流程：
-```text
-Step 01 Environment Setup
-        ↓
-Step 02 Dataset Preparation
-        ↓
-Step 03 Model Deployment
-        ↓
-Step 04 Experiment Design
-        ↓
-Step 05 Benchmark Evaluation
-        ↓
-Step 06 Result Analysis
-        ↓
-Step 07 Research Summary
-```
-
----
-
-# 🌱 Start Your First Experiment
-
-推荐从基础实验开始：
-
-➡️ [Experiment 01：Multimodal Vision AI 基础实验](Experiment_01/)
-
----
-
-# 🔬 Research-Oriented Learning
-
-实验不仅关注：
-
-> "如何运行一个模型"
-
-更关注：
-
-- 为什么选择这个模型？
-- 如何设计实验？
-- 如何评价性能？
-- 如何发现问题？
-- 如何提出改进方案？
-
-通过实验训练科研思维。
-
----
-
-# 📌 Learning Path
-
-推荐学习路线：
-
-```text
-Learning
-    ↓
-Reading
-    ↓
-Tutorials
-    ↓
-Experiments
-    ↓
-Research Projects
-```
-
----
-
-# 🌟 Future Topics
-
-实验中心将持续扩展：
-
-- Vision Language Models
-- Document AI
-- OCR
-- Multimodal Agents
-- Medical Vision AI
-- AI for Science
-
----
-
-**Learn · Practice · Experiment · Research**
-
-*Multimodal Vision AI Learning Center*
-
-
+最后更新：2026-08-07

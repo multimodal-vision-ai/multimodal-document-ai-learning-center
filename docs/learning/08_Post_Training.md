@@ -1,304 +1,175 @@
-# Qwen3.5-VL 后训练学习资源
-> Learning Center · MV-AI-Lab
+# 模型后训练与 W&B 实验管理
 
-本资料整理了实验室目前采用的 **Qwen3.5-VL 后训练（Post-training）** 学习资源，包括 **MS-SWIFT、LoRA、SFT、GRPO** 以及 **Weights & Biases (W&B)** 等核心工具。
+> **对应课程**：[Week 8](00_12_Week_Bootcamp.md#week-8) · [Week 9](00_12_Week_Bootcamp.md#week-9) · [Week 10](00_12_Week_Bootcamp.md#week-10)<br>
+> **目标**：完成一次小规模 LoRA/SFT，并用 W&B 形成可审计的实验对比。<br>
+> **建议顺序**：baseline → LoRA/SFT → W&B tracking → evaluation/ablation
 
----
+本页是学习入口与实验规范，不复制框架官网中的长篇命令。具体 API 以官方文档为准，学生成果以配置、run、artifact 和评测证据为准。
 
-# 推荐学习路线
+## 先判断是否应该微调
+
+微调不是默认答案。开始前先写一页实验提案，回答：
+
+1. Prompt 或 pipeline 调整为何不能解决问题？
+2. 训练数据是否合法、足够代表目标任务吗？
+3. 使用什么固定 test set 判断效果？
+4. 最小可行模型和算力预算是什么？
+5. 微调失败时，哪些结果仍有研究价值？
+
+只有问题、数据、baseline 和指标明确后，才进入训练。
+
+## Stage 1｜建立 baseline
+
+在训练前冻结：
+
+- `model_id` 与 model revision；
+- train/validation/test 划分与数据版本；
+- prompt/template；
+- 主指标和通过阈值；
+- 随机种子；
+- 资源预算。
+
+用未微调模型运行 test set，并保存逐样例 prediction。训练完成后必须使用同一评测协议比较。
+
+## Stage 2｜LoRA/PEFT 与 SFT
+
+### 必须理解的参数
+
+| 参数 | 学生需要回答的问题 |
+| --- | --- |
+| `r` | adapter 的秩为什么适合当前资源和任务？ |
+| `lora_alpha` | 与 `r` 的比例如何影响更新？ |
+| `target_modules` | 哪些层被训练，依据是什么？ |
+| learning rate | 为什么选择该值，如何比较？ |
+| effective batch size | gradient accumulation 后的实际值是多少？ |
+| epochs / max steps | 是否出现过拟合？ |
+| precision / quantization | 带来什么资源收益与数值风险？ |
+
+### 官方学习链接
+
+- [Hugging Face PEFT quicktour](https://huggingface.co/docs/peft/quicktour)（LoRA/adapter 基础）
+- [PEFT LoRA reference](https://huggingface.co/docs/peft/package_reference/lora)（参数与 QLoRA-style 配置）
+- [TRL SFT Trainer](https://huggingface.co/docs/trl/sft_trainer)（SFT 数据与训练接口）
+- [MS-SWIFT Qwen3.5 Best Practices](https://swift.readthedocs.io/en/latest/BestPractices/Qwen3_5-Best-Practice.html)（Qwen3.5 当前环境、推理和训练方案）
+- [PyTorch reproducibility](https://docs.pytorch.org/docs/stable/notes/randomness.html)（随机性与确定性限制）
+
+!!! warning "框架选择"
+    课程默认只要求掌握一条训练路径。优先选择与目标模型明确兼容、文档当前有效的框架；不要同时学习多个训练框架，也不要把其他模型的配置直接套到 Qwen3.5。
+
+### 最小训练交付
 
 ```text
-Qwen3.5-VL
-      │
-      ▼
-MS-SWIFT
-      │
-      ▼
-LoRA / QLoRA
-      │
-      ▼
-SFT
-      │
-      ▼
-Weights & Biases
-      │
-      ▼
-GRPO
-      │
-      ▼
-Evaluation
+week08/
+├── train.py                  # 或可从头运行的 notebook
+├── training-config.yaml
+├── dataset-card.md
+├── environment.txt
+├── logs/
+└── training-report.md
 ```
 
-建议严格按照上述顺序学习。
+`training-config.yaml` 至少记录模型 revision、数据版本、seed、LoRA 参数、优化器、学习率、batch size、最大步数、精度和输出目录。
 
----
+## Stage 3｜接入 Weights & Biases
 
-# 一、MS-SWIFT（★★★★★）
+W&B 的作用不是“画一条 loss 曲线”，而是把 config、metrics、运行环境、数据版本和模型产物连接起来。
 
-## 为什么学习 MS-SWIFT？
+### 安全登录
 
-> **这是目前实验室统一采用的大模型微调框架，也是当前 Qwen 系列模型微调的主要框架。**
+- 使用 `wandb login`、环境变量或平台 Secret；
+- 不把 API key 写入 notebook、YAML、截图或 Git 历史；
+- 使用私有项目时，保留可核对的 run ID，并在例会中只展示脱敏 report 导出。
 
-MS-SWIFT（ModelScope SWIFT）是 ModelScope 社区推出的大模型训练与部署框架，也是 **Qwen 官方推荐** 的训练框架。
+### 每个 Run 必须记录
 
-支持：
+| 类别 | 最低字段 |
+| --- | --- |
+| Identity | run name、group、tags、Git commit |
+| Config | model/data revision、seed、LoRA 与训练参数 |
+| Training | train/eval loss、learning rate、global step |
+| Task metrics | 与 baseline 相同的主指标 |
+| System | duration、GPU、peak memory（能获取时） |
+| Notes | 假设、唯一改动、异常与中止原因 |
 
-- Qwen / Qwen2 / Qwen3 / Qwen3.5
-- Vision-Language Model（VLM）
-- LoRA / QLoRA / DoRA
-- SFT
-- GRPO
-- DPO
-- PPO
-- RLHF
-- DeepSpeed
-- Megatron-SWIFT
-- 多 GPU 分布式训练
+### A/B 对比任务
 
----
-
-## 官方学习资源
-
-| 教程 | 推荐 | 官方链接 |
-|------|:----:|----------|
-| MS-SWIFT 官方文档（中文） | ⭐⭐⭐⭐⭐ | https://swift.readthedocs.io/zh-cn/latest/ |
-| Qwen 官方 MS-SWIFT 教程 | ⭐⭐⭐⭐⭐ | https://qwen.readthedocs.io/zh-cn/stable/training/ms_swift.html |
-| MS-SWIFT GitHub | ⭐⭐⭐⭐⭐ | https://github.com/modelscope/ms-swift |
-
----
-
-## 实验室重点推荐（一）
-
-### ⭐ Qwen3.5 Best Practice（必须阅读）
-
-这是目前 **Qwen3.5 官方最佳实践**。
-
-主要内容包括：
-
-- 环境配置
-- 推理
-- SFT
-- RL（GRPO）
-- 数据格式
-- 多模态训练
-- Qwen3.5 推荐配置
-
-官方文档：
-
-https://swift.readthedocs.io/zh-cn/latest/BestPractices/Qwen3_5-Best-Practice.html
-
-> ⭐⭐⭐⭐⭐ **建议所有成员首先阅读。**
-
----
-
-## 实验室重点推荐（二）
-
-### ⭐ LoRA Training（必须掌握）
-
-目前实验室大多数科研训练均采用 **LoRA 微调**。
-
-原因：
-
-- GPU 显存需求低
-- 收敛速度快
-- 实验效率高
-- 非常适合科研快速迭代
-
-虽然 LoRA 在模型能力上存在一定瓶颈，但它仍然是目前**最高效、最实用的微调方法**，也是实验室当前的主力训练方式。
-
-官方文档：
-
-https://swift.readthedocs.io/zh-cn/latest/Megatron-SWIFT/LoRA-Training.html
-
-建议重点学习：
-
-- LoRA 原理
-- LoRA 配置
-- LoRA Rank
-- LoRA Alpha
-- LoRA Merge
-- LoRA Export
-
----
-
-## 建议重点掌握
-
-- Environment
-- Dataset Format
-- Processor
-- YAML Config
-- LoRA
-- SFT
-- GRPO
-- Model Export
-
----
-
-# 二、Weights & Biases（W&B）
-
-## 为什么学习 W&B？
-
-Weights & Biases（简称 **W&B**）是目前国际上最流行的 AI 实验管理平台之一。
-
-实验室建议：
-
-> **所有模型训练默认开启 W&B。**
-
-它最大的价值不是"加快训练速度"，而是：
-
-> **帮助你更快发现问题、更科学调参、更容易复现实验。**
-
----
-
-## W&B 可以做什么？
-
-自动记录：
-
-- Training Loss
-- Validation Loss
-- Learning Rate
-- GPU Memory
-- GPU Utilization
-- Batch Size
-- Epoch
-- Step
-- Checkpoint
-
-自动生成：
-
-- Loss 曲线
-- 学习率曲线
-- GPU 利用率
-- 实验 Dashboard
-
-无需人工记录。
-
----
-
-## 重点关注
-
-模型训练过程中，请重点观察：
-
-- Loss
-- Learning Rate
-- Batch Size
-
-分析三者之间的联动关系。
-
-例如：
-
-- Loss 是否震荡？
-- Learning Rate 是否过大？
-- Batch Size 是否影响收敛？
-- 是否出现过拟合？
-
-这些信息对于后续调参具有重要价值。
-
----
-
-## 推荐学习资源
-
-| 教程 | 推荐 | 官方链接 |
-|------|:----:|----------|
-| W&B 官网 | ⭐⭐⭐⭐⭐ | https://wandb.ai/site |
-| W&B 官方文档 | ⭐⭐⭐⭐⭐ | https://docs.wandb.ai/ |
-| Quick Start | ⭐⭐⭐⭐⭐ | https://docs.wandb.ai/get-started |
-| Hyperparameter Sweeps | ⭐⭐⭐⭐☆ | https://docs.wandb.ai/models/sweeps/walkthrough |
-
----
-
-## 推荐中文资源
-
-| 平台 | 链接 |
-|------|------|
-| CSDN | https://blog.csdn.net/search?keyword=Weights%20%26%20Biases |
-| 知乎 | https://www.zhihu.com/search?type=content&q=Weights%20%26%20Biases |
-| Bilibili | https://search.bilibili.com/all?keyword=Weights%20%26%20Biases |
-
-建议：
-
-> **先阅读官方文档，再结合中文教程实践。**
-
----
-
-# 三、推荐学习顺序
-
-| 阶段 | 学习内容 |
-|------|----------|
-| 第一阶段 | MS-SWIFT 快速开始 |
-| 第二阶段 | Qwen3.5 Best Practice（★★★★★） |
-| 第三阶段 | LoRA 微调（★★★★★） |
-| 第四阶段 | SFT 微调 |
-| 第五阶段 | Weights & Biases |
-| 第六阶段 | GRPO 后训练 |
-| 第七阶段 | Benchmark 与 Evaluation |
-
----
-
-# 四、实验室统一技术路线
+运行至少两个可比较 runs，只改变一个因素。例如：
 
 ```text
-Qwen3.5-VL
-      │
-      ▼
-MS-SWIFT
-      │
-      ▼
-LoRA
-      │
-      ▼
-SFT
-      │
-      ▼
-Weights & Biases
-      │
-      ▼
-GRPO
-      │
-      ▼
-Evaluation
-      │
-      ▼
-Paper
+Run A: learning_rate = 1e-4
+Run B: learning_rate = 2e-4
+
+保持不变：model revision、dataset split、seed、LoRA config、steps、evaluation
 ```
 
----
+若无法完全固定随机性，应明确记录并谨慎解释小幅差异。
 
-# 五、实验室建议
+### Artifacts 与 Reports
 
-目前实验室统一采用：
+使用 Artifact 保存或引用：
 
-| 模块 | 推荐方案 |
-|------|----------|
-| 基础模型 | Qwen3.5-VL-0.8B / 2B |
-| 训练框架 | MS-SWIFT |
-| 微调方法 | LoRA + SFT |
-| 后训练 | GRPO |
-| 实验管理 | Weights & Biases |
-| 版本管理 | GitHub |
-| 模型存储 | Hugging Face / ModelScope |
-| 数据管理 | GitHub Metadata + 外部存储 |
+- dataset manifest/version；
+- training config；
+- adapter metadata 或小型 adapter；
+- evaluation results。
 
----
+最终 W&B Report 至少包含：研究问题、runs 表、训练曲线、主指标、资源成本、失败案例、结论和下一步。
 
-# 12. 下一章（Next Chapter）
+### W&B 官方链接
 
-下一章学习：
+- [W&B Quickstart](https://docs.wandb.ai/models/quickstart)（首次记录 run）
+- [Track experiments](https://docs.wandb.ai/models/track)（config、metrics 与 runs）
+- [Hugging Face integration](https://docs.wandb.ai/models/integrations/huggingface)（Transformers/Trainer 集成）
+- [W&B Artifacts](https://docs.wandb.ai/models/artifacts)（数据与模型版本）
+- [W&B Reports](https://docs.wandb.ai/models/reports)（可分享实验报告）
+- [W&B Sweeps](https://docs.wandb.ai/models/sweeps)（扩展学习，不是入门必做）
 
-> ** First Research Project **
+## Stage 4｜统一评测与消融 { #stage-4 }
 
-主要内容包括：
+训练完成后：
 
-* 第一个完整项目
-* 数据准备
-* 模型运行
-* 实验记录
-* Benchmark 测试
-* 结果分析
-* GitHub 项目管理
+1. 用冻结的 test set 重跑 baseline 与所有候选 adapters；
+2. 导出逐样例结果，而非只保存均值；
+3. 报告总体指标和按文档类型切片指标；
+4. 对最差案例做人工复核；
+5. 做一个只改变单个因素的 ablation；
+6. 同时报告准确性、训练时间和显存成本。
 
-完成后，你将独立完成第一个 Multimodal Document AI 科研实践项目，并掌握实验室标准的项目开发流程。
+不要使用 W&B 页面中“最好看”的单次 run 直接作为结论。
 
-[上一章](07_Doc_AI.md){ .md-button }    [下一章](../experiments/Experiment_01/README.md){ .md-button }
+## Week 8–10 自主检查
 
+- [ ] 有训练前 baseline 和固定 test set；
+- [ ] 数据来源、许可、划分和版本清楚；
+- [ ] LoRA/SFT 配置可机器读取；
+- [ ] 至少两个 W&B runs 只改变一个因素；
+- [ ] 每个 run 可追溯到 Git commit、config 与结果；
+- [ ] API key 未进入仓库；
+- [ ] W&B Report 包含负面结果、限制与资源成本；
+- [ ] 评测脚本能从原始 prediction 重算指标。
 
+## 推荐提交结构
+
+```text
+post-training-project/
+├── README.md
+├── configs/
+│   ├── baseline.yaml
+│   ├── run-a.yaml
+│   └── run-b.yaml
+├── src/
+│   ├── train.py
+│   └── evaluate.py
+├── results/
+│   ├── predictions.jsonl
+│   └── metrics.csv
+├── dataset-card.md
+├── wandb-report.md
+└── MODEL_CARD.md
+```
+
+## 进一步探索
+
+完成 SFT、W&B 和统一评测后，再考虑 GRPO、sweeps、分布式训练或更大模型。扩展实验仍需遵循相同原则：一次只提出一个明确问题，保留可复现证据，并如实报告成本与失败。
+
+最后更新：2026-08-07

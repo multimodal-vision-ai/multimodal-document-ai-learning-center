@@ -1,16 +1,30 @@
-# Document AI
+---
+hide:
+  - toc
+---
 
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Document AI
->
-> **Version:** v3.0
->
-> **Last Updated:** July 2026
+# 文档智能：从识别文字到理解结构
+
+第一次阅读只抓住一条演进主线：**OCR → 版面分析 → 多模态预训练 → 端到端文档解析**。模型名称用于理解这条变化，不需要逐个背诵。
+
+!!! success "本页最小任务"
+    选择一个文档样例，标出文字识别、版面、阅读顺序、表格结构和问答分别属于什么任务，并说明当前项目重点评价哪一项。
+
+## 本页快速定位
+
+| 当前任务 | 直接进入 | 重点带走什么 |
+| --- | --- | --- |
+| 分清 OCR、版面与文档理解 | [What is Document AI?](#part-1-what-is-document-ai) · [Evolution](#part-2-evolution-of-document-ai) | 任务输入、输出与能力边界 |
+| 理解版面感知预训练 | [LayoutLM](#layoutlm) · [LayoutLMv3](#layoutlmv3) | 文本、图像和位置如何融合 |
+| 选择文档解析工具 | [Docling](#docling) · [MinerU](#mineru) | 工具适用场景及输出差异 |
+| 评测端到端解析 | [OmniDocBench](#omnidocbench) | 数据、指标和典型失败类型 |
+| 从文档图像走向 VLM | [Vision-Language Document AI](#part-6-vision-language-document-ai) | OCR Pipeline 与端到端模型的取舍 |
+| 研究结构化表示 | [Structured Document Representation](#part-7-structured-document-representation) · [DocTags](#doctags) | 结构、位置和阅读顺序为何重要 |
+| 寻找下一步研究问题 | [Future Trends](#part-8-future-trends) | 选出一个可验证的开放问题 |
 
 ---
 
-# Overview
+## 为什么要学
 
 Document AI（文档智能）是近年来人工智能发展最快的方向之一。
 
@@ -36,7 +50,7 @@ Document AI（文档智能）是近年来人工智能发展最快的方向之一
 
 ---
 
-# Learning Objectives
+## 学习目标
 
 完成本章节后，应能够：
 
@@ -47,7 +61,7 @@ Document AI（文档智能）是近年来人工智能发展最快的方向之一
 
 ---
 
-# Learning Roadmap
+## 建议路线
 
 ```text
 OCR
@@ -79,7 +93,7 @@ Vision-Language Document AI
 
 ---
 
-# Reading Strategy
+## 阅读策略
 
 | Priority | Description |
 | -------- | ----------- |
@@ -426,10 +440,6 @@ Srikar Appalaraju et al.
 
 ## Official Paper
 
-ICCV Open Access
-
-https://openaccess.thecvf.com/content/ICCV2021/html/Appalaraju_DocFormer_End-to-End_Transformer_for_Document_Understanding_ICCV_2021_paper.html
-
 arXiv
 
 https://arxiv.org/abs/2106.11539
@@ -523,7 +533,7 @@ https://arxiv.org/abs/2203.02378
 
 Official Project
 
-https://aka.ms/msdit
+https://github.com/microsoft/unilm/tree/master/dit
 
 ---
 
