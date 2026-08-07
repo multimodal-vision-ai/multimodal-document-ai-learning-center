@@ -122,7 +122,7 @@ Run B: learning_rate = 2e-4
 - [Hugging Face integration](https://docs.wandb.ai/models/integrations/huggingface)（Transformers/Trainer 集成）
 - [W&B Artifacts](https://docs.wandb.ai/models/artifacts)（数据与模型版本）
 - [W&B Reports](https://docs.wandb.ai/models/reports)（可分享实验报告）
-- [W&B Sweeps](https://docs.wandb.ai/guides/sweeps/)（扩展学习，不是入门必做）
+- [W&B Sweeps](https://docs.wandb.ai/models/sweeps)（扩展学习，不是入门必做）
 
 ## Stage 4｜统一评测与消融 { #stage-4 }
 

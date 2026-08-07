@@ -69,7 +69,9 @@ Hugging Face、W&B 等 token 使用 Kaggle Secrets。代码只读取环境变量
 
 至少设置并记录 Python、NumPy 和 PyTorch seed。即使设置 seed，GPU 运算也可能不是完全确定的，应在报告中说明。
 
-## 必做任务
+## 按需任务：迁移到 Kaggle
+
+本页不要求所有学生在 Week 2 重复本地实验。只有本地缺少合适算力、需要分享可运行 Notebook，或希望提前熟悉 Week 8–10 云端训练时，再完成迁移。
 
 将 Week 2 的模型 demo 迁移到 Kaggle：
 

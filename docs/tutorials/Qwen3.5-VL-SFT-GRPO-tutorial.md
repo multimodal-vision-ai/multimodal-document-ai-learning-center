@@ -108,6 +108,7 @@
 
 - [Qwen GitHub organization](https://github.com/QwenLM)（EN）
 - [Qwen models on Hugging Face](https://huggingface.co/Qwen)（EN）
+- [Qwen3.5-0.8B Model Card](https://huggingface.co/Qwen/Qwen3.5-0.8B)（EN）
 - [Qwen documentation](https://qwen.readthedocs.io/)（EN）
 - [Hugging Face PEFT](https://huggingface.co/docs/peft/)（EN）
 - [Hugging Face TRL](https://huggingface.co/docs/trl/)（EN）

@@ -16,7 +16,7 @@
 | 周次 | 主题 / Topic | 本周可验证成果 | 建议时长 |
 | --- | --- | --- | --- |
 | [1](#week-1) | 可复现开发环境 | 环境清单、首次 PR、可运行脚本 | 6h |
-| [2](#week-2) | Hugging Face 与 Transformers | 两类模型推理 notebook | 7h |
+| [2](#week-2) | Hugging Face 与 Transformers | 最小推理 notebook 与 Model Card 对比 | 7h |
 | [3](#week-3) | AI 辅助编程 | prompt log、测试、人工审查 | 7h |
 | [4](#week-4) | Vision-Language Models | VLM demo 与失败案例 | 7h |
 | [5](#week-5) | Document AI 任务地图 | 三类文档分析报告 | 6h |
@@ -65,7 +65,7 @@
 
 **本周问题**：如何判断一个模型能否用于目标任务，并正确解释其输入输出？
 
-**本周学习入口**：[Hugging Face Hub](03_HuggingFace.md) · [Transformers 推理](05_Transformers.md) · [Kaggle Notebook](04_Kaggle.md)
+**本周学习入口**：[Hugging Face Hub](03_HuggingFace.md) · [Transformers 推理](05_Transformers.md) · [Kaggle Notebook（按需）](04_Kaggle.md)
 
 ### 学习目标
 
@@ -75,13 +75,13 @@
 
 ### 必做任务
 
-- [ ] 选择一个文本模型和一个视觉/多模态模型，完成最小推理。
-- [ ] 对每个模型记录来源、版本、license、输入输出和限制。
-- [ ] 保存三组正常样例及一组失败样例，比较 CPU/GPU 可行性。
+- [ ] 选择一个可在现有资源上运行的小模型，完成一次最小推理。
+- [ ] 再选择一个视觉/多模态模型，只阅读并对比 Model Card：来源、版本、license、输入输出、资源要求和限制。
+- [ ] 为已运行模型保存三组正常样例及一组失败样例，并判断 CPU/GPU 可行性。
 
 ### 提交与验收
 
-- `week02/model-demo.ipynb`、`model-notes.md`、机器可读配置文件。
+- `week02/model-demo.ipynb`、`model-comparison.md`、机器可读配置文件。
 - Notebook 从头运行无隐藏状态；结论能由保存的输出支持。
 
 ### 官方学习链接
@@ -149,7 +149,7 @@
 
 ### 官方学习链接
 
-- [Qwen-VL documentation](https://qwen.readthedocs.io/)（EN）
+- [Qwen3.5-0.8B official Model Card](https://huggingface.co/Qwen/Qwen3.5-0.8B)（EN）
 - [Transformers multimodal chat templates](https://huggingface.co/docs/transformers/chat_templating_multimodal)（EN）
 
 ---
@@ -366,7 +366,7 @@
 
 ### 官方学习链接
 
-- [Papers with Code](https://paperswithcode.com/)（论文—代码索引）
+- [NeurIPS Paper Checklist](https://neurips.cc/public/guides/PaperChecklist)（复现、透明度与研究伦理，EN）
 - [ACM Artifact Review and Badging](https://www.acm.org/publications/policies/artifact-review-and-badging-current)（EN）
 
 ---
