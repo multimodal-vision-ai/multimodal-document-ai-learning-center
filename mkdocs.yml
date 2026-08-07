@@ -1,6 +1,6 @@
-site_name: 多模态文档智能学习中心
-site_description: Multimodal Document AI Learning Center — 面向初学者的可复现学习平台
-site_author: Multimodal Vision AI Lab
+site_name: 多模态视觉智能学习中心
+site_description: Multimodal Vision AI Learning Center — 从文档理解出发，探索图像、视频与多模态智能
+site_author: 谭国平教授团队 · Multimodal Vision AI Lab
 site_url: https://multimodal-vision-ai.github.io/multimodal-document-ai-learning-center/
 
 repo_name: multimodal-vision-ai/multimodal-document-ai-learning-center

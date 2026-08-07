@@ -1,10 +1,15 @@
-# 多模态文档智能学习中心
+# 多模态视觉智能学习中心
 
 <div align="center">
   <img src="assets/figs/prism_brain_logo_animated.svg" width="420" alt="Multimodal Vision AI Learning Center">
   <p><strong>Learn · Build · Measure · Improve · Explain</strong></p>
-  <p>面向 AI 初学者的 12 周可复现训练课程</p>
+  <p>从文档理解出发，探索图像、视频与多模态智能</p>
 </div>
+
+[谭国平教授官方主页](https://jszy.hhu.edu.cn/tgp/){ .md-button }
+[开始 12 周课程](learning/README.md){ .md-button .md-button--primary }
+
+本学习中心由河海大学计算机与软件学院谭国平教授团队建设。当前课程聚焦 **Multimodal Document Understanding**，未来将逐步扩展到 **Video Understanding、Multimodal Reasoning** 与视觉智能应用。
 
 ---
 
@@ -25,6 +30,18 @@
 | 交什么？ | 明确的文件与实验证据 |
 | 如何评分？ | 统一量表与验收清单 |
 | 下一步是什么？ | 进阶阅读、实验与项目入口 |
+
+## 从当前主线走向未来
+
+| 学习方向 | 现在可以做什么 | 下一步可以追问什么 |
+| --- | --- | --- |
+| 文档理解 / Document Understanding | OCR、版面、表格、文档问答与结构化解析 | 模型能否理解更长、更复杂、更真实的文档？ |
+| 视觉语言模型 / VLM | 图像输入、Prompt、失败分析与小规模后训练 | 模型如何连接视觉证据、语言与推理？ |
+| 视频理解 / Video Understanding | 复用 VLM、评测和实验管理能力 | 如何理解时间、事件、动作和长视频上下文？ |
+| 多模态智能应用 | 构建可复现 pipeline 与可信 Benchmark | 如何把感知、推理和智能体连接到真实场景？ |
+
+!!! abstract "这里不是终点"
+    文档理解是当前课程的训练场。你在这里形成的数据、模型、评测和研究表达能力，可以继续迁移到图像、视频、机器人与行业智能问题。
 
 ## 12 周能力路线
 

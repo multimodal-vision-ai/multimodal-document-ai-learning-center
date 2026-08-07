@@ -1,6 +1,6 @@
 # Document AI
 
-> **Multimodal Document AI Learning Center**
+> **Multimodal Vision AI Learning Center**
 >
 > **Module:** Document AI
 >

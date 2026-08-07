@@ -1,6 +1,6 @@
 # Vision-Language Models (VLM)
 
-> **Multimodal Document AI Learning Center**
+> **Multimodal Vision AI Learning Center**
 >
 > **Module:** Vision-Language Models (VLM)
 >

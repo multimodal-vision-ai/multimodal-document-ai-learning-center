@@ -1,6 +1,6 @@
 # Benchmarks
 
-> **Multimodal Document AI Learning Center**
+> **Multimodal Vision AI Learning Center**
 >
 > **Module:** Benchmarks
 >
@@ -1086,7 +1086,7 @@ https://arxiv.org/abs/2407.06904
 
 # Benchmarks
 
-> **Multimodal Document AI Learning Center**
+> **Multimodal Vision AI Learning Center**
 >
 > **Module:** Benchmarks
 >

@@ -1,6 +1,6 @@
 # Foundation Models
 
-> **Multimodal Document AI Learning Center**
+> **Multimodal Vision AI Learning Center**
 >
 > **Module:** Foundation Models
 >

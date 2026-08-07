@@ -1,9 +1,13 @@
-# Multimodal Document AI Learning Center
+# 多模态视觉智能学习中心
+
+> **Multimodal Vision AI Learning Center**
 
 [![Documentation](https://img.shields.io/badge/docs-learning%20center-blue)](https://multimodal-vision-ai.github.io/multimodal-document-ai-learning-center/)
 [![Deploy MkDocs](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/workflows/deploy.yml/badge.svg)](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/workflows/deploy.yml)
 
-面向高年级本科生、研究生与实验室新成员的 **12 周多模态文档智能入门课程**。
+由河海大学计算机与软件学院[谭国平教授团队](https://jszy.hhu.edu.cn/tgp/)建设，面向高年级本科生、研究生与实验室新成员。
+
+当前以 **12 周多模态文档智能入门课程**为主线，未来将继续扩展图像理解、视频理解、多模态推理与智能应用。
 
 课程以中文讲解为主，保留必要的 English terminology；技术细节优先链接官方文档，仓库负责维护学习路径、任务、实验规范和考核证据。
 
