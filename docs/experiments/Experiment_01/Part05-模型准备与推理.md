@@ -1,13 +1,28 @@
-# Part 5：下载 Qwen3.5-VL-0.8B 模型并完成第一次官方推理（Model Preparation and First Inference）
+# Part 5：使用 Qwen/Qwen3.5-0.8B 完成第一次推理（Model Preparation and First Inference）
+
+[上一关：准备实验数据](Part04-数据集准备.md){ .md-button }
+[返回项目控制台](README.md){ .md-button }
+[下一关：完成受控对比](Part06-提示词管理与对比分析.md){ .md-button .md-button--primary }
+
+> **本关核心产出**：可运行代码、run metadata 与未经修改的原始输出 · **预计时间**：2–3 小时
+
+[官方 Model Card](https://huggingface.co/Qwen/Qwen3.5-0.8B){ .md-button .md-button--primary }
+[课程最小实验](../../learning/06-1_Qwen3.5-VL-0.8B.md){ .md-button }
+
+!!! success "本关通过条件"
+    从 README 中的一条命令可以处理一个 `sample_id`；代码使用官方模型 ID `Qwen/Qwen3.5-0.8B`；输入、完整 Prompt、模型 revision、generation config、环境版本和原始输出能够一一对应。
+
+!!! warning "先以 Model Card 为准"
+    模型加载类与依赖会更新。本页规定要保存什么证据，但安装命令和推理 API 应从当前官方 Model Card 复制。不要通过猜测类名或下载同名非官方仓库来绕过错误。
 
 ---
 
-# 一、本部分学习目标（Learning Objectives）
+## 一、本部分学习目标（Learning Objectives）
 
 完成本部分后，你应该能够：
 
 * 配置 Hugging Face 模型下载环境；
-* 下载 Qwen3.5-VL-0.8B 模型；
+* 使用官方模型 ID `Qwen/Qwen3.5-0.8B`；
 * 运行官方推理程序；
 * 理解一次完整的模型推理流程；
 * 保存推理结果；
@@ -15,14 +30,14 @@
 
 ---
 
-# 二、实验任务
+## 二、实验任务
 
 本部分需要完成以下任务：
 
 1. 检查 Python 环境；
 2. 安装项目依赖；
 3. 登录 Hugging Face；
-4. 下载模型；
+4. 通过官方模型 ID 加载模型；
 5. 编写第一个推理程序；
 6. 运行官方示例；
 7. 保存推理结果；
@@ -30,7 +45,7 @@
 
 ---
 
-# 三、检查开发环境（Operations）
+## 三、检查开发环境（Operations）
 
 进入项目目录：
 
@@ -68,39 +83,38 @@ git --version
 
 ---
 
-# 四、安装项目依赖（Operations）
+## 四、安装项目依赖（Operations）
 
-创建项目依赖文件：
+先阅读官方 Model Card 的当前安装要求，在隔离环境中完成安装。不要在运行前凭经验固定一组可能过期的版本。
+
+创建直接依赖说明文件：
 
 ```text
-requirements.txt
+requirements.in
 ```
 
-填写内容：
+可以先记录本项目直接使用的包：
 
 ```text
 torch
 torchvision
-transformers
 accelerate
 pillow
 huggingface_hub
-qwen-vl-utils
+# transformers 的安装来源或版本按当前 Model Card 记录
 ```
 
-保存文件。
-
-安装依赖：
+按照 Model Card 完成安装并成功运行后，再导出实际环境：
 
 ```bash
-pip install -r requirements.txt
+python -m pip freeze > requirements-lock.txt
 ```
 
-等待安装完成。
+`requirements.in` 用于解释直接依赖，`requirements-lock.txt` 用于复现实验；两者职责不同。
 
 ---
 
-# 五、导出环境配置（Operations）
+## 五、导出环境配置（Operations）
 
 安装完成后，导出当前环境。
 
@@ -110,10 +124,11 @@ pip install -r requirements.txt
 conda env export > environment.yml
 ```
 
-如果使用 venv，可保留：
+如果使用 venv，应保留：
 
 ```text
-requirements.txt
+requirements.in
+requirements-lock.txt
 ```
 
 即可。
@@ -122,35 +137,29 @@ requirements.txt
 
 ---
 
-# 六、登录 Hugging Face（Operations）
+## 六、按需登录 Hugging Face（Operations）
 
-打开终端。
-
-输入：
+先直接访问公开 Model Card。只有平台提示需要认证时，才在终端登录：
 
 ```bash
-huggingface-cli login
+hf auth login
 ```
 
-根据提示输入 Access Token。
-
-登录成功后，执行：
+验证当前账号：
 
 ```bash
-huggingface-cli whoami
+hf auth whoami
 ```
 
-能够显示当前用户名即可。
+不要把 token 写进脚本、notebook、`.env` 示例输出或 Git 历史。公开模型通常不需要为了“完成步骤”而强制登录。
+
+命令用法以 [Hugging Face Hub CLI 官方文档](https://huggingface.co/docs/huggingface_hub/package_reference/cli)为准。
 
 ---
 
-# 七、下载模型（Operations）
+## 七、确认并加载官方模型（Operations）
 
-推荐使用 Hugging Face 下载模型。
-
-在浏览器中打开模型主页。
-
-确认模型名称。
+在浏览器中打开 [Qwen/Qwen3.5-0.8B Model Card](https://huggingface.co/Qwen/Qwen3.5-0.8B)，确认仓库位于官方 `Qwen` 组织。首次运行 `from_pretrained` 或官方 pipeline 时会按 Hugging Face 缓存机制取得模型，无需把权重复制进项目仓库。
 
 记录：
 
@@ -172,15 +181,19 @@ docs/model_information.md
 
 ## Model
 
-Qwen3.5-VL-0.8B
+Qwen/Qwen3.5-0.8B
 
 ## Source
 
-Hugging Face
+https://huggingface.co/Qwen/Qwen3.5-0.8B
 
-## Version
+## Revision
 
-Official Release
+<commit hash>
+
+## License
+
+<从当前 Model Card 填写>
 
 ## Application
 
@@ -189,11 +202,18 @@ Vision Language Model
 ## Download Date
 
 YYYY-MM-DD
+
+## Runtime
+
+- Python:
+- PyTorch:
+- Transformers:
+- Device / dtype:
 ```
 
 ---
 
-# 八、创建模型目录（Operations）
+## 八、创建模型目录（Operations）
 
 进入：
 
@@ -225,7 +245,7 @@ README.md
 
 ---
 
-# 九、编写第一次推理程序（Operations）
+## 九、编写第一次推理程序（Operations）
 
 进入：
 
@@ -239,7 +259,15 @@ scripts/
 first_inference.py
 ```
 
-本实验建议直接参考官方示例程序完成，不建议修改模型核心代码。
+从官方 Model Card 复制当前的 Transformers `image-text-to-text` 最小示例，先保持官方图片与 Prompt 不变运行一次。确认成功后：
+
+1. 将模型 ID 保持为 `Qwen/Qwen3.5-0.8B`；
+2. 把图像替换为 `data/samples/manifest.csv` 中的一个本地样例；
+3. 把 `sample_id`、Prompt 和 generation config 作为显式输入；
+4. 将模型原始回答原样写入 `outputs/raw/<run_id>.txt`；
+5. 把同一 run 的 metadata 写入 `outputs/metadata/<run_id>.json`。
+
+不建议修改模型核心代码，也不要在保存前人工整理输出。
 
 程序完成后，应能够：
 
@@ -250,7 +278,7 @@ first_inference.py
 
 ---
 
-# 十、准备测试图片（Operations）
+## 十、准备测试图片（Operations）
 
 进入：
 
@@ -270,7 +298,7 @@ data/samples/
 
 ---
 
-# 十一、运行第一次推理（Operations）
+## 十一、运行第一次推理（Operations）
 
 打开终端。
 
@@ -288,7 +316,7 @@ python scripts/first_inference.py
 
 ---
 
-# 十二、保存推理结果（Operations）
+## 十二、保存推理结果（Operations）
 
 进入：
 
@@ -301,11 +329,9 @@ outputs/
 ```text
 outputs/
 
-├── markdown/
-
-├── json/
-
-└── images/
+├── raw/
+├── metadata/
+└── figures/
 ```
 
 保存：
@@ -315,9 +341,9 @@ outputs/
 例如：
 
 ```text
-outputs/markdown/
+outputs/raw/
 
-result_0001.md
+run_001.txt
 ```
 
 如果输出 JSON。
@@ -325,14 +351,14 @@ result_0001.md
 保存：
 
 ```text
-outputs/json/
+outputs/metadata/
 
-result_0001.json
+run_001.json
 ```
 
 ---
 
-# 十三、建立第一次实验记录（Operations）
+## 十三、建立第一次实验记录（Operations）
 
 进入：
 
@@ -379,7 +405,7 @@ YYYY-MM-DD
 
 ## Model
 
-Qwen3.5-VL-0.8B
+Qwen/Qwen3.5-0.8B
 
 ## Dataset
 
@@ -430,7 +456,7 @@ More detailed analysis will be added in the next experiment.
 
 ---
 
-# 十四、检查项目结构（Expected Results）
+## 十四、检查项目结构（Expected Results）
 
 完成本部分后，项目应新增：
 
@@ -445,9 +471,11 @@ first_inference.py
 
 outputs/
 
-markdown/
+raw/
 
-json/
+metadata/
+
+figures/
 
 experiments/
 
@@ -456,7 +484,7 @@ experiments/
 
 ---
 
-# 十五、Git 提交（Operations）
+## 十五、Git 提交（Operations）
 
 执行：
 
@@ -486,9 +514,9 @@ Push 成功后，刷新 GitHub 页面。
 
 ---
 
-# 十六、常见问题（Common Errors）
+## 十六、常见问题（Common Errors）
 
-## 问题一
+### 问题一
 
 模型下载失败。
 
@@ -500,7 +528,7 @@ Push 成功后，刷新 GitHub 页面。
 
 ---
 
-## 问题二
+### 问题二
 
 CUDA 不可用。
 
@@ -512,25 +540,19 @@ nvidia-smi
 
 确认 GPU 是否正常。
 
-如果没有 GPU，可先使用 CPU 完成测试。
+如果没有合适的 GPU，优先使用课程允许的 Kaggle 或实验室服务器；只有确认内存与耗时可接受时才使用 CPU。
 
 ---
 
-## 问题三
+### 问题三
 
 依赖安装失败。
 
-建议升级：
-
-```bash
-pip install --upgrade pip
-```
-
-然后重新安装依赖。
+回到 Model Card 核对当前安装来源、Python/PyTorch/Transformers 组合和完整错误信息。不要先无条件升级所有包；把实际解决方法与最终版本写入实验日志。
 
 ---
 
-## 问题四
+### 问题四
 
 程序无法找到图片。
 
@@ -544,11 +566,11 @@ data/samples/
 
 ---
 
-# 十七、本部分成果（Deliverables）
+## 十七、本部分成果（Deliverables）
 
 完成本部分后，应提交：
 
-* requirements.txt；
+* requirements.in 与 requirements-lock.txt；
 * environment.yml；
 * model_information.md；
 * first_inference.py；
@@ -558,12 +580,12 @@ data/samples/
 
 ---
 
-# 十八、自我检查列表（Checklist）
+## 十八、自我检查列表（Checklist）
 
 | 检查项        | 状态 |
 | ---------- | -- |
 | 开发环境正常     | □  |
-| 模型下载完成     | □  |
+| 官方模型可以加载   | □  |
 | 官方程序运行成功   | □  |
 | 成功完成第一次推理  | □  |
 | 推理结果已保存    | □  |
@@ -574,13 +596,13 @@ data/samples/
 
 ---
 
-# 十九、本部分小结
+## 十九、本部分小结
 
 至此，你已经完成了实验室第一个模型推理实验，并建立了模型管理、实验记录和结果保存的基本规范。
 
 ---
 
-# 下一部分
+## 下一部分
 
 **Part 6：Prompt Engineering 与多组实验（Prompt Design and Comparative Experiments）**
 

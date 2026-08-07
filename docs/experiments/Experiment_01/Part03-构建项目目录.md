@@ -1,8 +1,17 @@
 # Part 3：构建标准科研项目目录（Build a Standard Research Project Structure）
 
+[上一关：创建 GitHub 项目](Part02-创建Github科研项目仓库.md){ .md-button }
+[返回项目控制台](README.md){ .md-button }
+[下一关：准备实验数据](Part04-数据集准备.md){ .md-button .md-button--primary }
+
+> **本关核心产出**：最小项目目录、README 与实验日志 · **预计时间**：60 分钟
+
+!!! success "本关通过条件"
+    陌生同学打开 README 后能找到唯一运行入口；原始数据、可再生结果和代码目录职责明确；空目录使用说明文件保留，而不是提交无意义的占位内容。
+
 ---
 
-# 一、本部分学习目标（Learning Objectives）
+## 一、本部分学习目标（Learning Objectives）
 
 完成本部分后，你应该能够：
 
@@ -16,7 +25,7 @@
 
 ---
 
-# 二、为什么要统一项目目录？（Background）
+## 二、为什么要统一项目目录？（Background）
 
 在实验室中，一个科研项目通常需要持续数月甚至数年。
 
@@ -37,7 +46,7 @@
 
 ---
 
-# 三、项目目录结构（Project Structure）
+## 三、项目目录结构（Project Structure）
 
 请按照以下结构创建项目目录。
 
@@ -47,7 +56,8 @@ qwen3vl-first-project/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
-├── requirements.txt
+├── requirements.in
+├── requirements-lock.txt
 ├── environment.yml
 │
 ├── data/
@@ -55,32 +65,26 @@ qwen3vl-first-project/
 │   ├── processed/
 │   └── samples/
 │
-├── models/
-│
 ├── scripts/
 │
-├── notebooks/
-│
 ├── outputs/
-│   ├── images/
-│   ├── markdown/
-│   ├── json/
+│   ├── raw/
+│   ├── metadata/
+│   ├── figures/
 │   └── logs/
 │
 ├── experiments/
 │
-├── docs/
-│
-└── assets/
+└── docs/
 ```
 
-完成后，请确保目录名称与上述保持一致。
+这是本项目的最小结构。只有确实产生对应内容时再增加 `models/`、`notebooks/` 或 `assets/`，不要为了“看起来完整”创建大量空目录。
 
 ---
 
-# 四、创建项目目录（Operations）
+## 四、创建项目目录（Operations）
 
-## Step 1：打开项目目录
+### Step 1：打开项目目录
 
 进入已经 Clone 到本地的项目目录。
 
@@ -92,31 +96,25 @@ D:\Research\qwen3vl-first-project\
 
 ---
 
-## Step 2：创建一级目录
+### Step 2：创建一级目录
 
 依次创建以下目录：
 
 ```text
 data
 
-models
-
 scripts
-
-notebooks
 
 outputs
 
 experiments
 
 docs
-
-assets
 ```
 
 ---
 
-## Step 3：创建二级目录
+### Step 3：创建二级目录
 
 进入 data 目录，继续创建：
 
@@ -133,18 +131,18 @@ samples
 进入 outputs 目录，继续创建：
 
 ```text
-images
+raw
 
-markdown
+metadata
 
-json
+figures
 
 logs
 ```
 
 ---
 
-## Step 4：检查目录
+### Step 4：检查目录
 
 最终目录应如下所示：
 
@@ -157,17 +155,17 @@ qwen3vl-first-project/
 │   └── samples/
 │
 ├── outputs/
-│   ├── images/
-│   ├── markdown/
-│   ├── json/
+│   ├── raw/
+│   ├── metadata/
+│   ├── figures/
 │   └── logs/
 ```
 
 ---
 
-# 五、理解每个目录（Directory Description）
+## 五、理解每个目录（Directory Description）
 
-## README.md
+### README.md
 
 项目说明文件。
 
@@ -182,11 +180,11 @@ GitHub 首页默认显示该文件。
 
 ---
 
-## data/
+### data/
 
 用于保存数据集。
 
-### raw/
+#### raw/
 
 保存原始数据。
 
@@ -200,7 +198,7 @@ GitHub 首页默认显示该文件。
 
 ---
 
-### processed/
+#### processed/
 
 保存预处理后的数据。
 
@@ -214,19 +212,19 @@ GitHub 首页默认显示该文件。
 
 ---
 
-### samples/
+#### samples/
 
 保存用于快速测试的小规模数据。
 
 建议控制在：
 
-10～20 张图片。
+3～5 张图片。
 
 方便调试程序。
 
 ---
 
-## models/
+### models/
 
 保存模型相关内容。
 
@@ -240,7 +238,7 @@ GitHub 首页默认显示该文件。
 
 ---
 
-## scripts/
+### scripts/
 
 保存 Python 程序。
 
@@ -258,7 +256,7 @@ evaluate.py
 
 ---
 
-## notebooks/
+### notebooks/
 
 保存 Notebook。
 
@@ -278,37 +276,37 @@ Notebook 用于实验验证。
 
 ---
 
-## outputs/
+### outputs/
 
 保存模型输出。
 
 包括：
 
-### images/
+#### raw/
 
-保存可视化图片。
-
----
-
-### markdown/
-
-保存 Markdown。
+保存未经人工修改的模型原始输出。
 
 ---
 
-### json/
+#### metadata/
 
-保存结构化结果。
+保存 model revision、Prompt、generation config、sample_id 与运行环境。
 
 ---
 
-### logs/
+#### figures/
+
+保存报告中使用的图表与可视化。
+
+---
+
+#### logs/
 
 保存日志文件。
 
 ---
 
-## experiments/
+### experiments/
 
 保存实验记录。
 
@@ -328,7 +326,7 @@ Notebook 用于实验验证。
 
 ---
 
-## docs/
+### docs/
 
 保存项目文档。
 
@@ -341,7 +339,7 @@ Notebook 用于实验验证。
 
 ---
 
-## assets/
+### assets/
 
 保存 README 使用的图片。
 
@@ -355,12 +353,12 @@ Notebook 用于实验验证。
 
 ---
 
-# 六、创建第一个 README（Operations）
+## 六、创建第一个 README（Operations）
 
 在 README.md 中填写以下内容。
 
 ```markdown
-# Qwen3.5-VL First Project
+# Qwen3.5 Document Understanding Project
 
 ## Project Description
 
@@ -389,7 +387,7 @@ Your Name
 
 ---
 
-# 七、创建实验记录文件（Operations）
+## 七、创建实验记录文件（Operations）
 
 进入 experiments 目录。
 
@@ -431,7 +429,7 @@ Dataset:
 
 ---
 
-# 八、检查项目结构（Expected Results）
+## 八、检查项目结构（Expected Results）
 
 完成后，项目目录应如下：
 
@@ -439,23 +437,21 @@ Dataset:
 qwen3vl-first-project/
 
 ├── README.md
-├── requirements.txt
+├── requirements.in
+├── requirements-lock.txt
 ├── environment.yml
 ├── data/
-├── models/
 ├── scripts/
-├── notebooks/
 ├── outputs/
 ├── experiments/
-├── docs/
-└── assets/
+└── docs/
 ```
 
-目录创建完成后，不再随意修改。
+目录创建后保持职责稳定；后续只有产生真实内容时再增加可选目录。
 
 ---
 
-# 九、提交至 GitHub（Operations）
+## 九、提交至 GitHub（Operations）
 
 打开终端。
 
@@ -489,9 +485,9 @@ Push 完成后，刷新 GitHub 页面。
 
 ---
 
-# 十、常见问题（Common Errors）
+## 十、常见问题（Common Errors）
 
-## 问题一
+### 问题一
 
 目录名称大小写不一致。
 
@@ -501,7 +497,7 @@ Push 完成后，刷新 GitHub 页面。
 
 ---
 
-## 问题二
+### 问题二
 
 README 未显示。
 
@@ -517,37 +513,21 @@ README.md
 
 ---
 
-## 问题三
+### 问题三
 
 空目录未上传。
 
 原因：
 
-Git 默认不会跟踪空目录。
+Git 默认不会跟踪空目录，这是正常行为。
 
 解决方法：
 
-每个空目录创建：
-
-```text
-.gitkeep
-```
-
-例如：
-
-```text
-data/raw/.gitkeep
-
-models/.gitkeep
-
-outputs/json/.gitkeep
-```
-
-然后重新提交。
+不要为了上传目录而创建一批无说明的 `.gitkeep`。只创建当前阶段需要的目录，并在其中加入 README、manifest 或实际产出；尚未使用的可选目录等到需要时再建。
 
 ---
 
-# 十一、本部分成果（Deliverables）
+## 十一、本部分成果（Deliverables）
 
 完成本部分后，应提交以下成果：
 
@@ -559,7 +539,7 @@ outputs/json/.gitkeep
 
 ---
 
-# 十二、自我检查列表（Checklist）
+## 十二、自我检查列表（Checklist）
 
 | 检查项             | 状态 |
 | --------------- | -- |
@@ -574,7 +554,7 @@ outputs/json/.gitkeep
 
 ---
 
-# 十三、本部分小结
+## 十三、本部分小结
 
 至此，你已经完成实验室标准科研项目框架的搭建。
 
@@ -582,7 +562,7 @@ outputs/json/.gitkeep
 
 ---
 
-# 下一部分
+## 下一部分
 
 **Part 4：下载 OmniDocBench 数据集并完成数据集检查（Dataset Preparation）**
 

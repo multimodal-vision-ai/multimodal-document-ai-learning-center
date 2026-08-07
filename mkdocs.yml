@@ -80,7 +80,15 @@ nav:
       - 后训练路线：Qwen3.5-VL SFT/GRPO: tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.md
   - 项目实战:
       - 选择一个项目: experiments/README.md
-      - 项目 01：Qwen3.5-VL 文档理解与评测: experiments/Experiment_01/README.md
+      - 项目 01：Qwen3.5 文档理解与评测:
+          - 项目控制台: experiments/Experiment_01/README.md
+          - Part 01：确定目标与准备: experiments/Experiment_01/Part01-实验准备.md
+          - Part 02：创建 GitHub 项目: experiments/Experiment_01/Part02-创建Github科研项目仓库.md
+          - Part 03：构建项目目录: experiments/Experiment_01/Part03-构建项目目录.md
+          - Part 04：准备实验数据: experiments/Experiment_01/Part04-数据集准备.md
+          - Part 05：完成首次推理: experiments/Experiment_01/Part05-模型准备与推理.md
+          - Part 06：完成受控对比: experiments/Experiment_01/Part06-提示词管理与对比分析.md
+          - Part 07：评测与项目总结: experiments/Experiment_01/Part07-Bechmark评测与总结.md
   - 论文导读:
       - 阅读指南: reading/README.md
       - 综述地图: reading/00_surveys.md
