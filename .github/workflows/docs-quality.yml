@@ -19,10 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements-docs.txt
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
       - name: Validate navigation and internal links
@@ -38,7 +39,6 @@ jobs:
           args: >-
             --no-progress
             --accept 200,204,206,429
-            --exclude-mail
             --retry-wait-time 2
             --max-retries 2
             "docs/**/*.md"
