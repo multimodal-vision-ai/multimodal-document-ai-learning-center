@@ -51,47 +51,51 @@ extra_javascript:
   - js/visitor.js
 
 nav:
-  - 首页:
+  - 学习首页:
       - 欢迎: index.md
       - 关于学习中心: about.md
   - 12 周入门课程:
-      - 从这里开始: learning/README.md
-      - 课程总览与每周计划: learning/00_12_Week_Bootcamp.md
-      - 提交规范与评分量表: learning/10_Assessment_and_Submission.md
-      - 学习记录模板: learning/11_Learning_Log_Template.md
-      - 基础参考:
+      - 课程首页: learning/README.md
+      - 12 周路线与任务: learning/00_12_Week_Bootcamp.md
+      - 基础工具:
           - Git 与 GitHub: learning/01_Git_and_GitHub.md
-          - Python 环境: learning/02_Python_Environment.md
-          - Hugging Face: learning/03_HuggingFace.md
-          - Kaggle: learning/04_Kaggle.md
-          - Transformers: learning/05_Transformers.md
+          - Python 与可复现环境: learning/02_Python_Environment.md
+          - Hugging Face Hub: learning/03_HuggingFace.md
+          - Kaggle Notebook: learning/04_Kaggle.md
+          - Transformers 推理: learning/05_Transformers.md
+          - AI 辅助编程与验证: learning/05-1_AI_Assisted_Coding.md
+      - 文档智能专题:
           - Qwen3.5-VL: learning/06-1_Qwen3.5-VL-0.8B.md
-          - Docling: learning/06-2_Docling.md
-          - Document AI: learning/07_Doc_AI.md
-          - 模型后训练: learning/08_Post_Training.md
+          - Docling 文档解析: learning/06-2_Docling.md
+          - Document AI 与评测: learning/07_Doc_AI.md
+      - 后训练与实验追踪:
+          - LoRA、评测与 W&B: learning/08_Post_Training.md
+      - 提交与学习支持:
+          - 提交规范与评分量表: learning/10_Assessment_and_Submission.md
+          - 学习记录模板: learning/11_Learning_Log_Template.md
           - 常见问题: learning/09_FAQ.md
-  - 实践教程:
-      - 教程概览: tutorials/README.md
-      - Qwen2.5 OmniDocBench: tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.md
-      - Qwen3.5-VL SFT/GRPO: tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.md
-  - 实验:
-      - 实验概览: experiments/README.md
-      - Experiment 01: experiments/Experiment_01/README.md
-  - 论文阅读:
+  - 动手教程:
+      - 选择一个教程: tutorials/README.md
+      - 文档评测：OmniDocBench Markdown: tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.md
+      - 后训练路线：Qwen3.5-VL SFT/GRPO: tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.md
+  - 项目实战:
+      - 选择一个项目: experiments/README.md
+      - 项目 01：Qwen3.5-VL 文档理解与评测: experiments/Experiment_01/README.md
+  - 论文导读:
       - 阅读指南: reading/README.md
-      - 综述: reading/00_surveys.md
-      - Foundation Models: reading/01_foundation.md
-      - Document AI: reading/02_document-ai.md
-      - Vision Language Models: reading/03_vlm.md
+      - 综述地图: reading/00_surveys.md
+      - 基础模型: reading/01_foundation.md
+      - 文档智能: reading/02_document-ai.md
+      - 视觉语言模型: reading/03_vlm.md
       - DocTags: reading/04_doctags.md
-      - Benchmarks: reading/05_benchmark-2026.md
-  - 资源:
-      - 资源总览: resources/README.md
-      - 官方资源: resources/official-sources.md
+      - 评测基准: reading/05_benchmark-2026.md
+  - 学习资源:
+      - 查找学习资源: resources/README.md
+      - 官方文档与平台: resources/official-sources.md
       - 推荐课程: resources/courses.md
-      - 论文: resources/papers.md
-      - 数据集: resources/datasets.md
-      - 工具: resources/tools.md
-  - 项目展示: projects/README.md
+      - 论文索引: resources/papers.md
+      - 数据集索引: resources/datasets.md
+      - 工具清单: resources/tools.md
+  - 成果展厅: projects/README.md
 
 copyright: Copyright &copy; 2026 Multimodal Vision AI Lab.

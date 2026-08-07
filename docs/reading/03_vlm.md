@@ -243,7 +243,7 @@ https://arxiv.org/abs/2311.06242
 
 ## Official GitHub
 
-https://github.com/microsoft/Florence-2
+https://huggingface.co/collections/microsoft/florence-6669f44df0d87d9c3bfb76de
 
 ---
 

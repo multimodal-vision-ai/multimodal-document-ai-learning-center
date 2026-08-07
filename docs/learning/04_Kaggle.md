@@ -1,6 +1,6 @@
 # Kaggle Notebook：受限算力下的可复现实验
 
-> **对应课程**：Week 2、Week 4、Week 8–10 的云端实验<br>
+> **对应课程**：[Week 2](00_12_Week_Bootcamp.md#week-2)、[Week 4](00_12_Week_Bootcamp.md#week-4)、[Week 8–10](00_12_Week_Bootcamp.md#week-8) 的云端实验<br>
 > **目标**：创建一个可从头运行、无密钥泄漏、能导出结果的 GPU Notebook。
 
 Kaggle 提供托管 Notebook、数据挂载和有限 GPU 配额。它解决的是环境与算力入口，不会自动保证实验可复现。

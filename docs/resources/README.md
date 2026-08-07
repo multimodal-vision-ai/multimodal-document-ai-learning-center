@@ -1,167 +1,66 @@
-# 🌐 Resources
+# 学习资源：优先官方，按任务查找
 
-> **Multimodal Vision AI Resource Center**
->
-> Official Resources · Courses · Datasets · Papers · Tools
+本区是课程的资源索引，不是一份需要从头读完的书单。遇到版本、API、数据许可或工具选择问题时，先定位对应类别，再回到官方页面确认最新信息。
 
----
+[查找官方文档与平台](official-sources.md){ .md-button .md-button--primary }
+[查看推荐课程](courses.md){ .md-button }
 
-## 📖 Overview
+## 按需求选择
 
-**Resources** 是 **Multimodal Vision AI Learning Center** 的学习资源中心，汇集多模态人工智能领域高质量、免费、持续更新的学习资源。
+| 我现在需要什么 | 入口 | 使用建议 |
+| --- | --- | --- |
+| 模型、框架或平台的最新用法 | [官方文档与平台](official-sources.md) | 优先查看官方 quickstart、reference 和 release note |
+| 系统课程或教材 | [推荐课程](courses.md) | 只选择与当前周任务直接相关的章节 |
+| 代表性论文与技术报告 | [论文索引](papers.md) | 与[论文导读](../reading/README.md)配合使用 |
+| 可公开使用的数据和 Benchmark | [数据集索引](datasets.md) | 先核对 license、数据卡、划分与评价脚本 |
+| 开发、实验追踪与文档工具 | [工具清单](tools.md) | 说明选择理由，不因“流行”盲目增加工具 |
 
-本模块优先推荐：
-
-- 🌍 官方学习资源（Official Learning Resources）
-- 📚 精品课程与教材（Courses）
-- 📊 数据集与 Benchmark（Datasets）
-- 📄 经典论文与技术报告（Papers）
-- 🛠️ AI 开发工具与平台（Tools）
-
-所有资源均围绕 **"Learn → Build → Research"** 的学习理念进行组织，帮助学生建立完整的 AI 学习与科研路径。
-
----
-
-# 🎯 Learning Objectives
-
-通过 Resources 模块，你将能够：
-
-- 📖 学习国际主流 AI 技术生态；
-- 🌍 获取官方学习资源与开发文档；
-- 📊 下载公开数据集与 Benchmark；
-- 📄 阅读经典论文与前沿研究；
-- 🛠️ 熟悉 AI 开发工具与平台；
-- 🚀 支撑课程学习、项目实践与科研创新。
-
----
-
-# 📚 Resource Categories
-
-Resources 模块包含五类核心学习资源：
-
-| Category | Description | Navigation |
-| :--- | :--- | :--- |
-| 🌍 **Official Resources** | 官方学习平台、官方文档与开源生态 | [Official Resources](official-sources.md) |
-| 🎓 **Courses** | AI 课程、教材与教学资源 | [Course Resources](courses.md) |
-| 📚 **Papers** | 经典论文、Survey 与技术报告 | [Paper Resources](papers.md) |
-| 📊 **Datasets** | 数据集、Benchmark 与评测资源 | [Dataset Resources](datasets.md) |
-| 🛠️ **Tools** | AI 开发工具、平台与软件 | [Tool Resources](tools.md) |
-
----
-
-# 🌍 Recommended Learning Resources
-
-建议优先学习以下官方资源：
-
-| Platform | Purpose | Recommendation |
-| :--- | :--- | :---: |
-| 🐙 GitHub Docs | Git 与 GitHub 官方文档 | ⭐⭐⭐⭐⭐ |
-| 🤗 Hugging Face Learn | LLM、VLM、Agent 官方课程 | ⭐⭐⭐⭐⭐ |
-| 🏆 Kaggle Learn | 数据科学与 AI 实践课程 | ⭐⭐⭐⭐⭐ |
-| 💻 AI Coding Docs | Cursor、Copilot、Claude Code | ⭐⭐⭐⭐⭐ |
-
-> **Official First · Learn from the Best**
-
----
-
-# 🚀 Recommended Learning Workflow
-
-建议按照以下学习流程逐步深入：
+## 课程中的使用顺序
 
 ```text
-Official Resources
-        │
-        ▼
-Courses & Tutorials
-        │
-        ▼
-Run Official Examples
-        │
-        ▼
-Understand Source Code
-        │
-        ▼
-Modify & Reproduce
-        │
-        ▼
-Build Your Own Project
-        │
-        ▼
-Research & Innovation
+先明确本周任务
+        ↓
+在资源索引中找到官方入口
+        ↓
+阅读当前版本的 quickstart / model card / dataset card
+        ↓
+运行最小示例并固定 revision
+        ↓
+保存来源、配置、结果与限制
 ```
 
----
+## 资源选择标准
 
-# 🔬 Research-Oriented Learning Path
+### Official First
 
-Resources 服务于完整的科研成长路径：
+模型和框架优先引用维护方官网、官方 GitHub、官方文档或官方 Hugging Face 组织；论文优先引用出版页或 arXiv 原文；数据优先引用数据集主页和 dataset card。
 
-```text
-Learning Resources
-        │
-        ▼
-Knowledge Learning
-        │
-        ▼
-Hands-on Practice
-        │
-        ▼
-Open Source Projects
-        │
-        ▼
-Research Experiments
-        │
-        ▼
-Academic Papers
-        │
-        ▼
-Research Innovation
+### Task Fit
+
+资源必须回答当前任务中的具体问题。一个链接如果既没有学习目标，也没有使用时机，即使内容优秀，也不应堆到课程主线中。
+
+### Maintainable
+
+站内只保留必要的选择理由、学习顺序和验收要求。容易随版本变化的安装命令、API 参数和模型列表交给官方页面维护。
+
+### Responsible Use
+
+使用模型、数据和平台前检查 license、隐私、访问权限和地域/账户限制。不要把“可以下载”理解为“可以任意公开或商用”。
+
+## 给学生的记录模板
+
+```markdown
+- Resource：
+- Official URL：
+- Access date：
+- Version / revision：
+- 用它解决什么问题：
+- 采用了哪些设置：
+- 已知限制：
 ```
 
----
+## 链接失效怎么办
 
-# 📌 Resource Principles
+先在同一官方域名或官方组织中寻找新地址，再提交 issue/PR 更新链接。不要用来源不明的转载页替换官方材料，也不要为了让自动检查通过而忽略所有 401/403 响应。
 
-本资源中心坚持以下原则：
-
-- 🌍 **Official First** —— 官方资源优先；
-- 🔓 **Open Source First** —— 开源项目优先；
-- ⭐ **High Quality First** —— 高质量资源优先；
-- 🔄 **Continuously Updated** —— 持续维护与更新；
-- 🔬 **Research Oriented** —— 面向科研创新；
-- 🚀 **Practice Driven** —— 强调实践能力培养。
-
----
-
-# 🔭 Future Expansion
-
-Resources 将持续扩展更多学习资源，包括：
-
-- 🤖 AI Agent Ecosystem
-- 👁️ Vision Language Models (VLM)
-- 📄 Document AI
-- 🧠 Multimodal Foundation Models
-- 🔬 AI4Science
-- 🏥 Medical AI
-- 🚗 Autonomous Driving
-- 🌍 Embodied AI
-- 📡 Remote Sensing AI
-- 🏭 AI for Industry
-
----
-
-# 💡 Learning Philosophy
-
-> **Learn from Official Resources**
->
-> **Build with Open Source**
->
-> **Experiment with Real Projects**
->
-> **Create Research Innovation**
-
----
-
-**Learn · Practice · Research**
-
-*Multimodal Vision AI Learning Center*
+最后更新：2026-08-07

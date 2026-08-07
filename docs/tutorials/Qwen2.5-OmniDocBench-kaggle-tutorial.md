@@ -1,207 +1,119 @@
-# Kaggle Examples
+# 文档评测实战｜OmniDocBench Markdown Evaluation（Kaggle）
 
-> **Multimodal Document AI Learning Center**
->
-> **Module:** Kaggle Tutorials
->
-> **Version:** v1.0
->
-> **Last Updated:** July 2026
+> **类型**：可运行案例 · **对应课程**：Week 6–7 · **难度**：入门 · **建议投入**：1–2 小时 · **平台**：Kaggle Notebook
 
-本目录整理课程配套的 **Kaggle Notebook**。
+[打开 Kaggle Notebook](https://www.kaggle.com/code/guopingtan/omnidocbench-evaluation-md){ .md-button .md-button--primary }
+[查看 OmniDocBench 官方仓库](https://github.com/opendatalab/OmniDocBench){ .md-button }
 
-所有 Notebook 均可直接在线运行，无需本地配置复杂环境，适合作为课程实验、论文复现和科研入门案例。
+本教程演示如何使用 OmniDocBench 的评测流程，对文档解析得到的 Markdown prediction 进行检查。重点不是“跑出一个分数”，而是理解 prediction、ground truth、metric 和 error case 之间的关系。
 
----
+## 完成后你能做什么
 
-# Why Kaggle?
+- 说明 OmniDocBench 评测的输入、输出与数据组织方式；
+- 从头运行 Notebook，并保存配置与结果文件；
+- 阅读文本、表格、公式和阅读顺序相关结果；
+- 只修改一个变量，完成一次公平对照；
+- 从低分样例中提出可验证的改进假设。
 
-对于初学者而言，Kaggle 提供了完整的大模型实验环境：
+## 开始前
 
-* 免费 GPU（T4 / P100 / L4 等）
-* 预装 Python 与主流 AI 框架
-* 在线 Notebook
-* 可直接发布与分享
-* 可一键 Fork 修改
-* 与 GitHub 配合进行版本管理
+你需要：
 
-因此，本课程所有实验均优先提供 Kaggle Notebook 版本。
+- 一个 Kaggle 账号；
+- 能阅读基础 Python 和 Notebook cell；
+- 已了解 Markdown 文档结构；
+- 读过 [Week 7｜Dataset 与 Benchmark](../learning/00_12_Week_Bootcamp.md#week-7) 的任务要求。
 
----
+!!! warning "不要上传私人文档"
+    仅使用教程自带数据、公开授权数据或自制样例。Notebook、输出文件和截图中都不应出现 API key、个人信息或未授权材料。
 
-# Example 01
-
-## OmniDocBench Evaluation from Markdown
-
-**Author**
-
-Guoping Tan
-
-**Difficulty**
-
-⭐⭐⭐☆☆
-
-**Category**
-
-Document AI / Benchmark
-
-**Notebook**
-
-https://www.kaggle.com/code/guopingtan/omnidocbench-evaluation-md
-
----
-
-# Introduction
-
-本案例演示如何使用 **OmniDocBench 官方评测工具**，对文档解析模型输出的 Markdown 结果进行标准化评测。
-
-实验重点不是模型推理，而是帮助学生掌握：
-
-* Benchmark 的基本使用流程
-* 官方评测脚本的运行方式
-* Markdown 结果组织格式
-* OmniDocBench 指标计算方法
-* Benchmark 实验复现流程
-
-该案例适合作为 **Document AI Benchmark** 的第一个实践实验。
-
-OmniDocBench 是目前国际上最具代表性的文档解析评测基准之一，支持文本、表格、公式、阅读顺序等多维度评测。
-
----
-
-# Learning Objectives
-
-完成本案例后，应能够：
-
-* 理解 OmniDocBench 数据组织方式
-* 理解 Markdown Prediction 格式
-* 运行官方 Evaluation Pipeline
-* 阅读 Evaluation Report
-* 理解 Edit Distance、TEDS、Reading Order 等指标
-* 为自己的模型生成标准 Benchmark 结果
-
----
-
-# Skills You Will Learn
-
-* Benchmark Reproduction
-* Markdown Evaluation
-* Document Parsing Evaluation
-* Result Analysis
-* Research Reproducibility
-
----
-
-# Workflow
+## 评测流程
 
 ```text
-Model Prediction (.md)
-          │
-          ▼
-Prediction Folder
-          │
-          ▼
-OmniDocBench Evaluation
-          │
-          ▼
-Metric Calculation
-          │
-          ▼
-Evaluation Report
-          │
-          ▼
-Performance Analysis
+Markdown prediction
+        ↓
+与 ground truth 对齐
+        ↓
+运行 OmniDocBench evaluation
+        ↓
+得到分项与总体结果
+        ↓
+检查低分样例并解释误差
 ```
 
----
+## Step 1｜Fork 并建立实验记录
 
-# Related Learning Modules
+1. 打开 Notebook，选择 **Copy & Edit / Fork**；
+2. 在顶部记录 Notebook URL、运行日期、数据版本和代码 revision；
+3. 保留默认参数，第一次运行不要同时修改代码和数据；
+4. 执行 **Restart Session & Run All**，确认没有依赖隐藏状态。
 
-建议按照以下顺序学习：
+建议先建立结果表：
 
-| Step | Module                          |
-| ---- | ------------------------------- |
-| 1    | Foundation Models               |
-| 2    | Vision-Language Models          |
-| 3    | Document AI                     |
-| 4    | Benchmarks                      |
-| 5    | **Kaggle Example 01（当前案例）**     |
-| 6    | Experiment 01：Qwen3.5-VL 文档理解实验 |
+| Run | 唯一改动 | 数据/代码版本 | 关键结果 | 运行状态 |
+| --- | --- | --- | --- | --- |
+| baseline | 无 | 待填写 | 待填写 | 待填写 |
+| compare-01 | 待填写 | 与 baseline 一致 | 待填写 | 待填写 |
 
----
+## Step 2｜完成 baseline
 
-# Related Resources
+运行默认流程并保存：
 
-## Official Benchmark
+- 实际使用的 prediction 和 ground truth 路径；
+- 完整配置或命令；
+- 原始评测输出，不只保留截图；
+- 总体结果和至少两个分项结果；
+- 运行时间以及失败/警告信息。
 
-OmniDocBench Official Repository
+!!! tip "先验证输入，再解释指标"
+    如果 prediction 文件缺失、命名不匹配或内容为空，分数没有分析价值。先抽样打开 3 个输入和对应输出，再阅读评测结果。
 
-https://github.com/opendatalab/OmniDocBench
+## Step 3｜读懂结果
 
-官方提供：
+至少回答下面四个问题：
 
-* Benchmark Dataset
-* Evaluation Scripts
-* Leaderboard
-* Model Baselines
-* Official Documentation
+1. 文本内容、表格结构、公式和 reading order 分别由什么结果反映？
+2. 总体结果是否掩盖了某一类文档的明显退化？
+3. 最差的 3 个样例有什么共同错误？
+4. 错误主要来自模型输出、格式转换、文件对齐，还是评测输入不合法？
 
----
+指标定义与脚本行为应以[OmniDocBench 官方仓库](https://github.com/opendatalab/OmniDocBench)和[官方论文](https://arxiv.org/abs/2412.07626)为准，不根据指标名称自行猜测。
 
-## Official Paper
+## Step 4｜做一次受控对照
 
-**OmniDocBench: Benchmarking Diverse PDF Document Parsing with Comprehensive Annotations**
+从下面选择一个变量：
 
-https://arxiv.org/abs/2412.07626
+- 修正一类 Markdown 格式问题；
+- 替换一小组 prediction；
+- 改变一个解析或后处理设置；
+- 只评测一个固定文档切片。
 
-建议结合论文阅读 Benchmark 的整体设计思想和评价指标。
+保持数据划分、评测代码和其余配置不变，重新运行并填写结果表。结论需要同时报告“改善了什么”“没有改善什么”和“当前证据不能说明什么”。
 
----
+## Step 5｜形成错误分析
 
-# Suggested Exercises
+为至少 5 个失败样例记录：
 
-完成 Notebook 后，建议继续尝试：
+| 样例 | 文档类型 | 错误类别 | 证据 | 可能原因 | 下一步验证 |
+| --- | --- | --- | --- | --- | --- |
+| sample-01 | 待填写 | 待填写 | 输入/输出链接 | 待填写 | 待填写 |
 
-* 修改 Markdown 输出并重新评测；
-* 对比不同模型（如 Qwen3-VL、PaddleOCR-VL、MinerU、Docling）的评测结果；
-* 分析 Text、Table、Formula、Reading Order 等不同指标；
-* 绘制 Benchmark 对比图（Radar Chart、Bar Chart、Heatmap）；
-* 将实验结果整理为论文中的 Benchmark 实验章节。
+不要把“模型能力不足”当作最终原因。继续区分 OCR、layout、table structure、formula、reading order、format conversion 和 evaluation alignment。
 
----
+## 提交物
 
-# Citation
+- [ ] 可访问的 Kaggle Notebook 链接；
+- [ ] baseline 与 compare-01 的配置和原始结果；
+- [ ] 至少 5 条错误分析；
+- [ ] 一张可由原始结果重建的对比表或图；
+- [ ] 200–400 字结论，包含限制和下一步；
+- [ ] AI-assisted coding 使用与人工核验记录。
 
-如果本 Notebook 对你的学习或科研有所帮助，请同时引用：
+!!! success "完成判定 / Definition of Done"
+    Notebook 可以从头运行；两次运行只改变一个明确变量；结论能回到原始结果；学生能解释一个指标和一个失败案例。
 
-* OmniDocBench 官方论文；
-* OmniDocBench 官方 GitHub；
-* 本课程对应实验文档与代码仓库。
+## 下一步
 
----
+把本教程结果提交到 Week 7，或进入[项目实战 01](../experiments/Experiment_01/README.md)继续完成模型推理、Prompt 对照和项目报告。
 
-# Future Examples
-
-后续课程将持续补充更多 Kaggle Notebook：
-
-| Example    | Topic                          |
-| ---------- | ------------------------------ |
-| Example 01 | OmniDocBench Evaluation        |
-| Example 02 | Qwen3.5-VL Document Parsing    |
-| Example 03 | Docling Pipeline               |
-| Example 04 | PaddleOCR-VL Evaluation        |
-| Example 05 | MinerU Benchmark               |
-| Example 06 | OCRBench Evaluation            |
-| Example 07 | MMDocBench Evaluation          |
-| Example 08 | DocVQA Baseline                |
-| Example 09 | Table Recognition (PubTabNet)  |
-| Example 10 | End-to-End Document AI Project |
-
----
-
-> **Notebook Link**
->
-> https://www.kaggle.com/code/guopingtan/omnidocbench-evaluation-md
->
-> 建议先 **Fork** Notebook，再按照实验指导书逐步完成所有实践内容。
-
+最后更新：2026-08-07

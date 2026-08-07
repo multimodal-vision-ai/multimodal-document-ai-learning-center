@@ -134,7 +134,7 @@ https://arxiv.org/abs/2504.09724
 
 ### GitHub
 
-https://github.com/MPSCUMBC/Efficient-Vision-Language-Models-A-Survey
+https://github.com/MPSC-UMBC/Efficient-Vision-Language-Models-A-Survey
 
 ### Why Read
 
@@ -424,4 +424,4 @@ Research Projects
 * 熟悉主流 Benchmark 与评价体系；
 * 能够快速定位高质量论文，并独立阅读 CVPR、ICCV、ECCV、ACL、EMNLP、ICML、NeurIPS 等顶级会议的最新研究成果。
 
-[返回上一级](readme.md){ .md-button }    [下一章](01_foundation.md){ .md-button }
+[返回上一级](README.md){ .md-button }    [下一章](01_foundation.md){ .md-button }

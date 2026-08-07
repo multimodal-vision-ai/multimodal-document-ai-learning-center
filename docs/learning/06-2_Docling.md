@@ -1,6 +1,6 @@
 # Docling：PDF 到 Markdown/JSON 的可检查流水线
 
-> **对应课程**：[Week 6](00_12_Week_Bootcamp.md)<br>
+> **对应课程**：[Week 6](00_12_Week_Bootcamp.md#week-6)<br>
 > **目标**：把三类真实文档转换为结构化输出，并建立质量检查和失败记录。
 
 Docling 将 PDF、Office 文档、图像等转换为统一的 `DoclingDocument`，再导出 Markdown、JSON 等格式。它适合构建可检查的 modular pipeline，与生成式 VLM 形成对照。

@@ -1,6 +1,6 @@
 # Document AI 入门：从任务到评测
 
-> **对应课程**：[Week 5–7](00_12_Week_Bootcamp.md)<br>
+> **对应课程**：[Week 5](00_12_Week_Bootcamp.md#week-5) · [Week 6](00_12_Week_Bootcamp.md#week-6) · [Week 7](00_12_Week_Bootcamp.md#week-7)<br>
 > **目标**：认识不同文档任务，建立可计算的 baseline，而不是只展示几个“看起来不错”的输出。
 
 Document AI 研究如何把 PDF、扫描件、表格、表单等文档转换为机器可理解、可检索和可验证的信息。它不是单一模型，也不等于 OCR。

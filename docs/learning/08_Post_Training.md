@@ -1,6 +1,6 @@
 # 模型后训练与 W&B 实验管理
 
-> **对应课程**：[Week 8–10](00_12_Week_Bootcamp.md)<br>
+> **对应课程**：[Week 8](00_12_Week_Bootcamp.md#week-8) · [Week 9](00_12_Week_Bootcamp.md#week-9) · [Week 10](00_12_Week_Bootcamp.md#week-10)<br>
 > **目标**：完成一次小规模 LoRA/SFT，并用 W&B 形成可审计的实验对比。<br>
 > **建议顺序**：baseline → LoRA/SFT → W&B tracking → evaluation/ablation
 
@@ -117,14 +117,14 @@ Run B: learning_rate = 2e-4
 
 ### W&B 官方链接
 
-- [W&B Quickstart](https://docs.wandb.ai/quickstart/)（首次记录 run）
-- [Track experiments](https://docs.wandb.ai/guides/track/)（config、metrics 与 runs）
-- [Hugging Face integration](https://docs.wandb.ai/guides/integrations/huggingface/)（Transformers/Trainer 集成）
-- [W&B Artifacts](https://docs.wandb.ai/guides/artifacts/)（数据与模型版本）
-- [W&B Reports](https://docs.wandb.ai/guides/reports/)（可分享实验报告）
+- [W&B Quickstart](https://docs.wandb.ai/models/quickstart)（首次记录 run）
+- [Track experiments](https://docs.wandb.ai/models/track)（config、metrics 与 runs）
+- [Hugging Face integration](https://docs.wandb.ai/models/integrations/huggingface)（Transformers/Trainer 集成）
+- [W&B Artifacts](https://docs.wandb.ai/models/artifacts)（数据与模型版本）
+- [W&B Reports](https://docs.wandb.ai/models/reports)（可分享实验报告）
 - [W&B Sweeps](https://docs.wandb.ai/guides/sweeps/)（扩展学习，不是入门必做）
 
-## Stage 4｜统一评测与消融
+## Stage 4｜统一评测与消融 { #stage-4 }
 
 训练完成后：
 

@@ -1,6 +1,6 @@
 # Git 与 GitHub：可复现科研协作
 
-> **对应课程**：[Week 1](00_12_Week_Bootcamp.md)<br>
+> **对应课程**：[Week 1](00_12_Week_Bootcamp.md#week-1)<br>
 > **目标**：使用 branch → commit → pull request 完成一次可审查的科研改动。
 
 Git 保存项目历史，GitHub 承载协作、审查和证据。课程不要求记住所有命令，但要求每项实验都能追溯到明确的 commit。

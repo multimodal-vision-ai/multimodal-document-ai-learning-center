@@ -1,6 +1,6 @@
 # Hugging Face Hub：选择并记录模型与数据
 
-> **对应课程**：[Week 2](00_12_Week_Bootcamp.md)<br>
+> **对应课程**：[Week 2](00_12_Week_Bootcamp.md#week-2)<br>
 > **目标**：不依赖“模型名称印象”，从官方页面判断一个模型或数据集是否适用于实验。
 
 Hugging Face Hub 承载模型、数据集、Spaces 和版本历史。课程重点不是浏览排行榜，而是阅读 card、确认来源、锁定 revision，并保存可复现实验元数据。

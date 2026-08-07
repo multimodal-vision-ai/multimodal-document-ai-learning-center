@@ -15,24 +15,26 @@
 
 | 周次 | 主题 / Topic | 本周可验证成果 | 建议时长 |
 | --- | --- | --- | --- |
-| 1 | 可复现开发环境 | 环境清单、首次 PR、可运行脚本 | 6h |
-| 2 | Hugging Face 与 Transformers | 两类模型推理 notebook | 7h |
-| 3 | AI 辅助编程 | prompt log、测试、人工审查 | 7h |
-| 4 | Vision-Language Models | VLM demo 与失败案例 | 7h |
-| 5 | Document AI 任务地图 | 三类文档分析报告 | 6h |
-| 6 | Docling 文档解析流水线 | PDF→Markdown/JSON pipeline | 8h |
-| 7 | Dataset、Benchmark 与 Ethics | 固定测试集与 baseline | 7h |
-| 8 | LoRA/PEFT 微调 | adapter、配置和训练记录 | 8h |
-| 9 | W&B 辅助微调 | 两个可比较 runs 与 report | 8h |
-| 10 | Evaluation 与 Ablation | 指标、消融、错误分析 | 7h |
-| 11 | 论文阅读与小规模复现 | reproduction report | 7h |
-| 12 | Capstone 展示与答辩 | 完整项目、model card、演示 | 8h |
+| [1](#week-1) | 可复现开发环境 | 环境清单、首次 PR、可运行脚本 | 6h |
+| [2](#week-2) | Hugging Face 与 Transformers | 两类模型推理 notebook | 7h |
+| [3](#week-3) | AI 辅助编程 | prompt log、测试、人工审查 | 7h |
+| [4](#week-4) | Vision-Language Models | VLM demo 与失败案例 | 7h |
+| [5](#week-5) | Document AI 任务地图 | 三类文档分析报告 | 6h |
+| [6](#week-6) | Docling 文档解析流水线 | PDF→Markdown/JSON pipeline | 8h |
+| [7](#week-7) | Dataset、Benchmark 与 Ethics | 固定测试集与 baseline | 7h |
+| [8](#week-8) | LoRA/PEFT 微调 | adapter、配置和训练记录 | 8h |
+| [9](#week-9) | W&B 辅助微调 | 两个可比较 runs 与 report | 8h |
+| [10](#week-10) | Evaluation 与 Ablation | 指标、消融、错误分析 | 7h |
+| [11](#week-11) | 论文阅读与小规模复现 | reproduction report | 7h |
+| [12](#week-12) | Capstone 展示与答辩 | 完整项目、model card、演示 | 8h |
 
 ---
 
-## Week 1｜可复现的 AI Research Workflow
+## Week 1｜可复现的 AI Research Workflow { #week-1 }
 
 **本周问题 / Guiding question**：别人能否仅凭你的仓库，在新环境里复现实验？
+
+**本周学习入口**：[Git 与 GitHub](01_Git_and_GitHub.md) · [Python 与可复现环境](02_Python_Environment.md)
 
 ### 学习目标
 
@@ -42,9 +44,9 @@
 
 ### 必做任务
 
-1. 创建个人课程仓库和 `week01` 分支，通过 PR 合入首个脚本。
-2. 编写一个 PDF 页数或图片尺寸统计工具，包含 `--help`。
-3. 记录 Python、操作系统、关键依赖版本及复现命令。
+- [ ] 创建个人课程仓库和 `week01` 分支，通过 PR 合入首个脚本。
+- [ ] 编写一个 PDF 页数或图片尺寸统计工具，包含 `--help`。
+- [ ] 记录 Python、操作系统、关键依赖版本及复现命令。
 
 ### 提交与验收
 
@@ -59,9 +61,11 @@
 
 ---
 
-## Week 2｜Hugging Face Hub 与 Transformers
+## Week 2｜Hugging Face Hub 与 Transformers { #week-2 }
 
 **本周问题**：如何判断一个模型能否用于目标任务，并正确解释其输入输出？
+
+**本周学习入口**：[Hugging Face Hub](03_HuggingFace.md) · [Transformers 推理](05_Transformers.md) · [Kaggle Notebook](04_Kaggle.md)
 
 ### 学习目标
 
@@ -71,9 +75,9 @@
 
 ### 必做任务
 
-1. 选择一个文本模型和一个视觉/多模态模型，完成最小推理。
-2. 对每个模型记录来源、版本、license、输入输出和限制。
-3. 保存三组正常样例及一组失败样例，比较 CPU/GPU 可行性。
+- [ ] 选择一个文本模型和一个视觉/多模态模型，完成最小推理。
+- [ ] 对每个模型记录来源、版本、license、输入输出和限制。
+- [ ] 保存三组正常样例及一组失败样例，比较 CPU/GPU 可行性。
 
 ### 提交与验收
 
@@ -88,9 +92,11 @@
 
 ---
 
-## Week 3｜AI 辅助编程 / AI-assisted Coding
+## Week 3｜AI 辅助编程 / AI-assisted Coding { #week-3 }
 
 **本周问题**：怎样让 AI 提高开发效率，同时不把判断与责任交给 AI？
+
+**本周学习入口**：[AI 辅助编程与验证](05-1_AI_Assisted_Coding.md)
 
 ### 学习目标
 
@@ -100,10 +106,10 @@
 
 ### 必做任务
 
-1. 用 ChatGPT、GitHub Copilot 或同类工具改进 Week 1 工具：加入参数校验、错误处理和测试。
-2. 至少保留 3 轮“需求 → AI 建议 → 人工判断 → 验证 → 修正”的记录。
-3. 写 3 个正常测试和 2 个异常测试；故意询问 AI 一个含糊需求并分析失败原因。
-4. 在 README 披露使用了什么 AI、用于什么环节、哪些内容被人工修改。
+- [ ] 用 ChatGPT、GitHub Copilot 或同类工具改进 Week 1 工具：加入参数校验、错误处理和测试。
+- [ ] 至少保留 3 轮“需求 → AI 建议 → 人工判断 → 验证 → 修正”的记录。
+- [ ] 写 3 个正常测试和 2 个异常测试；故意询问 AI 一个含糊需求并分析失败原因。
+- [ ] 在 README 披露使用了什么 AI、用于什么环节、哪些内容被人工修改。
 
 ### 提交与验收
 
@@ -118,9 +124,11 @@
 
 ---
 
-## Week 4｜Vision-Language Models（VLM）
+## Week 4｜Vision-Language Models（VLM） { #week-4 }
 
 **本周问题**：VLM 在“看图并回答”时真正看到了什么，又会在哪里失败？
+
+**本周学习入口**：[Qwen3.5-VL 推理](06-1_Qwen3.5-VL-0.8B.md) · [Transformers 推理](05_Transformers.md)
 
 ### 学习目标
 
@@ -130,9 +138,9 @@
 
 ### 必做任务
 
-1. 使用一个公开 VLM 对 8 张不同类型图像执行描述与问答。
-2. 固定 prompt 比较至少两组 generation 设置。
-3. 建立 5 条以上 failure cases，给出错误类别和可能原因。
+- [ ] 使用一个公开 VLM 对 8 张不同类型图像执行描述与问答。
+- [ ] 固定 prompt 比较至少两组 generation 设置。
+- [ ] 建立 5 条以上 failure cases，给出错误类别和可能原因。
 
 ### 提交与验收
 
@@ -146,9 +154,11 @@
 
 ---
 
-## Week 5｜Document AI 任务地图
+## Week 5｜Document AI 任务地图 { #week-5 }
 
 **本周问题**：OCR、layout、table、Document VQA 的输入、输出与评价方式有何不同？
+
+**本周学习入口**：[Document AI 任务与评测](07_Doc_AI.md)
 
 ### 学习目标
 
@@ -158,9 +168,9 @@
 
 ### 必做任务
 
-1. 选择数字 PDF、扫描件、含表格文档各一份（公开或自制）。
-2. 人工标注预期结构，运行一个公开工具并逐项对照。
-3. 制作任务地图：输入 → 方法 → 输出 → 指标 → 常见错误。
+- [ ] 选择数字 PDF、扫描件、含表格文档各一份（公开或自制）。
+- [ ] 人工标注预期结构，运行一个公开工具并逐项对照。
+- [ ] 制作任务地图：输入 → 方法 → 输出 → 指标 → 常见错误。
 
 ### 提交与验收
 
@@ -174,9 +184,11 @@
 
 ---
 
-## Week 6｜Docling 文档解析 Pipeline
+## Week 6｜Docling 文档解析 Pipeline { #week-6 }
 
 **本周问题**：如何把不可直接计算的 PDF 转换为可检查、可复用的结构化数据？
+
+**本周学习入口**：[Docling 文档解析](06-2_Docling.md) · [项目实战 01](../experiments/Experiment_01/README.md)
 
 ### 学习目标
 
@@ -186,9 +198,9 @@
 
 ### 必做任务
 
-1. 用 Docling 解析 Week 5 的三份文档并导出 Markdown/JSON。
-2. 为命令行程序加入输入校验、日志和失败退出码。
-3. 定义 5 条自动或人工质量检查规则，并记录通过率。
+- [ ] 用 Docling 解析 Week 5 的三份文档并导出 Markdown/JSON。
+- [ ] 为命令行程序加入输入校验、日志和失败退出码。
+- [ ] 定义 5 条自动或人工质量检查规则，并记录通过率。
 
 ### 提交与验收
 
@@ -202,9 +214,11 @@
 
 ---
 
-## Week 7｜Dataset、Benchmark 与 Responsible AI
+## Week 7｜Dataset、Benchmark 与 Responsible AI { #week-7 }
 
 **本周问题**：怎样设计一个不会“用测试集教模型”的可信评测？
+
+**本周学习入口**：[Document AI Benchmark](07_Doc_AI.md) · [OmniDocBench 动手教程](../tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.md)
 
 ### 学习目标
 
@@ -214,9 +228,9 @@
 
 ### 必做任务
 
-1. 建立 20–50 个样例的小型固定测试集，不用于训练。
-2. 为 Week 6 pipeline 设定 baseline、至少两个指标和通过阈值。
-3. 输出总体结果与按文档类型切片结果，分析最差的 5 个案例。
+- [ ] 建立 20–50 个样例的小型固定测试集，不用于训练。
+- [ ] 为 Week 6 pipeline 设定 baseline、至少两个指标和通过阈值。
+- [ ] 输出总体结果与按文档类型切片结果，分析最差的 5 个案例。
 
 ### 提交与验收
 
@@ -231,9 +245,11 @@
 
 ---
 
-## Week 8｜LoRA/PEFT 小规模微调
+## Week 8｜LoRA/PEFT 小规模微调 { #week-8 }
 
 **本周问题**：在有限算力下，如何得到一个可复现且不过度宣称效果的 adapter？
+
+**本周学习入口**：[模型后训练与 W&B](08_Post_Training.md) · [Qwen3.5-VL 后训练路线](../tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.md)
 
 ### 学习目标
 
@@ -243,9 +259,9 @@
 
 ### 必做任务
 
-1. 选择足够小的模型/数据完成一次 LoRA SFT；显存不足可用更小模型或缩小数据。
-2. 训练前先保存 zero-shot/baseline 结果，训练后用同一验证集比较。
-3. 记录 trainable parameters、资源消耗、训练时间和已知限制。
+- [ ] 选择足够小的模型/数据完成一次 LoRA SFT；显存不足可用更小模型或缩小数据。
+- [ ] 训练前先保存 zero-shot/baseline 结果，训练后用同一验证集比较。
+- [ ] 记录 trainable parameters、资源消耗、训练时间和已知限制。
 
 ### 提交与验收
 
@@ -261,9 +277,11 @@
 
 ---
 
-## Week 9｜用 W&B 辅助模型微调
+## Week 9｜用 W&B 辅助模型微调 { #week-9 }
 
 **本周问题**：如何让训练曲线、超参数、模型产物和结论形成可审计链条？
+
+**本周学习入口**：[W&B 实验管理](08_Post_Training.md)
 
 ### 学习目标
 
@@ -273,10 +291,10 @@
 
 ### 必做任务
 
-1. 在 Week 8 训练代码中接入 W&B；不要将 API key 提交到仓库。
-2. 只改变一个因素，运行至少两个 runs（例如 learning rate A/B）。
-3. 记录 train/eval loss、学习率、关键任务指标、运行时间和显存；上传配置与 adapter metadata artifact。
-4. 创建 W&B Report，写出证据支持的结论与下一步。若项目不能公开，提交脱敏导出图和表。
+- [ ] 在 Week 8 训练代码中接入 W&B；不要将 API key 提交到仓库。
+- [ ] 只改变一个因素，运行至少两个 runs（例如 learning rate A/B）。
+- [ ] 记录 train/eval loss、学习率、关键任务指标、运行时间和显存；上传配置与 adapter metadata artifact。
+- [ ] 创建 W&B Report，写出证据支持的结论与下一步。若项目不能公开，提交脱敏导出图和表。
 
 ### 提交与验收
 
@@ -285,17 +303,19 @@
 
 ### 官方学习链接
 
-- [W&B Quickstart](https://docs.wandb.ai/quickstart/)（EN）
-- [Track experiments](https://docs.wandb.ai/guides/track/)（EN）
-- [Hugging Face Transformers integration](https://docs.wandb.ai/guides/integrations/huggingface/)（EN）
-- [W&B Artifacts](https://docs.wandb.ai/guides/artifacts/)（EN）
-- [W&B Reports](https://docs.wandb.ai/guides/reports/)（EN）
+- [W&B Quickstart](https://docs.wandb.ai/models/quickstart)（EN）
+- [Track experiments](https://docs.wandb.ai/models/track)（EN）
+- [Hugging Face Transformers integration](https://docs.wandb.ai/models/integrations/huggingface)（EN）
+- [W&B Artifacts](https://docs.wandb.ai/models/artifacts)（EN）
+- [W&B Reports](https://docs.wandb.ai/models/reports)（EN）
 
 ---
 
-## Week 10｜Evaluation、Ablation 与 Error Analysis
+## Week 10｜Evaluation、Ablation 与 Error Analysis { #week-10 }
 
 **本周问题**：观察到的改进来自微调设置，还是随机波动、数据泄漏或选择性汇报？
+
+**本周学习入口**：[统一评测与消融](08_Post_Training.md#stage-4)
 
 ### 学习目标
 
@@ -305,9 +325,9 @@
 
 ### 必做任务
 
-1. 冻结 Week 7 test set，对 baseline 和至少两个 Week 9 runs 统一评测。
-2. 做一个 ablation，报告总体、分组指标和资源成本。
-3. 建立至少 20 个错误案例的 taxonomy，抽样人工复核。
+- [ ] 冻结 Week 7 test set，对 baseline 和至少两个 Week 9 runs 统一评测。
+- [ ] 做一个 ablation，报告总体、分组指标和资源成本。
+- [ ] 建立至少 20 个错误案例的 taxonomy，抽样人工复核。
 
 ### 提交与验收
 
@@ -321,9 +341,11 @@
 
 ---
 
-## Week 11｜论文阅读与小规模复现
+## Week 11｜论文阅读与小规模复现 { #week-11 }
 
 **本周问题**：原论文的核心主张，在你的资源约束下能否被部分验证？
+
+**本周学习入口**：[论文导读](../reading/README.md) · [评测基准](../reading/05_benchmark-2026.md)
 
 ### 学习目标
 
@@ -333,9 +355,9 @@
 
 ### 必做任务
 
-1. 选择一篇与 capstone 相关且有公开代码/数据的论文。
-2. 预注册一个可验证主张、复现范围、成功标准和资源上限。
-3. 运行缩小版复现，比较原文与本地设置并分析偏差来源。
+- [ ] 选择一篇与 capstone 相关且有公开代码/数据的论文。
+- [ ] 预注册一个可验证主张、复现范围、成功标准和资源上限。
+- [ ] 运行缩小版复现，比较原文与本地设置并分析偏差来源。
 
 ### 提交与验收
 
@@ -349,9 +371,11 @@
 
 ---
 
-## Week 12｜Capstone、展示与答辩
+## Week 12｜Capstone、展示与答辩 { #week-12 }
 
 **本周问题**：一个陌生读者能否理解问题、复现结果，并判断结论是否可信？
+
+**本周学习入口**：[提交规范与评分量表](10_Assessment_and_Submission.md) · [项目实战](../experiments/README.md) · [成果展厅](../projects/README.md)
 
 ### 项目要求
 
@@ -359,9 +383,9 @@
 
 ### 必做任务
 
-1. 整理一键复现入口与环境说明；移除密钥、隐私数据和大文件。
-2. 编写 model card/project card，说明预期用途、不适用场景、限制与伦理风险。
-3. 准备 5 分钟演示和 5 分钟答辩；同伴按量表复核一次。
+- [ ] 整理一键复现入口与环境说明；移除密钥、隐私数据和大文件。
+- [ ] 编写 model card/project card，说明预期用途、不适用场景、限制与伦理风险。
+- [ ] 准备 5 分钟演示和 5 分钟答辩；同伴按量表复核一次。
 
 ### 提交与验收
 
@@ -372,12 +396,12 @@
 
 - [Hugging Face Model Cards](https://huggingface.co/docs/hub/model-cards)（EN）
 - [GitHub repository security: secret scanning](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning)（EN）
-- [W&B Reports](https://docs.wandb.ai/guides/reports/)（EN）
+- [W&B Reports](https://docs.wandb.ai/models/reports)（EN）
 
 ---
 
 ## 完成之后
 
-你已经完成的不是“看完 12 章”，而是一套可审计的研究证据。下一步可进入[论文阅读](../reading/README.md)、[完整实验](../experiments/README.md)，或将 capstone 整理为项目展示。
+你已经完成的不是“看完 12 章”，而是一套可审计的研究证据。下一步可进入[论文导读](../reading/README.md)、[项目实战](../experiments/README.md)，或将 capstone 整理到[成果展厅](../projects/README.md)。
 
 最后更新：2026-08-07

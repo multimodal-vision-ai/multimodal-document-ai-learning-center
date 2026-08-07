@@ -1,16 +1,16 @@
-# 🚀 AI Project Showcase
+# 成果展厅：看见课程可以走向哪里
 
-> **Real AI Projects · Real Applications · Real Innovation**
+> **Real projects · Verifiable evidence · Research inspiration**
 
-欢迎来到 **Multimodal Vision AI Learning Center** 项目展示中心。
+这里展示实验室代表性项目及其应用方向。它们用于帮助学生理解“完整作品可以怎样表达”，而不是可直接复制的标准答案。
 
-本页面展示实验室代表性的人工智能项目，涵盖多模态智能、类脑智能以及 AI 行业应用等方向。
+设计自己的 Capstone 时，请先明确研究问题、数据授权、baseline、评测与限制，再参考本页的叙事和演示方式。
 
 所有项目均基于真实科研工作构建，旨在帮助学生了解国际前沿 AI 技术的发展方向，激发科研兴趣，并体验 AI 技术从理论研究到实际应用的全过程。
 
 ---
 
-# 🌟 Featured Projects
+## 精选项目
 
 目前展示两个代表性项目：
 
@@ -21,9 +21,9 @@
 
 ---
 
-# 📄 Project 1 · Multimodal Document AI
+## 项目 1｜Multimodal Document AI
 
-## 🎯 Project Overview
+### 项目简介
 
 本项目展示基于 **Vision Language Models (VLMs)** 的智能文档理解系统，可自动完成复杂文档的信息解析、理解与问答。
 
@@ -39,7 +39,7 @@
 
 ---
 
-## 🎬 Project Demo
+### 项目演示
 
 <div align="center">
 
@@ -61,7 +61,7 @@
 
 ---
 
-## 🔬 Core Technologies
+### 核心技术
 
 | Technology | Description |
 | :--- | :--- |
@@ -74,9 +74,9 @@
 
 ---
 
-# 🧠 Project 2 · Brain-Inspired Adaptive Intelligence
+## 项目 2｜Brain-Inspired Adaptive Intelligence
 
-## 🎯 Project Overview
+### 项目简介
 
 本项目展示 **Brain-Inspired Adaptive Intelligence** 在自主智能控制与智能交通中的前沿研究，探索类脑神经网络如何赋予智能系统持续学习、自适应决策与复杂环境协同控制能力。
 
@@ -94,7 +94,7 @@
 
 ---
 
-## 🎬 Project Demo
+### 项目演示
 
 <div align="center">
 
@@ -116,7 +116,7 @@
 
 ---
 
-## 🔬 Core Technologies
+### 核心技术
 
 | Technology | Description |
 | :--- | :--- |
@@ -126,7 +126,7 @@
 
 ---
 
-## 🌍 Application Scenarios
+### 应用场景
 
 本演示涵盖多个典型 AI 应用场景：
 
@@ -138,13 +138,13 @@
 
 ---
 
-## 🎯 Research Vision
+### 研究愿景
 
 本项目聚焦下一代自主智能系统，探索类脑智能、自适应学习与协同决策技术，为未来机器人、自主驾驶、智慧交通及智能控制等领域提供新的技术范式。
 
 ---
 
-# 🚀 Research Directions
+## 后续研究方向
 
 未来将持续发布更多科研项目，包括：
 
@@ -158,7 +158,7 @@
 
 ---
 
-## 🌱 Learning Philosophy
+## 学习启发
 
 > **Explore AI** · **Build AI** · **Create the Future**
 

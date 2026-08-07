@@ -1244,8 +1244,8 @@ DocTags 的定位不是新的文档格式，而是 **AI Native Document Represen
 | ------------------------- | ------------------------------------------------------ |
 | Docling Documentation     | https://docling-project.github.io/docling/             |
 | Docling 中文文档              | https://docling.cn/docling/                            |
-| Docling API Reference     | https://docling-project.github.io/docling/reference/   |
-| DoclingDocument Reference | https://docling.cn/docling/reference/docling_document/ |
+| DoclingDocument Reference (EN) | https://docling-project.github.io/docling/reference/docling_document/ |
+| DoclingDocument Reference (ZH) | https://docling.cn/docling/reference/docling_document/ |
 
 ---
 
@@ -1254,8 +1254,8 @@ DocTags 的定位不是新的文档格式，而是 **AI Native Document Represen
 | Project          | URL                                                                |
 | ---------------- | ------------------------------------------------------------------ |
 | Docling          | https://github.com/docling-project/docling                         |
-| Docling Examples | https://github.com/docling-project/docling/tree/main/docs/examples |
-| Docling Recipes  | https://github.com/docling-project/docling/tree/main/docs/recipes  |
+| Examples Source  | https://github.com/docling-project/docling/tree/main/docs/examples |
+| Examples Guide   | https://docling-project.github.io/docling/examples/                |
 
 ---
 

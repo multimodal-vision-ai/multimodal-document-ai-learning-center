@@ -440,7 +440,7 @@ https://www.docvqa.org/
 
 ### Challenge
 
-https://rrc.cvc.uab.es/?ch=17
+https://www.docvqa.org/challenges
 
 ---
 
@@ -805,13 +805,9 @@ Multilingual Form Understanding
 
 https://arxiv.org/abs/2104.08836
 
-### GitHub
+### Repository and Dataset
 
 https://github.com/doc-analysis/XFUND
-
-### Dataset
-
-https://huggingface.co/datasets/xfund/xfund
 
 ---
 
@@ -935,13 +931,9 @@ Scanned Receipt OCR and Information Extraction
 
 ## Official Resources
 
-### Competition
+### Competition Paper
 
-https://rrc.cvc.uab.es/?ch=13
-
-### ICDAR Competition
-
-https://rrc.cvc.uab.es/
+https://arxiv.org/abs/2103.10213
 
 ---
 
@@ -1172,10 +1164,6 @@ https://mmdocbench.github.io/
 ### Paper
 
 https://arxiv.org/abs/2410.21311
-
-### GitHub
-
-https://github.com/fb-zhu/MMDocBench
 
 ### Dataset
 

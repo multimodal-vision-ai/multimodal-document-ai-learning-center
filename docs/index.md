@@ -48,18 +48,18 @@
 - AI-assisted coding 使用与人工验证记录；
 - LoRA/PEFT 微调配置；
 - 至少两个可比较的 W&B runs 与 Report；
-- 错误分析、限制、Model Card 和项目展示。
+- 错误分析、限制、Model Card 和成果展示。
 
 ## 按目标继续探索
 
 | 目标 | 入口 | 适合何时进入 |
 | --- | --- | --- |
-| 查阅基础专题 | [Learning modules](learning/README.md) | 完成对应周次任务时 |
-| 运行完整实验 | [Experiments](experiments/README.md) | Week 6 以后 |
-| 学习可运行教程 | [Tutorials](tutorials/README.md) | 需要代码参考时 |
-| 阅读论文与综述 | [Reading Center](reading/README.md) | Week 4 以后 |
-| 查找官方来源 | [Official resources](resources/official-sources.md) | 遇到版本或 API 问题时 |
-| 查看项目示例 | [Projects](projects/README.md) | 设计 Capstone 时 |
+| 查阅基础专题 | [专题学习](learning/README.md) | 完成对应周次任务时 |
+| 跟做一个短时可运行案例 | [动手教程](tutorials/README.md) | Week 2 以后，需要代码参考时 |
+| 完成端到端研究作品 | [项目实战](experiments/README.md) | Week 4 以后，准备连续投入时 |
+| 阅读论文与综述 | [论文导读](reading/README.md) | Week 4 以后 |
+| 查找官方来源 | [官方文档与平台](resources/official-sources.md) | 遇到版本或 API 问题时 |
+| 查看往期成果 | [成果展厅](projects/README.md) | 设计 Capstone 时 |
 
 ## 学习原则
 

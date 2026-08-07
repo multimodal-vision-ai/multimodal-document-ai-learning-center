@@ -1,110 +1,38 @@
-# About
+# 关于学习中心
 
-> **Multimodal Vision AI Learning Center**  
->
-> An Open Learning Platform for Multimodal Vision AI
+**Multimodal Document AI Learning Center** 是一个面向高年级本科生、研究生和 AI 初学者的开放学习平台。核心目标不是堆积资料，而是把课程、代码、评测和研究表达连接成一条可完成、可检查的路径。
 
----
+## 平台提供什么
 
-## 🌟 Overview
+| 入口 | 适合解决的问题 | 典型产出 |
+| --- | --- | --- |
+| [12 周入门课程](learning/README.md) | 我应该按什么顺序学习？每周交什么？ | 12 周学习记录与 Capstone |
+| [动手教程](tutorials/README.md) | 我想快速跟做一个可运行案例 | Notebook、结果与简短分析 |
+| [项目实战](experiments/README.md) | 我想完成一个端到端研究作品 | 代码、配置、Benchmark 与报告 |
+| [论文导读](reading/README.md) | 我需要理解基础概念或进入前沿研究 | 阅读笔记与复现问题 |
+| [学习资源](resources/README.md) | 我需要查找官方模型、数据和工具入口 | 可追溯的官方来源 |
+| [成果展厅](projects/README.md) | 我想参考项目选题与展示方式 | 项目示例与 Capstone 灵感 |
 
-Multimodal Vision AI Learning Center 是一个面向人工智能学习者和研究人员的开放学习平台。
+## 为什么这样组织
 
-本平台围绕 **Vision Language Models、Document AI、多模态大模型和智能应用**，系统整理：
+### 中文主讲，保留必要英文术语
 
-- 理论知识
-- 开源模型
-- 实践教程
-- 论文阅读
-- 科研项目
+正文以中文解释学习目标、任务和判断标准；API 名称、论文概念与行业常用术语保留英文，便于继续阅读官方资料。
 
-帮助学习者从 **学习（Learn） → 实践（Practice） → 研究（Research）**，逐步进入多模态人工智能领域。
+### Official First
 
----
+技术细节优先指向模型、框架、数据集和平台的官方文档。站内页面负责解释学习顺序、实践任务与验收标准，降低重复维护成本。
 
-## 🎯 Vision
+### Evidence First
 
-本平台目标是构建一个：
+“代码运行了”不是终点。每项结论都应能回到输入、版本、配置、原始输出、指标和失败案例。
 
-> **连接知识、代码和科研实践的多模态 AI 学习生态。**
+### Responsible AI
 
-通过开放的学习路线、真实的实验案例和持续更新的技术内容，帮助学生掌握：
+鼓励使用 AI-assisted coding，但必须披露使用范围，并用测试、官方文档和人工审查验证输出。密钥、私人文档与未授权数据不得提交到公开仓库。
 
-- 如何理解现代 AI 模型；
-- 如何使用开源工具进行实验；
-- 如何阅读最新科研论文；
-- 如何开展自己的人工智能研究。
+## 推荐入口
 
----
+第一次访问，请从[12 周入门课程](learning/README.md)开始；只想体验一个具体任务，可以选择[动手教程](tutorials/README.md)；准备形成完整作品时，再进入[项目实战](experiments/README.md)。
 
-## 📚 Platform
-
-平台主要包含：
-
-| Module | Description |
-|---|---|
-| 📖 Learning | 系统课程与基础知识 |
-| 📑 Reading | 论文、技术报告与前沿追踪 |
-| 💻 Tutorials | 模型部署与实验实践 |
-| 🔬 Experiments | 科研项目实验案例 |
-| 🌐 Resources | 高质量开源资源汇总 |
-
----
-
-## 🚀 Learning Philosophy
-
-本平台坚持：
-
-- **Official First** —— 优先学习官方资料
-- **Practice First** —— 通过实践掌握技术
-- **Open Source Driven** —— 拥抱开源生态
-- **Research Oriented** —— 面向科研创新
-
----
-
-## 🔭 Future Directions
-
-未来将持续建设：
-
-- Multimodal Document AI
-- Medical Vision AI
-- Vision Language Models
-- AI Agents
-- Multimodal Reasoning
-- AI for Science
-
-打造面向未来人工智能研究的开放学习平台。
-
----
-
-## 🚀 Start Exploring
-
-推荐学习路线：
-
-👉 [Learning Center](learning/README.md)
-
-系统学习 Multimodal Vision AI 基础知识。
-
-
-👉 [Reading Center](reading/README.md)
-
-阅读经典论文、技术报告和前沿研究。
-
-
-👉 [Tutorials](tutorials/README.md)
-
-通过案例学习模型部署、推理和实验。
-
-👉 [Experiments](experiments/README.md)
-
-通过实验学习模型训练、微调与分析。
-
-👉 [Resources](resources/README.md)
-
-探索高质量 AI 开源资源。
-
----
-
-**Learn · Practice · Research**
-
-*Multimodal Vision AI Learning Center*
+最后更新：2026-08-07
