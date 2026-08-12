@@ -1,6 +1,13 @@
-# 推荐课程：按缺口学习
+﻿# 推荐课程：按缺口学习
 
 不要按“收藏数量”或星级选择课程。先判断当前缺的是基础概念、模型使用、研究能力还是工程实践，再只学能解决这个缺口的章节。
+
+## 谭国平教授承担的课程
+
+- [未来媒体互联网](https://github.com/multimodal-vision-ai/courses/tree/main/future-media-internet) — 多媒体通信与互联网技术基础
+- [智能感知与自动驾驶技术](https://github.com/multimodal-vision-ai/courses/tree/main/intelligent-perception) — 视觉感知、目标检测与自动驾驶决策
+- 更多课程：[multimodal-vision-ai/courses](https://github.com/multimodal-vision-ai/courses)
+
 
 ## 第一步：补深度学习基础
 
