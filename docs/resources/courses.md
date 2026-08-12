@@ -2,12 +2,6 @@
 
 不要按“收藏数量”或星级选择课程。先判断当前缺的是基础概念、模型使用、研究能力还是工程实践，再只学能解决这个缺口的章节。
 
-## 谭国平教授承担的课程
-
-- [未来媒体互联网](https://github.com/multimodal-vision-ai/courses/tree/main/future-media-internet) — 多媒体通信与互联网技术基础
-- [智能感知与自动驾驶技术](https://github.com/multimodal-vision-ai/courses/tree/main/intelligent-perception) — 视觉感知、目标检测与自动驾驶决策
-- 更多课程：[multimodal-vision-ai/courses](https://github.com/multimodal-vision-ai/courses)
-
 
 ## 第一步：补深度学习基础
 
@@ -59,5 +53,12 @@
 - 每次只选一个最小单元，并提前写下预期产出。
 - 看完必须留下代码、图解、实验结果或决策说明之一。
 - 两周后无法复述或复用的笔记，需要改成问题卡或小实验。
+
+
+## 谭国平教授承担的课程
+
+- [未来媒体互联网](https://github.com/multimodal-vision-ai/courses/tree/main/future-media-internet) — 多媒体通信与互联网技术基础
+- [智能感知与自动驾驶技术](https://github.com/multimodal-vision-ai/courses/tree/main/intelligent-perception) — 视觉感知、目标检测与自动驾驶决策
+- 更多课程：[multimodal-vision-ai/courses](https://github.com/multimodal-vision-ai/courses)
 
 链接核对日期：2026-08-07
