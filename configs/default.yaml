@@ -30,10 +30,19 @@ omnidocbench_eval:
   repo_url: https://github.com/opendatalab/OmniDocBench.git
   # 官方仓库无 release/tag，锁定 main 最新 commit（2026-08-13 核实）
   commit: 193627ae9e97d89188468ed1ee3b7a856ff76044
-  # ⚠️ 官方 CLI 入口需首次运行时按锁定 commit 的 README/configs 核对后填写。
-  # 占位符：{repo} {gt} {pred} {out}。留空时 Notebook 07 只运行非官方 smoke 自检。
+  # 官方 CLI 入口（2026-08-13 从锁定 commit 的 README 与 configs/end2end.yaml 核实）：
+  #   python pdf_validation.py --config <yaml>
+  # - 该 commit 的 configs/ 只有 end2end.yaml（评测代码 v1.7）；
+  #   md2md.yaml 只存在于 v1_5 分支 → md2md 模板留空；
+  # - end2end 的 prediction 是「每页一个 .md 文件」的文件夹，
+  #   ground_truth 是 OmniDocBench 标注 JSON（可给页面子集）；
+  # - CDM 需要独立环境（Node/KaTeX），首跑配置由 src/evaluation.py 生成时默认关闭。
+  # ✅ 2026-08-13 Kaggle 实测：该入口成功出分（3 页 smoke，quick_match，
+  #    Edit_dist；Python 3.12 需用 src/evaluation.py.install_official_deps()
+  #    安装不锁版本依赖，不要执行官方 pip install -e .）。
+  entry_script: pdf_validation.py
   md2md_cmd_template: ""
-  end2end_cmd_template: ""
+  end2end_cmd_template: "python {repo}/pdf_validation.py --config {config}"
 
 modes:
   # 三种运行模式的页数（任务文件 §九）

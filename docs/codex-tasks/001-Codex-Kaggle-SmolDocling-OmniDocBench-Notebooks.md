@@ -1,6 +1,6 @@
 # Codex Task — Kaggle + SmolDocling + OmniDocBench
 
-- Status: Phase 1–4 全部实现 — Notebook 00–10 + src/ + configs/ + solutions/ 齐全；Phase 2 已通过 Kaggle 实测（smoke v6），Phase 3/4 本地验证通过、待 Kaggle 实测；官方评测模板与 GPU（T4/L4）路径待首跑回填
+- Status: Phase 1–4 全部实现 — Notebook 00–10 + src/ 齐全；Phase 2 Kaggle 实测通过（smoke v6）；官方评测模板已按锁定 commit 回填并在 Kaggle 跑出第一次官方分数（3 页 smoke，见 docs/notebook-design.md §13.8）；剩余：全量首跑与 Phase 3/4 Notebook 实测
 - Created: 2026-08-13
 - Owner: Guoping Tan
 - Research Direction: Document AI

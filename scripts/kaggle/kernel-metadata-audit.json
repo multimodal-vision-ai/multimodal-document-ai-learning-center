@@ -1,0 +1,14 @@
+{
+  "id": "guopingtan/mvai-odbeval-audit",
+  "title": "mvai-odbeval-audit",
+  "code_file": "audit_odbeval.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": true,
+  "competition_sources": [],
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

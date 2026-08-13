@@ -32,8 +32,11 @@ def main() -> None:
     repo = evaluation.ensure_eval_repo(project_root() / "third_party")
     print("[official eval repo]", repo)
 
+    gt_json = evaluation.gt_subset_for_predictions(
+        md_dir, annotations, bench / "gt_subset.json"
+    )
     log = evaluation.run_official_eval(
-        cfg, repo, gt_dir=data_root, pred_dir=md_dir, output_dir=bench, eval_kind="md2md"
+        cfg, repo, gt_json=gt_json, pred_dir=md_dir, output_dir=bench
     )
     if log is None:
         print(
@@ -48,4 +51,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

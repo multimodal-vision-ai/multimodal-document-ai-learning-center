@@ -94,6 +94,22 @@ results/      # 运行时产物（不入 Git，见 .gitignore）
 | fast 基线 12 页 | ≈ 3 h（CPU，平均 894 s/页） |
 | md2md 导出 + smoke 自检 | 46 s（12 页；sanity_ned 0.454，非官方指标） |
 
+### 第一次官方分数（2026-08-13，3 页 smoke）
+
+官方 end2end 评测链路已在 Kaggle 跑通（入口 `python pdf_validation.py --config <yaml>`，
+锁定 commit `193627ae…`，quick_match）。3 页固定子集（seed 42，CPU 基线，
+max_new_tokens=4096，CDM 关闭）结果：text_block Edit_dist 0.0234（2 页）、
+table TEDS 0.0 / Edit_dist 1.0（1 页）、reading_order Edit_dist 0.3333（3 页）。
+⚠️ 这是链路验证分数，不是全量 Benchmark 成绩；原始结果见
+`reports/official_eval_smoke/`。
+
+运行官方评测的两个环境要点：
+
+1. 官方代码要求 Python `<3.12` 并锁定旧版依赖；在 Kaggle 3.12 上**不要**
+   `pip install -e .`，改为 `src.evaluation.install_official_deps()`（不锁版本）后
+   从仓库根目录直接运行入口脚本；
+2. CDM 公式指标需要 Node/KaTeX/TeX 环境，默认关闭并在报告中注明 metric 集合。
+
 ### ⚠️ P100 + torch 2.10 GPU 不可用（已自动处理）
 
 Kaggle 本轮分配的 P100（sm_60）与镜像自带的 torch 2.10.0+cu128 不兼容

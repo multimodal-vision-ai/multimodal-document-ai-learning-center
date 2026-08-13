@@ -691,18 +691,21 @@ NB07 = [
     md(
         "# Concepts\n"
         "\n"
-        "- **官方评测仓库**：`opendatalab/OmniDocBench` 无 release/tag，锁定 commit `193627ae…`；\n"
-        "- **两条端到端路径**：end2end（结构化 JSON）与 md2md（Markdown）；\n"
+        "- **官方评测仓库**：`opendatalab/OmniDocBench` 无 release/tag，锁定 commit `193627ae…`（评测代码 v1.7）；\n"
+        "- **官方入口**：`python pdf_validation.py --config <yaml>`；该 commit 的 `configs/` 只有 `end2end.yaml`（md2md.yaml 仅在 v1_5 分支）；\n"
+        "- **end2end 输入**：ground_truth = 标注 JSON（可用页面子集），prediction = 每页一个 `.md` 文件的文件夹；\n"
         "- **官方指标族**：Edit Distance / BLEU / METEOR（文本）、TEDS（表格）、CDM（公式）、"
         "mAP（版面）、Reading Order 指标——以官方脚本实现为准；\n"
         "- **红线**：本 Notebook 的 normalized edit distance 只是 pipeline 自检，"
         "**不是官方指标**，不能用于报告结论。\n"
     ),
     md(
-        "## Step 1 — 准备官方评测仓库（锁定 commit）\n"
+        "## Step 1 — 准备官方评测仓库（锁定 commit + Python 3.12 依赖）\n"
         "\n"
         "首次运行会 `git clone` 官方仓库并 checkout 到锁定 commit；"
-        "再次运行校验 commit 一致。\n"
+        "再次运行校验 commit 一致。官方要求 Python 3.10，Kaggle 是 3.12："
+        "不要执行官方 `pip install -e .`（旧版 lxml 无 3.12 轮子），"
+        "改用 `evaluation.install_official_deps()` 安装不锁版本依赖。\n"
     ),
     code(
         HEADER
@@ -713,9 +716,11 @@ NB07 = [
         "repo = evaluation.ensure_eval_repo(project_root() / 'third_party')\n"
         "print('官方评测仓库:', repo)\n"
         "print('锁定 commit:', evaluation.OFFICIAL_COMMIT)\n"
+        "# 官方评测依赖（Python 3.12 兼容，不锁版本）\n"
+        "evaluation.install_official_deps()\n"
     ),
     md(
-        "## Step 2 — 从 baseline 缓存导出 Markdown 预测（md2md）\n"
+        "## Step 2 — 从 baseline 缓存导出 Markdown 预测（官方 end2end 输入）\n"
         "\n"
         "把 `results/baseline/predictions/*.json` 里的 DocTags 转成 Markdown 文件。\n"
     ),
@@ -733,11 +738,11 @@ NB07 = [
         "print('导出 Markdown 预测:', len(files), '个 ->', md_dir)\n"
     ),
     md(
-        "## Step 3 — 运行官方评测\n"
+        "## Step 3 — 运行官方评测（pdf_validation.py）\n"
         "\n"
-        "官方 CLI 命令模板在 `configs/default.yaml` 的 `omnidocbench_eval` 段。"
-        "首次运行时按锁定 commit 的官方 README 填写模板后重跑本格；"
-        "模板为空时自动跳过官方评测，只做非官方 smoke 自检。\n"
+        "`src/evaluation.py` 会按官方 `end2end.yaml` 结构生成配置（CDM 默认关闭），"
+        "再执行锁定 commit 的官方入口。官方结果写入仓库 result/ 目录；"
+        "模板为空或评测环境缺失时自动跳过，只做非官方 smoke 自检。\n"
     ),
     code(
         HEADER
@@ -747,12 +752,12 @@ NB07 = [
         "\n"
         "cfg = load_config()\n"
         "bench = project_root() / cfg['paths']['benchmark_dir']\n"
+        "gt_json = evaluation.gt_subset_for_predictions(md_dir, annotations, bench / 'gt_subset.json')\n"
         "log = evaluation.run_official_eval(\n"
-        "    cfg, repo, gt_dir=data_root, pred_dir=md_dir,\n"
-        "    output_dir=bench, eval_kind='md2md',\n"
+        "    cfg, repo, gt_json=gt_json, pred_dir=md_dir, output_dir=bench,\n"
         ")\n"
         "if log is None:\n"
-        "    print('⚠️ 官方 CLI 模板未配置（configs/default.yaml），本次跳过官方评测；')\n"
+        "    print('⚠️ 官方评测未运行（模板/环境不可用），本次跳过；')\n"
         "    print('⚠️ 下面是「非官方 smoke 自检」，仅验证 pipeline 贯通，不得作为成绩。')\n"
         "else:\n"
         "    print('官方评测日志:', log)\n"
@@ -820,8 +825,8 @@ NB07 = [
     md(
         "# Exercises\n"
         "\n"
-        "1. **TODO：** 按锁定 commit 的官方 README 填写 `configs/default.yaml` 的评测命令模板，"
-        "跑通一次真正的官方 md2md 评测，并记录官方指标 JSON 的位置；"
+        "1. **TODO：** 跑通一次真正的官方 end2end 评测（入口 `pdf_validation.py --config`），"
+        "并记录官方指标 JSON 的位置与使用的 metric 集合（CDM 是否开启）；"
         "有余力再用 `src.evaluation.export_end2end_predictions` 导出 end2end 候选格式"
         "（字段与类别映射需按官方 README 核对修正）；\n"
         "2. **TODO：** 挑出 smoke 自检中得分最低的 3 页，手动对比 prediction 与 GT，"

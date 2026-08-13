@@ -22,6 +22,36 @@ from . import data
 OFFICIAL_REPO_URL = "https://github.com/opendatalab/OmniDocBench.git"
 OFFICIAL_COMMIT = "193627ae9e97d89188468ed1ee3b7a856ff76044"
 
+# 官方 pyproject 的依赖（requires-python >=3.10,<3.12，锁定旧版）。
+# Kaggle 为 Python 3.12：不执行 `pip install -e .`（lxml==4.9.1 等无 3.12 轮子），
+# 改为安装不锁版本的依赖后直接从仓库根目录运行 pdf_validation.py。
+# 实测（2026-08-13）可出分，runtime_environment.json 会记录实际版本。
+OFFICIAL_DEPS = [
+    "apted",
+    "beautifulsoup4",
+    "evaluate",
+    "func-timeout",
+    "Levenshtein",
+    "loguru",
+    "lxml",
+    "nltk",
+    "pylatexenc",
+    "scipy",
+    "tabulate",
+    "pyyaml",
+]
+
+
+def install_official_deps() -> None:
+    """安装官方评测的 Python 依赖（不锁版本，兼容 Python 3.12）。"""
+    import subprocess
+    import sys
+
+    subprocess.run(
+        [sys.executable, "-m", "pip", "install"] + OFFICIAL_DEPS + ["--quiet"],
+        check=True,
+    )
+
 
 def ensure_eval_repo(base_dir: Path, commit: str = OFFICIAL_COMMIT) -> Path:
     """克隆或复用官方评测仓库并锁定 commit。"""
@@ -157,34 +187,101 @@ def export_end2end_predictions(
 def run_official_eval(
     config: Dict[str, Any],
     repo: Path,
-    gt_dir: Path,
+    gt_json: Path,
     pred_dir: Path,
     output_dir: Path,
-    eval_kind: str = "md2md",
+    include_cdm: bool = False,
 ) -> Optional[Path]:
-    """调用官方评测脚本（命令模板来自 configs/default.yaml）。
+    """调用官方评测入口 pdf_validation.py（锁定 commit 核实于 2026-08-13）。
 
-    eval_kind: md2md / end2end。
-    模板为空时返回 None，并提示按官方 README 填写（不做假跑）。
+    先按官方 configs/end2end.yaml 结构生成评测配置（CDM 默认关闭），
+    再执行 `python pdf_validation.py --config <yaml>`。
+    模板为空时返回 None（不做假跑）。
     """
     section = config.get("omnidocbench_eval", {})
-    template = section.get(f"{eval_kind}_cmd_template", "") or ""
+    template = section.get("end2end_cmd_template", "") or ""
     if not template:
         return None
+    cfg_path = write_end2end_config(
+        repo, gt_json, pred_dir, output_dir, include_cdm=include_cdm
+    )
     cmd = (
         template.replace("{repo}", str(repo))
-        .replace("{gt}", str(gt_dir))
-        .replace("{pred}", str(pred_dir))
-        .replace("{out}", str(output_dir))
+        .replace("{config}", str(cfg_path))
     )
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    log = output_dir / f"official_{eval_kind}.log"
+    log = output_dir / "official_end2end.log"
     with open(log, "w", encoding="utf-8") as f:
         proc = subprocess.run(cmd, shell=True, stdout=f, stderr=subprocess.STDOUT)
     if proc.returncode != 0:
         raise RuntimeError(f"官方评测失败（returncode={proc.returncode}），见 {log}")
     return log
+
+
+def write_end2end_config(
+    repo: Path,
+    gt_json: Path,
+    pred_dir: Path,
+    output_dir: Path,
+    include_cdm: bool = False,
+) -> Path:
+    """按官方 configs/end2end.yaml（锁定 commit）结构生成评测配置。
+
+    - text_block: Edit_dist；display_formula: Edit_dist（+CDM 可选）；
+    - table: TEDS + Edit_dist；reading_order: Edit_dist；
+    - match_method: quick_match（官方推荐）。
+    """
+    cdm_lines = "\n      - CDM" if include_cdm else "      # CDM 需要独立环境，默认关闭"
+    content = (
+        "end2end_eval:\n"
+        "  metrics:\n"
+        "    text_block:\n"
+        "      metric:\n"
+        "      - Edit_dist\n"
+        "    display_formula:\n"
+        "      metric:\n"
+        "      - Edit_dist\n"
+        f"{cdm_lines}\n"
+        "    table:\n"
+        "      metric:\n"
+        "      - TEDS\n"
+        "      - Edit_dist\n"
+        "    reading_order:\n"
+        "      metric:\n"
+        "      - Edit_dist\n"
+        "  dataset:\n"
+        "    dataset_name: end2end_dataset\n"
+        "    ground_truth:\n"
+        f"      data_path: {Path(gt_json).resolve()}\n"
+        "    prediction:\n"
+        f"      data_path: {Path(pred_dir).resolve()}\n"
+        "    match_method: quick_match\n"
+    )
+    out = Path(output_dir) / "end2end_custom.yaml"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(content, encoding="utf-8")
+    return out
+
+
+def prepare_gt_subset(
+    pages: Sequence[Dict[str, Any]], out_path: Path
+) -> Path:
+    """把若干官方页面写成评测 GT 子集 JSON（end2end 输入）。"""
+    return data.write_json(list(pages), out_path)
+
+
+def gt_subset_for_predictions(
+    pred_dir: Path,
+    annotations: Sequence[Dict[str, Any]],
+    out_path: Path,
+) -> Path:
+    """按 predictions 目录中的 image_id 抽取对应 GT 页面。"""
+    ids = {p.stem for p in Path(pred_dir).glob("*.md")}
+    pages = [p for p in annotations if data.sample_id(p) in ids]
+    if not pages:
+        raise ValueError("predictions 目录中没有与 GT 匹配的 .md 文件")
+    return prepare_gt_subset(pages, out_path)
 
 
 def normalized_edit_distance(pred_text: str, gt_text: str) -> float:

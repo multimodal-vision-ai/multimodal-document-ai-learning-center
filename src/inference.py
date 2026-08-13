@@ -80,6 +80,7 @@ def run_baseline(
     prompt_id: str = "v0",
     skip_existing: bool = True,
     n_pages: Optional[int] = None,
+    predict_kwargs: Optional[Dict[str, Any]] = None,
 ) -> Path:
     """运行 Baseline 批量推理。
 
@@ -116,7 +117,9 @@ def run_baseline(
                 skipped += 1
                 continue
         image = data.load_page_image(data_root, page)
-        prediction = adapter.predict(image, prompt=get_prompt(prompt_id))
+        prediction = adapter.predict(
+            image, prompt=get_prompt(prompt_id), **(predict_kwargs or {})
+        )
         prediction["image_id"] = image_id
         prediction["prompt_id"] = prompt_id
         prediction["document_type"] = data.page_attribute(page).get(

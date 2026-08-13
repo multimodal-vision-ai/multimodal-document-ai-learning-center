@@ -321,7 +321,7 @@ results/
 | R6 | Kaggle GPU 型号/配额波动 | 训练时间预算不稳定 | 已实测：本轮分配 P100 且与镜像 torch 不兼容，自动回退 CPU；排障方案写入 notebooks/README.md | 已记录 |
 | R7 | 全量 1651 页评测可能超出单次会话 | 结果丢失 | 缓存 + skip 已有输出 + 分片评测 + 版本化保存 | 设计中 |
 | R8 | 国内网络访问 HF 受限 | 本地开发困难 | 主平台为 Kaggle（可直连）；本地替代方案仅在 Notebook 00 作为可选说明，标注非官方 | 已记录 |
-| R9 | 评测指标细节与实现未知（官方 eval 配置未逐项核实） | 报告不可比 | Phase 2 从锁定 commit 复核官方 README/configs 后固化，禁止自造指标 | 待实测 |
+| R9 | 评测指标细节与实现未知（官方 eval 配置未逐项核实） | 报告不可比 | 已从锁定 commit 复核并实测出分（Edit_dist/TEDS/reading order，quick_match）；CDM 仍需独立环境 | 已处理 |
 
 ---
 
@@ -332,7 +332,7 @@ results/
 - [x] transformers 5.0.0 加载 SmolDocling（AutoModelForVision2Seq）成功；P100 无 sm_60 kernel → 自动回退 CPU（eager），flash_attention_2 未实际启用；
 - [x] HF 数据集在 Kaggle 下载：89.8 s，images 1.38 GB + 42 MB 标注，1651 页统计与 §4.2 完全一致；
 - [x] fast 模式真实时间：12 页 ≈ 3 h（CPU，894 s/页）；
-- [ ] OmniDocBench 官方 eval suite 安装方式与配置（仍需从 commit `193627ae…` 复核；本次 smoke 仅运行非官方自检）；
+- [x] OmniDocBench 官方 eval suite：入口 `python pdf_validation.py --config <yaml>`（commit `193627ae…`，2026-08-13 实测出分）；Python 3.12 需用不锁版本依赖（见 §13.8），CDM 默认关闭；
 - [ ] T4/L4 GPU 上的真实推理路径（本次未分配到）。
 
 ---
@@ -418,3 +418,26 @@ results/
 - 11 个 Notebook（00–10）与 `src/`（9 个模块）全部就位，任务文件 §四 的结构完成；
 - 剩余回填项：官方评测 CLI 模板（锁定 commit `193627ae…` 核对后填写）、T4/L4 GPU 实测（或 sm_60 兼容 torch 方案）、Phase 3/4 Notebook 的 Kaggle 首跑记录；
 - 下一步：完成一次「Smoke → Teaching → Training」三级验收（任务文件 §二十五），并将实测结果回填 README 与本文档。
+
+### 13.8 官方评测 smoke 实测（2026-08-13，第一次官方分数）
+
+环境与流程：
+
+- 官方仓库 tarball @ commit `193627ae…`，从仓库根目录运行 `python pdf_validation.py --config <yaml>`（无需 `pip install -e .`）；
+- 官方 `requires-python >=3.10,<3.12` 且锁定旧版依赖（lxml==4.9.1 等无 Python 3.12 轮子）→ Kaggle 3.12 改用**不锁版本**依赖安装（`src/evaluation.py.install_official_deps()`），实测版本记录在官方 `runtime_environment.json`；
+- 配置由 `write_end2end_config` 按官方 end2end.yaml 生成：text_block Edit_dist、display_formula Edit_dist（CDM 关闭）、table TEDS+Edit_dist、reading_order Edit_dist、quick_match；
+- 3 页固定子集（seed 42），SmolDocling zero-shot 基线（CPU，max_new_tokens=4096，平均 268 s/页）。
+
+官方分数（3 页 smoke；⚠️ 非全量 Benchmark，不代表模型水平，仅验证评测链路）：
+
+| 官方指标 | 值 | 分母（页） |
+| --- | ---: | ---: |
+| text_block Edit_dist（越低越好） | 0.0234 | 2 |
+| table TEDS（越高越好） | 0.0 | 1 |
+| table Edit_dist（越低越好） | 1.0 | 1 |
+| reading_order Edit_dist（越低越好） | 0.3333 | 3 |
+| display_formula Edit_dist | NaN（无匹配公式样本） | 0 |
+
+结论：官方评测链路（GT 子集 + Markdown 预测 + 官方脚本）全通（rc=0，errors={}）；
+分数本身受 CPU/截断/小样本限制，仅作链路验证。原始产物归档于
+`reports/official_eval_smoke/`（metrics、run_summary、metadata、评测配置）。

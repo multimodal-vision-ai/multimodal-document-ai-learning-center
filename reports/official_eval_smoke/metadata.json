@@ -1,0 +1,61 @@
+{
+  "experiment_id": "official-eval-smoke",
+  "timestamp_utc": "2026-08-13T10:25:58Z",
+  "omnidocbench_commit": "193627ae9e97d89188468ed1ee3b7a856ff76044",
+  "dataset_revision": "aa1ee96d106dbe53d0ae59474d75c6e6d9b53fec",
+  "model_revision": "ce51f56c4ebe36e0b1c3a55f67b261ba22a50bf8",
+  "pages": [
+    "scihub_s12237-014-9873-7.pdf_4",
+    "PPT_PresentationSpecification_page_025",
+    "book_en_搬书匠-3473-Reactive Programming with RxJS-2015-英文版_page_021"
+  ],
+  "baseline": {
+    "mode": "fast",
+    "requested_pages": 3,
+    "completed": 3,
+    "skipped_from_cache": 0,
+    "prompt_id": "v0",
+    "seed": 42,
+    "total_latency_sec": 805.29,
+    "mean_latency_sec": 268.43,
+    "wall_sec": 806.79,
+    "model_id": "docling-project/SmolDocling-256M-preview",
+    "model_revision": "ce51f56c4ebe36e0b1c3a55f67b261ba22a50bf8"
+  },
+  "official": {
+    "rc": 0,
+    "result_files": [
+      "end2end_quick_match_display_formula_formula.json",
+      "end2end_quick_match_display_formula_per_page_edit.json",
+      "end2end_quick_match_display_formula_result.json",
+      "end2end_quick_match_metric_result.json",
+      "end2end_quick_match_reading_order_per_page_edit.json",
+      "end2end_quick_match_reading_order_result.json",
+      "end2end_quick_match_table_per_page_edit.json",
+      "end2end_quick_match_table_result.json",
+      "end2end_quick_match_text_block_per_page_edit.json",
+      "end2end_quick_match_text_block_result.json",
+      "pred_md_quick_match_display_formula_result.json",
+      "pred_md_quick_match_metric_result.json",
+      "pred_md_quick_match_reading_order_per_page_edit.json",
+      "pred_md_quick_match_reading_order_result.json",
+      "pred_md_quick_match_run_summary.json",
+      "pred_md_quick_match_runtime_environment.json",
+      "pred_md_quick_match_runtime_environment.log",
+      "pred_md_quick_match_stage_execution.json",
+      "pred_md_quick_match_stage_execution.log",
+      "pred_md_quick_match_table_per_page_edit.json",
+      "pred_md_quick_match_table_per_table_TEDS.json",
+      "pred_md_quick_match_table_result.json",
+      "pred_md_quick_match_text_block_per_page_edit.json",
+      "pred_md_quick_match_text_block_result.json"
+    ]
+  },
+  "errors": {},
+  "timers": {
+    "setup_repo_sec": 11.4,
+    "dataset_sec": 3.9,
+    "baseline_3pages_sec": 855.0,
+    "official_eval_sec": 16.1
+  }
+}
