@@ -1438,6 +1438,434 @@ NB06 = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# Notebook 08 — Error Analysis
+# ---------------------------------------------------------------------------
+
+NB08 = [
+    md(
+        "# Notebook 08 — Error Analysis\n"
+        "\n"
+        "> **阶段**：Stage 4 Evaluate · **预计时间**：30–50 分钟（CPU 可完成） · **平台**：Kaggle Notebook\n"
+        "\n"
+        "目标是回答「模型到底不会什么」，而不是「模型分数是多少」。\n"
+    ),
+    md(
+        "# Learning Objectives\n"
+        "\n"
+        "- 建立可复查的错误分类学（Error Taxonomy）；\n"
+        "- 从预测与 GT 自动生成 error_cases.json（含证据路径）；\n"
+        "- 选择 Worst / Best-Improvement / Regression 三类案例；\n"
+        "- 用错误分布提出下一步的研究假设。\n"
+    ),
+    md(
+        "# Why This Matters\n"
+        "\n"
+        "同一 Overall 分数背后可以是完全不同的失败模式：OCR 错字、漏内容、"
+        "表格丢失还是幻觉。错误分析把「分数差」变成「可研究的问题」，"
+        "是论文问题形成前的最后一块拼图。\n"
+    ),
+    md(
+        "# Concepts\n"
+        "\n"
+        "错误分类学（教学启发式，需人工复核）：\n"
+        "\n"
+        "```text\n"
+        "OCR Error / Layout Error / Reading Order Error\n"
+        "Table Error / Formula Error / Missing Content\n"
+        "Hallucination / Repetition / Structure Error\n"
+        "```\n"
+        "\n"
+        "自动分类依据：归一化编辑距离、SequenceMatcher 的缺失/插入占比、"
+        "重复片段检测、页面是否含表格/公式而预测缺失对应标记。"
+        "所有案例带 evidence 路径，便于逐条人工复查。\n"
+    ),
+    md("## Step 1 — 生成错误案例库\n"),
+    code(
+        HEADER
+        + "\n"
+        "from src import data, error_analysis\n"
+        "from src.config import load_config, project_root\n"
+        "\n"
+        "cfg = load_config()\n"
+        "data_root = data.find_dataset_root()\n"
+        "annotations = data.load_annotations(data_root)\n"
+        "pred_dir = project_root() / cfg['paths']['baseline_dir'] / 'predictions'\n"
+        "\n"
+        "cases = error_analysis.build_error_cases(\n"
+        "    pred_dir, annotations, data_root,\n"
+        "    output_path=project_root() / 'results' / 'error_cases.json',\n"
+        ")\n"
+        "print('案例数:', len(cases))\n"
+        "print('错误类型分布:', error_analysis.taxonomy_summary(cases))\n"
+    ),
+    md("## Step 2 — 最差案例 Top N\n"),
+    code(
+        HEADER
+        + "\n"
+        "import json\n"
+        "from src import error_analysis\n"
+        "\n"
+        "worst = error_analysis.select_worst_cases(cases, n=10)\n"
+        "for c in worst[:5]:\n"
+        "    print(json.dumps(c, ensure_ascii=False))\n"
+    ),
+    md(
+        "## Step 3 — 改善最大与退化案例（训练前后对比）\n"
+        "\n"
+        "需要两份预测：baseline 与 fine-tuned。没有 SFT 预测时，"
+        "先用两个 Prompt 目录演示同一对比函数（变量不同但流程相同）。\n"
+    ),
+    code(
+        HEADER
+        + "\n"
+        "from src import data, error_analysis\n"
+        "from src.config import project_root\n"
+        "\n"
+        "base_dir = project_root() / 'results' / 'prompt_v0' / 'predictions'\n"
+        "other_dir = project_root() / 'results' / 'prompt_v1' / 'predictions'\n"
+        "if base_dir.is_dir() and other_dir.is_dir():\n"
+        "    base_cases = error_analysis.build_error_cases(base_dir, annotations, data_root)\n"
+        "    other_cases = error_analysis.build_error_cases(other_dir, annotations, data_root)\n"
+        "    comp = error_analysis.select_improvement_cases(base_cases, other_cases, n=5)\n"
+        "    print('improved:', [c['image_id'] for c in comp['improved']])\n"
+        "    print('regressed:', [c['image_id'] for c in comp['regressed']])\n"
+        "else:\n"
+        "    print('先运行 Notebook 03 生成 prompt_v0/v1 预测，或改用 SFT 预测目录。')\n"
+    ),
+    md(
+        "## Step 4 — 复核一个最差案例\n"
+        "\n"
+        "自动分类只是入口。挑 1 个最差案例，打开 evidence 里的 prediction 与"
+        "对应 GT 页面，人工判断：错误来自模型、转换还是评测对齐？把结论写回"
+        "该案例的 notes 字段。\n"
+    ),
+    md(
+        "# What You Should Observe\n"
+        "\n"
+        "- 错误类型分布通常不均：某 1–2 类占主导 → 这就是研究切入点；\n"
+        "- worst 案例常有共同特征（多栏、手写、低分辨率、表格复杂）；\n"
+        "- 改善与退化并存的页面说明训练不是单向变好。\n"
+    ),
+    md(
+        "# Research Checkpoint\n"
+        "\n"
+        "> **模型到底不会什么？** 用你的 taxonomy 统计和 2 个具体案例回答，"
+        "并说明这个结论与「平均分」的关系。\n"
+        "\n"
+        "**TODO：** 答案写入 `results/nb08/research_checkpoint.md`。\n"
+    ),
+    md(
+        "# Exercises\n"
+        "\n"
+        "1. **TODO：** 对 Top5 最差案例逐条人工复核，把「模型错」与「评测/转换错」"
+        "分开，更新 notes；\n"
+        "2. **TODO：** 按 document_type 分组统计错误类型，找出系统性弱点子群；\n"
+        "3. **TODO：** 写一个新的启发式分类器（例如「表格行列数不匹配」），"
+        "加进 classify_case 并评估其对错率。\n"
+    ),
+    md(
+        "# Takeaways\n"
+        "\n"
+        "- 分数说「差多少」，错误分析说「差在哪」；\n"
+        "- 启发式分类需要证据路径与人工复核，不能直接当作结论；\n"
+        "- 错误分布是研究假设的原材料。\n"
+        "\n"
+        "**下一步**：[Notebook 09](09_Ablation_Study.ipynb) — 用受控实验验证变量。\n"
+    ),
+]
+
+
+# ---------------------------------------------------------------------------
+# Notebook 09 — Ablation Study
+# ---------------------------------------------------------------------------
+
+NB09 = [
+    md(
+        "# Notebook 09 — Ablation Study\n"
+        "\n"
+        "> **阶段**：Stage 5 Research · **预计时间**：30 分钟设计 + GPU 实验时间 · **平台**：Kaggle Notebook\n"
+        "\n"
+        "设计你的第一个 Controlled Experiment：一次只改变一个主要变量。\n"
+    ),
+    md(
+        "# Learning Objectives\n"
+        "\n"
+        "- 设计四组消融：Prompt / 训练数据量 / LoRA rank / 图像分辨率；\n"
+        "- 坚持唯一变量原则并记录全部固定量；\n"
+        "- 生成 ablation_results.csv 与图表；\n"
+        "- 回答：哪个变量最影响 Text / Table / Formula？是否存在 diminishing returns？\n"
+    ),
+    md(
+        "# Why This Matters\n"
+        "\n"
+        "消融是「变量 → 结果」因果推断的最低门槛。没有消融的提升报告，"
+        "无法排除「分数涨了只是因为换了个 prompt」。\n"
+    ),
+    md(
+        "# Concepts\n"
+        "\n"
+        "| Ablation | 变量 | 取值（Kaggle 可调） |\n"
+        "| --- | --- | --- |\n"
+        "| A Prompt | prompt_id | v0（simple）vs v2/v3（structured） |\n"
+        "| B 数据量 | n_train | 25 / 50 / 100 / 200（GPU；CPU 冒烟 2/4/8） |\n"
+        "| C LoRA Rank | r | 4 / 8 / 16（其余超参固定） |\n"
+        "| D 分辨率 | image size | low / medium / high（按 processor 支持设置） |\n"
+        "\n"
+        "每组实验的固定量：模型 revision、数据划分 seed、评测 commit、"
+        "generation config、评测页面集合。\n"
+    ),
+    md("## Step 1 — Ablation A（Prompt，复用 Notebook 03 结果）\n"),
+    code(
+        HEADER
+        + "\n"
+        "import json\n"
+        "from src import data\n"
+        "from src.config import project_root\n"
+        "\n"
+        "bench = project_root() / 'results' / 'prompt_benchmark.json'\n"
+        "if bench.is_file():\n"
+        "    print(json.dumps(data.read_json(bench), ensure_ascii=False, indent=2))\n"
+        "else:\n"
+        "    print('先运行 Notebook 03 生成 prompt_benchmark.json。')\n"
+    ),
+    md(
+        "## Step 2 — Ablation B/C/D 的运行骨架\n"
+        "\n"
+        "下面的函数是骨架：B 复用 Notebook 05 的 train_sft，C 复用 Notebook 06 的 "
+        "setup_lora，D 在预处理图像时改变分辨率。CPU 上只做最小冒烟；"
+        "真实消融在 GPU 上跑并回填 ablation_results.csv。\n"
+    ),
+    code(
+        HEADER
+        + "\n"
+        "from src.ablation import ablation_record\n"
+        "\n"
+        "FIXED = {'model_revision': 'ce51f56c', 'dataset_revision': 'aa1ee96d',\n"
+        "        'eval_commit': '193627ae', 'seed': 42, 'eval_pages': 'fast-12'}\n"
+        "\n"
+        "# TODO: 每个取值跑完训练 + Notebook 07 评测后，把官方指标填入 metrics。\n"
+        "# 示例（数据量消融）：\n"
+        "rows_demo = [\n"
+        "    ablation_record('B_data_size', 'n_train', '25', {'text': None, 'table': None, 'formula': None, 'overall': None}, FIXED),\n"
+        "    ablation_record('B_data_size', 'n_train', '50', {'text': None, 'table': None, 'formula': None, 'overall': None}, FIXED),\n"
+        "    ablation_record('B_data_size', 'n_train', '100', {'text': None, 'table': None, 'formula': None, 'overall': None}, FIXED),\n"
+        "    ablation_record('B_data_size', 'n_train', '200', {'text': None, 'table': None, 'formula': None, 'overall': None}, FIXED),\n"
+        "]\n"
+        "print(rows_demo[0])\n"
+    ),
+    md("## Step 3 — 汇总 ablation_results.csv 并绘图\n"),
+    code(
+        HEADER
+        + "\n"
+        "from src.ablation import write_ablation_csv, plot_ablation\n"
+        "from src.config import project_root\n"
+        "\n"
+        "csv_path = write_ablation_csv(rows_demo, project_root() / 'results' / 'ablation_results.csv')\n"
+        "print('CSV:', csv_path)\n"
+        "# fig = plot_ablation(rows_demo, x_key='n_train', y_keys=['text', 'table', 'formula', 'overall'], title='Ablation B: data size')\n"
+        "# display(fig)\n"
+    ),
+    md(
+        "# What You Should Observe\n"
+        "\n"
+        "- 如果某个变量的曲线先升后平，就是 diminishing returns；\n"
+        "- Text/Table/Formula 对同一变量的响应可能不同——这正是研究问题的来源；\n"
+        "- 任何一行缺失固定量记录，该行都不可信。\n"
+    ),
+    md(
+        "# Research Checkpoint\n"
+        "\n"
+        "> 用（实测或预期的）曲线回答：哪个变量最影响 Text？哪个最影响 Table/Formula？"
+        "哪个增加算力但几乎没有提升？是否存在 diminishing returns？\n"
+        "\n"
+        "**TODO：** 答案写入 `results/nb09/research_checkpoint.md`。\n"
+    ),
+    md(
+        "# Exercises\n"
+        "\n"
+        "1. **TODO：** 在 GPU 上完成 Ablation B（至少 2 个数据量取值），回填 CSV；\n"
+        "2. **TODO：** 完成 Ablation C（r=4/8/16），记录 VRAM/时间，与参数量对照；\n"
+        "3. **TODO：** 设计 Ablation D 的分辨率档位（查 SmolDocling processor 支持的输入尺寸），"
+        "并说明分辨率如何影响推理成本与表格/公式识别。\n"
+    ),
+    md(
+        "# Takeaways\n"
+        "\n"
+        "- 消融的价值在于「可归因」，不在「图多」；\n"
+        "- 固定量记录与唯一变量同样重要；\n"
+        "- diminishing returns 是停止加预算的科学理由。\n"
+        "\n"
+        "**下一步**：[Notebook 10](10_From_Experiments_to_Research_Questions.ipynb) — 从实验走向科研问题。\n"
+    ),
+]
+
+
+# ---------------------------------------------------------------------------
+# Notebook 10 — From Experiments to Research Questions
+# ---------------------------------------------------------------------------
+
+NB10 = [
+    md(
+        "# Notebook 10 — From Experiments to Research Questions\n"
+        "\n"
+        "> **阶段**：Stage 5 Research · **预计时间**：60–90 分钟 · **平台**：任意环境\n"
+        "\n"
+        "收尾 Notebook：从 Benchmark + Error Analysis + Ablation 中生成真正的科学问题。\n"
+    ),
+    md(
+        "# Learning Objectives\n"
+        "\n"
+        "- 自动汇总 Benchmark / Error / Ablation 三类证据；\n"
+        "- 沿 Observation → Pattern → Cause → Hypothesis → Research Question → Experiment 形成问题；\n"
+        "- 填写 Research Question Canvas 与一页 Mini Research Proposal；\n"
+        "- 区分「证据支持的问题」与「凭空编的论文题目」。\n"
+    ),
+    md(
+        "# Why This Matters\n"
+        "\n"
+        "科研训练的目标不是调参，而是把观察变成可检验的假设。"
+        "本 Notebook 强制每个研究问题都挂到具体证据上。\n"
+    ),
+    md(
+        "# Concepts\n"
+        "\n"
+        "```text\n"
+        "Observation（数据里的现象）\n"
+        "   ↓\n"
+        "Pattern（系统性模式，不是个案）\n"
+        "   ↓\n"
+        "Possible Cause（可解释机制）\n"
+        "   ↓\n"
+        "Hypothesis（可证伪命题）\n"
+        "   ↓\n"
+        "Research Question（研究问题）\n"
+        "   ↓\n"
+        "Experiment（检验设计）\n"
+        "```\n"
+    ),
+    md("## Step 1 — 汇总三类证据\n"),
+    code(
+        HEADER
+        + "\n"
+        "import json\n"
+        "from pathlib import Path\n"
+        "\n"
+        "results_root = REPO_ROOT / 'results'\n"
+        "evidence = {}\n"
+        "for name in ('benchmark/sanity_summary.json', 'error_cases.json', 'ablation_results.csv', 'prompt_benchmark.json'):\n"
+        "    p = results_root / name\n"
+        "    if p.is_file():\n"
+        "        if p.suffix == '.csv':\n"
+        "            evidence[name] = p.read_text(encoding='utf-8')[:500]\n"
+        "        else:\n"
+        "            evidence[name] = json.loads(p.read_text(encoding='utf-8'))\n"
+        "        print('[found]', name)\n"
+        "    else:\n"
+        "        print('[missing]', name, '-> 先完成对应 Notebook')\n"
+    ),
+    md(
+        "## Step 2 — 寻找系统性弱点\n"
+        "\n"
+        "检查清单：subgroup performance gap（文档类型/语言/版面）、错误类型分布、"
+        "消融曲线的边际收益、效率瓶颈（延迟）、结构失败模式、prompt 敏感性。"
+        "从 Step 1 的证据里选出**最强的一个模式**写下来。\n"
+    ),
+    md(
+        "## Step 3 — 一个完整示例（任务文件的范例）\n"
+        "\n"
+        "```text\n"
+        "Observation:\n"
+        "Tables degrade much more than text on complex layouts.\n"
+        "\n"
+        "Possible Cause:\n"
+        "Spatial structure is insufficiently represented.\n"
+        "\n"
+        "Hypothesis:\n"
+        "Structure-aware supervision may improve complex-table parsing.\n"
+        "\n"
+        "Research Question:\n"
+        "Can structure-aware supervision improve table parsing\n"
+        "without degrading text recognition in compact VLMs?\n"
+        "```\n"
+        "\n"
+        "注意：你的 Observation 必须引用 results/ 里的实际数字或案例。\n"
+    ),
+    md("## Step 4 — Research Question Canvas\n"),
+    code(
+        HEADER
+        + "\n"
+        "canvas = {\n"
+        "    'Observation': '',          # TODO: 引用 benchmark/error_cases 证据\n"
+        "    'Research Gap': '',         # TODO: 与现有工作相比缺什么\n"
+        "    'Hypothesis': '',           # TODO: 可证伪命题\n"
+        "    'Independent Variable': '', # TODO: 唯一主要变量\n"
+        "    'Dependent Variable': '',   # TODO: 指标（官方评测）\n"
+        "    'Baseline': '',             # TODO: 对照条件\n"
+        "    'Dataset': '',              # TODO: 数据与划分\n"
+        "    'Metric': '',               # TODO: 主指标 + 分组切片\n"
+        "    'Expected Result': '',      # TODO: 预期观察\n"
+        "    'Risk': '',                 # TODO: 最大风险与预案\n"
+        "}\n"
+        "print(canvas)\n"
+    ),
+    md("## Step 5 — Mini Research Proposal（一页）\n"),
+    code(
+        HEADER
+        + "\n"
+        "proposal = '''# Mini Research Proposal\n"
+        "\n"
+        "- Title:\n"
+        "- Research Question:\n"
+        "- Motivation:\n"
+        "- Hypothesis:\n"
+        "- Method:\n"
+        "- Dataset:\n"
+        "- Benchmark:\n"
+        "- Ablation:\n"
+        "- Expected Contribution:\n"
+        "- Risks:\n"
+        "'''\n"
+        "out = REPO_ROOT / 'results' / 'mini_research_proposal.md'\n"
+        "out.write_text(proposal, encoding='utf-8')\n"
+        "print('模板已写:', out)\n"
+    ),
+    md(
+        "# What You Should Observe\n"
+        "\n"
+        "- 证据缺失时 Canvas 填不出来——这是好事：先补实验，再写问题；\n"
+        "- 好的 RQ 有唯一变量、可测指标、明确 baseline 与风险；\n"
+        "- 不要写「Improve SmolDocling」，要写可证伪的命题。\n"
+    ),
+    md(
+        "# Research Checkpoint\n"
+        "\n"
+        "> 为什么「让 LLM 凭空生成一个论文题目」不是科研？对比你基于证据填写的 "
+        "Canvas，说明两者在可检验性上的差别。\n"
+        "\n"
+        "**TODO：** 完成 Canvas 与一页 proposal，答案写入 `results/nb10/research_checkpoint.md`。\n"
+    ),
+    md(
+        "# Exercises\n"
+        "\n"
+        "1. **TODO：** 从错误分析中再提出一个**相反方向**的假设（例如不改进表格而是"
+        "检测何时不可靠），填入第二个 Canvas；\n"
+        "2. **TODO：** 为你的 RQ 设计最小可行实验：数据量、GPU 预算、停止条件；\n"
+        "3. **TODO：** 与同学互相审查 proposal：能否从原始结果重建每个观察？\n"
+    ),
+    md(
+        "# Takeaways\n"
+        "\n"
+        "- 研究问题 = 证据 + 模式 + 假设，不是灵感题；\n"
+        "- Canvas 强制补齐变量、baseline、指标与风险；\n"
+        "- 至此完成「从 AI 使用者到初级研究者」的完整路径。\n"
+        "\n"
+        "**路线完成**：回到 [README](README.md) 检查五阶段证据清单，并把成果接入"
+        "12 周课程（Week 8–12）与项目实战。\n"
+    ),
+]
+
+
 def main() -> None:
     write_notebook("00_Environment_and_First_Run.ipynb", NB00)
     write_notebook("01_Understanding_OmniDocBench.ipynb", NB01)
@@ -1447,6 +1875,9 @@ def main() -> None:
     write_notebook("05_SFT_Fundamentals.ipynb", NB05)
     write_notebook("06_LoRA_Fine_Tuning.ipynb", NB06)
     write_notebook("07_Benchmark_and_Evaluation.ipynb", NB07)
+    write_notebook("08_Error_Analysis.ipynb", NB08)
+    write_notebook("09_Ablation_Study.ipynb", NB09)
+    write_notebook("10_From_Experiments_to_Research_Questions.ipynb", NB10)
 
 
 if __name__ == "__main__":

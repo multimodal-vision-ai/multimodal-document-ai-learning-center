@@ -402,6 +402,19 @@ results/
 
 ⚠️ 未在 Kaggle 实测：Notebook 02/03/05/06 的运行时行为（SFT/LoRA 训练在 CPU 上仅设计为 2-step 冒烟；`page_to_doctags` 的具体 docling-core API 行为、peft target_modules 命中等需首跑确认）。GPU（T4/L4）分配后建议按 Notebook 顺序实测一次再回填。
 
-### 13.6 下一步（Phase 4 — Research Methodology）
+### 13.6 Phase 4 完成记录（2026-08-13）
 
-Notebook 08（Error Analysis）→ 09（Ablation Study）→ 10（From Experiments to Research Questions），并新增 `src/error_analysis.py`。前置条件：Phase 2/3 的官方评测模板已按锁定 commit 填写并至少跑出一次官方分数。
+已交付：
+
+- 新增 `src/error_analysis.py`：9 类错误分类学、基于 SequenceMatcher/重复检测/结构标记的启发式分类（显式标注「非官方结论，需人工复核」）、`build_error_cases` / `taxonomy_summary` / `select_worst_cases` / `select_improvement_cases`；
+- 新增 `src/ablation.py`：`ablation_record`（固定量+变量+指标）/ `write_ablation_csv` / `plot_ablation`；
+- Notebook 08（Error Analysis）、09（Ablation Study，四组消融 A–D 设计）、10（From Experiments to Research Questions：证据汇总 → 模式 → RQ Canvas → 一页 Mini Proposal）；
+- `solutions/nb08–nb10` 教师答案；README 五阶段表 08/09/10 标记为已实现。
+
+⚠️ 未实测项：Notebook 08–10 依赖的「官方评测分数」尚未产生（官方 CLI 模板仍留空），当前使用非官方 sanity 分数演示全流程；GPU 上完成一次 SFT/LoRA 后回填真实消融数据。
+
+### 13.7 全局状态与下一步
+
+- 11 个 Notebook（00–10）与 `src/`（9 个模块）全部就位，任务文件 §四 的结构完成；
+- 剩余回填项：官方评测 CLI 模板（锁定 commit `193627ae…` 核对后填写）、T4/L4 GPU 实测（或 sm_60 兼容 torch 方案）、Phase 3/4 Notebook 的 Kaggle 首跑记录；
+- 下一步：完成一次「Smoke → Teaching → Training」三级验收（任务文件 §二十五），并将实测结果回填 README 与本文档。

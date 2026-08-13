@@ -38,9 +38,9 @@ Research Question
 | 3 Train | 05 SFT Fundamentals | ✅ Phase 3（待 Kaggle 实测） | Fine-tuning 到底改变了什么？ |
 | 3 Train | 06 LoRA Fine-Tuning | ✅ Phase 3（待 Kaggle 实测） | LoRA 是资源-性能权衡，还是开关？ |
 | 4 Evaluate | [07 Benchmark](07_Benchmark_and_Evaluation.ipynb) | ✅ Phase 2 | 官方指标如何运行、如何切片？ |
-| 4 Evaluate | 08 Error Analysis | ⏳ Phase 4 | 模型到底不会什么？ |
-| 5 Research | 09 Ablation Study | ⏳ Phase 4 | 哪个变量真正起作用？ |
-| 5 Research | 10 Research Questions | ⏳ Phase 4 | 如何从实验走到论文问题？ |
+| 4 Evaluate | 08 Error Analysis | ✅ Phase 4（待 Kaggle 实测） | 模型到底不会什么？ |
+| 5 Research | 09 Ablation Study | ✅ Phase 4（待 Kaggle 实测） | 哪个变量真正起作用？ |
+| 5 Research | 10 Research Questions | ✅ Phase 4（待 Kaggle 实测） | 如何从实验走到论文问题？ |
 
 ## 在 Kaggle 上运行（推荐）
 
