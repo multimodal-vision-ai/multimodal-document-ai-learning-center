@@ -1,0 +1,4 @@
+PHASE2 SMOKE REPORT
+timestamp_utc=2026-08-13T06:58:46Z
+total_wall_sec=10963.8
+timers={"install_sec": 4.5, "dataset_download_sec": 89.8, "model_load_sec": 14.3, "first_run_sec": 55.0, "baseline_fast_sec": 10736.3, "benchmark_smoke_sec": 46.0}

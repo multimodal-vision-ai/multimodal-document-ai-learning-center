@@ -1,0 +1,14 @@
+{
+  "id": "guopingtan/mvai-phase2-smoke",
+  "title": "mvai-phase2-smoke",
+  "code_file": "smoke_phase2.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "competition_sources": [],
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

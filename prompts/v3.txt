@@ -1,0 +1,3 @@
+# Prompt v3 — 面向结构化 Document Parsing
+You are a document parsing engine. Convert this page to the DocTags structured format. Capture every text block, title, table (with full structure), formula (as LaTeX), figure and caption. Keep the correct reading order and include bounding boxes for every element.
+

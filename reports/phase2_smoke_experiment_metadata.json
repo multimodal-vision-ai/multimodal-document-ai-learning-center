@@ -1,0 +1,238 @@
+{
+  "experiment_id": "phase2-smoke",
+  "timestamp_utc": "2026-08-13T06:58:46Z",
+  "total_wall_sec": 10963.8,
+  "config": {
+    "model_id": "docling-project/SmolDocling-256M-preview",
+    "model_revision": "ce51f56c4ebe36e0b1c3a55f67b261ba22a50bf8",
+    "dataset_id": "opendatalab/OmniDocBench",
+    "dataset_revision": "aa1ee96d106dbe53d0ae59474d75c6e6d9b53fec",
+    "omnidocbench_commit": "193627ae9e97d89188468ed1ee3b7a856ff76044"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Linux-6.12.90+-x86_64-with-glibc2.35",
+    "torch": "2.10.0+cu128",
+    "cuda_available": true,
+    "gpu": [
+      {
+        "name": "Tesla P100-PCIE-16GB",
+        "vram_gb": 15.9
+      }
+    ],
+    "cuda_version": "12.8",
+    "transformers": "5.0.0",
+    "docling_core": null,
+    "pillow": null,
+    "numpy": "2.0.2",
+    "pandas": "2.3.3",
+    "nvidia_smi": "Tesla P100-PCIE-16GB, 16384 MiB"
+  },
+  "versions": {
+    "torch": "2.10.0+cu128",
+    "transformers": "5.0.0",
+    "docling-core": "2.91.0",
+    "huggingface_hub": "1.11.0",
+    "pillow": "11.3.0",
+    "numpy": "2.0.2",
+    "pandas": "2.3.3",
+    "matplotlib": "3.10.0",
+    "tqdm": "4.67.3",
+    "PyYAML": "6.0.3"
+  },
+  "dataset_stats": {
+    "pages": {
+      "total": 1651
+    },
+    "document_type": {
+      "book": 276,
+      "academic_literature": 215,
+      "note": 118,
+      "PPT2PDF": 253,
+      "colorful_textbook": 159,
+      "historical_document": 5,
+      "magazine": 149,
+      "exam_paper": 193,
+      "research_report": 132,
+      "newspaper": 151
+    },
+    "language": {
+      "english": 755,
+      "simplified_chinese": 765,
+      "traditional_chinese": 13,
+      "en_ch_mixed": 116,
+      "other": 2
+    },
+    "layout": {
+      "single_column": 887,
+      "other_layout": 372,
+      "double_column": 184,
+      "1andmore_column": 155,
+      "three_column": 53
+    },
+    "subset": {
+      "equation_hard": 100,
+      "layout_hard": 99,
+      "table_hard": 97,
+      "v1.5": 1355
+    },
+    "block_category": {
+      "text_block": 16520,
+      "equation_isolated": 2066,
+      "header": 1920,
+      "page_number": 1188,
+      "abandon": 760,
+      "equation_semantic": 160,
+      "code_txt": 40,
+      "title": 4441,
+      "list_group": 79,
+      "table": 665,
+      "table_caption": 486,
+      "chart_mask": 26,
+      "figure_caption": 722,
+      "figure": 1385,
+      "page_footnote": 126,
+      "figure_footnote": 175,
+      "organic_chemical_formula_mask": 15,
+      "table_footnote": 194,
+      "footer": 741,
+      "algorithm_mask": 1,
+      "reference": 275,
+      "unknown_mask": 17,
+      "equation_caption": 281,
+      "table_mask": 25,
+      "text_mask": 465,
+      "need_mask": 6,
+      "equation_explanation": 16,
+      "code_txt_caption": 3
+    },
+    "table": {
+      "count": 665,
+      "with_html": 665
+    },
+    "formula": {
+      "count": 2523,
+      "with_latex": 2066
+    },
+    "relation": {
+      "parent_son": 1686,
+      "truncated": 1166
+    }
+  },
+  "dataset_images_mb": 1379.3,
+  "first_run": {
+    "latency_sec": 53.771,
+    "api_path": "DocTagsDocument.from_doctags_and_image_pairs → DoclingDocument.load_from_doctags",
+    "markdown_len": 222
+  },
+  "baseline_fast": {
+    "mode": "fast",
+    "requested_pages": 12,
+    "completed": 12,
+    "skipped_from_cache": 0,
+    "prompt_id": "v0",
+    "seed": 42,
+    "total_latency_sec": 10728.48,
+    "mean_latency_sec": 894.04,
+    "wall_sec": 10735.48,
+    "model_id": "docling-project/SmolDocling-256M-preview",
+    "model_revision": "ce51f56c4ebe36e0b1c3a55f67b261ba22a50bf8"
+  },
+  "benchmark": {
+    "md_files": 12,
+    "rows": 12,
+    "summary": {
+      "overall": {
+        "n": 12,
+        "mean_sanity_ned": 0.4541
+      },
+      "document_type": {
+        "PPT2PDF": {
+          "n": 2,
+          "mean_sanity_ned": 0.8757
+        },
+        "academic_literature": {
+          "n": 2,
+          "mean_sanity_ned": 0.0314
+        },
+        "book": {
+          "n": 1,
+          "mean_sanity_ned": 0.7632
+        },
+        "colorful_textbook": {
+          "n": 1,
+          "mean_sanity_ned": 0.7866
+        },
+        "exam_paper": {
+          "n": 1,
+          "mean_sanity_ned": 0.617
+        },
+        "historical_document": {
+          "n": 1,
+          "mean_sanity_ned": 0.0
+        },
+        "magazine": {
+          "n": 1,
+          "mean_sanity_ned": 0.9692
+        },
+        "newspaper": {
+          "n": 1,
+          "mean_sanity_ned": 0.4318
+        },
+        "note": {
+          "n": 1,
+          "mean_sanity_ned": 0.0625
+        },
+        "research_report": {
+          "n": 1,
+          "mean_sanity_ned": 0.005
+        }
+      },
+      "language": {
+        "en_ch_mixed": {
+          "n": 2,
+          "mean_sanity_ned": 0.4245
+        },
+        "english": {
+          "n": 8,
+          "mean_sanity_ned": 0.5744
+        },
+        "simplified_chinese": {
+          "n": 1,
+          "mean_sanity_ned": 0.005
+        },
+        "traditional_chinese": {
+          "n": 1,
+          "mean_sanity_ned": 0.0
+        }
+      },
+      "layout": {
+        "1andmore_column": {
+          "n": 1,
+          "mean_sanity_ned": 0.9692
+        },
+        "double_column": {
+          "n": 1,
+          "mean_sanity_ned": 0.617
+        },
+        "other_layout": {
+          "n": 1,
+          "mean_sanity_ned": 0.4318
+        },
+        "single_column": {
+          "n": 9,
+          "mean_sanity_ned": 0.3813
+        }
+      }
+    }
+  },
+  "errors": {},
+  "timers": {
+    "install_sec": 4.5,
+    "dataset_download_sec": 89.8,
+    "model_load_sec": 14.3,
+    "first_run_sec": 55.0,
+    "baseline_fast_sec": 10736.3,
+    "benchmark_smoke_sec": 46.0
+  }
+}

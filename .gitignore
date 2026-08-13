@@ -167,6 +167,12 @@ venv.bak/
 # mkdocs documentation
 /site
 
+# 实验产物与本地数据（不入库；数据本体仅记录 revision 与下载方式）
+/results/
+/data/
+/third_party/
+/outputs/
+
 # mypy
 .mypy_cache/
 .dmypy.json

@@ -1,0 +1,54 @@
+# 全局实验配置（Phase 2）。
+# 修改本文件后重跑 Notebook 即可；实验产物自动记录所用配置。
+#
+# Kaggle 首次实测（2026-08-13，smoke v6 全步骤通过）：
+# GPU Tesla P100-PCIE-16GB + 镜像 torch 2.10.0+cu128 无 sm_60 kernel，
+# src/model.py 自动回退 CPU 并记录 device_fallback_reason。
+# 实测：数据集下载 89.8s（images 1.38 GB）；模型加载 14.3s；
+# CPU 单页推理约 894s（max_new_tokens=8192）；fast 12 页 ≈ 3h。
+# teaching/research 模式在 CPU 上不可行，排障方案见 notebooks/README.md。
+
+project:
+  seed: 42
+  description: "SmolDocling x OmniDocBench teaching track"
+
+model:
+  # 官方模型与锁定 revision（docs/notebook-design.md §3）
+  id: docling-project/SmolDocling-256M-preview
+  revision: ce51f56c4ebe36e0b1c3a55f67b261ba22a50bf8
+  dtype: auto        # auto | bfloat16 | float16 | float32
+  attention: auto    # auto | flash_attention_2 | eager
+
+dataset:
+  # 官方数据集与锁定 revision（docs/notebook-design.md §4）
+  id: opendatalab/OmniDocBench
+  revision: aa1ee96d106dbe53d0ae59474d75c6e6d9b53fec
+  annotation_file: OmniDocBench.json
+  images_dir: images
+
+omnidocbench_eval:
+  repo_url: https://github.com/opendatalab/OmniDocBench.git
+  # 官方仓库无 release/tag，锁定 main 最新 commit（2026-08-13 核实）
+  commit: 193627ae9e97d89188468ed1ee3b7a856ff76044
+  # ⚠️ 官方 CLI 入口需首次运行时按锁定 commit 的 README/configs 核对后填写。
+  # 占位符：{repo} {gt} {pred} {out}。留空时 Notebook 07 只运行非官方 smoke 自检。
+  md2md_cmd_template: ""
+  end2end_cmd_template: ""
+
+modes:
+  # 三种运行模式的页数（任务文件 §九）
+  fast: 12
+  teaching: 100
+  research: 1651
+
+generation:
+  max_new_tokens: 8192
+  do_sample: false
+  prompt_id: v0        # Baseline 使用官方默认 prompt
+
+paths:
+  results_dir: results
+  baseline_dir: results/baseline
+  benchmark_dir: results/benchmark
+  metadata_file: results/experiment_metadata.json
+  manifest_file: results/experiment_manifest.json

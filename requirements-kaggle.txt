@@ -1,0 +1,21 @@
+# Kaggle 依赖清单（Phase 2）
+#
+# 首次实测（2026-08-13，Kaggle GPU=P100，Python 3.12.13）回填：
+# - torch 2.10.0+cu128（镜像自带）⚠️ 与 P100（sm_60）不兼容，模型自动回退 CPU；
+# - transformers 5.0.0（镜像自带）；
+# - docling-core 2.91.0（pip 安装；DocTagsDocument → DoclingDocument.load_from_doctags
+#   旧 API 实测可用，src/model.py 同时兼容新 API）；
+# - huggingface_hub 1.11.0 · pillow 11.3.0 · numpy 2.0.2 · pandas 2.3.3
+#   · matplotlib 3.10.0 · tqdm 4.67.3 · PyYAML 6.0.3。
+# - Phase 3（Notebook 05/06）需要的 peft / accelerate / datasets 暂不安装。
+
+torch                       # 使用 Kaggle 镜像自带版本（实测 2.10.0+cu128）
+transformers>=4.45          # Idefics3 支持；实测镜像版本 5.0.0
+docling-core>=2.4           # DocTags -> DoclingDocument 转换（实测 2.91.0）
+pillow
+numpy
+tqdm
+pyyaml
+pandas
+matplotlib
+huggingface_hub             # 数据集下载（snapshot_download）
