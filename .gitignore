@@ -212,6 +212,12 @@ tempCodeRunnerFile.py
 # Ruff stuff:
 .ruff_cache/
 
+# Repository-local test and temporary workspaces
+/.test-tmp/
+/.test-work/
+/tmp*/
+/.temp-quarantine-*/
+
 # PyPI configuration file
 .pypirc
 

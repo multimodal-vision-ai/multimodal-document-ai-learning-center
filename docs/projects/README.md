@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+shanshui_scene: 7
 ---
 
 <div class="mv-showcase" markdown>

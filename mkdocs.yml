@@ -9,6 +9,7 @@ edit_uri: edit/dev/docs/
 
 theme:
   name: material
+  custom_dir: overrides
   language: zh
   features:
     - navigation.instant
@@ -49,9 +50,11 @@ markdown_extensions:
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/shanshui.css
 
 extra_javascript:
   - js/visitor.js
+  - js/shanshui.js
 
 nav:
   - 学习首页:
