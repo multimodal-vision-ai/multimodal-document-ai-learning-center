@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {{ super() }}
+  {% if page.meta and page.meta.shanshui_scene %}
+    {% set scene = page.meta.shanshui_scene | int %}
+    {% set files = {
+      1: "01-home.png",
+      2: "02-intro.png",
+      3: "03-tutorial.png",
+      4: "04-project.png",
+      5: "05-papers.png",
+      6: "06-resources.png",
+      7: "07-gallery.png"
+    } %}
+    {% set filename = files.get(scene) %}
+    {% if filename %}
+      <aside
+        class="mv-shanshui"
+        data-shanshui
+        data-shanshui-scene="{{ scene }}"
+        data-shanshui-root="{{ 'assets/figs/shanshui-realms' | url }}"
+        aria-label="山水五境"
+      >
+        <figure class="mv-shanshui__figure">
+          <img
+            class="mv-shanshui__image"
+            src="{{ ('assets/figs/shanshui-realms/song/' ~ filename) | url }}"
+            alt="山水五境 · 宋韵"
+            loading="lazy"
+            decoding="async"
+          >
+          <figcaption class="mv-shanshui__caption">
+            <div class="mv-shanshui__controls">
+              <details class="mv-shanshui__picker">
+                <summary>
+                  山水五境 · 当前：<span data-shanshui-current>宋韵</span>
+                  <span aria-hidden="true">▾</span>
+                </summary>
+                <div class="mv-shanshui__options" role="group" aria-label="选择山水风格">
+                  <button type="button" data-shanshui-realm="song" aria-pressed="true">宋韵</button>
+                  <button type="button" data-shanshui-realm="tang" aria-pressed="false">唐韵</button>
+                  <button type="button" data-shanshui-realm="vintage" aria-pressed="false">仿古</button>
+                  <button type="button" data-shanshui-realm="modern" aria-pressed="false">现代</button>
+                  <button type="button" data-shanshui-realm="postmodern" aria-pressed="false">后现代</button>
+                </div>
+              </details>
+              <button class="mv-shanshui__fullscreen" type="button" data-shanshui-fullscreen aria-label="全屏欣赏">全屏欣赏</button>
+            </div>
+          </figcaption>
+        </figure>
+      </aside>
+    {% endif %}
+  {% endif %}
+{% endblock %}

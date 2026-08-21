@@ -50,7 +50,7 @@
 - [Hugging Face PEFT quicktour](https://huggingface.co/docs/peft/quicktour)（LoRA/adapter 基础）
 - [PEFT LoRA reference](https://huggingface.co/docs/peft/package_reference/lora)（参数与 QLoRA-style 配置）
 - [TRL SFT Trainer](https://huggingface.co/docs/trl/sft_trainer)（SFT 数据与训练接口）
-- [MS-SWIFT Qwen3.5 Best Practices](https://swift.readthedocs.io/en/latest/BestPractices/Qwen3_5-Best-Practice.html)（Qwen3.5 当前环境、推理和训练方案）
+- [MS-SWIFT Qwen3.5 Best Practices](https://swift.readthedocs.io/en/v4.1/BestPractices/Qwen3_5-Best-Practice.html)（Qwen3.5 当前环境、推理和训练方案）
 - [PyTorch reproducibility](https://docs.pytorch.org/docs/stable/notes/randomness.html)（随机性与确定性限制）
 
 !!! warning "框架选择"
