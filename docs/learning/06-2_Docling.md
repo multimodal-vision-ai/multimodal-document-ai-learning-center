@@ -5,6 +5,40 @@
 
 Docling 将 PDF、Office 文档、图像等转换为统一的 `DoclingDocument`，再导出 Markdown、JSON 等格式。它适合构建可检查的 modular pipeline，与生成式 VLM 形成对照。
 
+## 模块学习卡与完成路径
+
+| 字段 | 本页约定 |
+| --- | --- |
+| 对应周次 | Week 6 |
+| 适合谁 | 已建立 Python 环境，准备把真实文档转换为结构化结果的学生 |
+| 预计时间 | 最小 2–3 小时 |
+| 学什么 | DocumentConverter、转换状态、Markdown/JSON 差异与质量检查 |
+| 官方来源 | Docling 官方文档、API、Serialization 与 GitHub 仓库 |
+| 最小动作 | 转换一个公开 PDF，保存 Markdown、JSON、版本、状态和耗时 |
+| 提交证据 | 输入 metadata、配置、日志、Markdown/JSON 与质量检查记录 |
+| 完成自查 | 输出非空、结构可定位、失败有记录，流程不依赖本机绝对路径 |
+| 下一步 | [Document AI 与评测](07_Doc_AI.md)或[Week 7](00_12_Week_Bootcamp.md#week-7) |
+
+| 路径 | 完成范围 |
+| --- | --- |
+| **最小** | 转换一个公开 PDF，并保存两种输出与运行 metadata |
+| **标准** | 完成三类文档、质量检查、失败记录和推荐输出结构 |
+| **进阶** | 比较两种解析/OCR 设置，或与另一 pipeline 做固定样例对照 |
+
+## 运行契约
+
+| 项目 | 约定 |
+| --- | --- |
+| 前置条件 | Python 隔离环境；公开/授权 PDF；足够磁盘空间；扫描件任务按需准备 OCR 依赖 |
+| 唯一入口 | [Docling 官方 Quickstart](https://docling-project.github.io/docling/getting_started/quickstart/)的 `DocumentConverter` 最小流程 |
+| 版本 | 记录 Docling、Python、可选 OCR/backend package、操作系统和代码 revision |
+| 预计耗时 | 30–60 分钟安装与首跑，1–2 小时检查输出和失败案例 |
+| 算力与成本 | 通常 CPU 即可；首次模型下载可能耗时和占磁盘；不要求付费算力 |
+| 输入 | 一个公开 PDF；标准路径增加文本、扫描和复杂版面三类文档 |
+| 预期输出 | `outputs/document.md`、`outputs/document.json`、`run-metadata.json`、日志和质量检查 |
+| 成功判定 | 转换状态可检查，Markdown/JSON 非空，版本、耗时和输入标识已保存 |
+| 常见失败与恢复 | 扫描件无文本时启用并记录 OCR；表格丢结构时检查 JSON；首跑慢时区分模型下载与实际转换耗时 |
+
 ## 官方学习入口
 
 - [Installation](https://docling-project.github.io/docling/getting_started/installation/)（当前安装和可选 OCR 引擎）

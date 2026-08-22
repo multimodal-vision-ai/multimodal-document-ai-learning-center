@@ -101,4 +101,20 @@ shanshui_scene: 2
 | 跑通一个短时案例 | [动手教程](../tutorials/README.md) |
 | 完成端到端作品 | [项目实战](../experiments/README.md) |
 
+## 按当前需要选择专题
+
+| 当前需要 | 推荐专题 | 专题最小耗时 | GPU | 完成后去向 |
+| --- | --- | ---: | --- | --- |
+| 建立可审查仓库 | [Git 与 GitHub](01_Git_and_GitHub.md) | 1–2 小时 | 不需要 | Python 环境 |
+| 建立可重建环境 | [Python 环境](02_Python_Environment.md) | 1–2 小时 | 不需要 | Hugging Face / Transformers |
+| 选择并记录模型或数据 | [Hugging Face Hub](03_HuggingFace.md) | 1–2 小时 | 不需要 | Transformers 推理 |
+| 使用免费云端环境 | [Kaggle Notebook](04_Kaggle.md) | 约 1 小时 | 按任务启用 | 对应教程或课程周次 |
+| 完成首次可复现推理 | [Transformers](05_Transformers.md) | 1–2 小时 | 小模型可不需要 | VLM 专题 |
+| 安全使用 AI 编程助手 | [AI 辅助编程](05-1_AI_Assisted_Coding.md) | 2–3 小时 | 不需要 | Week 3 证据整理 |
+| 完成一次轻量 VLM 推理 | [Qwen3.5-0.8B](06-1_Qwen3.5-VL-0.8B.md) | 2–3 小时 | 可选 | Week 4 受控实验 |
+| 把 PDF 转为结构化结果 | [Docling](06-2_Docling.md) | 2–3 小时 | 通常不需要 | Document AI 与评测 |
+| 规划小规模微调 | [后训练与 W&B](08_Post_Training.md) | 先用 1 小时规划 | 执行阶段通常需要 | Week 8–10 评测与消融 |
+
+专题最小耗时只覆盖页面中的最小动作，不等于对应 Week 的完整投入。进入页面后先选择最小、标准或进阶范围，再按运行契约准备环境。
+
 最后更新：2026-08-07

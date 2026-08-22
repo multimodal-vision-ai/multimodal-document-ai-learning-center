@@ -6,6 +6,40 @@
 
 本页是学习入口与实验规范，不复制框架官网中的长篇命令。具体 API 以官方文档为准，学生成果以配置、run、artifact 和评测证据为准。
 
+## 模块学习卡与完成路径
+
+| 字段 | 本页约定 |
+| --- | --- |
+| 对应周次 | Week 8–10 |
+| 适合谁 | 已有固定数据划分、可复现 baseline 和评测脚本的学生 |
+| 预计时间 | 先用约 1 小时完成计划；训练耗时按模型、数据和资源上限确定 |
+| 学什么 | LoRA/SFT、W&B runs/artifacts、统一评测、消融和成本记录 |
+| 官方来源 | PEFT、TRL、MS-SWIFT、W&B 与所选框架官方文档 |
+| 最小动作 | 冻结 baseline、预算和停止条件，完成一次小规模 LoRA/SFT 及训练前后对比 |
+| 提交证据 | 计划、配置、环境、runs、artifact metadata、评测结果和错误分析 |
+| 完成自查 | 数据隔离正确，协议一致，成本有上限，结论包含失败与限制 |
+| 下一步 | [Week 10 评测与消融](00_12_Week_Bootcamp.md#week-10) |
+
+| 路径 | 完成范围 |
+| --- | --- |
+| **最小** | 小模型、小数据、短程 LoRA/SFT，完成一次公平的训练前后对比 |
+| **标准** | 完成 Week 8–10 的 runs、artifacts、统一评测、消融和错误分析 |
+| **进阶** | 增加单变量消融、切片/稳健性评测；只有 reward 与 SFT baseline 稳定后才考虑 GRPO |
+
+## 执行契约
+
+| 项目 | 约定 |
+| --- | --- |
+| 前置条件 | 合法数据、固定 train/validation/test、可复现 baseline、评测脚本、资源预算和停止条件 |
+| 唯一入口 | 先完成[后训练教程的一页实验计划](../tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.md#post-training-plan)，再选择一种官方框架执行 LoRA/SFT |
+| 版本 | 锁定模型 ID/revision、数据版本、代码 commit、框架/package、chat template、seed 与评测版本 |
+| 预计耗时 | 计划约 1 小时；训练与评测必须在计划中写明 GPU 小时和总时限 |
+| 算力与成本 | 通常需要 GPU；优先免费 Kaggle/Colab、小模型和小切片；训练前写明费用上限，不默认购买资源 |
+| 输入 | 固定数据划分、baseline prediction、训练配置和统一评测协议 |
+| 预期输出 | `post-training-plan.md`、`training-config.yaml`、环境记录、checkpoint/adapter metadata、runs、原始评测和报告 |
+| 成功判定 | 训练前后仅改变计划变量，使用相同 test protocol，结果、成本和失败案例均可追溯 |
+| 常见失败与恢复 | OOM/超时先缩小规模；结果不可比时恢复冻结协议；指标改善但样例退化时检查切片；GRPO 不稳时退回 SFT baseline |
+
 ## 先判断是否应该微调
 
 微调不是默认答案。开始前先写一页实验提案，回答：

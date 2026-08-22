@@ -5,6 +5,40 @@
 
 Hugging Face Hub 承载模型、数据集、Spaces 和版本历史。课程重点不是浏览排行榜，而是阅读 card、确认来源、锁定 revision，并保存可复现实验元数据。
 
+## 模块学习卡与完成路径
+
+| 字段 | 本页约定 |
+| --- | --- |
+| 对应周次 | Week 2 |
+| 适合谁 | 准备选择模型或数据，并能阅读基础 Python 的学生 |
+| 预计时间 | 最小 1–2 小时；标准任务 2–3 小时 |
+| 学什么 | Model/Dataset Card、revision、license、输入输出和限制 |
+| 官方来源 | Hugging Face Hub、Transformers 与 Datasets 官方文档 |
+| 最小动作 | 完成一个模型选择记录，并用固定 revision 运行一次最小推理 |
+| 提交证据 | Model Card 摘要、模型 ID/revision、元数据与原始输出 |
+| 完成自查 | 能说明模型为何适合任务、有什么限制，以及结果如何追溯 |
+| 下一步 | [Transformers 推理](05_Transformers.md) |
+
+| 路径 | 完成范围 |
+| --- | --- |
+| **最小** | 阅读一个 Model Card，锁定 revision 并完成一次最小推理 |
+| **标准** | 增加模型比较、失败样例、license 与 Dataset Card 检查 |
+| **进阶** | 比较两个 revision/模型，或验证缓存与离线复现行为 |
+
+## 运行契约
+
+| 项目 | 约定 |
+| --- | --- |
+| 前置条件 | Python 隔离环境；已阅读目标模型 Model Card；需要受限资源时具备相应访问权限 |
+| 唯一入口 | 从目标模型或数据集的官方 Hub 页面进入，先完成 Card 清单，再采用其官方示例 |
+| 版本 | 固定 repository ID 与 commit hash/tag；记录 `huggingface_hub`、Transformers/Datasets 及实际依赖版本 |
+| 预计耗时 | 30–60 分钟完成选择，30–60 分钟完成最小加载或推理 |
+| 算力与成本 | Card 阅读不需要 GPU；最小模型可用 CPU，较大模型按 Card 评估资源；不默认产生付费成本 |
+| 输入 | 模型/数据官方页面、固定样例与实验问题 |
+| 预期输出 | `run-metadata.md`、模型选择说明、原始输出；数据任务另附 Dataset Card 检查 |
+| 成功判定 | 模型或数据来源、revision、许可、输入输出与限制均可追溯 |
+| 常见失败与恢复 | 示例失效时先核对 revision、依赖和页面更新；需要登录时只用官方认证方式，不把 token 写入仓库 |
+
 ## 学习目标
 
 - 区分 model repository、dataset repository、Space 与 library documentation；

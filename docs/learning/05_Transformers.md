@@ -5,6 +5,40 @@
 
 Transformers 提供统一模型 API，但不同模型仍可能需要不同的加载类、chat template、输入格式和版本。代码应从目标模型的官方 Model Card 出发，而不是从随机博客复制。
 
+## 模块学习卡与完成路径
+
+| 字段 | 本页约定 |
+| --- | --- |
+| 对应周次 | Week 2 与 Week 4 |
+| 适合谁 | 已建立 Python 环境并选定官方模型的学生 |
+| 预计时间 | 最小 1–2 小时；标准任务 2–3 小时 |
+| 学什么 | processor/tokenizer、model、generation config 与 pipeline 的职责 |
+| 官方来源 | Transformers 官方文档与目标模型 Model Card |
+| 最小动作 | 固定模型和输入完成一次推理，保存配置、原始输出和一个失败样例 |
+| 提交证据 | 推理脚本/Notebook、环境、模型 revision、generation config 与输出 |
+| 完成自查 | 从头运行成功，且能解释输入预处理、生成参数和输出限制 |
+| 下一步 | [Qwen3.5-0.8B 多模态推理](06-1_Qwen3.5-VL-0.8B.md) |
+
+| 路径 | 完成范围 |
+| --- | --- |
+| **最小** | 使用官方示例完成一个固定输入的推理并保存证据 |
+| **标准** | 完成 pipeline/Auto classes 理解、失败样例与提交物 |
+| **进阶** | 只改变一个 generation 或输入参数，完成受控对照 |
+
+## 运行契约
+
+| 项目 | 约定 |
+| --- | --- |
+| 前置条件 | 可重建 Python 环境；已阅读目标 Model Card；准备一个公开或自制固定样例 |
+| 唯一入口 | 从目标 Model Card 的当前官方示例开始；先跑通 pipeline/smoke test，再按需使用 Auto classes |
+| 版本 | 记录模型 ID/revision、Transformers、PyTorch、processor 相关 package、Python 与 CUDA/设备 |
+| 预计耗时 | 30–60 分钟跑通，30–60 分钟保存失败样例与配置 |
+| 算力与成本 | 小模型可用 CPU；VLM/较大模型按 Model Card 选择本地或免费 Kaggle，不默认付费 |
+| 输入 | 固定文本/图像、prompt/chat template 与 generation config |
+| 预期输出 | `run-metadata.md`、推理脚本/Notebook、原始 prediction 和失败样例 |
+| 成功判定 | 从空状态运行成功，模型、输入模板和生成参数均可追溯 |
+| 常见失败与恢复 | 加载类或输入报错时回到 Model Card；OOM 时缩小模型/输入或调整 dtype/device；输出异常时先检查 template 与 prompt 回显 |
+
 ## 官方学习入口
 
 - [Transformers installation](https://huggingface.co/docs/transformers/installation)（当前安装方式）

@@ -5,6 +5,40 @@
 
 Kaggle 提供托管 Notebook、数据挂载和有限 GPU 配额。它解决的是环境与算力入口，不会自动保证实验可复现。
 
+## 模块学习卡与完成路径
+
+| 字段 | 本页约定 |
+| --- | --- |
+| 对应周次 | Week 2、Week 4、Week 8–10 |
+| 适合谁 | 需要免费云端环境或有限 GPU，并能操作 Notebook 的学生 |
+| 预计时间 | 最小约 1 小时；迁移完整实验通常 2–3 小时 |
+| 学什么 | Notebook 状态、环境记录、数据挂载、Secret、配额与结果导出 |
+| 官方来源 | Kaggle Notebooks、GPU usage、API 与 Models 官方文档 |
+| 最小动作 | Fork/新建一个 Notebook，Restart Session & Run All，并导出一次结果 |
+| 提交证据 | Notebook 链接、version、环境、配置、原始结果和导出文件 |
+| 完成自查 | Notebook 不依赖隐藏状态，不泄漏密钥，配额和实际设备有记录 |
+| 下一步 | 返回对应周次，或进入[动手教程](../tutorials/README.md) |
+
+| 路径 | 完成范围 |
+| --- | --- |
+| **最小** | 运行环境检查和一个固定样例，保存 Notebook version 与结果 |
+| **标准** | 按最小结构完成数据、运行、评测、导出和限制说明 |
+| **进阶** | 增加可重复参数配置、CLI 同步或资源/耗时比较 |
+
+## 运行契约
+
+| 项目 | 约定 |
+| --- | --- |
+| 前置条件 | Kaggle 账号；明确公开或已授权的数据来源；了解目标实验的最小命令 |
+| 唯一入口 | 从课程或教程给出的目标 Notebook Fork；没有指定 Notebook 时新建一个并按“Notebook 最小结构”组织 |
+| 版本 | 记录 Notebook URL/version、Python、关键 package、数据版本、模型 revision、实际 accelerator |
+| 预计耗时 | 约 1 小时完成最小运行；完整迁移按实验另设上限 |
+| 算力与成本 | 优先 CPU/免费额度；只在代码确实需要时开启 GPU；课程不要求购买额外算力 |
+| 输入 | 已授权数据、固定配置、模型或代码 revision |
+| 预期输出 | `run-metadata`、prediction、metrics、日志与导出的结果文件 |
+| 成功判定 | Restart Session & Run All 成功，结果可下载，并能回到明确版本与配置 |
+| 常见失败与恢复 | 配额不足时改用 CPU/小模型/小切片；重启导致状态丢失时从头运行；依赖变更后记录并重启 Session |
+
 ## 官方学习入口
 
 - [Kaggle Notebooks](https://www.kaggle.com/docs/notebooks)（Notebook 基础）
