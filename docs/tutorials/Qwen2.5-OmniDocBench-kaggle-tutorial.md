@@ -7,6 +7,31 @@
 
 本教程演示如何使用 OmniDocBench 的评测流程，对文档解析得到的 Markdown prediction 进行检查。重点不是“跑出一个分数”，而是理解 prediction、ground truth、metric 和 error case 之间的关系。
 
+## 运行契约
+
+| 项目 | 本教程约定 |
+| --- | --- |
+| 前置条件 | Kaggle 账号；能阅读基础 Python/Notebook；了解 Markdown；已阅读 Week 7 任务 |
+| 唯一入口 | [OmniDocBench Markdown Evaluation Kaggle Notebook](https://www.kaggle.com/code/guopingtan/omnidocbench-evaluation-md) |
+| 版本 | Fork 后记录 Notebook URL、运行日期、Notebook version、数据版本和 OmniDocBench revision；实际 package 版本以运行环境输出为准 |
+| 预计耗时 | 60–120 分钟，包括 baseline、一次受控对照和结果保存 |
+| 算力与成本 | Kaggle CPU/免费额度即可完成评测；不要求 GPU，不应开启付费资源 |
+| 预期文件 | `run-metadata.md`、baseline/compare-01 原始结果、`error-analysis.md` 和 `conclusion.md`；可放入个人仓库的 `week07/omnidocbench/` |
+| 最小完成动作 | Restart Session & Run All，保存一次 baseline 原始结果，并解释一个指标和一个失败案例 |
+
+!!! warning "常见失败与恢复"
+    - **prediction 或 ground truth 路径错误**：先列出输入文件并抽查 3 组对应样例，再运行评测。
+    - **Notebook 依赖隐藏状态**：Restart Session & Run All，不通过手工补跑跳过失败 cell。
+    - **结果为空或异常低**：先检查文件命名、内容是否为空、Markdown 格式和样例对齐，再讨论模型能力。
+    - **Kaggle Session 中断**：保留已运行版本和输出文件，从唯一入口重新 Fork；不要把临时 Session 当作提交物。
+
+!!! info "模块学习卡"
+    **学什么**：prediction、ground truth、metric 与 error case 的关系。<br>
+    **官方来源**：[OmniDocBench 官方仓库](https://github.com/opendatalab/OmniDocBench)与官方论文。<br>
+    **做什么**：运行 baseline，再做一次只改变一个变量的对照。<br>
+    **提交什么**：运行 metadata、原始结果、错误分析和结论。<br>
+    **如何自查**：从头运行成功，且每个结论都能回到具体输入和原始输出。
+
 ## 完成后你能做什么
 
 - 说明 OmniDocBench 评测的输入、输出与数据组织方式；

@@ -24,6 +24,13 @@ shanshui_scene: 3
 | [OmniDocBench Markdown 文档评测](Qwen2.5-OmniDocBench-kaggle-tutorial.md) | 可运行案例 / Runnable lab | Week 6–7 | 1–2 小时 | 一次 Benchmark 运行、结果文件与误差观察 |
 | [Qwen3.5-VL：SFT 与 GRPO](Qwen3.5-VL-SFT-GRPO-tutorial.md) | 进阶路线 / Guided path | Week 8–10 以后 | 1 小时规划 + 后续实验 | 框架选择、训练路线与实践项目清单 |
 
+!!! info "教程模块学习卡"
+    **学什么**：从唯一入口完成一次可复现运行，或形成一份可执行的后训练计划。<br>
+    **官方来源**：OmniDocBench、Qwen、Hugging Face 及所选训练框架的官方文档。<br>
+    **做什么**：先完成教程运行契约中的最小动作，再决定是否扩展实验。<br>
+    **提交什么**：入口链接、版本与配置、预期文件、失败记录和结论。<br>
+    **如何自查**：从头运行或逐项检查计划，确保他人不需要口头说明即可复现。
+
 !!! tip "第一次进入建议"
     如果还没有跑通过 Document AI pipeline，先完成文档评测教程；如果已经有 baseline、固定数据划分和评测脚本，再进入 SFT/GRPO 路线。
 

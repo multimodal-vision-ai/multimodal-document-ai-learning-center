@@ -10,6 +10,21 @@ hide:
 !!! success "本页最小任务"
     画出 Transformer、ViT、CLIP 到 VLM 的关系图，并能解释每个组件为文档理解解决了什么问题、仍留下什么限制。
 
+## 阅读分层与模块学习卡
+
+| 标签 | 预计时长 | 阅读范围 | 最小完成动作 |
+| --- | ---: | --- | --- |
+| **必读** | 30–45 分钟 | [Transformer](#attention-is-all-you-need)、[ViT](#an-image-is-worth-1616-words-vision-transformer-vit)、[CLIP](#clip-contrastive-languageimage-pre-training)各读 Main Contributions 与 Students Should Learn | 画出三者到 VLM 的关系图，并为每个组件写一句作用 |
+| **选读** | 1–2 小时 | 按当前问题选择 [BLIP-2](#blip-2)、[SigLIP 2](#siglip-2)、Scaling、MoE 或 Long Context | 完成一张“方法变化—收益—代价”对照表 |
+| **深挖** | 半天至 1 周 | 阅读一篇官方论文与代码，核对一个关键机制 | 用最小代码或计算示例验证一个主张 |
+
+!!! info "本页学习卡"
+    **学什么**：序列建模、视觉 token 与图文对齐如何构成 VLM 基础。<br>
+    **官方来源**：各节点列出的正式论文与官方代码。<br>
+    **做什么**：先完成 Transformer → ViT → CLIP 的最小主线。<br>
+    **提交什么**：结构图、作用说明；选读时增加方法对照表。<br>
+    **如何自查**：不依赖模型名称，也能解释图像如何进入语言模型及主要限制。
+
 ## 本页快速定位
 
 | 当前问题 | 必读节点 | 读完应能回答 |
