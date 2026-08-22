@@ -7,6 +7,32 @@
 
 本页帮助你决定怎样开始 Qwen3.5-VL 后训练。推荐顺序是 **baseline → LoRA/SFT → 统一评测 → 可选 GRPO**。没有稳定 baseline 和评测脚本时，不应直接进入强化学习训练。
 
+## 执行契约
+
+| 项目 | 本教程约定 |
+| --- | --- |
+| 前置条件 | 已有固定 train/validation/test 划分、可复现 baseline、评测脚本和明确的资源上限 |
+| 唯一入口 | 先填写本页的[一页实验计划模板](#post-training-plan)，再进入[课程后训练流程](../learning/08_Post_Training.md)执行 |
+| 版本 | 训练前锁定模型 ID/revision、数据版本、框架及 package 版本、chat template 和评测代码 revision |
+| 预计耗时 | 约 1 小时完成计划；SFT 运行时间取决于模型、数据和硬件，必须在计划中预设上限 |
+| 算力与成本 | 最小路径使用小模型、小数据切片和短程 LoRA/SFT；先写明 GPU 小时与费用上限；GRPO 不属于最低完成要求 |
+| 预期文件 | `post-training-plan.md`；执行后增加 `training-config.yaml`、环境记录、原始评测结果、错误分析和成本记录 |
+| 最小完成动作 | 冻结 baseline、唯一变量、指标、预算和停止条件，完成一页可执行实验计划 |
+
+!!! warning "常见失败与恢复"
+    - **没有稳定 baseline**：停止训练，返回 Week 7 固定数据、推理配置和评测脚本。
+    - **显存不足或训练过慢**：减小模型、数据切片、序列长度或 batch size，并记录调整；不要无上限增加云资源。
+    - **训练结果无法公平比较**：恢复相同 test set、generation 参数和评测代码，每轮只保留一个变量。
+    - **指标上升但样例退化**：检查切片结果和错误案例，不仅报告总体分数。
+    - **GRPO reward 不稳定**：停止 GRPO，先单独测试 reward，并保留 SFT-only 对照。
+
+!!! info "模块学习卡"
+    **学什么**：何时选择 SFT、何时才适合 GRPO，以及如何公平评测后训练。<br>
+    **官方来源**：Qwen、PEFT、TRL、LLaMA-Factory 或 OpenRLHF 的官方资料。<br>
+    **做什么**：先冻结 baseline 与预算，再执行一次小规模、单变量 LoRA/SFT。<br>
+    **提交什么**：实验计划、配置、版本、原始结果、成本和错误分析。<br>
+    **如何自查**：训练前后使用同一协议，test set 未参与训练、调参或 reward 设计。
+
 ## 先做决策
 
 | 你的目标 | 优先选择 | 暂时不要做什么 |
@@ -85,7 +111,7 @@
 
 推荐先阅读 [TRL GRPOTrainer](https://huggingface.co/docs/trl/grpo_trainer)。需要多机或大规模训练时，再评估 [OpenRLHF 官方文档](https://openrlhf.readthedocs.io/en/latest/)；不要仅因为框架支持就扩大实验范围。
 
-## 一页实验计划模板
+## 一页实验计划模板 { #post-training-plan }
 
 ```markdown
 # Post-training Plan

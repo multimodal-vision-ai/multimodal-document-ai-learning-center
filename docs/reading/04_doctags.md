@@ -10,6 +10,21 @@ hide:
 !!! success "本页最小任务"
     选择一页含标题、段落和表格的文档，对比纯文本、Markdown 与结构化表示，指出至少 3 项信息损失及其对下游任务的影响。
 
+## 阅读分层与模块学习卡
+
+| 标签 | 预计时长 | 阅读范围 | 最小完成动作 |
+| --- | ---: | --- | --- |
+| **必读** | 30–45 分钟 | [为什么需要 DocTags](#part-1-why-do-we-need-doctags)、[DocTags vs Markdown](#doctags-vs-markdown)、[Core Structure](#core-structure) | 对比三种表示，指出至少 3 项信息损失 |
+| **选读** | 1–2 小时 | [Spatial Information](#spatial-information)、[Reading Order](#reading-order)、[Provenance](#provenance)及生成流程 | 画出结构层级，并说明证据如何定位回原页 |
+| **深挖** | 半天至 1 周 | 阅读 Docling/SmolDocling 官方资料，选择生成、质量评测、RAG 或 Agent 方向 | 生成或检查一个结构化样例，记录质量问题和验证指标 |
+
+!!! info "本页学习卡"
+    **学什么**：结构、空间位置、阅读顺序和 provenance 的价值。<br>
+    **官方来源**：Docling、SmolDocling 官方论文、文档和仓库。<br>
+    **做什么**：比较同一文档的纯文本、Markdown 与结构化表示。<br>
+    **提交什么**：信息损失表、结构图和一个下游影响说明。<br>
+    **如何自查**：能把结构化字段定位回原页面，并解释缺失字段会破坏什么任务。
+
 ## 本页快速定位
 
 | 当前问题 | 直接进入 | 阅读目标 |
