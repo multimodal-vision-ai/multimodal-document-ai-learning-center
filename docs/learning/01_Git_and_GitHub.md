@@ -5,6 +5,26 @@
 
 Git 保存项目历史，GitHub 承载协作、审查和证据。课程不要求记住所有命令，但要求每项实验都能追溯到明确的 commit。
 
+## 模块学习卡与完成路径
+
+| 字段 | 本页约定 |
+| --- | --- |
+| 对应周次 | Week 1 |
+| 适合谁 | 能编辑文本文件，准备建立第一个可复现研究仓库的学生 |
+| 预计时间 | 最小 1–2 小时；标准任务 3–4 小时 |
+| 学什么 | repository、branch、staging、commit、remote 与 PR 的关系 |
+| 官方来源 | Git 与 GitHub 官方文档，以本页“官方学习入口”为准 |
+| 最小动作 | 新建分支，完成一次明确 commit，并通过 PR 说明改动和验证方式 |
+| 提交证据 | 仓库链接、branch、至少一次 commit、PR 链接及验证输出 |
+| 完成自查 | 他人能从 PR 理解改动，仓库不含密钥、隐私数据或不必要的大文件 |
+| 下一步 | [Python 与可复现环境](02_Python_Environment.md) |
+
+| 路径 | 完成范围 |
+| --- | --- |
+| **最小** | 完成 branch → commit → PR，并写明 How to verify |
+| **标准** | 完成本页 Week 1 必做任务、仓库结构、安全检查与自查 |
+| **进阶** | 增加 Issue、PR Review、自动化检查或更细粒度 commit 历史 |
+
 ## 学习目标
 
 - 区分 repository、working tree、staging area、commit 与 remote；
