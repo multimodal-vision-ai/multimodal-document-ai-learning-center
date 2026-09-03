@@ -1,4 +1,4 @@
-# 文档评测实战｜OmniDocBench Markdown Evaluation（Kaggle）
+﻿# 文档评测实战｜OmniDocBench Markdown Evaluation（Kaggle）
 
 > **类型**：可运行案例 · **对应课程**：Week 6–7 · **难度**：入门 · **建议投入**：1–2 小时 · **平台**：Kaggle Notebook
 
@@ -141,4 +141,4 @@ Markdown prediction
 
 把本教程结果提交到 Week 7，或进入[项目实战 01](../experiments/Experiment_01/README.md)继续完成模型推理、Prompt 对照和项目报告。
 
-最后更新：2026-08-07
+

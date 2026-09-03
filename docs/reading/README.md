@@ -1,4 +1,4 @@
----
+﻿---
 shanshui_scene: 5
 ---
 
@@ -135,4 +135,4 @@ shanshui_scene: 5
 
 需要跑通代码，进入[动手教程](../tutorials/README.md)；准备把问题做成完整作品，进入[项目实战](../experiments/README.md)；Week 11 的学习任务见[12 周课程路线](../learning/00_12_Week_Bootcamp.md#week-11)。
 
-最后更新：2026-08-07
+

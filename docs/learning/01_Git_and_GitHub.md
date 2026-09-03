@@ -1,4 +1,4 @@
-# Git 与 GitHub：可复现科研协作
+﻿# Git 与 GitHub：可复现科研协作
 
 > **对应课程**：[Week 1](00_12_Week_Bootcamp.md#week-1)<br>
 > **目标**：使用 branch → commit → pull request 完成一次可审查的科研改动。
@@ -131,4 +131,4 @@ fix empty input crash
 
 继续完成[Python 环境](02_Python_Environment.md)，让 PR 中的代码可以在干净环境复现。
 
-最后更新：2026-08-07
+

@@ -7,6 +7,11 @@ repo_name: multimodal-vision-ai/multimodal-document-ai-learning-center
 repo_url: https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center
 edit_uri: edit/dev/docs/
 
+exclude_docs: |
+    notebook-design.md
+    assets/README.md
+    codex-tasks/001-Codex-Kaggle-SmolDocling-OmniDocBench-Notebooks.md
+
 theme:
   name: material
   custom_dir: overrides

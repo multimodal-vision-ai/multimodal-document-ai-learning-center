@@ -1,4 +1,4 @@
-# Transformers：从 Model Card 到可复现推理
+﻿# Transformers：从 Model Card 到可复现推理
 
 > **对应课程**：[Week 2](00_12_Week_Bootcamp.md#week-2) 与 [Week 4](00_12_Week_Bootcamp.md#week-4)<br>
 > **目标**：理解 processor/tokenizer、model、generation 与 pipeline 的职责，并保存完整推理证据。
@@ -151,4 +151,4 @@ week02/
 
 进入[Qwen3.5-0.8B 多模态推理](06-1_Qwen3.5-VL-0.8B.md)，将相同记录规范应用到文档图像。
 
-最后更新：2026-08-07
+

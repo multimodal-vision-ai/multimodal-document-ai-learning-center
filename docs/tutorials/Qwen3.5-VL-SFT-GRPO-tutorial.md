@@ -1,4 +1,4 @@
-# Qwen3.5-VL 后训练路线｜SFT → Evaluation → GRPO
+﻿# Qwen3.5-VL 后训练路线｜SFT → Evaluation → GRPO
 
 > **类型**：进阶学习路线 · **对应课程**：Week 8–10 以后 · **建议投入**：先用 1 小时完成实验设计，再决定训练预算
 
@@ -153,4 +153,4 @@
 
 把一页实验计划带入 [Week 8–10](../learning/08_Post_Training.md)执行；如果 baseline 和评测尚未准备好，先返回[项目实战 01](../experiments/Experiment_01/README.md)。
 
-最后更新：2026-08-07
+

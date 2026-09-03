@@ -1,4 +1,4 @@
-# 模型后训练与 W&B 实验管理
+﻿# 模型后训练与 W&B 实验管理
 
 > **对应课程**：[Week 8](00_12_Week_Bootcamp.md#week-8) · [Week 9](00_12_Week_Bootcamp.md#week-9) · [Week 10](00_12_Week_Bootcamp.md#week-10)<br>
 > **目标**：完成一次小规模 LoRA/SFT，并用 W&B 形成可审计的实验对比。<br>
@@ -206,4 +206,4 @@ post-training-project/
 
 完成 SFT、W&B 和统一评测后，再考虑 GRPO、sweeps、分布式训练或更大模型。扩展实验仍需遵循相同原则：一次只提出一个明确问题，保留可复现证据，并如实报告成本与失败。
 
-最后更新：2026-08-07
+

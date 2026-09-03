@@ -1,4 +1,4 @@
-# Hugging Face Hub：选择并记录模型与数据
+﻿# Hugging Face Hub：选择并记录模型与数据
 
 > **对应课程**：[Week 2](00_12_Week_Bootcamp.md#week-2)<br>
 > **目标**：不依赖“模型名称印象”，从官方页面判断一个模型或数据集是否适用于实验。
@@ -166,4 +166,4 @@ Notebook 必须 Restart & Run All，并避免把 token、缓存路径或私人�
 
 进入[Transformers 基础](05_Transformers.md)，再完成[Qwen3.5-0.8B 多模态推理](06-1_Qwen3.5-VL-0.8B.md)。
 
-最后更新：2026-08-07
+
