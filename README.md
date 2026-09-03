@@ -62,11 +62,12 @@ mkdocs build --strict
 
 ## 协作流程
 
-1. 从 `dev` 创建工作分支或在约定的 `dev` 实验流程中修改；
-2. 只改动任务相关文件；
-3. 检查内部链接、官方链接和课程自主检查项；
-4. 通过文档质量检查；
-5. 发起 `dev → main` PR，review 通过后再发布。
+1. `dev` 为长期保留分支，不删除；
+2. 所有开发改动先进入 `dev`（直接提交到 `dev` 或先到工作分支再合并到 `dev`）；
+3. 只改动任务相关文件；
+4. 检查内部链接、官方链接和课程自主检查项；
+5. 通过文档质量检查；
+6. 发起 `dev → main` PR，人工核对与 review 通过后再发布。
 
 课程内容以学生体验、可复现证据和低维护成本为优先。欢迎通过 [Issues](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues) 报告失效链接或提出改进建议。
 
