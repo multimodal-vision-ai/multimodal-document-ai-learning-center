@@ -1,5 +1,18 @@
 # 自主学习常见问题
 
+## 快速定位
+
+| 你现在遇到的问题 | 先做什么 | 相关入口 |
+| --- | --- | --- |
+| 时间或基础不足 | 选择最小路径，只保留一个样例、一次运行和核心证据 | [12 周路线](00_12_Week_Bootcamp.md) · [证据清单](10_Assessment_and_Submission.md#evidence-manifest) |
+| 没有 GPU 或云端配额 | 缩小模型/数据，优先 CPU、免费 Kaggle/Colab 或短程实验 | [Kaggle Notebook](04_Kaggle.md) |
+| 运行失败或指标没提升 | 保留配置、日志、失败原因和下一步假设 | [自主评估](10_Assessment_and_Submission.md) |
+| 不知道证据是否完整 | 对照唯一 Evidence Manifest 补齐缺项 | [证据清单](10_Assessment_and_Submission.md#evidence-manifest) |
+| 准备开始项目 | 先确认已有固定样例、baseline 与评测问题 | [项目实战](../experiments/README.md) |
+| 需要安全使用 AI/Secret | 使用环境变量或平台 Secret，并记录人工核验 | [AI 辅助编程](05-1_AI_Assisted_Coding.md) |
+
+本页用于快速恢复学习节奏；若问题涉及具体运行环境、模型或数据，优先回到对应专题的“常见失败与恢复”。
+
 ## 每周必须刚好学习 24 小时吗？
 
 24 小时是用于规划课程深度的建议投入，不是考勤要求。先保证主线成果可运行、可复现和可解释，再使用剩余时间选择自主探索方向。不要为了记录时长而增加无目的阅读或重复运行。

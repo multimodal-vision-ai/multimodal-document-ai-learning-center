@@ -5,6 +5,26 @@
 
 Document AI 研究如何把 PDF、扫描件、表格、表单等文档转换为机器可理解、可检索和可验证的信息。它不是单一模型，也不等于 OCR。
 
+## 模块学习卡与三周路径
+
+| 字段 | 本页约定 |
+| --- | --- |
+| 对应周次 | Week 5–7 |
+| 适合谁 | 已能运行基础 Python/Notebook，准备从文档任务走向可信评测的学生 |
+| 建议顺序 | 任务地图 → 解析 pipeline → 固定 benchmark；没有后两项证据时不进入后训练 |
+| 官方来源 | Docling、PaddleOCR、Transformers Document VQA、DocLayNet、OmniDocBench 官方资料 |
+| 统一证据 | 使用[Evidence Manifest](10_Assessment_and_Submission.md#evidence-manifest)记录入口、版本、输入、结果、失败与下一步 |
+| 最小交接条件 | 进入 Week 8 前必须已有固定 test set、baseline、评测脚本和失败案例 |
+
+| 周次 | 最小路径 | 标准路径 | 进阶路径 | 本周最小完成动作 |
+| --- | --- | --- | --- | --- |
+| Week 5 | 为一个公开文档标注任务、输出和风险 | 完成三类文档任务地图与错误标记 | 形成可验证研究问题 | 写出 `task-map.md` 与 1 个指标选择理由 |
+| Week 6 | 转换一个公开 PDF，保存 Markdown/JSON | 完成三类文档 pipeline、质量检查与日志 | 对比两种工具或设置 | 用一条命令生成可检查输出 |
+| Week 7 | 固定小 test set 并运行 baseline | 完成 metrics、切片结果和 5 个失败案例 | 增加第二 baseline 或稳健性评测 | 生成逐样例 `results.csv` 与错误分类 |
+
+!!! info "从专题到项目"
+    只需要掌握单一工具时，先进入[Docling](06-2_Docling.md)或[Qwen3.5-0.8B](06-1_Qwen3.5-VL-0.8B.md)。已经有固定样例、baseline 和指标时，可以进入[项目 01](../experiments/Experiment_01/README.md)完成端到端证据链。
+
 ## 任务地图
 
 | 任务 | 输入 | 输出 | 常见指标 |
@@ -49,6 +69,8 @@ Document Image + Instruction → Multimodal Model → Text/JSON/Answer
 
 ## Week 5｜建立任务地图
 
+> **交接检查**：记录文档来源、任务单位、预期输出、适用指标和至少一个可能失败区域；这些信息将成为 Week 6 的输入清单。
+
 选择三份公开或自制文档：数字 PDF、扫描件、复杂表格各一份。
 
 对每份文档记录：
@@ -72,6 +94,8 @@ week05/
 ```
 
 ## Week 6｜构建解析 pipeline
+
+> **交接检查**：运行入口、输入标识、版本、日志、Markdown/JSON 输出和质量规则必须可定位；这些信息将成为 Week 7 的 baseline 证据。
 
 使用[Docling 入门](06-2_Docling.md)或另一个有官方文档的工具，将相同文档转换为 Markdown/JSON。
 
@@ -98,6 +122,8 @@ week06/
 ```
 
 ## Week 7｜构建可信 benchmark
+
+> **交接检查**：冻结 test set、baseline、评测脚本、主指标和失败案例。只有这些条件满足，才开始 LoRA/SFT 或更大规模实验。
 
 ### 1. 冻结数据划分
 
@@ -166,6 +192,6 @@ week07/
 
 ## 下一步
 
-只有 baseline、test set 和评测脚本准备好后，才进入[模型后训练与 W&B](08_Post_Training.md)。这样 Week 8–10 的提升才有可信的比较基准。
+只有 baseline、test set 和评测脚本准备好后，才进入[模型后训练与 W&B](08_Post_Training.md)。想先把 Week 4–7 串成完整作品，可进入[项目 01：文档理解与评测](../experiments/Experiment_01/README.md)。这样后续提升才有可信的比较基准。
 
 最后更新：2026-08-07
