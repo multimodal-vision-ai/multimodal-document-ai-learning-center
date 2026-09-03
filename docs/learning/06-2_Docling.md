@@ -1,4 +1,4 @@
-# Docling：PDF 到 Markdown/JSON 的可检查流水线
+﻿# Docling：PDF 到 Markdown/JSON 的可检查流水线
 
 > **对应课程**：[Week 6](00_12_Week_Bootcamp.md#week-6)<br>
 > **目标**：把三类真实文档转换为结构化输出，并建立质量检查和失败记录。
@@ -158,4 +158,4 @@ week06/
 
 进入[Document AI：从任务到评测](07_Doc_AI.md)，为 pipeline 建立固定 test set、质量指标和错误分类。
 
-最后更新：2026-08-07
+

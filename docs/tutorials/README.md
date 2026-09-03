@@ -1,4 +1,4 @@
----
+﻿---
 shanshui_scene: 3
 ---
 
@@ -76,4 +76,4 @@ shanshui_scene: 3
 
 完成单个教程后，可以返回[12 周课程](../learning/00_12_Week_Bootcamp.md)整理对应周次证据，或进入[项目实战](../experiments/README.md)把多个步骤串成完整项目。
 
-最后更新：2026-08-07
+

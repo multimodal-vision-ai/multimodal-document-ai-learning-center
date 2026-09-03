@@ -1,4 +1,4 @@
-# AI 辅助编程：生成只是开始，验证才算完成
+﻿# AI 辅助编程：生成只是开始，验证才算完成
 
 > **对应课程**：[Week 3｜AI-assisted Coding](00_12_Week_Bootcamp.md#week-3) · **专题最小练习**：2–3 小时 · **完整 Week 3**：约 24 小时 · **最终产出**：可测试的代码、Prompt 记录与人工审查
 
@@ -173,4 +173,4 @@ python -m unittest discover -v
 
 完成验证闭环后，进入[Week 4｜Vision-Language Models](00_12_Week_Bootcamp.md#week-4)。继续使用 AI 时沿用同一记录方式，不向工具上传课程中的私人文档或密钥。
 
-最后更新：2026-08-07
+

@@ -1,4 +1,4 @@
-# Python 环境：让实验能够重建
+﻿# Python 环境：让实验能够重建
 
 > **对应课程**：[Week 1](00_12_Week_Bootcamp.md#week-1)<br>
 > **目标**：从空环境执行一条安装命令和一条运行命令，得到与 README 一致的结果。
@@ -182,4 +182,4 @@ week01/
 
 进入[Hugging Face Hub](03_HuggingFace.md)，学习如何记录模型和数据的准确版本。
 
-最后更新：2026-08-07
+

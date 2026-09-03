@@ -1,4 +1,4 @@
-# Document AI 入门：从任务到评测
+﻿# Document AI 入门：从任务到评测
 
 > **对应课程**：[Week 5](00_12_Week_Bootcamp.md#week-5) · [Week 6](00_12_Week_Bootcamp.md#week-6) · [Week 7](00_12_Week_Bootcamp.md#week-7)<br>
 > **目标**：认识不同文档任务，建立可计算的 baseline，而不是只展示几个“看起来不错”的输出。
@@ -194,4 +194,4 @@ week07/
 
 只有 baseline、test set 和评测脚本准备好后，才进入[模型后训练与 W&B](08_Post_Training.md)。想先把 Week 4–7 串成完整作品，可进入[项目 01：文档理解与评测](../experiments/Experiment_01/README.md)。这样后续提升才有可信的比较基准。
 
-最后更新：2026-08-07
+

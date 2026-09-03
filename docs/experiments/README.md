@@ -1,4 +1,4 @@
----
+﻿---
 shanshui_scene: 4
 ---
 
@@ -98,4 +98,4 @@ shanshui_scene: 4
 
 后续项目将围绕 Document AI pipeline、VLM evaluation、模型后训练与视频理解逐步建设。
 
-最后更新：2026-08-07
+

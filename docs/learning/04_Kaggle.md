@@ -1,4 +1,4 @@
-# Kaggle Notebook：受限算力下的可复现实验
+﻿# Kaggle Notebook：受限算力下的可复现实验
 
 > **对应课程**：[Week 2](00_12_Week_Bootcamp.md#week-2)、[Week 4](00_12_Week_Bootcamp.md#week-4)、[Week 8–10](00_12_Week_Bootcamp.md#week-8) 的云端实验<br>
 > **目标**：创建一个可从头运行、无密钥泄漏、能导出结果的 GPU Notebook。
@@ -157,4 +157,4 @@ week02/
 
 完成[Transformers 基础](05_Transformers.md)，再运行[Qwen3.5 多模态推理](06-1_Qwen3.5-VL-0.8B.md)。
 
-最后更新：2026-08-07
+
