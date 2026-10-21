@@ -48,6 +48,20 @@ jobs:
             git archive FETCH_HEAD research-radar/data | tar -xf -
           fi
 
+      - name: Collect real public candidates (DEV branch only)
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/radar/collect.py
+
+      - name: Refresh Issue snapshot and dated reports (DEV only)
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/radar/sync_tasks.py
+          python scripts/radar/reports.py
+
       - name: Render Research Radar snapshot
         run: |
           python -m unittest discover -s tests/radar -v
@@ -109,6 +123,20 @@ jobs:
           name: dev-preview-site
           path: ${{ runner.temp }}/dev-site
           retention-days: 7
+
+      - name: Stage public Radar data for snapshot persistence (DEV only)
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        run: |
+          mkdir -p "$RUNNER_TEMP/radar-snapshot"
+          cp -a research-radar/data/. "$RUNNER_TEMP/radar-snapshot/"
+
+      - name: Upload data snapshot artifact (DEV only)
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-radar-snapshot
+          path: ${{ runner.temp }}/radar-snapshot
+          retention-days: 3
 
   publish:
     name: Publish isolated DEV preview branch
@@ -173,3 +201,40 @@ jobs:
           done
           echo "::error::Generated preview is present on GitHub but public proxy did not pass the HTTP smoke test"
           exit 1
+
+      - name: Checkout persistent Radar data branch
+        uses: actions/checkout@v4
+        with:
+          ref: radar-data
+          path: radar-store
+          persist-credentials: true
+
+      - name: Download collected data snapshot
+        uses: actions/download-artifact@v4
+        with:
+          name: dev-radar-snapshot
+          path: ${{ runner.temp }}/radar-snapshot
+
+      - name: Persist only generated public data to radar-data
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "$RUNNER_TEMP/radar-snapshot/candidates.json"
+          mkdir -p radar-store/research-radar/data
+          cp -a "$RUNNER_TEMP/radar-snapshot/." radar-store/research-radar/data/
+          cd radar-store
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research-radar/data/candidates.json research-radar/data/tasks.json
+          git add research-radar/data/collection-status.json
+          for folder in daily weekly monthly; do
+            if [ -d "research-radar/data/$folder" ]; then
+              git add "research-radar/data/$folder"
+            fi
+          done
+          if git diff --cached --quiet; then
+            echo "Radar data snapshot unchanged."
+          else
+            git commit -m "data(radar): update candidate discovery and DEV reports [skip ci]"
+            git push origin HEAD:radar-data
+          fi
