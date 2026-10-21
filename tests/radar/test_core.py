@@ -14,7 +14,7 @@ import collect
 
 NOW = datetime(2026, 10, 21, 12, 0, tzinfo=timezone.utc)
 SCORES = {
-    "innovation": 9, "openness": 8, "compute": 8,
+    "innovation": 10, "openness": 8, "compute": 8,
     "reproducibility": 8, "extension": 9, "commercialization": 8,
 }
 
