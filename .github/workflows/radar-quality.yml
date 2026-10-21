@@ -30,17 +30,17 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
-      - name: Validate research model
+      - name: Research and discovery unit tests (mocked network)
         run: python -m unittest discover -s tests/radar -v
-      - name: Render empty or approved records
+      - name: Render site from reviewed data
         run: python scripts/radar/render.py
-      - name: Require deterministic rendering
+      - name: Require deterministic output
         run: |
           sha256sum docs/index.md docs/radar/*.md > /tmp/radar-before.sha
           python scripts/radar/render.py
           sha256sum docs/index.md docs/radar/*.md > /tmp/radar-after.sha
           diff -u /tmp/radar-before.sha /tmp/radar-after.sha
-      - name: Build documentation
+      - name: Build MkDocs strictly
         run: |
           pip install -r requirements-docs.txt
           mkdocs build --strict

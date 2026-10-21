@@ -9,38 +9,64 @@ permissions:
   contents: write
 
 concurrency:
-  group: radar-data
+  group: radar-data-writes
   cancel-in-progress: false
 
 jobs:
   collect:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout current application code from main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: site-source
+          persist-credentials: false
+
+      - name: Checkout persistent research data
+        uses: actions/checkout@v4
         with:
           ref: radar-data
+          path: radar-store
           persist-credentials: true
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
-      - name: Collect public candidates
+
+      - name: Hydrate data into current application
+        run: |
+          mkdir -p site-source/research-radar/data
+          cp -a radar-store/research-radar/data/. site-source/research-radar/data/
+
+      - name: Collect public research leads (pending only)
+        working-directory: site-source
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python scripts/radar/collect.py
-      - name: Synchronize labelled research Issues
+
+      - name: Sync research Issues and write dated summaries
+        working-directory: site-source
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: python scripts/radar/sync_tasks.py
-      - name: Validate records and tests
+        run: |
+          python scripts/radar/sync_tasks.py
+          python scripts/radar/reports.py
+
+      - name: Validate records, tests and offline rendering
+        working-directory: site-source
         run: |
           python -m unittest discover -s tests/radar -v
           python scripts/radar/render.py
-      - name: Commit reviewed data snapshot
+
+      - name: Persist research data (only, no application code)
         run: |
+          cp -a site-source/research-radar/data/. radar-store/research-radar/data/
+          cd radar-store
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add research-radar/data
           if ! git diff --cached --quiet; then
-            git commit -m "chore(radar): refresh research snapshots"
+            git commit -m "chore(radar): update research discovery and reports"
             git push origin HEAD:radar-data
           fi
