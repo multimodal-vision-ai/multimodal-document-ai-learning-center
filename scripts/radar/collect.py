@@ -208,28 +208,43 @@ def official_feeds():
 
 def main():
     previous = load(DATA / "candidates.json", [])
-    findings, failed, success = [], [], 0
+    findings, failed, success, counts = [], [], 0, {}
     providers = [
-        ("arxiv", arxiv), ("github", github), ("huggingface", huggingface),
-        ("openreview", openreview), ("official-feeds", official_feeds)
+        ("arxiv", arxiv, CONFIG.get("arxiv", {}).get("enabled", False)),
+        ("github", github, CONFIG.get("github", {}).get("enabled", False)),
+        ("huggingface", huggingface, CONFIG.get("huggingface", {}).get("enabled", False)),
+        ("openreview", openreview, CONFIG.get("openreview", {}).get("enabled", False)),
+        ("official-feeds", official_feeds, bool(CONFIG.get("institution_feeds")))
     ]
-    for name, fn in providers:
+    for name, fn, enabled in providers:
+        if not enabled:
+            continue
         try:
             items = fn()
             findings.extend(items)
             success += 1
+            counts[name] = len(items)
             print(f"{name}: {len(items)} leads")
         except Exception as exc:
             failed.append(f"{name}: {type(exc).__name__}: {exc}")
     if not success:
-        print("ERROR: no discovery sources succeeded; old database preserved", file=sys.stderr)
+        print("ERROR: no enabled discovery sources succeeded; old database preserved", file=sys.stderr)
         for message in failed:
             print(message, file=sys.stderr)
         return 1
-    save(DATA / "candidates.json", merge_candidates(previous, findings))
+    merged = merge_candidates(previous, findings)
+    save(DATA / "candidates.json", merged)
+    save(DATA / "collection-status.json", {
+        "last_successful_run_utc": iso_now(),
+        "source_counts": counts,
+        "source_failures": failed,
+        "candidate_records": len(merged),
+        "current_run_discovered": len(findings),
+        "review_policy": "all automated leads pending"
+    })
     for message in failed:
         print("WARNING " + message, file=sys.stderr)
-    print(f"Updated candidate index; {len(findings)} leads. No automatic approvals.")
+    print(f"Updated candidate index: {len(merged)} records; {len(findings)} observed leads. No automatic approvals.")
     return 0
 
 if __name__ == "__main__":

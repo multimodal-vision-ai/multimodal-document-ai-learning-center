@@ -61,6 +61,7 @@ def render(now=None):
                       key=lambda p: (p.get("score") or 0, p.get("reviewed_at") or ""), reverse=True)
     tasks = load(DATA / "tasks.json", [])
     candidates = load(DATA / "candidates.json", [])
+    collection_status = load(DATA / "collection-status.json", {})
     rows = []
     for p in approved:
         paper = p.get("paper_url") or p["source_url"]
@@ -110,8 +111,14 @@ def render(now=None):
         leads.append(f"- {link(item['source_url'], title)} — {provider} · {date}（未经审核）")
         if len(leads) >= 15:
             break
-    content = replace(content, "CANDIDATES", "\n".join(leads) if leads else
-                      "暂无自动采集到的公开线索。")
+    run_time = escape(collection_status.get("last_successful_run_utc", "尚未运行"))
+    failures = len(collection_status.get("source_failures", []))
+    sources = len(collection_status.get("source_counts", {}))
+    status_line = (f"**最近一次公开源采集（UTC）：{run_time}**；"
+                   f"成功来源 {sources}；异常来源 {failures}；"
+                   f"候选总数 {len(candidates)}。")
+    content = replace(content, "CANDIDATES", status_line + "\n\n" +
+                      ("\n".join(leads) if leads else "暂无自动采集到的公开线索。"))
     save_page("radar/index.md", content)
 
     page = DOCS / "radar/tasks.md"
@@ -136,6 +143,7 @@ def render(now=None):
 <div class="radar-home-card" markdown>
 <div class="radar-stats">
 <div class="radar-stat"><strong>{len(approved)}</strong> 已审核项目</div>
+<div class="radar-stat"><strong>{len(candidates)}</strong> 待审核线索</div>
 <div class="radar-stat"><strong>{len(reports["daily"]["projects"])}</strong> 近24小时重点</div>
 <div class="radar-stat"><strong>{len(tasks)}</strong> 研究任务</div>
 </div>
