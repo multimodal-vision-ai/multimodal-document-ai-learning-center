@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Verified research radar item",
+  "title": "Research Radar item (reviewed or pending)",
   "type": "object",
   "required": [
     "id",
@@ -14,14 +14,13 @@
   "properties": {
     "id": {
       "type": "string",
-      "minLength": 3
+      "pattern": "^[a-z0-9][a-z0-9-]{2,100}$"
     },
     "title": {
       "type": "string",
       "minLength": 3
     },
     "category": {
-      "type": "string",
       "enum": [
         "document",
         "video",
@@ -55,18 +54,60 @@
       "format": "uri"
     },
     "published_at": {
-      "type": "string"
+      "type": "string",
+      "format": "date-time"
     },
     "first_seen_at": {
-      "type": "string"
+      "type": "string",
+      "format": "date-time"
     },
     "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "significant_update_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewed_by": {
       "type": "string"
     },
-    "organization": {
-      "type": "string"
+    "review": {
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ]
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "score_dimensions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 10
+      },
+      "required": [
+        "innovation",
+        "openness",
+        "compute",
+        "reproducibility",
+        "extension",
+        "commercialization"
+      ]
     },
     "parameters": {
+      "type": "string"
+    },
+    "gpu": {
       "type": "string"
     },
     "weights_open": {
@@ -87,9 +128,6 @@
         "null"
       ]
     },
-    "gpu": {
-      "type": "string"
-    },
     "lora": {
       "type": [
         "boolean",
@@ -102,28 +140,6 @@
         "null"
       ]
     },
-    "innovation": {
-      "type": "string"
-    },
-    "research_opportunity": {
-      "type": "string"
-    },
-    "score": {
-      "type": [
-        "number",
-        "null"
-      ],
-      "minimum": 0,
-      "maximum": 10
-    },
-    "review": {
-      "type": "string",
-      "enum": [
-        "pending",
-        "approved",
-        "rejected"
-      ]
-    },
     "evidence_urls": {
       "type": "array",
       "items": {
@@ -132,5 +148,32 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "review": {
+            "const": "approved"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "reviewed_by",
+          "reviewed_at",
+          "innovation",
+          "research_opportunity",
+          "score_dimensions",
+          "score",
+          "evidence_urls"
+        ],
+        "properties": {
+          "evidence_urls": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": true
 }
