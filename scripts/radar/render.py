@@ -116,8 +116,8 @@ def render(now=None):
     sources = len(collection_status.get("source_counts", {}))
     status_line = (f"**最近一次公开源采集（UTC）：{run_time}**；"
                    f"成功来源 {sources}；异常来源 {failures}；"
-                   f"候选总数 {len(candidates)}。\\n\\n")
-    content = replace(content, "CANDIDATES", status_line.replace("\\\\n", "\\n") +
+                   f"候选总数 {len(candidates)}。")
+    content = replace(content, "CANDIDATES", status_line + "\n\n" +
                       ("\n".join(leads) if leads else "暂无自动采集到的公开线索。"))
     save_page("radar/index.md", content)
 
