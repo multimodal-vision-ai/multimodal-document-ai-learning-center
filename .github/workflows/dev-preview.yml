@@ -155,3 +155,21 @@ jobs:
             git push origin HEAD:refs/heads/dev-preview
           fi
           echo "Fixed URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
+
+      - name: Verify public DEV preview response
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
+          for attempt in 1 2 3 4 5; do
+            echo "Probing DEV preview (attempt $attempt/5)"
+            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$url" -o "$RUNNER_TEMP/dev-preview-public.html" \
+               && grep -q "DEV 预览版" "$RUNNER_TEMP/dev-preview-public.html" \
+               && grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html"; then
+              echo "DEV preview public URL accessible with expected banner and Radar text"
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "::error::Generated preview is present on GitHub but public proxy did not pass the HTTP smoke test"
+          exit 1
