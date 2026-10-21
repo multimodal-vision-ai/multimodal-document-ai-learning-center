@@ -1,32 +1,52 @@
-# Research Radar 科研雷达
+# Research Radar — 科研雷达
 
-该模块附属于现有 MkDocs 学习中心，**不创建额外的顶级网站栏目**。
+这是多模态视觉AI学习中心的首页模块和三个子页面，并非新的一级导航栏。
 
-- `data/candidates.json`：公开来源自动发现的候选条目，未经人工核验，不代表正式推荐。
-- `data/projects.json`：已审阅的结构化项目记录；只有 `review=approved` 的条目进入网站及预警。
-- `data/tasks.json`：带 `research-radar` 标签的 GitHub Issues 只读快照。
-- `schema/research-item.schema.json`：正式研究项目的字段约束。
-- `config/scoring.json`：科研评分权重及每日预警上限。
-- `config/sources.json`：公开数据源配置。
+## 数据和审核
 
-## 本地或 Actions 使用
+- data/candidates.json：从公开数据源自动发现的候选信息（全部pending，不代表高价值推荐）。
+- data/projects.json：研究人员核验后批准的项目；只有approved记录进入网站。
+- data/tasks.json：带research-radar标签的公开GitHub Issues快照。
+- data/daily、data/weekly、data/monthly：按24小时、7天、30天窗口生成的结构化科研摘要。
+- schema/research-item.schema.json：项目字段约束。
+- config/sources.json：官方公开API来源和机构RSS/Atom清单。
+- config/scoring.json：评分配置和预警上限。
 
-```bash
-python scripts/radar/collect.py
-python scripts/radar/sync_tasks.py
-python scripts/radar/render.py
-python -m unittest discover -s tests/radar -v
-mkdocs build --strict
-```
+**严禁把模型自动筛选结果冒充人工核实的科研结论。** Approved项目必须包含审核人员reviewed_by、审核时间reviewed_at、原始证据evidence_urls、创新点innovation、研究机会research_opportunity，以及六项独立评分score_dimensions和加权总分score。代码核实分数是否一致，不会自行给某篇论文编造分数。
 
-可用 `python scripts/radar/ingest.py --input path/to/reviewed.json` 导入经人工核验的条目（列表或单条记录）。只有 `review=approved` 且完成必需字段及证据校验才会公开展示。
+论文发布时间published_at与重大更新significant_update_at必须单独记录，只有实际有证据的重要更新才能设置后者。未知权重、GPU需求和微调支持需要明确写为未知；T4可以加载不代表训练已复现。
 
-- **无需付费API**即可运行发现采集流程，但它只产生候选，不能保证论文质量和开源真实性。
-- OpenReview公开搜索接口可能限流或不可用；机构官网须逐个添加官方RSS/Atom。单个源失败只会记录警告，不得发布伪造信息。
-- ChatGPT计划任务与GitHub Actions互不自动同步；将其内容导入需要另行提供结构化JSON或连接API。
-- 自动采集会在独立的 `radar-data` 分支保存数据；站点构建从该分支读取，源码和课程内容继续走 `dev → main` PR审核。
-- 不要将令牌、未公开选题、个人信息或授权受限数据写入公开仓库。
+## 使用
 
-## 评分与证据
+在仓库工作目录（Python 3.11+）：
 
-总分由6项0–10的人工可审核指标加权计算，不由缺失字段猜测。论文发表时间、模型或代码更新、采集时间分开存储；训练与显存等数据标明核验来源。
+    python scripts/radar/collect.py
+    python scripts/radar/sync_tasks.py
+    python scripts/radar/reports.py
+    python scripts/radar/render.py
+    python -m unittest discover -s tests/radar -v
+
+人工审核并将JSON存入项目库：
+
+    python scripts/radar/ingest.py --input reviewed.json
+
+发布前可用：
+
+    pip install -r requirements-docs.txt
+    mkdocs build --strict
+
+采集器不要求付费模型API。来源包括arXiv Atom、GitHub REST、Hugging Face Hub、OpenReview API2公开搜索。机构官网只支持配置中显式填写的官方RSS/Atom源，默认空列表，不代表对所有机构官网进行了覆盖。部分官方服务可能限流或不可用，失败必须如实记录。
+
+仅对arXiv/OpenReview完全一致的规范化论文标题做有限合并，保留来源链接。模型仓库和GitHub项目名不能直接当作相同论文，无依据不进行自动合并。
+
+## 远程部署
+
+科研代码继续走 feature分支 → dev PR → main审核发布。数据单独储存在radar-data分支。每日采集Actions从main读取最新版脚本，从radar-data读取历史数据，更新后仅向radar-data提交数据；独立发布Actions渲染网站。原有main部署流程保留。默认分支正式包含工作流之前，定时任务不会生效。
+
+GitHub Actions运行时由GitHub提供GITHUB_TOKEN，源码不保存密钥。公开仓库不应存放未发表研究、隐私数据和商业机密。
+
+GitHub Issues只用于已立项科研任务，不会因为自动发现论文而主动创建Issue。ChatGPT的既有定时提醒也不会天然与GitHub Actions同步，需要经核验的结构化数据导入。
+
+## 限制
+
+日报和周报目前是可追溯的结构化汇总而非人工撰写的长篇学术综述。自动推荐默认关闭：没有已审核的成果就显示空记录，不会推送凑数项目。要形成可对外公开的科研结论，必须由研究人员检查论文、开源仓库和可复现证据。
