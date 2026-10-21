@@ -60,6 +60,7 @@ def render(now=None):
     approved = sorted((p for p in projects if p.get("review") == "approved"),
                       key=lambda p: (p.get("score") or 0, p.get("reviewed_at") or ""), reverse=True)
     tasks = load(DATA / "tasks.json", [])
+    candidates = load(DATA / "candidates.json", [])
     rows = []
     for p in approved:
         paper = p.get("paper_url") or p["source_url"]
@@ -99,6 +100,18 @@ def render(now=None):
     }
     for marker, body in blocks.items():
         content = replace(content, marker, indent(body))
+    leads = []
+    for item in sorted(candidates, key=lambda x: (x.get("updated_at") or x.get("published_at") or "", x.get("id", "")), reverse=True):
+        if item.get("review") != "pending" or not valid_url(item.get("source_url")):
+            continue
+        title = escape(item.get("title", "Untitled"))
+        provider = escape(item.get("discovered_from", "source"))
+        date = escape(str(item.get("updated_at") or item.get("published_at") or "")[:10])
+        leads.append(f"- {link(item['source_url'], title)} — {provider} · {date}（未经审核）")
+        if len(leads) >= 15:
+            break
+    content = replace(content, "CANDIDATES", "\n".join(leads) if leads else
+                      "暂无自动采集到的公开线索。")
     save_page("radar/index.md", content)
 
     page = DOCS / "radar/tasks.md"
