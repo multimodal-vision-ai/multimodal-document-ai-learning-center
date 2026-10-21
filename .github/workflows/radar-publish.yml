@@ -1,0 +1,58 @@
+name: Research Radar refresh pages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "55 2 * * *"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout current website code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: site-source
+
+      - name: Checkout verified snapshot
+        uses: actions/checkout@v4
+        with:
+          ref: radar-data
+          path: radar-store
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Load current research data
+        run: |
+          mkdir -p site-source/research-radar/data
+          cp -a radar-store/research-radar/data/. site-source/research-radar/data/
+
+      - name: Validate and render the site
+        working-directory: site-source
+        run: |
+          python -m unittest discover -s tests/radar -v
+          python scripts/radar/render.py
+          pip install -r requirements-docs.txt
+          mkdocs build --strict
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site-source/site
+
+      - uses: actions/deploy-pages@v4
+        id: deployment

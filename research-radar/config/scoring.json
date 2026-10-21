@@ -1,0 +1,13 @@
+{
+  "weights": {
+    "innovation": 0.2,
+    "openness": 0.2,
+    "compute": 0.15,
+    "reproducibility": 0.15,
+    "extension": 0.2,
+    "commercialization": 0.1
+  },
+  "recommendation_threshold": 8.5,
+  "max_daily_recommendations": 3,
+  "review_required": true
+}
