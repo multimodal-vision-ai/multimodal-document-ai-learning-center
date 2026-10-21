@@ -62,8 +62,19 @@ def arxiv():
         "start": 0, "max_results": min(int(config.get("max_results", 50)), 100),
         "sortBy": "lastUpdatedDate", "sortOrder": "descending"
     })
-    root = ET.fromstring(fetch("https://export.arxiv.org/api/query?" + params,
-                               {"Accept": "application/atom+xml"}))
+    # The public arXiv API sometimes times out on the export host.
+    # Retry once via the canonical arxiv.org host; never invent results.
+    errors = []
+    root = None
+    for host in ("https://export.arxiv.org", "https://arxiv.org"):
+        try:
+            root = ET.fromstring(fetch(host + "/api/query?" + params,
+                                       {"Accept": "application/atom+xml"}))
+            break
+        except (TimeoutError, HTTPError, URLError, OSError, ET.ParseError) as exc:
+            errors.append(f"{host}: {type(exc).__name__}: {exc}")
+    if root is None:
+        raise RuntimeError("arXiv API unavailable on both hosts: " + "; ".join(errors))
     ns = {"a": "http://www.w3.org/2005/Atom"}
     results = []
     for entry in root.findall("a:entry", ns):

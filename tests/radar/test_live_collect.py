@@ -59,5 +59,46 @@ class CollectionIntegrationTests(unittest.TestCase):
             self.assertEqual(len(health["source_failures"]), 1)
             self.assertEqual(health["source_counts"]["arxiv"], 1)
 
+
+
+class SourcePriorityTests(unittest.TestCase):
+    def test_research_papers_first_and_source_limits(self):
+        import render
+        items = []
+        for source, count in (("github", 12), ("huggingface", 8), ("openreview", 8)):
+            for i in range(count):
+                items.append({
+                    "id": f"{source}-{i}",
+                    "review": "pending",
+                    "discovered_from": source,
+                    "title": f"Candidate {source} {i}",
+                    "source_url": "https://example.org/" + source + str(i),
+                    "published_at": "2026-10-21T00:00:00Z"
+                })
+        chosen = render.select_candidate_leads(items)
+        self.assertEqual(len(chosen), 10)
+        self.assertEqual(chosen[0]["discovered_from"], "openreview")
+        self.assertEqual(sum(x["discovered_from"] == "openreview" for x in chosen), 6)
+        self.assertEqual(sum(x["discovered_from"] == "huggingface" for x in chosen), 2)
+        self.assertEqual(sum(x["discovered_from"] == "github" for x in chosen), 2)
+
+    def test_arxiv_falls_back_to_second_official_host(self):
+        from datetime import datetime, timezone
+        today = datetime.now(timezone.utc).isoformat()
+        atom = ('<feed xmlns="http://www.w3.org/2005/Atom">'
+                '<entry><title>Multimodal Document Parsing</title>'
+                '<id>https://arxiv.org/abs/2610.12345v2</id>'
+                f'<published>{today}</published><updated>{today}</updated>'
+                '</entry></feed>').encode("utf-8")
+        with patch.object(collect, "CONFIG", {"arxiv": {"enabled": True}}):
+            with patch.object(collect, "fetch", side_effect=[
+                    TimeoutError("export host timed out"), atom
+            ]) as called:
+                entries = collect.arxiv()
+        self.assertEqual(called.call_count, 2)
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["id"], "arxiv-2610-12345")
+        self.assertEqual(entries[0]["review"], "pending")
+
 if __name__ == "__main__":
     unittest.main()

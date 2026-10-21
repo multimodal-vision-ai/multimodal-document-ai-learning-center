@@ -53,6 +53,30 @@ def research_listing(items, empty):
 def indent(text):
     return "\n".join("    " + row if row else "" for row in text.splitlines())
 
+def select_candidate_leads(items):
+    """Show a small, source-balanced *unreviewed* sample, not a quality ranking.
+
+    Papers get more space than model uploads and GitHub repositories. All
+    raw leads remain in candidates.json for independent human inspection.
+    """
+    caps = (("arxiv", 5), ("openreview", 6), ("institution", 2),
+            ("huggingface", 2), ("github", 2))
+    result = []
+    for provider, count in caps:
+        group = [
+            item for item in items
+            if item.get("review") == "pending"
+            and item.get("discovered_from") == provider
+            and valid_url(item.get("source_url"))
+        ]
+        group.sort(key=lambda item: (
+            item.get("updated_at") or item.get("published_at") or "",
+            item.get("id", "")
+        ), reverse=True)
+        result.extend(group[:count])
+    return result[:15]
+
+
 def render(now=None):
     now = now or datetime.now(timezone.utc)
     projects = load(DATA / "projects.json", [])
@@ -102,9 +126,7 @@ def render(now=None):
     for marker, body in blocks.items():
         content = replace(content, marker, indent(body))
     leads = []
-    for item in sorted(candidates, key=lambda x: (x.get("updated_at") or x.get("published_at") or "", x.get("id", "")), reverse=True):
-        if item.get("review") != "pending" or not valid_url(item.get("source_url")):
-            continue
+    for item in select_candidate_leads(candidates):
         title = escape(item.get("title", "Untitled"))
         provider = escape(item.get("discovered_from", "source"))
         date = escape(str(item.get("updated_at") or item.get("published_at") or "")[:10])
@@ -116,7 +138,8 @@ def render(now=None):
     sources = len(collection_status.get("source_counts", {}))
     status_line = (f"**最近一次公开源采集（UTC）：{run_time}**；"
                    f"成功来源 {sources}；异常来源 {failures}；"
-                   f"候选总数 {len(candidates)}。")
+                   f"数据库候选总数 {len(candidates)}。"
+                   " 下方按来源限额展示部分线索，非质量排名。")
     content = replace(content, "CANDIDATES", status_line + "\n\n" +
                       ("\n".join(leads) if leads else "暂无自动采集到的公开线索。"))
     save_page("radar/index.md", content)
