@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#ec4899;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="pinkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f472b6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="strongGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" fill="#0f172a" rx="40"/>
+
+  <!-- Background grid -->
+  <g opacity="0.1">
+    <circle cx="40" cy="40" r="1.5" fill="#60a5fa"/><circle cx="80" cy="40" r="1.5" fill="#60a5fa"/>
+    <circle cx="120" cy="40" r="1.5" fill="#60a5fa"/><circle cx="160" cy="40" r="1.5" fill="#60a5fa"/>
+    <circle cx="200" cy="40" r="1.5" fill="#60a5fa"/><circle cx="240" cy="40" r="1.5" fill="#60a5fa"/>
+    <circle cx="280" cy="40" r="1.5" fill="#60a5fa"/><circle cx="320" cy="40" r="1.5" fill="#60a5fa"/>
+    <circle cx="360" cy="40" r="1.5" fill="#60a5fa"/>
+    <circle cx="40" cy="80" r="1.5" fill="#60a5fa"/><circle cx="80" cy="80" r="1.5" fill="#60a5fa"/>
+    <circle cx="120" cy="80" r="1.5" fill="#60a5fa"/><circle cx="160" cy="80" r="1.5" fill="#60a5fa"/>
+    <circle cx="200" cy="80" r="1.5" fill="#60a5fa"/><circle cx="240" cy="80" r="1.5" fill="#60a5fa"/>
+    <circle cx="280" cy="80" r="1.5" fill="#60a5fa"/><circle cx="320" cy="80" r="1.5" fill="#60a5fa"/>
+    <circle cx="360" cy="80" r="1.5" fill="#60a5fa"/>
+    <circle cx="40" cy="120" r="1.5" fill="#60a5fa"/><circle cx="80" cy="120" r="1.5" fill="#60a5fa"/>
+    <circle cx="120" cy="120" r="1.5" fill="#60a5fa"/><circle cx="160" cy="120" r="1.5" fill="#60a5fa"/>
+    <circle cx="200" cy="120" r="1.5" fill="#60a5fa"/><circle cx="240" cy="120" r="1.5" fill="#60a5fa"/>
+    <circle cx="280" cy="120" r="1.5" fill="#60a5fa"/><circle cx="320" cy="120" r="1.5" fill="#60a5fa"/>
+    <circle cx="360" cy="120" r="1.5" fill="#60a5fa"/>
+    <circle cx="40" cy="160" r="1.5" fill="#60a5fa"/><circle cx="80" cy="160" r="1.5" fill="#60a5fa"/>
+    <circle cx="120" cy="160" r="1.5" fill="#60a5fa"/><circle cx="160" cy="160" r="1.5" fill="#60a5fa"/>
+    <circle cx="200" cy="160" r="1.5" fill="#60a5fa"/><circle cx="240" cy="160" r="1.5" fill="#60a5fa"/>
+    <circle cx="280" cy="160" r="1.5" fill="#60a5fa"/><circle cx="320" cy="160" r="1.5" fill="#60a5fa"/>
+    <circle cx="360" cy="160" r="1.5" fill="#60a5fa"/>
+    <circle cx="40" cy="200" r="1.5" fill="#60a5fa"/><circle cx="80" cy="200" r="1.5" fill="#60a5fa"/>
+    <circle cx="120" cy="200" r="1.5" fill="#60a5fa"/><circle cx="160" cy="200" r="1.5" fill="#60a5fa"/>
+    <circle cx="200" cy="200" r="1.5" fill="#60a5fa"/><circle cx="240" cy="200" r="1.5" fill="#60a5fa"/>
+    <circle cx="280" cy="200" r="1.5" fill="#60a5fa"/><circle cx="320" cy="200" r="1.5" fill="#60a5fa"/>
+    <circle cx="360" cy="200" r="1.5" fill="#60a5fa"/>
+    <circle cx="40" cy="240" r="1.5" fill="#60a5fa"/><circle cx="80" cy="240" r="1.5" fill="#60a5fa"/>
+    <circle cx="120" cy="240" r="1.5" fill="#60a5fa"/><circle cx="160" cy="240" r="1.5" fill="#60a5fa"/>
+    <circle cx="200" cy="240" r="1.5" fill="#60a5fa"/><circle cx="240" cy="240" r="1.5" fill="#60a5fa"/>
+    <circle cx="280" cy="240" r="1.5" fill="#60a5fa"/><circle cx="320" cy="240" r="1.5" fill="#60a5fa"/>
+    <circle cx="360" cy="240" r="1.5" fill="#60a5fa"/>
+    <circle cx="40" cy="280" r="1.5" fill="#60a5fa"/><circle cx="80" cy="280" r="1.5" fill="#60a5fa"/>
+    <circle cx="120" cy="280" r="1.5" fill="#60a5fa"/><circle cx="160" cy="280" r="1.5" fill="#60a5fa"/>
+    <circle cx="200" cy="280" r="1.5" fill="#60a5fa"/><circle cx="240" cy="280" r="1.5" fill="#60a5fa"/>
+    <circle cx="280" cy="280" r="1.5" fill="#60a5fa"/><circle cx="320" cy="280" r="1.5" fill="#60a5fa"/>
+    <circle cx="360" cy="280" r="1.5" fill="#60a5fa"/>
+    <circle cx="40" cy="320" r="1.5" fill="#60a5fa"/><circle cx="80" cy="320" r="1.5" fill="#60a5fa"/>
+    <circle cx="120" cy="320" r="1.5" fill="#60a5fa"/><circle cx="160" cy="320" r="1.5" fill="#60a5fa"/>
+    <circle cx="200" cy="320" r="1.5" fill="#60a5fa"/><circle cx="240" cy="320" r="1.5" fill="#60a5fa"/>
+    <circle cx="280" cy="320" r="1.5" fill="#60a5fa"/><circle cx="320" cy="320" r="1.5" fill="#60a5fa"/>
+    <circle cx="360" cy="320" r="1.5" fill="#60a5fa"/>
+    <circle cx="40" cy="360" r="1.5" fill="#60a5fa"/><circle cx="80" cy="360" r="1.5" fill="#60a5fa"/>
+    <circle cx="120" cy="360" r="1.5" fill="#60a5fa"/><circle cx="160" cy="360" r="1.5" fill="#60a5fa"/>
+    <circle cx="200" cy="360" r="1.5" fill="#60a5fa"/><circle cx="240" cy="360" r="1.5" fill="#60a5fa"/>
+    <circle cx="280" cy="360" r="1.5" fill="#60a5fa"/><circle cx="320" cy="360" r="1.5" fill="#60a5fa"/>
+    <circle cx="360" cy="360" r="1.5" fill="#60a5fa"/>
+  </g>
+
+  <!-- Main Logo centered -->
+  <g transform="translate(200, 170)">
+    <!-- Outer glow -->
+    <circle cx="0" cy="0" r="110" fill="none" stroke="url(#mainGrad)" stroke-width="1" opacity="0.15" filter="url(#strongGlow)"/>
+    <circle cx="0" cy="0" r="125" fill="none" stroke="url(#mainGrad)" stroke-width="0.5" opacity="0.1"/>
+
+    <!-- Hexagon brain outline -->
+    <polygon points="0,-100 86.6,-50 86.6,50 0,100 -86.6,50 -86.6,-50" 
+             fill="none" stroke="url(#mainGrad)" stroke-width="3.5" opacity="0.95" filter="url(#glow)"/>
+
+    <!-- Inner hexagon -->
+    <polygon points="0,-88 76.2,-44 76.2,44 0,88 -76.2,44 -76.2,-44" 
+             fill="none" stroke="url(#mainGrad)" stroke-width="1" opacity="0.25"/>
+
+    <!-- Neural pathways -->
+    <line x1="0" y1="-100" x2="0" y2="100" stroke="#3b82f6" stroke-width="2.5" opacity="0.5" filter="url(#glow)"/>
+    <line x1="-86.6" y1="-50" x2="86.6" y2="50" stroke="#8b5cf6" stroke-width="2.5" opacity="0.5" filter="url(#glow)"/>
+    <line x1="86.6" y1="-50" x2="-86.6" y2="50" stroke="#ec4899" stroke-width="2.5" opacity="0.5" filter="url(#glow)"/>
+
+    <!-- Secondary connections -->
+    <line x1="0" y1="-100" x2="86.6" y2="50" stroke="#6366f1" stroke-width="1.5" opacity="0.3"/>
+    <line x1="0" y1="-100" x2="-86.6" y2="50" stroke="#6366f1" stroke-width="1.5" opacity="0.3"/>
+    <line x1="0" y1="100" x2="86.6" y2="-50" stroke="#f472b6" stroke-width="1.5" opacity="0.3"/>
+    <line x1="0" y1="100" x2="-86.6" y2="-50" stroke="#f472b6" stroke-width="1.5" opacity="0.3"/>
+
+    <!-- Central core -->
+    <circle cx="0" cy="0" r="22" fill="url(#mainGrad)" opacity="0.95" filter="url(#glow)"/>
+    <circle cx="0" cy="0" r="10" fill="#f8fafc" opacity="0.95"/>
+
+    <!-- Peripheral nodes -->
+    <circle cx="0" cy="-76" r="11" fill="url(#blueGrad)" opacity="0.95" filter="url(#glow)"/>
+    <circle cx="0" cy="-76" r="5" fill="#f8fafc"/>
+
+    <circle cx="65.8" cy="-38" r="11" fill="url(#purpleGrad)" opacity="0.95" filter="url(#glow)"/>
+    <circle cx="65.8" cy="-38" r="5" fill="#f8fafc"/>
+
+    <circle cx="65.8" cy="38" r="11" fill="url(#pinkGrad)" opacity="0.95" filter="url(#glow)"/>
+    <circle cx="65.8" cy="38" r="5" fill="#f8fafc"/>
+
+    <circle cx="0" cy="76" r="11" fill="url(#orangeGrad)" opacity="0.95" filter="url(#glow)"/>
+    <circle cx="0" cy="76" r="5" fill="#f8fafc"/>
+
+    <circle cx="-65.8" cy="38" r="11" fill="url(#pinkGrad)" opacity="0.95" filter="url(#glow)"/>
+    <circle cx="-65.8" cy="38" r="5" fill="#f8fafc"/>
+
+    <circle cx="-65.8" cy="-38" r="11" fill="url(#purpleGrad)" opacity="0.95" filter="url(#glow)"/>
+    <circle cx="-65.8" cy="-38" r="5" fill="#f8fafc"/>
+
+    <!-- Orbital rings -->
+    <circle cx="0" cy="0" r="42" fill="none" stroke="#3b82f6" stroke-width="2" opacity="0.4" stroke-dasharray="8,5" filter="url(#glow)"/>
+    <circle cx="0" cy="0" r="62" fill="none" stroke="#8b5cf6" stroke-width="1.2" opacity="0.25" stroke-dasharray="5,10"/>
+    <circle cx="0" cy="0" r="80" fill="none" stroke="#ec4899" stroke-width="1" opacity="0.15" stroke-dasharray="4,12"/>
+
+    <!-- Connection lines -->
+    <line x1="0" y1="0" x2="0" y2="-76" stroke="#60a5fa" stroke-width="2.5" opacity="0.6"/>
+    <line x1="0" y1="0" x2="65.8" y2="-38" stroke="#a78bfa" stroke-width="2.5" opacity="0.6"/>
+    <line x1="0" y1="0" x2="65.8" y2="38" stroke="#f472b6" stroke-width="2.5" opacity="0.6"/>
+    <line x1="0" y1="0" x2="0" y2="76" stroke="#fbbf24" stroke-width="2.5" opacity="0.6"/>
+    <line x1="0" y1="0" x2="-65.8" y2="38" stroke="#f472b6" stroke-width="2.5" opacity="0.6"/>
+    <line x1="0" y1="0" x2="-65.8" y2="-38" stroke="#a78bfa" stroke-width="2.5" opacity="0.6"/>
+
+    <!-- Inter-node hexagon web -->
+    <line x1="0" y1="-76" x2="65.8" y2="-38" stroke="#6366f1" stroke-width="1.5" opacity="0.35"/>
+    <line x1="65.8" y1="-38" x2="65.8" y2="38" stroke="#8b5cf6" stroke-width="1.5" opacity="0.35"/>
+    <line x1="65.8" y1="38" x2="0" y2="76" stroke="#ec4899" stroke-width="1.5" opacity="0.35"/>
+    <line x1="0" y1="76" x2="-65.8" y2="38" stroke="#ec4899" stroke-width="1.5" opacity="0.35"/>
+    <line x1="-65.8" y1="38" x2="-65.8" y2="-38" stroke="#8b5cf6" stroke-width="1.5" opacity="0.35"/>
+    <line x1="-65.8" y1="-38" x2="0" y2="-76" stroke="#6366f1" stroke-width="1.5" opacity="0.35"/>
+  </g>
+
+  <!-- Organization name at bottom -->
+  <text x="200" y="330" text-anchor="middle" 
+        font-family="'Inter', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif" 
+        font-size="22" font-weight="700" fill="url(#mainGrad)" letter-spacing="0.05em">
+    MVAI Lab
+  </text>
+  <text x="200" y="355" text-anchor="middle" 
+        font-family="'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif" 
+        font-size="12" font-weight="400" fill="#64748b" letter-spacing="0.1em">
+    多模态视觉AI实验室
+  </text>
+  <text x="200" y="375" text-anchor="middle" 
+        font-family="'JetBrains Mono', 'Fira Code', monospace" 
+        font-size="9" fill="#334155" letter-spacing="0.15em">
+    MULTIMODAL VISION AI
+  </text>
+</svg>

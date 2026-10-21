@@ -1,0 +1,4027 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Multimodal Vision AI Learning Center — 从文档理解出发，探索图像、视频与多模态智能">
+      
+      
+        <meta name="author" content="谭国平教授团队 · Multimodal Vision AI Lab">
+      
+      
+        <link rel="canonical" href="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/reading/04_doctags.html">
+      
+      
+        <link rel="prev" href="02_document-ai.html">
+      
+      
+        <link rel="next" href="05_benchmark-2026.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>结构表示 - 多模态视觉AI学习中心</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../stylesheets/shanshui.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr"><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#doctags" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="多模态视觉AI学习中心" class="md-header__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            多模态视觉AI学习中心
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              结构表示
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../index.html" class="md-tabs__link">
+          
+  
+  
+  学习首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../learning/index.html" class="md-tabs__link">
+          
+  
+  
+  入门课程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/index.html" class="md-tabs__link">
+          
+  
+  
+  动手教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../experiments/index.html" class="md-tabs__link">
+          
+  
+  
+  项目实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+  论文导读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../resources/index.html" class="md-tabs__link">
+          
+  
+  
+  学习资源
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../projects/index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  成果展厅
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="多模态视觉AI学习中心" class="md-nav__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    多模态视觉AI学习中心
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习首页
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            学习首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    欢迎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../radar/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    科研动态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../radar/projects.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目库
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../radar/tasks.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    研究任务
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于学习中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    入门课程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            入门课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    课程首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/00_12_Week_Bootcamp.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    12 周自主路线
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            基础工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/01_Git_and_GitHub.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git 与 GitHub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/02_Python_Environment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Python 与可复现环境
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/03_HuggingFace.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hugging Face Hub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/04_Kaggle.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kaggle Notebook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/05_Transformers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Transformers 推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/05-1_AI_Assisted_Coding.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI 辅助编程与验证
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档智能专题
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档智能专题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/06-1_Qwen3.5-VL-0.8B.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Qwen3.5-0.8B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/06-2_Docling.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docling 文档解析
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/07_Doc_AI.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Document AI 与评测
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    后训练与实验追踪
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            后训练与实验追踪
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/08_Post_Training.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LoRA、评测与 W&B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    自主学习支持
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            自主学习支持
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/10_Assessment_and_Submission.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主评估与证据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/11_Learning_Log_Template.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主学习记录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/09_FAQ.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    常见问题
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    动手教程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            动手教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个教程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档评测：OmniDocBench Markdown
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    后训练路线：Qwen3.5-VL SFT/GRPO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目实战
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            项目实战
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目 01：文档理解评测
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            项目 01：文档理解评测
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目控制台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part01-%E5%AE%9E%E9%AA%8C%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 01：确定目标与准备
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part02-%E5%88%9B%E5%BB%BAGithub%E7%A7%91%E7%A0%94%E9%A1%B9%E7%9B%AE%E4%BB%93%E5%BA%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 02：创建 GitHub 项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part03-%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 03：构建项目目录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part04-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 04：准备实验数据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part05-%E6%A8%A1%E5%9E%8B%E5%87%86%E5%A4%87%E4%B8%8E%E6%8E%A8%E7%90%86.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 05：完成首次推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part06-%E6%8F%90%E7%A4%BA%E8%AF%8D%E7%AE%A1%E7%90%86%E4%B8%8E%E5%AF%B9%E6%AF%94%E5%88%86%E6%9E%90.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 06：完成受控对比
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part07-Bechmark%E8%AF%84%E6%B5%8B%E4%B8%8E%E6%80%BB%E7%BB%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 07：评测与项目总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    论文导读
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            论文导读
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    快速选读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="00_surveys.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    领域地图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    核心原理
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            核心原理
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01_foundation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    模型基石
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03_vlm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉语言
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档研究
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档研究
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02_document-ai.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档智能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    结构表示
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="04_doctags.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    结构表示
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      阅读分层与模块学习卡
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      本页快速定位
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      为什么要学
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      学习目标
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      建议路线
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05_benchmark-2026.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    评测选型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习资源
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            学习资源
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    按问题找资源
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/official-sources.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    官方文档与平台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/courses.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    推荐课程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/papers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    论文索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/datasets.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    数据集索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/tools.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工具清单
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    成果展厅
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      阅读分层与模块学习卡
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      本页快速定位
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      为什么要学
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      学习目标
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      建议路线
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+                  
+  
+
+
+
+  
+    <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/edit/dev/docs/reading/04_doctags.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="doctags">DocTags：保留文档结构与证据位置<a class="headerlink" href="#doctags" title="Permanent link">&para;</a></h1>
+<p>本页重点不是记标签语法，而是理解纯文本或 Markdown 会丢失哪些版面信息，以及结构、阅读顺序、空间位置和来源信息怎样支持后续检索与推理。</p>
+<div class="admonition success">
+<p class="admonition-title">本页最小任务</p>
+<p>选择一页含标题、段落和表格的文档，对比纯文本、Markdown 与结构化表示，指出至少 3 项信息损失及其对下游任务的影响。</p>
+</div>
+<h2 id="_1">阅读分层与模块学习卡<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th style="text-align: right;">预计时长</th>
+<th>阅读范围</th>
+<th>最小完成动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>必读</strong></td>
+<td style="text-align: right;">30–45 分钟</td>
+<td><a href="#part-1-why-do-we-need-doctags">为什么需要 DocTags</a>、<a href="#doctags-vs-markdown">DocTags vs Markdown</a>、<a href="#core-structure">Core Structure</a></td>
+<td>对比三种表示，指出至少 3 项信息损失</td>
+</tr>
+<tr>
+<td><strong>选读</strong></td>
+<td style="text-align: right;">1–2 小时</td>
+<td><a href="#spatial-information">Spatial Information</a>、<a href="#reading-order">Reading Order</a>、<a href="#provenance">Provenance</a>及生成流程</td>
+<td>画出结构层级，并说明证据如何定位回原页</td>
+</tr>
+<tr>
+<td><strong>深挖</strong></td>
+<td style="text-align: right;">半天至 1 周</td>
+<td>阅读 Docling/SmolDocling 官方资料，选择生成、质量评测、RAG 或 Agent 方向</td>
+<td>生成或检查一个结构化样例，记录质量问题和验证指标</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">本页学习卡</p>
+<p><strong>学什么</strong>：结构、空间位置、阅读顺序和 provenance 的价值。<br>
+<strong>官方来源</strong>：Docling、SmolDocling 官方论文、文档和仓库。<br>
+<strong>做什么</strong>：比较同一文档的纯文本、Markdown 与结构化表示。<br>
+<strong>提交什么</strong>：信息损失表、结构图和一个下游影响说明。<br>
+<strong>如何自查</strong>：能把结构化字段定位回原页面，并解释缺失字段会破坏什么任务。</p>
+</div>
+<h2 id="_2">本页快速定位<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>当前问题</th>
+<th>直接进入</th>
+<th>阅读目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>纯文本为什么不够</td>
+<td><a href="#part-1-why-do-we-need-doctags">Why Do We Need DocTags?</a> · <a href="#limitations-of-plain-text">Plain Text 的限制</a></td>
+<td>找出至少 3 类信息损失</td>
+</tr>
+<tr>
+<td>DocTags 与 Markdown 有何区别</td>
+<td><a href="#doctags-vs-markdown">DocTags vs Markdown</a></td>
+<td>比较结构、空间位置与语义表达</td>
+</tr>
+<tr>
+<td>DocTags 如何组织数据</td>
+<td><a href="#part-5-doctags-architecture">Architecture</a> · <a href="#core-structure">Core Structure</a></td>
+<td>画出核心层级关系</td>
+</tr>
+<tr>
+<td>哪些字段决定可追溯性</td>
+<td><a href="#spatial-information">Spatial Information</a> · <a href="#reading-order">Reading Order</a> · <a href="#provenance">Provenance</a></td>
+<td>解释证据如何定位回原页面</td>
+</tr>
+<tr>
+<td>DocTags 如何生成</td>
+<td><a href="#part-7-how-are-doctags-generated">Generation</a> · <a href="#part-8-doctags-generation-pipeline">Generation Pipeline</a></td>
+<td>比较传统 OCR 与现代 VLM Pipeline</td>
+</tr>
+<tr>
+<td>如何用于项目和研究</td>
+<td><a href="#part-10-practical-applications">Practical Applications</a> · <a href="#part-12-suggested-laboratory-research">Suggested Research</a></td>
+<td>选出一个下游任务和验证指标</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_3">为什么要学<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>DocTags 是近年来提出的一种面向 <strong>Document AI</strong> 的新型结构化文档表示格式（Structured Document Representation）。</p>
+<p>它的目标不是简单保存文本，而是：</p>
+<blockquote>
+<p><strong>完整描述文档中的内容、结构、空间位置和语义信息。</strong></p>
+</blockquote>
+<p>DocTags 已成为 Docling、SmolDocling 等新一代 Document AI 系统的重要组成部分，也是未来 AI Agent 和 RAG 系统的重要中间表示。</p>
+<hr />
+<h2 id="_4">学习目标<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>完成本章节后，应能够：</p>
+<ul>
+<li>理解为什么需要 DocTags</li>
+<li>理解 DocTags 与 Markdown、HTML、JSON 的区别</li>
+<li>理解结构化文档表示（Structured Representation）</li>
+<li>理解 DocTags 在现代 Document AI 中的作用</li>
+</ul>
+<hr />
+<h2 id="_5">建议路线<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Vision-Language Model
+ │
+ ▼
+Structured Document
+ │
+ ▼
+DocTags
+ │
+ ▼
+Knowledge Representation
+ │
+ ▼
+AI Agent
+</code></pre></div>
+<hr />
+<h1 id="part-1-why-do-we-need-doctags">Part 1. Why Do We Need DocTags?<a class="headerlink" href="#part-1-why-do-we-need-doctags" title="Permanent link">&para;</a></h1>
+<p>传统 OCR 的输出通常只有文本：</p>
+<div class="highlight"><pre><span></span><code>This is a document.
+
+Table 1 ...
+
+Figure 2 ...
+</code></pre></div>
+<p>虽然文本能够保存内容，</p>
+<p>但是会丢失：</p>
+<ul>
+<li>页面布局</li>
+<li>阅读顺序</li>
+<li>图片位置</li>
+<li>表格结构</li>
+<li>标题层级</li>
+<li>数学公式</li>
+<li>图表关系</li>
+</ul>
+<p>对于 AI 来说：</p>
+<p>这些信息同样重要。</p>
+<hr />
+<h1 id="limitations-of-plain-text">Limitations of Plain Text<a class="headerlink" href="#limitations-of-plain-text" title="Permanent link">&para;</a></h1>
+<p>例如：</p>
+<div class="highlight"><pre><span></span><code>Introduction
+
+Figure 1
+
+Table 1
+
+Conclusion
+</code></pre></div>
+<p>无法回答：</p>
+<ul>
+<li>Figure 位于哪里？</li>
+<li>Table 属于哪一章节？</li>
+<li>Caption 对应哪个图片？</li>
+<li>阅读顺序是什么？</li>
+<li>这是标题还是正文？</li>
+</ul>
+<p>因此：</p>
+<blockquote>
+<p><strong>Plain Text 无法表达 Document Structure。</strong></p>
+</blockquote>
+<hr />
+<h1 id="part-2-evolution-of-document-representation">Part 2. Evolution of Document Representation<a class="headerlink" href="#part-2-evolution-of-document-representation" title="Permanent link">&para;</a></h1>
+<p>文档表示的发展过程如下：</p>
+<div class="highlight"><pre><span></span><code>Plain Text
+      │
+      ▼
+Markdown
+      │
+      ▼
+HTML
+      │
+      ▼
+JSON
+      │
+      ▼
+Structured Document
+      │
+      ▼
+DocTags
+</code></pre></div>
+<p>DocTags 的目标不是替代 Markdown，</p>
+<p>而是在 Markdown 基础上增加：</p>
+<ul>
+<li>Layout</li>
+<li>Structure</li>
+<li>Location</li>
+<li>Semantic Information</li>
+</ul>
+<p>形成统一的文档语义表示。</p>
+<hr />
+<h1 id="what-is-doctags">What is DocTags?<a class="headerlink" href="#what-is-doctags" title="Permanent link">&para;</a></h1>
+<p>DocTags 可以理解为：</p>
+<blockquote>
+<p><strong>一种面向大型语言模型的文档描述语言（Document Markup Language）。</strong></p>
+</blockquote>
+<p>它能够统一表示：</p>
+<ul>
+<li>标题</li>
+<li>正文</li>
+<li>图片</li>
+<li>表格</li>
+<li>数学公式</li>
+<li>代码</li>
+<li>列表</li>
+<li>Caption</li>
+<li>Reading Order</li>
+<li>页面位置</li>
+</ul>
+<p>相比 Markdown：信息更加完整。</p>
+<hr />
+<h1 id="part-3-why-markdown-is-not-enough">Part 3. Why Markdown is Not Enough?<a class="headerlink" href="#part-3-why-markdown-is-not-enough" title="Permanent link">&para;</a></h1>
+<p>Markdown 适合：</p>
+<ul>
+<li>文档写作</li>
+<li>博客</li>
+<li>GitHub</li>
+<li>README</li>
+</ul>
+<p>例如：</p>
+<div class="highlight"><pre><span></span><code><span class="gh"># Title</span>
+
+This is a paragraph.
+
+| A | B |
+</code></pre></div>
+<p>但是：</p>
+<p>Markdown 无法准确表达：</p>
+<ul>
+<li>Bounding Box</li>
+<li>Reading Order</li>
+<li>Page Coordinates</li>
+<li>Semantic Regions</li>
+<li>Multi-column Layout</li>
+</ul>
+<p>因此：</p>
+<p>现代 Document AI 更需要一种：</p>
+<blockquote>
+<p><strong>Layout-aware Structured Representation</strong></p>
+</blockquote>
+<hr />
+<h1 id="doctags-vs-markdown">DocTags vs Markdown<a class="headerlink" href="#doctags-vs-markdown" title="Permanent link">&para;</a></h1>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th style="text-align: center;">Markdown</th>
+<th style="text-align: center;">DocTags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Text</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Heading</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Table</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Formula</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Figure</td>
+<td style="text-align: center;">△</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Layout</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Reading Order</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Bounding Box</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Semantic Block</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>AI-ready</td>
+<td style="text-align: center;">△</td>
+<td style="text-align: center;">✓</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="part-4-doctags-design-philosophy">Part 4. DocTags Design Philosophy<a class="headerlink" href="#part-4-doctags-design-philosophy" title="Permanent link">&para;</a></h1>
+<p>DocTags 的设计目标包括：</p>
+<h2 id="1-unified-representation">1. Unified Representation<a class="headerlink" href="#1-unified-representation" title="Permanent link">&para;</a></h2>
+<p>统一表示：</p>
+<ul>
+<li>PDF</li>
+<li>DOCX</li>
+<li>PPT</li>
+<li>HTML</li>
+<li>Image</li>
+</ul>
+<p>所有文档类型。</p>
+<hr />
+<h2 id="2-layout-aware">2. Layout-aware<a class="headerlink" href="#2-layout-aware" title="Permanent link">&para;</a></h2>
+<p>保留：</p>
+<ul>
+<li>页面布局</li>
+<li>空间位置</li>
+<li>阅读顺序</li>
+</ul>
+<p>而不仅仅是文本。</p>
+<hr />
+<h2 id="3-semantic-aware">3. Semantic-aware<a class="headerlink" href="#3-semantic-aware" title="Permanent link">&para;</a></h2>
+<p>保留：</p>
+<ul>
+<li>Heading</li>
+<li>Caption</li>
+<li>Table</li>
+<li>Formula</li>
+<li>Code</li>
+<li>Figure</li>
+</ul>
+<p>等语义信息。</p>
+<hr />
+<h2 id="4-llm-friendly">4. LLM-friendly<a class="headerlink" href="#4-llm-friendly" title="Permanent link">&para;</a></h2>
+<p>DocTags 的设计目标之一就是：</p>
+<blockquote>
+<p><strong>让大型语言模型更容易理解文档。</strong></p>
+</blockquote>
+<p>相比传统 OCR，</p>
+<p>模型无需重新推断文档结构，</p>
+<p>可以直接利用结构化表示进行推理。</p>
+<hr />
+<h1 id="typical-workflow">Typical Workflow<a class="headerlink" href="#typical-workflow" title="Permanent link">&para;</a></h1>
+<p>现代 Document AI 的处理流程：</p>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Document Parser
+ │
+ ▼
+Vision-Language Model
+ │
+ ▼
+DocTags
+ │
+ ▼
+Markdown / JSON
+ │
+ ▼
+LLM
+ │
+ ▼
+RAG
+ │
+ ▼
+AI Agent
+</code></pre></div>
+<hr />
+<h1 id="laboratory-relevance">Laboratory Relevance<a class="headerlink" href="#laboratory-relevance" title="Permanent link">&para;</a></h1>
+<p>实验室未来建议统一采用：</p>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Qwen3-VL
+ │
+ ▼
+DocTags
+ │
+ ▼
+OmniDocBench
+ │
+ ▼
+Research Agent
+</code></pre></div>
+<p>DocTags 将作为：</p>
+<ul>
+<li>统一数据格式</li>
+<li>Benchmark 数据格式</li>
+<li>Agent 输入格式</li>
+<li>Long-context Document Memory</li>
+</ul>
+<p>的重要基础。</p>
+<hr />
+<h1 id="knowledge-checklist">Knowledge Checklist<a class="headerlink" href="#knowledge-checklist" title="Permanent link">&para;</a></h1>
+<p>完成本部分后，应能够回答：</p>
+<h2 id="structured-representation">Structured Representation<a class="headerlink" href="#structured-representation" title="Permanent link">&para;</a></h2>
+<ul>
+<li>为什么纯文本不能表达复杂文档？</li>
+<li>Markdown 有哪些局限？</li>
+<li>为什么需要结构化文档表示？</li>
+</ul>
+<hr />
+<h2 id="doctags_1">DocTags<a class="headerlink" href="#doctags_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>DocTags 的设计目标是什么？</li>
+<li>DocTags 与 Markdown 有什么区别？</li>
+<li>DocTags 为什么更适合大型语言模型？</li>
+</ul>
+<hr />
+<h1 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h1>
+<p>Document Representation 的发展路线如下：</p>
+<div class="highlight"><pre><span></span><code>Plain Text
+      │
+      ▼
+Markdown
+      │
+      ▼
+HTML
+      │
+      ▼
+JSON
+      │
+      ▼
+DocTags
+      │
+      ▼
+AI-ready Structured Document
+</code></pre></div>
+<p>DocTags 代表了现代 <strong>Document AI</strong> 从"文本提取"向"语义理解"发展的重要方向，也是构建 <strong>Document AI Agent</strong>、<strong>RAG</strong> 和 <strong>AI Research Agent</strong> 的关键基础表示。</p>
+<hr />
+<h1 id="part-5-doctags-architecture">Part 5. DocTags Architecture<a class="headerlink" href="#part-5-doctags-architecture" title="Permanent link">&para;</a></h1>
+<p>DocTags 的设计目标不是简单记录文本，而是完整描述：</p>
+<ul>
+<li>文档内容（Content）</li>
+<li>文档结构（Structure）</li>
+<li>页面布局（Layout）</li>
+<li>空间位置（Location）</li>
+<li>阅读顺序（Reading Order）</li>
+<li>语义关系（Semantic Relation）</li>
+</ul>
+<p>因此，一个 DocTags 文档可以理解为：</p>
+<div class="highlight"><pre><span></span><code>Document
+    │
+    ├── Metadata
+    ├── Pages
+    ├── Blocks
+    ├── Layout
+    ├── Reading Order
+    ├── Semantic Structure
+    └── Spatial Information
+</code></pre></div>
+<p>相比传统 Markdown, DocTags 增加了：</p>
+<blockquote>
+<p><strong>Document Structure + Semantic Layout</strong></p>
+</blockquote>
+<p>这是现代 Document AI 最重要的变化之一。</p>
+<hr />
+<h1 id="relationship-with-doclingdocument">Relationship with DoclingDocument<a class="headerlink" href="#relationship-with-doclingdocument" title="Permanent link">&para;</a></h1>
+<p>目前 Docling 的统一内部数据结构是：</p>
+<blockquote>
+<p><strong>DoclingDocument</strong></p>
+</blockquote>
+<p>DocTags 是其一种重要导出格式。</p>
+<p>整体流程如下：</p>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Docling Parser
+ │
+ ▼
+DoclingDocument
+ │
+ ├── Markdown
+ ├── HTML
+ ├── JSON
+ ├── DocTags
+ └── DocLang
+</code></pre></div>
+<p>DoclingDocument 保留了完整的文档层级、布局、来源信息（Provenance）和页面坐标，再根据需求导出不同格式。</p>
+<hr />
+<h1 id="core-structure">Core Structure<a class="headerlink" href="#core-structure" title="Permanent link">&para;</a></h1>
+<p>一个完整的 DocTags 通常包含以下几类信息。</p>
+<div class="highlight"><pre><span></span><code>Document
+ │
+ ├── Metadata
+ ├── Pages
+ ├── Sections
+ ├── Paragraphs
+ ├── Tables
+ ├── Figures
+ ├── Equations
+ ├── Lists
+ ├── Code Blocks
+ └── References
+</code></pre></div>
+<p>其中每个对象不仅包含文本，</p>
+<p>还保存：</p>
+<ul>
+<li>Bounding Box</li>
+<li>Page Index</li>
+<li>Reading Order</li>
+<li>Parent Node</li>
+<li>Child Node</li>
+</ul>
+<hr />
+<h1 id="part-6-core-semantic-elements">Part 6. Core Semantic Elements<a class="headerlink" href="#part-6-core-semantic-elements" title="Permanent link">&para;</a></h1>
+<p>现代 Document AI 最关注的是：</p>
+<blockquote>
+<p><strong>Semantic Blocks</strong></p>
+</blockquote>
+<p>典型语义元素包括：</p>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Title</td>
+<td>文档标题</td>
+</tr>
+<tr>
+<td>Heading</td>
+<td>各级章节标题</td>
+</tr>
+<tr>
+<td>Paragraph</td>
+<td>正文段落</td>
+</tr>
+<tr>
+<td>List</td>
+<td>列表</td>
+</tr>
+<tr>
+<td>Table</td>
+<td>表格</td>
+</tr>
+<tr>
+<td>Figure</td>
+<td>图片</td>
+</tr>
+<tr>
+<td>Caption</td>
+<td>图题、表题</td>
+</tr>
+<tr>
+<td>Formula</td>
+<td>数学公式</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>代码块</td>
+</tr>
+<tr>
+<td>Footnote</td>
+<td>脚注</td>
+</tr>
+<tr>
+<td>Reference</td>
+<td>参考文献</td>
+</tr>
+</tbody>
+</table>
+<p>相比 OCR，这些元素具有明确的语义边界。</p>
+<hr />
+<h1 id="hierarchical-representation">Hierarchical Representation<a class="headerlink" href="#hierarchical-representation" title="Permanent link">&para;</a></h1>
+<p>DocTags 采用层次化表示方式。</p>
+<p>例如：</p>
+<div class="highlight"><pre><span></span><code>Document
+    │
+    ├── Chapter
+    │      │
+    │      ├── Section
+    │      │      │
+    │      │      ├── Paragraph
+    │      │      ├── Figure
+    │      │      └── Table
+    │      │
+    │      └── Section
+    │
+    └── References
+</code></pre></div>
+<p>这种结构能够完整恢复论文、教材、技术文档等复杂层级。</p>
+<hr />
+<h1 id="spatial-information">Spatial Information<a class="headerlink" href="#spatial-information" title="Permanent link">&para;</a></h1>
+<p>DocTags 不仅保存文本，</p>
+<p>还保存页面中的空间信息。</p>
+<p>例如：</p>
+<div class="highlight"><pre><span></span><code>Heading
+
+Page: 3
+
+Bounding Box:
+(x1,y1,x2,y2)
+</code></pre></div>
+<p>空间信息可用于：</p>
+<ul>
+<li>页面重建</li>
+<li>Visual Grounding</li>
+<li>Region Retrieval</li>
+<li>Reading Order</li>
+<li>GUI Agent</li>
+</ul>
+<p>这是 Markdown 无法提供的能力。</p>
+<hr />
+<h1 id="reading-order">Reading Order<a class="headerlink" href="#reading-order" title="Permanent link">&para;</a></h1>
+<p>对于复杂文档，</p>
+<p>阅读顺序通常不是：</p>
+<div class="highlight"><pre><span></span><code>Left → Right
+</code></pre></div>
+<p>而是：</p>
+<div class="highlight"><pre><span></span><code>Column 1
+      │
+      ▼
+Column 2
+      │
+      ▼
+Figure
+      │
+      ▼
+Caption
+</code></pre></div>
+<p>DocTags 将阅读顺序作为独立信息保存，避免多栏论文、杂志和报告出现阅读错误。</p>
+<hr />
+<h1 id="provenance">Provenance<a class="headerlink" href="#provenance" title="Permanent link">&para;</a></h1>
+<p>现代 DocTags 还记录：</p>
+<blockquote>
+<p><strong>Provenance（来源信息）</strong></p>
+</blockquote>
+<p>包括：</p>
+<ul>
+<li>来源页面</li>
+<li>坐标位置</li>
+<li>原始区域</li>
+<li>OCR 来源</li>
+<li>Parser 来源</li>
+</ul>
+<p>例如：</p>
+<div class="highlight"><pre><span></span><code>Paragraph
+
+Page: 12
+
+Source:
+PDF
+
+Bounding Box:
+(...)
+</code></pre></div>
+<p>这对于：</p>
+<ul>
+<li>可追溯 AI</li>
+<li>Citation</li>
+<li>Document QA</li>
+</ul>
+<p>具有重要意义。</p>
+<hr />
+<h1 id="metadata">Metadata<a class="headerlink" href="#metadata" title="Permanent link">&para;</a></h1>
+<p>DocTags 一般保存：</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Title</td>
+<td>文档标题</td>
+</tr>
+<tr>
+<td>Author</td>
+<td>作者</td>
+</tr>
+<tr>
+<td>Language</td>
+<td>语言</td>
+</tr>
+<tr>
+<td>Pages</td>
+<td>页数</td>
+</tr>
+<tr>
+<td>Creation Time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>Source</td>
+<td>文档来源</td>
+</tr>
+<tr>
+<td>Version</td>
+<td>文档版本</td>
+</tr>
+</tbody>
+</table>
+<p>Metadata 是 RAG 和知识库管理的重要基础。</p>
+<hr />
+<h1 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h1>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th style="text-align: center;">Markdown</th>
+<th style="text-align: center;">HTML</th>
+<th style="text-align: center;">JSON</th>
+<th style="text-align: center;">DocTags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Text</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Heading</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Table</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Formula</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Layout</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">△</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Reading Order</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">△</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Bounding Box</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Hierarchy</td>
+<td style="text-align: center;">△</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Provenance</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">△</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Agent-ready</td>
+<td style="text-align: center;">△</td>
+<td style="text-align: center;">△</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="laboratory-relevance_1">Laboratory Relevance<a class="headerlink" href="#laboratory-relevance_1" title="Permanent link">&para;</a></h1>
+<p>建议实验室统一采用如下流程：</p>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Qwen3-VL
+ │
+ ▼
+DoclingDocument
+ │
+ ▼
+DocTags
+ │
+ ▼
+Markdown / JSON
+ │
+ ▼
+Knowledge Base
+ │
+ ▼
+AI Agent
+</code></pre></div>
+<p>这一流程兼顾：</p>
+<ul>
+<li>数据保存</li>
+<li>模型训练</li>
+<li>Benchmark</li>
+<li>RAG</li>
+<li>Agent</li>
+</ul>
+<p>也是当前国际开源生态的发展方向。</p>
+<hr />
+<h1 id="knowledge-checklist_1">Knowledge Checklist<a class="headerlink" href="#knowledge-checklist_1" title="Permanent link">&para;</a></h1>
+<p>完成本部分后，应能够回答：</p>
+<h2 id="document-structure">Document Structure<a class="headerlink" href="#document-structure" title="Permanent link">&para;</a></h2>
+<ul>
+<li>什么是层次化文档表示？</li>
+<li>为什么需要 Document Tree？</li>
+</ul>
+<hr />
+<h2 id="spatial-information_1">Spatial Information<a class="headerlink" href="#spatial-information_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>为什么 Bounding Box 很重要？</li>
+<li>Reading Order 为什么必须单独保存？</li>
+</ul>
+<hr />
+<h2 id="provenance_1">Provenance<a class="headerlink" href="#provenance_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>什么是 Provenance？</li>
+<li>为什么 AI Agent 需要来源信息？</li>
+</ul>
+<hr />
+<h2 id="doctags_2">DocTags<a class="headerlink" href="#doctags_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li>DocTags 与 DoclingDocument 的关系是什么？</li>
+<li>为什么 DocTags 比 Markdown 更适合作为 Document AI 的中间表示？</li>
+</ul>
+<hr />
+<h1 id="summary_1">Summary<a class="headerlink" href="#summary_1" title="Permanent link">&para;</a></h1>
+<p>DocTags 的核心设计思想如下：</p>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+DoclingDocument
+ │
+ ▼
+Document Tree
+ │
+ ├── Metadata
+ ├── Layout
+ ├── Reading Order
+ ├── Semantic Blocks
+ ├── Bounding Boxes
+ └── Provenance
+ │
+ ▼
+DocTags
+ │
+ ▼
+AI-ready Structured Document
+</code></pre></div>
+<p>DocTags 不只是新的文档格式，更代表了 <strong>Document AI 从文本提取（Text Extraction）向语义表达（Semantic Representation）</strong> 的演进方向，为后续 <strong>RAG、Document Agent、AI Research Agent</strong> 提供统一的数据基础。</p>
+<hr />
+<h1 id="part-7-how-are-doctags-generated">Part 7. How Are DocTags Generated?<a class="headerlink" href="#part-7-how-are-doctags-generated" title="Permanent link">&para;</a></h1>
+<p>现代 Document AI 已逐渐从传统 OCR Pipeline 演进为：</p>
+<blockquote>
+<p><strong>Vision-Language Model → Structured Representation → DocTags</strong></p>
+</blockquote>
+<p>典型流程如下：</p>
+<div class="highlight"><pre><span></span><code>PDF / Image
+      │
+      ▼
+Vision-Language Model
+      │
+      ▼
+Layout Understanding
+      │
+      ▼
+Semantic Understanding
+      │
+      ▼
+Document Tree
+      │
+      ▼
+DoclingDocument
+      │
+      ▼
+DocTags
+</code></pre></div>
+<p>Docling 将不同来源的文档统一转换为 <strong>DoclingDocument</strong>，随后可以导出 Markdown、HTML、JSON、DocTags 等格式。</p>
+<hr />
+<h1 id="traditional-pipeline-vs-modern-pipeline">Traditional Pipeline vs Modern Pipeline<a class="headerlink" href="#traditional-pipeline-vs-modern-pipeline" title="Permanent link">&para;</a></h1>
+<h2 id="traditional-ocr-pipeline">Traditional OCR Pipeline<a class="headerlink" href="#traditional-ocr-pipeline" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+OCR
+ │
+ ▼
+Layout Analysis
+ │
+ ▼
+Table Recognition
+ │
+ ▼
+Formula Recognition
+ │
+ ▼
+Markdown
+</code></pre></div>
+<p>特点：</p>
+<ul>
+<li>多模块串联</li>
+<li>误差容易累积</li>
+<li>难以统一优化</li>
+</ul>
+<hr />
+<h2 id="modern-vlm-pipeline">Modern VLM Pipeline<a class="headerlink" href="#modern-vlm-pipeline" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Vision Encoder
+ │
+ ▼
+Large Language Model
+ │
+ ▼
+Unified Document Understanding
+ │
+ ▼
+DoclingDocument
+ │
+ ▼
+DocTags
+</code></pre></div>
+<p>特点：</p>
+<ul>
+<li>End-to-End</li>
+<li>统一推理</li>
+<li>更强泛化能力</li>
+<li>更适合 AI Agent</li>
+</ul>
+<hr />
+<h1 id="part-8-doctags-generation-pipeline">Part 8. DocTags Generation Pipeline<a class="headerlink" href="#part-8-doctags-generation-pipeline" title="Permanent link">&para;</a></h1>
+<p>完整生成流程通常包括：</p>
+<div class="highlight"><pre><span></span><code>Document
+    │
+    ▼
+Page Detection
+    │
+    ▼
+Layout Detection
+    │
+    ▼
+Reading Order
+    │
+    ▼
+Text Recognition
+    │
+    ▼
+Table Recognition
+    │
+    ▼
+Formula Recognition
+    │
+    ▼
+Semantic Classification
+    │
+    ▼
+Document Tree
+    │
+    ▼
+DocTags
+</code></pre></div>
+<p>现代 Docling 已将版面分析、阅读顺序、表格结构、公式、图片、代码等信息统一组织到 <code>DoclingDocument</code> 中，并支持直接导出 DocTags。</p>
+<hr />
+<h1 id="what-does-a-vision-language-model-learn">What Does a Vision-Language Model Learn?<a class="headerlink" href="#what-does-a-vision-language-model-learn" title="Permanent link">&para;</a></h1>
+<p>现代 VLM 并不是直接学习：</p>
+<div class="highlight"><pre><span></span><code>Image
+    │
+    ▼
+Text
+</code></pre></div>
+<p>而是学习：</p>
+<div class="highlight"><pre><span></span><code>Image
+   │
+   ▼
+Layout
+   │
+   ▼
+Structure
+   │
+   ▼
+Semantics
+   │
+   ▼
+Reasoning
+</code></pre></div>
+<p>因此，DocTags 更像是：</p>
+<blockquote>
+<p><strong>Vision-Language Model 对文档理解结果的结构化表达。</strong></p>
+</blockquote>
+<hr />
+<h1 id="key-information-preserved-in-doctags">Key Information Preserved in DocTags<a class="headerlink" href="#key-information-preserved-in-doctags" title="Permanent link">&para;</a></h1>
+<p>DocTags 通常保存以下信息：</p>
+<table>
+<thead>
+<tr>
+<th>Information</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Document Hierarchy</td>
+<td>Chapter → Section → Paragraph</td>
+</tr>
+<tr>
+<td>Reading Order</td>
+<td>多栏阅读顺序</td>
+</tr>
+<tr>
+<td>Page Number</td>
+<td>第几页</td>
+</tr>
+<tr>
+<td>Bounding Box</td>
+<td>页面坐标</td>
+</tr>
+<tr>
+<td>Figure Association</td>
+<td>图片与 Caption 对应关系</td>
+</tr>
+<tr>
+<td>Table Structure</td>
+<td>行、列、表头</td>
+</tr>
+<tr>
+<td>Formula</td>
+<td>LaTeX 表示</td>
+</tr>
+<tr>
+<td>Code Block</td>
+<td>编程语言与内容</td>
+</tr>
+<tr>
+<td>Metadata</td>
+<td>标题、作者、语言等</td>
+</tr>
+</tbody>
+</table>
+<p>相比 Markdown，DocTags 能够完整保留：</p>
+<blockquote>
+<p><strong>Document Semantics + Layout + Provenance</strong></p>
+</blockquote>
+<hr />
+<h1 id="relationship-between-docling-and-doctags">Relationship Between Docling and DocTags<a class="headerlink" href="#relationship-between-docling-and-doctags" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Docling
+ │
+ ▼
+DoclingDocument
+ │
+ ├── Markdown
+ ├── HTML
+ ├── JSON
+ ├── DocTags
+ └── DocLang
+</code></pre></div>
+<p>DocTags 并不是独立解析器，而是：</p>
+<blockquote>
+<p><strong>DoclingDocument 的一种高语义导出格式。</strong></p>
+</blockquote>
+<p>Docling 官方将 DocTags 定义为一种能够高效表达文档内容和布局特征的标记格式。</p>
+<hr />
+<h1 id="why-is-reading-order-critical">Why Is Reading Order Critical?<a class="headerlink" href="#why-is-reading-order-critical" title="Permanent link">&para;</a></h1>
+<p>复杂文档通常包含：</p>
+<ul>
+<li>双栏论文</li>
+<li>跨页表格</li>
+<li>图片</li>
+<li>Caption</li>
+<li>页眉页脚</li>
+</ul>
+<p>如果阅读顺序错误：</p>
+<div class="highlight"><pre><span></span><code>Column 1
+Column 2
+</code></pre></div>
+<p>可能变成：</p>
+<div class="highlight"><pre><span></span><code>Column 1
+Figure
+Column 2
+Caption
+</code></pre></div>
+<p>导致：</p>
+<ul>
+<li>LLM 理解错误</li>
+<li>RAG 检索失败</li>
+<li>Agent 推理错误</li>
+</ul>
+<p>因此，Reading Order 是现代 Document AI 的核心能力之一，也是 DocTags 保存的重要属性。</p>
+<hr />
+<h1 id="why-structured-representation-matters-for-llms">Why Structured Representation Matters for LLMs?<a class="headerlink" href="#why-structured-representation-matters-for-llms" title="Permanent link">&para;</a></h1>
+<p>传统输入：</p>
+<div class="highlight"><pre><span></span><code>Plain Text
+</code></pre></div>
+<p>现代输入：</p>
+<div class="highlight"><pre><span></span><code>DocTags
+</code></pre></div>
+<p>优势包括：</p>
+<ul>
+<li>保留章节层级</li>
+<li>保留图片与标题关系</li>
+<li>保留表格结构</li>
+<li>保留来源信息</li>
+<li>保留页面坐标</li>
+<li>保留语义标签</li>
+</ul>
+<p>LLM 无需再次推断文档结构，</p>
+<p>即可直接进行：</p>
+<ul>
+<li>问答（QA）</li>
+<li>摘要（Summarization）</li>
+<li>检索（Retrieval）</li>
+<li>推理（Reasoning）</li>
+</ul>
+<hr />
+<h1 id="laboratory-research-pipeline">Laboratory Research Pipeline<a class="headerlink" href="#laboratory-research-pipeline" title="Permanent link">&para;</a></h1>
+<p>建议实验室统一采用如下流程：</p>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Qwen3-VL
+ │
+ ▼
+Docling
+ │
+ ▼
+DoclingDocument
+ │
+ ▼
+DocTags
+ │
+ ▼
+Knowledge Base
+ │
+ ▼
+RAG
+ │
+ ▼
+Research Agent
+</code></pre></div>
+<p>该流程能够兼顾：</p>
+<ul>
+<li>文档解析</li>
+<li>数据集构建</li>
+<li>模型训练</li>
+<li>Benchmark</li>
+<li>Agent 应用</li>
+</ul>
+<p>也是当前国际开源生态推荐的发展方向。</p>
+<hr />
+<h1 id="future-research-directions">Future Research Directions<a class="headerlink" href="#future-research-directions" title="Permanent link">&para;</a></h1>
+<p>DocTags 未来值得重点研究的方向包括：</p>
+<table>
+<thead>
+<tr>
+<th>Research Topic</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DocTags Generation</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>DocTags Schema Optimization</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Reading Order Prediction</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Table Semantic Representation</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Formula Semantic Representation</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>DocTags-aware Fine-tuning</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>DocTags Benchmark</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Agent-ready Structured Documents</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="knowledge-checklist_2">Knowledge Checklist<a class="headerlink" href="#knowledge-checklist_2" title="Permanent link">&para;</a></h1>
+<p>完成本部分后，应能够回答：</p>
+<h2 id="generation-pipeline">Generation Pipeline<a class="headerlink" href="#generation-pipeline" title="Permanent link">&para;</a></h2>
+<ul>
+<li>DocTags 是如何生成的？</li>
+<li>DoclingDocument 与 DocTags 有什么关系？</li>
+<li>为什么现代 VLM 更容易生成结构化文档？</li>
+</ul>
+<hr />
+<h2 id="reading-order_1">Reading Order<a class="headerlink" href="#reading-order_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Reading Order 为什么重要？</li>
+<li>阅读顺序错误会导致哪些问题？</li>
+</ul>
+<hr />
+<h2 id="structured-representation_1">Structured Representation<a class="headerlink" href="#structured-representation_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>为什么 LLM 更适合处理结构化文档？</li>
+<li>DocTags 相比 Markdown 增加了哪些关键能力？</li>
+</ul>
+<hr />
+<h1 id="summary_2">Summary<a class="headerlink" href="#summary_2" title="Permanent link">&para;</a></h1>
+<p>现代 DocTags 的生成流程如下：</p>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Vision-Language Model
+ │
+ ▼
+Layout Understanding
+ │
+ ▼
+Semantic Understanding
+ │
+ ▼
+DoclingDocument
+ │
+ ▼
+DocTags
+ │
+ ▼
+RAG
+ │
+ ▼
+AI Agent
+</code></pre></div>
+<p>DocTags 不仅是文档解析的输出格式，更是连接 <strong>Vision-Language Models、Document AI、RAG 和 AI Agent</strong> 的统一中间表示，为未来构建高质量 Document Intelligence 系统提供了坚实的数据基础。</p>
+<hr />
+<h1 id="part-9-doctags-ecosystem">Part 9. DocTags Ecosystem<a class="headerlink" href="#part-9-doctags-ecosystem" title="Permanent link">&para;</a></h1>
+<p>截至 2026 年，DocTags 已逐渐成为现代 <strong>Document AI</strong> 开源生态的重要组成部分。</p>
+<p>其核心生态如下：</p>
+<div class="highlight"><pre><span></span><code>                PDF / Image / Office
+                        │
+                        ▼
+                 Vision-Language Model
+                        │
+                        ▼
+                 DoclingDocument
+                        │
+        ┌───────────────┼────────────────┐
+        ▼               ▼                ▼
+    Markdown          HTML            DocTags
+        │               │                │
+        └───────────────┼────────────────┘
+                        ▼
+               RAG / Knowledge Base
+                        │
+                        ▼
+                 AI Agent / LLM
+</code></pre></div>
+<p>DocTags 的定位不是新的文档格式，而是 <strong>AI Native Document Representation（AI 原生文档表示）</strong>，能够作为大型语言模型、RAG 系统和 Agent 的统一输入。</p>
+<hr />
+<h1 id="part-10-practical-applications">Part 10. Practical Applications<a class="headerlink" href="#part-10-practical-applications" title="Permanent link">&para;</a></h1>
+<p>目前 DocTags 已广泛应用于以下场景。</p>
+<table>
+<thead>
+<tr>
+<th>Application</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Document Parsing</td>
+<td>PDF、DOCX、PPT 等统一解析</td>
+</tr>
+<tr>
+<td>Enterprise Knowledge Base</td>
+<td>企业知识库构建</td>
+</tr>
+<tr>
+<td>RAG</td>
+<td>结构化文档检索</td>
+</tr>
+<tr>
+<td>Scientific Literature</td>
+<td>科研论文解析</td>
+</tr>
+<tr>
+<td>Technical Documents</td>
+<td>技术文档转换</td>
+</tr>
+<tr>
+<td>Patent Analysis</td>
+<td>专利解析</td>
+</tr>
+<tr>
+<td>Financial Reports</td>
+<td>财报分析</td>
+</tr>
+<tr>
+<td>AI Agent</td>
+<td>Agent 的结构化输入</td>
+</tr>
+</tbody>
+</table>
+<p>相比传统 Markdown，DocTags 能够保留：</p>
+<ul>
+<li>文档层级</li>
+<li>页面坐标</li>
+<li>Reading Order</li>
+<li>Provenance</li>
+<li>Element Relationship</li>
+</ul>
+<p>因此更适合复杂文档处理。</p>
+<hr />
+<h1 id="part-11-recommended-technical-resources">Part 11. Recommended Technical Resources<a class="headerlink" href="#part-11-recommended-technical-resources" title="Permanent link">&para;</a></h1>
+<h2 id="official-documentation">Official Documentation<a class="headerlink" href="#official-documentation" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docling Documentation</td>
+<td><a href="https://docling-project.github.io/docling/">https://docling-project.github.io/docling/</a></td>
+</tr>
+<tr>
+<td>Docling 中文文档</td>
+<td><a href="https://docling.cn/docling/">https://docling.cn/docling/</a></td>
+</tr>
+<tr>
+<td>DoclingDocument Reference (EN)</td>
+<td><a href="https://docling-project.github.io/docling/reference/docling_document/">https://docling-project.github.io/docling/reference/docling_document/</a></td>
+</tr>
+<tr>
+<td>DoclingDocument Reference (ZH)</td>
+<td><a href="https://docling.cn/docling/reference/docling_document/">https://docling.cn/docling/reference/docling_document/</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="official-github">Official GitHub<a class="headerlink" href="#official-github" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docling</td>
+<td><a href="https://github.com/docling-project/docling">https://github.com/docling-project/docling</a></td>
+</tr>
+<tr>
+<td>Examples Source</td>
+<td><a href="https://github.com/docling-project/docling/tree/main/docs/examples">https://github.com/docling-project/docling/tree/main/docs/examples</a></td>
+</tr>
+<tr>
+<td>Examples Guide</td>
+<td><a href="https://docling-project.github.io/docling/examples/">https://docling-project.github.io/docling/examples/</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="recommended-papers">Recommended Papers<a class="headerlink" href="#recommended-papers" title="Permanent link">&para;</a></h2>
+<h3 id="1-docling-technical-report">1. Docling Technical Report (★★★★★)<a class="headerlink" href="#1-docling-technical-report" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>Christoph Auer et al.</p>
+</blockquote>
+<p>2024</p>
+<p><a href="https://arxiv.org/abs/2408.09869">https://arxiv.org/abs/2408.09869</a></p>
+<p>介绍：</p>
+<ul>
+<li>Docling 架构</li>
+<li>DoclingDocument</li>
+<li>Layout Analysis</li>
+<li>TableFormer</li>
+<li>Export Pipeline</li>
+</ul>
+<p>推荐指数：</p>
+<p>⭐⭐⭐⭐⭐</p>
+<hr />
+<h3 id="2-docling-an-efficient-open-source-toolkit-for-ai-driven-document-conversion">2. Docling: An Efficient Open-Source Toolkit for AI-driven Document Conversion (★★★★★)<a class="headerlink" href="#2-docling-an-efficient-open-source-toolkit-for-ai-driven-document-conversion" title="Permanent link">&para;</a></h3>
+<p>2025</p>
+<p><a href="https://arxiv.org/abs/2501.17887">https://arxiv.org/abs/2501.17887</a></p>
+<p>重点阅读：</p>
+<ul>
+<li>Unified Representation</li>
+<li>Modular Pipeline</li>
+<li>AI-ready Document Conversion</li>
+<li>LangChain / LlamaIndex Integration</li>
+</ul>
+<p>推荐指数：</p>
+<p>⭐⭐⭐⭐⭐</p>
+<hr />
+<h3 id="3-smoldocling">3. SmolDocling (★★★★★)<a class="headerlink" href="#3-smoldocling" title="Permanent link">&para;</a></h3>
+<p>2025</p>
+<p><a href="https://arxiv.org/abs/2503.11576">https://arxiv.org/abs/2503.11576</a></p>
+<p>重点阅读：</p>
+<ul>
+<li>End-to-End Document Conversion</li>
+<li>DocTags Generation</li>
+<li>Compact Vision-Language Model</li>
+<li>Universal Document Markup</li>
+</ul>
+<p>推荐指数：</p>
+<p>⭐⭐⭐⭐⭐</p>
+<hr />
+<h3 id="4-advanced-layout-analysis-models-for-docling">4. Advanced Layout Analysis Models for Docling（推荐）<a class="headerlink" href="#4-advanced-layout-analysis-models-for-docling" title="Permanent link">&para;</a></h3>
+<p>2025</p>
+<p><a href="https://arxiv.org/abs/2509.11720">https://arxiv.org/abs/2509.11720</a></p>
+<p>重点阅读：</p>
+<ul>
+<li>新一代版面分析模型（Heron）</li>
+<li>布局检测训练方法</li>
+<li>Docling 布局模型演进</li>
+</ul>
+<p>推荐指数：</p>
+<p>⭐⭐⭐⭐</p>
+<hr />
+<h1 id="part-12-suggested-laboratory-research">Part 12. Suggested Laboratory Research<a class="headerlink" href="#part-12-suggested-laboratory-research" title="Permanent link">&para;</a></h1>
+<p>实验室围绕 DocTags 开展以下研究。</p>
+<h2 id="direction-1">Direction 1<a class="headerlink" href="#direction-1" title="Permanent link">&para;</a></h2>
+<h3 id="doctags-generation">DocTags Generation<a class="headerlink" href="#doctags-generation" title="Permanent link">&para;</a></h3>
+<p>研究目标：</p>
+<blockquote>
+<p>Vision-Language Model → DocTags</p>
+</blockquote>
+<p>重点内容：</p>
+<ul>
+<li>Prompt Engineering</li>
+<li>Instruction Tuning</li>
+<li>LoRA Fine-tuning</li>
+<li>Structured Generation</li>
+</ul>
+<hr />
+<h2 id="direction-2">Direction 2<a class="headerlink" href="#direction-2" title="Permanent link">&para;</a></h2>
+<h3 id="doctags-quality-evaluation">DocTags Quality Evaluation<a class="headerlink" href="#doctags-quality-evaluation" title="Permanent link">&para;</a></h3>
+<p>评价内容：</p>
+<ul>
+<li>Structure Accuracy</li>
+<li>Reading Order</li>
+<li>Hierarchy Recovery</li>
+<li>Semantic Completeness</li>
+<li>Layout Preservation</li>
+</ul>
+<p>建议建立：</p>
+<blockquote>
+<p><strong>DocTagsBench</strong></p>
+</blockquote>
+<p>作为统一评测基准。</p>
+<hr />
+<h2 id="direction-3">Direction 3<a class="headerlink" href="#direction-3" title="Permanent link">&para;</a></h2>
+<h3 id="doctags-aware-rag">DocTags-aware RAG<a class="headerlink" href="#doctags-aware-rag" title="Permanent link">&para;</a></h3>
+<p>重点研究：</p>
+<ul>
+<li>Hierarchical Chunking</li>
+<li>Structure-aware Retrieval</li>
+<li>Citation-aware Retrieval</li>
+<li>Figure/Table Retrieval</li>
+<li>Multi-page Retrieval</li>
+</ul>
+<p>目标：</p>
+<p>提高复杂文档问答质量。</p>
+<hr />
+<h2 id="direction-4">Direction 4<a class="headerlink" href="#direction-4" title="Permanent link">&para;</a></h2>
+<h3 id="agent-ready-documents">Agent-ready Documents<a class="headerlink" href="#agent-ready-documents" title="Permanent link">&para;</a></h3>
+<p>研究：</p>
+<p>如何利用 DocTags 构建：</p>
+<ul>
+<li>Document Agent</li>
+<li>Research Agent</li>
+<li>Enterprise Knowledge Agent</li>
+<li>Scientific Assistant</li>
+</ul>
+<p>重点探索：</p>
+<ul>
+<li>Tool Calling</li>
+<li>Planning</li>
+<li>Memory</li>
+<li>Multi-step Reasoning</li>
+</ul>
+<hr />
+<h1 id="part-13-recommended-open-source-stack">Part 13. Recommended Open-source Stack<a class="headerlink" href="#part-13-recommended-open-source-stack" title="Permanent link">&para;</a></h1>
+<p>实验室统一采用如下技术栈。</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Recommended Project</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vision-Language Model</td>
+<td>Qwen3-VL</td>
+</tr>
+<tr>
+<td>Document Conversion</td>
+<td>Docling</td>
+</tr>
+<tr>
+<td>Structured Representation</td>
+<td>DocTags</td>
+</tr>
+<tr>
+<td>Benchmark</td>
+<td>OmniDocBench</td>
+</tr>
+<tr>
+<td>Knowledge Index</td>
+<td>LlamaIndex / LangChain</td>
+</tr>
+<tr>
+<td>Vector Database</td>
+<td>Milvus / Qdrant / FAISS</td>
+</tr>
+<tr>
+<td>AI Framework</td>
+<td>Hugging Face Transformers</td>
+</tr>
+</tbody>
+</table>
+<p>该技术栈覆盖了文档解析、知识库构建、模型评测和智能体开发的完整流程。</p>
+<hr />
+<h1 id="laboratory-learning-path">Laboratory Learning Path<a class="headerlink" href="#laboratory-learning-path" title="Permanent link">&para;</a></h1>
+<p>建议按照以下路线学习：</p>
+<div class="highlight"><pre><span></span><code>Foundation Models
+        │
+        ▼
+Vision-Language Models
+        │
+        ▼
+Document AI
+        │
+        ▼
+Docling
+        │
+        ▼
+DoclingDocument
+        │
+        ▼
+DocTags
+        │
+        ▼
+OmniDocBench
+        │
+        ▼
+RAG
+        │
+        ▼
+Document Agent
+        │
+        ▼
+AI Research Agent
+</code></pre></div>
+<hr />
+<h1 id="knowledge-checklist_3">Knowledge Checklist<a class="headerlink" href="#knowledge-checklist_3" title="Permanent link">&para;</a></h1>
+<p>完成本模块后，应能够回答以下问题。</p>
+<h2 id="doctags-ecosystem">DocTags Ecosystem<a class="headerlink" href="#doctags-ecosystem" title="Permanent link">&para;</a></h2>
+<ul>
+<li>为什么 DocTags 能够作为 AI 原生文档表示？</li>
+<li>DoclingDocument 与 DocTags 分别承担什么角色？</li>
+<li>为什么越来越多 Document AI 系统采用统一文档表示？</li>
+</ul>
+<hr />
+<h2 id="research">Research<a class="headerlink" href="#research" title="Permanent link">&para;</a></h2>
+<ul>
+<li>如何设计 DocTags Generation Pipeline？</li>
+<li>如何构建 DocTags Benchmark？</li>
+<li>如何利用 DocTags 构建高质量 RAG？</li>
+<li>DocTags 在 AI Agent 中有哪些应用价值？</li>
+</ul>
+<hr />
+<h1 id="chapter-summary">Chapter Summary<a class="headerlink" href="#chapter-summary" title="Permanent link">&para;</a></h1>
+<p>DocTags 是现代 <strong>Document AI</strong> 从"文档解析工具"走向"统一知识表示"的重要一步。</p>
+<p>对于实验室未来研究，建议以：</p>
+<div class="highlight"><pre><span></span><code>Qwen3-VL
+      │
+      ▼
+Docling
+      │
+      ▼
+DocTags
+      │
+      ▼
+OmniDocBench
+      │
+      ▼
+RAG
+      │
+      ▼
+AI Agent
+</code></pre></div>
+<p>作为统一技术路线。</p>
+<hr />
+<h1 id="recommended-next-reading">Recommended Next Reading<a class="headerlink" href="#recommended-next-reading" title="Permanent link">&para;</a></h1>
+<p>继续学习：</p>
+<blockquote>
+<p><strong>benchmarks.md</strong></p>
+</blockquote>
+<p>重点学习：</p>
+<ul>
+<li>OmniDocBench</li>
+<li>DocLayNet</li>
+<li>PubTabNet</li>
+<li>DocVQA</li>
+<li>OCRBench</li>
+<li>ChartQA</li>
+<li>Document Parsing Evaluation</li>
+<li>Reading Order Evaluation</li>
+<li>Structure-aware Benchmark</li>
+</ul>
+<p><a class="md-button" href="03_vlm.html">上一章</a>    <a class="md-button" href="05_benchmark-2026.html">下一章</a></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+                
+  
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Multimodal Vision AI Lab.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../js/visitor.js"></script>
+      
+        <script src="../js/shanshui.js"></script>
+      
+        <script src="../js/radar.js"></script>
+      
+    
+  </body>
+</html>
