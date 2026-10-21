@@ -1,0 +1,157 @@
+name: DEV Preview - isolated static build
+
+# No deployment to the repository's official GitHub Pages environment.
+# PRs only build an artifact. A push to dev additionally publishes the
+# generated site to the dev-preview branch, served via a dev-only proxy.
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - ".github/workflows/dev-preview.yml"
+      - "docs/**"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - "scripts/radar/**"
+      - "research-radar/**"
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: dev-preview
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build isolated DEV website
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code under review
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-docs.txt
+
+      - name: Install MkDocs dependencies
+        run: pip install -r requirements-docs.txt
+
+      - name: Hydrate optional research data (read-only)
+        run: |
+          if git ls-remote --exit-code --heads origin radar-data > /dev/null 2>&1; then
+            git fetch --no-tags --depth=1 origin radar-data
+            git archive FETCH_HEAD research-radar/data | tar -xf -
+          fi
+
+      - name: Render Research Radar snapshot
+        run: |
+          python -m unittest discover -s tests/radar -v
+          python scripts/radar/render.py
+
+      - name: Override preview base URL in temporary runner copy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path("mkdocs.yml")
+          text = path.read_text(encoding="utf-8")
+          target = (
+              "site_url: https://raw.githack.com/"
+              "multimodal-vision-ai/multimodal-document-ai-learning-center/"
+              "dev-preview/"
+          )
+          new, count = re.subn(r"(?m)^site_url: .*$", target, text)
+          if count != 1:
+              raise SystemExit("Could not locate exactly one MkDocs site_url")
+          path.write_text(new, encoding="utf-8")
+          PY
+
+      - name: Strict build with explicit HTML links
+        run: mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
+
+      - name: Add visible DEV environment marking
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"]) / "dev-site"
+          banner = (
+              '<div role="note" style="position:relative;z-index:10;'
+              'padding:.4rem 1rem;text-align:center;background:#fef3c7;'
+              'color:#713f12;font:600 14px/1.5 system-ui,sans-serif">'
+              'DEV 预览版 · 来自 dev 分支 · 非正式发布站点'
+              '</div>'
+          )
+          count = 0
+          for path in root.rglob("*.html"):
+              body = path.read_text(encoding="utf-8")
+              start = body.find("<body")
+              if start == -1:
+                  continue
+              insert = body.find(">", start)
+              if insert == -1:
+                  continue
+              path.write_text(body[:insert+1] + banner + body[insert+1:], encoding="utf-8")
+              count += 1
+          if not (root / "index.html").exists() or count == 0:
+              raise SystemExit("MkDocs preview is missing HTML output")
+          print(f"Marked {count} pages as DEV-only")
+          PY
+
+      - name: Upload preview for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-preview-site
+          path: ${{ runner.temp }}/dev-site
+          retention-days: 7
+
+  publish:
+    name: Publish isolated DEV preview branch
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout source for authenticated push
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          persist-credentials: true
+
+      - name: Download built DEV site
+        uses: actions/download-artifact@v4
+        with:
+          name: dev-preview-site
+          path: ${{ runner.temp }}/dev-site
+
+      - name: Publish static files to dev-preview branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "$RUNNER_TEMP/dev-site/index.html"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin dev-preview > /dev/null 2>&1; then
+            git fetch --no-tags origin dev-preview
+            git switch -C dev-preview FETCH_HEAD
+          else
+            git switch --orphan dev-preview
+          fi
+          git rm -rf --ignore-unmatch . > /dev/null
+          git clean -fdx > /dev/null
+          cp -a "$RUNNER_TEMP/dev-site/." .
+          touch .nojekyll
+          git add -A
+          if git diff --cached --quiet; then
+            echo "DEV preview is already up to date."
+          else
+            git commit -m "docs(preview): refresh generated DEV site [skip ci]"
+            git push origin HEAD:refs/heads/dev-preview
+          fi
+          echo "Fixed URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
