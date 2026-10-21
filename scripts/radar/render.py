@@ -1,85 +1,148 @@
-"""Render research radar MkDocs pages from reviewed JSON; deterministic and offline."""
+"""Render three MkDocs pages and homepage without touching course materials."""
 import html
 import re
-from collections import Counter
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
-from core import DATA, ROOT, load, verify
+from core import DATA, ROOT, load, valid_url
+from reports import build
 
-DOCS=ROOT/"docs"
-TODAY=datetime.now(timezone.utc).date()
+DOCS = ROOT / "docs"
 
-def esc(value):
-    return html.escape(str(value or "未核实"),quote=True)
+def escape(value):
+    return html.escape("未核实" if value is None or value == "" else str(value), quote=True)
 
-def link(url,label):
-    return f'<a href="{esc(url)}" rel="noopener noreferrer">{esc(label)}</a>' if url and str(url).startswith("https://") else "未提供"
+def link(url, label):
+    return (f'<a href="{escape(url)}" target="_blank" rel="noopener noreferrer">'
+            f'{escape(label)}</a>') if valid_url(url) else escape(label)
 
-def replace(text,marker,body):
-    pattern=r"(<!-- RADAR:"+marker+r"-START -->).*?(<!-- RADAR:"+marker+r"-END -->)"
-    result,n=re.subn(pattern,lambda m:m.group(1)+"\n"+body+"\n"+m.group(2),text,flags=re.S)
-    if n!=1:raise ValueError("Expected one marker pair: "+marker)
-    return result
+def replace(text, marker, body):
+    pattern = r"(<!-- RADAR:" + marker + r"-START -->).*?(<!-- RADAR:" + marker + r"-END -->)"
+    replaced, n = re.subn(pattern, lambda match:
+                         match.group(1) + "\n" + body + "\n" + match.group(2),
+                         text, flags=re.S)
+    if n != 1:
+        raise ValueError(f"Expected exactly one {marker} marker pair")
+    return replaced
 
-def save_page(relative,new):
-    target=DOCS/relative
-    old=target.read_text(encoding="utf-8-sig")
-    if new!=old:target.write_text(new,encoding="utf-8")
+def save_page(relative, text):
+    target = DOCS / relative
+    if target.read_text(encoding="utf-8-sig") != text:
+        target.write_text(text, encoding="utf-8")
 
-def run():
-    raw=load(DATA/"projects.json",[])
-    verified=[]
-    for item in raw:
-        verify(item)
-        if item["review"]=="approved":verified.append(item)
-    verified.sort(key=lambda x:(x.get("published_at",""),x["id"]),reverse=True)
-    rows=[]
-    for item in verified:
-        refs=" · ".join(link(item.get(key),lab) for key,lab in (("paper_url","论文"),("github_url","代码"),("huggingface_url","模型")) if item.get(key))
-        rows.append(f'<tr data-category="{esc(item["category"])}"><td><strong>{esc(item["title"])}</strong><br><small>{esc(item.get("organization",""))}</small></td><td>{esc(item["category"])}</td><td>{esc(item.get("parameters"))}</td><td>{esc(item.get("gpu"))}</td><td>{esc(item.get("score","—"))}</td><td>{refs}</td></tr>')
-    contents=('<p id="radar-filter-count">'+str(len(rows))+' 条记录</p><table id="radar-project-table"><thead><tr><th>项目</th><th>领域</th><th>规模</th><th>GPU</th><th>评分</th><th>链接</th></tr></thead><tbody>'+"".join(rows)+"</tbody></table>") if rows else "**暂无已审核科研项目。**"
-    p=DOCS/"radar/projects.md"
-    save_page("radar/projects.md",replace(p.read_text(encoding="utf-8"),"PROJECTS",contents))
-    daily=[]
-    for x in verified:
-        try:
-            dt=datetime.fromisoformat(x["published_at"].replace("Z","+00:00")).date()
-        except ValueError:continue
-        if dt >= TODAY-timedelta(days=1) and float(x.get("score") or 0)>=8.5:daily.append(x)
-    daily=daily[:3]
-    week=verified[:10]
-    month=verified[:10]
-    def listing(items):
-        if not items:return "暂无符合条件的已审核记录。"
-        return "\n\n".join(f"- **{esc(x['title'])}**（{esc(x.get('parameters','未核实'))}，评分 {esc(x.get('score','未评分'))}）— {link(x.get('paper_url') or x['source_url'],'查看来源')}  \n  {esc(x.get('innovation',''))}" for x in items)
-    p=DOCS/"radar/index.md"; page=p.read_text(encoding="utf-8")
-    for marker,items in (("DAILY",daily),("WEEKLY",week),("MONTHLY",month)):
-        body="\n".join("    "+line if line else "" for line in listing(items).splitlines())
-        page=replace(page,marker,body)
-    save_page("radar/index.md",page)
-    tasks=load(DATA/"tasks.json",[])
-    tasklines="\n".join(f"- [{esc(t['title'])}]({t['url']}) — {esc(t.get('state','open'))}" for t in tasks if isinstance(t,dict) and str(t.get("url","")).startswith("https://"))
-    p=DOCS/"radar/tasks.md";save_page("radar/tasks.md",replace(p.read_text(encoding="utf-8"),"TASKS",tasklines or "暂无研究任务快照。请查看上方 GitHub Issues 入口。"))
-    # Site home: keep course content, replace only controlled radar block.
-    p=DOCS/"index.md";home=p.read_text(encoding="utf-8-sig")
-    top="".join(f"<li>{link(x.get('paper_url') or x['source_url'],x['title'])} · {esc(x.get('parameters',''))}</li>" for x in verified[:3])
-    block=f'''## 科研雷达 · Research Radar
+def params_min(text):
+    match = re.search(r"(\d+(?:\.\d+)?)\s*[Bb]\b", str(text or ""))
+    return float(match.group(1)) if match else None
+
+def research_listing(items, empty):
+    if not items:
+        return empty
+    lines = []
+    for item in items:
+        url = item.get("paper_url") or item["source_url"]
+        when = escape(str(item["published_at"])[:10])
+        score = escape(item["score"])
+        topic = escape(item.get("research_opportunity", ""))
+        lines.append(
+            f"- **{link(url, item['title'])}** — {when}，评分 {score}/10；"
+            f"{escape(item.get('parameters'))}；{escape(item.get('category'))}\n"
+            f"    - 创新：{escape(item.get('innovation'))}\n"
+            f"    - 后续研究：{topic}"
+        )
+    return "\n\n".join(lines)
+
+def indent(text):
+    return "\n".join("    " + row if row else "" for row in text.splitlines())
+
+def render(now=None):
+    now = now or datetime.now(timezone.utc)
+    projects = load(DATA / "projects.json", [])
+    reports = build(projects, now)
+    approved = sorted((p for p in projects if p.get("review") == "approved"),
+                      key=lambda p: (p.get("score") or 0, p.get("reviewed_at") or ""), reverse=True)
+    tasks = load(DATA / "tasks.json", [])
+    rows = []
+    for p in approved:
+        paper = p.get("paper_url") or p["source_url"]
+        links = " · ".join(link(p.get(k), label) for k, label in
+                           (("paper_url", "论文"), ("github_url", "GitHub"), ("huggingface_url", "HF"))
+                           if p.get(k)) or link(paper, "原始来源")
+        minimum = params_min(p.get("parameters"))
+        size = f'{minimum:g}' if minimum is not None else ""
+        tier = escape(p.get("gpu_tier") or "")
+        rows.append(
+            f'<tr data-category="{escape(p["category"])}" data-size="{size}" data-gpu="{tier}">'
+            f'<td><strong>{escape(p["title"])}</strong><br><small>{escape(p.get("organization"))}</small>'
+            f'<details><summary>研究详情</summary><p>{escape(p.get("innovation"))}</p>'
+            f'<p>后续研究：{escape(p.get("research_opportunity"))}</p></details></td>'
+            f'<td>{escape(p["category"])}</td><td>{escape(p.get("parameters"))}</td>'
+            f'<td>{escape(p.get("gpu"))}</td><td>{escape(p.get("score"))}</td>'
+            f'<td>{links}</td></tr>'
+        )
+    if rows:
+        project_html = (
+            f'<p id="radar-filter-count">{len(rows)} 条记录</p>'
+            '<div class="radar-table-wrap"><table id="radar-project-table">'
+            '<thead><tr><th>项目</th><th>领域</th><th>规模</th><th>GPU</th><th>评分</th><th>链接</th></tr></thead>'
+            '<tbody>' + "".join(rows) + '</tbody></table></div>'
+        )
+    else:
+        project_html = "**暂无通过人工审核的科研项目。**"
+    page = DOCS / "radar/projects.md"
+    save_page("radar/projects.md", replace(page.read_text(encoding="utf-8"), "PROJECTS", project_html))
+
+    page = DOCS / "radar/index.md"
+    content = page.read_text(encoding="utf-8")
+    blocks = {
+        "DAILY": research_listing(reports["daily"]["projects"], "最近24小时暂无达到预警门槛的已审核项目。"),
+        "WEEKLY": research_listing(reports["weekly"]["projects"], "最近7天暂无已审核的重点进展。"),
+        "MONTHLY": research_listing(reports["monthly"]["projects"], "最近30天暂无已审核的研究机会。"),
+    }
+    for marker, body in blocks.items():
+        content = replace(content, marker, indent(body))
+    save_page("radar/index.md", content)
+
+    page = DOCS / "radar/tasks.md"
+    items = [
+        f'- {link(p.get("url"), p.get("title", "Issue"))} — {escape(p.get("state", "open"))}'
+        for p in tasks if isinstance(p, dict) and valid_url(p.get("url"))
+    ]
+    content = replace(page.read_text(encoding="utf-8"), "TASKS",
+                      "\n".join(items) or "暂无研究任务快照。请通过上方 GitHub Issues 入口查看。")
+    save_page("radar/tasks.md", content)
+
+    home = DOCS / "index.md"
+    content = home.read_text(encoding="utf-8-sig")
+    top = "".join(
+        "<li>" + link(p.get("paper_url") or p["source_url"], p["title"]) +
+        " · " + escape(p.get("parameters")) + "</li>" for p in approved[:3]
+    )
+    state = ("<p>已审核重点项目：</p><ul>" + top + "</ul>" if top else
+             "<p>目前暂无经过人工核实的高价值推荐；候选资料不会自动发布。</p>")
+    home_block = f"""## 科研雷达 · Research Radar
 
 <div class="radar-home-card" markdown>
-<div class="radar-stats"><div class="radar-stat"><strong>{len(verified)}</strong> 已审核项目</div><div class="radar-stat"><strong>{len(daily)}</strong> 近24小时重点</div><div class="radar-stat"><strong>{len(tasks)}</strong> 研究任务</div></div>
-
-{"<p>近期重点项目：</p><ul>"+top+"</ul>" if top else "<p>目前暂无已审核的高价值研究记录。候选项目不会直接作为正式推荐发布。</p>"}
+<div class="radar-stats">
+<div class="radar-stat"><strong>{len(approved)}</strong> 已审核项目</div>
+<div class="radar-stat"><strong>{len(reports["daily"]["projects"])}</strong> 近24小时重点</div>
+<div class="radar-stat"><strong>{len(tasks)}</strong> 研究任务</div>
+</div>
+{state}
 
 [科研动态](radar/index.md) · [科研项目库](radar/projects.md) · [研究任务](radar/tasks.md)
 
-</div>'''
-    save_page("index.md",replace(home,"",block) if False else replace_home(home,block))
-    print(f"Rendered {len(verified)} approved projects, {len(tasks)} tasks.")
+<small>数据时间窗口以UTC为准；预警须经过人工审阅。</small>
+</div>"""
+    content = replace(content, "", home_block) if False else replace_home(content, home_block)
+    save_page("index.md", content)
+    print(f"Radar render complete: {len(approved)} approved, {len(tasks)} tasks")
 
-def replace_home(home,block):
-    pattern=r"<!-- RADAR:START -->.*?<!-- RADAR:END -->"
-    next_text,n=re.subn(pattern,"<!-- RADAR:START -->\n"+block+"\n<!-- RADAR:END -->",home,flags=re.S)
-    if n!=1:raise ValueError("Homepage marker not found")
-    return next_text
+def replace_home(text, body):
+    result, n = re.subn(r"<!-- RADAR:START -->.*?<!-- RADAR:END -->",
+                        lambda match: "<!-- RADAR:START -->\n" + body + "\n<!-- RADAR:END -->",
+                        text, flags=re.S)
+    if n != 1:
+        raise ValueError("Missing home Radar markers")
+    return result
 
-if __name__=="__main__":run()
+if __name__ == "__main__":
+    render()
