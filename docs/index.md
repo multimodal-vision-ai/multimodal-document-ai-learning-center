@@ -46,6 +46,17 @@ shanshui_scene: 1
 
 </div>
 
+<!-- RADAR:START -->
+## 科研雷达 · Research Radar
+
+科研进展自动汇总入口：文档理解、视频理解与多模态小模型。数据先核验再推荐，不为凑数而发布。
+
+**当前暂无已审核的高价值研究记录。** 自动采集的候选项目不会直接作为推荐发布。
+
+[科研动态](radar/index.md) · [科研项目库](radar/projects.md) · [研究任务](radar/tasks.md)
+
+<!-- RADAR:END -->
+
 本学习中心由河海大学计算机与软件学院谭国平教授团队建设。当前课程聚焦 **Multimodal Document Understanding**，未来将逐步扩展到 **Video Understanding、Multimodal Reasoning** 与视觉智能应用。
 
 ---

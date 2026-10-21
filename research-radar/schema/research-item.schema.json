@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Verified research radar item",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "category",
+    "source_url",
+    "published_at",
+    "first_seen_at",
+    "review"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "document",
+        "video",
+        "small-vlm",
+        "agent"
+      ]
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "paper_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+    "github_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+    "huggingface_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+    "published_at": {
+      "type": "string"
+    },
+    "first_seen_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "organization": {
+      "type": "string"
+    },
+    "parameters": {
+      "type": "string"
+    },
+    "weights_open": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "training_code_open": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "data_open": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "gpu": {
+      "type": "string"
+    },
+    "lora": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "qlora": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "innovation": {
+      "type": "string"
+    },
+    "research_opportunity": {
+      "type": "string"
+    },
+    "score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10
+    },
+    "review": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ]
+    },
+    "evidence_urls": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    }
+  },
+  "additionalProperties": true
+}
