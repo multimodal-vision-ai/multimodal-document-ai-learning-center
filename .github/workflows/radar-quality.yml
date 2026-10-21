@@ -1,0 +1,44 @@
+name: Research Radar quality
+
+on:
+  pull_request:
+    paths:
+      - "research-radar/**"
+      - "scripts/radar/**"
+      - "tests/radar/**"
+      - "docs/radar/**"
+      - ".github/workflows/radar-*.yml"
+      - ".github/workflows/deploy.yml"
+      - "docs/index.md"
+      - "mkdocs.yml"
+  push:
+    branches: [dev]
+    paths:
+      - "research-radar/**"
+      - "scripts/radar/**"
+      - "tests/radar/**"
+      - "docs/radar/**"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Validate research model
+        run: python -m unittest discover -s tests/radar -v
+      - name: Render empty or approved records
+        run: python scripts/radar/render.py
+      - name: Require deterministic rendering
+        run: |
+          python scripts/radar/render.py
+          git diff --exit-code -- docs/index.md docs/radar
+      - name: Build documentation
+        run: |
+          pip install -r requirements-docs.txt
+          mkdocs build --strict
