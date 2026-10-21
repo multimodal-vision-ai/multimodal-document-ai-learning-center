@@ -2,7 +2,11 @@
 
 ## 独立访问地址
 
-**DEV 测试网站：**
+**DEV 测试网站（主链接）：**
+
+https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview/index.html
+
+**备用链接（第三方预览代理）：**
 
 https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html
 
@@ -15,7 +19,7 @@ https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-cen
 - 每页加入明显的“DEV 预览版”提示，不与正式页面混淆。
 - Pull Request 只会生成测试构建 artifact，不部署预览。合并至 dev 且 CI 完成后才会发布。
 - 仅 dev-preview 分支包含编译后的静态文件；该分支不作为当前仓库 GitHub Pages 发布源。
-- 预览依赖第三方 raw.githack.com 的开发模式。首次打开 HTML 可能显示安全确认，需根据其说明确认；公开免费服务没有正式SLA，缓存更新可能延迟数分钟。请勿把它用作正式生产网站。
+- 预览主链接使用 JSDelivr 的 GitHub CDN，并在每次部署后尝试清理首页和科研雷达页面的 CDN 缓存，再通过 GitHub Actions 检查首页、科研动态页和 CSS 是否可访问。raw.githack.com 保留为备用链接。两者都是第三方服务，没有正式 SLA；如主链接短暂不可用，可使用备用链接或稍后重试。请勿把 DEV 预览当作正式生产网站。
 - 所有 DEV 预览页面都公开，不能放入未发布论文、学生隐私或内部商业材料。
 
 GitHub Actions 记录：https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/workflows/dev-preview.yml

@@ -75,9 +75,9 @@ jobs:
           path = Path("mkdocs.yml")
           text = path.read_text(encoding="utf-8")
           target = (
-              "site_url: https://raw.githack.com/"
-              "multimodal-vision-ai/multimodal-document-ai-learning-center/"
-              "dev-preview/"
+              "site_url: https://cdn.jsdelivr.net/gh/"
+              "multimodal-vision-ai/multimodal-document-ai-learning-center"
+              "@dev-preview/"
           )
           new, count = re.subn(r"(?m)^site_url: .*$", target, text)
           if count != 1:
@@ -182,24 +182,66 @@ jobs:
             git commit -m "docs(preview): refresh generated DEV site [skip ci]"
             git push origin HEAD:refs/heads/dev-preview
           fi
-          echo "Fixed URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
+          echo "Fixed URL: https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview/index.html"
 
-      - name: Verify public DEV preview response
+      - name: Purge JSDelivr cache for updated DEV pages
         shell: bash
         run: |
           set -euo pipefail
-          url="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
+          base="https://purge.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
+          failed=0
+          for path in index.html radar/index.html radar/projects.html radar/tasks.html; do
+            safe_path="${path//\//-}"
+            ok=0
+            for attempt in 1 2 3; do
+              if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 25 "$base/$path" -o "$RUNNER_TEMP/purge-$safe_path.json"; then
+                ok=1
+                break
+              fi
+              sleep 5
+            done
+            if [ "$ok" -eq 0 ]; then
+              echo "::warning::JSDelivr cache purge failed for $path; public smoke test will determine whether deployment is healthy"
+              failed=1
+            fi
+          done
+          echo "JSDelivr cache purge step completed (purge_errors=$failed)"
+
+      - name: Verify public DEV preview response and assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
+          root_url="$base/index.html"
+          radar_url="$base/radar/index.html"
           for attempt in 1 2 3 4 5; do
-            echo "Probing DEV preview (attempt $attempt/5)"
-            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$url" -o "$RUNNER_TEMP/dev-preview-public.html" \
+            echo "Probing JSDelivr DEV preview (attempt $attempt/5)"
+            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$root_url" -o "$RUNNER_TEMP/dev-preview-public.html" \
+               && curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$radar_url" -o "$RUNNER_TEMP/dev-preview-radar.html" \
                && grep -q "DEV 预览版" "$RUNNER_TEMP/dev-preview-public.html" \
-               && grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html"; then
-              echo "DEV preview public URL accessible with expected banner and Radar text"
-              exit 0
+               && grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html" \
+               && grep -q "自动发现线索" "$RUNNER_TEMP/dev-preview-radar.html"; then
+              asset_url="$(python - "$radar_url" "$RUNNER_TEMP/dev-preview-radar.html" <<'PY'
+          import re
+          import sys
+          from urllib.parse import urljoin
+          base_url, file_path = sys.argv[1], sys.argv[2]
+          body = open(file_path, encoding="utf-8").read()
+          match = re.search(r'''href=["']([^"']+\.css[^"']*)["']''', body)
+          if not match:
+              raise SystemExit("No stylesheet URL found in Radar page")
+          print(urljoin(base_url, match.group(1)))
+          PY
+          )"
+              if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$asset_url" -o "$RUNNER_TEMP/dev-preview-radar.css" \
+                 && test -s "$RUNNER_TEMP/dev-preview-radar.css"; then
+                echo "JSDelivr preview HTML and stylesheet are accessible"
+                exit 0
+              fi
             fi
             sleep 20
           done
-          echo "::error::Generated preview is present on GitHub but public proxy did not pass the HTTP smoke test"
+          echo "::error::DEV preview branch exists but JSDelivr HTML/assets smoke test failed"
           exit 1
 
       - name: Checkout persistent Radar data branch
