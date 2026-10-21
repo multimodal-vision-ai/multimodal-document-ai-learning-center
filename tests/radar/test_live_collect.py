@@ -59,8 +59,6 @@ class CollectionIntegrationTests(unittest.TestCase):
             self.assertEqual(len(health["source_failures"]), 1)
             self.assertEqual(health["source_counts"]["arxiv"], 1)
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class SourcePriorityTests(unittest.TestCase):
@@ -101,3 +99,6 @@ class SourcePriorityTests(unittest.TestCase):
         self.assertEqual(len(entries), 1)
         self.assertEqual(entries[0]["id"], "arxiv-2610-12345")
         self.assertEqual(entries[0]["review"], "pending")
+
+if __name__ == "__main__":
+    unittest.main()
