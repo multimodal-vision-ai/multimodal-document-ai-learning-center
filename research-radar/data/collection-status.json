@@ -1,7 +1,7 @@
 {
-  "candidate_records": 149,
+  "candidate_records": 172,
   "current_run_discovered": 151,
-  "last_successful_run_utc": "2026-10-21T07:22:59+00:00",
+  "last_successful_run_utc": "2026-10-21T10:54:04+00:00",
   "review_policy": "all automated leads pending",
   "source_counts": {
     "arxiv": 60,
