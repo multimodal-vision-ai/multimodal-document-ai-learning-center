@@ -1,0 +1,47 @@
+name: Research Radar refresh pages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "55 2 * * *"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Load research data branch
+        run: |
+          git fetch origin radar-data
+          mkdir -p research-radar/data
+          git archive origin/radar-data research-radar/data | tar -xf -
+      - name: Render radar pages
+        run: |
+          python -m unittest discover -s tests/radar -v
+          python scripts/radar/render.py
+      - name: Build site
+        run: |
+          pip install -r requirements-docs.txt
+          mkdocs build --strict
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - uses: actions/deploy-pages@v4
+        id: deployment
