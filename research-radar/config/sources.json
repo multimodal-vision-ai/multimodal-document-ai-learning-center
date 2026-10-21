@@ -24,8 +24,10 @@
     "enabled": true,
     "queries": [
       "document understanding",
-      "video understanding"
-    ]
+      "video understanding",
+      "visual reasoning"
+    ],
+    "limit": 20
   },
   "institution_feeds": []
 }
