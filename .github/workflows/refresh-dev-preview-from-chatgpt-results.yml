@@ -169,19 +169,32 @@ jobs:
         run: |
           set -euo pipefail
           base="https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
-          for attempt in 1 2 3; do
-            echo "Checking public DEV preview response (attempt $attempt/3)"
-            if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 15 "$base/index.html" -o "$RUNNER_TEMP/public-home.html" \
-               && curl --fail --location --silent --show-error --connect-timeout 10 --max-time 15 "$base/radar/index.html" -o "$RUNNER_TEMP/public-radar.html" \
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            echo "Checking public DEV preview content (attempt $attempt/10)"
+            if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/index.html" -o "$RUNNER_TEMP/public-home.html" \
+               && curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/radar/index.html" -o "$RUNNER_TEMP/public-radar.html" \
                && test -s "$RUNNER_TEMP/public-home.html" \
-               && test -s "$RUNNER_TEMP/public-radar.html" \
-               && grep -q "ChatGPT 科研价值精选" "$RUNNER_TEMP/public-home.html" \
-               && grep -q "周期任务运行验收" "$RUNNER_TEMP/public-home.html" \
-               && grep -q "ChatGPT 科研价值精选" "$RUNNER_TEMP/public-radar.html"; then
-              echo "Public DEV preview endpoints return non-empty HTML; the published branch content was validated before deployment."
-              exit 0
+               && test -s "$RUNNER_TEMP/public-radar.html"; then
+              if grep -q "ChatGPT 科研价值精选" "$RUNNER_TEMP/public-home.html" \
+                 && grep -q "周期任务运行验收" "$RUNNER_TEMP/public-home.html" \
+                 && grep -q "ChatGPT 科研价值精选" "$RUNNER_TEMP/public-radar.html"; then
+                echo "Public DEV preview endpoints return the expected current research-curation and watchdog content."
+                exit 0
+              fi
+              echo "CDN returned HTML, but at least one expected content marker is missing; checking cache propagation."
+              echo "Home marker presence: stage2=$(grep -q 'ChatGPT 科研价值精选' "$RUNNER_TEMP/public-home.html" && echo yes || echo no), watchdog=$(grep -q '周期任务运行验收' "$RUNNER_TEMP/public-home.html" && echo yes || echo no)"
+              echo "Detail marker presence: stage2=$(grep -q 'ChatGPT 科研价值精选' "$RUNNER_TEMP/public-radar.html" && echo yes || echo no)"
             fi
-            sleep 5
+            sleep 10
           done
-          echo "::error::Public DEV preview endpoints are not responding with valid HTML"
+          echo "Stable CDN URL did not expose the new DEV content after retries. Checking cache-busted response for diagnosis."
+          if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/index.html?verify=$GITHUB_SHA" -o "$RUNNER_TEMP/public-home-busted.html"; then
+            if grep -q "周期任务运行验收" "$RUNNER_TEMP/public-home-busted.html"; then
+              echo "::error::Cache-busted URL has current content, but stable CDN URL is stale; publication is not considered verified."
+            else
+              echo "::error::Cache-busted URL also lacks the expected watchdog marker."
+            fi
+          else
+            echo "::error::Public DEV preview endpoint failed after retries."
+          fi
           exit 1
