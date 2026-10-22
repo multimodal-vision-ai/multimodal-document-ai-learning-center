@@ -110,8 +110,18 @@ def github():
             created, modified = record.get("created_at"), record.get("pushed_at")
             if not title or not valid_url(url) or not created or not recent(created, modified):
                 continue
-            items.append(candidate("github-" + str(record["id"]), title, url, created,
-                                   "github", github_url=url, updated_at=modified))
+            license = record.get("license") or {}
+            license_id = license.get("spdx_id") if isinstance(license, dict) else None
+            description = str(record.get("description") or "")[:1200]
+            items.append(candidate(
+                "github-" + str(record["id"]), title, url, created, "github",
+                github_url=url, updated_at=modified, description=description,
+                github_stars=int(record.get("stargazers_count") or 0),
+                github_forks=int(record.get("forks_count") or 0),
+                github_license=license_id,
+                github_language=record.get("language"),
+                github_topics=(record.get("topics") or [])[:20],
+            ))
     return items
 
 def huggingface():
@@ -133,8 +143,18 @@ def huggingface():
                 continue
             url = "https://huggingface.co/" + name
             key = hashlib.sha256(name.lower().encode()).hexdigest()[:20]
-            found.append(candidate("hf-" + key, name, url, created, "huggingface",
-                                   huggingface_url=url, updated_at=modified))
+            card_known = "cardData" in record or "card_data" in record
+            has_card = bool(record.get("cardData") or record.get("card_data")) if card_known else None
+            found.append(candidate(
+                "hf-" + key, name, url, created, "huggingface",
+                huggingface_url=url, updated_at=modified,
+                hf_downloads=int(record.get("downloads") or 0),
+                hf_likes=int(record.get("likes") or 0),
+                hf_tags=(record.get("tags") or [])[:30],
+                hf_pipeline_tag=record.get("pipeline_tag"),
+                hf_library_name=record.get("library_name"),
+                hf_has_model_card=has_card,
+            ))
     return found
 
 def openreview():
