@@ -10,8 +10,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: chatgpt-results-dev-preview
-  cancel-in-progress: true
+  group: dev-preview
+  cancel-in-progress: false
 
 jobs:
   refresh:
