@@ -77,9 +77,9 @@ jobs:
           path = Path("mkdocs.yml")
           text = path.read_text(encoding="utf-8")
           target = (
-              "site_url: https://cdn.jsdelivr.net/gh/"
+              "site_url: https://raw.githack.com/"
               "multimodal-vision-ai/multimodal-document-ai-learning-center"
-              "@dev-preview/"
+              "/dev-preview/"
           )
           new, count = re.subn(r"(?m)^site_url: .*$", target, text)
           if count != 1:
@@ -184,7 +184,7 @@ jobs:
             git commit -m "docs(preview): refresh generated DEV site [skip ci]"
             git push origin HEAD:refs/heads/dev-preview
           fi
-          echo "Fixed URL: https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview/index.html"
+          echo "Fixed DEV preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
 
       - name: Checkout persistent Radar data branch
         if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
@@ -241,42 +241,19 @@ jobs:
             fi
           fi
 
-      - name: Purge JSDelivr cache for updated DEV pages
+      - name: Verify public DEV preview serves rendered HTML and assets
         shell: bash
         run: |
           set -euo pipefail
-          base="https://purge.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
-          failed=0
-          for path in index.html radar/index.html radar/projects.html radar/tasks.html; do
-            safe_path="${path//\//-}"
-            ok=0
-            for attempt in 1 2 3; do
-              if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 25 "$base/$path" -o "$RUNNER_TEMP/purge-$safe_path.json"; then
-                ok=1
-                break
-              fi
-              sleep 5
-            done
-            if [ "$ok" -eq 0 ]; then
-              echo "::warning::JSDelivr cache purge failed for $path; public smoke test will determine whether deployment is healthy"
-              failed=1
-            fi
-          done
-          echo "JSDelivr cache purge step completed (purge_errors=$failed)"
-
-      - name: Verify public DEV preview response and assets
-        # Third-party CDN outages must not block shared radar-data persistence.
-        continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-          base="https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
-          root_url="$base/index.html"
-          radar_url="$base/radar/index.html"
-          for attempt in 1 2 3 4 5; do
-            echo "Probing JSDelivr DEV preview (attempt $attempt/5)"
-            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$root_url" -o "$RUNNER_TEMP/dev-preview-public.html" \
-               && curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$radar_url" -o "$RUNNER_TEMP/dev-preview-radar.html" \
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview"
+          root_url="$base/index.html?preview_build=${GITHUB_SHA}"
+          radar_url="$base/radar/index.html?preview_build=${GITHUB_SHA}"
+          for attempt in 1 2 3 4 5 6; do
+            echo "Probing rendered DEV preview (attempt $attempt/6)"
+            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 -D "$RUNNER_TEMP/dev-home.headers" "$root_url" -o "$RUNNER_TEMP/dev-preview-public.html" \
+               && curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 -D "$RUNNER_TEMP/dev-radar.headers" "$radar_url" -o "$RUNNER_TEMP/dev-preview-radar.html" \
+               && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/dev-home.headers" \
+               && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/dev-radar.headers" \
                && grep -q "DEV 预览版" "$RUNNER_TEMP/dev-preview-public.html" \
                && grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html" \
                && grep -q "高匹配自动候选" "$RUNNER_TEMP/dev-preview-radar.html"; then
@@ -294,12 +271,13 @@ jobs:
           )"
               if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$asset_url" -o "$RUNNER_TEMP/dev-preview-radar.css" \
                  && test -s "$RUNNER_TEMP/dev-preview-radar.css"; then
-                echo "JSDelivr preview HTML and stylesheet are accessible"
+                echo "DEV preview returns HTML content types and its stylesheet is accessible"
+                echo "Open: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
                 exit 0
               fi
             fi
-            sleep 20
+            sleep 15
           done
-          echo "::error::DEV preview branch exists but JSDelivr HTML/assets smoke test failed"
+          echo "::error::DEV preview failed the HTML content-type or asset check"
+          echo "The preview is not considered healthy until the browser receives rendered HTML."
           exit 1
-
