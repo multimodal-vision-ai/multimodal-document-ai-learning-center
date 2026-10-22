@@ -5,6 +5,7 @@ These are source-linked structured summaries, not LLM-written peer-reviewed rese
 from datetime import datetime, timedelta, timezone
 from core import DATA, load, parse_dt, save, verify
 from ranking import rank_candidates, summarize_candidates, DISPLAY_MATCH_THRESHOLD
+from screening import build_queue
 
 def event_time(item):
     candidates = [parse_dt(item["published_at"]), parse_dt(item["reviewed_at"])]
@@ -70,6 +71,9 @@ def snapshot():
     candidates = load(DATA / "candidates.json", [])
     now = datetime.now(timezone.utc)
     reports = build(projects, now, candidates)
+    queue = build_queue(candidates, now)
+    save(DATA / "screening-queue.json", queue)
+    print(f"Saved stage-one AI screening queue: {queue['total']} candidates meeting >=8.0")
     stamp = now.strftime("%Y-%m-%d")
     iso = now.isocalendar()
     paths = {
