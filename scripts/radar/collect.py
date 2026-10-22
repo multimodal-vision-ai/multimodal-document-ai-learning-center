@@ -6,6 +6,7 @@ public API2 search, and explicitly configured official Atom/RSS feeds.
 import hashlib
 import json
 import os
+import re
 import sys
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
