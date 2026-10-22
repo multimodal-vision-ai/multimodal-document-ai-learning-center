@@ -119,7 +119,7 @@ def inspect(data_path=DATA, now=None):
     return result
 
 
-REPORT_PATH = re.compile(r"^research-radar/data/chatgpt-reviewed/latest-(daily|weekly|monthly)\\.json$")
+REPORT_PATH = re.compile(r"^research-radar/data/chatgpt-reviewed/latest-(daily|weekly|monthly)\.json$")
 
 
 def validate_updated_reports(data_path=DATA, event_path=None, now=None):
