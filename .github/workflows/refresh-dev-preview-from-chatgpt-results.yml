@@ -50,6 +50,7 @@ jobs:
         working-directory: site-source
         run: |
           python -m unittest discover -s tests/radar -v
+          python scripts/radar/screening.py
           python scripts/radar/render.py
 
       - name: Set the isolated DEV preview base URL
@@ -105,8 +106,8 @@ jobs:
           if not (root / "index.html").exists() or count == 0:
               raise SystemExit("Built DEV site is missing index.html")
           required = {
-              "index.html": ["ChatGPT 已筛选研究结果", "One Fact, Many Places"],
-              "radar/index.html": ["ChatGPT 已筛选结果", "RPD + SARA", "MaLoW"],
+              "index.html": ["ChatGPT 科研价值精选", "本周高匹配线索"],
+              "radar/index.html": ["ChatGPT 科研价值精选", "历史 ChatGPT 筛选档案"],
           }
           for relative, markers in required.items():
               page = root / relative
