@@ -1,4 +1,4 @@
-"""Render three MkDocs pages and homepage without touching course materials."""
+"""Render the consolidated Research Updates page and legacy internal snapshots."""
 import html
 import re
 from datetime import datetime, timedelta, timezone
@@ -7,7 +7,6 @@ from core import DATA, ROOT, load, valid_url, parse_dt
 from reports import build
 from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
 from screening import collect_screened, build_queue
-from monitor_ui import widget as monitor_widget
 
 DOCS = ROOT / "docs"
 
@@ -416,96 +415,6 @@ def stage_two_home_section(chatgpt_reports, queue):
     )
 
 
-def homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, screening_queue, now):
-    daily = reports.get("daily", {}).get("candidate_summary", {})
-    weekly = reports.get("weekly", {}).get("candidate_summary", {})
-    weekly_leads = reports.get("weekly", {}).get("candidate_leads", [])[:3]
-    approved_top = approved[:3]
-    featured_html = "".join(candidate_card(item) for item in weekly_leads)
-    if not featured_html:
-        featured_html = (
-            '<div class="radar-empty-state"><strong>近7天暂无主题匹配度 ≥8.0 的自动候选。</strong>'
-            '<p>系统不会为了填满首页而推荐无关项目。可查看完整科研动态与历史记录。</p></div>'
-        )
-    approved_html = ""
-    if approved_top:
-        approved_html = (
-            '<div class="radar-home-section-heading"><h3>已核验重点项目</h3>'
-            '<span>经过研究人员审核的记录</span></div>'
-            '<div class="radar-feature-grid radar-approved-grid">'
-            + "".join(approved_card(item) for item in approved_top) + '</div>'
-        )
-
-    category_counts = weekly.get("category_counts", {})
-    trend_cards = []
-    for category in ("document", "video", "small-vlm"):
-        count = category_counts.get(category, 0)
-        sample = next((item for item in weekly_leads if item.get("category") == category), None)
-        sample_html = (
-            f'<p class="radar-trend-sample">{link(sample["source_url"], sample["title"])}</p>'
-            if sample else '<p class="radar-trend-sample radar-muted">暂无达到门槛的代表线索</p>'
-        )
-        trend_cards.append(
-            '<article class="radar-trend-card">'
-            f'<span class="radar-trend-count">{count}</span>'
-            f'<strong>{escape(category_label(category))}</strong>'
-            f'{sample_html}</article>'
-        )
-
-    last_run = pretty_time(collection_status.get("last_successful_run_utc"))
-    source_counts = collection_status.get("source_counts", {})
-    source_text = " · ".join(
-        f'{escape(source_label(key))} {escape(value)}'
-        for key, value in sorted(source_counts.items())
-    ) or "来源统计尚未记录"
-    failures = collection_status.get("source_failures", [])
-    if failures:
-        health_html = (
-            f'<div class="radar-home-warning" role="status">本次采集有 {len(failures)} 个来源异常；'
-            '首页保留已成功采集的数据，不把失败来源视为零结果。</div>'
-        )
-    elif collection_status.get("last_successful_run_utc"):
-        health_html = '<div class="radar-home-health" role="status">采集状态：最近一次成功运行未报告来源异常</div>'
-    else:
-        health_html = '<div class="radar-home-warning" role="status">尚未记录成功采集时间；请查看运行日志确认数据新鲜度。</div>'
-
-    stat_html = (
-        '<div class="radar-stats">'
-        f'<div class="radar-stat"><strong>{weekly.get("relevant_count", 0)}</strong><span>近7天≥8分候选</span></div>'
-        f'<div class="radar-stat"><strong>{len(weekly.get("source_counts", {}))}</strong><span>本周覆盖来源类型</span></div>'
-        f'<div class="radar-stat"><strong>{weekly.get("new_papers_count", 0)}</strong><span>近7天新论文 / 投稿</span></div>'
-        f'<div class="radar-stat"><strong>{len(approved)}</strong><span>已审核项目</span></div>'
-        '</div>'
-    )
-    return f"""<section class="radar-home-card" aria-labelledby="radar-home-title">
-<div class="radar-home-heading">
-<div><p class="radar-kicker">LIVE RESEARCH MONITOR</p>
-<h2 id="radar-home-title">科研雷达 · Research Radar</h2>
-<p class="radar-home-intro">每周集中更新文档理解、视频理解和多模态小模型进展，每月形成研究总结；日度预警已停用，完整证据和历史资料仍可查阅。</p></div>
-<span class="radar-live-pill">自动采集</span>
-</div>
-<div class="radar-home-meta"><span>最近成功采集：<time>{escape(last_run)}</time></span><span>本次来源命中：{source_text}</span></div>
-{health_html}
-{stage_two_home_section(chatgpt_reports, screening_queue)}
-{monitor_widget(DATA, now)}
-{stat_html}
-<details class="radar-legacy-archive"><summary>查看历史 ChatGPT 筛选档案（未按新标准复评）</summary>
-{chatgpt_home_section(chatgpt_reports, now)}
-</details>
-{approved_html}
-<div class="radar-home-section-heading"><h3>本周高匹配线索</h3><span>匹配度 ≥8.0 · 最多3项 · 未经科研审核</span></div>
-<div class="radar-feature-grid">{featured_html}</div>
-<div class="radar-home-section-heading"><h3>本周监测线索分布</h3><span>自动分类统计，不代表整个领域的发文量或质量排名</span></div>
-<div class="radar-trend-grid">{"".join(trend_cards)}</div>
-<div class="radar-home-actions">
-<a class="radar-home-action-primary" href="radar/index.html">查看最新动态与日报周报 →</a>
-<a href="radar/projects.html">已审核项目库</a>
-<a href="radar/tasks.html">研究任务</a>
-</div>
-<p class="radar-home-footnote">自动初筛的“主题匹配度”是可解释的关键词与来源规则分，不是科研质量评分或专家结论。项目权重、代码、许可证、GPU 需求与复现结果只有在有证据时才会标为已核实。当前数据范围：{escape(str(reports.get("weekly", {}).get("window_start", ""))[:10])} 至 {escape(str(reports.get("weekly", {}).get("window_end", ""))[:10])}（UTC）。研究任务数：{len(tasks)}。</p>
-</section>"""
-
-
 def render(now=None):
     now = now or datetime.now(timezone.utc)
     projects = load(DATA / "projects.json", [])
@@ -597,20 +506,7 @@ def render(now=None):
                       "\n".join(items) or "暂无研究任务快照。请通过上方 GitHub Issues 入口查看。")
     save_page("radar/tasks.md", content)
 
-    home = DOCS / "index.md"
-    content = home.read_text(encoding="utf-8-sig")
-    home_block = homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, screening_queue, now)
-    content = replace_home(content, home_block)
-    save_page("index.md", content)
-    print(f"Radar render complete: {len(approved)} approved, {len(tasks)} tasks")
-
-def replace_home(text, body):
-    result, n = re.subn(r"<!-- RADAR:START -->.*?<!-- RADAR:END -->",
-                        lambda match: "<!-- RADAR:START -->\n" + body + "\n<!-- RADAR:END -->",
-                        text, flags=re.S)
-    if n != 1:
-        raise ValueError("Missing home Radar markers")
-    return result
+    print(f"Radar render complete: {len(approved)} approved records; research updates refreshed")
 
 if __name__ == "__main__":
     render()
