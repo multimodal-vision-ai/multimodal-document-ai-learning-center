@@ -4,6 +4,7 @@ These are source-linked structured summaries, not LLM-written peer-reviewed rese
 """
 from datetime import datetime, timedelta, timezone
 from core import DATA, load, parse_dt, save, verify
+from ranking import rank_candidates, summarize_candidates
 
 def event_time(item):
     candidates = [parse_dt(item["published_at"]), parse_dt(item["reviewed_at"])]
@@ -22,10 +23,11 @@ def select(projects, since, until, limit, threshold=0):
             results.append(item)
     return sorted(results, key=lambda x: (-x["score"], -event_time(x).timestamp(), x["id"]))[:limit]
 
-def build(projects, now=None):
+def build(projects, now=None, candidates=None):
     now = now or datetime.now(timezone.utc)
     if now.tzinfo is None:
         now = now.replace(tzinfo=timezone.utc)
+    candidates = candidates or []
     iso = now.isocalendar()
     intervals = {
         "daily": (now - timedelta(hours=24), 3, 8.5),
@@ -35,6 +37,9 @@ def build(projects, now=None):
     out = {}
     for name, (start, cap, threshold) in intervals.items():
         picked = select(projects, start, now, cap, threshold)
+        candidate_limit = {"daily": 3, "weekly": 10, "monthly": 10}[name]
+        candidate_leads = rank_candidates(candidates, start, now, limit=candidate_limit)
+        candidate_stats = summarize_candidates(candidates, start, now)
         out[name] = {
             "period": name,
             "window_start": start.isoformat(timespec="seconds"),
@@ -46,19 +51,23 @@ def build(projects, now=None):
                     "innovation", "research_opportunity"
                 )} for p in picked
             ],
+            "candidate_leads": candidate_leads,
+            "candidate_summary": candidate_stats,
             "research_topics": [
                 {"project_id": p["id"], "title": p["title"],
                  "opportunity": p.get("research_opportunity", "")}
                 for p in picked[:3]
             ] if name == "monthly" else [],
             "empty": not bool(picked),
+            "empty_candidate_leads": not bool(candidate_leads),
         }
     return out
 
 def snapshot():
     projects = load(DATA / "projects.json", [])
+    candidates = load(DATA / "candidates.json", [])
     now = datetime.now(timezone.utc)
-    reports = build(projects, now)
+    reports = build(projects, now, candidates)
     stamp = now.strftime("%Y-%m-%d")
     iso = now.isocalendar()
     paths = {
