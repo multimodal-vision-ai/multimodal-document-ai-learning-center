@@ -68,6 +68,23 @@ class RankingTests(unittest.TestCase):
         })
         self.assertEqual(rank_candidates([record], WEEK, NOW, limit=None), [])
 
+    def test_new_research_papers_precede_app_repositories_on_homepage(self):
+        paper = item("arxiv-new-doc", "Document Understanding Dataset and Evaluation",
+                     "arxiv", "2026-10-20T08:00:00Z", category="document",
+                     url="https://arxiv.org/abs/2610.12345")
+        repo = item("github-strong-rag", "Daemon-VI/optivision-rag", "github",
+                    "2026-08-17T17:28:24Z", "2026-10-21T07:28:42Z",
+                    category="document", url="https://github.com/Daemon-VI/optivision-rag")
+        repo.update({
+            "description": "Visual-token compression for VLM document retrieval with quantization and token pruning.",
+            "github_stars": 50, "github_license": "MIT",
+            "github_topics": ["document-retrieval", "quantization", "vision-language-model"],
+        })
+        ranked = rank_candidates([repo, paper], WEEK, NOW, limit=None)
+        self.assertEqual(ranked[0]["id"], "arxiv-new-doc")
+        self.assertEqual(ranked[0]["priority_tier"], 0)
+        self.assertGreaterEqual(ranked[1]["priority_tier"], 2)
+
     def test_summary_counts_relevant_categories_and_new_papers(self):
         paper = item("arxiv-video", "Efficient Long Video Question Answering",
                      "arxiv", "2026-10-22T11:00:00Z", category="video",
