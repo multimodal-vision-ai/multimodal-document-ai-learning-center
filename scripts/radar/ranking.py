@@ -61,6 +61,15 @@ NOISE_TERMS = (
 )
 
 
+def _normalized_text(value):
+    return " " + re.sub(r"[^a-z0-9]+", " ", str(value or "").lower()).strip() + " "
+
+
+def _contains_term(normalized_text, term):
+    normalized_term = re.sub(r"[^a-z0-9]+", " ", str(term or "").lower()).strip()
+    return bool(normalized_term) and f" {normalized_term} " in normalized_text
+
+
 def _date(value):
     try:
         return parse_dt(value) if value else None
@@ -155,6 +164,7 @@ def score_candidate(item, event_at, now=None):
          " ".join(tag_values), str(item.get("hf_pipeline_tag") or ""),
          str(item.get("hf_library_name") or "")]
     ).lower()
+    normalized_text = _normalized_text(text)
 
     if any(term in text for term in NOISE_TERMS):
         return {"match_score": 0.0, "match_reasons": ["疑似自动生成或测试仓库，已降权"], "relevant": False}
@@ -168,7 +178,7 @@ def score_candidate(item, event_at, now=None):
 
     matched_topics = []
     for key, label, terms, weight in TOPIC_GROUPS:
-        if any(term in text for term in terms):
+        if any(_contains_term(normalized_text, term) for term in terms):
             points += weight
             matched_topics.append((key, label))
             reasons.append("主题：" + label)
@@ -176,10 +186,10 @@ def score_candidate(item, event_at, now=None):
     if not matched_topics:
         return {"match_score": 0.0, "match_reasons": ["未命中核心研究主题"], "relevant": False}
 
-    if any(term in text for term in EFFICIENCY_TERMS):
+    if any(_contains_term(normalized_text, term) for term in EFFICIENCY_TERMS):
         points += 0.9
         reasons.append("方法关键词：高效化 / 压缩 / 低成本训练")
-    if any(term in text for term in ARTIFACT_TERMS):
+    if any(_contains_term(normalized_text, term) for term in ARTIFACT_TERMS):
         points += 0.35
         reasons.append("成果类型：Benchmark / 数据集 / 评测")
 
@@ -258,6 +268,7 @@ def candidate_priority(item, event):
             str(item.get("title") or ""), description,
             " ".join(map(str, item.get("github_topics", []))) if isinstance(item.get("github_topics"), list) else "",
         ]).lower()
+        normalized_text = _normalized_text(text)
         research_terms = (
             "benchmark", "dataset", "token compression", "token reduction",
             "quantization", "distillation", "lora", "qlora", "vision-language",
@@ -267,7 +278,7 @@ def candidate_priority(item, event):
         )
         if stars >= 10 and description and item.get("github_license"):
             return 2
-        if any(term in text for term in research_terms):
+        if any(_contains_term(normalized_text, term) for term in research_terms):
             return 3
         if description and stars >= 5:
             return 4
