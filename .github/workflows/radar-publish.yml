@@ -2,8 +2,6 @@ name: Research Radar refresh pages
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "55 2 * * *"
 
 permissions:
   contents: read
