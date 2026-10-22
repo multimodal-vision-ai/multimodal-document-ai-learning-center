@@ -15,6 +15,22 @@ DIMENSIONS = {"innovation": 10, "openness": 9, "compute": 8,
               "reproducibility": 9, "extension": 9, "commercialization": 8}
 
 class RadarRenderTests(unittest.TestCase):
+    def test_value_points_use_student_facing_language(self):
+        examples = [
+            "原周报列为 A 优先级；模型权重和数据被记录为开放，且提供了 GitHub 与 Hugging Face 入口，适合作为文档解析的复现基线。",
+            "已存档周报记录了 T4 16GB 环境测试，并报告 FP32 约 46 edits/s；完整蒸馏流程尚未确认，适合开展可复现实验和评测方法研究。",
+            "报告列为 A 优先级，开放权重与数据。",
+        ]
+        cleaned = [render.clean_value_point(value) for value in examples]
+        for value in cleaned:
+            self.assertNotIn("原周报", value)
+            self.assertNotIn("已存档周报", value)
+            self.assertNotIn("周报记录", value)
+            self.assertNotIn("A 优先级", value)
+        self.assertIn("GitHub", cleaned[0])
+        self.assertIn("T4 16GB", cleaned[1])
+        self.assertIn("开放权重与数据", cleaned[2])
+
     def test_approved_project_and_pending_leads_are_separated(self):
         with tempfile.TemporaryDirectory() as temp:
             tempdir = Path(temp)
@@ -150,6 +166,9 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn('<strong>参数量：</strong><span>2B</span>', weekly_section)
             self.assertIn('<strong>GPU需求：</strong><span>T4 量化推理可行；LoRA 约 24GB；全量训练至少 40GB</span>', weekly_section)
             self.assertNotIn("按已存档周报记录", weekly_section)
+            self.assertNotIn("原周报", weekly_section)
+            self.assertNotIn("已存档周报", weekly_section)
+            self.assertNotIn("A 优先级", weekly_section)
             self.assertNotIn("需实测复核", weekly_section)
             self.assertIn("radar-resource-row", weekly_section)
             self.assertIn("本月研究机会", first["radar/index.md"])
