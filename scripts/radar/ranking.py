@@ -234,6 +234,47 @@ def score_candidate(item, event_at, now=None):
     }
 
 
+def candidate_priority(item, event):
+    """Prefer new research publications, then evidence-rich research artifacts."""
+    provider = str(item.get("discovered_from") or "").lower()
+    if provider in PAPER_SOURCES and event.get("is_new_paper"):
+        return 0
+    if provider == "arxiv" and event.get("event_label") == "arXiv 版本更新":
+        return 1
+    if provider in {"institution", "official-feeds"}:
+        return 2
+    if provider == "huggingface":
+        downloads = int(item.get("hf_downloads") or 0)
+        likes = int(item.get("hf_likes") or 0)
+        if item.get("hf_has_model_card") is True or downloads >= 100 or likes >= 5:
+            return 2
+        if item.get("hf_pipeline_tag") or item.get("hf_library_name"):
+            return 3
+        return 5
+    if provider == "github":
+        stars = int(item.get("github_stars") or 0)
+        description = str(item.get("description") or "").strip()
+        text = " ".join([
+            str(item.get("title") or ""), description,
+            " ".join(map(str, item.get("github_topics", []))) if isinstance(item.get("github_topics"), list) else "",
+        ]).lower()
+        research_terms = (
+            "benchmark", "dataset", "token compression", "token reduction",
+            "quantization", "distillation", "lora", "qlora", "vision-language",
+            "vision language", "document-vlm", "video-language", "evaluation",
+            "document rag", "video rag", "model compression", "inference engine",
+            "vlm fine-tuning", "vlm fine tuning", "document retrieval",
+        )
+        if stars >= 10 and description and item.get("github_license"):
+            return 2
+        if any(term in text for term in research_terms):
+            return 3
+        if description and stars >= 5:
+            return 4
+        return 5
+    return 5
+
+
 def rank_candidates(items, since, until, limit=15, threshold=3.5):
     """Rank current-window leads by topic match and recency; all remain unreviewed."""
     ranked = []
@@ -265,6 +306,10 @@ def rank_candidates(items, since, until, limit=15, threshold=3.5):
             "hf_downloads": item.get("hf_downloads"),
             "hf_likes": item.get("hf_likes"),
             "hf_has_model_card": item.get("hf_has_model_card"),
+            "hf_pipeline_tag": item.get("hf_pipeline_tag"),
+            "hf_library_name": item.get("hf_library_name"),
+            "github_topics": item.get("github_topics", []),
+            "priority_tier": candidate_priority(item, event),
             "discovered_from": item.get("discovered_from", ""),
             "published_at": item.get("published_at"),
             "updated_at": item.get("updated_at"),
@@ -276,7 +321,8 @@ def rank_candidates(items, since, until, limit=15, threshold=3.5):
             "review": "pending",
         })
     ranked.sort(key=lambda x: (
-        -x["match_score"], -(_date(x["event_at"]) or datetime.min.replace(tzinfo=timezone.utc)).timestamp(),
+        x.get("priority_tier", 5), -x["match_score"],
+        -(_date(x["event_at"]) or datetime.min.replace(tzinfo=timezone.utc)).timestamp(),
         x.get("id", ""),
     ))
     return ranked if limit is None else ranked[:max(0, limit)]
