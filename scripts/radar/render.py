@@ -271,7 +271,7 @@ def render(now=None):
         content = replace(content, marker, indent(body))
     leads = []
     for item in select_candidate_leads(candidates, now):
-        title = escape(item.get("title", "Untitled"))
+        title = item.get("title", "Untitled")
         event_label = escape(item.get("event_label", "近期研究线索"))
         date = escape(str(item.get("event_at") or "")[:10])
         reasons = escape("；".join(item.get("match_reasons", [])[:4]))
@@ -286,7 +286,7 @@ def render(now=None):
     status_line = (f"**最近一次公开源采集（UTC）：{run_time}**；"
                    f"成功来源 {sources}；异常来源 {failures}；"
                    f"数据库候选总数 {len(candidates)}。"
-                   " 下方按来源限额展示部分线索，非质量排名。")
+                   " 下方展示近7天达到主题相关度门槛的候选；匹配度是规则初筛，不是质量排名。")
     content = replace(content, "CANDIDATES", status_line + "\n\n" +
                       ("\n".join(leads) if leads else "暂无自动采集到的公开线索。"))
     save_page("radar/index.md", content)
