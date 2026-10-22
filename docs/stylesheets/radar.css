@@ -1016,3 +1016,57 @@
     font-size:.78rem;
   }
 }
+
+
+/* Student-first layout for the featured recommendations. */
+.md-content__inner:has(.radar-review-intro) .radar-review-card-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: .65rem;
+  margin-bottom: .55rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-title {
+  min-width: 0;
+  margin: 0 !important;
+  font-size: 1.08rem !important;
+  line-height: 1.42 !important;
+  overflow-wrap: anywhere;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-overall {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-summary {
+  margin: .3rem 0 .65rem !important;
+  color: var(--md-default-fg-color--light);
+  font-size: .88rem;
+  line-height: 1.65;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-detail h4 {
+  font-size: .86rem !important;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-detail p {
+  font-size: .85rem;
+  line-height: 1.65;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-sources > strong {
+  color: var(--md-default-fg-color);
+  font-size: .76rem;
+}
+@media (max-width: 760px) {
+  .md-content__inner:has(.radar-review-intro) .radar-review-score-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 520px) {
+  .md-content__inner:has(.radar-review-intro) .radar-review-card-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .md-content__inner:has(.radar-review-intro) .radar-review-overall {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
+}
