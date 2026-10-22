@@ -7,7 +7,6 @@ from core import DATA, ROOT, load, valid_url, parse_dt
 from reports import build
 from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
 from screening import collect_screened, build_queue
-from automation_health import REPORTS as AUTOMATION_REPORTS
 
 DOCS = ROOT / "docs"
 
@@ -380,7 +379,7 @@ def automation_health_panel(health):
     if valid_url(publication.get("run_url")):
         pub_link = f' · {link(publication["run_url"], "查看 GitHub Actions")}'
     watch = health.get("watchdog", {})
-    watch_time = escape(watch.get("last_run_at") or health.get("checked_at") or "未知")
+    watch_time = escape(watch.get("last_run_at") or "尚未运行独立巡检")
     overall = health.get("overall_status", "degraded")
     overall_label = "三项任务报告均通过" if overall == "healthy" else "存在待处理项"
     overall_class = "radar-home-health" if overall == "healthy" else "radar-home-warning"
