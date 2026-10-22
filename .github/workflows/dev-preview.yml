@@ -220,7 +220,21 @@ jobs:
             echo "Radar data snapshot unchanged."
           else
             git commit -m "data(radar): update candidate discovery and DEV reports [skip ci]"
-            git push origin HEAD:radar-data
+            pushed=0
+            for attempt in 1 2 3; do
+              if git push origin HEAD:refs/heads/radar-data; then
+                pushed=1
+                break
+              fi
+              echo "::warning::radar-data advanced concurrently; rebasing snapshot (attempt $attempt/3)"
+              git fetch origin radar-data
+              git rebase FETCH_HEAD
+              sleep 3
+            done
+            if [ "$pushed" -ne 1 ]; then
+              echo "::error::radar-data push did not succeed after retries"
+              exit 1
+            fi
           fi
 
       - name: Purge JSDelivr cache for updated DEV pages
