@@ -162,8 +162,15 @@ def report_items(report, queue):
 def collect_screened(reports, queue):
     """Separate strictly validated AI results from legacy summaries."""
     entries, problems = [], []
-    for kind in ("daily", "weekly", "monthly"):
+    for kind in ("screened", "daily", "weekly", "monthly"):
         report = reports.get(kind, {})
+        # A prior review becomes a historical record once the current rolling
+        # queue is more than seven days newer. Do not block future builds when
+        # an old candidate leaves the discovery window.
+        run_date = _date(report.get("generated_at")) if isinstance(report, dict) else None
+        queue_date = _date(queue.get("generated_at"))
+        if run_date and queue_date and queue_date - run_date > timedelta(days=7):
+            continue
         approved, errors = report_items(report, queue)
         problems.extend(f"{kind}: {x}" for x in errors)
         for item in approved:

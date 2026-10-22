@@ -94,6 +94,21 @@ class SecondStageTests(unittest.TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["candidate_id"], q["candidates"][0]["id"])
 
+    def test_standalone_chatgpt_review_is_visible(self):
+        q = build_queue([RESEARCH], NOW)
+        reviewed, issues = collect_screened({"screened": report(q)}, q)
+        self.assertEqual(issues, [])
+        self.assertEqual(len(reviewed), 1)
+        self.assertEqual(reviewed[0]["_report_type"], "screened")
+
+    def test_expired_review_does_not_block_new_queue(self):
+        q = build_queue([RESEARCH], NOW)
+        old = report(q)
+        old["generated_at"] = "2026-10-01T12:00:00Z"
+        reviewed, issues = collect_screened({"screened": old}, q)
+        self.assertEqual(reviewed, [])
+        self.assertEqual(issues, [])
+
     def test_no_high_value_with_empty_results_is_valid(self):
         q = build_queue([RESEARCH], NOW)
         x = report(q, [])

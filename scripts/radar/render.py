@@ -512,7 +512,7 @@ def render(now=None):
     collection_status = load(DATA / "collection-status.json", {})
     chatgpt_reports = {
         kind: load(DATA / "chatgpt-reviewed" / f"latest-{kind}.json", {})
-        for kind in ("daily", "weekly", "monthly")
+        for kind in ("screened", "daily", "weekly", "monthly")
     }
     reports = build(projects, now, candidates)
     screening_queue = load(DATA / "screening-queue.json", None) or build_queue(candidates, now)
