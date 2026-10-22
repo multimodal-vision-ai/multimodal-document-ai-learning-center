@@ -1,67 +1,6 @@
 [
   {
     "category": "video",
-    "description": "NVIDIA AI Blueprint for video search and summarization (VSS) is a GPU-accelerated reference architecture for building video analytics agents with real-time verified alerts, visual Q&A, and automated reporting. The VSS Blueprint uses vision language models (VLMs) such as NVIDIA Cosmos, LLMs such as NVIDIA Nemotron, RAG, and NVIDIA NIMs.",
-    "discovered_from": "github",
-    "evidence_urls": [],
-    "first_seen_at": "2026-10-21T07:17:18+00:00",
-    "github_forks": 413,
-    "github_language": "Python",
-    "github_license": "Apache-2.0",
-    "github_stars": 1939,
-    "github_topics": [
-      "computer-vision",
-      "generative-ai",
-      "long-video-understanding",
-      "model-context-protocol",
-      "multimodal-ai",
-      "natural-language-search",
-      "nvidia-nim",
-      "rag",
-      "real-time-video-analytics",
-      "retrieval-augmented-generation",
-      "skills",
-      "video-agent",
-      "video-analytics",
-      "video-rag",
-      "video-search",
-      "video-summarization",
-      "video-understanding",
-      "vision-agent",
-      "vision-language-model",
-      "vlm"
-    ],
-    "github_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
-    "id": "github-876545970",
-    "published_at": "2024-10-22T06:43:05Z",
-    "related_urls": [],
-    "review": "pending",
-    "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
-    "title": "NVIDIA-AI-Blueprints/video-search-and-summarization",
-    "updated_at": "2026-10-22T04:01:16Z"
-  },
-  {
-    "category": "agent",
-    "description": "Multi-agent visual defect inspector that grounds VLM observations in spec documents (RAG), cross-checks them, and asks a human before risky actions.",
-    "discovered_from": "github",
-    "evidence_urls": [],
-    "first_seen_at": "2026-10-21T07:17:18+00:00",
-    "github_forks": 0,
-    "github_language": "Python",
-    "github_license": null,
-    "github_stars": 0,
-    "github_topics": [],
-    "github_url": "https://github.com/siamin20/grounded-visual-inspector",
-    "id": "github-1426391812",
-    "published_at": "2026-10-20T02:05:40Z",
-    "related_urls": [],
-    "review": "pending",
-    "source_url": "https://github.com/siamin20/grounded-visual-inspector",
-    "title": "siamin20/grounded-visual-inspector",
-    "updated_at": "2026-10-22T04:01:16Z"
-  },
-  {
-    "category": "video",
     "description": "Open-source inference engine that runs language, vision, speech, image and video models from one container format, with a PyTorch and a Triton compute branch. Released for NVIDIA GPUs and CPU; Apple Silicon in progress.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -99,7 +38,239 @@
     "review": "pending",
     "source_url": "https://github.com/NeuroBrix/neurobrix",
     "title": "NeuroBrix/neurobrix",
-    "updated_at": "2026-10-22T03:52:15Z"
+    "updated_at": "2026-10-22T06:10:18Z"
+  },
+  {
+    "category": "video",
+    "description": "NVIDIA AI Blueprint for video search and summarization (VSS) is a GPU-accelerated reference architecture for building video analytics agents with real-time verified alerts, visual Q&A, and automated reporting. The VSS Blueprint uses vision language models (VLMs) such as NVIDIA Cosmos, LLMs such as NVIDIA Nemotron, RAG, and NVIDIA NIMs.",
+    "discovered_from": "github",
+    "evidence_urls": [],
+    "first_seen_at": "2026-10-21T07:17:18+00:00",
+    "github_forks": 413,
+    "github_language": "Python",
+    "github_license": "Apache-2.0",
+    "github_stars": 1939,
+    "github_topics": [
+      "computer-vision",
+      "generative-ai",
+      "long-video-understanding",
+      "model-context-protocol",
+      "multimodal-ai",
+      "natural-language-search",
+      "nvidia-nim",
+      "rag",
+      "real-time-video-analytics",
+      "retrieval-augmented-generation",
+      "skills",
+      "video-agent",
+      "video-analytics",
+      "video-rag",
+      "video-search",
+      "video-summarization",
+      "video-understanding",
+      "vision-agent",
+      "vision-language-model",
+      "vlm"
+    ],
+    "github_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "id": "github-876545970",
+    "published_at": "2024-10-22T06:43:05Z",
+    "related_urls": [],
+    "review": "pending",
+    "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "title": "NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "updated_at": "2026-10-22T06:09:23Z"
+  },
+  {
+    "category": "document",
+    "description": "Invoice and receipt extraction with local vision-language models, measured against an OCR + LLM baseline on held-out layouts; serverless intake on AWS Lambda (run on the Floci emulator)",
+    "discovered_from": "github",
+    "first_seen_at": "2026-10-22T06:15:38+00:00",
+    "github_forks": 0,
+    "github_language": "Python",
+    "github_license": "MIT",
+    "github_stars": 0,
+    "github_topics": [],
+    "github_url": "https://github.com/Tajaddin/vlm-document-extraction",
+    "id": "github-1429269716",
+    "published_at": "2026-10-22T05:09:50Z",
+    "review": "pending",
+    "source_url": "https://github.com/Tajaddin/vlm-document-extraction",
+    "title": "Tajaddin/vlm-document-extraction",
+    "updated_at": "2026-10-22T06:09:15Z"
+  },
+  {
+    "category": "video",
+    "discovered_from": "huggingface",
+    "first_seen_at": "2026-10-22T06:15:39+00:00",
+    "hf_downloads": 0,
+    "hf_has_model_card": null,
+    "hf_library_name": null,
+    "hf_likes": 0,
+    "hf_pipeline_tag": null,
+    "hf_tags": [
+      "safetensors",
+      "duolm",
+      "recommendation",
+      "personalization",
+      "personalized-recommendation",
+      "candidate-ranking",
+      "knowledge-distillation",
+      "arxiv:2610.24481",
+      "en",
+      "base_model:Qwen/Qwen3-0.6B-Base",
+      "base_model:finetune:Qwen/Qwen3-0.6B-Base",
+      "license:apache-2.0",
+      "region:us"
+    ],
+    "huggingface_url": "https://huggingface.co/hulehule/DuoLM-Video-Games",
+    "id": "hf-940836c55478c2fb6497",
+    "published_at": "2026-10-22T05:28:38.000Z",
+    "review": "pending",
+    "source_url": "https://huggingface.co/hulehule/DuoLM-Video-Games",
+    "title": "hulehule/DuoLM-Video-Games",
+    "updated_at": "2026-10-22T05:55:38.000Z"
+  },
+  {
+    "category": "document",
+    "description": "Visual-token compression for VLM document retrieval: 448 KB to 3.95 KB per page (113.5x) at 86.7% of baseline nDCG@5. ColPali/ColSmol, PyTorch, Qdrant.",
+    "discovered_from": "github",
+    "evidence_urls": [],
+    "first_seen_at": "2026-10-21T07:17:18+00:00",
+    "github_forks": 0,
+    "github_language": "Python",
+    "github_license": "MIT",
+    "github_stars": 2,
+    "github_topics": [
+      "colpali",
+      "document-retrieval",
+      "pytorch",
+      "qdrant",
+      "quantization",
+      "rag",
+      "token-pruning",
+      "vision-language-model"
+    ],
+    "github_url": "https://github.com/Daemon-VI/optivision-rag",
+    "id": "github-1337450667",
+    "published_at": "2026-08-17T17:28:24Z",
+    "related_urls": [],
+    "review": "pending",
+    "source_url": "https://github.com/Daemon-VI/optivision-rag",
+    "title": "Daemon-VI/optivision-rag",
+    "updated_at": "2026-10-22T05:50:47Z"
+  },
+  {
+    "category": "video",
+    "discovered_from": "huggingface",
+    "first_seen_at": "2026-10-22T06:15:39+00:00",
+    "hf_downloads": 52,
+    "hf_has_model_card": null,
+    "hf_library_name": null,
+    "hf_likes": 0,
+    "hf_pipeline_tag": null,
+    "hf_tags": [
+      "gguf",
+      "video",
+      "video-understanding",
+      "temporal-grounding",
+      "qwen3.5",
+      "llama.cpp",
+      "base_model:Qwen/Qwen3.5-4B",
+      "base_model:quantized:Qwen/Qwen3.5-4B",
+      "license:apache-2.0",
+      "endpoints_compatible",
+      "region:us",
+      "conversational"
+    ],
+    "huggingface_url": "https://huggingface.co/Nock-AI/nock-video-4b-GGUF",
+    "id": "hf-85709937c84f68ce2afd",
+    "published_at": "2026-10-20T02:09:12.000Z",
+    "review": "pending",
+    "source_url": "https://huggingface.co/Nock-AI/nock-video-4b-GGUF",
+    "title": "Nock-AI/nock-video-4b-GGUF",
+    "updated_at": "2026-10-22T05:34:53.000Z"
+  },
+  {
+    "category": "video",
+    "description": "Tag and describe video and images with a local vision-language model (MiniCPM-V) and write JSON sidecars — macOS app + CLI",
+    "discovered_from": "github",
+    "first_seen_at": "2026-10-22T06:15:39+00:00",
+    "github_forks": 0,
+    "github_language": "Python",
+    "github_license": "Apache-2.0",
+    "github_stars": 0,
+    "github_topics": [],
+    "github_url": "https://github.com/alvroga/vlm-media-tagger",
+    "id": "github-1429279815",
+    "published_at": "2026-10-22T05:22:27Z",
+    "review": "pending",
+    "source_url": "https://github.com/alvroga/vlm-media-tagger",
+    "title": "alvroga/vlm-media-tagger",
+    "updated_at": "2026-10-22T05:22:33Z"
+  },
+  {
+    "category": "agent",
+    "description": "Multi-agent visual defect inspector that grounds VLM observations in spec documents (RAG), cross-checks them, and asks a human before risky actions.",
+    "discovered_from": "github",
+    "evidence_urls": [],
+    "first_seen_at": "2026-10-21T07:17:18+00:00",
+    "github_forks": 0,
+    "github_language": "Python",
+    "github_license": null,
+    "github_stars": 0,
+    "github_topics": [],
+    "github_url": "https://github.com/siamin20/grounded-visual-inspector",
+    "id": "github-1426391812",
+    "published_at": "2026-10-20T02:05:40Z",
+    "related_urls": [],
+    "review": "pending",
+    "source_url": "https://github.com/siamin20/grounded-visual-inspector",
+    "title": "siamin20/grounded-visual-inspector",
+    "updated_at": "2026-10-22T05:04:33Z"
+  },
+  {
+    "category": "small-vlm",
+    "discovered_from": "huggingface",
+    "first_seen_at": "2026-10-22T06:15:39+00:00",
+    "hf_downloads": 0,
+    "hf_has_model_card": null,
+    "hf_library_name": null,
+    "hf_likes": 0,
+    "hf_pipeline_tag": null,
+    "hf_tags": [
+      "region:us"
+    ],
+    "huggingface_url": "https://huggingface.co/Leochaves777/Ia-leo-videos-v2",
+    "id": "hf-0e729a74601ac6bd9f49",
+    "published_at": "2026-10-22T04:29:34.000Z",
+    "review": "pending",
+    "source_url": "https://huggingface.co/Leochaves777/Ia-leo-videos-v2",
+    "title": "Leochaves777/Ia-leo-videos-v2",
+    "updated_at": "2026-10-22T04:32:34.000Z"
+  },
+  {
+    "category": "video",
+    "discovered_from": "huggingface",
+    "first_seen_at": "2026-10-22T06:15:39+00:00",
+    "hf_downloads": 0,
+    "hf_has_model_card": null,
+    "hf_library_name": "open_clip",
+    "hf_likes": 1,
+    "hf_pipeline_tag": "text-to-video",
+    "hf_tags": [
+      "open_clip",
+      "text-to-video",
+      "license:cc-by-nc-4.0",
+      "region:us"
+    ],
+    "huggingface_url": "https://huggingface.co/Jffx/modelscope-damo-text-to-video-synthesis",
+    "id": "hf-1d4a2017c379b72659f4",
+    "published_at": "2026-10-22T04:07:39.000Z",
+    "review": "pending",
+    "source_url": "https://huggingface.co/Jffx/modelscope-damo-text-to-video-synthesis",
+    "title": "Jffx/modelscope-damo-text-to-video-synthesis",
+    "updated_at": "2026-10-22T04:07:40.000Z"
   },
   {
     "category": "document",
@@ -916,6 +1087,34 @@
     "updated_at": "2026-10-21T15:50:43.000Z"
   },
   {
+    "abstract": "Automated radiology report generation for multi-sequence brain MRI holds strong promise for alleviating radiologists' workload, yet it remains a demanding problem: brain MRI studies are inherently volumetric, each pulse sequence carries complementary diagnostic information, and annotated data are critically scarce for low-resource clinical languages. Existing brain MRI-report resources are still dominated by English reports, translated clinical text, or datasets adapted from task-specific imaging benchmarks, leaving routine low-resource clinical reporting and heterogeneous multi-sequence MRI protocols insufficiently represented. To bridge this gap, we introduce ViBMR, to the best of our knowledge, the first large-scale multi-sequence brain MRI dataset paired with routine Vietnamese clinical reports, comprising 3,649 patients and 11,875 MRI series across T1, T2, FLAIR, and contrast-enhanced T1 sequences. Building on ViBMR, we establish a comprehensive evaluation setup for brain MRI report generation, covering representative medical vision-language models, multi-sequence inputs, and feature aggregation strategies. The results provide key insights into dataset characteristics and model behavior, while demonstrating the necessity of native low-resource clinical datasets for reliable Vietnamese-origin brain MRI report generation. Our dataset and baseline models will be released for non-commercial research.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Dai Lam Le",
+      "Minh Khoi Nguyen",
+      "Son Dinh Nguyen",
+      "Amir Reza Jafari",
+      "Viet Ha",
+      "Nguyen Son",
+      "Reza Farahbakhsh",
+      "Noel Crespi",
+      "Phi Le Nguyen"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29905",
+    "paper_url": "https://arxiv.org/abs/2610.29905v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29905v1",
+    "published_at": "2026-10-21T15:46:37Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29905v1",
+    "title": "ViBMR: A Large-Scale Multi-Sequence Brain MRI Dataset and Comprehensive Evaluation for Vietnamese Radiology Report Generation",
+    "updated_at": "2026-10-21T15:46:37Z"
+  },
+  {
     "category": "video",
     "description": "A research project on video anomaly detection and interpretability based on Visual-Language Models (VLM) + Prompt Engineering",
     "discovered_from": "github",
@@ -934,6 +1133,31 @@
     "source_url": "https://github.com/wensizhao/VLM",
     "title": "wensizhao/VLM",
     "updated_at": "2026-10-21T15:06:02Z"
+  },
+  {
+    "abstract": "Compositional zero-shot learning (CZSL) aims to recognize novel combinations of previously observed objects and attributes. Prior work showed that large-scale vision-language models encode decomposable semantic structures that can be recomposed to enable generalization. The Geodesically Decomposable Embeddings (GDE) framework formalizes this by identifying directions in the tangent space at the Frechet mean of the embedding distribution, which encode primitive visual concepts. Unseen attribute-object compositions can be synthesized through vector addition of these primitives. We revisit the assumption that compositional generalization requires explicit attribute-object pair re-composition. By means of new compositional scoring functions and extensive evaluations, we show that directly using the decomposed primitives suffices for recognizing unseen compositions. In that, we gain insights on how the geometry of the embedding manifold (Euclidean, spherical, or hyperbolic) and dataset structure affect compositional reasoning. Across models (CLIP, DINOv2, MERU, HyCoCLIP), we show that compositional structure consistently emerges as primitive representations, enabling inference on CZSL benchmarks (MIT-States, VAW-CZSL, UT-Zappos50K, Clothing16K) and group robustness on Waterbirds and CelebA. Code: https://github.com/nis-research/Compositionality-with-Primitives.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Puru Vaish",
+      "Meelad Dashti",
+      "Christoph Brune",
+      "Pascal Mettes",
+      "Tatiana Tommasi",
+      "Nicola Strisciuglio"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29811",
+    "paper_url": "https://arxiv.org/abs/2610.29811v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29811v1",
+    "published_at": "2026-10-21T14:34:51Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29811v1",
+    "title": "Compositionality with Primitives: A Unified View from Euclidean to Hyperbolic Vision-Language Models",
+    "updated_at": "2026-10-21T14:34:51Z"
   },
   {
     "category": "agent",
@@ -969,6 +1193,58 @@
     "updated_at": "2026-10-21T14:26:49Z"
   },
   {
+    "abstract": "With the advent of foundation models, robots are increasingly capable of understanding and executing explicitly specified human tasks. Extending these capabilities to open-ended tasks, however, requires robots to infer appropriate actions from the observed scene. Household organization exemplifies this challenge, as robots must often act without detailed instructions, predefined object vocabularies, or known object-receptacle associations. While robots may follow instructions or learn organization preferences from demonstrations, inferring the latent organization of an occasionally changing scene and placing a novel object consistently with it remains challenging. We propose an open-world multi-attribute reasoning pipeline that grounds unknown objects across views and constructs an instance-level 3D scene graph for placement reasoning. First, a vision-language model proposes labels together with attributes such as content and packaging type, which are grounded through segmentation, depth, and multi-view association. Then, an LLM reasons over this representation to infer the latent shelf organization and rank scene-consistent object placements without explicitly user-provided preferences. The resulting placement rankings guide subsequent geometric and kinematic feasibility checks for execution. Our experimental evaluation shows that our approach leads to improved instance mapping and placement coherence over single-view language-grounding and geometry-only baselines, enabling autonomous placement of previously unseen objects without predefined object-receptacle mappings or class-specific retraining.",
+    "arxiv_categories": [
+      "cs.RO"
+    ],
+    "authors": [
+      "Benedikt Kreis",
+      "Rohit Menon",
+      "Benno Wingender",
+      "Muhammad Ehsan Ullah",
+      "Nils Dengler",
+      "Maren Bennewitz"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29761",
+    "paper_url": "https://arxiv.org/abs/2610.29761v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29761v1",
+    "published_at": "2026-10-21T13:59:13Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29761v1",
+    "title": "OMAR: Open-World Multi-Attribute Reasoning for Scene-Conditioned Shelf Organization",
+    "updated_at": "2026-10-21T13:59:13Z"
+  },
+  {
+    "abstract": "We present SpatialDex, a framework that learns 3D-grounded bimanual dexterity from RGB-only human videos through reconstruction-augmented visuomotor pre-training. The central idea is to learn human behavior together with its spatial context. From each video, we reconstruct the scene geometry and estimate the hand motion, align them at a shared video-level scale using the hand-size prior of 3D hand estimates. We retain the reconstructed geometry as both a policy input and a prediction target. The policy grounds the token grid of a pre-trained vision-language model in this geometry through gated residual fusion, is trained to predict future scene geometry alongside wrist and finger actions, and generates finger motion conditioned on the predicted trajectories of both wrists. Pre-trained on 1M human-video clips and fine-tuned with a small number of robot demonstrations, SpatialDex outperforms the state-of-the-art methods by 16.5 points on nine simulated dexterous tasks across two embodiments and by 38.3 points on six real-world bimanual dexterous tasks. Under a matched comparison, pre-training with reconstructed geometry improves success by 14.2 points over pre-training on hand motion alone.",
+    "arxiv_categories": [
+      "cs.RO"
+    ],
+    "authors": [
+      "Xingyi He",
+      "Zhiwen Qiu",
+      "Adhitya Polavaram",
+      "Yunhao Cao",
+      "Cory Fan",
+      "Julius Samwer",
+      "Saleh Kalantari",
+      "Kuan Fang"
+    ],
+    "category": "video",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29716",
+    "paper_url": "https://arxiv.org/abs/2610.29716v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29716v1",
+    "published_at": "2026-10-21T13:28:19Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29716v1",
+    "title": "Reconstruction-Augmented Visuomotor Pre-Training of 3D-Grounded Bimanual Dexterity from RGB-Only Human Videos",
+    "updated_at": "2026-10-21T13:28:19Z"
+  },
+  {
     "category": "video",
     "description": "The Almighty Sign Language: a real-time sign language recognition system that streams webcam video from a client laptop to a GPU server over a secure Cloudflare tunnel, runs a fully GPU-resident pipeline (nvJPEG decoding, fused custom CUDA kernels verified against reference implementations, and a TensorRT FP16 model),",
     "discovered_from": "github",
@@ -987,6 +1263,54 @@
     "source_url": "https://github.com/ItSnOtNoOkIeBeAr/The-Almighty-Sign-Language",
     "title": "ItSnOtNoOkIeBeAr/The-Almighty-Sign-Language",
     "updated_at": "2026-10-21T13:10:13Z"
+  },
+  {
+    "abstract": "Object counting in videos remains a poorly characterized capability of multimodal large language models. Counting questions are included in many existing VideoQA benchmarks, but the ground-truth count distributions in these benchmarks are heavily skewed toward small values. Across the nine benchmarks we survey, the median ground-truth count is at most five, and the three most frequent values together account for between 45% and 93% of the videos. The resulting mean accuracy is then dominated by the most frequent counts; a value-dependent bias at a rare count contributes negligibly to the average and remains invisible. We introduce CountVideoBench, a benchmark of 2,600 synthetic videos covering 26 cardinalities in the interval [5, 50] (100 videos each), grouped into six clusters of consecutive counts that span the range while enabling near-neighbor comparisons. Each video contains a single class of static objects under a controlled camera motion, removing object motion and reducing recognition as confounds. We evaluate sixteen video-language models from nine architecture families in a zero-shot setting. No model exceeds 27.6% Exact Match. The dependence of accuracy on cardinality varies across models, ranging from monotonic decline to a non-monotonic peak-and-collapse pattern, which rules out increasing difficulty with cardinality as the dominant explanation of counting failure. Every model further concentrates its predictions on its own set of preferred integers, with accuracy peaks coinciding with these values and collapsing at adjacent counts. These findings highlight the need for balanced, diagnostic counting benchmarks to reliably assess this fundamental visual capability.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI",
+      "cs.LG"
+    ],
+    "authors": [
+      "Marc Chapus",
+      "Carlos Crispim-Junior",
+      "Véronique Eglin",
+      "Atilla Baskurt"
+    ],
+    "category": "video",
+    "discovered_from": "arxiv",
+    "evidence_urls": [],
+    "first_seen_at": "2026-10-21T07:22:56+00:00",
+    "id": "arxiv-2610-28356",
+    "paper_url": "https://arxiv.org/abs/2610.28356v2",
+    "pdf_url": "https://arxiv.org/pdf/2610.28356v2",
+    "published_at": "2026-10-20T15:20:28Z",
+    "related_urls": [],
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.28356v2",
+    "title": "CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models",
+    "updated_at": "2026-10-21T11:52:51Z"
+  },
+  {
+    "abstract": "Vision-language models (VLMs) achieve remarkable performance on 2D medical images, such as X-rays or pathology images, while 3D VLMs that directly process CT/MRI volumes lag behind due to limited 3D training data and the predominance of 2D foundation architectures. To leverage powerful 2D VLMs for analyzing medical volumes, which contain hundreds of slices, it is therefore necessary to focus only on those few slices, which are diagnostically relevant. To enable such a prioritization, we propose XGLASS, a method that transfers medical expertise from 2D X-rays to 3D CT for task-aware slice prioritization. XGLASS uses disease-conditioned importance maps derived from language-aligned radiologist gaze on X-rays and spatially aligns them with coronal CT projections, bringing gaze priors and CT content into a shared 2D representation. The fused gaze-prior/CT projection is then used to predict a disease-specific ordering of axial slices, prioritizing diagnostically relevant slices. XGLASS significantly improves budgeted retrieval over 2D and 3D-native baselines, achieving a top-10 hit rate up to 75.9% for the best-performing disease. In practice, this means that after inspecting only the top 10 slices (4.17% of a 240-slice scan), XGLASS identifies a diagnostically relevant slice in more than 75% of cases. For downstream slice-wise finding classification, an XGLASS-selected 30-slice candidate set reduces model calls by 87.5% while improving F1 by 11.3 percentage points over all-slice inference, 4.2 points over the strongest 2D selector, and remains competitive with 3D-native selectors while requiring up to 130.8 times less time and 10.9 times less GPU memory per finding, supporting its use as a lightweight preselector for volumetric CT analysis. The code and pretrained checkpoint are available on https://github.com/michaelgloeckler/XGLASS.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Michael Glöckler",
+      "Timo Ropinski"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-26255",
+    "paper_url": "https://arxiv.org/abs/2610.26255v2",
+    "pdf_url": "https://arxiv.org/pdf/2610.26255v2",
+    "published_at": "2026-10-19T12:13:30Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.26255v2",
+    "title": "XGLASS: X-Ray, Gaze and Language Assisted Slice Sequencing for CT Volumes",
+    "updated_at": "2026-10-21T11:27:48Z"
   },
   {
     "category": "video",
@@ -1229,6 +1553,63 @@
     "updated_at": "2026-10-21T09:52:38.000Z"
   },
   {
+    "abstract": "Choosing the right large language model (LLM) backbone is the most consequential decision when building a vision-language model (VLM), yet it remains fundamentally unprincipled: compute-based scaling laws fail to generalize across model families, and no framework exists for directly predicting VLM performance before training begins. We propose the Capability-Driven Multimodal Scaling Law, the first cross-family framework that predicts VLM benchmark accuracy from directly observable textual capability. Given a low-dimensional capability score $S$ extracted from LLM textual benchmarks via PCA, we model VLM performance as a function of $S$, with a per-backbone transfer rate and an absorption rate that quantifies data-scaling efficiency. To fit and validate the framework, we train over 150 VLMs on 34 LLMs spanning 7 model families under a strictly controlled recipe. Evaluations on more than 200 textual and 50 multimodal benchmarks show that the law accurately extrapolates transfer rate from models up to 8B parameters to 72B-scale backbones, predicts full VLM training trajectories with high fidelity, and generalizes to entirely held-out model families. Beyond the scaling law, our analysis surfaces actionable insights: certain textual benchmarks negatively correlate with multimodal performance, exposing latent benchmark-gaming behavior; base LLMs outperform instruction-tuned counterparts as VLM backbones due to higher absorption rates and lower data-scaling decay; and different model families occupy distinct positions in the transfer--absorption space. The framework turns backbone selection from costly empirical sweeps into a principled, quantitative decision. Code and data are available at https://github.com/wangq-dev/CDMScaling.",
+    "arxiv_categories": [
+      "cs.CL",
+      "cs.AI",
+      "cs.CV"
+    ],
+    "authors": [
+      "Ziran Li",
+      "Qiang Wang",
+      "Zhengyu Chen",
+      "Shanglin Lei",
+      "Borun Chen",
+      "Jingang Wang",
+      "Xunliang Cai"
+    ],
+    "category": "agent",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2608-00013",
+    "paper_url": "https://arxiv.org/abs/2608.00013v4",
+    "pdf_url": "https://arxiv.org/pdf/2608.00013v4",
+    "published_at": "2026-06-24T13:23:33Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2608.00013v4",
+    "title": "What Transfers from Text to Vision? Capability Scaling Laws and Transfer Dynamics for VLMs",
+    "updated_at": "2026-10-21T09:33:38Z"
+  },
+  {
+    "abstract": "Vision-Language Models (VLMs) have achieved strong performance on general multimodal reasoning, yet remain challenged in integrating nonlocal visual information to support semantically underdetermined visual reasoning. We describe this challenge as Fragmented Visual Reasoning. To this end, we propose Credit Assignment for Visual Evidence (CAVE), a structured process-reward method based on GRPO for interleaved visual reasoning. Specifically, CAVE evaluates the contribution of intermediate steps at the action level via three complementary reasoning process signals: belief update, evidence acquisition, and adaptive focus control, thereby guiding the model to optimize each reasoning action and learn more reliable visual reasoning strategies. Meanwhile, we construct TRACER-Bench, which covers four nonlocal and semantically confusable reasoning dimensions and provides key intermediate evidence to supervise reasoning paths. Experiments demonstrate that CAVE substantially improves performance on tasks requiring fragmented visual evidence integration, covering both public benchmarks and our newly introduced TRACER-Bench, while retaining competitive performance on general multimodal evaluations. Further analyses reveal that CAVE effectively improves the visual reasoning capacity and exhibits stronger robustness under longer-range and deeper cross-region dependencies.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Tengda Guo",
+      "Jie Leng",
+      "Hanlei Li",
+      "Yaoyuan Liang",
+      "Qingyue Zhang",
+      "Dian Yang",
+      "Mingyu Zhang",
+      "Yuhua Fu",
+      "Shao-Lun Huang"
+    ],
+    "category": "agent",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2605-16416",
+    "paper_url": "https://arxiv.org/abs/2605.16416v2",
+    "pdf_url": "https://arxiv.org/pdf/2605.16416v2",
+    "published_at": "2026-05-13T16:50:24Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2605.16416v2",
+    "title": "CAVE: A Structured Credit Assignment Approach for Fragmented Visual Evidence Reasoning",
+    "updated_at": "2026-10-21T09:09:33Z"
+  },
+  {
     "category": "document",
     "description": "Semark converts PDFs, Office files, HTML, and images into RAG-ready semantic Markdown using MinerU and VLM/LLM review, with chunks, source maps, and automatic document splitting.",
     "discovered_from": "github",
@@ -1314,33 +1695,105 @@
     "updated_at": "2026-10-21T07:32:56Z"
   },
   {
-    "category": "document",
-    "description": "Visual-token compression for VLM document retrieval: 448 KB to 3.95 KB per page (113.5x) at 86.7% of baseline nDCG@5. ColPali/ColSmol, PyTorch, Qdrant.",
-    "discovered_from": "github",
-    "evidence_urls": [],
-    "first_seen_at": "2026-10-21T07:17:18+00:00",
-    "github_forks": 0,
-    "github_language": "Python",
-    "github_license": "MIT",
-    "github_stars": 2,
-    "github_topics": [
-      "colpali",
-      "document-retrieval",
-      "pytorch",
-      "qdrant",
-      "quantization",
-      "rag",
-      "token-pruning",
-      "vision-language-model"
+    "abstract": "Long-horizon robot manipulation requires a robot to remember task-relevant information beyond its short observation window. Existing memory-augmented policies typically retrieve relevant information from history and reason over it at execution time, placing a heavy reasoning burden on the high-level model. To address this challenge, we propose PAL (\\textbf{P}lan first, \\textbf{A}ct \\textbf{L}ater), a hierarchical memory framework for vision-language robot manipulation. It maintains a short-term visual buffer, a semantic-event memory, and an executable \\texttt{subtask\\_list}. A high-level vision-language model (VLM) converts streaming visual observations into the \\texttt{subtask\\_list}. At execution time, the VLM selects the currently relevant subtask from the \\texttt{subtask\\_list} and passes it to a low-level vision-language-action (VLA) policy. To teach the model what to write to memory and when to update it, we introduce a two-stage data generation procedure that first expands sparse update supervision and then uses self-labeling with task-grounded verification to generate training data that better match the state distribution encountered during execution. We evaluate our approach on memory-dependent benchmarks and real-world manipulation tasks. On RoboMME, PAL achieves a \\textbf{56.05\\%} success rate, outperforming the strongest baseline, FrameSamp-Modul, at 44.51\\%. In real-world experiments across four manipulation tasks, \\pal{} reaches \\textbf{60.83\\%} overall success, surpassing MemER (45.00\\%) and FrameSamp-Modul (28.33\\%). These results show that proactively writing future-relevant subtasks into hierarchical memory improves long-horizon visual reasoning and robot control. Code and videos can be found on our website: https://qinghangliu.github.io/pal-webpage/",
+    "arxiv_categories": [
+      "cs.RO"
     ],
-    "github_url": "https://github.com/Daemon-VI/optivision-rag",
-    "id": "github-1337450667",
-    "published_at": "2026-08-17T17:28:24Z",
-    "related_urls": [],
+    "authors": [
+      "Qinghang Liu",
+      "Conglin Wang",
+      "Zongsheng Li",
+      "Boyong He",
+      "Han Gao",
+      "Pengcheng Wang",
+      "Tao Sun",
+      "Lige Liu",
+      "Chang Liu"
+    ],
+    "category": "video",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29329",
+    "paper_url": "https://arxiv.org/abs/2610.29329v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29329v1",
+    "published_at": "2026-10-21T07:27:58Z",
     "review": "pending",
-    "source_url": "https://github.com/Daemon-VI/optivision-rag",
-    "title": "Daemon-VI/optivision-rag",
-    "updated_at": "2026-10-21T07:28:42Z"
+    "source_url": "https://arxiv.org/abs/2610.29329v1",
+    "title": "Plan First, Act Later: Streaming Reasoning for Executable Memory in Robot Control",
+    "updated_at": "2026-10-21T07:27:58Z"
+  },
+  {
+    "abstract": "Vision-language models are now routinely tested on theory of mind: whether they can work out what another person sees, knows, and means. A common design asks the model to report that perspective and then to act for the person, and reads a correct report beside a wrong action as a failure to use the perspective. That reading rests on a quiet assumption: that asking for the report leaves the action unchanged. We show that it does not. In a rendered Director Task, a partition hides the largest block from a director who asks for \"the largest block\". Asking first which blocks the director can see raises the share of replies that choose this hidden block by 12 to 88 percentage points on six GPT models and by 17 on Qwen3.8-27B, even though the models mostly report correctly which blocks the director sees. Reasoning traces and prompt rewordings suggest why: the question shifts how the request is read, from the director's view toward the model's own. When the prompt states what the director knows and refers to, fewer than 1% of replies pair a correct report with a hidden-block choice. Any evaluation that elicits a perspective report before the action it scores needs a baseline without the question, and we deliver one: paired prompts that differ only in that question, a design any perspective-taking benchmark can adopt.",
+    "arxiv_categories": [
+      "cs.CL",
+      "cs.CV"
+    ],
+    "authors": [
+      "Jiaxuan Guo",
+      "Xingyu Ren",
+      "Kejia Zhang",
+      "Jingxin Yang",
+      "Youran Sun",
+      "Haizhao Yang"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29318",
+    "paper_url": "https://arxiv.org/abs/2610.29318v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29318v1",
+    "published_at": "2026-10-21T07:21:08Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29318v1",
+    "title": "Asking What a Director Sees Can Change What Vision-Language Models Choose",
+    "updated_at": "2026-10-21T07:21:08Z"
+  },
+  {
+    "abstract": "%Large vision-language models (LVLMs) have shown substantial advances in multimodal understanding and generation. However, when presented with incompetent or adversarial inputs, they frequently produce unreliable or even harmful content, such as fact hallucinations or dangerous instructions. This misalignment with human expectations, referred to as \\emph{misbehaviors} of LVLMs, raises serious concerns for deployment in critical applications. These misbehaviors are found to stem from epistemic uncertainty, specifically either conflicting internal knowledge or the absence of supporting information. However, existing uncertainty quantification methods, which typically capture only overall epistemic uncertainty, have shown limited effectiveness in identifying such issues. To address this gap, we propose Evidential Uncertainty Quantification (EUQ), a fine-grained method that captures both information conflict and ignorance for effective detection of LVLM misbehaviors. In particular, we interpret features from the model output head as either supporting (positive) or opposing (negative) evidence. Leveraging Evidence Theory, we model and aggregate this evidence to quantify internal conflict and knowledge gaps within a single forward pass. %We extensively evaluate our method across four categories of misbehavior, including hallucinations, jailbreaks, adversarial vulnerabilities, and out-of-distribution (OOD) failures, using state-of-the-art LVLMs, and find that EUQ consistently outperforms strong baselines, showing that hallucinations correspond to high internal conflict and OOD failures to high ignorance. Furthermore, layer-wise evidential uncertainty dynamics analysis helps interpret the evolution of internal representations from a new perspective. The source code is available at https://github.com/HT86159/EUQ.",
+    "arxiv_categories": [
+      "cs.LG"
+    ],
+    "authors": [
+      "Tao Huang",
+      "Rui Wang",
+      "Xiaofei Liu",
+      "Yi Qin",
+      "Li Duan",
+      "Liping Jing"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2602-05535",
+    "paper_url": "https://arxiv.org/abs/2602.05535v3",
+    "pdf_url": "https://arxiv.org/pdf/2602.05535v3",
+    "published_at": "2026-02-05T10:51:39Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2602.05535v3",
+    "title": "Detecting Misbehaviors of Large Vision-Language Models by Evidential Uncertainty Quantification",
+    "updated_at": "2026-10-21T05:58:49Z"
+  },
+  {
+    "abstract": "Thermal cameras enable robots to perceive human activities in darkness while revealing less personally identifiable appearance information and fewer details of the surrounding environment than RGB cameras. As vision-language models (VLMs), originally developed for RGB imagery, are increasingly integrated into embodied systems for scene understanding and high-level planning, thermal sensing offers a promising way to extend activity perception to low-light and privacy-sensitive settings. However, the failure modes of VLMs in thermal human activity understanding for human-robot interaction (HRI) remain underexplored. We fill this gap by evaluating seven locally deployable VLMs, including models developed for physical AI and robotics, on two person-centric thermal datasets. Our diagnostic tasks examine fine-grained action recognition, activity timeline reconstruction, and the ability to withhold unsupported answers. Paired RGB recordings serve as a performance reference, while controlled variations in frame sampling, thermal input presentation, and reasoning are used to assess whether the observed errors can be mitigated. Our results show that models can recognize broad activity categories but struggle with fine-grained actions such as coughing, sneezing, and yawning. They also produce inaccurate event timelines and hallucinate actions involving objects. Simple thermal input preprocessing and additional reasoning offer only limited, model-dependent gains. Abstention behavior also varies across models even under explicit instructions, limiting their reliability for practical robotic use.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.RO"
+    ],
+    "authors": [
+      "Han Hu",
+      "He Chen"
+    ],
+    "category": "video",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29244",
+    "paper_url": "https://arxiv.org/abs/2610.29244v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29244v1",
+    "published_at": "2026-10-21T05:49:05Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29244v1",
+    "title": "Failure Modes of Vision-Language Models for Human Activity Understanding in Thermal HRI",
+    "updated_at": "2026-10-21T05:49:05Z"
   },
   {
     "category": "video",
@@ -1377,6 +1830,83 @@
     "updated_at": "2026-10-21T05:48:31Z"
   },
   {
+    "abstract": "In this paper, we investigate why vision-language models (VLMs) produce errors by decomposing them into two sources: visual-representation failures, in which the visual evidence required for the correct answer is not encoded, and visual-utilization failures, in which this evidence is encoded but not successfully used. We propose to estimate the visual-utilization failure rate using lightweight probes and derive theoretical bounds on the true rate that account for probe imperfections. We introduce VELens (Visual Evidence Lens), a rank-based probe that traces visual evidence for both a target object and its ground-truth attribute, such as color, material, or shape, across VLM layers. We evaluate VELens on over 6,000 images using LLaVA-1.6-7B and Qwen2.5-VL-7B. Our method achieves ROC-AUC scores of 0.95 and 0.91, respectively, and outperforms alternative probes in both low-resource and unseen-attribute settings. Using it to diagnose errors, we estimate that visual-utilization failures account for 84.4% of LLaVA errors and 70.0% of Qwen errors, with conservative lower bounds of 77.5% and 61.0%, respectively. Overall, our study identifies visual utilization as the dominant bottleneck in VLMs and suggests that a central opportunity for improvement lies in developing better mechanisms to locate, route, and use the visual information they already encode.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Anat Veikherman",
+      "Mor Ventura",
+      "Nitay Calderon",
+      "Lihi Zelnik-Manor",
+      "Roi Reichart"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29241",
+    "paper_url": "https://arxiv.org/abs/2610.29241v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29241v1",
+    "published_at": "2026-10-21T05:47:57Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29241v1",
+    "title": "Encoded but Unused: Bounding the Sources of VLM Errors",
+    "updated_at": "2026-10-21T05:47:57Z"
+  },
+  {
+    "abstract": "Vision-Language Models (VLMs) excel at 2D recognition but often fail to maintain consistent 3D relations across sparse viewpoints, leading to spatial hallucinations under occlusion and perspective changes. Existing methods commonly fuse all frames with dense geometry, incurring substantial computation and context overhead while encouraging blind reliance on imperfect estimators. We present Think-Capture, a query-conditioned framework that first identifies task-critical objects and then acquires their geometry on demand. A 3D toolkit lifts zero-shot masks into a common coordinate frame, and a Symbolic 3D State Abstraction compresses object and camera states into structured text. Hierarchical Group Relative Policy Optimization (GRPO) trains the VLM on cases in which geometry either helps or misleads, teaching it when to use tool evidence and when to fall back on visual cues. Think-Capture-4B reaches 54.4% on MindCube-Tiny (+21.5 points over its backbone), 39.1% on the MMSI-Bench positional subset (+7.9), and 42.8% on ViewSpatial (+5.2). It also remains robust under coordinate and mask perturbations. The full stack fits one 24 GB GPU and serves as an asynchronous high-level reasoner on an Agibot G1. Our code is available at https://github.com/819346675/Think-Capture.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Junjie Wang",
+      "Zhihao Yuan",
+      "Yunhan Tang",
+      "Sheng Xu",
+      "Jiaqi Mao",
+      "Xiaoyu Ye",
+      "Yueru Luo",
+      "Xu Yan",
+      "Chun-Mei Feng",
+      "Zhen Li"
+    ],
+    "category": "video",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29232",
+    "paper_url": "https://arxiv.org/abs/2610.29232v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29232v1",
+    "published_at": "2026-10-21T05:42:29Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29232v1",
+    "title": "Think-Capture: Active 3D Geometry Acquisition for Spatial Reasoning in Vision-Language Models",
+    "updated_at": "2026-10-21T05:42:29Z"
+  },
+  {
+    "abstract": "Visual question answering from low-altitude UAV imagery must deliver timely and accurate judgments to support disaster response under limited edge computing resources. Routine questions may be answered through direct decisions, whereas more challenging questions may benefit from step-by-step reasoning. However, existing research primarily focuses on improving models' visual understanding and generative reasoning capabilities, with limited exploration of efficient direct decision-making and its adaptive coordination with generative reasoning. We develop Disaster-S1 based on a vision-language model adapted to the disaster domain. Trained for option discrimination, it outputs a probability distribution over answer options in a single multimodal forward pass for fast decision-making. We further propose DisasterRoute, a dual-system routing framework that combines prediction confidence with disaster evidence to decide whether to accept the initial answer or invoke the disaster reasoning model DisasterVL for review. By allocating inference computation on demand, the framework retains the efficiency of direct decision-making and improves overall question-answering accuracy through selective review. Experiments on DisasterBench show that Disaster-S1 achieves superior accuracy with low latency, while DisasterRoute further improves accuracy through selective review at substantially lower latency than full reasoning.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Tan Zhang",
+      "Xing Deng",
+      "Lu Zhang",
+      "Xiaofeng Zhu",
+      "Ping Hu"
+    ],
+    "category": "agent",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29231",
+    "paper_url": "https://arxiv.org/abs/2610.29231v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29231v1",
+    "published_at": "2026-10-21T05:41:44Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29231v1",
+    "title": "DisasterRoute: Evidence-Guided Dual-System Routing for Visual Disaster Question Answering",
+    "updated_at": "2026-10-21T05:41:44Z"
+  },
+  {
     "category": "video",
     "description": "Lamina Labs — independent third-party profile of a public API surface, by API Evangelist. Lamina Labs is a San Francisco company (Y Combinator Spring 2026) building near-real-time video infrastructure for large language models. Its flagship product, Simi, turns prompts, documents, and AI-generated answers into whiteboard-style teaching videos in se",
     "discovered_from": "github",
@@ -1408,6 +1938,53 @@
     "updated_at": "2026-10-21T05:37:45Z"
   },
   {
+    "abstract": "Every driving scene is logged once, but driving is one-to-many: the scene determines which behaviors are feasible, while an instruction selects among them. A log records only the action taken, leaving no direct supervision for alternative feasible actions or instructions the scene cannot support. Consequently, a policy that ignores language and one that follows it without regard to scene constraints can fit the same data. We present Cartender, which learns from the drives not taken. Counterfactual Branching constructs matched and mismatched instruction-action pairs from real recordings without a simulator: a vision-language model proposes alternative futures and their selecting instructions, while unsupported instructions provide negative labels. A learned scene-language compatibility score regulates language conditioning in trajectory generation, and a reward-trained language residual re-ranks generated candidates over a scene-based score. The branches are used for training; instruction following is evaluated by swapping instructions under identical recorded inputs and measuring behavior rather than agreement with generated targets. On WOD-E2E, the best of four proposals achieves an RFS of 8.642 across 3,603 feasible instruction conditions. Across 8,974 admitted proposals, mean RFS is 8.203 versus 7.906 for matched logged trajectories, and 67% score higher than their logged counterpart. Compared with matched-only imitation using the same backbone, Cartender improves same-scene paired instruction success from 23.67% to 57.00% and RFS from 6.32 to 7.10; its gate reduces infeasible-instruction execution from 53.36% to 14.18%.",
+    "arxiv_categories": [
+      "cs.RO"
+    ],
+    "authors": [
+      "Zhiwen Chen",
+      "Benjin Zhu",
+      "Yan Xie",
+      "Jun Ma"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-26390",
+    "paper_url": "https://arxiv.org/abs/2610.26390v2",
+    "pdf_url": "https://arxiv.org/pdf/2610.26390v2",
+    "published_at": "2026-10-19T13:38:00Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.26390v2",
+    "title": "Cartender: Verifiable Language-Conditioned Driving by Learning the Drives Not Taken",
+    "updated_at": "2026-10-21T04:44:06Z"
+  },
+  {
+    "abstract": "Recent advancements in Vision-Language Models (VLMs) enable end-to-end visual grounding via language prompts and generative decoding, demonstrating largely improved zero-shot and open-vocabulary detection capabilities. As a result, VLMs are rapidly being deployed at the edge in safety-critical real-world systems. However, the physical adversarial robustness of edge VLMs has not been systematically studied, and the fundamental differences in output with modern object detectors create methodological challenges for fair evaluation. To compare the two families directly, we evaluate every selected representative model on one outcome: whether an adversarial patch worn on a person evades detection of the model. We report this by introducing a unified metric, conditional attack success rate (cASR), counted only on images the model still localizes under a matched gray occluder, and partition every failure into omission (no box), substitution (a box on the patch), and displacement (a box on neither). We benchmark the physical adversarial vulnerability of compact grounding VLMs against a range of object detectors, and find that the VLMs can be as vulnerable as the detectors. We disclose that failure mode is largely associated with the output format of a model rather than its architecture family. Of the three, only omission is visible to a downstream system; displacement and substitution return confident, well-formed boxes, making them potentially more dangerous failures. Further, we find that, under distribution shift, VLMs that primarily failed by omission instead shift to failing more by displacement/substitution. Thus, a grounding VLM can inherit the detector's vulnerability while showing the possibility to adopt more dangerous failure modes. Our code and data are available at https://github.com/ericliang1/physical-adversarial-robustness.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.CR",
+      "cs.LG"
+    ],
+    "authors": [
+      "Eric Liang",
+      "Alan Luo",
+      "Kaiwen Yuan"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29196",
+    "paper_url": "https://arxiv.org/abs/2610.29196v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29196v1",
+    "published_at": "2026-10-21T04:38:02Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29196v1",
+    "title": "A Unified Evaluation Framework of Physical Adversarial Robustness in the Edge VLM Era",
+    "updated_at": "2026-10-21T04:38:02Z"
+  },
+  {
     "category": "video",
     "discovered_from": "huggingface",
     "evidence_urls": [],
@@ -1420,6 +1997,35 @@
     "source_url": "https://huggingface.co/off-grid-ai/LingBot-Video-Dense-1.3B-GGUF",
     "title": "off-grid-ai/LingBot-Video-Dense-1.3B-GGUF",
     "updated_at": "2026-10-21T04:21:49.000Z"
+  },
+  {
+    "abstract": "Executing vision-language models (VLMs) aboard low-Earth orbit satellites enables flexible processing of observation data without first downlinking it to the ground. On commercial off-the-shelf payloads, however, a request may span multiple execution windows: power and thermal constraints, fault-triggered reboots, and competing payload demands can interrupt inference before it completes. Each shutdown discards volatile activations and KV caches, forcing an unprotected request to repeat work after restart. We present OrbitWeaver, a framework that preserves VLM inference progress across onboard interruptions through coordinated checkpointing and recovery. Its phase-aware checkpointing selects recovery boundaries according to the state lifetimes and computational characteristics of vision encoding, language-model prefill, and decoding, balancing storage traffic against recomputation. Its dependency-aware dynamic recovery schedules restoration from partially completed states across the layer and token-chunk dimensions. By overlapping checkpoint and weight reads with recomputation, it reduces restart latency; the recovery planner computes an optimal execution order under its scheduling model within 100 ms. Experiments on satellite payload hardware using on-orbit telemetry traces show up to a 4.07-fold end-to-end speedup and a 3.56-fold reduction in SSD write volume over the evaluated baselines. A 72-hour deployment on two low-Earth orbit satellites demonstrates that OrbitWeaver retains inference progress and resumes execution across repeated bus-enforced shutdowns.",
+    "arxiv_categories": [
+      "cs.DC",
+      "cs.AI"
+    ],
+    "authors": [
+      "Xiaolong Huang",
+      "Yinyuan Zhang",
+      "Daliang Xu",
+      "Yun Ma",
+      "Qing Li",
+      "Mengwei Xu",
+      "Shangguang Wang",
+      "Gang Huang",
+      "Xuanzhe Liu"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29183",
+    "paper_url": "https://arxiv.org/abs/2610.29183v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29183v1",
+    "published_at": "2026-10-21T04:14:43Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29183v1",
+    "title": "Resuming Vision-Language Inference across Onboard Interruptions",
+    "updated_at": "2026-10-21T04:14:43Z"
   },
   {
     "category": "video",
@@ -1738,6 +2344,26 @@
     "updated_at": "2026-10-21T01:02:24.000Z"
   },
   {
+    "abstract": "Estimating food mass from a photograph is central to image-based dietary assessment, but whether trained models transfer to new cameras and foods is unclear. We fine-tuned DINOv2-base on 2,253 weighed Nutrition5k dishes to predict mass from one RGB photograph and compared it with a zero-shot vision-language model, Qwen3-VL-32B, on Nutrition5k and three external datasets: ASA24 studio portions, ECUSTFD whole foods and Food Portion Benchmark meal trays. In domain, the fine-tuned model's mean absolute error was 24.8 g, less than half of Qwen's. On external datasets it did not beat Qwen. For a food it had never seen, it ranked portions by size, but no better than a count of food pixels. Its gram scale was wrong in two ways: it changed with how much of the scene the photograph showed, and it was off by a different factor for each food. Training on other foods or trays from the tested dataset cut the external error by 38 to 65%. DINOv2-large, a larger backbone trained on the same dishes, did not reduce the external error. One labeled photograph of the same food cut the model's ASA24 error to 28.3 g, better than that photograph achieved alone. Prediction intervals that held the true mass for 90% of Nutrition5k dishes held it for at most half of external photographs. Nutrition5k often photographed the same plate several times, so a random test split shared near-identical photographs with training and overstated accuracy. Single-image mass estimators therefore need labeled photographs from the setting where they are used.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Yongsheng Lian"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-29025",
+    "paper_url": "https://arxiv.org/abs/2610.29025v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.29025v1",
+    "published_at": "2026-10-21T00:59:03Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.29025v1",
+    "title": "Single-Image Food Mass Estimators Do Not Transfer Their Gram Scale Across Datasets",
+    "updated_at": "2026-10-21T00:59:03Z"
+  },
+  {
     "category": "video",
     "discovered_from": "huggingface",
     "evidence_urls": [],
@@ -1772,6 +2398,30 @@
     "updated_at": "2026-10-20T23:23:21Z"
   },
   {
+    "abstract": "In medical imaging, small sets of expert labels are often combined with zero-shot pseudo-labels from a vision-language model (VLM). When the expert-labeled set is very small, the extra pseudo-labels reduce variance and improve accuracy. Once a classifier trained on expert labels alone reaches the accuracy of the weak labeler, however, adding pseudo-labels lowers test performance. We measure where this crossover occurs on PatchCamelyon histopathology, ISIC 2019 dermoscopy, and NIH ChestX-ray14 radiography using pseudo-labels from BiomedCLIP and PubMedCLIP across six student architectures ($8\\mathrm{M}$ to $89\\mathrm{M}$ parameters). Weak labels stop helping after $20$--$50$ expert labels on ISIC 2019, about $100$ on PatchCamelyon, and $250$--$500$ on NIH ChestX-ray14. Above those budgets, adding $10{,}000$ pseudo-labels reduces test macro-AUC by up to $0.14$ points with BiomedCLIP ($0.23$ with PubMedCLIP) on ISIC 2019, $0.10$ on PatchCamelyon, and $0.08$ on NIH ChestX-ray14. Across the six student architectures, the weak-label ceiling stays within a $0.024$ AUC range ($0.841$--$0.865$), indicating that the VLM labeler, rather than student size, limits performance. Comparing VLM pseudo-labels with random label flips at the same error rate shows that systematic VLM mistakes yield $0.09$--$0.20$ lower AUC than random noise on PatchCamelyon and ISIC 2019, but $0.03$--$0.04$ higher AUC on 15-class NIH ChestX-ray14, where per-finding crossovers also span more than a $20\\times$ range. A simple bias-variance rule estimated from the weak labeler's validation accuracy and small expert-only runs predicts whether pseudo-labels will help or hurt in all $30$ statistically significant settings ($39/42$ overall).",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI",
+      "cs.LG"
+    ],
+    "authors": [
+      "Bruce Changlong Xu",
+      "Jose K. James",
+      "Alexander J. Ryu"
+    ],
+    "category": "agent",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2605-24771",
+    "paper_url": "https://arxiv.org/abs/2605.24771v2",
+    "pdf_url": "https://arxiv.org/pdf/2605.24771v2",
+    "published_at": "2026-05-23T23:15:07Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2605.24771v2",
+    "title": "From Theory to Decision Rule: Calibrating the Noisy-Label Crossover for Vision-Language Model Weak Supervision Across Three Medical-Imaging Benchmarks",
+    "updated_at": "2026-10-20T22:48:22Z"
+  },
+  {
     "category": "small-vlm",
     "description": "Zhipu AI — independent third-party profile of a public API surface, by API Evangelist. Zhipu AI (Z.ai / BigModel) is a Chinese AI research lab and the developer of the GLM (General Language Model) family. The Z.ai open platform exposes chat completions, vision, image generation, video generation, web search, audio transcription, embeddings, fine-tu",
     "discovered_from": "github",
@@ -1798,6 +2448,60 @@
     "source_url": "https://github.com/api-evangelist/zhipu-ai",
     "title": "api-evangelist/zhipu-ai",
     "updated_at": "2026-10-20T22:28:21Z"
+  },
+  {
+    "abstract": "As quantum computing moves from the noisy intermediate-scale quantum (NISQ) era toward early fault-tolerant quantum computing (EFTQC), quantum-enhanced AI is shifting from a conceptual idea to experimental research. Quantum components are expected to extend the capabilities of existing AI systems, yet it remains unclear how such components will help within large multimodal models. In this study, we try to answer that question for vision-language models (VLMs) using classically simulated quantum layers. With LLaVA-OneVision as the backbone, we evaluate 4- and 8-qubit basic-ring and strongly entangling circuits at four insertion and four replacement locations. Insertion adds quantum layers to the classical model, while replacement substitutes them for classical components. Using the same setup, we compare performance and computational cost between classical and quantum-classical hybrid models. On the Visual Spatial Reasoning dataset, inserting a quantum layer after the visual projector reaches 80.7% development accuracy, 2.28 percentage-points above classical full fine-tuning. Replacing the final decoder feed-forward sublayer retains 79.22% accuracy with 13.07 million fewer trainable parameters. Quantum insertion can thus improve accuracy, and selective replacement can reduce parameters. These benefits depend strongly on where the quantum layer is inserted or which classical component it replaces: earlier replacements lower accuracy, and fewer parameters do not reliably shorten training or reduce computation. To assess potential security benefits, we evaluated the robustness of quantum-classical hybrid models under six attack settings. Overall, our study maps where quantum layers help and hurt within VLMs, offering a starting point for hybrid VLM design; whether these gains generalize remains open. The code is available at https://github.com/TITANS-Lab-Artifacts/QuantumVLM.",
+    "arxiv_categories": [
+      "quant-ph",
+      "cs.AI",
+      "cs.CV",
+      "cs.LG"
+    ],
+    "authors": [
+      "Md Khalid Syfullah",
+      "Alvi Ataur Khalil"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2610-28964",
+    "paper_url": "https://arxiv.org/abs/2610.28964v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28964v1",
+    "published_at": "2026-10-20T22:28:17Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2610.28964v1",
+    "title": "Can Quantum Layers offer Performance and Security Advantages in Vision-Language Models?",
+    "updated_at": "2026-10-20T22:28:17Z"
+  },
+  {
+    "abstract": "Vision-language models (VLMs) have shown increasing potential for medical image understanding, yet their capabilities in ophthalmic imaging remain insufficiently characterized. Existing ophthalmic datasets are typically designed for individual diseases or specialized tasks, making it difficult to systematically evaluate whether VLMs can move beyond disease recognition toward comparative reasoning and fine-grained spatial grounding. We introduce EyeVQA, a unified visual question answering benchmark for comprehensive evaluation of ophthalmic VLMs. EyeVQA is constructed from 21 available ophthalmic datasets and contains 20,000 question-answer pairs spanning six disease groups and seven question types: Single-Choice, Multi-Select, Variable-Select, True-False, Ranking, Point Location, and Bounding Box. Gold answers are deterministically derived from source-provided diagnoses, severity grades, clinical findings, segmentation masks, bounding boxes, and anatomical landmarks, enabling reproducible evaluation without relying on model-generated annotations. Notably, 44.5% of the questions require reasoning across multiple images, extending evaluation beyond conventional single-image medical VQA. We benchmark fourteen representative general-purpose, scientific, and medically specialized VLMs under a unified zero-shot protocol. The best-performing model only achieves an overall score of 62.8, while substantial gaps remain in spatial grounding and cross-task generalization. These results highlight the limitations of current VLMs in comprehensive ophthalmic visual understanding and establish EyeVQA as a diagnostic benchmark for developing more reliable and spatially grounded ophthalmic multimodal models. The project page is available at https://github.com/PKUTHM/EyeVQA.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Gujie Shao",
+      "Zixun Xie",
+      "Xuechun Xing",
+      "Ruixiang Wang",
+      "Ziyun Lan",
+      "Yanlin Qi",
+      "Gangyi Zhang",
+      "Yuxin Yang",
+      "Dawei Li",
+      "Haiming Tang"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2609-32352",
+    "paper_url": "https://arxiv.org/abs/2609.32352v3",
+    "pdf_url": "https://arxiv.org/pdf/2609.32352v3",
+    "published_at": "2026-09-26T08:15:17Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2609.32352v3",
+    "title": "EyeVQA: Benchmarking Ophthalmic Vision-Language Models from Recognition to Spatial Grounding",
+    "updated_at": "2026-10-20T21:56:44Z"
   },
   {
     "category": "small-vlm",
@@ -1828,6 +2532,32 @@
     "source_url": "https://github.com/api-evangelist/plumerai",
     "title": "api-evangelist/plumerai",
     "updated_at": "2026-10-20T20:51:03Z"
+  },
+  {
+    "abstract": "Data visualization understanding, which requires integrating visual, numerical, and linguistic inputs, poses fundamental challenges to multimodal reasoning. Recently developed vision-language models (VLMs) are promising candidates for modeling the computations that underlie human data visualization understanding. However, whether they are useful as scientific models depends not only on whether they produce correct answers, but also whether they approximate the patterns of responses that people produce on the same tasks. This distinction has been ignored in recent evaluations of VLMs, which typically only report overall model performance (accuracy) without direct comparison to human behavioral patterns. Here we introduce a human-centered evaluation protocol that compares VLM and human responses on the same set of visualization understanding items. We apply this protocol to eight VLMs across six assessments: five established tests of human visualization literacy, plus one designed specifically for evaluating VLMs. Models performed worse than humans on average, and this gap persisted even under lenient criteria. Moreover, while relative performance across items was somewhat correlated between models and humans, all models produced error patterns that were reliably distinct from those of humans. We envision our evaluation protocol helping to identify artificial systems that might serve as promising scientific cognitive models of how humans reason about data visualizations.",
+    "arxiv_categories": [
+      "cs.HC",
+      "cs.CL",
+      "cs.CV"
+    ],
+    "authors": [
+      "Arnav Verma",
+      "Kushin Mukherjee",
+      "Christopher Potts",
+      "Elisa Kreiss",
+      "Judith E. Fan"
+    ],
+    "category": "small-vlm",
+    "discovered_from": "arxiv",
+    "first_seen_at": "2026-10-22T06:15:37+00:00",
+    "id": "arxiv-2505-17202",
+    "paper_url": "https://arxiv.org/abs/2505.17202v2",
+    "pdf_url": "https://arxiv.org/pdf/2505.17202v2",
+    "published_at": "2025-05-22T18:15:04Z",
+    "review": "pending",
+    "source_url": "https://arxiv.org/abs/2505.17202v2",
+    "title": "Human-centered evaluation of data visualization understanding in vision-language models",
+    "updated_at": "2026-10-20T18:55:19Z"
   },
   {
     "abstract": "Motivated by the human ability to integrate experience across language, perception, and action, we introduce UniWALM, a unified world-action-language model that learns video, action, and language in a single shared representation, where each modality is both a conditioning signal and a supervision target. We ask: can jointly generating language enrich this shared representation, improving manipulation and supporting memory-dependent behavior? Unlike prior approaches that attach a reasoning or vision-language model to a video-action backbone and run them as distinct stages, UniWALM unifies all three modalities inside a single mixture-of-transformers backbone whose per-modality diffusion heads co-denoise synchronously, decoding subtask and textual memory in the same pass as action with no separate planning stage; the generated language is re-consumed on the next step, closing a language-as-memory loop without an external planner or memory bank. To keep the action stream reliable under this richer objective, we further introduce Flow Matching with Correction (FMC), a training objective that teaches recovery from perturbed action trajectories at no inference-time cost. UniWALM consistently improves over same-backbone baselines (e.g., FastWAM) on compositional pick-and-place (MolmoSpaces) and across the memory-dependent subset of RMBench, where it reaches 34.5% without any pretrained language or reasoning model and exceeds Mem-0's keyframe-equipped setup (28.5%) using only a single anchor frame. On a real-world Find-the-Item task, generating textual memory lifts success from 11.1% to 61.1%, while state-of-the-art VLAs stay at or below chance (<=33.3%).",
@@ -2115,33 +2845,6 @@
     "source_url": "https://arxiv.org/abs/2610.28369v1",
     "title": "Don't Skip the Baseline: A Controlled Comparison of Dynamic Expert Skipping in MoEs",
     "updated_at": "2026-10-20T15:29:19Z"
-  },
-  {
-    "abstract": "Object counting in videos remains a poorly characterized capability of multimodal large language models. Counting questions are included in many existing VideoQA benchmarks, but the ground-truth count distributions in these benchmarks are heavily skewed toward small values. Across the nine benchmarks we survey, the median ground-truth count is at most five, and the three most frequent values together account for between 45% and 93% of the videos. The resulting mean accuracy is then dominated by the most frequent counts; a value-dependent bias at a rare count contributes negligibly to the average and remains invisible. We introduce CountVideoBench, a benchmark of 2,600 synthetic videos covering 26 cardinalities in the interval [5, 50] (100 videos each), grouped into six clusters of consecutive counts that span the range while enabling near-neighbor comparisons. Each video contains a single class of static objects under a controlled camera motion, removing object motion and reducing recognition as confounds. We evaluate sixteen video-language models from nine architecture families in a zero-shot setting. No model exceeds 27.6% Exact Match. The dependence of accuracy on cardinality varies across models, ranging from monotonic decline to a non-monotonic peak-and-collapse pattern, which rules out increasing difficulty with cardinality as the dominant explanation of counting failure. Every model further concentrates its predictions on its own set of preferred integers, with accuracy peaks coinciding with these values and collapsing at adjacent counts. These findings highlight the need for balanced, diagnostic counting benchmarks to reliably assess this fundamental visual capability.",
-    "arxiv_categories": [
-      "cs.CV",
-      "cs.AI",
-      "cs.LG"
-    ],
-    "authors": [
-      "Marc Chapus",
-      "Carlos Crispim-Junior",
-      "Véronique Eglin",
-      "Atilla Baskurt"
-    ],
-    "category": "video",
-    "discovered_from": "arxiv",
-    "evidence_urls": [],
-    "first_seen_at": "2026-10-21T07:22:56+00:00",
-    "id": "arxiv-2610-28356",
-    "paper_url": "https://arxiv.org/abs/2610.28356v1",
-    "pdf_url": "https://arxiv.org/pdf/2610.28356v1",
-    "published_at": "2026-10-20T15:20:28Z",
-    "related_urls": [],
-    "review": "pending",
-    "source_url": "https://arxiv.org/abs/2610.28356v1",
-    "title": "CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models",
-    "updated_at": "2026-10-20T15:20:28Z"
   },
   {
     "abstract": "Realistic few-shot adaptation of medical vision-language models (VLMs) can leave low-prevalence classes without any labeled support. The training-free SS- Text+ solver remains operational in this setting, but its zero-support prototypes receive no visual adaptation and fall back to a purely textual class prototype. We in- troduce Gated Knowledge-Guided Prototype Transfer (GProtoT), a pre-repulsion module that transfers supported-class visual residuals to missing classes using VLM similarity and an ontology-based clinical distance. A validation-free evidence gate scales transfer based on semantic relevance and residual agreement, thereby limiting unsupported extrapolation. In 50 paired realistic one-shot trials on MESSIDOR with FLAIR features, severe and proliferative diabetic retinopathy were absent from every support set. Relative to SS-Text+, gated ProtoT improved missing-class recall by 5.23 points, average class accuracy by 1.37 points, and the missing/supported recall harmonic mean by 1.83 points. It reduced negative- transfer frequency from 46-48% for ungated transfer to 2%, while at the cost of reductions of 1.20 percentage points in supported-class recall and 0.45 percentage points in top-1 accuracy. These results indicate that evidence-based gating provides a safety mechanism for the knowledge source. GProtoT is based on SS- Text+ and requires no gradients, validation data, or additional model inference, of- fering a low-compute path toward accountable adaptation under incomplete clini- cal supervision. Code is available: https://github.com/sumaiyaafridi/GProtoT",
