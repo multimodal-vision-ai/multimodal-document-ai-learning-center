@@ -74,12 +74,12 @@ jobs:
       - name: Build static DEV site
         working-directory: site-source
         env:
-          SITE_DIR: \${{ runner.temp }}/chatgpt-dev-site
+          SITE_DIR: ${{ runner.temp }}/chatgpt-dev-site
         run: mkdocs build --strict --no-directory-urls --site-dir "$SITE_DIR"
 
       - name: Mark pages as DEV-only
         env:
-          SITE_DIR: \${{ runner.temp }}/chatgpt-dev-site
+          SITE_DIR: ${{ runner.temp }}/chatgpt-dev-site
         run: |
           python - <<'PY'
           import os
@@ -117,7 +117,7 @@ jobs:
       - name: Publish rebuilt static preview
         working-directory: preview
         env:
-          SITE_DIR: \${{ runner.temp }}/chatgpt-dev-site
+          SITE_DIR: ${{ runner.temp }}/chatgpt-dev-site
         run: |
           set -euo pipefail
           test -f "$SITE_DIR/index.html"
