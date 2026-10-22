@@ -50,5 +50,22 @@ class MonitorUITests(unittest.TestCase):
             self.assertIn("尚无可核验的发布记录", body)
             self.assertNotIn("最近一次报告发布与页面核验通过", body)
 
+    def test_success_label_requires_both_page_content_checks(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            self.write(root / "automation-health.json", {
+                "schema_version": 1,
+                "watchdog": {"last_run_at": "2026-10-22T11:30:00Z", "status": "completed"},
+                "publication": {
+                    "status": "success",
+                    "home_content_verified": True,
+                    "detail_content_verified": False,
+                    "message": "Detail page was not verified."
+                }
+            })
+            body = widget(root, NOW)
+            self.assertIn("尚无可核验的发布记录", body)
+            self.assertNotIn("最近一次报告发布与页面核验通过", body)
+
 if __name__ == "__main__":
     unittest.main()
