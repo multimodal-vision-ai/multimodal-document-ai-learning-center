@@ -255,8 +255,10 @@ jobs:
                && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/dev-home.headers" \
                && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/dev-radar.headers" \
                && grep -q "DEV 预览版" "$RUNNER_TEMP/dev-preview-public.html" \
-               && grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html" \
-               && grep -q "高匹配自动候选" "$RUNNER_TEMP/dev-preview-radar.html"; then
+               && ! grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html" \
+               && grep -q "前沿动态" "$RUNNER_TEMP/dev-preview-radar.html" \
+               && grep -q "本周精选" "$RUNNER_TEMP/dev-preview-radar.html" \
+               && grep -q "查看近期自动发现线索" "$RUNNER_TEMP/dev-preview-radar.html"; then
               asset_url="$(python - "$radar_url" "$RUNNER_TEMP/dev-preview-radar.html" <<'PY'
           import re
           import sys
