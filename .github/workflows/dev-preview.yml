@@ -65,6 +65,7 @@ jobs:
       - name: Render Research Radar snapshot
         run: |
           python -m unittest discover -s tests/radar -v
+          python scripts/radar/automation_health.py --write
           python scripts/radar/screening.py
           python scripts/radar/render.py
 
