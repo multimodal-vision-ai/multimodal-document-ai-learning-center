@@ -7,6 +7,9 @@ import re
 from core import parse_dt, valid_url
 
 PAPER_SOURCES = {"arxiv", "openreview"}
+
+# Public automatic leads only; ChatGPT results and approved research are exempt.
+DISPLAY_MATCH_THRESHOLD = 8.0
 SOURCE_LABELS = {
     "arxiv": "arXiv",
     "openreview": "OpenReview",

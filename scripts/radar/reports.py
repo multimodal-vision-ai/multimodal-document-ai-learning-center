@@ -4,7 +4,7 @@ These are source-linked structured summaries, not LLM-written peer-reviewed rese
 """
 from datetime import datetime, timedelta, timezone
 from core import DATA, load, parse_dt, save, verify
-from ranking import rank_candidates, summarize_candidates
+from ranking import rank_candidates, summarize_candidates, DISPLAY_MATCH_THRESHOLD
 
 def event_time(item):
     candidates = [parse_dt(item["published_at"]), parse_dt(item["reviewed_at"])]
@@ -38,8 +38,10 @@ def build(projects, now=None, candidates=None):
     for name, (start, cap, threshold) in intervals.items():
         picked = select(projects, start, now, cap, threshold)
         candidate_limit = {"daily": 3, "weekly": 10, "monthly": 10}[name]
-        candidate_leads = rank_candidates(candidates, start, now, limit=candidate_limit)
-        candidate_stats = summarize_candidates(candidates, start, now)
+        candidate_leads = rank_candidates(candidates, start, now, limit=candidate_limit,
+                                          threshold=DISPLAY_MATCH_THRESHOLD)
+        candidate_stats = summarize_candidates(candidates, start, now,
+                                               threshold=DISPLAY_MATCH_THRESHOLD)
         out[name] = {
             "period": name,
             "window_start": start.isoformat(timespec="seconds"),

@@ -103,9 +103,10 @@ class SourcePriorityTests(unittest.TestCase):
             },
         ]
         chosen = render.select_candidate_leads(items, now=now, limit=15)
-        self.assertGreaterEqual(len(chosen), 3)
+        self.assertEqual(len(chosen), 1)
         self.assertEqual(chosen[0]["id"], "arxiv-video-token-reduction")
-        self.assertTrue(any(x["id"] == "openreview-document-dataset" for x in chosen))
+        self.assertGreaterEqual(chosen[0]["match_score"], 8.0)
+        self.assertFalse(any(x["id"] == "openreview-document-dataset" for x in chosen))
         self.assertFalse(any("generatedDigitalExps" in x["title"] for x in chosen))
         self.assertTrue(all(x["review"] == "pending" for x in chosen))
 
