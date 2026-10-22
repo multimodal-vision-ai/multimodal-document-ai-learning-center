@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from core import DATA, ROOT, load, valid_url, parse_dt
 from reports import build
-from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS
+from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
 
 DOCS = ROOT / "docs"
 
@@ -57,7 +57,8 @@ def indent(text):
 def select_candidate_leads(items, now=None, limit=15):
     """Return relevant recent candidates, ranked by transparent topic matching."""
     now = now or datetime.now(timezone.utc)
-    return rank_candidates(items, now - timedelta(days=7), now, limit=limit, threshold=3.5)
+    return rank_candidates(items, now - timedelta(days=7), now,
+                           limit=limit, threshold=DISPLAY_MATCH_THRESHOLD)
 
 
 def pretty_time(value):
@@ -345,7 +346,7 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, chat
     featured_html = "".join(candidate_card(item) for item in weekly_leads)
     if not featured_html:
         featured_html = (
-            '<div class="radar-empty-state"><strong>当前没有达到主题相关度门槛的近期线索。</strong>'
+            '<div class="radar-empty-state"><strong>近7天暂无主题匹配度 ≥8.0 的自动候选。</strong>'
             '<p>系统不会为了填满首页而推荐无关项目。可查看完整科研动态与历史记录。</p></div>'
         )
     approved_html = ""
@@ -392,7 +393,7 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, chat
 
     stat_html = (
         '<div class="radar-stats">'
-        f'<div class="radar-stat"><strong>{len(candidates)}</strong><span>累计候选线索</span></div>'
+        f'<div class="radar-stat"><strong>{weekly.get('relevant_count', 0)}</strong><span>近7天≥8分候选</span></div>'
         f'<div class="radar-stat"><strong>{daily.get("relevant_count", 0)}</strong><span>近24小时相关线索</span></div>'
         f'<div class="radar-stat"><strong>{weekly.get("new_papers_count", 0)}</strong><span>近7天新论文 / 投稿</span></div>'
         f'<div class="radar-stat"><strong>{len(approved)}</strong><span>已审核项目</span></div>'
@@ -410,7 +411,7 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, chat
 {stat_html}
 {chatgpt_home_section(chatgpt_reports, now)}
 {approved_html}
-<div class="radar-home-section-heading"><h3>本周自动精选</h3><span>最多展示 3 项 · 依据主题相关度与时间窗口排序</span></div>
+<div class="radar-home-section-heading"><h3>本周高匹配线索</h3><span>匹配度 ≥8.0 · 最多3项 · 未经科研审核</span></div>
 <div class="radar-feature-grid">{featured_html}</div>
 <div class="radar-home-section-heading"><h3>本周监测线索分布</h3><span>自动分类统计，不代表整个领域的发文量或质量排名</span></div>
 <div class="radar-trend-grid">{"".join(trend_cards)}</div>
@@ -497,10 +498,10 @@ def render(now=None):
     sources = len(collection_status.get("source_counts", {}))
     status_line = (f"**最近一次公开源采集（UTC）：{run_time}**；"
                    f"成功来源 {sources}；异常来源 {failures}；"
-                   f"数据库候选总数 {len(candidates)}。"
-                   " 下方展示近7天达到主题相关度门槛的候选；匹配度是规则初筛，不是质量排名。")
+                   f"近7天主题匹配度 ≥8.0 的候选 {reports['weekly']['candidate_summary'].get('relevant_count', 0)} 条。"
+                   " 下方仅展示近7天≥8.0分的自动候选（最多15条）；其余原始线索保留在后台。匹配度不是科研质量评分。")
     content = replace(content, "CANDIDATES", status_line + "\n\n" +
-                      ("\n".join(leads) if leads else "暂无自动采集到的公开线索。"))
+                      ("\n".join(leads) if leads else "近7天暂无主题匹配度达到 8.0 的自动候选。"))
     save_page("radar/index.md", content)
 
     page = DOCS / "radar/tasks.md"
