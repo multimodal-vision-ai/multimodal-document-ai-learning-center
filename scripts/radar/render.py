@@ -393,7 +393,7 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, chat
 
     stat_html = (
         '<div class="radar-stats">'
-        f'<div class="radar-stat"><strong>{weekly.get('relevant_count', 0)}</strong><span>近7天≥8分候选</span></div>'
+        f'<div class="radar-stat"><strong>{weekly.get("relevant_count", 0)}</strong><span>近7天≥8分候选</span></div>'
         f'<div class="radar-stat"><strong>{daily.get("relevant_count", 0)}</strong><span>近24小时相关线索</span></div>'
         f'<div class="radar-stat"><strong>{weekly.get("new_papers_count", 0)}</strong><span>近7天新论文 / 投稿</span></div>'
         f'<div class="radar-stat"><strong>{len(approved)}</strong><span>已审核项目</span></div>'
