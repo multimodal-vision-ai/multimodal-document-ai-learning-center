@@ -609,3 +609,6 @@
 .radar-home-card .radar-home-footnote{margin:1rem 0 0;color:var(--mv-muted);font-size:.7rem;line-height:1.55}
 @media screen and (max-width:64em){.radar-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media screen and (max-width:44.984375em){.radar-home-card{margin-right:-.35rem;margin-left:-.35rem;padding:.9rem;border-radius:1rem}.radar-home-card .radar-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.radar-feature-grid,.radar-trend-grid{grid-template-columns:minmax(0,1fr)}.radar-home-meta{flex-direction:column;gap:.25rem}.radar-home-section-heading{align-items:flex-start;flex-direction:column}}
+
+.radar-feature-card .radar-feature-description{margin:.45rem 0;color:var(--mv-ink);font-size:.78rem;line-height:1.5}
+.radar-feature-card .radar-repo-signals{margin:.3rem 0;color:var(--mv-muted);font-size:.7rem}
