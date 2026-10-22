@@ -71,7 +71,7 @@ class RadarRenderTests(unittest.TestCase):
                     "category": "document", "paper_url": "https://arxiv.org/abs/2610.20335",
                     "github_url": "https://github.com/yufanchen96/RPD",
                     "huggingface_url": "https://huggingface.co/chen-doc-ai/Qwen3.5-2B_with_SARA",
-                    "parameters": "2B", "gpu": "T4 量化推理可行；LoRA 约 24GB；全量训练至少 40GB",
+                    "parameters": "2B", "gpu": "T4 量化推理可行；LoRA 约 24GB；全量训练至少 40GB（按已存档周报记录，需实测复核）",
                     "summary": "结构感知的统一文档解析方法。",
                     "why_selected": "报告列为 A 优先级，开放权重与数据。",
                     "research_opportunity": "评估布局和结构约束在不同文档版式中的泛化。",
@@ -139,12 +139,19 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn("Unreviewed", first["index.md"])
             self.assertIn("# 前沿动态", first["radar/index.md"])
             self.assertIn("本周精选", first["radar/index.md"])
-            self.assertIn('本周精选 <span class="radar-section-period">（2026年第42周，筛选日期：2026-10-19）</span>', first["radar/index.md"])
+            self.assertIn('## 本周精选\n\n<p class="radar-section-period">2026年第42周，筛选日期：2026-10-19</p>', first["radar/index.md"])
+            self.assertNotIn('（2026年第42周，筛选日期：2026-10-19）', first["radar/index.md"])
+            self.assertEqual(first["radar/index.md"].count("尚未逐项独立实测"), 1)
             weekly_section = first["radar/index.md"].split("<!-- RADAR:CHATGPT_WEEKLY-START -->", 1)[1].split("<!-- RADAR:CHATGPT_WEEKLY-END -->", 1)[0]
             self.assertIn("radar-brief-heading", weekly_section)
             self.assertNotIn("radar-period-badge", weekly_section)
             self.assertNotIn("筛选日期：", weekly_section)
             self.assertNotIn("报告周期：2026年第42周", weekly_section)
+            self.assertIn('<strong>参数量：</strong><span>2B</span>', weekly_section)
+            self.assertIn('<strong>GPU需求：</strong><span>T4 量化推理可行；LoRA 约 24GB；全量训练至少 40GB</span>', weekly_section)
+            self.assertNotIn("按已存档周报记录", weekly_section)
+            self.assertNotIn("需实测复核", weekly_section)
+            self.assertIn("radar-resource-row", weekly_section)
             self.assertIn("本月研究机会", first["radar/index.md"])
             self.assertIn("radar-brief-card", first["radar/index.md"])
             self.assertIn("MaLoW", first["radar/index.md"])
