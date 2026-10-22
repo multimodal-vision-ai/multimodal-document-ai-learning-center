@@ -38,7 +38,7 @@ class RadarRenderTests(unittest.TestCase):
                 "parameters": "2B", "gpu": "24GB", "gpu_tier": "24gb"
             }
             candidate = {
-                "id": "unverified-sample", "title": "Unreviewed <img> Title",
+                "id": "unverified-sample", "title": "Unreviewed <img> Long Video Understanding with Token Reduction",
                 "category": "video", "source_url": "https://example.org/lead",
                 "published_at": "2026-10-21T05:00:00+00:00",
                 "first_seen_at": "2026-10-21T06:00:00+00:00",
@@ -62,6 +62,10 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("Unreviewed", first["radar/index.md"])
             self.assertNotIn("Unreviewed", first["radar/projects.md"])
             self.assertIn("已审核项目", first["index.md"])
+            self.assertIn("本周自动精选", first["index.md"])
+            self.assertIn("主题匹配度", first["index.md"])
+            self.assertIn("Unreviewed &lt;img&gt;", first["index.md"])
+            self.assertNotIn("<img>", first["index.md"])
             self.assertIn("data-size=\"2\"", first["radar/projects.md"])
 
 if __name__ == "__main__":
