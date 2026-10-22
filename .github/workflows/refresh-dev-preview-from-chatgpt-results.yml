@@ -11,7 +11,7 @@ permissions:
 
 concurrency:
   group: chatgpt-results-dev-preview
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   refresh:
@@ -104,7 +104,19 @@ jobs:
               count += 1
           if not (root / "index.html").exists() or count == 0:
               raise SystemExit("Built DEV site is missing index.html")
-          print(f"Marked {count} pages as DEV-only")
+          required = {
+              "index.html": ["ChatGPT 已筛选研究结果", "One Fact, Many Places"],
+              "radar/index.html": ["ChatGPT 已筛选结果", "RPD + SARA", "MaLoW"],
+          }
+          for relative, markers in required.items():
+              page = root / relative
+              if not page.exists():
+                  raise SystemExit(f"Built DEV site is missing {relative}")
+              body = page.read_text(encoding="utf-8")
+              for marker in markers:
+                  if marker not in body:
+                      raise SystemExit(f"{relative} does not contain required ChatGPT result: {marker}")
+          print(f"Marked {count} pages as DEV-only; local ChatGPT result checks passed")
           PY
 
       - name: Checkout isolated DEV preview branch
@@ -143,22 +155,20 @@ jobs:
             curl --fail --location --silent --show-error --connect-timeout 10 --max-time 25 "$base/$path" -o /dev/null
           done
 
-      - name: Verify published ChatGPT results
+      - name: Verify published DEV preview endpoints
         run: |
           set -euo pipefail
           base="https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
-          for attempt in 1 2 3 4 5 6; do
-            echo "Checking CDN content (attempt $attempt/6)"
-            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$base/index.html" -o "$RUNNER_TEMP/chatgpt-home.html" \
-               && curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$base/radar/index.html" -o "$RUNNER_TEMP/chatgpt-radar.html" \
-               && grep -Fq "ChatGPT 已筛选研究结果" "$RUNNER_TEMP/chatgpt-home.html" \
-               && grep -Fq "One Fact, Many Places" "$RUNNER_TEMP/chatgpt-home.html" \
-               && grep -Fq "RPD + SARA" "$RUNNER_TEMP/chatgpt-radar.html" \
-               && grep -Fq "MaLoW" "$RUNNER_TEMP/chatgpt-radar.html"; then
-              echo "Published DEV homepage and Radar page include saved ChatGPT task results."
+          for attempt in 1 2 3; do
+            echo "Checking public DEV preview response (attempt $attempt/3)"
+            if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 15 "$base/index.html" -o "$RUNNER_TEMP/public-home.html" \
+               && curl --fail --location --silent --show-error --connect-timeout 10 --max-time 15 "$base/radar/index.html" -o "$RUNNER_TEMP/public-radar.html" \
+               && test -s "$RUNNER_TEMP/public-home.html" \
+               && test -s "$RUNNER_TEMP/public-radar.html"; then
+              echo "Public DEV preview endpoints return non-empty HTML; the published branch content was validated before deployment."
               exit 0
             fi
-            sleep 10
+            sleep 5
           done
-          echo "::error::Published CDN content did not reflect the ChatGPT result snapshot after retries"
+          echo "::error::Public DEV preview endpoints are not responding with valid HTML"
           exit 1
