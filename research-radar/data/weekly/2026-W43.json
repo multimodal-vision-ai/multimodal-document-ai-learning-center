@@ -1,8 +1,262 @@
 {
+  "candidate_leads": [
+    {
+      "category": "video",
+      "discovered_from": "arxiv",
+      "event_at": "2026-10-20T16:43:06+00:00",
+      "event_label": "新论文 / 新投稿",
+      "github_url": null,
+      "huggingface_url": null,
+      "id": "arxiv-2610-28502",
+      "is_new_paper": true,
+      "match_reasons": [
+        "来源：arXiv",
+        "主题：视频理解",
+        "主题：多模态小模型",
+        "方法关键词：高效化 / 压缩 / 低成本训练",
+        "时间：近7天"
+      ],
+      "match_score": 8.6,
+      "paper_url": "https://arxiv.org/abs/2610.28502v1",
+      "published_at": "2026-10-20T16:43:06Z",
+      "review": "pending",
+      "source_url": "https://arxiv.org/abs/2610.28502v1",
+      "title": "GazeLens for Efficient Egocentric Video Question Answering with Simple Gaze-Driven Adaptive Token Reduction",
+      "updated_at": "2026-10-20T16:43:06Z"
+    },
+    {
+      "category": "video",
+      "discovered_from": "openreview",
+      "event_at": "2026-10-15T20:36:53+00:00",
+      "event_label": "论文记录近期更新",
+      "github_url": null,
+      "huggingface_url": null,
+      "id": "openreview-788b3858529592e4952b",
+      "is_new_paper": false,
+      "match_reasons": [
+        "来源：OpenReview",
+        "主题：文档理解",
+        "主题：视频理解",
+        "时间：近7天"
+      ],
+      "match_score": 8.0,
+      "paper_url": "https://openreview.net/forum?id=j2iY8B86Ir",
+      "published_at": "2025-03-10T16:29:59.697000+00:00",
+      "review": "pending",
+      "source_url": "https://openreview.net/forum?id=j2iY8B86Ir",
+      "title": "DrVideo: Document Retrieval Based Long Video Understanding",
+      "updated_at": "2026-10-15T20:36:53.079000+00:00"
+    },
+    {
+      "category": "document",
+      "discovered_from": "huggingface",
+      "event_at": "2026-10-21T18:03:45+00:00",
+      "event_label": "新建模型仓库",
+      "github_url": null,
+      "huggingface_url": "https://huggingface.co/RKB109/multimodal-document-retrieval-20261021-model",
+      "id": "hf-b965d722191e71b0920c",
+      "is_new_paper": false,
+      "match_reasons": [
+        "来源：Hugging Face",
+        "主题：文档理解",
+        "主题：多模态小模型",
+        "时间：近24小时"
+      ],
+      "match_score": 6.8,
+      "paper_url": null,
+      "published_at": "2026-10-21T18:03:44.000Z",
+      "review": "pending",
+      "source_url": "https://huggingface.co/RKB109/multimodal-document-retrieval-20261021-model",
+      "title": "RKB109/multimodal-document-retrieval-20261021-model",
+      "updated_at": "2026-10-21T18:03:45.000Z"
+    },
+    {
+      "category": "video",
+      "discovered_from": "arxiv",
+      "event_at": "2026-10-20T15:37:38+00:00",
+      "event_label": "新论文 / 新投稿",
+      "github_url": null,
+      "huggingface_url": null,
+      "id": "arxiv-2610-28386",
+      "is_new_paper": true,
+      "match_reasons": [
+        "来源：arXiv",
+        "主题：多模态小模型",
+        "主题：多模态 Agent / RAG",
+        "时间：近7天"
+      ],
+      "match_score": 6.5,
+      "paper_url": "https://arxiv.org/abs/2610.28386v1",
+      "published_at": "2026-10-20T15:37:38Z",
+      "review": "pending",
+      "source_url": "https://arxiv.org/abs/2610.28386v1",
+      "title": "VisualEvolve: A Skill Self-Evolution Framework for Visual Reasoning",
+      "updated_at": "2026-10-20T15:37:38Z"
+    },
+    {
+      "category": "agent",
+      "discovered_from": "arxiv",
+      "event_at": "2026-10-19T16:17:48+00:00",
+      "event_label": "新论文 / 新投稿",
+      "github_url": null,
+      "huggingface_url": null,
+      "id": "arxiv-2610-26659",
+      "is_new_paper": true,
+      "match_reasons": [
+        "来源：arXiv",
+        "主题：多模态小模型",
+        "主题：多模态 Agent / RAG",
+        "时间：近7天"
+      ],
+      "match_score": 6.5,
+      "paper_url": "https://arxiv.org/abs/2610.26659v2",
+      "published_at": "2026-10-19T16:17:48Z",
+      "review": "pending",
+      "source_url": "https://arxiv.org/abs/2610.26659v2",
+      "title": "SpatialScout: Can VLM Agents Actively Explore and Map 3D Scenes?",
+      "updated_at": "2026-10-20T02:49:48Z"
+    },
+    {
+      "category": "agent",
+      "discovered_from": "arxiv",
+      "event_at": "2026-10-16T13:56:16+00:00",
+      "event_label": "新论文 / 新投稿",
+      "github_url": null,
+      "huggingface_url": null,
+      "id": "arxiv-2610-23479",
+      "is_new_paper": true,
+      "match_reasons": [
+        "来源：arXiv",
+        "主题：多模态小模型",
+        "主题：多模态 Agent / RAG",
+        "时间：近7天"
+      ],
+      "match_score": 6.5,
+      "paper_url": "https://arxiv.org/abs/2610.23479v2",
+      "published_at": "2026-10-16T13:56:16Z",
+      "review": "pending",
+      "source_url": "https://arxiv.org/abs/2610.23479v2",
+      "title": "HexaShell: A Thin Harness for Exploring the Limits of VLM Agents as Robot Coding Agents",
+      "updated_at": "2026-10-20T15:47:35Z"
+    },
+    {
+      "category": "small-vlm",
+      "discovered_from": "openreview",
+      "event_at": "2026-10-17T03:21:43+00:00",
+      "event_label": "新论文 / 新投稿",
+      "github_url": null,
+      "huggingface_url": null,
+      "id": "openreview-9faa95b09f1202e172b3",
+      "is_new_paper": true,
+      "match_reasons": [
+        "来源：OpenReview",
+        "主题：多模态小模型",
+        "主题：多模态 Agent / RAG",
+        "时间：近7天"
+      ],
+      "match_score": 6.4,
+      "paper_url": "https://openreview.net/forum?id=TFEdV9udS0",
+      "published_at": "2026-10-17T03:21:43.925000+00:00",
+      "review": "pending",
+      "source_url": "https://openreview.net/forum?id=TFEdV9udS0",
+      "title": "BabyVision: Visual Reasoning Beyond Language",
+      "updated_at": "2026-10-17T03:21:44.062000+00:00"
+    },
+    {
+      "category": "small-vlm",
+      "discovered_from": "openreview",
+      "event_at": "2026-10-15T03:28:06+00:00",
+      "event_label": "新论文 / 新投稿",
+      "github_url": null,
+      "huggingface_url": null,
+      "id": "openreview-e9937d176b69053048ba",
+      "is_new_paper": true,
+      "match_reasons": [
+        "来源：OpenReview",
+        "主题：多模态小模型",
+        "主题：多模态 Agent / RAG",
+        "时间：近7天"
+      ],
+      "match_score": 6.4,
+      "paper_url": "https://openreview.net/forum?id=zjg8VNLKPu",
+      "published_at": "2026-10-15T03:28:06.505000+00:00",
+      "review": "pending",
+      "source_url": "https://openreview.net/forum?id=zjg8VNLKPu",
+      "title": "Latent Implicit Visual Reasoning",
+      "updated_at": "2026-10-15T03:28:08.945000+00:00"
+    },
+    {
+      "category": "small-vlm",
+      "discovered_from": "arxiv",
+      "event_at": "2026-10-20T11:18:42+00:00",
+      "event_label": "论文记录近期更新",
+      "github_url": null,
+      "huggingface_url": null,
+      "id": "arxiv-2606-07000",
+      "is_new_paper": false,
+      "match_reasons": [
+        "来源：arXiv",
+        "主题：多模态小模型",
+        "方法关键词：高效化 / 压缩 / 低成本训练",
+        "时间：近7天"
+      ],
+      "match_score": 6.0,
+      "paper_url": "https://arxiv.org/abs/2606.07000v2",
+      "published_at": "2026-06-05T07:43:22Z",
+      "review": "pending",
+      "source_url": "https://arxiv.org/abs/2606.07000v2",
+      "title": "Teaching the Way, Not the Answer: Privileged Tutoring Distillation for Multimodal Policy Optimization",
+      "updated_at": "2026-10-20T11:18:42Z"
+    },
+    {
+      "category": "small-vlm",
+      "discovered_from": "arxiv",
+      "event_at": "2026-10-20T11:01:38+00:00",
+      "event_label": "论文记录近期更新",
+      "github_url": null,
+      "huggingface_url": null,
+      "id": "arxiv-2605-10641",
+      "is_new_paper": false,
+      "match_reasons": [
+        "来源：arXiv",
+        "主题：多模态小模型",
+        "方法关键词：高效化 / 压缩 / 低成本训练",
+        "时间：近7天"
+      ],
+      "match_score": 6.0,
+      "paper_url": "https://arxiv.org/abs/2605.10641v2",
+      "published_at": "2026-05-11T14:28:44Z",
+      "review": "pending",
+      "source_url": "https://arxiv.org/abs/2605.10641v2",
+      "title": "LLaVA-CKD: Bottom-Up Cascaded Knowledge Distillation for Vision-Language Models",
+      "updated_at": "2026-10-20T11:01:38Z"
+    }
+  ],
+  "candidate_summary": {
+    "category_counts": {
+      "agent": 4,
+      "document": 26,
+      "small-vlm": 36,
+      "video": 14
+    },
+    "new_papers_count": 30,
+    "relevant_count": 80,
+    "selection_note": "Rule-based topic relevance only; not a scientific-quality score or human approval.",
+    "selection_threshold": 3.5,
+    "source_counts": {
+      "arxiv": 40,
+      "github": 7,
+      "huggingface": 28,
+      "openreview": 5
+    },
+    "window_end": "2026-10-22T00:20:06+00:00",
+    "window_start": "2026-10-15T00:20:06+00:00"
+  },
   "empty": true,
+  "empty_candidate_leads": false,
   "period": "weekly",
   "projects": [],
   "research_topics": [],
-  "window_end": "2026-10-21T10:54:04+00:00",
-  "window_start": "2026-10-14T10:54:04+00:00"
+  "window_end": "2026-10-22T00:20:06+00:00",
+  "window_start": "2026-10-15T00:20:06+00:00"
 }

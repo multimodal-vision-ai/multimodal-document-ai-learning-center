@@ -1,0 +1,96 @@
+{
+  "candidate_leads": [
+    {
+      "category": "document",
+      "discovered_from": "huggingface",
+      "event_at": "2026-10-21T18:03:45+00:00",
+      "event_label": "新建模型仓库",
+      "github_url": null,
+      "huggingface_url": "https://huggingface.co/RKB109/multimodal-document-retrieval-20261021-model",
+      "id": "hf-b965d722191e71b0920c",
+      "is_new_paper": false,
+      "match_reasons": [
+        "来源：Hugging Face",
+        "主题：文档理解",
+        "主题：多模态小模型",
+        "时间：近24小时"
+      ],
+      "match_score": 6.8,
+      "paper_url": null,
+      "published_at": "2026-10-21T18:03:44.000Z",
+      "review": "pending",
+      "source_url": "https://huggingface.co/RKB109/multimodal-document-retrieval-20261021-model",
+      "title": "RKB109/multimodal-document-retrieval-20261021-model",
+      "updated_at": "2026-10-21T18:03:45.000Z"
+    },
+    {
+      "category": "document",
+      "discovered_from": "huggingface",
+      "event_at": "2026-10-21T20:09:02+00:00",
+      "event_label": "新建模型仓库",
+      "github_url": null,
+      "huggingface_url": "https://huggingface.co/DawoodAlyy/qwen-document-reliability-evaluation",
+      "id": "hf-27645959c6f336cb467c",
+      "is_new_paper": false,
+      "match_reasons": [
+        "来源：Hugging Face",
+        "主题：文档理解",
+        "成果类型：Benchmark / 数据集 / 评测",
+        "时间：近24小时"
+      ],
+      "match_score": 5.0,
+      "paper_url": null,
+      "published_at": "2026-10-21T19:49:56.000Z",
+      "review": "pending",
+      "source_url": "https://huggingface.co/DawoodAlyy/qwen-document-reliability-evaluation",
+      "title": "DawoodAlyy/qwen-document-reliability-evaluation",
+      "updated_at": "2026-10-21T20:09:02.000Z"
+    },
+    {
+      "category": "video",
+      "discovered_from": "github",
+      "event_at": "2026-10-22T00:19:46+00:00",
+      "event_label": "代码库近期提交",
+      "github_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+      "huggingface_url": null,
+      "id": "github-876545970",
+      "is_new_paper": false,
+      "match_reasons": [
+        "来源：GitHub",
+        "主题：视频理解",
+        "时间：近24小时"
+      ],
+      "match_score": 4.8,
+      "paper_url": null,
+      "published_at": "2024-10-22T06:43:05Z",
+      "review": "pending",
+      "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+      "title": "NVIDIA-AI-Blueprints/video-search-and-summarization",
+      "updated_at": "2026-10-22T00:19:46Z"
+    }
+  ],
+  "candidate_summary": {
+    "category_counts": {
+      "document": 2,
+      "small-vlm": 3,
+      "video": 8
+    },
+    "new_papers_count": 0,
+    "relevant_count": 13,
+    "selection_note": "Rule-based topic relevance only; not a scientific-quality score or human approval.",
+    "selection_threshold": 3.5,
+    "source_counts": {
+      "github": 4,
+      "huggingface": 9
+    },
+    "window_end": "2026-10-22T00:20:06+00:00",
+    "window_start": "2026-10-21T00:20:06+00:00"
+  },
+  "empty": true,
+  "empty_candidate_leads": false,
+  "period": "daily",
+  "projects": [],
+  "research_topics": [],
+  "window_end": "2026-10-22T00:20:06+00:00",
+  "window_start": "2026-10-21T00:20:06+00:00"
+}
