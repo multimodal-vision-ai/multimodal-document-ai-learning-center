@@ -339,6 +339,31 @@ def chatgpt_report_listing(report, report_type):
     return "\n\n".join(lines)
 
 
+def stage_two_detail_listing(reports, queue):
+    selected, errors = collect_screened(reports, queue)
+    if errors:
+        return "二次评价数据未通过证据与评分规范检查，无法作为科研精选展示。"
+    if not selected:
+        return "**目前没有符合四维科研价值评分标准的 ChatGPT 二次评价结果。** 自动候选不会直接晋升。"
+    lines = []
+    for item in selected:
+        details = item["evaluation_dimensions"]
+        scores = "、".join(
+            f'{label}{escape(details[key]["score"])}/10'
+            for key, label in (
+                ("innovation", "创新性"), ("open_source", "开源完整度"),
+                ("reproducibility", "复现可行性"), ("research_potential", "科研潜力")
+            )
+        )
+        links = " · ".join(link(url, "来源证据") for url in item["evidence_urls"][:4])
+        lines.append(f'- **{link(item["evidence_urls"][0], item["title"])}** — 科研价值辅助评分 **{item["value_score"]}/10**')
+        lines.append(f'    - 四维评分：{scores}')
+        lines.append(f'    - 理由：{escape(item["why_selected"])}')
+        lines.append(f'    - 研究方向：{escape(item["research_opportunity"])}')
+        lines.append(f'    - {links}')
+    return "\n".join(lines)
+
+
 def stage_two_home_section(chatgpt_reports, queue):
     reviewed, validation_errors = collect_screened(chatgpt_reports, queue)
     if validation_errors:
@@ -525,6 +550,7 @@ def render(now=None):
 
     page = DOCS / "radar/index.md"
     content = page.read_text(encoding="utf-8")
+    content = replace(content, "STAGE_TWO", stage_two_detail_listing(chatgpt_reports, screening_queue))
     for marker, report_type in (
         ("CHATGPT_DAILY", "daily"),
         ("CHATGPT_WEEKLY", "weekly"),
