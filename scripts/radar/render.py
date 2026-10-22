@@ -364,7 +364,7 @@ def chatgpt_item_card(item, report_type, report_generated):
     title_url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
     title = link(title_url, title_text)
     summary = item.get("summary") or item.get("abstract") or item.get("description") or ""
-    why = item.get("why_selected") or item.get("selection_rationale") or ""
+    why = clean_value_point(item.get("why_selected") or item.get("selection_rationale") or "")
     opportunity = item.get("research_opportunity") or item.get("next_steps") or ""
     params = item.get("parameters") or item.get("parameter_scale") or "未报告"
     gpu = item.get("gpu") or item.get("gpu_requirement") or "未核实"
@@ -505,6 +505,32 @@ def clean_resource_note(value):
     text = re.sub(r"[（(]\s*[）)]", "", text)
     return text.strip(" ；;，,")
 
+def clean_value_point(value):
+    """Use direct, student-facing language instead of internal report provenance."""
+    text = str(value or "").strip()
+    rewrites = {
+        "原周报列为 A 优先级；模型权重和数据被记录为开放，且提供了 GitHub 与 Hugging Face 入口，适合作为文档解析的复现基线。":
+            "提供 GitHub 与 Hugging Face 资源入口，可用于核查模型权重、数据和复现流程；适合作为文档解析任务的基线候选。",
+        "已存档周报记录了 T4 16GB 环境测试，并报告 FP32 约 46 edits/s；完整蒸馏流程尚未确认，适合开展可复现实验和评测方法研究。":
+            "参考性能数据为：T4 16GB 环境下 FP32 约 46 edits/s；该结果与完整蒸馏流程仍待独立核实，可从性能复现和评测方法入手。",
+        "已存档周报记录训练代码开放，并覆盖多个参数规模，适合在统一任务和资源预算下比较模型规模、结构约束与泛化能力。":
+            "项目涉及多个参数规模的模型，可在统一任务和资源预算下比较模型规模、结构约束与泛化能力；实验前应确认训练代码是否可获取。",
+        "覆盖较小模型规模，适合研究长视频记忆、参数效率和视频 token 预算之间的关系；已存档周报指出训练代码与数据开放状态仍需核验。":
+            "该方法面向较小模型规模，适合研究长视频记忆、参数效率与视频 token 预算之间的权衡；开展实验前应先确认训练代码和数据是否可获取。",
+        "提供了论文和 GitHub 项目入口，适合评估直接视频决策与候选缓存的计算收益；T4 可运行性尚未确认。":
+            "论文和 GitHub 项目提供了可追溯的研究入口，适合评估直接视频决策与候选缓存的计算收益；T4 可运行性仍需实测确认。",
+    }
+    if text in rewrites:
+        return rewrites[text]
+    text = re.sub(r"(?:原周报|报告)列为\s*[A-D]\s*优先级[；;，,]?\s*", "", text)
+    text = re.sub(r"已存档周报(?:中)?记录了?\s*", "", text)
+    text = re.sub(r"已存档周报(?:中)?指出\s*", "", text)
+    text = re.sub(r"原周报(?:中)?(?:提到|指出|记录|列为)\s*", "", text)
+    text = re.sub(r"周报(?:中)?(?:记录了?|指出|提到|报告了?)\s*", "", text)
+    text = re.sub(r"\s+", " ", text)
+    return text.strip(" ；;，,。")
+
+
 def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
     """Render compact report cards; weekly period metadata lives in the section heading."""
     labels = {"weekly": "周报", "monthly": "月度总结"}
@@ -548,7 +574,7 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
         title_url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
         title = link(title_url, title_text)
         summary = item.get("summary") or item.get("abstract") or item.get("description") or ""
-        why = item.get("why_selected") or item.get("selection_rationale") or ""
+        why = clean_value_point(item.get("why_selected") or item.get("selection_rationale") or "")
         opportunity = item.get("research_opportunity") or item.get("next_steps") or ""
         screened_raw = item.get("screened_at") or generated_raw
         screened_at = escape(str(screened_raw or "日期未记录")[:10])
@@ -646,7 +672,7 @@ def stage_two_detail_listing(reports, queue):
         evidence = " <span aria-hidden=\"true\">·</span> ".join(evidence_links)
         title = link(urls[0] if urls else None, item["title"])
         summary = escape(str(item["summary"])[:220])
-        reason = escape(str(item["why_selected"])[:240])
+        reason = escape(clean_value_point(item["why_selected"])[:240])
         opportunity = escape(str(item["research_opportunity"])[:240])
         score = escape(item["value_score"])
         cards.append(
