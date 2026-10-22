@@ -472,7 +472,7 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, chat
     stat_html = (
         '<div class="radar-stats">'
         f'<div class="radar-stat"><strong>{weekly.get("relevant_count", 0)}</strong><span>近7天≥8分候选</span></div>'
-        f'<div class="radar-stat"><strong>{daily.get("relevant_count", 0)}</strong><span>近24小时相关线索</span></div>'
+        f'<div class="radar-stat"><strong>{len(weekly.get("source_counts", {}))}</strong><span>本周覆盖来源类型</span></div>'
         f'<div class="radar-stat"><strong>{weekly.get("new_papers_count", 0)}</strong><span>近7天新论文 / 投稿</span></div>'
         f'<div class="radar-stat"><strong>{len(approved)}</strong><span>已审核项目</span></div>'
         '</div>'
@@ -481,7 +481,7 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, chat
 <div class="radar-home-heading">
 <div><p class="radar-kicker">LIVE RESEARCH MONITOR</p>
 <h2 id="radar-home-title">科研雷达 · Research Radar</h2>
-<p class="radar-home-intro">文档理解、视频理解与多模态小模型的持续追踪。首页自动展示近期相关线索，完整证据与历史报告可继续查阅。</p></div>
+<p class="radar-home-intro">每周集中更新文档理解、视频理解和多模态小模型进展，每月形成研究总结；日度预警已停用，完整证据和历史资料仍可查阅。</p></div>
 <span class="radar-live-pill">自动采集</span>
 </div>
 <div class="radar-home-meta"><span>最近成功采集：<time>{escape(last_run)}</time></span><span>本次来源命中：{source_text}</span></div>
