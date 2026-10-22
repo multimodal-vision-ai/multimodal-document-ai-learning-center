@@ -201,6 +201,11 @@ def _archive_records(report_type):
             "path": path,
             "report": report,
             "period_label": report_period_label(report_type, report),
+            "window_label": (
+                f'{str(report.get("window_start") or "")[:10]} — {str(report.get("window_end") or report.get("generated_at") or "")[:10]}'
+                if report.get("window_start") and (report.get("window_end") or report.get("generated_at"))
+                else str(report.get("generated_at") or "日期未记录")[:10]
+            ),
             "year": year,
             "sort_key": sort_key,
             "title": report.get("report_title") or ("每周科研周报" if report_type == "weekly" else "月度研究机会"),
@@ -226,6 +231,7 @@ def archive_card(record):
         f'data-archive-text="{escape(record["search_text"])}">'
         '<header class="radar-archive-head">'
         f'<span class="radar-period-badge">{escape(record["period_label"])}</span>'
+        f'<span class="radar-archive-date">{escape(record["window_label"])}</span>'
         f'<span class="radar-archive-kind">{ "周报" if kind == "weekly" else "月报" }</span>'
         f'<span class="radar-archive-count">{count} {count_label}</span>'
         '</header>'
