@@ -477,7 +477,7 @@ def chatgpt_home_section(chatgpt_reports, now, limit=3):
 
 
 def weekly_heading_label(report):
-    """Compact weekly metadata shown once beside the section title."""
+    """Return compact weekly metadata for its own line below the section heading."""
     if not isinstance(report, dict) or report.get("status") not in ("completed", "no_high_value"):
         return "暂无已发布周报"
     period = report_period_label("weekly", report)
@@ -485,6 +485,19 @@ def weekly_heading_label(report):
     dt = _period_datetime(anchor)
     screened_date = dt.strftime("%Y-%m-%d") if dt else "日期待核实"
     return f"{period}，筛选日期：{screened_date}"
+
+
+def clean_resource_note(value):
+    """Avoid repeating archive/verification caveats on each individual weekly card."""
+    text = str(value or "").strip()
+    text = re.sub(r"[（(]\\s*按已存档周报记录(?:，需实测复核)?\\s*[）)]", "", text)
+    text = text.replace("据已存档周报记录", "")
+    text = text.replace("已存档周报记录", "")
+    text = re.sub(r"，?\\s*需(?:按原设置|实测)复核", "", text)
+    text = re.sub(r"\\s+", " ", text)
+    text = re.sub(r"[（(]\\s*[）)]", "", text)
+    text = re.sub(r"([；;，,])\\s*([；;，,])", r"\\1", text)
+    return text.strip(" ；;，,")
 
 
 def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
@@ -547,9 +560,14 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
         params = item.get("parameters") or item.get("parameter_scale")
         gpu = item.get("gpu") or item.get("gpu_requirement")
         if params:
-            resource_meta.append("参数：" + escape(params))
+            resource_meta.append(
+                f'<div class="radar-resource-row"><strong>参数量：</strong><span>{escape(params)}</span></div>'
+            )
         if gpu:
-            resource_meta.append("GPU：" + escape(gpu))
+            gpu_display = clean_resource_note(gpu)
+            resource_meta.append(
+                f'<div class="radar-resource-row"><strong>GPU需求：</strong><span>{escape(gpu_display)}</span></div>'
+            )
         links = []
         seen = set()
         for key, link_label in (("paper_url", "论文"), ("github_url", "GitHub"), ("huggingface_url", "Hugging Face")):
@@ -566,7 +584,7 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
             + (f'<p class="radar-brief-summary">{escape(summary[:220])}</p>' if summary else "")
             + (f'<p class="radar-brief-value"><strong>价值点</strong>{escape(why[:220])}</p>' if why else "")
             + (f'<p class="radar-brief-student"><strong>学生切入</strong>{escape(opportunity[:240])}</p>' if opportunity else "")
-            + (f'<p class="radar-chatgpt-compute">{" · ".join(resource_meta)[:160]}</p>' if resource_meta else "")
+            + (f'<div class="radar-chatgpt-compute">{"".join(resource_meta)}</div>' if resource_meta else "")
             + (f'<div class="radar-brief-links">{"".join(links)}</div>' if links else "")
             + '</article>'
         )
