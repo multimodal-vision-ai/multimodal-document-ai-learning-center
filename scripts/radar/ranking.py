@@ -3,6 +3,7 @@
 This is a topic-matching heuristic, not a scientific-quality score or human review.
 """
 from datetime import datetime, timedelta, timezone
+import re
 from core import parse_dt, valid_url
 
 PAPER_SOURCES = {"arxiv", "openreview"}
@@ -88,7 +89,7 @@ def candidate_event(item, since, until):
         # URL itself identifies a newer version (v2, v3, ...). A timestamp alone
         # is not enough evidence of a substantive update.
         import re
-        version = re.search(r"v(\\d+)(?:$|[?#])", str(item.get("source_url") or ""))
+        version = re.search(r"v(\d+)(?:$|[?#])", str(item.get("source_url") or ""))
         has_new_version = bool(version and int(version.group(1)) > 1)
         if (_in_window(updated, since, until) and published and has_new_version
                 and updated > published + timedelta(hours=1)):
@@ -208,7 +209,7 @@ def score_candidate(item, event_at, now=None):
         if has_card is False and downloads < 5 and likes == 0:
             points -= 2.0
             reasons.append("模型卡与社区使用信号不足")
-        if (re.search(r"20\\d{6}", title) and downloads < 10 and likes == 0
+        if (re.search(r"20\d{6}", title) and downloads < 10 and likes == 0
                 and has_card is not True):
             points -= 1.5
             reasons.append("名称疑似批量生成的日期标记")
