@@ -84,10 +84,22 @@ def candidate_card(item):
     event_date = escape(str(item.get("event_at") or "")[:10] or "日期未核实")
     score = escape(item.get("match_score", "—"))
     reasons = "；".join(item.get("match_reasons", [])[:4])
-    description = str(item.get("description") or "").strip()
+    description = str(item.get("description") or item.get("abstract") or "").strip()
     description_html = (
-        f'<p class="radar-feature-description">{escape(description[:260])}</p>'
+        f'<p class="radar-feature-description">{escape(description[:360])}</p>'
         if description else ""
+    )
+    author_values = item.get("authors") if isinstance(item.get("authors"), list) else []
+    author_text = ", ".join(str(value) for value in author_values[:4] if value)
+    if len(author_values) > 4:
+        author_text += " 等"
+    author_html = (
+        f'<p class="radar-feature-authors">作者：{escape(author_text)}</p>'
+        if author_text else ""
+    )
+    venue_html = (
+        f'<p class="radar-feature-venue">来源 / 会议：{escape(item.get("venue"))}</p>'
+        if item.get("venue") else ""
     )
     signals = []
     if item.get("github_stars") is not None:
@@ -105,6 +117,7 @@ def candidate_card(item):
     for key, label in (
         ("source_url", "原始来源"),
         ("paper_url", "论文"),
+        ("pdf_url", "PDF"),
         ("github_url", "GitHub"),
         ("huggingface_url", "模型仓库"),
     ):
@@ -121,6 +134,8 @@ def candidate_card(item):
         '</div>'
         f'<h4>{title}</h4>'
         f'{description_html}'
+        f'{author_html}'
+        f'{venue_html}'
         f'{signal_html}'
         f'<p class="radar-feature-reasons">筛选依据：{escape(reasons)}</p>'
         '<div class="radar-feature-footer">'
