@@ -169,7 +169,175 @@ def approved_card(item):
     )
 
 
-def homepage_block(approved, candidates, tasks, reports, collection_status, now):
+
+def open_state(value):
+    if value is True:
+        return "已标记开放"
+    if value is False:
+        return "未开放"
+    return "状态待核实"
+
+
+def chatgpt_item_card(item, report_type, report_generated):
+    report_label = {"daily": "每日预警", "weekly": "每周周报", "monthly": "月度选题"}.get(report_type, "研究报告")
+    title_text = item.get("title", "未命名研究成果")
+    title_url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
+    title = link(title_url, title_text)
+    summary = item.get("summary") or item.get("abstract") or item.get("description") or ""
+    why = item.get("why_selected") or item.get("selection_rationale") or ""
+    opportunity = item.get("research_opportunity") or item.get("next_steps") or ""
+    params = item.get("parameters") or item.get("parameter_scale") or "未报告"
+    gpu = item.get("gpu") or item.get("gpu_requirement") or "未核实"
+    screened_at = item.get("screened_at") or report_generated
+    details = []
+    if params != "未报告":
+        details.append("参数规模：" + escape(params))
+    else:
+        details.append("参数规模：未报告")
+    details.append("GPU：" + escape(gpu))
+    if item.get("weights_open") is not None:
+        details.append("权重：" + escape(open_state(item.get("weights_open"))))
+    if item.get("training_code_open") is not None:
+        details.append("训练代码：" + escape(open_state(item.get("training_code_open"))))
+    if item.get("data_open") is not None:
+        details.append("数据：" + escape(open_state(item.get("data_open"))))
+    meta_links = []
+    seen = set()
+    for key, label in (("paper_url", "论文"), ("github_url", "GitHub"), ("huggingface_url", "Hugging Face")):
+        url = item.get(key)
+        if url and url not in seen and valid_url(url):
+            seen.add(url)
+            meta_links.append(link(url, label))
+    links_html = " <span aria-hidden=\"true\">·</span> ".join(meta_links)
+    return (
+        '<article class="radar-feature-card radar-chatgpt-card">'
+        '<div class="radar-feature-meta">'
+        '<span class="radar-tag radar-tag-chatgpt">ChatGPT 已筛选</span>'
+        f'<span class="radar-event-label">{escape(report_label)}</span>'
+        f'<span class="radar-event-label">{escape(category_label(item.get("category")))}</span>'
+        '</div>'
+        f'<h4>{title}</h4>'
+        f'<p class="radar-feature-description">{escape(summary[:460])}</p>'
+        + (f'<p class="radar-feature-reasons"><strong>入选理由：</strong>{escape(why)}</p>' if why else "")
+        + (f'<p class="radar-feature-reasons"><strong>研究切入点：</strong>{escape(opportunity)}</p>' if opportunity else "")
+        + f'<p class="radar-chatgpt-compute">{" · ".join(details)}</p>'
+        + f'<div class="radar-feature-footer"><span class="radar-match-score">科研筛选结果</span><time datetime="{escape(screened_at or "")}">报告时间：{escape(str(screened_at or "未记录")[:10])}</time></div>'
+        + (f'<div class="radar-feature-links">{links_html}</div>' if links_html else "")
+        + '</article>'
+    )
+
+
+def chatgpt_home_section(chatgpt_reports, now, limit=3):
+    report_labels = {"daily": "每日预警", "weekly": "每周周报", "monthly": "月度选题"}
+    entries = []
+    latest_report_time = None
+    for kind in ("daily", "weekly", "monthly"):
+        report = chatgpt_reports.get(kind) or {}
+        generated = report.get("generated_at")
+        if generated:
+            try:
+                dt = parse_dt(generated)
+                if latest_report_time is None or dt > latest_report_time:
+                    latest_report_time = dt
+            except (ValueError, TypeError):
+                pass
+        if report.get("status") not in ("completed", "no_high_value"):
+            continue
+        for item in report.get("items", []):
+            if not isinstance(item, dict) or item.get("selection_status", "selected") not in ("selected", "chatgpt_selected", "recommended"):
+                continue
+            entry = dict(item)
+            entry["_report_type"] = kind
+            entry["_report_generated"] = generated
+            entries.append(entry)
+    entries.sort(key=lambda x: str(x.get("screened_at") or x.get("_report_generated") or ""), reverse=True)
+    deduped = []
+    seen = set()
+    for item in entries:
+        key = str(item.get("id") or item.get("paper_url") or item.get("source_url") or item.get("title", "")).lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(item)
+    cards = "".join(
+        chatgpt_item_card(item, item["_report_type"], item["_report_generated"])
+        for item in deduped[:limit]
+    )
+    if not cards:
+        cards = (
+            '<div class="radar-empty-state"><strong>尚无 ChatGPT 任务筛选结果写入共享档案。</strong>'
+            '<p>本区域只展示每日预警、周报和选题任务实际生成并保存的结果，不会把爬虫候选冒充为 ChatGPT 推荐。</p></div>'
+        )
+    if latest_report_time:
+        age = now.astimezone(timezone.utc) - latest_report_time
+        time_text = latest_report_time.strftime("%Y-%m-%d %H:%M UTC")
+        if age > timedelta(hours=36):
+            status = (
+                f'<div class="radar-home-warning" role="status">最近一次 ChatGPT 结果存档：{escape(time_text)}。'
+                '该快照已超过 36 小时；下次计划任务成功写入后，此处才会更新为新结果。</div>'
+            )
+        else:
+            status = f'<div class="radar-home-health" role="status">最近一次 ChatGPT 结果存档：{escape(time_text)}</div>'
+    else:
+        status = (
+            '<div class="radar-home-warning" role="status">尚未记录 ChatGPT 任务结果的生成时间；'
+            '自动采集候选不会替代 ChatGPT 的科研判断。</div>'
+        )
+    return f"""
+<section class="radar-home-card radar-chatgpt-section" aria-labelledby="radar-chatgpt-title">
+<div class="radar-home-section-heading"><h3 id="radar-chatgpt-title">ChatGPT 已筛选研究结果</h3>
+<span>每日预警 · 周报 · 月度选题</span></div>
+<p>此处只呈现 ChatGPT 研究任务实际筛选并写入共享档案的成果，与下方规则自动采集的候选线索分开。</p>
+{status}
+<div class="radar-feature-grid radar-chatgpt-grid">{cards}</div>
+<div class="radar-home-actions"><a class="radar-home-action-primary" href="radar/index.html#chatgpt-reviewed">查看全部 ChatGPT 筛选结果与理由 →</a></div>
+<p class="radar-home-footnote">ChatGPT 筛选是研究辅助判断，不等同于同行评审；所有项目仍应保留原始来源与可核验证据。未知的参数规模、权重、训练代码、数据和 GPU 需求会明确标为未核实。</p>
+</section>
+"""
+
+
+def chatgpt_report_listing(report, report_type):
+    labels = {"daily": "每日预警", "weekly": "每周周报", "monthly": "月度选题"}
+    if not isinstance(report, dict) or not report:
+        return f"尚无已存档的 ChatGPT{labels.get(report_type, '研究')}结果。"
+    status = report.get("status")
+    generated = report.get("generated_at") or "时间未记录"
+    if status == "no_high_value":
+        return f"最近一次 ChatGPT {labels.get(report_type, '研究')}任务于 **{escape(generated)}** 完成；未发现达到设定门槛的项目。"
+    if status != "completed":
+        return f"最近一次 ChatGPT {labels.get(report_type, '研究')}任务尚未形成可展示的结果（状态：{escape(status or '未知')}）。"
+    items = report.get("items", [])
+    if not items:
+        return f"最近一次 ChatGPT {labels.get(report_type, '研究')}任务于 **{escape(generated)}** 完成，但没有保存可展示的筛选条目。"
+    lines = [f"**生成时间：{escape(generated)}**。以下是该任务实际输出并保存的筛选结果："]
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        title_text = item.get("title", "未命名研究成果")
+        url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
+        links = []
+        for key, label in (("paper_url", "论文"), ("github_url", "GitHub"), ("huggingface_url", "Hugging Face")):
+            if item.get(key) and valid_url(item[key]):
+                links.append(link(item[key], label))
+        lines.append(
+            f"- **{link(url, title_text)}** — {escape(category_label(item.get('category')))}；"
+            f"筛选日期：{escape(str(item.get('screened_at') or generated)[:10])}"
+        )
+        for field, label in (
+            ("summary", "研究摘要"),
+            ("why_selected", "ChatGPT 入选理由"),
+            ("research_opportunity", "后续研究机会"),
+            ("gpu", "GPU 需求"),
+            ("parameters", "参数规模"),
+        ):
+            if item.get(field):
+                lines.append(f"    - {label}：{escape(item[field])}")
+        if links:
+            lines.append("    - 资源：" + " · ".join(links))
+    return "\n\n".join(lines)
+
+
+def homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, now):
     daily = reports.get("daily", {}).get("candidate_summary", {})
     weekly = reports.get("weekly", {}).get("candidate_summary", {})
     weekly_leads = reports.get("weekly", {}).get("candidate_leads", [])[:3]
@@ -240,6 +408,7 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, now)
 <div class="radar-home-meta"><span>最近成功采集：<time>{escape(last_run)}</time></span><span>本次来源命中：{source_text}</span></div>
 {health_html}
 {stat_html}
+{chatgpt_home_section(chatgpt_reports, now)}
 {approved_html}
 <div class="radar-home-section-heading"><h3>本周自动精选</h3><span>最多展示 3 项 · 依据主题相关度与时间窗口排序</span></div>
 <div class="radar-feature-grid">{featured_html}</div>
@@ -260,6 +429,10 @@ def render(now=None):
     tasks = load(DATA / "tasks.json", [])
     candidates = load(DATA / "candidates.json", [])
     collection_status = load(DATA / "collection-status.json", {})
+    chatgpt_reports = {
+        kind: load(DATA / "chatgpt-reviewed" / f"latest-{kind}.json", {})
+        for kind in ("daily", "weekly", "monthly")
+    }
     reports = build(projects, now, candidates)
     approved = sorted((p for p in projects if p.get("review") == "approved"),
                       key=lambda p: (p.get("score") or 0, p.get("reviewed_at") or ""), reverse=True)
@@ -295,6 +468,12 @@ def render(now=None):
 
     page = DOCS / "radar/index.md"
     content = page.read_text(encoding="utf-8")
+    for marker, report_type in (
+        ("CHATGPT_DAILY", "daily"),
+        ("CHATGPT_WEEKLY", "weekly"),
+        ("CHATGPT_MONTHLY", "monthly"),
+    ):
+        content = replace(content, marker, chatgpt_report_listing(chatgpt_reports.get(report_type, {}), report_type))
     blocks = {
         "DAILY": research_listing(reports["daily"]["projects"], "最近24小时暂无达到预警门槛的已审核项目。"),
         "WEEKLY": research_listing(reports["weekly"]["projects"], "最近7天暂无已审核的重点进展。"),
@@ -335,7 +514,7 @@ def render(now=None):
 
     home = DOCS / "index.md"
     content = home.read_text(encoding="utf-8-sig")
-    home_block = homepage_block(approved, candidates, tasks, reports, collection_status, now)
+    home_block = homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, now)
     content = replace_home(content, home_block)
     save_page("index.md", content)
     print(f"Radar render complete: {len(approved)} approved, {len(tasks)} tasks")

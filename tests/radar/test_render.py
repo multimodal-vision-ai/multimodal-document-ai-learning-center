@@ -47,6 +47,48 @@ class RadarRenderTests(unittest.TestCase):
             save(data / "projects.json", [record])
             save(data / "candidates.json", [candidate])
             save(data / "tasks.json", [])
+            save(data / "chatgpt-reviewed" / "latest-daily.json", {
+                "status": "completed",
+                "generated_at": "2026-10-20T09:08:45Z",
+                "report_title": "ChatGPT 每日科研预警",
+                "items": [{
+                    "id": "arxiv-2610-26401", "title": "One Fact, Many Places",
+                    "category": "document", "paper_url": "https://arxiv.org/abs/2610.26401",
+                    "summary": "长文档 RAG 中重复证据的评测与分析。",
+                    "why_selected": "该任务将其列为值得关注的研究进展。",
+                    "research_opportunity": "评测冗余证据对检索和回答可靠性的影响。",
+                    "selection_status": "selected"
+                }]
+            })
+            save(data / "chatgpt-reviewed" / "latest-weekly.json", {
+                "status": "completed",
+                "generated_at": "2026-10-19T09:22:26Z",
+                "report_title": "文档理解、视频理解与多模态小模型科研周报",
+                "items": [{
+                    "id": "rpd-sara", "title": "RPD+SARA",
+                    "category": "document", "paper_url": "https://arxiv.org/abs/2610.20335",
+                    "github_url": "https://github.com/yufanchen96/RPD",
+                    "huggingface_url": "https://huggingface.co/chen-doc-ai/Qwen3.5-2B_with_SARA",
+                    "parameters": "2B", "gpu": "T4 量化推理可行；LoRA 约 24GB；全量训练至少 40GB",
+                    "summary": "结构感知的统一文档解析方法。",
+                    "why_selected": "报告列为 A 优先级，开放权重与数据。",
+                    "research_opportunity": "评估布局和结构约束在不同文档版式中的泛化。",
+                    "selection_status": "selected"
+                }, {
+                    "id": "malow", "title": "MaLoW",
+                    "category": "video", "paper_url": "https://arxiv.org/abs/2610.22070",
+                    "github_url": "https://github.com/dragonlzm/MaLoW",
+                    "huggingface_url": "https://huggingface.co/collections/zhuomingliu/malow",
+                    "parameters": "0.8B–9B", "gpu": "0.8B/2B 可尝试 T4 推理；4B 约需 24GB",
+                    "summary": "面向视频理解的参数记忆与动态 LoRA 方法。",
+                    "why_selected": "报告将其列为值得复现的低成本视频理解方向。",
+                    "research_opportunity": "在固定显存和长视频条件下评估记忆机制与时间定位。",
+                    "selection_status": "selected"
+                }]
+            })
+            save(data / "chatgpt-reviewed" / "latest-monthly.json", {
+                "status": "not_published", "generated_at": None, "items": []
+            })
             now = datetime(2026, 10, 21, 12, tzinfo=timezone.utc)
             with patch.object(render, "DOCS", docs), patch.object(render, "DATA", data):
                 render.render(now)
@@ -63,6 +105,12 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn("Unreviewed", first["radar/projects.md"])
             self.assertIn("已审核项目", first["index.md"])
             self.assertIn("本周自动精选", first["index.md"])
+            self.assertIn("ChatGPT 已筛选研究结果", first["index.md"])
+            self.assertIn("One Fact, Many Places", first["index.md"])
+            self.assertIn("RPD+SARA", first["index.md"])
+            self.assertIn("ChatGPT 已筛选结果", first["radar/index.md"])
+            self.assertIn("MaLoW", first["radar/index.md"])
+            self.assertIn("https://arxiv.org/abs/2610.22070", first["radar/index.md"])
             self.assertIn("主题匹配度", first["index.md"])
             self.assertIn("Unreviewed &lt;img&gt;", first["index.md"])
             self.assertNotIn("Unreviewed <img>", first["index.md"])
