@@ -648,7 +648,7 @@ def clean_recommendation_text(value):
     for old, new in rewrites.items():
         text = text.replace(old, new)
     text = text.replace("在本项目中独立复现", "独立复现")
-    text = re.sub(r"\\s+", " ", text)
+    text = re.sub(r"\s+", " ", text)
     return text.strip()
 
 
