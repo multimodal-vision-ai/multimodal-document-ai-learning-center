@@ -63,6 +63,8 @@ class RadarRenderTests(unittest.TestCase):
             save(data / "chatgpt-reviewed" / "latest-weekly.json", {
                 "status": "completed",
                 "generated_at": "2026-10-19T09:22:26Z",
+                "window_start": "2026-10-12",
+                "window_end": "2026-10-19",
                 "report_title": "文档理解、视频理解与多模态小模型科研周报",
                 "items": [{
                     "id": "rpd-sara", "title": "RPD+SARA",
@@ -137,6 +139,12 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn("Unreviewed", first["index.md"])
             self.assertIn("# 前沿动态", first["radar/index.md"])
             self.assertIn("本周精选", first["radar/index.md"])
+            self.assertIn('本周精选 <span class="radar-section-period">（2026年第42周，筛选日期：2026-10-19）</span>', first["radar/index.md"])
+            weekly_section = first["radar/index.md"].split("<!-- RADAR:CHATGPT_WEEKLY-START -->", 1)[1].split("<!-- RADAR:CHATGPT_WEEKLY-END -->", 1)[0]
+            self.assertIn("radar-brief-heading", weekly_section)
+            self.assertNotIn("radar-period-badge", weekly_section)
+            self.assertNotIn("筛选日期：", weekly_section)
+            self.assertNotIn("报告周期：2026年第42周", weekly_section)
             self.assertIn("本月研究机会", first["radar/index.md"])
             self.assertIn("radar-brief-card", first["radar/index.md"])
             self.assertIn("MaLoW", first["radar/index.md"])
