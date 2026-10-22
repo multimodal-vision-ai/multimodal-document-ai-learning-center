@@ -150,6 +150,14 @@ class SourcePriorityTests(unittest.TestCase):
         self.assertEqual(entries[0]["github_license"], "Apache-2.0")
         self.assertIn("document-ai", entries[0]["github_topics"])
 
+    def test_candidate_category_uses_abstract_when_title_is_ambiguous(self):
+        record = collect.candidate(
+            "arxiv-gazehoi", "Gaze2HOI: Gaze-Aware Intention Disambiguation",
+            "https://arxiv.org/abs/2610.27877v1", "2026-10-20T08:59:54Z", "arxiv",
+            abstract="A vision-language model for egocentric hand-object interaction forecasting."
+        )
+        self.assertEqual(record["category"], "video")
+
     def test_openreview_captures_abstract_authors_and_pdf(self):
         from datetime import datetime, timezone
         now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)

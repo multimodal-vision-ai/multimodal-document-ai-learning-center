@@ -85,6 +85,21 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(ranked[0]["priority_tier"], 0)
         self.assertGreaterEqual(ranked[1]["priority_tier"], 2)
 
+    def test_formula_keyword_does_not_match_the_verb_formulates(self):
+        record = item("arxiv-gazehoi", "Gaze2HOI: Gaze-Aware Intention Disambiguation",
+                      "arxiv", "2026-10-20T08:59:54Z", category="small-vlm",
+                      url="https://arxiv.org/abs/2610.27877v1")
+        record["abstract"] = (
+            "We propose a gaze-aware framework that formulates hand-object interaction "
+            "forecasting with visual representations of a vision-language model for egocentric scenes."
+        )
+        ranked = rank_candidates([record], WEEK, NOW, limit=3)
+        self.assertEqual(len(ranked), 1)
+        reasons = " ".join(ranked[0]["match_reasons"])
+        self.assertIn("视频理解", reasons)
+        self.assertIn("多模态小模型", reasons)
+        self.assertNotIn("文档理解", reasons)
+
     def test_summary_counts_relevant_categories_and_new_papers(self):
         paper = item("arxiv-video", "Efficient Long Video Question Answering",
                      "arxiv", "2026-10-22T11:00:00Z", category="video",
