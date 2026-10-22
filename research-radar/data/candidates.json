@@ -1,5 +1,23 @@
 [
   {
+    "category": "video",
+    "description": "Turns a YouTube link or a local video into a structured ODT, DOCX or PDF: speech recognised, slides pulled out of the frame, the whole thing organised by a language model.",
+    "discovered_from": "github",
+    "first_seen_at": "2026-10-22T00:29:38+00:00",
+    "github_forks": 2,
+    "github_language": "Python",
+    "github_license": "MIT",
+    "github_stars": 13,
+    "github_topics": [],
+    "github_url": "https://github.com/kryadov/video2docs",
+    "id": "github-1020359264",
+    "published_at": "2025-07-15T18:38:12Z",
+    "review": "pending",
+    "source_url": "https://github.com/kryadov/video2docs",
+    "title": "kryadov/video2docs",
+    "updated_at": "2026-10-22T00:28:45Z"
+  },
+  {
     "category": "small-vlm",
     "description": "Open-source inference engine that runs language, vision, speech, image and video models from one container format, with a PyTorch and a Triton compute branch. Released for NVIDIA GPUs and CPU; Apple Silicon in progress.",
     "discovered_from": "github",
