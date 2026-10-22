@@ -3,7 +3,8 @@ name: Research Radar collection
 on:
   workflow_dispatch:
   schedule:
-    - cron: "25 1 * * *"
+    # Public-source collection runs weekly to avoid unnecessary daily scans.
+    - cron: "25 1 * * 1"
 
 permissions:
   contents: write
