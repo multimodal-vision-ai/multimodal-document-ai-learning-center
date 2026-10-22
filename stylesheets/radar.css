@@ -12,3 +12,20 @@
 .radar-monitoring{margin:1rem 0;padding:.9rem 1rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.55rem;background:var(--md-default-bg-color)}
 .radar-publish-evidence{margin:.7rem 0;padding:.7rem .85rem;border-left:3px solid var(--md-primary-fg-color);background:var(--md-code-bg-color);overflow-wrap:anywhere}
 .radar-publish-evidence p{margin:.35rem 0;font-size:.82rem}
+
+
+/* Compact, student-first Frontier Updates page. */
+.radar-page-intro{font-size:1rem;color:var(--md-default-fg-color--light)}
+.radar-brief-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr));gap:.85rem;margin:1rem 0}
+.radar-brief-card{min-width:0;padding:1rem 1.1rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.6rem;background:var(--md-default-bg-color)}
+.radar-brief-card h3,.radar-brief-card h4{margin:.35rem 0 .65rem;line-height:1.4}
+.radar-brief-card p{margin:.45rem 0;font-size:.9rem;line-height:1.6}
+.radar-brief-meta{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;font-size:.76rem;color:var(--md-default-fg-color--light)}
+.radar-brief-score{font-weight:700;color:var(--md-primary-fg-color)}
+.radar-brief-label{padding:.12rem .45rem;border-radius:999px;background:var(--md-code-bg-color)}
+.radar-brief-links{margin-top:.75rem;padding-top:.6rem;border-top:1px solid var(--md-default-fg-color--lightest);font-size:.84rem}
+.radar-brief-dimensions{display:flex;gap:.35rem;flex-wrap:wrap;margin:.55rem 0}
+.radar-brief-dimensions span{padding:.18rem .42rem;border-radius:.3rem;background:var(--md-code-bg-color);font-size:.75rem}
+.radar-candidate-details{margin:1rem 0;border:1px solid var(--md-default-fg-color--lightest);border-radius:.5rem;padding:.6rem .8rem}
+.radar-candidate-details>summary{font-weight:600;cursor:pointer}
+.radar-page-note{font-size:.8rem;color:var(--md-default-fg-color--light);margin-top:1.2rem}
