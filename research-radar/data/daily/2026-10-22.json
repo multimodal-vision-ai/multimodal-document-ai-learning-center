@@ -1,96 +1,118 @@
 {
   "candidate_leads": [
     {
-      "category": "document",
-      "discovered_from": "huggingface",
-      "event_at": "2026-10-21T18:03:45+00:00",
-      "event_label": "新建模型仓库",
-      "github_url": null,
-      "huggingface_url": "https://huggingface.co/RKB109/multimodal-document-retrieval-20261021-model",
-      "id": "hf-b965d722191e71b0920c",
-      "is_new_paper": false,
-      "match_reasons": [
-        "来源：Hugging Face",
-        "主题：文档理解",
-        "主题：多模态小模型",
-        "时间：近24小时"
-      ],
-      "match_score": 6.8,
-      "paper_url": null,
-      "published_at": "2026-10-21T18:03:44.000Z",
-      "review": "pending",
-      "source_url": "https://huggingface.co/RKB109/multimodal-document-retrieval-20261021-model",
-      "title": "RKB109/multimodal-document-retrieval-20261021-model",
-      "updated_at": "2026-10-21T18:03:45.000Z"
-    },
-    {
-      "category": "document",
-      "discovered_from": "huggingface",
-      "event_at": "2026-10-21T20:09:02+00:00",
-      "event_label": "新建模型仓库",
-      "github_url": null,
-      "huggingface_url": "https://huggingface.co/DawoodAlyy/qwen-document-reliability-evaluation",
-      "id": "hf-27645959c6f336cb467c",
-      "is_new_paper": false,
-      "match_reasons": [
-        "来源：Hugging Face",
-        "主题：文档理解",
-        "成果类型：Benchmark / 数据集 / 评测",
-        "时间：近24小时"
-      ],
-      "match_score": 5.0,
-      "paper_url": null,
-      "published_at": "2026-10-21T19:49:56.000Z",
-      "review": "pending",
-      "source_url": "https://huggingface.co/DawoodAlyy/qwen-document-reliability-evaluation",
-      "title": "DawoodAlyy/qwen-document-reliability-evaluation",
-      "updated_at": "2026-10-21T20:09:02.000Z"
-    },
-    {
-      "category": "video",
+      "category": "small-vlm",
+      "description": "Pick a video on your machine, transcribe it with local whisper, translate the transcript into the language you want, and write a timed .srt/.vtt beside the file. Demux and the 16 kHz downmix are pure Rust (symphonia), so there is no ffmpeg to install, and both model hops default to on-device.",
       "discovered_from": "github",
-      "event_at": "2026-10-22T00:19:46+00:00",
+      "event_at": "2026-10-21T21:11:20+00:00",
       "event_label": "代码库近期提交",
-      "github_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+      "github_license": "NOASSERTION",
+      "github_stars": 0,
+      "github_url": "https://github.com/amajorai/ryu-subtitles",
+      "hf_downloads": null,
+      "hf_has_model_card": null,
+      "hf_likes": null,
       "huggingface_url": null,
-      "id": "github-876545970",
+      "id": "github-1332920967",
       "is_new_paper": false,
       "match_reasons": [
         "来源：GitHub",
         "主题：视频理解",
+        "主题：多模态小模型",
+        "方法关键词：高效化 / 压缩 / 低成本训练",
+        "仓库提供许可证元数据"
+      ],
+      "match_score": 8.4,
+      "paper_url": null,
+      "published_at": "2026-08-13T09:10:03Z",
+      "review": "pending",
+      "source_url": "https://github.com/amajorai/ryu-subtitles",
+      "title": "amajorai/ryu-subtitles",
+      "updated_at": "2026-10-21T21:11:20Z"
+    },
+    {
+      "category": "small-vlm",
+      "description": "Visual-token compression for VLM document retrieval: 448 KB to 3.95 KB per page (113.5x) at 86.7% of baseline nDCG@5. ColPali/ColSmol, PyTorch, Qdrant.",
+      "discovered_from": "github",
+      "event_at": "2026-10-21T07:28:42+00:00",
+      "event_label": "代码库近期提交",
+      "github_license": "MIT",
+      "github_stars": 2,
+      "github_url": "https://github.com/Daemon-VI/optivision-rag",
+      "hf_downloads": null,
+      "hf_has_model_card": null,
+      "hf_likes": null,
+      "huggingface_url": null,
+      "id": "github-1337450667",
+      "is_new_paper": false,
+      "match_reasons": [
+        "来源：GitHub",
+        "主题：文档理解",
+        "主题：多模态小模型",
+        "方法关键词：高效化 / 压缩 / 低成本训练",
+        "仓库提供许可证元数据"
+      ],
+      "match_score": 8.4,
+      "paper_url": null,
+      "published_at": "2026-08-17T17:28:24Z",
+      "review": "pending",
+      "source_url": "https://github.com/Daemon-VI/optivision-rag",
+      "title": "Daemon-VI/optivision-rag",
+      "updated_at": "2026-10-21T07:28:42Z"
+    },
+    {
+      "category": "small-vlm",
+      "description": "VLM Fine-Tuning for Identity Document Understanding | Qwen2-VL + LoRA (Unsloth) on MIDV-2020",
+      "discovered_from": "github",
+      "event_at": "2026-10-21T18:17:17+00:00",
+      "event_label": "代码库近期提交",
+      "github_license": null,
+      "github_stars": 0,
+      "github_url": "https://github.com/OmTilwar/ID-VLM",
+      "hf_downloads": null,
+      "hf_has_model_card": null,
+      "hf_likes": null,
+      "huggingface_url": null,
+      "id": "github-1312188762",
+      "is_new_paper": false,
+      "match_reasons": [
+        "来源：GitHub",
+        "主题：文档理解",
+        "主题：多模态小模型",
+        "方法关键词：高效化 / 压缩 / 低成本训练",
         "时间：近24小时"
       ],
-      "match_score": 4.8,
+      "match_score": 8.2,
       "paper_url": null,
-      "published_at": "2024-10-22T06:43:05Z",
+      "published_at": "2026-07-25T17:40:33Z",
       "review": "pending",
-      "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
-      "title": "NVIDIA-AI-Blueprints/video-search-and-summarization",
-      "updated_at": "2026-10-22T00:19:46Z"
+      "source_url": "https://github.com/OmTilwar/ID-VLM",
+      "title": "OmTilwar/ID-VLM",
+      "updated_at": "2026-10-21T18:17:17Z"
     }
   ],
   "candidate_summary": {
     "category_counts": {
-      "document": 2,
-      "small-vlm": 3,
-      "video": 8
+      "document": 1,
+      "small-vlm": 23,
+      "video": 2
     },
     "new_papers_count": 0,
-    "relevant_count": 13,
+    "relevant_count": 26,
     "selection_note": "Rule-based topic relevance only; not a scientific-quality score or human approval.",
     "selection_threshold": 3.5,
     "source_counts": {
-      "github": 4,
-      "huggingface": 9
+      "github": 24,
+      "huggingface": 2
     },
-    "window_end": "2026-10-22T00:20:06+00:00",
-    "window_start": "2026-10-21T00:20:06+00:00"
+    "window_end": "2026-10-22T00:26:04+00:00",
+    "window_start": "2026-10-21T00:26:04+00:00"
   },
   "empty": true,
   "empty_candidate_leads": false,
   "period": "daily",
   "projects": [],
   "research_topics": [],
-  "window_end": "2026-10-22T00:20:06+00:00",
-  "window_start": "2026-10-21T00:20:06+00:00"
+  "window_end": "2026-10-22T00:26:04+00:00",
+  "window_start": "2026-10-21T00:26:04+00:00"
 }
