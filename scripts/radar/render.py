@@ -636,19 +636,51 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
     return '<div class="radar-brief-list">' + "".join(cards) + '</div>' + extra
 
 
+def clean_recommendation_text(value):
+    """Rewrite source-provenance wording as direct, student-facing research language."""
+    text = str(value or "").strip()
+    rewrites = {
+        "原论文及Apple研究页说明它试图在长视频推理中降低视觉token冗余。":
+            "该方法旨在减少长视频推理中的冗余视觉 token。",
+        "当前尚未在本项目中独立复现实验，GPU配置仍需核实。":
+            "完整训练流程尚未独立复现，GPU 需求仍需实测确认。",
+    }
+    for old, new in rewrites.items():
+        text = text.replace(old, new)
+    text = text.replace("在本项目中独立复现", "独立复现")
+    text = re.sub(r"\\s+", " ", text)
+    return text.strip()
+
+
+def evidence_label(url):
+    """Name links by the resource a student will open, not by their position."""
+    value = str(url or "").lower()
+    if "arxiv.org/" in value or "openreview.net/" in value or "doi.org/" in value:
+        return "论文"
+    if "machinelearning.apple.com/" in value:
+        return "研究介绍"
+    if "github.com/" in value:
+        return "GitHub 仓库"
+    if "huggingface.co/" in value:
+        return "模型/数据"
+    if "paperswithcode.com/" in value:
+        return "方法与实现"
+    return "相关资源"
+
+
 def stage_two_detail_listing(reports, queue):
-    """Render evidence-validated research picks in a scannable student-first card."""
+    """Render a student-first shortlist with direct value, next steps and named resources."""
     selected, errors = collect_screened(reports, queue)
     if errors:
         return (
-            '<div class="radar-empty-state"><strong>本次科研价值复核未通过数据校验。</strong>'
-            '<p>相关记录暂不展示为推荐，请检查自动检查日志。</p></div>'
+            '<div class="radar-empty-state"><strong>推荐内容暂不可展示。</strong>'
+            '<p>相关来源或评分信息需要进一步核查，完成后再更新。</p></div>'
         )
     if not selected:
         return (
-            '<div class="radar-empty-state"><strong>暂时没有项目通过科研价值复核。</strong>'
-            '<p>入选条件：主题匹配度 ≥8.0、综合评分 ≥7.5/10，且原始证据可核验。'
-            '自动发现的线索不会直接成为推荐。</p></div>'
+            '<div class="radar-empty-state"><strong>当前没有项目同时达到推荐标准。</strong>'
+            '<p>本栏优先展示主题相关度高、研究来源可查且具有明确学生切入点的工作；'
+            '自动发现的候选不会直接列为推荐。</p></div>'
         )
     fields = (
         ("创新性", "innovation"), ("开源完整度", "open_source"),
@@ -665,44 +697,37 @@ def stage_two_detail_listing(reports, queue):
             for label, key in fields
         )
         urls = [url for url in item["evidence_urls"][:3] if valid_url(url)]
-        evidence_links = []
-        for index, url in enumerate(urls):
-            label = "主要来源" if index == 0 else f"补充来源 {index + 1}"
-            evidence_links.append(link(url, label))
-        evidence = " <span aria-hidden=\"true\">·</span> ".join(evidence_links)
+        evidence_links = [
+            link(url, evidence_label(url)) for url in urls
+        ]
+        evidence = " ".join(evidence_links)
         title = link(urls[0] if urls else None, item["title"])
-        summary = escape(str(item["summary"])[:220])
-        reason = escape(clean_value_point(item["why_selected"])[:240])
-        opportunity = escape(str(item["research_opportunity"])[:240])
+        summary = escape(clean_recommendation_text(item["summary"])[:260])
+        reason = escape(clean_recommendation_text(item["why_selected"])[:300])
+        opportunity = escape(clean_recommendation_text(item["research_opportunity"])[:300])
         score = escape(item["value_score"])
         cards.append(
             '<article class="radar-review-card">'
             '<header class="radar-review-card-head">'
-            '<div class="radar-review-card-labels">'
-            f'<span class="radar-period-badge">{escape(weekly_period_label(item.get("screened_at") or reports.get("screened", {}).get("generated_at")))}</span>'
-            '<span class="radar-review-pill radar-review-pill-approved">通过复核</span>'
-            '<span class="radar-review-pill">主题匹配度 ≥8.0</span>'
-            '</div>'
+            f'<h3 class="radar-review-title">{title}</h3>'
             f'<div class="radar-review-overall"><span>综合评分</span>'
             f'<strong>{score}</strong><small>/10</small></div>'
             '</header>'
-            f'<h3 class="radar-review-title">{title}</h3>'
             f'<p class="radar-review-summary">{summary}</p>'
             '<div class="radar-review-score-grid" aria-label="四项评分">'
             f'{scores}</div>'
             '<div class="radar-review-detail-grid">'
             '<section class="radar-review-detail radar-review-value">'
-            '<h4>研究价值</h4>'
+            '<h4>为什么值得研究</h4>'
             f'<p>{reason}</p></section>'
             '<section class="radar-review-detail radar-review-student">'
-            '<h4>学生切入点</h4>'
+            '<h4>学生可以怎么做</h4>'
             f'<p>{opportunity}</p></section>'
             '</div>'
-            f'<footer class="radar-review-sources"><strong>原始证据</strong>{evidence}</footer>'
+            f'<footer class="radar-review-sources"><strong>论文与项目资源</strong>{evidence}</footer>'
             '</article>'
         )
     return '<div class="radar-brief-list radar-review-list">' + "".join(cards) + '</div>'
-
 
 
 def stage_two_home_section(chatgpt_reports, queue):
