@@ -211,11 +211,12 @@ def score_candidate(item, event_at, now=None):
             reasons.append("模型卡与社区使用信号不足")
         if (re.search(r"20\d{6}", title) and downloads < 10 and likes == 0
                 and has_card is not True):
-            points -= 1.5
+            points -= 3.5
             reasons.append("名称疑似批量生成的日期标记")
-        if "hf_downloads" in item and downloads == 0 and likes == 0 and not tags and not item.get("hf_pipeline_tag"):
-            points -= 0.8
-            reasons.append("模型仓库元数据较少")
+        if (downloads == 0 and likes == 0 and has_card is not True
+                and not item.get("hf_pipeline_tag") and not item.get("hf_library_name")):
+            points -= 2.0
+            reasons.append("模型卡、任务标签与社区使用信号不足")
 
     now = now or datetime.now(timezone.utc)
     age_hours = max(0.0, (now - event_at).total_seconds() / 3600)
