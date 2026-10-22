@@ -4,7 +4,10 @@ No API calls. Status is calculated from committed GitHub data; a successful
 unit-test or manually inserted stage-two item is NOT evidence that a daily,
 weekly or monthly ChatGPT automation executed.
 """
+import argparse
 import json
+import os
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -116,8 +119,92 @@ def inspect(data_path=DATA, now=None):
     return result
 
 
+REPORT_PATH = re.compile(r"^research-radar/data/chatgpt-reviewed/latest-(daily|weekly|monthly)\.json$")
+
+
+def validate_updated_reports(data_path=DATA, event_path=None, now=None):
+    """Require every newly written latest report to use the v2 screening contract."""
+    event_path = event_path or os.environ.get("GITHUB_EVENT_PATH")
+    if not event_path or not Path(event_path).exists():
+        return ["GITHUB_EVENT_PATH is unavailable; cannot verify changed report files"]
+    event = json.loads(Path(event_path).read_text(encoding="utf-8"))
+    changed = set()
+    for commit in event.get("commits", []):
+        if isinstance(commit, dict):
+            for key in ("added", "modified", "removed"):
+                changed.update(commit.get(key, []))
+    head = event.get("head_commit")
+    if isinstance(head, dict):
+        for key in ("added", "modified", "removed"):
+            changed.update(head.get(key, []))
+    changed_reports = {}
+    for path in changed:
+        match = REPORT_PATH.fullmatch(path)
+        if match:
+            changed_reports[match.group(1)] = path
+    if not changed_reports:
+        print("No latest daily/weekly/monthly report changed in this push; existing archives remain readable.")
+        return []
+
+    queue = load(data_path / "screening-queue.json", {})
+    now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    errors = []
+    for kind, relpath in changed_reports.items():
+        report = load(data_path / "chatgpt-reviewed" / f"latest-{kind}.json", {})
+        prefix = f"{relpath}: "
+        if report.get("schema_version") != 1:
+            errors.append(prefix + "schema_version must be 1")
+        if report.get("report_type") != kind:
+            errors.append(prefix + f"report_type must be {kind}")
+        if report.get("screening_schema_version") != 2:
+            errors.append(prefix + "new report writes must use screening_schema_version=2")
+        if report.get("first_stage_threshold") != 8.0:
+            errors.append(prefix + "first_stage_threshold must equal 8.0")
+        if report.get("status") not in ("completed", "no_high_value"):
+            errors.append(prefix + "status must be completed or no_high_value")
+        generated = as_utc(report.get("generated_at"))
+        if generated is None:
+            errors.append(prefix + "generated_at must be a valid UTC/ISO timestamp")
+        elif generated < ROLLOUT_UTC:
+            errors.append(prefix + "generated_at predates the v2 rollout")
+        elif generated > now + timedelta(minutes=5):
+            errors.append(prefix + "generated_at is in the future")
+        elif now - generated > MAX_AGE[kind]:
+            errors.append(prefix + "generated_at is outside the task freshness window")
+        items = report.get("items")
+        if not isinstance(items, list):
+            errors.append(prefix + "items must be an array")
+            items = []
+        recommended_in_report = [
+            item for item in items
+            if isinstance(item, dict) and item.get("selection_status") == "recommended"
+        ]
+        if report.get("status") == "no_high_value" and items:
+            errors.append(prefix + "no_high_value requires items=[]")
+        if report.get("status") == "completed" and not recommended_in_report:
+            errors.append(prefix + "completed requires at least one recommended item; otherwise use no_high_value with items=[]")
+        _, item_errors = report_items(report, queue)
+        errors.extend(prefix + item_error for item_error in item_errors)
+    return errors
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Check unattended research-radar report health.")
+    parser.add_argument("--validate-updated", action="store_true",
+                        help="reject newly committed latest reports that do not meet the v2 contract")
+    parser.add_argument("--event-path", type=Path, default=None)
+    args = parser.parse_args()
+    if args.validate_updated:
+        problems = validate_updated_reports(event_path=str(args.event_path) if args.event_path else None)
+        if problems:
+            print("New ChatGPT report commit rejected:", file=__import__("sys").stderr)
+            for problem in problems:
+                print(" - " + problem, file=__import__("sys").stderr)
+            return 1
     print(json.dumps(inspect(), ensure_ascii=False, indent=2))
+    return 0
 
 
 if __name__ == "__main__":

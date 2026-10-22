@@ -1,6 +1,7 @@
 """Operational monitoring tests: green, degraded, overdue, schema and cadence.
 Tests do not claim actual automation tasks ran.
 """
+import json
 import sys
 import tempfile
 import unittest
@@ -9,7 +10,7 @@ from datetime import datetime, timezone, timedelta
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/"scripts"/"radar"))
 from core import save
-from health import inspect, FIRST_DEADLINES
+from health import inspect, FIRST_DEADLINES, validate_updated_reports
 from screening import build_queue
 from test_screening import RESEARCH, screened, report as make_report
 
@@ -89,5 +90,38 @@ class HealthTests(unittest.TestCase):
             actual=inspect(root,NOW)
             self.assertEqual(actual["acquisition"]["status"],"stale")
             self.assertEqual(actual["overall"],"needs_attention")
+    def test_new_legacy_report_write_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            q=snapshot(root)
+            report=make_report(q)
+            report.update({"schema_version":1,"screening_schema_version":1,"report_type":"daily","generated_at":NOW.isoformat()})
+            save(root/"chatgpt-reviewed"/"latest-daily.json",report)
+            event=root/"event.json"
+            save(event,{"commits":[{"added":["research-radar/data/chatgpt-reviewed/latest-daily.json"],"modified":[],"removed":[]}]})
+            errors=validate_updated_reports(root,str(event),NOW)
+            self.assertTrue(any("screening_schema_version=2" in e for e in errors))
+
+    def test_new_v2_report_write_passes_strict_gate(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            q=snapshot(root)
+            report=make_report(q)
+            report.update({"schema_version":1,"report_type":"daily","generated_at":NOW.isoformat()})
+            save(root/"chatgpt-reviewed"/"latest-daily.json",report)
+            event=root/"event.json"
+            save(event,{"commits":[{"modified":["research-radar/data/chatgpt-reviewed/latest-daily.json"],"added":[],"removed":[]}]})
+            errors=validate_updated_reports(root,str(event),NOW)
+            self.assertEqual(errors,[])
+
+    def test_health_file_only_push_does_not_revalidate_legacy_archives(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            snapshot(root)
+            event=root/"event.json"
+            save(event,{"commits":[{"modified":["research-radar/data/automation-health.json"],"added":[],"removed":[]}]})
+            errors=validate_updated_reports(root,str(event),NOW)
+            self.assertEqual(errors,[])
+
 if __name__=="__main__":
     unittest.main()
