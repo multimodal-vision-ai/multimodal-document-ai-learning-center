@@ -1,0 +1,156 @@
+name: Refresh DEV preview from ChatGPT research results
+
+on:
+  push:
+    branches: [radar-data]
+    paths:
+      - "research-radar/data/chatgpt-reviewed/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chatgpt-results-dev-preview
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Rebuild DEV preview from shared ChatGPT results
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current DEV site source
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          path: site-source
+
+      - name: Checkout shared radar data
+        uses: actions/checkout@v4
+        with:
+          ref: radar-data
+          path: radar-store
+
+      - name: Load shared radar data
+        run: |
+          mkdir -p site-source/research-radar/data
+          cp -a radar-store/research-radar/data/. site-source/research-radar/data/
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: site-source/requirements-docs.txt
+
+      - name: Install documentation dependencies
+        working-directory: site-source
+        run: pip install -r requirements-docs.txt
+
+      - name: Validate and render shared ChatGPT results
+        working-directory: site-source
+        run: |
+          python -m unittest discover -s tests/radar -v
+          python scripts/radar/render.py
+
+      - name: Set the isolated DEV preview base URL
+        working-directory: site-source
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path("mkdocs.yml")
+          text = path.read_text(encoding="utf-8")
+          target = (
+              "site_url: https://cdn.jsdelivr.net/gh/"
+              "multimodal-vision-ai/multimodal-document-ai-learning-center"
+              "@dev-preview/"
+          )
+          updated, count = re.subn(r"(?m)^site_url: .*$", target, text)
+          if count != 1:
+              raise SystemExit("Could not locate exactly one MkDocs site_url")
+          path.write_text(updated, encoding="utf-8")
+          PY
+
+      - name: Build static DEV site
+        working-directory: site-source
+        env:
+          SITE_DIR: \${{ runner.temp }}/chatgpt-dev-site
+        run: mkdocs build --strict --no-directory-urls --site-dir "$SITE_DIR"
+
+      - name: Mark pages as DEV-only
+        env:
+          SITE_DIR: \${{ runner.temp }}/chatgpt-dev-site
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path(os.environ["SITE_DIR"])
+          banner = (
+              '<div role="note" style="position:relative;z-index:10;'
+              'padding:.4rem 1rem;text-align:center;background:#fef3c7;'
+              'color:#713f12;font:600 14px/1.5 system-ui,sans-serif">'
+              'DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>'
+          )
+          count = 0
+          for path in root.rglob("*.html"):
+              body = path.read_text(encoding="utf-8")
+              start = body.find("<body")
+              if start < 0:
+                  continue
+              end = body.find(">", start)
+              if end < 0:
+                  continue
+              path.write_text(body[:end + 1] + banner + body[end + 1:], encoding="utf-8")
+              count += 1
+          if not (root / "index.html").exists() or count == 0:
+              raise SystemExit("Built DEV site is missing index.html")
+          print(f"Marked {count} pages as DEV-only")
+          PY
+
+      - name: Checkout isolated DEV preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: dev-preview
+          path: preview
+          persist-credentials: true
+
+      - name: Publish rebuilt static preview
+        working-directory: preview
+        env:
+          SITE_DIR: \${{ runner.temp }}/chatgpt-dev-site
+        run: |
+          set -euo pipefail
+          test -f "$SITE_DIR/index.html"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -rf --ignore-unmatch . >/dev/null
+          git clean -fdx >/dev/null
+          cp -a "$SITE_DIR/." .
+          touch .nojekyll
+          git add -A
+          if git diff --cached --quiet; then
+            echo "DEV preview already matches the shared ChatGPT result snapshot."
+          else
+            git commit -m "docs(preview): publish updated ChatGPT research results [skip ci]"
+            git push origin HEAD:refs/heads/dev-preview
+          fi
+
+      - name: Purge preview CDN cache
+        run: |
+          set -euo pipefail
+          base="https://purge.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
+          for path in index.html radar/index.html; do
+            curl --fail --location --silent --show-error --connect-timeout 10 --max-time 25 "$base/$path" -o /dev/null
+          done
+
+      - name: Verify published ChatGPT results
+        run: |
+          set -euo pipefail
+          base="https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$base/index.html" -o "$RUNNER_TEMP/chatgpt-home.html"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$base/radar/index.html" -o "$RUNNER_TEMP/chatgpt-radar.html"
+          grep -q "ChatGPT 已筛选研究结果" "$RUNNER_TEMP/chatgpt-home.html"
+          grep -q "One Fact, Many Places" "$RUNNER_TEMP/chatgpt-home.html"
+          grep -q "RPD+SARA" "$RUNNER_TEMP/chatgpt-radar.html"
+          grep -q "MaLoW" "$RUNNER_TEMP/chatgpt-radar.html"
+          echo "Published DEV homepage and Radar page include saved ChatGPT task results."
