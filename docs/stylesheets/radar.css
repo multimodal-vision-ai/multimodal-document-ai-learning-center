@@ -870,3 +870,39 @@
   font-size:.72rem;
   font-variant-numeric:tabular-nums;
 }
+
+
+/* Explain why the supplementary candidate pool exists before students expand it. */
+.radar-candidate-purpose{
+  max-width:58rem;
+  margin:.45rem 0 .75rem;
+  padding:.7rem .85rem;
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.35rem;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.82rem;
+  line-height:1.65;
+}
+.radar-candidate-purpose p{
+  margin:.15rem 0;
+}
+.radar-candidate-purpose strong{
+  color:var(--md-default-fg-color);
+}
+.radar-candidate-details{
+  max-width:58rem;
+  margin:.55rem 0 1rem;
+}
+.radar-candidate-details>summary{
+  padding:.65rem .8rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.5rem;
+  background:var(--md-default-bg-color);
+  font-size:.86rem;
+  font-weight:650;
+}
+.radar-candidate-details[open]>summary{
+  border-bottom-left-radius:0;
+  border-bottom-right-radius:0;
+}
