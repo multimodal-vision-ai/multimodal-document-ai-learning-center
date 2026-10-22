@@ -142,7 +142,7 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("MaLoW", first["radar/index.md"])
             self.assertIn("https://arxiv.org/abs/2610.22070", first["radar/index.md"])
             self.assertIn("Unreviewed", first["radar/index.md"])
-            self.assertIn("四维评分", first["radar/index.md"])
+            self.assertIn("四项评分", first["radar/index.md"])
             self.assertIn("radar-review-card", first["radar/index.md"])
             self.assertIn("radar-review-score-grid", first["radar/index.md"])
             self.assertIn("radar-review-detail-grid", first["radar/index.md"])
