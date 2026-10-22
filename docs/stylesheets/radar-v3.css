@@ -1,10 +1,12 @@
 /* Research Radar weekly digest: clear period metadata and separate compute rows. */
 .md-typeset p.radar-section-period,
-.md-content__inner p.radar-section-period {
+.md-content__inner p.radar-section-period,
+.md-typeset h2 .radar-section-period,
+.md-content__inner h2 .radar-section-period {
   display: block !important;
   width: fit-content;
   max-width: 100%;
-  margin: .35rem 0 .85rem !important;
+  margin: .35rem 0 .85rem 0 !important;
   padding: .18rem .62rem !important;
   border: 1px solid #c7d0ff !important;
   border-radius: 999px !important;
@@ -14,6 +16,7 @@
   font-weight: 650 !important;
   line-height: 1.5 !important;
   white-space: normal;
+  vertical-align: baseline !important;
 }
 
 .md-typeset .radar-brief-heading .radar-brief-label,
@@ -47,21 +50,23 @@
 }
 
 .md-content__inner:has(.radar-review-intro) .radar-resource-row {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  align-items: start;
-  column-gap: .45rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: .08rem;
   min-width: 0;
   margin: 0;
 }
 
 .md-content__inner:has(.radar-review-intro) .radar-resource-row strong {
+  display: block;
   color: var(--md-default-fg-color);
   font-weight: 700;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .md-content__inner:has(.radar-review-intro) .radar-resource-row span {
+  display: block;
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -74,7 +79,6 @@
     font-size: .8rem !important;
   }
   .md-content__inner:has(.radar-review-intro) .radar-resource-row {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: .08rem;
+    gap: .08rem;
   }
 }
