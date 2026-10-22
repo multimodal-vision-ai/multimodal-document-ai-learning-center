@@ -7,3 +7,14 @@
 .radar-tag-chatgpt{background:var(--md-primary-fg-color);color:var(--md-primary-bg-color)}
 .radar-chatgpt-compute{font-size:.8rem;color:var(--md-default-fg-color--light);margin:.4rem 0}
 .radar-chatgpt-section .radar-home-section-heading{margin-top:.3rem}
+
+/* Observable status for scheduled ChatGPT tasks and the DEV publish pipeline. */
+.radar-automation-health{margin:1rem 0;padding:.9rem 1rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.55rem;background:var(--md-default-bg-color)}
+.radar-automation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.65rem;margin:.8rem 0}
+.radar-automation-task{padding:.75rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.4rem;background:var(--md-code-bg-color);min-width:0}
+.radar-automation-task p{font-size:.78rem;line-height:1.5;margin:.35rem 0;overflow-wrap:anywhere}
+.radar-automation-task-head{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
+.radar-automation-badge{display:inline-block;padding:.12rem .45rem;border-radius:1rem;font-size:.72rem;font-weight:600;border:1px solid var(--md-default-fg-color--lightest)}
+.radar-status-healthy{color:#13795b;border-color:#13795b}
+.radar-status-legacy_schema,.radar-status-legacy_schema_and_stale,.radar-status-not_published,.radar-status-stale,.radar-status-missing,.radar-status-invalid,.radar-status-future_timestamp,.radar-status-invalid_timestamp{color:#a35c00;border-color:#a35c00}
+.radar-automation-publish{font-size:.82rem;font-weight:600;overflow-wrap:anywhere}
