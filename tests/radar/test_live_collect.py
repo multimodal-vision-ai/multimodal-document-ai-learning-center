@@ -109,6 +109,47 @@ class SourcePriorityTests(unittest.TestCase):
         self.assertFalse(any("generatedDigitalExps" in x["title"] for x in chosen))
         self.assertTrue(all(x["review"] == "pending" for x in chosen))
 
+    def test_huggingface_metadata_is_saved_for_quality_screening(self):
+        record = {
+            "id": "Lab/document-vlm-small",
+            "createdAt": "2026-10-22T00:00:00Z",
+            "lastModified": "2026-10-22T00:10:00Z",
+            "downloads": 25, "likes": 2,
+            "tags": ["transformers", "document", "vision-language"],
+            "pipeline_tag": "image-text-to-text",
+            "library_name": "transformers",
+            "cardData": {"license": "apache-2.0"}
+        }
+        config = {"huggingface": {"enabled": True, "queries": ["document"], "limit": 1}}
+        with patch.object(collect, "CONFIG", config):
+            with patch.object(collect, "fetch", return_value=json.dumps([record]).encode("utf-8")):
+                entries = collect.huggingface()
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["hf_downloads"], 25)
+        self.assertEqual(entries[0]["hf_likes"], 2)
+        self.assertTrue(entries[0]["hf_has_model_card"])
+        self.assertIn("document", entries[0]["hf_tags"])
+
+    def test_github_metadata_is_saved_for_quality_screening(self):
+        record = {
+            "id": 42, "full_name": "lab/document-vlm",
+            "html_url": "https://github.com/lab/document-vlm",
+            "created_at": "2026-10-21T00:00:00Z",
+            "pushed_at": "2026-10-22T00:00:00Z",
+            "description": "Document VLM parsing and evaluation",
+            "stargazers_count": 25, "forks_count": 4,
+            "license": {"spdx_id": "Apache-2.0"},
+            "language": "Python", "topics": ["document-ai", "vlm"]
+        }
+        config = {"github": {"enabled": True, "queries": ["document-vlm"], "per_page": 1}}
+        with patch.object(collect, "CONFIG", config):
+            with patch.object(collect, "fetch", return_value=json.dumps({"items": [record]}).encode("utf-8")):
+                entries = collect.github()
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["github_stars"], 25)
+        self.assertEqual(entries[0]["github_license"], "Apache-2.0")
+        self.assertIn("document-ai", entries[0]["github_topics"])
+
     def test_arxiv_falls_back_to_second_official_host(self):
         from datetime import datetime, timezone
         today = datetime.now(timezone.utc).isoformat()
