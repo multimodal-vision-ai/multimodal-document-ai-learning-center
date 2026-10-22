@@ -5,6 +5,7 @@ on:
     branches: [radar-data]
     paths:
       - "research-radar/data/chatgpt-reviewed/**"
+      - "research-radar/data/automation-health.json"
 
 permissions:
   contents: write
@@ -50,6 +51,8 @@ jobs:
         working-directory: site-source
         run: |
           python -m unittest discover -s tests/radar -v
+          python scripts/radar/health.py --validate-updated
+          python scripts/radar/health.py
           python scripts/radar/screening.py
           python scripts/radar/render.py
 
@@ -106,7 +109,7 @@ jobs:
           if not (root / "index.html").exists() or count == 0:
               raise SystemExit("Built DEV site is missing index.html")
           required = {
-              "index.html": ["ChatGPT 科研价值精选", "本周高匹配线索"],
+              "index.html": ["ChatGPT 科研价值精选", "周期任务运行验收", "本周高匹配线索"],
               "radar/index.html": ["ChatGPT 科研价值精选", "历史 ChatGPT 筛选档案"],
           }
           for relative, markers in required.items():
@@ -119,6 +122,12 @@ jobs:
                       raise SystemExit(f"{relative} does not contain required ChatGPT result: {marker}")
           print(f"Marked {count} pages as DEV-only; local ChatGPT result checks passed")
           PY
+
+      - name: Verify rendered second-stage recommendation content
+        working-directory: site-source
+        env:
+          SITE_DIR: ${{ runner.temp }}/chatgpt-dev-site
+        run: python scripts/radar/verify_publication.py --site-dir "$SITE_DIR" --data-dir research-radar/data
 
       - name: Checkout isolated DEV preview branch
         uses: actions/checkout@v4
@@ -165,7 +174,10 @@ jobs:
             if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 15 "$base/index.html" -o "$RUNNER_TEMP/public-home.html" \
                && curl --fail --location --silent --show-error --connect-timeout 10 --max-time 15 "$base/radar/index.html" -o "$RUNNER_TEMP/public-radar.html" \
                && test -s "$RUNNER_TEMP/public-home.html" \
-               && test -s "$RUNNER_TEMP/public-radar.html"; then
+               && test -s "$RUNNER_TEMP/public-radar.html" \
+               && grep -q "ChatGPT 科研价值精选" "$RUNNER_TEMP/public-home.html" \
+               && grep -q "周期任务运行验收" "$RUNNER_TEMP/public-home.html" \
+               && grep -q "ChatGPT 科研价值精选" "$RUNNER_TEMP/public-radar.html"; then
               echo "Public DEV preview endpoints return non-empty HTML; the published branch content was validated before deployment."
               exit 0
             fi
