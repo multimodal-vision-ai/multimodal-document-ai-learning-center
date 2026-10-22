@@ -28,5 +28,6 @@
       "data_open": null,
       "note": "模型规模、开源代码、数据与 GPU 需求未在已存档结果中可靠记录。"
     }
-  ]
+  ],
+  "shared_archive_sync_version": 2
 }
