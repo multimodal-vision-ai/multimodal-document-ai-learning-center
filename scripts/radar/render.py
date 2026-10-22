@@ -6,6 +6,7 @@ from pathlib import Path
 from core import DATA, ROOT, load, valid_url, parse_dt
 from reports import build
 from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
+from screening import collect_screened, build_queue
 
 DOCS = ROOT / "docs"
 
@@ -286,9 +287,9 @@ def chatgpt_home_section(chatgpt_reports, now, limit=3):
         )
     return f"""
 <section class="radar-home-card radar-chatgpt-section" aria-labelledby="radar-chatgpt-title">
-<div class="radar-home-section-heading"><h3 id="radar-chatgpt-title">ChatGPT 已筛选研究结果</h3>
+<div class="radar-home-section-heading"><h3 id="radar-chatgpt-title">历史 ChatGPT 筛选档案（待四维复评）</h3>
 <span>每日预警 · 周报 · 月度选题</span></div>
-<p>此处只呈现 ChatGPT 研究任务实际筛选并写入共享档案的成果，与下方规则自动采集的候选线索分开。</p>
+<p>此处保存过去 ChatGPT 研究任务曾筛选的成果；这些条目未必具有按当前四维标准计算的科研价值评分，不能直接算作第二轮通过的推荐。</p>
 {status}
 <div class="radar-feature-grid radar-chatgpt-grid">{cards}</div>
 <div class="radar-home-actions"><a class="radar-home-action-primary" href="radar/index.html#chatgpt-reviewed">查看全部 ChatGPT 筛选结果与理由 →</a></div>
@@ -338,7 +339,58 @@ def chatgpt_report_listing(report, report_type):
     return "\n\n".join(lines)
 
 
-def homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, now):
+def stage_two_home_section(chatgpt_reports, queue):
+    reviewed, validation_errors = collect_screened(chatgpt_reports, queue)
+    if validation_errors:
+        body = ('<div class="radar-home-warning">部分二次评价记录不符合证据与评分规范，'
+                '已阻止作为科研精选发布。请检查 CI 审核日志。</div>')
+    elif not reviewed:
+        body = ('<div class="radar-empty-state"><strong>尚无通过四维科研价值核验的第二轮推荐。</strong>'
+                '<p>第一轮匹配度 ≥8.0 的候选不会自动晋升为推荐。'
+                '待 ChatGPT 计划任务提交带证据、逐项评分的报告后，本区域自动更新。</p></div>')
+    else:
+        cards = []
+        for item in reviewed[:3]:
+            dimensions = item["evaluation_dimensions"]
+            fields = [
+                ("创新性", "innovation"), ("开源完整度", "open_source"),
+                ("复现可行性", "reproducibility"), ("科研潜力", "research_potential")
+            ]
+            scores = " · ".join(
+                f'{label} {escape(dimensions[key]["score"])}/10' for label, key in fields
+            )
+            links = " · ".join(link(url, "来源证据") for url in item["evidence_urls"][:3])
+            title_url = item["evidence_urls"][0]
+            reason = escape(item["why_selected"])
+            opportunity = escape(item["research_opportunity"])
+            cards.append(
+                '<article class="radar-feature-card radar-chatgpt-card">'
+                '<div class="radar-feature-meta"><span class="radar-tag radar-tag-chatgpt">'
+                'ChatGPT 二次评价</span>'
+                f'<span class="radar-match-score">综合 {escape(item["value_score"])}/10</span></div>'
+                f'<h4>{link(title_url, item["title"])}</h4>'
+                f'<p>{escape(item["summary"])}</p>'
+                f'<p class="radar-feature-reasons">入选原因：{reason}</p>'
+                f'<p class="radar-feature-reasons">后续研究：{opportunity}</p>'
+                f'<p class="radar-feature-reasons">{scores}</p>'
+                f'<p class="radar-feature-reasons">证据状态：自动结构校验通过；'
+                f'可信度 {escape(item["confidence"])}，实验结论仍须复核</p>'
+                f'<div class="radar-feature-links">{links}</div>'
+                '</article>'
+            )
+        body = '<div class="radar-feature-grid radar-chatgpt-grid">' + "".join(cards) + '</div>'
+    return (
+        '<section class="radar-chatgpt-priority" aria-label="ChatGPT 二次筛选科研精选">'
+        '<div class="radar-home-section-heading"><h3>ChatGPT 科研价值精选 · 第二轮</h3>'
+        '<span>先按主题 ≥8 分初筛，再按科研价值四维评分（推荐 ≥7.5）</span></div>'
+        + body
+        + '<p class="radar-home-footnote">创新性30%、开源完整度25%、复现可行性25%、'
+        '科研潜力20%；所有结论附原始来源。分数是 ChatGPT 辅助研究评价，不是同行评审。</p>'
+        '</section>'
+    )
+
+
+def homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, screening_queue, now):
     daily = reports.get("daily", {}).get("candidate_summary", {})
     weekly = reports.get("weekly", {}).get("candidate_summary", {})
     weekly_leads = reports.get("weekly", {}).get("candidate_leads", [])[:3]
@@ -408,8 +460,11 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, chat
 </div>
 <div class="radar-home-meta"><span>最近成功采集：<time>{escape(last_run)}</time></span><span>本次来源命中：{source_text}</span></div>
 {health_html}
+{stage_two_home_section(chatgpt_reports, screening_queue)}
 {stat_html}
+<details class="radar-legacy-archive"><summary>查看历史 ChatGPT 筛选档案（未按新标准复评）</summary>
 {chatgpt_home_section(chatgpt_reports, now)}
+</details>
 {approved_html}
 <div class="radar-home-section-heading"><h3>本周高匹配线索</h3><span>匹配度 ≥8.0 · 最多3项 · 未经科研审核</span></div>
 <div class="radar-feature-grid">{featured_html}</div>
@@ -435,6 +490,7 @@ def render(now=None):
         for kind in ("daily", "weekly", "monthly")
     }
     reports = build(projects, now, candidates)
+    screening_queue = load(DATA / "screening-queue.json", None) or build_queue(candidates, now)
     approved = sorted((p for p in projects if p.get("review") == "approved"),
                       key=lambda p: (p.get("score") or 0, p.get("reviewed_at") or ""), reverse=True)
     rows = []
@@ -515,7 +571,7 @@ def render(now=None):
 
     home = DOCS / "index.md"
     content = home.read_text(encoding="utf-8-sig")
-    home_block = homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, now)
+    home_block = homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, screening_queue, now)
     content = replace_home(content, home_block)
     save_page("index.md", content)
     print(f"Radar render complete: {len(approved)} approved, {len(tasks)} tasks")
