@@ -66,6 +66,7 @@ jobs:
         run: |
           python -m unittest discover -s tests/radar -v
           python scripts/radar/screening.py
+          python scripts/radar/health.py
           python scripts/radar/render.py
 
       - name: Override preview base URL in temporary runner copy
