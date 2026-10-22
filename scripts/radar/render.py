@@ -7,6 +7,7 @@ from core import DATA, ROOT, load, valid_url, parse_dt
 from reports import build
 from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
 from screening import collect_screened, build_queue
+from automation_health import REPORTS as AUTOMATION_REPORTS
 
 DOCS = ROOT / "docs"
 
@@ -339,6 +340,63 @@ def chatgpt_report_listing(report, report_type):
     return "\n\n".join(lines)
 
 
+def automation_health_panel(health):
+    if not isinstance(health, dict) or not health.get("checked_at"):
+        return (
+            '<section class="radar-automation-health radar-home-warning" aria-label="周期任务健康检查">'
+            '<h3>周期任务无人值守验收</h3>'
+            '<p>尚未生成健康检查记录。首次检查后，这里会显示每日、每周、每月报告的时效、schema v2 评分校验与最近一次发布核验。</p>'
+            '</section>'
+        )
+    labels = {
+        "healthy": "正常", "legacy_schema": "旧版格式",
+        "legacy_schema_and_stale": "旧版且过期", "not_published": "未发布",
+        "stale": "已过期", "invalid": "校验失败",
+        "future_timestamp": "时间异常", "invalid_timestamp": "时间异常",
+        "missing": "缺失"
+    }
+    tasks = health.get("task_statuses", {})
+    cards = []
+    for kind in ("daily", "weekly", "monthly"):
+        item = tasks.get(kind, {})
+        status = str(item.get("status") or "missing")
+        label = labels.get(status, status)
+        when = escape(item.get("generated_at") or "尚无报告")
+        age = item.get("age_hours")
+        age_text = f'{age:.1f} 小时前' if isinstance(age, (int, float)) else "时间未知"
+        cards.append(
+            '<article class="radar-automation-task">'
+            f'<div class="radar-automation-task-head"><strong>{escape(item.get("label") or kind)}</strong>'
+            f'<span class="radar-automation-badge radar-status-{escape(status)}">{escape(label)}</span></div>'
+            f'<p>最近报告：<time>{when}</time></p>'
+            f'<p>{escape(age_text)} · {escape(item.get("message") or "尚无状态说明")}</p>'
+            '</article>'
+        )
+    publication = health.get("publication", {})
+    pub_status = publication.get("status", "unknown")
+    pub_labels = {"success": "最近一次发布核验通过", "failed": "最近一次发布失败", "unknown": "尚无发布核验记录"}
+    pub_label = pub_labels.get(pub_status, pub_status)
+    pub_link = ""
+    if valid_url(publication.get("run_url")):
+        pub_link = f' · {link(publication["run_url"], "查看 GitHub Actions")}'
+    watch = health.get("watchdog", {})
+    watch_time = escape(watch.get("last_run_at") or health.get("checked_at") or "未知")
+    overall = health.get("overall_status", "degraded")
+    overall_label = "三项任务报告均通过" if overall == "healthy" else "存在待处理项"
+    overall_class = "radar-home-health" if overall == "healthy" else "radar-home-warning"
+    return (
+        '<section class="radar-automation-health" aria-label="周期任务健康检查">'
+        '<div class="radar-home-section-heading"><h3>周期任务无人值守验收</h3>'
+        f'<span>最近检查：{watch_time}</span></div>'
+        f'<div class="{overall_class}" role="status">当前状态：{overall_label}</div>'
+        '<div class="radar-automation-grid">' + "".join(cards) + '</div>'
+        f'<p class="radar-automation-publish">发布链路：{escape(pub_label)}{pub_link}</p>'
+        '<p class="radar-home-footnote">检查报告时效、四维评分与来源关联，并记录最近一次 DEV 发布烟测。'
+        '“正常”表示报告文件与已记录发布证据通过自动校验，不代表科学结论已被独立证明；跨周期连续运行须以各周期后续实际运行记录为准。</p>'
+        '</section>'
+    )
+
+
 def stage_two_detail_listing(reports, queue):
     selected, errors = collect_screened(reports, queue)
     if errors:
@@ -415,7 +473,7 @@ def stage_two_home_section(chatgpt_reports, queue):
     )
 
 
-def homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, screening_queue, now):
+def homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, screening_queue, automation_health, now):
     daily = reports.get("daily", {}).get("candidate_summary", {})
     weekly = reports.get("weekly", {}).get("candidate_summary", {})
     weekly_leads = reports.get("weekly", {}).get("candidate_leads", [])[:3]
@@ -485,6 +543,7 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, chat
 </div>
 <div class="radar-home-meta"><span>最近成功采集：<time>{escape(last_run)}</time></span><span>本次来源命中：{source_text}</span></div>
 {health_html}
+{automation_health_panel(automation_health)}
 {stage_two_home_section(chatgpt_reports, screening_queue)}
 {stat_html}
 <details class="radar-legacy-archive"><summary>查看历史 ChatGPT 筛选档案（未按新标准复评）</summary>
@@ -510,6 +569,7 @@ def render(now=None):
     tasks = load(DATA / "tasks.json", [])
     candidates = load(DATA / "candidates.json", [])
     collection_status = load(DATA / "collection-status.json", {})
+    automation_health = load(DATA / "automation-health.json", {})
     chatgpt_reports = {
         kind: load(DATA / "chatgpt-reviewed" / f"latest-{kind}.json", {})
         for kind in ("screened", "daily", "weekly", "monthly")
@@ -597,7 +657,7 @@ def render(now=None):
 
     home = DOCS / "index.md"
     content = home.read_text(encoding="utf-8-sig")
-    home_block = homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, screening_queue, now)
+    home_block = homepage_block(approved, candidates, tasks, reports, collection_status, chatgpt_reports, screening_queue, automation_health, now)
     content = replace_home(content, home_block)
     save_page("index.md", content)
     print(f"Radar render complete: {len(approved)} approved, {len(tasks)} tasks")
