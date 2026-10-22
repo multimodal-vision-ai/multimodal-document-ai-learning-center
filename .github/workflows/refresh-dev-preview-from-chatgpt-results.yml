@@ -151,6 +151,6 @@ jobs:
           curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$base/radar/index.html" -o "$RUNNER_TEMP/chatgpt-radar.html"
           grep -q "ChatGPT 已筛选研究结果" "$RUNNER_TEMP/chatgpt-home.html"
           grep -q "One Fact, Many Places" "$RUNNER_TEMP/chatgpt-home.html"
-          grep -q "RPD+SARA" "$RUNNER_TEMP/chatgpt-radar.html"
+          grep -q "RPD + SARA" "$RUNNER_TEMP/chatgpt-radar.html"
           grep -q "MaLoW" "$RUNNER_TEMP/chatgpt-radar.html"
           echo "Published DEV homepage and Radar page include saved ChatGPT task results."
