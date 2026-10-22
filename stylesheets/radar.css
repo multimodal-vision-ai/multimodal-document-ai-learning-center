@@ -910,13 +910,17 @@
 
 /* Weekly digest: one period label at the section heading, compact cards below. */
 .radar-section-period{
-  display:inline;
-  margin-left:.4rem;
-  color:var(--md-default-fg-color--light);
-  font-size:.58em;
-  font-weight:500;
+  display:inline-block;
+  margin-left:.45rem;
+  padding:.16rem .55rem;
+  border:1px solid var(--md-primary-fg-color);
+  border-radius:999px;
+  background:var(--md-code-bg-color);
+  color:var(--md-primary-fg-color);
+  font-size:.68em;
+  font-weight:650;
   line-height:1.5;
-  vertical-align:baseline;
+  vertical-align:middle;
 }
 .md-content__inner:has(.radar-review-intro) .radar-brief-card{
   grid-template-columns:minmax(10rem,.68fr) minmax(0,1.7fr);
@@ -987,5 +991,28 @@
   .md-content__inner:has(.radar-review-intro) .radar-brief-heading{
     gap:.3rem;
     margin-bottom:.1rem;
+  }
+}
+
+
+/* Make each research category immediately scannable on the weekly cards. */
+.md-content__inner:has(.radar-review-intro) .radar-brief-heading .radar-brief-label{
+  padding:.24rem .68rem;
+  border:1px solid var(--md-primary-fg-color);
+  border-radius:.45rem;
+  background:var(--md-primary-fg-color);
+  color:#fff;
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.45;
+  letter-spacing:.01em;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);
+}
+@media(max-width:900px){
+  .radar-section-period{
+    display:block;
+    width:fit-content;
+    margin:.35rem 0 0;
+    font-size:.78rem;
   }
 }
