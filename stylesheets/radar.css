@@ -31,20 +31,21 @@
 .radar-page-note{font-size:.8rem;color:var(--md-default-fg-color--light);margin-top:1.2rem}
 
 
-/* Readable, compact layout for the Frontier Updates page. */
-.radar-frontier-page {
+/* Readable, compact layout for the Frontier Updates page.
+   Scope to the Radar page via its unique review-guide component, without wrapping
+   generated card HTML in a Markdown container. */
+.md-content__inner:has(.radar-review-intro) {
   box-sizing: border-box;
-  width: 100%;
   max-width: 60rem;
   margin-inline: auto;
 }
-.radar-frontier-page > h2 {
+.md-content__inner:has(.radar-review-intro) > h2 {
   margin-top: 2rem;
   margin-bottom: .65rem;
   padding-bottom: .4rem;
   border-bottom: 1px solid var(--md-default-fg-color--lightest);
 }
-.radar-frontier-page > p {
+.md-content__inner:has(.radar-review-intro) > p {
   max-width: 60rem;
   line-height: 1.65;
 }
@@ -70,7 +71,7 @@
   color: var(--md-default-fg-color--light);
   font-size: .8rem;
 }
-.radar-frontier-page .radar-brief-list {
+.md-content__inner:has(.radar-review-intro) .radar-brief-list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
@@ -238,10 +239,10 @@
   text-decoration: underline;
 }
 @media (max-width: 720px) {
-  .radar-frontier-page {
+  .md-content__inner:has(.radar-review-intro) {
     max-width: 100%;
   }
-  .radar-frontier-page .radar-brief-list {
+  .md-content__inner:has(.radar-review-intro) .radar-brief-list {
     max-width: 100%;
   }
   .radar-review-card {
