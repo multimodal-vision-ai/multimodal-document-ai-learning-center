@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "checked_at": null,
+  "overall_status": "watching",
+  "watchdog": {
+    "last_run_at": null,
+    "status": "not_run",
+    "message": "初始化占位记录。尚无独立周期任务巡检结果；此文件不代表每日、每周或每月 ChatGPT 任务已成功执行。"
+  },
+  "publication": {
+    "status": "unknown",
+    "checked_at": null,
+    "refresh_workflow_run_url": null,
+    "dev_preview_workflow_run_url": null,
+    "home_content_verified": false,
+    "detail_content_verified": false,
+    "message": "等待首次独立验收核对报告提交、GitHub Actions 运行和公开 DEV 页面内容。"
+  }
+}
