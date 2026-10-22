@@ -1,9 +1,11 @@
 """Render the consolidated Research Updates page and legacy internal snapshots."""
+import hashlib
 import html
+import json
 import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from core import DATA, ROOT, load, valid_url, parse_dt
+from core import DATA, ROOT, load, save, valid_url, parse_dt
 from reports import build
 from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
 from screening import collect_screened, build_queue
@@ -77,6 +79,176 @@ def category_label(value):
 
 def source_label(value):
     return SOURCE_LABELS.get(value, value or "未知来源")
+
+
+
+def _period_datetime(value):
+    if not value:
+        return None
+    try:
+        return parse_dt(str(value))
+    except (ValueError, TypeError, OverflowError):
+        return None
+
+
+def week_year_number(value):
+    """Return an ISO Monday-start week number constrained to 1..52.
+
+    ISO week 53 is folded into week 52 so the UI never displays a 53rd week.
+    """
+    dt = _period_datetime(value)
+    if dt is None:
+        return None
+    iso = dt.isocalendar()
+    return iso.year, min(52, iso.week)
+
+
+def weekly_period_label(value):
+    period = week_year_number(value)
+    return f"{period[0]}年第{period[1]}周" if period else "周次待核实"
+
+
+def monthly_period_label(value):
+    dt = _period_datetime(value)
+    return dt.strftime("%Y年%m月") if dt else "月份待核实"
+
+
+def report_period_label(report_type, report):
+    report = report if isinstance(report, dict) else {}
+    anchor = report.get("window_start") or report.get("generated_at")
+    if report_type == "weekly":
+        return weekly_period_label(anchor)
+    if report_type == "monthly":
+        return monthly_period_label(anchor)
+    return str(anchor or "时间待核实")[:10]
+
+
+def _archive_key(report_type, report):
+    anchor = report.get("window_start") or report.get("generated_at")
+    dt = _period_datetime(anchor)
+    if dt is None:
+        return None
+    if report_type == "weekly":
+        year, week = week_year_number(dt)
+        return f"{year}-W{week:02d}"
+    if report_type == "monthly":
+        return dt.strftime("%Y-%m")
+    return None
+
+
+def archive_latest_reports(reports):
+    """Persist completed weekly/monthly ChatGPT reports without overwriting history."""
+    archived = 0
+    archive_root = DATA / "chatgpt-reviewed" / "archive"
+    for kind in ("weekly", "monthly"):
+        report = reports.get(kind, {}) if isinstance(reports, dict) else {}
+        if not isinstance(report, dict) or report.get("status") not in ("completed", "no_high_value"):
+            continue
+        if not report.get("generated_at"):
+            continue
+        key = _archive_key(kind, report)
+        if not key:
+            continue
+        folder = archive_root / kind
+        target = folder / f"{key}.json"
+        existing = load(target, None)
+        if existing == report:
+            continue
+        if existing is not None:
+            canonical = json.dumps(report, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+            digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:10]
+            generated = _period_datetime(report.get("generated_at"))
+            stamp = generated.strftime("%Y%m%d") if generated else "revision"
+            target = folder / f"{key}-{stamp}-{digest}.json"
+            if load(target, None) == report:
+                continue
+        save(target, report)
+        archived += 1
+    return archived
+
+
+def _archive_records(report_type):
+    folder = DATA / "chatgpt-reviewed" / "archive" / report_type
+    records = []
+    if not folder.exists():
+        return records
+    for path in folder.glob("*.json"):
+        report = load(path, None)
+        if not isinstance(report, dict) or report.get("status") not in ("completed", "no_high_value"):
+            continue
+        anchor = report.get("window_start") or report.get("generated_at")
+        dt = _period_datetime(anchor)
+        if report_type == "weekly":
+            week_info = week_year_number(anchor)
+            year = str(week_info[0]) if week_info else ""
+            sort_key = dt.timestamp() if dt else 0
+        else:
+            year = str(dt.year) if dt else ""
+            sort_key = dt.timestamp() if dt else 0
+        items = [
+            item for item in report.get("items", [])
+            if isinstance(item, dict)
+            and item.get("selection_status", "selected") in ("selected", "chatgpt_selected", "recommended")
+        ]
+        search_parts = [report.get("report_title", ""), report.get("summary", "")]
+        for item in items:
+            for key in ("title", "summary", "why_selected", "research_opportunity", "next_steps"):
+                value = item.get(key)
+                if value:
+                    search_parts.append(str(value)[:240])
+        records.append({
+            "kind": report_type,
+            "path": path,
+            "report": report,
+            "period_label": report_period_label(report_type, report),
+            "year": year,
+            "sort_key": sort_key,
+            "title": report.get("report_title") or ("每周科研周报" if report_type == "weekly" else "月度研究机会"),
+            "summary": report.get("summary") or (
+                "本期未发现达到筛选门槛的高价值项目。"
+                if report.get("status") == "no_high_value" else "本期报告未提供摘要。"
+            ),
+            "items": items,
+            "search_text": " ".join(str(part) for part in search_parts).lower(),
+        })
+    return sorted(records, key=lambda item: (item["sort_key"], item["path"].name), reverse=True)
+
+
+def archive_card(record):
+    kind = record["kind"]
+    report = record["report"]
+    count = len(record["items"])
+    count_label = "项精选" if kind == "weekly" else "项选题"
+    detail_html = chatgpt_report_listing(report, kind, limit=None, include_note=False)
+    return (
+        f'<article class="radar-archive-item" data-archive-type="{escape(kind)}" '
+        f'data-archive-year="{escape(record["year"])}" '
+        f'data-archive-text="{escape(record["search_text"])}">'
+        '<header class="radar-archive-head">'
+        f'<span class="radar-period-badge">{escape(record["period_label"])}</span>'
+        f'<span class="radar-archive-kind">{ "周报" if kind == "weekly" else "月报" }</span>'
+        f'<span class="radar-archive-count">{count} {count_label}</span>'
+        '</header>'
+        f'<h4 class="radar-archive-title">{escape(record["title"])}</h4>'
+        f'<p class="radar-archive-summary">{escape(str(record["summary"])[:260])}</p>'
+        '<details class="radar-archive-details">'
+        '<summary>展开查看本期内容</summary>'
+        f'{detail_html}'
+        '</details>'
+        '</article>'
+    )
+
+
+def archive_cards(report_type):
+    records = _archive_records(report_type)
+    if not records:
+        label = "周报" if report_type == "weekly" else "月报"
+        return (
+            '<div class="radar-empty-state radar-archive-empty">'
+            f'暂未形成历史{label}档案。每期报告生成并通过校验后，会自动保存到历史记录。'
+            '</div>'
+        )
+    return '<div class="radar-archive-list">' + "".join(archive_card(record) for record in records) + '</div>'
 
 
 def candidate_card(item):
@@ -298,18 +470,20 @@ def chatgpt_home_section(chatgpt_reports, now, limit=3):
 """
 
 
-def chatgpt_report_listing(report, report_type):
-    """Render a short, student-readable set of report cards."""
+def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
+    """Render a short, student-readable report; archives can request all saved items."""
     labels = {"weekly": "周报", "monthly": "月度总结"}
     label = labels.get(report_type, "研究报告")
     if not isinstance(report, dict) or not report:
         return f'<div class="radar-empty-state">尚无已存档的 ChatGPT{label}结果。</div>'
     status = report.get("status")
-    generated = escape(str(report.get("generated_at") or "时间未记录")[:10])
+    generated_raw = report.get("generated_at")
+    generated = escape(str(generated_raw or "时间未记录")[:10])
+    period = escape(report_period_label(report_type, report))
     if status == "no_high_value":
         return (
             '<div class="radar-empty-state"><strong>本期未发现达到门槛的高价值项目。</strong>'
-            f'<p>任务已于 {generated} 完成；系统不会为了填满页面而推荐普通线索。</p></div>'
+            f'<p>{period} · 任务于 {generated} 完成；系统不会为了填满页面而推荐普通线索。</p></div>'
         )
     if status != "completed":
         return f'<div class="radar-empty-state">最近一次{label}尚无可展示结果。</div>'
@@ -321,20 +495,23 @@ def chatgpt_report_listing(report, report_type):
     if not items:
         return (
             '<div class="radar-empty-state"><strong>本期没有保存可展示的精选条目。</strong>'
-            f'<p>任务记录时间：{generated}。</p></div>'
+            f'<p>报告周期：{period}；任务记录时间：{generated}。</p></div>'
         )
+    shown_items = items if limit is None else items[:limit]
     cards = []
-    for item in items[:3]:
+    for item in shown_items:
         title_text = item.get("title", "未命名研究成果")
         title_url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
         title = link(title_url, title_text)
         summary = item.get("summary") or item.get("abstract") or item.get("description") or ""
         why = item.get("why_selected") or item.get("selection_rationale") or ""
         opportunity = item.get("research_opportunity") or item.get("next_steps") or ""
-        screened_at = escape(str(item.get("screened_at") or report.get("generated_at") or "日期未记录")[:10])
+        screened_raw = item.get("screened_at") or generated_raw
+        screened_at = escape(str(screened_raw or "日期未记录")[:10])
         meta = [
+            f'<span class="radar-period-badge">{period}</span>',
             f'<span class="radar-brief-label">{escape(category_label(item.get("category")))}</span>',
-            f'<span>筛选日期：{screened_at}</span>'
+            f'<span class="radar-brief-date">筛选日期：{screened_at}</span>'
         ]
         resource_meta = []
         params = item.get("parameters") or item.get("parameter_scale")
@@ -354,17 +531,18 @@ def chatgpt_report_listing(report, report_type):
             '<article class="radar-brief-card radar-weekly-card">'
             f'<div class="radar-brief-meta">{"".join(meta)}</div>'
             f'<h3>{title}</h3>'
-            + (f'<p>{escape(summary[:180])}</p>' if summary else "")
-            + (f'<p><strong>价值点：</strong>{escape(why[:160])}</p>' if why else "")
-            + (f'<p><strong>学生切入：</strong>{escape(opportunity[:180])}</p>' if opportunity else "")
-            + (f'<p class="radar-chatgpt-compute">{" · ".join(resource_meta)[:140]}</p>' if resource_meta else "")
-            + (f'<div class="radar-brief-links">{" · ".join(links)}</div>' if links else "")
+            + (f'<p class="radar-brief-summary">{escape(summary[:220])}</p>' if summary else "")
+            + (f'<p class="radar-brief-value"><strong>价值点</strong>{escape(why[:220])}</p>' if why else "")
+            + (f'<p class="radar-brief-student"><strong>学生切入</strong>{escape(opportunity[:240])}</p>' if opportunity else "")
+            + (f'<p class="radar-chatgpt-compute">{" · ".join(resource_meta)[:160]}</p>' if resource_meta else "")
+            + (f'<div class="radar-brief-links">{"".join(links)}</div>' if links else "")
             + '</article>'
         )
     extra = (
-        f'<p class="radar-page-note">报告更新：{generated}。仅展示前 3 项；'
-        '完整原始记录保留在共享档案中。</p>'
-    )
+        f'<p class="radar-page-note">报告周期：{period} · 更新于 {generated}。'
+        + (f' 当前页面展示前 {len(shown_items)} 项；' if limit is not None and len(items) > len(shown_items) else "")
+        + '</p>'
+    ) if include_note else ""
     return '<div class="radar-brief-list">' + "".join(cards) + '</div>' + extra
 
 
@@ -411,6 +589,7 @@ def stage_two_detail_listing(reports, queue):
             '<article class="radar-review-card">'
             '<header class="radar-review-card-head">'
             '<div class="radar-review-card-labels">'
+            f'<span class="radar-period-badge">{escape(weekly_period_label(item.get("screened_at") or reports.get("screened", {}).get("generated_at")))}</span>'
             '<span class="radar-review-pill radar-review-pill-approved">通过复核</span>'
             '<span class="radar-review-pill">主题匹配度 ≥8.0</span>'
             '</div>'
@@ -497,6 +676,7 @@ def render(now=None):
         kind: load(DATA / "chatgpt-reviewed" / f"latest-{kind}.json", {})
         for kind in ("screened", "daily", "weekly", "monthly")
     }
+    archive_latest_reports(chatgpt_reports)
     reports = build(projects, now, candidates)
     screening_queue = load(DATA / "screening-queue.json", None) or build_queue(candidates, now)
     approved = sorted((p for p in projects if p.get("review") == "approved"),
@@ -539,6 +719,8 @@ def render(now=None):
         ("CHATGPT_MONTHLY", "monthly"),
     ):
         content = replace(content, marker, chatgpt_report_listing(chatgpt_reports.get(report_type, {}), report_type))
+    content = replace(content, "WEEKLY_ARCHIVE", archive_cards("weekly"))
+    content = replace(content, "MONTHLY_ARCHIVE", archive_cards("monthly"))
     leads = []
     for item in select_candidate_leads(candidates, now):
         title = item.get("title", "Untitled")
