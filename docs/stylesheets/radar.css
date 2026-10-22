@@ -14,255 +14,475 @@
 .radar-publish-evidence p{margin:.35rem 0;font-size:.82rem}
 
 
-/* Compact, student-first Frontier Updates page. */
-.radar-page-intro{font-size:1rem;color:var(--md-default-fg-color--light)}
-.radar-brief-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr));gap:.85rem;margin:1rem 0}
-.radar-brief-card{min-width:0;padding:1rem 1.1rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.6rem;background:var(--md-default-bg-color)}
-.radar-brief-card h3,.radar-brief-card h4{margin:.35rem 0 .65rem;line-height:1.4}
-.radar-brief-card p{margin:.45rem 0;font-size:.9rem;line-height:1.6}
-.radar-brief-meta{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;font-size:.76rem;color:var(--md-default-fg-color--light)}
+/* Student-first layout for the Frontier Updates page. */
+.radar-page-intro{font-size:.94rem;color:var(--md-default-fg-color--light)}
 .radar-brief-score{font-weight:700;color:var(--md-primary-fg-color)}
-.radar-brief-label{padding:.12rem .45rem;border-radius:999px;background:var(--md-code-bg-color)}
-.radar-brief-links{margin-top:.75rem;padding-top:.6rem;border-top:1px solid var(--md-default-fg-color--lightest);font-size:.84rem}
+.radar-brief-label{display:inline-flex;align-items:center;padding:.15rem .5rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:999px;background:var(--md-code-bg-color);font-size:.74rem;white-space:nowrap}
 .radar-brief-dimensions{display:flex;gap:.35rem;flex-wrap:wrap;margin:.55rem 0}
 .radar-brief-dimensions span{padding:.18rem .42rem;border-radius:.3rem;background:var(--md-code-bg-color);font-size:.75rem}
-.radar-candidate-details{margin:1rem 0;border:1px solid var(--md-default-fg-color--lightest);border-radius:.5rem;padding:.6rem .8rem}
-.radar-candidate-details>summary{font-weight:600;cursor:pointer}
-.radar-page-note{font-size:.8rem;color:var(--md-default-fg-color--light);margin-top:1.2rem}
 
+/* Scope all layout rules to this page, identified by its review guide. */
+.md-content__inner:has(.radar-review-intro){
+  box-sizing:border-box;
+  max-width:60rem;
+  margin-inline:auto;
+}
+.md-content__inner:has(.radar-review-intro)>h1{
+  margin:0 0 .45rem;
+  font-size:clamp(1.8rem,2.8vw,2.25rem);
+  line-height:1.25;
+  letter-spacing:-.02em;
+}
+.md-content__inner:has(.radar-review-intro)>h1+p{
+  max-width:58rem;
+  margin:.25rem 0 1.2rem;
+  padding:.72rem .9rem;
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:0 .55rem .55rem 0;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.9rem;
+  line-height:1.65;
+}
+.md-content__inner:has(.radar-review-intro)>h2{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  margin:1.8rem 0 .7rem;
+  padding-bottom:.42rem;
+  border-bottom:1px solid var(--md-default-fg-color--lightest);
+  font-size:1.28rem;
+  line-height:1.35;
+  letter-spacing:-.01em;
+}
+.md-content__inner:has(.radar-review-intro)>h2::before{
+  content:"";
+  flex:0 0 .22rem;
+  height:1.05em;
+  border-radius:999px;
+  background:var(--md-primary-fg-color);
+}
+.md-content__inner:has(.radar-review-intro)>p{
+  max-width:60rem;
+  line-height:1.65;
+}
 
-/* Readable, compact layout for the Frontier Updates page.
-   Scope to the Radar page via its unique review-guide component, without wrapping
-   generated card HTML in a Markdown container. */
-.md-content__inner:has(.radar-review-intro) {
-  box-sizing: border-box;
-  max-width: 60rem;
-  margin-inline: auto;
+/* Selection criteria: readable but visually secondary to the recommendations. */
+.radar-review-intro{
+  max-width:58rem;
+  margin:.65rem 0 .9rem;
+  padding:.75rem .9rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.55rem;
+  background:var(--md-default-bg-color);
 }
-.md-content__inner:has(.radar-review-intro) > h2 {
-  margin-top: 2rem;
-  margin-bottom: .65rem;
-  padding-bottom: .4rem;
-  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+.radar-review-intro p{
+  margin:.15rem 0;
+  font-size:.84rem;
+  line-height:1.6;
 }
-.md-content__inner:has(.radar-review-intro) > p {
-  max-width: 60rem;
-  line-height: 1.65;
+.radar-review-threshold span{
+  display:inline;
+  margin-left:.3rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.78rem;
 }
-.radar-review-intro {
-  max-width: 58rem;
-  margin: .75rem 0 1.15rem;
-  padding: .85rem 1rem;
-  border-left: 3px solid var(--md-primary-fg-color);
-  border-radius: .25rem .6rem .6rem .25rem;
-  background: var(--md-code-bg-color);
+
+/* Weekly/monthly selections: one consistent row per item, not an uneven 2+1 grid. */
+.md-content__inner:has(.radar-review-intro) .radar-brief-list:not(.radar-review-list){
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:.7rem;
+  width:100%;
+  max-width:58rem;
+  margin:.8rem 0 1.1rem;
 }
-.radar-review-intro p {
-  margin: .2rem 0;
-  font-size: .92rem;
-  line-height: 1.65;
+.radar-brief-card{
+  display:grid;
+  grid-template-columns:minmax(10rem,.78fr) minmax(0,1.65fr);
+  grid-template-areas:
+    "meta summary"
+    "title value"
+    "compute student"
+    "links links";
+  align-items:start;
+  gap:.22rem 1.05rem;
+  box-sizing:border-box;
+  min-width:0;
+  padding:.9rem 1rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.7rem;
+  background:var(--md-default-bg-color);
+  box-shadow:0 3px 14px rgba(30,45,90,.045);
 }
-.radar-review-intro .radar-review-threshold {
-  margin-top: .4rem;
+.radar-brief-meta{
+  grid-area:meta;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem .5rem;
+  margin:.05rem 0 .15rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.74rem;
+  line-height:1.45;
 }
-.radar-review-threshold span {
-  display: block;
-  margin-top: .2rem;
-  color: var(--md-default-fg-color--light);
-  font-size: .8rem;
+.radar-brief-card>h3{
+  grid-area:title;
+  min-width:0;
+  margin:.25rem 0 .45rem;
+  font-size:1.05rem;
+  line-height:1.4;
+  overflow-wrap:anywhere;
 }
-.md-content__inner:has(.radar-review-intro) .radar-brief-list {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
-  width: 100%;
-  max-width: 58rem;
-  margin: 1rem 0 1.4rem;
+.radar-brief-card>h3 a{
+  font-weight:700;
+  text-decoration:none;
 }
-.radar-review-card {
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  padding: 1.05rem 1.15rem;
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-left: 4px solid var(--md-primary-fg-color);
-  border-radius: .8rem;
-  background: var(--md-default-bg-color);
-  box-shadow: 0 4px 16px rgba(30, 45, 90, .055);
+.radar-brief-card>h3 a:hover{text-decoration:underline}
+.radar-brief-card>p{
+  min-width:0;
+  margin:.12rem 0 .35rem;
+  font-size:.84rem;
+  line-height:1.58;
+  overflow-wrap:anywhere;
 }
-.radar-review-card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: .75rem;
-  flex-wrap: wrap;
-  margin-bottom: .65rem;
+.radar-brief-card>p:nth-of-type(1){
+  grid-area:summary;
+  color:var(--md-default-fg-color--light);
 }
-.radar-review-card-labels {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: .4rem;
+.radar-brief-card>p:nth-of-type(2){
+  grid-area:value;
+  padding:.52rem .62rem;
+  border-radius:.45rem;
+  background:var(--md-code-bg-color);
 }
-.radar-review-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: .22rem .55rem;
-  border-radius: 999px;
-  background: var(--md-code-bg-color);
-  color: var(--md-default-fg-color--light);
-  font-size: .72rem;
-  line-height: 1.45;
+.radar-brief-card>p:nth-of-type(3){
+  grid-area:student;
+  padding:.52rem .62rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.45rem;
 }
-.radar-review-pill-approved {
-  background: rgba(38, 143, 91, .12);
-  color: #218052;
-  font-weight: 650;
+.radar-brief-card>p:nth-of-type(2) strong,
+.radar-brief-card>p:nth-of-type(3) strong{
+  color:var(--md-primary-fg-color);
 }
-.radar-review-overall {
-  display: inline-flex;
-  align-items: baseline;
-  gap: .28rem;
-  padding: .38rem .65rem;
-  border-radius: .55rem;
-  background: var(--md-code-bg-color);
-  white-space: nowrap;
+.radar-brief-card>p.radar-chatgpt-compute{
+  grid-area:compute;
+  margin:.12rem 0 .25rem;
+  padding:.45rem .58rem;
+  border-radius:.4rem;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.75rem;
+  line-height:1.5;
 }
-.radar-review-overall > span {
-  color: var(--md-default-fg-color--light);
-  font-size: .74rem;
+.radar-brief-links{
+  grid-area:links;
+  margin-top:.25rem;
+  padding-top:.55rem;
+  border-top:1px solid var(--md-default-fg-color--lightest);
+  font-size:.8rem;
+  line-height:1.8;
 }
-.radar-review-overall > strong {
-  color: var(--md-primary-fg-color);
-  font-size: 1.25rem;
-  line-height: 1.2;
+.radar-brief-links a{
+  display:inline-block;
+  margin:.1rem .12rem .1rem 0;
+  padding:.12rem .48rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:999px;
+  background:var(--md-default-bg-color);
+  font-weight:650;
+  text-decoration:none;
 }
-.radar-review-overall > small {
-  color: var(--md-default-fg-color--light);
-  font-size: .72rem;
+.radar-brief-links a:hover{
+  border-color:var(--md-primary-fg-color);
+  text-decoration:none;
 }
-.radar-review-title {
-  margin: .35rem 0 .55rem !important;
-  font-size: 1.16rem !important;
-  line-height: 1.45 !important;
-  overflow-wrap: anywhere;
+
+/* Evidence-reviewed recommendations: score, value, student task and sources are distinct. */
+.radar-review-list{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:.8rem;
+  width:100%;
+  max-width:58rem;
+  margin:.85rem 0 1.2rem;
 }
-.radar-review-summary {
-  margin: .35rem 0 .9rem !important;
-  color: var(--md-default-fg-color--light);
-  font-size: .9rem;
-  line-height: 1.65;
+.radar-review-card{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  padding:.95rem 1rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.75rem;
+  background:var(--md-default-bg-color);
+  box-shadow:0 4px 16px rgba(30,45,90,.05);
 }
-.radar-review-score-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: .55rem;
-  margin: .8rem 0 1rem;
+.radar-review-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.6rem;
+  flex-wrap:wrap;
+  margin-bottom:.45rem;
 }
-.radar-review-score-item {
-  min-width: 0;
-  padding: .65rem .7rem;
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: .55rem;
-  background: var(--md-code-bg-color);
+.radar-review-card-labels{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem;
 }
-.radar-review-score-label {
-  display: block;
-  margin-bottom: .3rem;
-  color: var(--md-default-fg-color--light);
-  font-size: .76rem;
-  line-height: 1.45;
+.radar-review-pill{
+  display:inline-flex;
+  align-items:center;
+  padding:.18rem .5rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:999px;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.7rem;
+  line-height:1.45;
 }
-.radar-review-score-value {
-  display: flex;
-  align-items: baseline;
-  gap: .2rem;
+.radar-review-pill-approved{
+  border-color:rgba(38,143,91,.22);
+  background:rgba(38,143,91,.1);
+  color:#218052;
+  font-weight:700;
 }
-.radar-review-score-value strong {
-  font-size: 1.12rem;
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
+.radar-review-overall{
+  display:inline-flex;
+  align-items:baseline;
+  gap:.25rem;
+  padding:.3rem .55rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.5rem;
+  background:var(--md-code-bg-color);
+  white-space:nowrap;
 }
-.radar-review-score-value span {
-  color: var(--md-default-fg-color--light);
-  font-size: .7rem;
+.radar-review-overall>span,
+.radar-review-overall>small{
+  color:var(--md-default-fg-color--light);
+  font-size:.7rem;
 }
-.radar-review-detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .65rem;
-  margin: .9rem 0;
+.radar-review-overall>strong{
+  color:var(--md-primary-fg-color);
+  font-size:1.15rem;
+  line-height:1.2;
+  font-variant-numeric:tabular-nums;
 }
-.radar-review-detail {
-  min-width: 0;
-  padding: .75rem .85rem;
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: .6rem;
-  background: var(--md-default-bg-color);
+.radar-review-title{
+  margin:.25rem 0 .45rem!important;
+  font-size:1.08rem!important;
+  line-height:1.4!important;
+  overflow-wrap:anywhere;
 }
-.radar-review-detail h4 {
-  margin: 0 0 .35rem !important;
-  font-size: .86rem !important;
-  line-height: 1.45 !important;
+.radar-review-title a{font-weight:750;text-decoration:none}
+.radar-review-title a:hover{text-decoration:underline}
+.radar-review-summary{
+  margin:.3rem 0 .7rem!important;
+  color:var(--md-default-fg-color--light);
+  font-size:.85rem;
+  line-height:1.6;
 }
-.radar-review-value h4 {
-  color: var(--md-primary-fg-color);
+.radar-review-score-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.45rem;
+  margin:.65rem 0 .8rem;
 }
-.radar-review-student h4 {
-  color: var(--md-default-fg-color);
+.radar-review-score-item{
+  min-width:0;
+  padding:.5rem .6rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.5rem;
+  background:var(--md-code-bg-color);
 }
-.radar-review-detail p {
-  margin: 0 !important;
-  font-size: .87rem;
-  line-height: 1.65;
-  overflow-wrap: anywhere;
+.radar-review-score-label{
+  display:block;
+  margin-bottom:.22rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.72rem;
+  line-height:1.4;
+  overflow-wrap:anywhere;
 }
-.radar-review-sources {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: .45rem .75rem;
-  margin-top: .8rem;
-  padding-top: .7rem;
-  border-top: 1px solid var(--md-default-fg-color--lightest);
-  font-size: .82rem;
+.radar-review-score-value{
+  display:flex;
+  align-items:baseline;
+  gap:.2rem;
 }
-.radar-review-sources > strong {
-  color: var(--md-default-fg-color--light);
-  font-size: .75rem;
+.radar-review-score-value strong{
+  font-size:1.05rem;
+  line-height:1.2;
+  font-variant-numeric:tabular-nums;
 }
-.radar-review-sources a {
-  font-weight: 600;
-  text-decoration: none;
+.radar-review-score-value span{
+  color:var(--md-default-fg-color--light);
+  font-size:.68rem;
 }
-.radar-review-sources a:hover {
-  text-decoration: underline;
+.radar-review-detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.55rem;
+  margin:.75rem 0;
 }
-@media (max-width: 720px) {
-  .md-content__inner:has(.radar-review-intro) {
-    max-width: 100%;
+.radar-review-detail{
+  min-width:0;
+  padding:.65rem .75rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.55rem;
+  background:var(--md-default-bg-color);
+}
+.radar-review-detail h4{
+  margin:0 0 .3rem!important;
+  font-size:.82rem!important;
+  line-height:1.4!important;
+}
+.radar-review-value h4{color:var(--md-primary-fg-color)}
+.radar-review-student h4{color:var(--md-default-fg-color)}
+.radar-review-detail p{
+  margin:0!important;
+  font-size:.82rem;
+  line-height:1.58;
+  overflow-wrap:anywhere;
+}
+.radar-review-sources{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem .5rem;
+  margin-top:.7rem;
+  padding-top:.6rem;
+  border-top:1px solid var(--md-default-fg-color--lightest);
+  font-size:.78rem;
+}
+.radar-review-sources>strong{
+  margin-right:.1rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.72rem;
+}
+.radar-review-sources a{
+  display:inline-block;
+  padding:.12rem .48rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:999px;
+  background:var(--md-code-bg-color);
+  font-weight:650;
+  text-decoration:none;
+}
+.radar-review-sources a:hover{
+  border-color:var(--md-primary-fg-color);
+  text-decoration:none;
+}
+
+/* Empty states and unreviewed leads stay visible but deliberately secondary. */
+.radar-empty-state{
+  margin:.75rem 0 1rem;
+  padding:.72rem .85rem;
+  border:1px dashed var(--md-default-fg-color--lightest);
+  border-radius:.55rem;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.84rem;
+  line-height:1.6;
+}
+.radar-candidate-details{
+  margin:.75rem 0 1rem;
+  padding:.65rem .8rem;
+  border:1px dashed var(--md-default-fg-color--lightest);
+  border-radius:.6rem;
+  background:var(--md-default-bg-color);
+}
+.radar-candidate-details>summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.65rem;
+  cursor:pointer;
+  list-style:none;
+  font-size:.88rem;
+  font-weight:700;
+  line-height:1.5;
+}
+.radar-candidate-details>summary::-webkit-details-marker{display:none}
+.radar-candidate-details>summary::after{
+  content:"+";
+  flex:0 0 auto;
+  color:var(--md-primary-fg-color);
+  font-size:1.1rem;
+  line-height:1;
+}
+.radar-candidate-details[open]>summary{
+  margin-bottom:.6rem;
+  padding-bottom:.55rem;
+  border-bottom:1px solid var(--md-default-fg-color--lightest);
+}
+.radar-candidate-details[open]>summary::after{content:"−"}
+.radar-candidate-details>p{
+  margin:.45rem 0;
+  color:var(--md-default-fg-color--light);
+  font-size:.81rem;
+  line-height:1.6;
+}
+.radar-candidate-details ul{
+  margin:.55rem 0 0;
+  padding:0;
+  list-style:none;
+}
+.radar-candidate-details li{
+  margin:.45rem 0;
+  padding:.48rem .62rem;
+  border-left:2px solid var(--md-default-fg-color--lightest);
+  border-radius:.35rem;
+  background:var(--md-code-bg-color);
+  font-size:.81rem;
+  line-height:1.58;
+  overflow-wrap:anywhere;
+}
+.radar-candidate-details li a{font-weight:650}
+.radar-page-note{
+  margin:1rem 0 .5rem;
+  padding-top:.6rem;
+  border-top:1px solid var(--md-default-fg-color--lightest);
+  color:var(--md-default-fg-color--light);
+  font-size:.76rem;
+  line-height:1.6;
+}
+
+/* At narrower widths, keep every card in a single readable column. */
+@media(max-width:900px){
+  .md-content__inner:has(.radar-review-intro){max-width:100%}
+  .md-content__inner:has(.radar-review-intro) .radar-brief-list,
+  .radar-review-list{max-width:100%}
+  .radar-brief-card{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:
+      "meta"
+      "title"
+      "summary"
+      "value"
+      "student"
+      "compute"
+      "links";
+    gap:.08rem;
+    padding:.85rem;
   }
-  .md-content__inner:has(.radar-review-intro) .radar-brief-list {
-    max-width: 100%;
-  }
-  .radar-review-card {
-    padding: .85rem;
-  }
-  .radar-review-score-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .radar-review-detail-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  .radar-brief-card>h3{margin:.15rem 0 .35rem}
+  .radar-brief-card>p:nth-of-type(1),
+  .radar-brief-card>p:nth-of-type(2),
+  .radar-brief-card>p:nth-of-type(3),
+  .radar-brief-card>p.radar-chatgpt-compute{margin:.18rem 0}
+  .radar-review-card{padding:.85rem}
+  .radar-review-score-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .radar-review-detail-grid{grid-template-columns:minmax(0,1fr)}
 }
-@media (max-width: 380px) {
-  .radar-review-card-head {
-    align-items: flex-start;
-  }
-  .radar-review-overall {
-    margin-left: auto;
-  }
-  .radar-review-score-item {
-    padding: .55rem;
-  }
+@media(max-width:380px){
+  .radar-review-card-head{align-items:flex-start}
+  .radar-review-overall{margin-left:auto}
+  .radar-review-score-item{padding:.45rem}
+  .radar-review-card-labels{gap:.25rem}
+  .radar-review-pill{font-size:.66rem}
+  .radar-candidate-details{padding:.55rem .65rem}
 }
