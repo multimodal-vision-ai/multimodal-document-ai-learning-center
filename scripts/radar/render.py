@@ -488,17 +488,16 @@ def weekly_heading_label(report):
 
 
 def clean_resource_note(value):
-    """Avoid repeating archive/verification caveats on each individual weekly card."""
+    """Avoid repeating archive/verification caveats on each individual card."""
     text = str(value or "").strip()
-    text = re.sub(r"[（(]\\s*按已存档周报记录(?:，需实测复核)?\\s*[）)]", "", text)
+    text = re.sub(r"[（(]\s*按已存档周报记录(?:，需实测复核)?\s*[）)]", "", text)
     text = text.replace("据已存档周报记录", "")
     text = text.replace("已存档周报记录", "")
-    text = re.sub(r"，?\\s*需(?:按原设置|实测)复核", "", text)
-    text = re.sub(r"\\s+", " ", text)
-    text = re.sub(r"[（(]\\s*[）)]", "", text)
-    text = re.sub(r"([；;，,])\\s*([；;，,])", r"\\1", text)
+    text = re.sub(r"，?\s*需(?:按原设置|实测)复核", "", text)
+    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"[（(]\s*[）)]", "", text)
+    text = re.sub(r"([；;，,])\s*([；;，,])", r"\1", text)
     return text.strip(" ；;，,")
-
 
 def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
     """Render compact report cards; weekly period metadata lives in the section heading."""
