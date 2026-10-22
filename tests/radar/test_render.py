@@ -31,6 +31,23 @@ class RadarRenderTests(unittest.TestCase):
         self.assertIn("T4 16GB", cleaned[1])
         self.assertIn("开放权重与数据", cleaned[2])
 
+    def test_recommendation_copy_is_student_facing(self):
+        raw = (
+            "TrajTok减少冗余视觉token。原论文及Apple研究页说明它试图在长视频推理中降低视觉token冗余。"
+            "当前尚未在本项目中独立复现实验，GPU配置仍需核实。"
+        )
+        cleaned = render.clean_recommendation_text(raw)
+        self.assertNotIn("原论文及Apple研究页说明", cleaned)
+        self.assertNotIn("本项目中", cleaned)
+        self.assertIn("该方法旨在减少长视频推理中的冗余视觉 token。", cleaned)
+        self.assertIn("GPU 需求仍需实测确认", cleaned)
+
+    def test_evidence_links_have_student_friendly_labels(self):
+        self.assertEqual(render.evidence_label("https://arxiv.org/abs/1234.5678"), "论文")
+        self.assertEqual(render.evidence_label("https://github.com/example/project"), "GitHub 仓库")
+        self.assertEqual(render.evidence_label("https://machinelearning.apple.com/research/example"), "研究介绍")
+        self.assertEqual(render.evidence_label("https://example.org/research"), "相关资源")
+
     def test_approved_project_and_pending_leads_are_separated(self):
         with tempfile.TemporaryDirectory() as temp:
             tempdir = Path(temp)
@@ -180,7 +197,17 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("radar-review-card", first["radar/index.md"])
             self.assertIn("radar-review-score-grid", first["radar/index.md"])
             self.assertIn("radar-review-detail-grid", first["radar/index.md"])
-            self.assertIn("主要来源", first["radar/index.md"])
+            self.assertIn("相关资源", first["radar/index.md"])
+            self.assertNotIn("主要来源", first["radar/index.md"])
+            self.assertNotIn("补充来源", first["radar/index.md"])
+            self.assertIn("推荐标准", first["radar/index.md"])
+            self.assertIn("评分说明", first["radar/index.md"])
+            self.assertIn("为什么值得研究", first["radar/index.md"])
+            self.assertIn("学生可以怎么做", first["radar/index.md"])
+            self.assertIn("论文与项目资源", first["radar/index.md"])
+            self.assertNotIn("通过复核", first["radar/index.md"])
+            self.assertNotIn("主题匹配度 ≥8.0", first["radar/index.md"])
+            self.assertNotIn("原始证据", first["radar/index.md"])
             self.assertIn("radar-review-intro", first["radar/index.md"])
             self.assertIn("2026年第42周", first["radar/index.md"])
             self.assertIn("历史档案检索", first["radar/index.md"])
