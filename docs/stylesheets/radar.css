@@ -864,3 +864,9 @@
   .radar-archive-keyword{grid-column:auto}
   .radar-archive-countline{grid-column:auto}
 }
+
+.radar-archive-date{
+  color:var(--md-default-fg-color--light);
+  font-size:.72rem;
+  font-variant-numeric:tabular-nums;
+}
