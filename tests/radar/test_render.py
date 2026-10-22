@@ -116,6 +116,18 @@ class RadarRenderTests(unittest.TestCase):
                     "data_open": None
                 }]
             })
+            save(data / "automation-health.json", {
+                "schema_version": 1,
+                "checked_at": "2026-10-21T11:30:00Z",
+                "overall_status": "degraded",
+                "task_statuses": {
+                    "daily": {"label": "每日科研预警", "status": "healthy", "generated_at": "2026-10-21T11:00:00Z", "age_hours": 0.5, "message": "报告通过校验。"},
+                    "weekly": {"label": "每周科研周报", "status": "legacy_schema", "generated_at": "2026-10-19T09:22:26Z", "age_hours": 50.0, "message": "报告尚未采用 schema v2。"},
+                    "monthly": {"label": "每月科研选题", "status": "not_published", "generated_at": None, "age_hours": None, "message": "计划任务尚未发布有效报告。"}
+                },
+                "publication": {"status": "success", "checked_at": "2026-10-21T11:00:00Z", "run_url": "https://github.com/example/repo/actions/runs/123", "source_commit": "abc123", "home_verified": True, "detail_verified": True, "message": "端点验证通过。"},
+                "watchdog": {"last_run_at": "2026-10-21T11:30:00Z"}
+            })
             with patch.object(render, "DOCS", docs), patch.object(render, "DATA", data):
                 render.render(now)
                 first = {str(p.relative_to(docs)): p.read_text(encoding="utf-8")
@@ -136,6 +148,10 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("ChatGPT 科研价值精选", first["index.md"])
             self.assertIn("综合 8.0/10", first["index.md"])
             self.assertIn("历史 ChatGPT 筛选档案", first["index.md"])
+            self.assertIn("周期任务无人值守验收", first["index.md"])
+            self.assertIn("每月科研选题", first["index.md"])
+            self.assertIn("旧版格式", first["index.md"])
+            self.assertIn("查看 GitHub Actions", first["index.md"])
             self.assertIn("Unreviewed &lt;img&gt; Long Video Understanding", first["index.md"])
             self.assertIn("RPD+SARA", first["index.md"])
             self.assertIn("ChatGPT 科研价值精选", first["radar/index.md"])
