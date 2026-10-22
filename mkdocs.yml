@@ -59,6 +59,7 @@ extra_css:
   - stylesheets/extra.css
   - stylesheets/shanshui.css
   - stylesheets/radar.css
+  - stylesheets/radar-v2.css
 
 extra_javascript:
   - js/visitor.js
