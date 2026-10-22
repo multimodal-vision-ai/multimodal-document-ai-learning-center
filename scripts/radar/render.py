@@ -476,8 +476,19 @@ def chatgpt_home_section(chatgpt_reports, now, limit=3):
 """
 
 
+def weekly_heading_label(report):
+    """Compact weekly metadata shown once beside the section title."""
+    if not isinstance(report, dict) or report.get("status") not in ("completed", "no_high_value"):
+        return "暂无已发布周报"
+    period = report_period_label("weekly", report)
+    anchor = report.get("generated_at") or report.get("window_end") or report.get("window_start")
+    dt = _period_datetime(anchor)
+    screened_date = dt.strftime("%Y-%m-%d") if dt else "日期待核实"
+    return f"{period}，筛选日期：{screened_date}"
+
+
 def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
-    """Render a short, student-readable report; archives can request all saved items."""
+    """Render compact report cards; weekly period metadata lives in the section heading."""
     labels = {"weekly": "周报", "monthly": "月度总结"}
     label = labels.get(report_type, "研究报告")
     if not isinstance(report, dict) or not report:
@@ -487,10 +498,14 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
     generated = escape(str(generated_raw or "时间未记录")[:10])
     period = escape(report_period_label(report_type, report))
     if status == "no_high_value":
-        return (
-            '<div class="radar-empty-state"><strong>本期未发现达到门槛的高价值项目。</strong>'
-            f'<p>{period} · 任务于 {generated} 完成；系统不会为了填满页面而推荐普通线索。</p></div>'
+        message = (
+            '<strong>本期未发现达到门槛的高价值项目。</strong>'
+            '<p>系统不会为了填满页面而推荐普通线索。</p>'
+            if report_type == "weekly"
+            else '<strong>本期未发现达到门槛的高价值项目。</strong>'
+            f'<p>{period} · 任务于 {generated} 完成；系统不会为了填满页面而推荐普通线索。</p>'
         )
+        return f'<div class="radar-empty-state">{message}</div>'
     if status != "completed":
         return f'<div class="radar-empty-state">最近一次{label}尚无可展示结果。</div>'
     items = [
@@ -499,6 +514,11 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
         and item.get("selection_status", "selected") in ("selected", "chatgpt_selected", "recommended")
     ]
     if not items:
+        if report_type == "weekly":
+            return (
+                '<div class="radar-empty-state"><strong>本期没有保存可展示的精选条目。</strong>'
+                '<p>通过评估的研究成果出现后，将在此处展示。</p></div>'
+            )
         return (
             '<div class="radar-empty-state"><strong>本期没有保存可展示的精选条目。</strong>'
             f'<p>报告周期：{period}；任务记录时间：{generated}。</p></div>'
@@ -514,11 +534,15 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
         opportunity = item.get("research_opportunity") or item.get("next_steps") or ""
         screened_raw = item.get("screened_at") or generated_raw
         screened_at = escape(str(screened_raw or "日期未记录")[:10])
-        meta = [
-            f'<span class="radar-period-badge">{period}</span>',
-            f'<span class="radar-brief-label">{escape(category_label(item.get("category")))}</span>',
-            f'<span class="radar-brief-date">筛选日期：{screened_at}</span>'
-        ]
+        category = f'<span class="radar-brief-label">{escape(category_label(item.get("category")))}</span>'
+        meta = (
+            category if report_type == "weekly"
+            else (
+                f'<span class="radar-period-badge">{period}</span>'
+                + category
+                + f'<span class="radar-brief-date">筛选日期：{screened_at}</span>'
+            )
+        )
         resource_meta = []
         params = item.get("parameters") or item.get("parameter_scale")
         gpu = item.get("gpu") or item.get("gpu_requirement")
@@ -535,8 +559,10 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
                 links.append(link(url, link_label))
         cards.append(
             '<article class="radar-brief-card radar-weekly-card">'
-            f'<div class="radar-brief-meta">{"".join(meta)}</div>'
+            '<div class="radar-brief-heading">'
+            f'<div class="radar-brief-meta">{meta}</div>'
             f'<h3>{title}</h3>'
+            '</div>'
             + (f'<p class="radar-brief-summary">{escape(summary[:220])}</p>' if summary else "")
             + (f'<p class="radar-brief-value"><strong>价值点</strong>{escape(why[:220])}</p>' if why else "")
             + (f'<p class="radar-brief-student"><strong>学生切入</strong>{escape(opportunity[:240])}</p>' if opportunity else "")
@@ -544,11 +570,20 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True):
             + (f'<div class="radar-brief-links">{"".join(links)}</div>' if links else "")
             + '</article>'
         )
-    extra = (
-        f'<p class="radar-page-note">报告周期：{period} · 更新于 {generated}。'
-        + (f' 当前页面展示前 {len(shown_items)} 项；' if limit is not None and len(items) > len(shown_items) else "")
-        + '</p>'
-    ) if include_note else ""
+    if not include_note:
+        extra = ""
+    elif report_type == "weekly":
+        extra = (
+            f'<p class="radar-page-note">当前展示前 {len(shown_items)} 项；'
+            '更多已评估内容可在历史周报中查看。</p>'
+            if limit is not None and len(items) > len(shown_items) else ""
+        )
+    else:
+        extra = (
+            f'<p class="radar-page-note">报告周期：{period} · 更新于 {generated}。'
+            + (f' 当前页面展示前 {len(shown_items)} 项；' if limit is not None and len(items) > len(shown_items) else "")
+            + '</p>'
+        )
     return '<div class="radar-brief-list">' + "".join(cards) + '</div>' + extra
 
 
@@ -720,6 +755,7 @@ def render(now=None):
     page = DOCS / "radar/index.md"
     content = page.read_text(encoding="utf-8")
     content = replace(content, "STAGE_TWO", stage_two_detail_listing(chatgpt_reports, screening_queue))
+    content = content.replace("WEEKLY_PERIOD_LABEL", escape(weekly_heading_label(chatgpt_reports.get("weekly", {}))))
     for marker, report_type in (
         ("CHATGPT_WEEKLY", "weekly"),
         ("CHATGPT_MONTHLY", "monthly"),
