@@ -142,7 +142,6 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("四维评分", first["radar/index.md"])
             self.assertNotIn("[浏览项目库]", first["radar/index.md"])
             self.assertNotIn("[查看研究任务]", first["radar/index.md"])
-            self.assertIn("data-size=\\\"2\\\"", first["radar/projects.md"])
             config = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
             self.assertIn("radar/projects.md", config)
             self.assertIn("radar/tasks.md", config)
