@@ -228,7 +228,7 @@ jobs:
               fi
               echo "::warning::radar-data advanced concurrently; rebasing snapshot (attempt $attempt/3)"
               git fetch origin radar-data
-              git rebase origin/radar-data
+              git rebase FETCH_HEAD
               sleep 3
             done
             if [ "$pushed" -ne 1 ]; then
