@@ -3,6 +3,7 @@
     "category": "video",
     "description": "Turns a YouTube link or a local video into a structured ODT, DOCX or PDF: speech recognised, slides pulled out of the frame, the whole thing organised by a language model.",
     "discovered_from": "github",
+    "evidence_urls": [],
     "first_seen_at": "2026-10-22T00:29:38+00:00",
     "github_forks": 2,
     "github_language": "Python",
@@ -12,10 +13,11 @@
     "github_url": "https://github.com/kryadov/video2docs",
     "id": "github-1020359264",
     "published_at": "2025-07-15T18:38:12Z",
+    "related_urls": [],
     "review": "pending",
     "source_url": "https://github.com/kryadov/video2docs",
     "title": "kryadov/video2docs",
-    "updated_at": "2026-10-22T00:28:45Z"
+    "updated_at": "2026-10-22T00:30:29Z"
   },
   {
     "category": "small-vlm",
@@ -1788,12 +1790,33 @@
     "updated_at": "2026-10-20T20:51:03Z"
   },
   {
+    "abstract": "Motivated by the human ability to integrate experience across language, perception, and action, we introduce UniWALM, a unified world-action-language model that learns video, action, and language in a single shared representation, where each modality is both a conditioning signal and a supervision target. We ask: can jointly generating language enrich this shared representation, improving manipulation and supporting memory-dependent behavior? Unlike prior approaches that attach a reasoning or vision-language model to a video-action backbone and run them as distinct stages, UniWALM unifies all three modalities inside a single mixture-of-transformers backbone whose per-modality diffusion heads co-denoise synchronously, decoding subtask and textual memory in the same pass as action with no separate planning stage; the generated language is re-consumed on the next step, closing a language-as-memory loop without an external planner or memory bank. To keep the action stream reliable under this richer objective, we further introduce Flow Matching with Correction (FMC), a training objective that teaches recovery from perturbed action trajectories at no inference-time cost. UniWALM consistently improves over same-backbone baselines (e.g., FastWAM) on compositional pick-and-place (MolmoSpaces) and across the memory-dependent subset of RMBench, where it reaches 34.5% without any pretrained language or reasoning model and exceeds Mem-0's keyframe-equipped setup (28.5%) using only a single anchor frame. On a real-world Find-the-Item task, generating textual memory lifts success from 11.1% to 61.1%, while state-of-the-art VLAs stay at or below chance (<=33.3%).",
+    "arxiv_categories": [
+      "cs.RO",
+      "cs.AI",
+      "cs.CV"
+    ],
+    "authors": [
+      "Rahul Sajnani",
+      "Diego Romeres",
+      "Mingyuan Zhang",
+      "Kai Gao",
+      "Carl Qi",
+      "Baichuan Huang",
+      "Srinath Sridhar",
+      "Dylan Randle",
+      "Lillian J. Ratliff",
+      "Jose Barreiros",
+      "Manikantan Nambi",
+      "Jeroen Vanbaar"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28626",
     "paper_url": "https://arxiv.org/abs/2610.28626v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28626v1",
     "published_at": "2026-10-20T17:59:04Z",
     "related_urls": [],
     "review": "pending",
@@ -1802,12 +1825,24 @@
     "updated_at": "2026-10-20T17:59:04Z"
   },
   {
+    "abstract": "Visual anomaly detection aims to detect abnormal objects, while anomaly samples are often scarce during model training. Assembling multiple pretrained detectors can help by leveraging their transferable image scores and anomaly maps. However, most existing ensemble methods apply fixed fusion rules over saved predictions which struggle when pretrained detectors clearly disagree due to different training objectives, priors, and visual representations. To this end, we design AnomalyAgent, a post-training fusion framework for accurate visual anomaly detection. AnomalyAgent aligns heterogeneous scores and maps, summarizes score- and region-level disagreement, and treats fusion as a finite action-selection problem. It implements two types of actions: 1) score actions that determine how to fuse image-level detector confidence via consensus, robust aggregation, detector weighting, or score-map consistency; 2) map actions that fuse dense anomaly responses via consensus, detector weighting, geometric aggregation, or disagreement correction. A constrained vision-language model (VLM) is introduced to inspect high-conflict samples and select valid score action and map action to produce the final prediction. We evaluate AnomalyAgent on MVTec AD and VisA as primary benchmarks, together with seven additional public anomaly benchmarks and Real-IAD for large-scale score-level evaluation. Across these benchmarks, AnomalyAgent consistently improves over equal-weight fusion and achieves the best mean image AUROC and pixel AP among the compared fusion methods on MVTec AD and VisA, while demonstrating robust transfer across additional anomaly domains.",
+    "arxiv_categories": [
+      "cs.AI"
+    ],
+    "authors": [
+      "Shangquan Sun",
+      "Wenjun Luo",
+      "Xu He",
+      "Yoonsoo Lee",
+      "Shijian Lu"
+    ],
     "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28560",
     "paper_url": "https://arxiv.org/abs/2610.28560v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28560v1",
     "published_at": "2026-10-20T17:22:25Z",
     "related_urls": [],
     "review": "pending",
@@ -1816,12 +1851,23 @@
     "updated_at": "2026-10-20T17:22:25Z"
   },
   {
+    "abstract": "Smart glasses can help users understand their activities and surroundings, but small vision-language models must preserve useful evidence within limited computation. This is difficult because redundant frames consume the visual budget, while aggressive spatial compression can discard relevant details. Although gaze identifies the wearer's focus, the question may require evidence from the surrounding scene. To address these constraints, we propose GazeLens, which combines frame selection with gaze- and question-guided token reduction. First, HOG transitions and image sharpness select frames before visual encoding. For each selected frame, Gaussian pooling then forms gaze-focused and complementary summaries. Because their relevance depends on the question, a lightweight gate blends them into a primary token. Together with a global scene token, this retains both focused and contextual summaries within two tokens per frame. On StreamGaze, GazeLens achieves higher macro and micro accuracy than the evaluated full-grid and token-reduction baselines, with lower input-forward FLOPs than the shared-backbone token-reduction baselines.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Trong-Thang Pham",
+      "Anh Nguyen",
+      "Hien Van Nguyen",
+      "Ngan Le"
+    ],
     "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28502",
     "paper_url": "https://arxiv.org/abs/2610.28502v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28502v1",
     "published_at": "2026-10-20T16:43:06Z",
     "related_urls": [],
     "review": "pending",
@@ -1830,12 +1876,28 @@
     "updated_at": "2026-10-20T16:43:06Z"
   },
   {
+    "abstract": "Object-goal navigation (ObjectNav) requires an embodied agent to find an instance of a specified category in an unseen environment and stop near it. The agent typically relies on an object detector but must judge online from a limited egocentric video stream, sometimes a single frame, whether a detected candidate is the target. Detectors often confidently mistake similar objects, such as a sofa for a bed, and stopping at a false positive fails the episode. Prevailing systems also approach candidates greedily, leaving them occluded or partially observed. We present CLOSER, an evidence-aware active verification framework that treats stopping as closed-loop evidence acquisition, coupling vision-language model (VLM) verification with active perception. CLOSER fine-tunes an open-source VLM to label each view of a candidate tracked across frames as target, non-target, or uncertain, selects complementary views with an embedding-based diversity gate, and fuses their per-view probabilities with a lightweight network. If the fused judgment remains uncertain, a diffusion policy drives the agent toward the candidate using only the tracked mask and depth until the decision becomes decisive. CLOSER runs locally and plugs into existing ObjectNav systems without retraining them. On Gibson and Habitat-Matterport 3D, it raises average success rate by 3.6 points and success weighted by path length by 2.0 points, showing that verifying evidence before committing improves embodied navigation.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.RO"
+    ],
+    "authors": [
+      "Pengying Wu",
+      "Mingye Jiang",
+      "Yunze Hu",
+      "Zhejia Wen",
+      "Kangjie Zhou",
+      "Zongru Yang",
+      "Zhe Peng",
+      "Chang Liu"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28476",
     "paper_url": "https://arxiv.org/abs/2610.28476v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28476v1",
     "published_at": "2026-10-20T16:27:33Z",
     "related_urls": [],
     "review": "pending",
@@ -1844,12 +1906,22 @@
     "updated_at": "2026-10-20T16:27:33Z"
   },
   {
+    "abstract": "Multimodal rerankers are usually dedicated models: a vision-language model (VLM) is trained on retrieval data to score the candidates of a query. Scoring options is not specific to reranking. System One decision models such as Jev map a state and a typed question to one probability per option without generating text, and general models can make such decisions with little or no training. Reranking is one such decision, with the query and its candidates as the state and the candidates as the options. We therefore argue that a general VLM can serve as a multimodal reranker through System One decisions, and that decision tuning can improve its reranking. We ask a VLM one choice question over the top 16 candidates of a first-stage retriever and rank the candidates by the probabilities of their labels, read from one forward pass. On MMEB-V2 image retrieval, this choice scores 5.4 to 7.3 hit@1 above a yes/no question per candidate, and the yes/no question falls below the first stage. With the choice, zero-shot Qwen3.8-27B beats the supervised Qwen3-VL-Reranker-2B on all three benchmarks and comes within 1.6 points of Reranker-8B on each. It matches Reranker-8B on MMEB-V2 visual documents (84.79 vs. 84.78 nDCG@5), at 1.1 to 1.5 times its latency. JEV-27B-VL, the same backbone tuned on text decisions only, improves page reranking by 0.6 to 1.1 points, with gains on most tasks (sign test, p <= 0.017), and leaves natural images unchanged. The zero-shot model is larger than the supervised rerankers and of a newer generation, so these comparisons are confounded; we discuss this and other alternative views, and the experiments that would test the position.",
+    "arxiv_categories": [
+      "cs.IR"
+    ],
+    "authors": [
+      "Zhuchenyang Liu",
+      "Yao Zhang",
+      "Yu Xiao"
+    ],
     "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28435",
     "paper_url": "https://arxiv.org/abs/2610.28435v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28435v1",
     "published_at": "2026-10-20T16:00:45Z",
     "related_urls": [],
     "review": "pending",
@@ -1858,12 +1930,21 @@
     "updated_at": "2026-10-20T16:00:45Z"
   },
   {
+    "abstract": "Deep learning has become the default tool for medical image analysis, driven by the open-source movement. However, achieving the best performance on a given task remains difficult, with architecture selection and hyperparameter optimization (HPO) still considered \"more of an art than a science\". Automated machine learning (AutoML) automates parts of model training, yet helps little in medical imaging: general-purpose approaches lack medical architectures and preprocessing, and medical-focused ones demand engineering expertise and remain confined to narrow tasks such as 3D segmentation. We introduce MedicalMLOmni, a multi-agent AutoML framework that automates model training for diverse single- and multi-modal medical tasks through a natural language interface. Specifically, MedicalMLOmni performs evidence-based planning by retrieving published results to guide model selection and configuration, and employs parallel HPO where multiple agents explore adjustment strategies concurrently. MedicalMLOmni achieves the best score on 19 of 20 benchmarks; PMC-VQA is the exception, where a vision-language model with broader pre-training leads. Backbone-matched controls attribute the gains to the framework, not the backbone. By removing coding requirements, MedicalMLOmni lowers the barrier for domain experts with rich datasets but limited engineering expertise.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Yiqing Shen",
+      "Mathias Unberath"
+    ],
     "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28410",
     "paper_url": "https://arxiv.org/abs/2610.28410v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28410v1",
     "published_at": "2026-10-20T15:49:38Z",
     "related_urls": [],
     "review": "pending",
@@ -1872,12 +1953,31 @@
     "updated_at": "2026-10-20T15:49:38Z"
   },
   {
+    "abstract": "Agents built on vision language models (VLMs) now compete with learned policies on robot manipulation leaderboards. We ask how far a coding agent can go when it controls a robot instead of a computer, and where it stops. Our system, HexaShell, gives the agent a thin harness: one command line that turns its commands into robot motion and makes no decisions of its own. On the robot, the agent keeps doing what it does best: it reads output, writes code and runs tests. Two agents of the same model share the work. An acting agent runs each episode. After a failure, an optimizer agent reads the full record of the episode, with every command, image and message, finds the cause, and writes or fixes small programs called tools, each with its own tests. What the agents learn stays as code, and no demonstrations or training are needed. At run time, the tools use only what a real robot also has: RGB images, camera calibration and the state of the arms. They find objects by triangulation between camera views. Because these inputs are the same in simulation and on hardware, the tools move to a real robot with a different arm after only a small change for the arm. We build the tools on ten layouts of one seed per task with Codex and GPT-6-Astra and freeze them; the eight Open tasks share one set of tools. In RoboDojo's official evaluation on a hidden seed, 50 episodes for each of the 42 tasks, HexaShell reaches 46.9% success and a progress score of 53.2, the state of the art on the official RoboDojo leaderboard. The limit is contact, not reasoning: memory tasks reach 81.0%, but precision tasks only 32.0%. We open source the tools evolved so far at https://github.com/HexaFuture/HexaShell.",
+    "arxiv_categories": [
+      "cs.RO"
+    ],
+    "authors": [
+      "Hongcheng Gao",
+      "Alex Zhou",
+      "Jay Zhu",
+      "Zelin Zheng",
+      "Shijia Ge",
+      "Xiping Li",
+      "Di Wu",
+      "Yazhe Wang",
+      "Jianshu Zeng",
+      "Xuan Shangguan",
+      "Yongli Wang",
+      "Yexing Wan"
+    ],
     "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-23479",
     "paper_url": "https://arxiv.org/abs/2610.23479v2",
+    "pdf_url": "https://arxiv.org/pdf/2610.23479v2",
     "published_at": "2026-10-16T13:56:16Z",
     "related_urls": [],
     "review": "pending",
@@ -1886,12 +1986,32 @@
     "updated_at": "2026-10-20T15:47:35Z"
   },
   {
+    "abstract": "Visual tool use enables vision-language models (VLMs) to acquire task-relevant evidence, but its effectiveness can be limited by predefined visual operations and the tool-use strategies learned during training. Representing these operations and strategies as reusable external skills allows them to be refined through self-evolution without updating model parameters. However, skill refinement can introduce performance regressions. Meanwhile, inspecting accumulated task execution trajectories together with skill evolution history may lead to evolution evidence overload. To address these challenges, we propose VisualEvolve, a self-evolving framework that evolves executable visual operations and tool-use strategies for VLMs through a Select--Execute--Evolve--Evaluate cycle. Skill-Library Snapshot Selection uses performance on a fixed validation set disjoint from execution tasks to select an effective historical snapshot for subsequent evolution, limiting the propagation of performance regressions. Progressive Evidence Access (PEA) guides capability-gap diagnosis through a coarse-to-fine hierarchy comprising the Skill-Performance Report, Evolution Log, Trajectory Summaries, and relevant raw trajectory segments. Across four VLM backbones and six evaluation sets from three benchmarks, VisualEvolve improves over the Initial Skill Library in 23 of 24 settings, with a maximum gain of 15.1 percentage points on VisualProbe Hard using Qwen3.5-Plus. Ablation studies support the contributions of Snapshot Selection and PEA, while further experiments show that skills can be improved using experience from different data settings and directly reused across backbones. Moreover, VisualEvolve enables effective skill self-evolution with over an order of magnitude fewer task-solving trajectories than estimated for representative RL-based methods.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Jiawei Wang",
+      "Yucun Li",
+      "Xueqi Li",
+      "Shenghao Wang",
+      "Xinquan Gong",
+      "Dan Zhang",
+      "Zheqi Lv",
+      "Yuquan Le",
+      "Shaozu Yuan",
+      "An Zhang",
+      "Da Cao",
+      "Tat-Seng Chua"
+    ],
     "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28386",
     "paper_url": "https://arxiv.org/abs/2610.28386v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28386v1",
     "published_at": "2026-10-20T15:37:38Z",
     "related_urls": [],
     "review": "pending",
@@ -1900,12 +2020,27 @@
     "updated_at": "2026-10-20T15:37:38Z"
   },
   {
+    "abstract": "Do Vision-Language Models (VLMs) count what they see, or what they know about the world? We introduce CounterCount, a diagnostic dataset of paired factual and counterfactual (CF) images, in which the CF image contains an atypical count of a subject's attribute (e.g., a rabbit with four ears), together with annotations localizing the counted attributes. Humans answer both types of images nearly perfectly ($98.9\\%$ and $97.5\\%$), but across 16 VLMs (14 open-weight and 2 closed-source), average accuracy drops from $91.6\\%$ on factual to $49.5\\%$ on CF images, with most errors stemming from responses that match the canonical count, therefore revealing a bias towards knowledge priors rather than reliance on visual information. Based on these findings, we perform an analysis that reveals two interesting insights behind this gap. First, models exhibit a ``System-1''-like response behavior, falling back on canonical counts after a shallow recognition of the subject. Second, model activations partially contain the visual evidence necessary to answer correctly, yet models underutilize it, attending less to the counted attributes when they provide biased answers. Input manipulations that break visual context, introduce cueing or reasoning, or direct amplification of the model's internal attention to relevant regions can reduce such biases. CounterCount goes beyond showing that VLMs fall back on knowledge priors, revealing that once a familiar context is recognized, models favor prior knowledge over available visual evidence rather than failing to encode that evidence.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Reem Alzahrani",
+      "Bushra Bin Hemid",
+      "Hassan Alshanqiti",
+      "Zaid Alyafeai",
+      "Paul Gavrikov",
+      "Bernard Ghanem",
+      "Abdelrahman Eldesokey"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2605-17826",
     "paper_url": "https://arxiv.org/abs/2605.17826v2",
+    "pdf_url": "https://arxiv.org/pdf/2605.17826v2",
     "published_at": "2026-05-18T04:00:05Z",
     "related_urls": [],
     "review": "pending",
@@ -1914,12 +2049,26 @@
     "updated_at": "2026-10-20T15:34:58Z"
   },
   {
+    "abstract": "A growing body of work proposes dynamic expert-skipping methods for Mixture-of-Experts (MoE) models that adjust the number of experts activated per token during inference, aiming to preserve model quality while further reducing the number of active parameters. These methods have added calibrated importance scores, inter-expert similarity metrics, or learned per-token allocators in order to identify experts to skip. However, different calibration regimes, different reductions in the effective number of experts, and evaluation suites make comparisons difficult. We classify four representative prior methods into a unified taxonomy and benchmark them against a natural, simple baseline: statically reducing the number of experts $k$ (i.e., same reduced $k$ across all layers and tokens). We provide a fair comparison of these methods at matched expert-compute budget, on two modern MoEs (Gemma4-26B-A4B and Qwen3-30B-A3B) in a text-only setting and a contemporary vision-language model (Qwen3-VL) in a multimodal setting. Surprisingly, we find that the simple baseline is hard to outperform consistently across models, modalities, benchmarks, and calibration settings. The methods we benchmark often underperform the baseline and achieved gains, when present, are minor. We further find that the effective $k$ achieved (or optimized for) in calibration can diverge from the effective $k$ in testing, resulting in over- or under-estimating the compute at inference time. Based on these findings, we recommend a calibration-free per-modality static $k$ reduction and validate this on a held-out model and modality. We further argue that a static control at matched measured compute is the baseline any dynamic skipping method must beat.",
+    "arxiv_categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "authors": [
+      "Jakob Steimle",
+      "Thomas Elsken",
+      "Daniel Ehrhardt",
+      "Lukas Rinder",
+      "Daniel Cremers",
+      "Xi Wang"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28369",
     "paper_url": "https://arxiv.org/abs/2610.28369v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28369v1",
     "published_at": "2026-10-20T15:29:19Z",
     "related_urls": [],
     "review": "pending",
@@ -1928,12 +2077,25 @@
     "updated_at": "2026-10-20T15:29:19Z"
   },
   {
+    "abstract": "Object counting in videos remains a poorly characterized capability of multimodal large language models. Counting questions are included in many existing VideoQA benchmarks, but the ground-truth count distributions in these benchmarks are heavily skewed toward small values. Across the nine benchmarks we survey, the median ground-truth count is at most five, and the three most frequent values together account for between 45% and 93% of the videos. The resulting mean accuracy is then dominated by the most frequent counts; a value-dependent bias at a rare count contributes negligibly to the average and remains invisible. We introduce CountVideoBench, a benchmark of 2,600 synthetic videos covering 26 cardinalities in the interval [5, 50] (100 videos each), grouped into six clusters of consecutive counts that span the range while enabling near-neighbor comparisons. Each video contains a single class of static objects under a controlled camera motion, removing object motion and reducing recognition as confounds. We evaluate sixteen video-language models from nine architecture families in a zero-shot setting. No model exceeds 27.6% Exact Match. The dependence of accuracy on cardinality varies across models, ranging from monotonic decline to a non-monotonic peak-and-collapse pattern, which rules out increasing difficulty with cardinality as the dominant explanation of counting failure. Every model further concentrates its predictions on its own set of preferred integers, with accuracy peaks coinciding with these values and collapsing at adjacent counts. These findings highlight the need for balanced, diagnostic counting benchmarks to reliably assess this fundamental visual capability.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI",
+      "cs.LG"
+    ],
+    "authors": [
+      "Marc Chapus",
+      "Carlos Crispim-Junior",
+      "Véronique Eglin",
+      "Atilla Baskurt"
+    ],
     "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28356",
     "paper_url": "https://arxiv.org/abs/2610.28356v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28356v1",
     "published_at": "2026-10-20T15:20:28Z",
     "related_urls": [],
     "review": "pending",
@@ -1942,12 +2104,24 @@
     "updated_at": "2026-10-20T15:20:28Z"
   },
   {
+    "abstract": "Realistic few-shot adaptation of medical vision-language models (VLMs) can leave low-prevalence classes without any labeled support. The training-free SS- Text+ solver remains operational in this setting, but its zero-support prototypes receive no visual adaptation and fall back to a purely textual class prototype. We in- troduce Gated Knowledge-Guided Prototype Transfer (GProtoT), a pre-repulsion module that transfers supported-class visual residuals to missing classes using VLM similarity and an ontology-based clinical distance. A validation-free evidence gate scales transfer based on semantic relevance and residual agreement, thereby limiting unsupported extrapolation. In 50 paired realistic one-shot trials on MESSIDOR with FLAIR features, severe and proliferative diabetic retinopathy were absent from every support set. Relative to SS-Text+, gated ProtoT improved missing-class recall by 5.23 points, average class accuracy by 1.37 points, and the missing/supported recall harmonic mean by 1.83 points. It reduced negative- transfer frequency from 46-48% for ungated transfer to 2%, while at the cost of reductions of 1.20 percentage points in supported-class recall and 0.45 percentage points in top-1 accuracy. These results indicate that evidence-based gating provides a safety mechanism for the knowledge source. GProtoT is based on SS- Text+ and requires no gradients, validation data, or additional model inference, of- fering a low-compute path toward accountable adaptation under incomplete clini- cal supervision. Code is available: https://github.com/sumaiyaafridi/GProtoT",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Sumaiya Fazal",
+      "Rizwan Qureshi",
+      "Laleh Behjat",
+      "Samira Ebrahimi Kahou"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28350",
     "paper_url": "https://arxiv.org/abs/2610.28350v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28350v1",
     "published_at": "2026-10-20T15:16:09Z",
     "related_urls": [],
     "review": "pending",
@@ -1956,12 +2130,24 @@
     "updated_at": "2026-10-20T15:16:09Z"
   },
   {
+    "abstract": "Instruction-based image editing models can now add, remove a specified number of objects or change their category while preserving the scene. Yet these models often fail to produce the correct number, and these failures grow sharply as scenes become more complex and the requested count increases. Current benchmarks largely miss this problem: they score edits with holistic similarity metrics or with vision-language model (VLM) judges that are themselves poor at counting, so numerical errors go unnoticed or are graded incorrectly. As a result, the true numerical ability of today's editing models has never been accurately measured. We address this issue with ABACUS, a new benchmark, evaluation protocol and dedicated scoring metric for numerical image editing. Our protocol is judge-free: no VLM or MLLM scores an edit or counts objects (a VLM only confirms the category of rare ambiguous crops). Instead, it verifies each edit at the instance level against panoptic ground truth confirmed by detector consensus, checking both that the exact requested count was achieved and that the rest of the scene was preserved, across the add, remove and change operations. By evaluating leading image editors, our method reveals substantial numerical editing failures that worsen with increasing scene complexity and object count; failures that prior benchmarks often overlooked or misjudged.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI",
+      "cs.LG"
+    ],
+    "authors": [
+      "Aymen Lassoued",
+      "Angelique Loesch",
+      "Romaric Audigier"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28316",
     "paper_url": "https://arxiv.org/abs/2610.28316v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28316v1",
     "published_at": "2026-10-20T14:53:22Z",
     "related_urls": [],
     "review": "pending",
@@ -1970,12 +2156,30 @@
     "updated_at": "2026-10-20T14:53:22Z"
   },
   {
+    "abstract": "Cardiac magnetic resonance imaging (CMR) enables assessment of cardiac anatomy, ventricular function, and myocardial tissue characteristics. Clinicians interpret these images by identifying cardiac structures and focusing on the regions relevant to each clinical question, motivating anatomically guided vision-language models (VLMs). Yet CMR-specific supervision for anatomical localisation and clinical question answering remains limited. To address this gap, we investigate fine-grained CMR visual question answering through anatomical grounding and guided attention. We construct 128,915 anatomical-grounding and 42,799 clinical QA pairs across short-axis cine, late gadolinium enhancement, and long-axis cine. These datasets support anatomical recognition, localisation, and clinical assessment without requiring paired reports for individual training images. To help the model learn where to look, we introduce Cardiac Anatomy-Routed Attention (CARA), which selects predicted anatomical priors according to the question and guides decoder attention with learned task-specific strengths. Combining anatomical grounding pretraining with CARA yields our model, CARA-VL. Experiments demonstrate CARA-VL's strengths in clinical assessment and regional localisation across CMR imaging settings, with promising generalization to an external clinical cohort. Together, our data and method provide a practical framework for studying and advancing cardiac visual understanding in VLMs. We will release the QA data derived from public datasets upon publication.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Bangwei Guo",
+      "Xiao Chen",
+      "Boris Mailhe",
+      "Jia Yao",
+      "Yiqing Wang",
+      "Ankush Mukherjee",
+      "Yikang Liu",
+      "Zheyuan Zhang",
+      "Hang Yu",
+      "Terrence Chen",
+      "Shanhui Sun"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2609-39899",
     "paper_url": "https://arxiv.org/abs/2609.39899v3",
+    "pdf_url": "https://arxiv.org/pdf/2609.39899v3",
     "published_at": "2026-09-30T15:00:44Z",
     "related_urls": [],
     "review": "pending",
@@ -1984,12 +2188,27 @@
     "updated_at": "2026-10-20T14:44:39Z"
   },
   {
+    "abstract": "VGL-stGen is a multimodal large language model adapted from a pretrained medical vision-language model using paired lung H&E and spatial transcriptomics with single-cell references. Training integrates image-expression and expression-cell-type pairs, and gene-conditioned pseudo-labels transfer transcriptomic cell-type supervision to histology images. One deployed checkpoint supports thirteen evaluated tasks spanning tissue and cell-type classification, gene prediction and conditional expression completion from combinations of histology, cell identity and observed gene expression. Task-specific decoding produces categorical labels, gene lists and structured expression levels. For conditional completion, fixing queried gene identities and predicting their levels autoregressively improves structured prediction. Controlled adaptation shows that restricting supervision to requested expression-level tokens can further improve image-conditioned completion. Image-permutation experiments indicate that correctly paired histology adds information beyond observed expression. External classification relies partly on computational references with shared annotation lineage, and some H&E sources were exposed during cancer training or model development. Within these conditions, VGL-stGen demonstrates how a medical vision-language backbone can learn from spatial transcriptomics and histology to connect tissue morphology and molecular states through shared generative modeling.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI",
+      "q-bio.QM"
+    ],
+    "authors": [
+      "Haenara Shin",
+      "Dongjoo Lee",
+      "Sungwoo Bae",
+      "Kwon Joong Na",
+      "Daeseung Lee",
+      "Hongyoon Choi"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28266",
     "paper_url": "https://arxiv.org/abs/2610.28266v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28266v1",
     "published_at": "2026-10-20T14:22:47Z",
     "related_urls": [],
     "review": "pending",
@@ -2018,12 +2237,24 @@
     "updated_at": "2026-10-20T14:01:54Z"
   },
   {
+    "abstract": "Scientific discovery increasingly relies on federated learning over data from high-resolution instruments, and these data are strongly non-IID and long-tailed. Coreset selection could shorten training, but existing federated coreset methods either prune with local heuristics that ignore the global class distribution, or first train a warm-up model at every client and upload class centroids of its features. This makes coreset selection a distributed bottleneck that consumes GPU time at every client, grows with the model and the number of clients, and must be repeated for every architecture. We introduce SCOPE, named for Semantic Coreset using Orthogonal Projection Embeddings, a scalable, training-free federated coreset framework for long-tailed data. Each client scores its samples once with a frozen, compact vision-language model and uploads scalar statistics per class. The server merges these into a global class profile, which lets each client remove anomalies and prune redundant samples only from classes that are locally abundant but globally common. SCOPE therefore requires no warm-up training, needs a single exchange with the server, and uploads a payload that depends only on the number of classes. On GPU nodes of an HPC cluster, with four datasets, including scientific micrographs, and six baselines, SCOPE selects its coreset up to 7.7x faster and uploads up to 293x less data than the feature-based baseline. As the number of clients grows from 10 to 500, SCOPE's time before training grows by fewer seconds than any baseline's, and at 500 clients the baselines need 1.7 to 3.6x SCOPE's time. Trained on the coreset, the global model reaches 98% of the full-data accuracy in 18 to 42% fewer global rounds than full-data training, with 8 to 21% less client computation over 200 rounds.",
+    "arxiv_categories": [
+      "cs.LG",
+      "cs.CV"
+    ],
+    "authors": [
+      "Md Anwar Hossen",
+      "Nathan R. Tallent",
+      "Luanzheng Guo",
+      "Ali Jannesary"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2603-12976",
     "paper_url": "https://arxiv.org/abs/2603.12976v2",
+    "pdf_url": "https://arxiv.org/pdf/2603.12976v2",
     "published_at": "2026-03-13T13:24:12Z",
     "related_urls": [],
     "review": "pending",
@@ -2032,12 +2263,25 @@
     "updated_at": "2026-10-20T13:49:38Z"
   },
   {
+    "abstract": "Applying South Africa's draft R3337 warning criteria to food-package photographs requires nutrition, ingredient and product-form evidence. This study presents a region-guided evidence extraction and abstention-aware screening workflow for draft R3337. A three-class detector localises nutrition information panels, ingredient lists and product-identity regions, after which PaddleOCR and structured extraction recover nutrient values, ingredient evidence and product-form information. Recovered evidence is aggregated and assessed using deterministic draft R3337 rules. When evidence is incomplete, uncertain or conflicting, the workflow abstains through Review or Insufficient evidence rather than forcing an automatic outcome. For qualifying unresolved cases, a selective vision-language model (VLM) review stage using Qwen3-VL 8B Instruct reassesses unresolved evidence. Accepted evidence is merged and the same deterministic rules are reapplied. The workflow was applied to 442 products represented by 3,929 images. Evaluation used a manual validation set of 65 products. Before selective VLM review, 31 of 60 decidable products received automatic outcomes and 30 were correct, giving 51.7% coverage and 96.8% accuracy among automatic outcomes (selective accuracy). Selective VLM review resolved eight additional products, increasing coverage to 65.0%. Of 39 automatic outcomes, 38 were correct, giving 97.4% selective accuracy. The single false warning was retained from the rules-only workflow, while no unsafe warning omissions occurred after selective review. Evidence-level evaluation nevertheless identified incorrect VLM-recovered nutrition, ingredient and product-form evidence. These findings show that selective VLM review can recover unresolved evidence, while deterministic screening and explicit abstention remain necessary for reliable image-based draft R3337 screening.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Mayimunah Nagayi",
+      "Alice Scaria Khan",
+      "Tamryn Frank",
+      "Rina Swart",
+      "Clement Nyirenda"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28211",
     "paper_url": "https://arxiv.org/abs/2610.28211v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28211v1",
     "published_at": "2026-10-20T13:48:36Z",
     "related_urls": [],
     "review": "pending",
@@ -2087,12 +2331,29 @@
     "updated_at": "2026-10-20T13:10:31.000Z"
   },
   {
+    "abstract": "Large vision-language models (VLMs) often exhibit weakened safety alignment with the integration of the visual modality. Even when text prompts contain explicit harmful intent, adding an image can substantially increase jailbreak success rates. In this paper, we observe that VLMs can clearly distinguish benign inputs from harmful ones in their representation space. Moreover, even among harmful inputs, jailbreak samples form a distinct internal state that is separable from refusal samples. These observations suggest that jailbreaks do not arise from a failure to recognize harmful intent. Instead, the visual modality shifts representations toward a specific jailbreak state, thereby leading to a failure to trigger refusal. To quantify this transition, we identify a jailbreak direction and define the jailbreak-related shift as the component of the image-induced representation shift along this direction. Our analysis shows that the jailbreak-related shift reliably characterizes jailbreak behavior, providing a unified explanation for diverse jailbreak scenarios. Finally, we propose a defense method that enhances VLM safety by removing the jailbreak-related shift (JRS-Rem) at inference time. Experiments show that JRS-Rem provides strong defense across multiple scenarios while preserving performance on benign tasks. Code is available at https://github.com/LeeQueue513/JRS-Rem.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Zhihua Wei",
+      "Qiang Li",
+      "Jian Ruan",
+      "Zhenxin Qin",
+      "Leilei Wen",
+      "Ruiyang Qin",
+      "Qingzhuo Wang",
+      "Dongrui Liu",
+      "Wen Shen"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2603-17372",
     "paper_url": "https://arxiv.org/abs/2603.17372v3",
+    "pdf_url": "https://arxiv.org/pdf/2603.17372v3",
     "published_at": "2026-03-18T05:31:29Z",
     "related_urls": [],
     "review": "pending",
@@ -2101,12 +2362,22 @@
     "updated_at": "2026-10-20T12:45:53Z"
   },
   {
+    "abstract": "Vision-language-action (VLA) models can learn a wide range of robotic skills, but combining separately trained skills remains challenging. The original training data may be unavailable for joint retraining, while directly merging model weights can cause interference. We propose NestedVLA, which consolidates independently fine-tuned VLA policies without access to their original training data. Instead of merging all updates into one checkpoint, a hypernetwork embedded in the VLA generates action-expert weight updates for a selected task. Each task's compressed vision-language model update is stored separately, and both updates are added to a frozen base VLA to instantiate the corresponding policy. We evaluate NestedVLA by consolidating three policies fine-tuned with reinforcement learning on MetaWorld, ManiSkill, and CALVIN. It achieves 66.7% average success, improving on the strongest model-merging baseline by 41.1 percentage points. It performs within 1 percentage point of per-task fine-tuning on ManiSkill and substantially narrows the gap on CALVIN. In this three-policy setting, total storage is 1.5x that of a single full checkpoint. Code is available at https://github.com/WanyuGroup/NeurIPS2026-NestedVLA.",
+    "arxiv_categories": [
+      "cs.RO",
+      "cs.LG"
+    ],
+    "authors": [
+      "Guodong Du",
+      "Wanyu Lin"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-23271",
     "paper_url": "https://arxiv.org/abs/2610.23271v3",
+    "pdf_url": "https://arxiv.org/pdf/2610.23271v3",
     "published_at": "2026-10-16T10:42:29Z",
     "related_urls": [],
     "review": "pending",
@@ -2115,12 +2386,27 @@
     "updated_at": "2026-10-20T12:11:31Z"
   },
   {
+    "abstract": "Recent post-training methods, particularly Reinforcement Learning with Verifiable Rewards (RLVR), have significantly enhanced the reasoning ability of Large Vision-Language Models (LVLMs). However, the sparse nature of verifiable rewards provides little token-level supervision for failed rollouts, often leading to inefficient exploration in complex multimodal reasoning tasks. Although policy distillation can offer dense guidance, external teacher based methods introduce substantial computational overhead, while answer conditioned tuning methods may expose answer-level information and induce shortcut-like generation behavior. To address these limitations, we propose PTD-PO, a Privileged Tutoring Distillation Policy Optimization framework for RLVR that provides dense guidance without exposing the answer to the student policy. Specifically, PTD-PO constructs structured privileged hints from spatial attention guidance and intermediate textual reasoning steps, and uses them through in-context learning to produce step-wise token-distribution supervision. The student is still optimized under the original answer-free context, and its failed rollouts are aligned with the hint-augmented reference model at the token-distribution level. To further stabilize distillation under the distribution shift between guided and unguided contexts, we introduce a Top-K Jensen-Shannon divergence objective that focuses alignment on informative token probabilities while reducing memory overhead. Experiments on LVLMs ranging from 2B to 8B parameters show that PTD-PO consistently outperforms RLVR and distillation baselines, mitigates entropy collapse, and improves complex multimodal reasoning performance.",
+    "arxiv_categories": [
+      "cs.AI"
+    ],
+    "authors": [
+      "Shizhe Xiang",
+      "Ke An",
+      "Wenlong Yu",
+      "Yue Liu",
+      "Tingting Wu",
+      "Jian Luan",
+      "Pei Fu",
+      "Qilong Wang"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2606-07000",
     "paper_url": "https://arxiv.org/abs/2606.07000v2",
+    "pdf_url": "https://arxiv.org/pdf/2606.07000v2",
     "published_at": "2026-06-05T07:43:22Z",
     "related_urls": [],
     "review": "pending",
@@ -2129,12 +2415,24 @@
     "updated_at": "2026-10-20T11:18:42Z"
   },
   {
+    "abstract": "Examining existing benchmarks for grounding in 3D VLMs reveals a pervasive \"semantic leakage\" in the evaluation and prompting protocols: a heavy reliance on bounding boxes as spatial prompts or representation primitives. Because bounding boxes are highly informative of object categories, they introduce a shortcut for the models to neglect visual information during 3D VLM training. We demonstrate this with a \"blind\" LLM that, prompted only with the box coordinates, can perform surprisingly well. To further analyze this shortcut, we propose point-based grounding prompting - querying models with a single 3D point instead of a box. Under this protocol, the accuracy of the blind LLM drops from 36.4% to 18.0% on ScanNet's Nr3D, and similarly degrades for 3D VLMs (e.g. LL3DA). Building on this insight, we introduce P$^3$-VLM, a novel tri-pathway 3D VLM that supports point-based prompts and achieves 52.1% state-of-the-art accuracy on location-grounded captioning under this setting. To achieve this, we redesign the architecture while keeping it detector-free, scene-centric, and suitable for 3D GS inputs. P$^3$-VLM utilizes three complementary pathways (location-, task-, and context-aware), enabling strong reasoning about scenes without any bounding box dependencies. The key benefit of point-based learning is a consistent improvement across settings: P$^3$-VLM achieves state-of-the-art performance under point-based grounding while also improving robustness, OOD generalization, and performance on ungrounded scene-centric 3D VQA benchmarks, reflecting its reduced reliance on bounding-box shortcuts and resulting stronger visual-spatial reasoning.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Anna-Maria Halacheva",
+      "Jan-Nico Zaech",
+      "Sombit Dey",
+      "Luc Van Gool",
+      "Danda Pani Paudel"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-28018",
     "paper_url": "https://arxiv.org/abs/2610.28018v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.28018v1",
     "published_at": "2026-10-20T11:08:07Z",
     "related_urls": [],
     "review": "pending",
@@ -2143,12 +2441,22 @@
     "updated_at": "2026-10-20T11:08:07Z"
   },
   {
+    "abstract": "Large Vision-Language Models (VLMs) are successful in addressing a multitude of vision-language understanding tasks, such as Visual Question Answering (VQA), but their memory and compute requirements remain a concern for practical deployment. A promising class of techniques for mitigating this concern is Knowledge Distillation, where knowledge from a high-capacity Teacher network is transferred to a considerably smaller Student network. However, the capacity gap between the two networks is both a blessing and a curse: the smaller the Student network, the better its efficiency, and the stronger (typically, also larger) the Teacher, the more knowledge it carries; yet, beyond a point, the larger capacity gap between the two leads to worse knowledge transfer. To counter this effect, we propose a bottom-up cascaded knowledge distillation (CKD) framework. Instead of treating knowledge transfer as an activity involving one high-capacity Teacher (or an ensemble of such), inspired by human formal education systems, we introduce one (potentially, more) additional Teacher(s) of intermediate capacity that gradually bring the Student network to the next level, where the next (higher-capacity) Teacher can take over. We provide a theoretical analysis to motivate why progressive reduction of the Teacher-Student gap may improve distillation. We apply the proposed framework on models built upon the LLaVA methodology and evaluate the derived models on seven standard, publicly available VQA benchmarks, demonstrating competitive performance with recent compact VLMs. Source code for cascaded distillation and trained models are available at https://github.com/IDT-ITI/LLaVA-CKD.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Nikolaos Gkalelis",
+      "Vasileios Mezaris"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2605-10641",
     "paper_url": "https://arxiv.org/abs/2605.10641v2",
+    "pdf_url": "https://arxiv.org/pdf/2605.10641v2",
     "published_at": "2026-05-11T14:28:44Z",
     "related_urls": [],
     "review": "pending",
@@ -2157,12 +2465,24 @@
     "updated_at": "2026-10-20T11:01:38Z"
   },
   {
+    "abstract": "Class-Incremental Learning (CIL) enables models to learn new classes continually while preserving past knowledge. Recently, vision-language models like CLIP offer transferable features via multimodal pre-training, making them well-suited for CIL. However, real-world visual and linguistic concepts are inherently hierarchical: a textual concept like \"dog\" subsumes fine-grained categories such as \"Labrador\" and \"Golden Retriever,\" and each category is associated with corresponding images. Nevertheless, existing CLIP-based CIL methods fail to explicitly capture this inherent hierarchy, leading to feature drift of fine-grained classes during incremental updates and ultimately to catastrophic forgetting. To address this challenge, we propose HASTEN (Hierarchical Semantic Tree Anchoring), a hierarchy-aware framework that uses semantic structure to stabilize CLIP-based CIL. Rather than treating classes as isolated labels, HASTEN leverages external hierarchical knowledge as structured supervision to organize visual and textual features in hyperbolic space, helping maintain parent--child relations as new tasks arrive and mitigating feature drift. Since the shared hyperbolic mapper is updated across tasks, we further stabilize it by constraining its updates to a null space induced by prior-task features, reducing interference with previous mappings while retaining adaptability to new classes. Extensive experiments on nine benchmarks show that HASTEN consistently outperforms existing methods while reducing feature drift and catastrophic forgetting. Code is available at: https://github.com/LAMDA-CL/NeurIPS2026-HASTEN.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.LG"
+    ],
+    "authors": [
+      "Tao Hu",
+      "Lan Li",
+      "Zhen-Hao Xie",
+      "Da-Wei Zhou"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2511-15633",
     "paper_url": "https://arxiv.org/abs/2511.15633v2",
+    "pdf_url": "https://arxiv.org/pdf/2511.15633v2",
     "published_at": "2025-11-19T17:14:47Z",
     "related_urls": [],
     "review": "pending",
@@ -2171,12 +2491,27 @@
     "updated_at": "2026-10-20T10:00:47Z"
   },
   {
+    "abstract": "Recent advances in large (vision) language models have enabled computer-use agents that automate digital workflows via fine-grained keyboard and mouse operations. However, such agents remain fragile in long-horizon settings, where errors accumulate and executed actions leave unintended side effects, making the ability to recover from failures critical. Yet, existing remedies remain inadequate: environment resets are infeasible in proprietary settings, action replay is prohibitively expensive over long horizons, and API-based rollback is limited to web environments, leaving model-based recovery largely unexplored. To address this gap, we present ReTrace, a scalable evaluation framework for systematically studying recovery behavior in computer-use agents. We formalize Transition-Consistent Recovery: identical downstream actions from the recovered and target states must yield identical outcomes. We operationalize this criterion through goal-oriented action replay following controlled error injection. Using ReTrace, we present the first systematic study of autonomous, model-based recovery, revealing that (i) ideal recovery can unlock model's latent task completion capabilities, (ii) current computer-use agents fail to exploit their latent recovery capabilities, and (iii) accurate model-based recovery yields measurable end-to-end gains. Together, these findings establish recovery as a fundamental capability for building reliable computer-use agents. Our code and dataset is available at https://github.com/BangProx/ReTRACE.",
+    "arxiv_categories": [
+      "cs.AI",
+      "cs.CL",
+      "cs.LG"
+    ],
+    "authors": [
+      "Byeonghun Bang",
+      "Sangwoo Park",
+      "Jinheon Baek",
+      "Kangsan Kim",
+      "Youngwan Lee",
+      "Sung Ju Hwang"
+    ],
     "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27954",
     "paper_url": "https://arxiv.org/abs/2610.27954v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27954v1",
     "published_at": "2026-10-20T09:59:12Z",
     "related_urls": [],
     "review": "pending",
@@ -2185,12 +2520,26 @@
     "updated_at": "2026-10-20T09:59:12Z"
   },
   {
+    "abstract": "Person re-identification (ReID) ranks an image gallery using either an image query or a textual query. In image-to-image (I2I) ReID, viewpoint, illumination, occlusion, and background changes can make distractors appear more similar than the true match. In text-to-image (T2I) ReID, incomplete or ambiguous descriptions may omit key visual evidence. We study this problem for vision-language model (VLM) based ReID, where attributes such as clothing color and carried objects provide useful fine-grained matching cues. However, directly using attribute-prompt similarities as retrieval scores is unreliable because templated prompts can be biased, correlated, and poorly calibrated. We therefore propose \\textbf{PR}ompt-guided \\textbf{A}ttribute-based \\textbf{I}nference-time \\textbf{S}imilarity \\textbf{E}nhancement (\\texttt{PRAISE}), a query-side test-time adaptation framework for VLM-based ReID. Instead of treating prompts as scores, \\texttt{PRAISE} uses a transferable attribute-prompt bank to construct an \\emph{Attribute-Conditioned Subspace} (ACS): a query-dependent low-rank subspace induced by the most compatible attribute prompts. ACS provides a controlled attribute-conditioned geometry for reshaping query--gallery affinities and guiding lightweight inference-time updates without identity or attribute labels. Experiments across multiple I2I- and T2I-ReID benchmarks show that \\texttt{PRAISE} consistently improves VLM retrieval backbones and outperforms both generic and ReID-specific TTA baselines.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Rajarshi Bhattacharya",
+      "Aryan Shukla",
+      "Shakeeb Murtaza",
+      "Christian Desrosiers",
+      "Jose Dolz",
+      "Maguelonne Heritier",
+      "Eric Granger"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27944",
     "paper_url": "https://arxiv.org/abs/2610.27944v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27944v1",
     "published_at": "2026-10-20T09:52:06Z",
     "related_urls": [],
     "review": "pending",
@@ -2199,12 +2548,23 @@
     "updated_at": "2026-10-20T09:52:06Z"
   },
   {
+    "abstract": "Subliminal learning is the phenomenon in which a model transmits its preferences to another model through data that do not explicitly express them. As models increasingly curate training data for other models, we ask whether this transfer can arise from choosing among near-duplicate images while keeping the source photographs and human-written captions fixed. For each photograph, a curator selects one of eight near-duplicate variants by caption likelihood, without target-specific prompts. Students trained on target-preferring curators' selections show higher mean target-versus-alternatives log-likelihood ratios in an image-free readout than students trained on neutral selections. Under a prespecified decision rule, this directional shift appears for an owl target in LLaVA-1.5, Qwen2.5-VL, Qwen3-VL, and Gemma 4, with curators and students initialized from the same base checkpoint, and target rotations move it toward camels, oak trees, and a political figure. The owl target-selected student also scores above all count-matched random-reselection students in three models and above 55 of 60 in LLaVA-1.5, and Qwen3-VL shows the shift again on a new source bank with newly trained curators. Its size depends on dataset size, learning rate, and training budget; greedy choices among the eight options move toward the target by 10.4 percentage points in Qwen3-VL and 0.5-1.3 points elsewhere. First-generation students also pass the owl preference to a second generation through captions without explicit owl mentions in LLaVA-1.5 and Qwen3-VL. Thus even a deduplication-style choice among near-identical copies can shift students' target-relative readouts with source photographs and captions fixed; the tested linear probes classify the selecting arm with accuracies up to 59.7% (chance 50%).",
+    "arxiv_categories": [
+      "cs.LG"
+    ],
+    "authors": [
+      "Jaeyoung Kim",
+      "Eunseok Kim",
+      "Dongsuk Jang",
+      "Seunghyun Kim"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27943",
     "paper_url": "https://arxiv.org/abs/2610.27943v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27943v1",
     "published_at": "2026-10-20T09:51:18Z",
     "related_urls": [],
     "review": "pending",
@@ -2213,12 +2573,26 @@
     "updated_at": "2026-10-20T09:51:18Z"
   },
   {
+    "abstract": "History-dependent robotic manipulation requires task context and interaction history, as the current observation alone is insufficient to determine the next action. Hierarchical frameworks use task memory for high-level subgoal reasoning and low-level policies for execution. However, memory updates require accurate completion assessment: similar observations may correspond to different execution phases, and prematurely recording completion can mislead subsequent subgoal reasoning. We present EventSync, a hierarchical framework that coordinates task reasoning and action execution through event-driven memory updates. A vision-language model generates subgoals from task plans and interaction history, while a vision-language-action model executes them. A lightweight Event Monitor combines visual observations with end-effector trajectories to determine whether the current subgoal is complete. The framework records the current subgoal in its completed-subgoal history and triggers subsequent reasoning only after obtaining completion evidence. With visual history in the executor, EventSync achieves 64.5% overall success on RoboMME, exceeding the best baseline reported in the benchmark by 20.0 percentage points. Further analysis shows that this update mechanism helps build a reliable completed-subgoal history. Experiments on four real-robot tasks with different memory requirements validate the framework's effectiveness in real-world robotic manipulation.",
+    "arxiv_categories": [
+      "cs.RO"
+    ],
+    "authors": [
+      "Jingjiao Zhao",
+      "Dong Jing",
+      "Mingyu Cao",
+      "Ruochuan Shi",
+      "Xiansheng Chen",
+      "Pengwei Wang",
+      "Zhiwu Lu"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27917",
     "paper_url": "https://arxiv.org/abs/2610.27917v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27917v1",
     "published_at": "2026-10-20T09:29:49Z",
     "related_urls": [],
     "review": "pending",
@@ -2227,12 +2601,26 @@
     "updated_at": "2026-10-20T09:29:49Z"
   },
   {
+    "abstract": "Chinese historical documents are invaluable cultural treasures, but their complexity poses significant comprehension challenges for non-specialists. Despite the success of Large Language Models (LLMs) and Large Vision-Language Models (LVLMs) in modern document tasks, their capabilities in Long (full-book) Historical Document understanding remain largely unexplored. To bridge this gap, we introduce LongHisDoc, the first benchmark tailored for long historical document understanding. LongHisDoc comprises 1,012 expert-annotated QA pairs derived from 101 PDF documents, with an average of 85.1 pages and 42,776.4 tokens per document. It spans 10 categories and features four QA types: single-page, cross-page, multi-hop, and unanswerable. Answering these questions requires integrating multimodal evidence from text, layout, and visual elements. Our evaluation reveals that the top-performing LVLM and LLM achieve only 62.9% and 69.9% accuracy, respectively, highlighting a substantial performance gap. Furthermore, we assess various modal retrievers and the end-to-end RAG performance to provide references for Retrieval-Augmented Generation (RAG) systems. We believe that LongHisDoc serves as a comprehensive benchmark to catalyze future research in full-book historical document understanding. The benchmark and evaluation code are available at https://huggingface.co/datasets/qweq12433454/LongHisDoc and https://github.com/SCUT-DLVCLab/LongHisDoc.",
+    "arxiv_categories": [
+      "cs.CL"
+    ],
+    "authors": [
+      "Zeyu Shan",
+      "Yongxin Shi",
+      "Shihang Wu",
+      "Peirong Zhang",
+      "Yuanyuan Fang",
+      "Zhaopeng Wang",
+      "Lianwen Jin"
+    ],
     "category": "document",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-14531",
     "paper_url": "https://arxiv.org/abs/2610.14531v2",
+    "pdf_url": "https://arxiv.org/pdf/2610.14531v2",
     "published_at": "2026-10-10T03:44:08Z",
     "related_urls": [],
     "review": "pending",
@@ -2271,12 +2659,28 @@
     "updated_at": "2026-10-20T09:02:47Z"
   },
   {
+    "abstract": "Anticipating how users will interact with their surroundings is essential for proactive systems that provide timely assistance in AR, VR, and embodied applications. Prior work typically forecasts hand-object interactions directly from historical observations, leaving intention and contact geometry implicit. However, similar observation histories can precede semantically or geometrically distinct futures. Inspired by behavioral evidence that gaze can provide early cues for underlying intention, we propose Gaze2HOI, a gaze-aware framework that formulates hand-object interaction forecasting as a hierarchical problem comprising intention inference, contact grounding, and coupled hand-object motion generation. Specifically, Gaze2HOI first weights gaze cues by fixation strength and recency, and uses them to modulate the visual representations of a vision-language model (VLM) through Temporal Gaze Saliency Modulation (TGSM), thereby reducing semantic ambiguity in intention inference. Subsequently, an Anticipatory Contact Grounding (ACG) module maps these structured intentions into explicit contact, support, and placement fields, effectively mitigating geometric ambiguity. Driven by these explicit conditions, a diffusion-based model jointly generates the 6-DoF object trajectories and future articulated motion of both hands. To evaluate Gaze2HOI, we further introduce EgoAIM, a phase-aware benchmark that organizes egocentric hand-object interactions into four phases defined by evolving hand-object relations and provides fine-grained intention annotations. Extensive experiments demonstrate that Gaze2HOI achieves state-of-the-art performance in both intention inference and motion forecasting, even approaching oracle-level end-to-end performance in specific interaction phases. Project page: https://gaze2hoi.github.io/.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Chuanyang Ma",
+      "Chenye Wang",
+      "Yixuan Wang",
+      "Huiling Zhou",
+      "Xingqun Qi",
+      "Muyi Sun",
+      "Man Zhang",
+      "Caifeng Shan",
+      "Zhenan Sun"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27877",
     "paper_url": "https://arxiv.org/abs/2610.27877v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27877v1",
     "published_at": "2026-10-20T08:59:54Z",
     "related_urls": [],
     "review": "pending",
@@ -2285,12 +2689,28 @@
     "updated_at": "2026-10-20T08:59:54Z"
   },
   {
+    "abstract": "We present ZeroDex, a zero-shot framework for long-horizon dexterous manipulation that grounds language instructions into executable 3D task plans from calibrated multi-view RGB images. Our framework builds on the grounding ability that vision-language models (VLMs) already exhibit in 2D and lifts their predictions into 3D through multi-view fusion, which extends VLM grounding beyond image-space keypoints to the metric 3D quantities that manipulation actually requires: contact points, placement targets, and tool-motion anchors. Because execution is driven by these 3D groundings rather than a learned policy, the system preserves the VLM's open-world generalization, without collecting demonstrations or post-training for a specific task or embodiment. The VLM decomposes a complex instruction into a sequence of atomic tasks, each executed by a primitive from a small reusable library that covers manipulation tasks including pick-and-place and tool-use: for tool-use, we retrieve an object-centric atomic action corresponding to the inferred skill category and align its stored 6D tool trajectory to the grounded keypoints; for dexterous execution, we expand the lifted grasp keypoint into a task-conditioned grasp affordance region and generate feasible grasp-motion pairs with an arm-hand motion generator. Real-world experiments show improved 3D grounding accuracy and higher task success than zero-shot visual-prompting and constraint-based baselines, both of which ground from a single RGB-D view, and our demonstration-free system outperforms VLA policies fine-tuned on 100 task demonstrations. We further demonstrate long-horizon manipulation, where execution verification and replanning recover from intermediate failures, and show that the system generalizes to unseen objects and tool-use tasks in novel scenes.",
+    "arxiv_categories": [
+      "cs.RO"
+    ],
+    "authors": [
+      "Jisoo Kim",
+      "Sangwon Baik",
+      "Taeksoo Kim",
+      "Sungjoo Kim",
+      "Junyoung Lee",
+      "Mingi Choi",
+      "Kisang Park",
+      "Sungjoon Choi",
+      "Hanbyul Joo"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2606-19340",
     "paper_url": "https://arxiv.org/abs/2606.19340v3",
+    "pdf_url": "https://arxiv.org/pdf/2606.19340v3",
     "published_at": "2026-06-17T17:59:56Z",
     "related_urls": [],
     "review": "pending",
@@ -2299,12 +2719,27 @@
     "updated_at": "2026-10-20T08:53:43Z"
   },
   {
+    "abstract": "Multimodal retrieval-augmented generation over visually rich documents requires evidence at a finer granularity than entire pages. Existing visual retrievers typically index or return full pages, whereas training region-level retrievers often requires costly query-to-region annotations or noisy model-generated labels. We introduce GARRET, a region-retrieval framework trained from (page, question, answer) triplets through differentiable generative feedback. A shared context-preserving retriever produces page and region multi-vector representations. During training, their retrieval scores define a soft routing distribution over candidate region crops. An auxiliary vision-language model attends to each crop separately, aggregates crop-specific contexts using the routing weights, and predicts the question followed by the answer under a next-token prediction objective. Gradients through the routing distribution assign query-conditioned credit to the indexed region representations, without requiring query-to-region annotations. At inference, the auxiliary model is removed. GARRET also reuses the contextualized region representations, together with page summary tokens, to construct a compact page representation. We introduce ViDoRe-V3-Region, a corpus-wide benchmark containing 200,682 fixed candidate regions across eight domains. GARRET achieves a macro nDCG@10 of 0.4126, outperforming the strongest visual baseline by 2.94 points. On page retrieval, it remains comparable to ColQwen2.5-v0.2 while indexing 47.8% fewer vectors per page.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.IR"
+    ],
+    "authors": [
+      "Weijian Jian",
+      "Siyang Chen",
+      "Yuguang Yang",
+      "Yajun Zhang",
+      "Chunyu Xie",
+      "Dawei Leng",
+      "Yuhui Yin"
+    ],
     "category": "document",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27829",
     "paper_url": "https://arxiv.org/abs/2610.27829v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27829v1",
     "published_at": "2026-10-20T08:19:14Z",
     "related_urls": [],
     "review": "pending",
@@ -2313,12 +2748,27 @@
     "updated_at": "2026-10-20T08:19:14Z"
   },
   {
+    "abstract": "Vision-language models (VLMs) are exact on small sets and drift into estimation on larger ones, a profile reminiscent of children before they master counting. Children cross the barrier with epistemic actions: pointing at each item while reciting number words, moving counted items aside, partitioning the array. We give VLMs the same actions as dumb image tools with no visual intelligence of their own in a training-free agent loop. Our central claim is about measurement, not intervention: a model that counts by marking leaves a normally hidden serial procedure on the image, and the developmental principles of counting turn those marks into an interpretable audit of serial visual reasoning: every tag is classified against point-level ground truth as on-target, duplicate, phantom, or omitted, the answer is checked against the number of tags, and order irrelevance is tested by forcing opposite traversal orders. Across 9 models, 682 images, and 7 harness conditions we find that (i) the exact-counting range is a model-specific signature spanning nearly two orders of magnitude (R80 from 3 to 150 dots); (ii) as an intervention the finger mostly fails: tags help 4 of 9 models on small-count photographs, hurt imprecise pointers, and rarely beat a verbal routine or a blind point list; what the loop buys is an auditable trace, not accuracy; (iii) as measurement it succeeds: a tag-perturbation probe shows that precise pointers read their answers off the tags, pointing precision tracks which models benefit, dense scenes fail by omission, and models rarely revise after seeing their own tags; and (iv) the capacities dissociate: models follow an instructed traversal order yet often change their answer when it reverses, and children's regular-over-scattered advantage appears only under the routine and survives lattices that defeat a rows-times-columns shortcut.",
+    "arxiv_categories": [
+      "cs.AI",
+      "cs.CL",
+      "cs.CV",
+      "cs.LG",
+      "cs.RO"
+    ],
+    "authors": [
+      "Yingxin Jia",
+      "Hui Geng",
+      "Wenxin Yang",
+      "Mohan Zhang"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27756",
     "paper_url": "https://arxiv.org/abs/2610.27756v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27756v1",
     "published_at": "2026-10-20T07:19:03Z",
     "related_urls": [],
     "review": "pending",
@@ -2327,12 +2777,27 @@
     "updated_at": "2026-10-20T07:19:03Z"
   },
   {
+    "abstract": "Assuming that neither source data nor source model parameters are accessible, black-box domain adaptation (BBDA) represents a highly practical yet challenging setting, where transferable knowledge is limited to the predictions of a black-box source model. Existing approaches exploit such knowledge via pseudo-label refinement or by leveraging vision-language models (ViLs), but they often fail to reconcile the inherent discrepancy between task-specific knowledge from black-box models and language-aligned semantic priors of ViLs, resulting in suboptimal integration and degraded adaptation performance. To address this challenge, we propose adaptive Dual-Teacher Distillation with Subnetwork Rectification (DDSR), a framework that explicitly reconciles these complementary yet inconsistent knowledge sources. DDSR employs an adaptive prediction fusion strategy to integrate predictions from the black-box source model and a ViL, generating reliable pseudo-labels for the target domain. A subnetwork-based regularization mechanism mitigates overfitting to noisy supervision by enforcing output consistency and gradient divergency. Furthermore, progressively improved target predictions iteratively refine both pseudo-labels and ViL prompts, enhancing semantic alignment. Finally, class-wise prototypes are used to further optimize target predictions via self-training. Extensive experiments on multiple benchmark datasets demonstrate that DDSR consistently outperforms state-of-the-art methods, including those with access to source data or source model parameters.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.LG"
+    ],
+    "authors": [
+      "Zhe Zhang",
+      "Jing Li",
+      "Wanli Xue",
+      "Xu Cheng",
+      "Jianhua Zhang",
+      "Qinghua Hu",
+      "Shengyong Chen"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2603-22908",
     "paper_url": "https://arxiv.org/abs/2603.22908v5",
+    "pdf_url": "https://arxiv.org/pdf/2603.22908v5",
     "published_at": "2026-03-24T07:54:19Z",
     "related_urls": [],
     "review": "pending",
@@ -2355,12 +2820,32 @@
     "updated_at": "2026-10-20T05:33:34Z"
   },
   {
+    "abstract": "Vision-language models (VLMs) have demonstrated impressive capabilities but suffer from substantial computational overhead, as vision tokens dominate the input sequence. This motivates vision token compression as a key direction to alleviate the burden. However, with the emergence of hybrid architectures incorporating linear attention (\\eg, Qwen3.5), prior methods designed for softmax attention struggle to generalize. Our analysis reveals that both attention- and similarity-based approaches suffer notable performance degradation, underscoring the urgent need for compression methods tailored to this regime. To this end, we propose \\textbf{V-CoLA}, an efficient training-free token compression framework specifically designed for linear attention. V-CoLA introduces a novel \\textit{uniqueness-aware importance criterion} for identifying critical vision tokens, coupled with an \\textit{adaptive token merging strategy} that performs compression. All components are optimized at the implementation level to remain compatible with the chunk-wise parallelism of linear attention, ensuring strong practical value. Extensive experiments across multiple benchmarks demonstrate the superiority of V-CoLA: it achieves 99.5\\% of the original performance with only 50.0\\% of vision tokens, and over 88.0\\% with as few as 12.5\\%, while delivering a 1.86$\\times$ to 6.15$\\times$ prefill speedup. Our code is available at https://github.com/alibaba/EfficientRL.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.LG"
+    ],
+    "authors": [
+      "Hao Jiang",
+      "Yiru Mao",
+      "Tianpeng Bu",
+      "Hao Zhou",
+      "Hongtao Duan",
+      "Wang Jing",
+      "Bowen Xu",
+      "Xin Chen",
+      "Lulu Hu",
+      "Bin Yang",
+      "Yongliang Tao",
+      "Minying Zhang"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-11251",
     "paper_url": "https://arxiv.org/abs/2610.11251v2",
+    "pdf_url": "https://arxiv.org/pdf/2610.11251v2",
     "published_at": "2026-10-08T04:55:50Z",
     "related_urls": [],
     "review": "pending",
@@ -2369,12 +2854,24 @@
     "updated_at": "2026-10-20T05:14:02Z"
   },
   {
+    "abstract": "Vision-language models (VLMs) learn strong statistical regularities during training, which can make them fail to properly respond to visual evidence when input images violate those regularities. It is challenging to disambiguate these prior-induced errors from errors caused by the model missing the underlying visual capabilities. In this work, we use controlled visual in-context learning to encourage the model to focus on the visual evidence, and demonstrate that this alone is frequently sufficient to correct the errors -- suggesting that the models in fact do possess the relevant visual capabilities. Specifically, we show that across five vision-centric tasks, demonstrations yield large gains on prior-conflicting counterfactual examples ($+27.2\\%$ for Qwen3-VL 235B and $+15.1\\%$ for Qwen3-VL 32B) while leaving accuracy on prior-aligned examples nearly unchanged. These findings generalize across five VLM families with gains from $+9.7\\%$ to $+30.3\\%$. We analyze visual representations and find that demonstrations indeed redirect attention toward grounding cues while reducing reliance on cues that support the learned prior. Finally, we find that in-context learning is limited when the underlying visual capability is weak or absent. Together, these results show that current VLMs possess visual grounding capabilities that standard evaluations may overlook, underscoring the need for controlled evaluation design in diagnosing and improving model capability.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Kun Wang",
+      "Xindi Wu",
+      "Sanghyuk Chun",
+      "Olga Russakovsky",
+      "Esin Tureci"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-12942",
     "paper_url": "https://arxiv.org/abs/2610.12942v3",
+    "pdf_url": "https://arxiv.org/pdf/2610.12942v3",
     "published_at": "2026-10-09T03:40:07Z",
     "related_urls": [],
     "review": "pending",
@@ -2383,12 +2880,24 @@
     "updated_at": "2026-10-20T03:58:10Z"
   },
   {
+    "abstract": "Large Vision Language Models (VLMs) excel at visual question answering and semantic grounding, but their capacity for autonomous logical reasoning remains underexplored. Existing anomaly benchmarks emphasize visual errors or direct prompting rather than the physical and social common sense needed for open-world deployment. To address this, we introduce LAD-bench, a benchmark of more than 1,000 curated synthetic images with logical anomalies across four domains: Residential, Urban, Collaborative, and Nature. We further propose a Tiered Prompting Protocol based on progressive disclosure, which measures how much explicit assistance a model needs to localize and reason about a logical fault. Evaluating leading foundation models reveals substantial weaknesses: even the best achieves only 70.11% overall accuracy, showing that implicit logical fault detection remains unsolved. Crucially, models often fail to identify anomalies even after receiving explicit hints in deeper tiers. By surfacing these limitations in sequential multimodal reasoning, LAD-Bench offers a rigorous framework for advancing the safety, reliability, and cognitive alignment of autonomous visual systems. Dataset and Code: https://huggingface.co/datasets/SahasraK/LADBench",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Sahasra Kondapalli",
+      "Lara Radovanovic",
+      "Aadi Palnitkar",
+      "Mingyang Mao",
+      "Xiaomin Lin"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2606-17433",
     "paper_url": "https://arxiv.org/abs/2606.17433v2",
+    "pdf_url": "https://arxiv.org/pdf/2606.17433v2",
     "published_at": "2026-06-16T02:32:38Z",
     "related_urls": [],
     "review": "pending",
@@ -2397,12 +2906,24 @@
     "updated_at": "2026-10-20T03:51:18Z"
   },
   {
+    "abstract": "Zero-shot composed image retrieval (ZS-CIR) aims to retrieve a target image based on a reference image and modification text. Recent approaches commonly rely on large vision-language models to generate target image captions for retrieval. However, these captions may include redundant semantic details, introducing noise when retrieving the target image and leading to suboptimal retrieval results. To address this issue, we propose Less-is-More CIR, a two-stage training-free framework that combines Concise Retrieval and Critic Re-ranking. In the first stage, concise target-oriented captions are generated that preserve only the most discriminative modification semantics, thereby reducing semantic noise in the retrieval. In the second stage, a critic re-rank module further evaluates the retrieved candidates from the perspectives of modification consistency and reference preservation. Extensive experiments demonstrate the effectiveness and robustness of the proposed framework for the ZS-CIR. Our code is available at: https://github.com/dxlabskku/LM-CIR.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Yuqian Zheng",
+      "Hyoju Ahn",
+      "Hyeongjin Ahn",
+      "Eunil Park"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27538",
     "paper_url": "https://arxiv.org/abs/2610.27538v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27538v1",
     "published_at": "2026-10-20T02:53:02Z",
     "related_urls": [],
     "review": "pending",
@@ -2411,12 +2932,30 @@
     "updated_at": "2026-10-20T02:53:02Z"
   },
   {
+    "abstract": "Spatial intelligence requires agents to actively acquire visual evidence and integrate observations into a coherent representation of the three-dimensional world. Yet spatial question answering offers limited evidence of whether models can construct accurate metric maps through autonomous exploration. We introduce SpatialScout, a benchmark for evaluating vision-language model (VLM) agents on active object-level 3D mapping. SpatialScout comprises 80 diverse indoor scenes containing 3,140 target objects. Given an object inventory, RGB observations, camera calibration, and camera poses, agents control a camera to explore each scene and estimate object centers in a shared coordinate frame. The task requires coordinating viewpoint selection, cross-view association, geometric estimation, and map revision under bounded interaction budgets. Evaluation jointly measures localization accuracy and target coverage through object-scale overlap scores that penalize missing predictions. Experiments with frontier VLMs reveal substantial limitations: the strongest evaluated model, Claude Opus 5.5, achieves a mean overlap score of 41.71%, with 47.23% of targets exceeding an intersection-over-union (IoU) threshold of 0.5 and only 3.25% exceeding 0.9. These results reveal a substantial gap between recovering coarse object layouts and constructing complete, precise metric maps. SpatialScout provides a quantitative testbed for developing agents that build reliable 3D spatial representations through active perception. Code is available at https://github.com/JesseZZZZZ/SpatialScout.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.CL"
+    ],
+    "authors": [
+      "Zhaoxi Zhang",
+      "Hao Liang",
+      "Linxuan Wu",
+      "Yiming Wu",
+      "Yifu Yuan",
+      "Kun Liang",
+      "Chenming Tang",
+      "Meiyi Qiang",
+      "Wentao Zhang",
+      "Weikang Li"
+    ],
     "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-26659",
     "paper_url": "https://arxiv.org/abs/2610.26659v2",
+    "pdf_url": "https://arxiv.org/pdf/2610.26659v2",
     "published_at": "2026-10-19T16:17:48Z",
     "related_urls": [],
     "review": "pending",
@@ -2425,12 +2964,27 @@
     "updated_at": "2026-10-20T02:49:48Z"
   },
   {
+    "abstract": "Despite advances in photorealism, semantic fidelity, and aesthetics, text-to-image generation and image editing remain understudied in a human-centered dimension: whether their outputs feel psychologically comforting. Grounded in cognitive evaluation theory, we define psychological comfort as an affective response shaped by viewers' appraisal of restorative and emotionally supportive visual cues. We introduce HealBench, a fine-grained benchmark of 30,000 high-quality image-text pairs spanning 19 categories and 92 subcategories, selected from 100,000 candidates through a human- and expert-in-the-loop pipeline combining vision-language model matching, human preference models, expert filtering, and exemplar-guided augmentation. We also construct HealBench-Eval, a feature-clustered evaluation set of 1,095 instances. Using HealBench-Eval, we conduct objective and subjective evaluations of 14 representative image generation models and prompt-rewriting strategies. Results reveal a gap between conventional visual quality and perceived comfort: strong semantic alignment and aesthetics do not guarantee emotionally restorative images. Reinforcement learning experiments further show that HealScorer can serve as a reward signal for assessing and improving the emotional and restorative quality of generated images. These findings establish psychological comfort as a distinct dimension of human-centered image generation and position HealBench as a foundation for affect-aware generative models.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Junjie Xu",
+      "Yuzhe Yang",
+      "Rui Yang",
+      "Luwei Xiao",
+      "Wenxin Wu",
+      "Xingjiao Wu",
+      "Liang He"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27516",
     "paper_url": "https://arxiv.org/abs/2610.27516v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27516v1",
     "published_at": "2026-10-20T02:31:31Z",
     "related_urls": [],
     "review": "pending",
@@ -2439,12 +2993,22 @@
     "updated_at": "2026-10-20T02:31:31Z"
   },
   {
+    "abstract": "Pretrained Vision-Language Models (PVLMs) achieve strong zero-shot recognition but often suffer performance degradation under target-domain shift. Unsupervised adaptation provides a practical way to improve target-domain performance without labeled data, but it remains challenging because pseudo-labels generated by the model can be unreliable and no labeled validation set is available for model selection or early stopping. We propose a simple framework for unsupervised PVLM adaptation that combines progressive margin-based subset selection with cascaded consistency learning. The subset selection strategy constructs a class-balanced pseudo-labeled set using prediction margins and gradually expands it during training, enabling adaptation to start from reliable supervision anchors before incorporating broader target-domain data. Cascaded consistency learning further exploits unlabeled samples by using temporally smoothed teacher predictions on weakly augmented views to supervise student predictions on strongly augmented views, with confidence filtering to reduce the influence of uncertain pseudo-labels. To preserve the pretrained embedding structure, the framework updates only normalization parameters in the visual encoder and class prototypes initialized from text prompts. Experiments across multiple recognition benchmarks with both CLIP and SigLIP backbones show consistent improvements over zero-shot baselines and competitive performance against recent unsupervised PVLM adaptation methods. These results suggest that progressive pseudo-label selection and teacher-guided consistency provide an effective and lightweight strategy for adapting PVLM classifiers without labeled target data.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Hao Yan",
+      "Guanghui Wang"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27515",
     "paper_url": "https://arxiv.org/abs/2610.27515v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27515v1",
     "published_at": "2026-10-20T02:30:11Z",
     "related_urls": [],
     "review": "pending",
@@ -2453,12 +3017,22 @@
     "updated_at": "2026-10-20T02:30:11Z"
   },
   {
+    "abstract": "Foundation models now serve as reasoning layers for robot teams, but it remains unclear whether embodiment-specialized vision-language models (VLMs) preserve the social-reasoning capabilities of general-purpose VLMs. We evaluate Gemini Robotics-ER on SHREC, a benchmark of real human-robot social interactions, and compare it with published general-purpose VLM baselines. Robotics-ER outperforms GPT-4o-mini on error/competence detection but performs worse on detailed social-attribute judgments; adding a visual frame helps one task while hurting the other. These results suggest embodiment-specialized models may perform differently on social judgments that can be read more directly from observable interaction cues versus those requiring more inference about a person's internal state. Because the comparison spans model families, these differences cannot be attributed to embodiment specialization alone. This matters for multi-robot systems, where a shared foundation model could cause systematic social-perception errors to influence multiple coordination decisions. This work presents an initial evaluation, with broader cross-context and video-based analyses left for future work.",
+    "arxiv_categories": [
+      "cs.RO",
+      "cs.HC"
+    ],
+    "authors": [
+      "Daniel Weiner",
+      "Raj Korpan"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27496",
     "paper_url": "https://arxiv.org/abs/2610.27496v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27496v1",
     "published_at": "2026-10-20T02:14:00Z",
     "related_urls": [],
     "review": "pending",
@@ -2467,12 +3041,25 @@
     "updated_at": "2026-10-20T02:14:00Z"
   },
   {
+    "abstract": "Open-vocabulary object detection aims to detect both seen and unseen categories by leveraging the semantic knowledge of vision-language models. However, existing methods often struggle with small objects due to insufficient preservation of high-resolution details, ineffective information aggregation across feature levels, and limited region-level discriminability. To address these challenges, we propose FocusOVD, an open-vocabulary object detector that enhances small-object representations without modifying the frozen VLM backbone. FocusOVD introduces three complementary components: a Reweighted Cross-scale Feature Fusion module, which learns normalized level-wise weights to adaptively balance shallow appearance details and deep semantic cues during feature pyramid aggregation; a Residual Pinwheel-shaped Gated Convolution module, which strengthens local geometric responses in high-resolution features; and a Residual Convolutional Gated Linear Unit module, which suppresses background-dominated activations and enhances RoI discriminability before prediction. Extensive experiments on COCO-OVD and LVIS-OVD demonstrate the effectiveness of FocusOVD. On COCO-OVD, FocusOVD achieves a novel-category AP of 36.3%, outperforming CORA, UniDetector, and SAMP by 1.3%, 1.1%, and 1.5%, respectively; on LVIS-OVD, it achieves an overall AP of 33.7%, surpassing the strongest competing method by 0.6%. These results demonstrate the strong generalization ability of FocusOVD for open-vocabulary small-object detection.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Hanlin Kou",
+      "Beiqi Bai",
+      "Li Chen",
+      "Youjia Jing",
+      "Shupan Li",
+      "Mingyuan Jiu"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27479",
     "paper_url": "https://arxiv.org/abs/2610.27479v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27479v1",
     "published_at": "2026-10-20T01:45:41Z",
     "related_urls": [],
     "review": "pending",
@@ -2481,12 +3068,24 @@
     "updated_at": "2026-10-20T01:45:41Z"
   },
   {
+    "abstract": "Scaling laws suggest that increasing model size, training data, and compute generally yields monotonic performance improvements. While this often holds at the aggregate level, we present systematic evidence that vision-language models (VLMs) exhibit inverse scaling at the subtask level: specific question categories on which larger models perform worse than smaller counterparts within the same model family. We evaluate 19 models from four distinct model families across eight multimodal benchmarks (nine evaluation splits), answering 29,386 questions per model, 558,334 model-question evaluations in total. Using per-question pairwise analysis across all model pairs in each family, we identify 375 subtask-model-pair combinations exhibiting inverse scaling, spanning 4,342 unique queries where a smaller model answers correctly but a larger model fails, and we find that these patterns replicate across independently developed architectures. We identify 13 subtask-dataset pairs that show inverse scaling across multiple families, consistent with the phenomenon being task-driven rather than model-specific. The most affected domains in our study include multi-image spatial reasoning, visual perception, and university-level STEM knowledge, with accuracy gaps exceeding 20 percentage points in several cases, while diagram understanding appears comparatively resistant. These findings challenge the assumption that increasing model size uniformly improves multimodal capabilities and suggest that model selection should be task-aware.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Rohit Saxena",
+      "Alessandro Suglia",
+      "Marek Rei",
+      "Pasquale Minervini"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27360",
     "paper_url": "https://arxiv.org/abs/2610.27360v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27360v1",
     "published_at": "2026-10-19T22:39:42Z",
     "related_urls": [],
     "review": "pending",
@@ -2495,12 +3094,23 @@
     "updated_at": "2026-10-19T22:39:42Z"
   },
   {
+    "abstract": "Vision-language models (VLMs) have advanced rapidly in multimodal reasoning, yet they remain limited on tasks requiring fine-grained understanding of small or easily overlooked image regions. Recent thinking with images approaches mitigate this limitation by allowing models to inspect images through operations such as zooming, cropping, or code execution. While effective, their multi-turn interactions with VLMs introduce redundant token computation and slow inference, and separate region inspection from the reasoning step that depends on it. To address these issues, we propose Look Before You Reason (LoRe), an implicit visual thinking framework for efficient visual reasoning within a single-turn VLM interaction. Given an image and a question, LoRe predicts the most relevant image region, aligns it with the corresponding image patch features, and strengthens the associated key-value (KV) cache entries, enabling subsequent decoding to directly exploit the selected visual cues without additional visual inputs or explicit tool calls. We further employ reinforcement learning to guide the VLM toward identifying informative image regions and leveraging them during reasoning. To support fine-grained evaluation of multimodal reasoning, we introduce COCO-ObjQA, a large-scale benchmark for object-centric multimodal reasoning. Experiments on three challenging multimodal benchmarks demonstrate that LoRe consistently improves VLM reasoning performance with low additional inference overhead.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Zerui Chen",
+      "Changrui Chen",
+      "Fei Ni",
+      "Jiankang Deng"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27341",
     "paper_url": "https://arxiv.org/abs/2610.27341v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27341v1",
     "published_at": "2026-10-19T22:11:24Z",
     "related_urls": [],
     "review": "pending",
@@ -2509,12 +3119,28 @@
     "updated_at": "2026-10-19T22:11:24Z"
   },
   {
+    "abstract": "Vision-language models (VLMs) can infer sensitive information such as geolocation from subtle visual cues, creating privacy risks when responses disclose more detail than the visual context warrants. We study visual-contextual privacy in geolocation disclosure, where a VLM should reveal location information only at the granularity appropriate to the visual context depicted in the image. We first show that this contextually appropriate granularity is recoverable from pre-generation hidden states, even when generated responses are misaligned, with disclosure levels exhibiting an ordered structure along a common hidden-state direction. Motivated by this, we propose an inference-time route-and-steer framework: an ordinal granularity router maps visual-contextual privacy representations to a disclosure route, and a disclosure-level-conditioned steering module applies route-specific hidden-state interventions during decoding. Across four VLM backbones, our method improves visual-context-aware disclosure alignment, better balances over- and under-disclosure, and incurs only modest changes on general capability benchmarks. It further transfers to another dataset with a distinct data distribution and privacy-risk taxonomy.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Wenyue Chen",
+      "Yuhan Cheng",
+      "Ruixin Yang",
+      "Ethan Mendes",
+      "Alan Ritter",
+      "Jingwei Sun",
+      "Hai Li",
+      "Yiran Chen"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27323",
     "paper_url": "https://arxiv.org/abs/2610.27323v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27323v1",
     "published_at": "2026-10-19T21:41:54Z",
     "related_urls": [],
     "review": "pending",
@@ -2523,12 +3149,25 @@
     "updated_at": "2026-10-19T21:41:54Z"
   },
   {
+    "abstract": "Vision-language-action (VLA) models are sensitive to visual corruptions, but knowing that a corruption is typically harmful does not establish whether removing it would benefit the current episode. Furthermore, when several corruptions co-occur, deciding what to correct requires understanding which ones contribute to failure risk and how much their removal would help. We define this problem as failure attribution. Detecting corruption presence alone cannot answer this question, as corruptions can be present but relatively harmless, while directly measuring removal benefits requires costly paired policy rollouts with and without the corruption present. To address this, we introduce a factorized risk model that learns separate representations of the scene and corruptions, allowing us to estimate removal benefits through latent intervention from the current image and task instruction, without paired clean images or additional counterfactual rollouts. We evaluate our approach on OpenVLA and $π_{0.5}$ in simulation and $π_{0.5}$-DROID on a Franka robot. Our method outperforms monolithic and vision-language-model (VLM) baselines, including achieving approximately 3x lower attribution error than frontier VLMs. We also demonstrate our method adapts to execution context and corruption intensity, and can be used for online failure monitoring on hardware.",
+    "arxiv_categories": [
+      "cs.RO",
+      "cs.LG"
+    ],
+    "authors": [
+      "Carson Sobolewski",
+      "Anjali Parashar",
+      "Fei Chen",
+      "Yingke Li",
+      "Chuchu Fan"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27277",
     "paper_url": "https://arxiv.org/abs/2610.27277v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27277v1",
     "published_at": "2026-10-19T20:53:00Z",
     "related_urls": [],
     "review": "pending",
@@ -2537,12 +3176,28 @@
     "updated_at": "2026-10-19T20:53:00Z"
   },
   {
+    "abstract": "Multimodal large language models (MLLMs) should exhibit cross-modal consistency, generating consistent responses given semantically equivalent inputs across modalities. However, we observe a systematic discrepancy in model predictions under such cross-modal variations. Specifically, we define the modality gap as the difference in model performance under semantically equivalent textual and multimodal inputs. We introduce TokenSwap, a method that constructs such inputs by replacing textual concepts with semantically aligned images, resulting in sequences where visual tokens are interleaved with text tokens. Based on TokenSwap, we transform existing text-based benchmarks (e.g., MMLU) into image-interleaved counterparts, resulting in TokenSwap-Bench. Across 42 MLLMs, we observe a pervasive modality gap, with performance decreasing by 4.2% to 47.4% when moving from text-only to image-interleaved inputs, averaging 19.6% +/- 3.3% across models. Notably, reasoning models exhibit consistently smaller gaps, achieving an average gap of 10.1% compared to 25.5% for non-reasoning models, suggesting greater robustness in multimodal reasoning across equivalent textual and visual representations. In contrast, neither prompting strategies nor scaling training compute alone reliably reduces the modality gap. Finally, we demonstrate that incorporating TokenSwap during training effectively mitigates this gap, improving cross-modal alignment while preserving strong text-only and vision-language model performance. The project page is available at https://dongxzz.github.io/TokenSwap/.",
+    "arxiv_categories": [
+      "cs.CL",
+      "cs.CV"
+    ],
+    "authors": [
+      "Andong Hua",
+      "Colton Bishop",
+      "Igor Mordatch",
+      "Arian Hosseini",
+      "Jindong Gu",
+      "Aleksandra Faust",
+      "Rebecca Roelofs",
+      "Yao Qin"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2607-28640",
     "paper_url": "https://arxiv.org/abs/2607.28640v3",
+    "pdf_url": "https://arxiv.org/pdf/2607.28640v3",
     "published_at": "2026-05-20T00:25:52Z",
     "related_urls": [],
     "review": "pending",
@@ -2551,12 +3206,21 @@
     "updated_at": "2026-10-19T20:13:57Z"
   },
   {
+    "abstract": "Continual vision-language models (VLMs) encounter a stream of environments and must also reject inputs that do not belong to the environment at hand. Class information from earlier environments can aid out-of-distribution (OOD) detection, yet existing detectors score each environment in isolation, and when previous environments help or hurt is theoretically unclear. We develop a theory of environment-aware OOD detection built on contribution scores, pairwise cosine expectations measuring how the image and text features of one environment align with those of another. We propose a cross-environment maximum-concept-matching (MCM) score with two terms: a primary term matching the test image against the current class texts, and a secondary term matching it against the class texts of a previous environment, weighted by the intra-modal alignment between the two environments. We prove that, under a positive environment transition and a bounded class-matching margin for OOD inputs, this score attains a false-positive rate no larger than that of the standard MCM detector at an adjusted threshold. We then show that the score gap of an MCM detector between two environments equals the self-contribution of the in-distribution environment minus its cross-modal contribution into the OOD environment, which separates soft OOD environments, with explicit AUROC, true-positive, and false-positive guarantees, from hard ones, which no threshold that retains the in-distribution data can reliably reject. For cascaded detection, in which the text prototypes of all seen environments are pooled, the false-positive rate on every past environment is non-decreasing in time, and we characterize when detection provably fails. A contribution balance factor applied to the gradients of the classification loss and of a smoothed false-positive rate completes the framework.",
+    "arxiv_categories": [
+      "cs.LG"
+    ],
+    "authors": [
+      "Salimeh Sekeh",
+      "Mary Wisell"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27211",
     "paper_url": "https://arxiv.org/abs/2610.27211v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27211v1",
     "published_at": "2026-10-19T19:43:36Z",
     "related_urls": [],
     "review": "pending",
@@ -2565,12 +3229,28 @@
     "updated_at": "2026-10-19T19:43:36Z"
   },
   {
+    "abstract": "Tokenization in video models, typically through patchification, generates an excessive and redundant number of tokens. This severely limits video efficiency and scalability. While recent trajectory-based tokenizers offer a promising solution by decoupling video duration from token count, they rely on complex external segmentation and tracking pipelines that are slow and task-agnostic. We propose TrajTok, an end-to-end video tokenizer module that is fully integrated and co-trained with video models for a downstream objective, dynamically adapting its token granularity to semantic complexity, independent of video duration. TrajTok contains a unified segmenter that performs implicit clustering over pixels in both space and time to directly produce object trajectories in a single forward pass. By prioritizing downstream adaptability over pixel-perfect segmentation fidelity, TrajTok is lightweight and efficient, yet empirically improves video understanding performance. With TrajTok, we implement a video CLIP model trained from scratch (TrajViT2). It achieves the best accuracy at scale across both classification and retrieval benchmarks, while maintaining efficiency comparable to the best token-merging methods. TrajTok also proves to be a versatile component beyond its role as a tokenizer. We show that it can be seamlessly integrated as either a probing head for pretrained visual features (TrajAdapter) or an alignment connector in vision-language models (TrajVLM) with especially strong performance in long-video reasoning.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Chenhao Zheng",
+      "Jieyu Zhang",
+      "Jianing Zhang",
+      "Weikai Huang",
+      "Ashutosh Kumar",
+      "Quan Kong",
+      "Oncel Tuzel",
+      "Chun-Liang Li",
+      "Ranjay Krishna"
+    ],
     "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2602-22779",
     "paper_url": "https://arxiv.org/abs/2602.22779v4",
+    "pdf_url": "https://arxiv.org/pdf/2602.22779v4",
     "published_at": "2026-02-26T09:15:34Z",
     "related_urls": [],
     "review": "pending",
@@ -2605,12 +3285,22 @@
     "updated_at": "2026-10-19T19:18:45Z"
   },
   {
+    "abstract": "Detecting hallucinations in Large Vision-Language Models (LVLMs) requires both accurate span localization and well-calibrated confidence scores. Fine-tuned generative VLMs excel at identifying hallucinated text spans but suffer from overconfidence and high inference latency. Discriminative sequence taggers offer deterministic speed and superior calibration but exhibit conservative span recall. We present SpanCalib-VLM, a hybrid dual-system for the SHROOM-Visions Shared Task that combines a multimodal sequence tagger, consisting of XLM-RoBERTa-Large fused with a SigLIP vision encoder via cross-attention, with our fine-tuned generative VLM (Qwen3.5-4B-SHROOM-SFT). Through a Union-Calibrated Fusion strategy, candidate spans from the generative model are re-scored with calibrated probabilities from the sequence tagger. On the SHROOM-Visions English validation split, our ensemble achieves a Pearson calibration correlation of 0.41 and an overall IoU of 0.39 (with a clean-response IoU of 0.91 and overall detection accuracy of 70.7%). On the official blind test set, SpanCalib-VLM achieves a Pearson correlation of 0.32 and an IoU of 0.25 on English, substantially outperforming the shared task baseline (0.15 on both metrics) and demonstrating consistent gains across all four languages. We make our model weights and code publicly available.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.CL"
+    ],
+    "authors": [
+      "Amanuel Gizachew Abebe",
+      "Yasmin Moslem"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2608-29974",
     "paper_url": "https://arxiv.org/abs/2608.29974v2",
+    "pdf_url": "https://arxiv.org/pdf/2608.29974v2",
     "published_at": "2026-08-30T19:00:31Z",
     "related_urls": [],
     "review": "pending",
@@ -2619,12 +3309,26 @@
     "updated_at": "2026-10-19T18:14:10Z"
   },
   {
+    "abstract": "Scientific method figures often provide researchers with a clear visual entry point into a paper's methodology and core contributions, yet their dense layouts and complex information flows are difficult for Vision Language Models (VLMs) to interpret. Existing benchmarks predominantly focus on coarse-grained tasks, such as context-based retrieval or holistic comprehension, overlooking the fine-grained content and inter-module relations within complex methodological diagrams. To address these overlooked aspects, we introduce Scientific Figure Benchmark (SciFigBench), a benchmark for evaluating core capabilities required for scientific method figure understanding. Specifically, it targets three capabilities: dense content perception, visual relation comprehension, and information-flow tracing. For this purpose, we curate 4,352 scientific method figures from real-world research papers and construct 40,670 QA pairs to operationalize these capabilities as measurable question-answering tasks. All annotations are generated by dedicated pipelines and then manually verified. We further propose SciFigCue, a training-free visual prompting module that externalizes arrow-induced dependencies as visual relational evidence for method-figure reasoning. Experiments across open-source and proprietary VLMs show that even strong models remain substantially limited in visual relation comprehension, while SciFigCue improves performance across several tasks without parameter updates. The code and related resources are available at https://github.com/LeNcyer/SciFigBench.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.CL"
+    ],
+    "authors": [
+      "Lijia Wu",
+      "Zheng Li",
+      "Yuxuan Liu",
+      "Jingwen Zhang",
+      "Penghai Zhao",
+      "Xiang Li"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27087",
     "paper_url": "https://arxiv.org/abs/2610.27087v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27087v1",
     "published_at": "2026-10-19T18:00:07Z",
     "related_urls": [],
     "review": "pending",
@@ -2633,12 +3337,33 @@
     "updated_at": "2026-10-19T18:00:07Z"
   },
   {
+    "abstract": "Vision-language models (VLMs) can increasingly handle extended contexts and answer questions about long videos--but can they understand the narrative structure of movies as humans do? To investigate this question, we introduce MF$^2$ (Movie Facts and Fibs), a fully manually curated benchmark designed to evaluate whether models can identify, recall, and comprehend information central to the movie's storyline, using both the visual and textual modalities. MF$^2$ includes over 50 open-licensed movies, each paired with manually constructed sets of claim pairs: one true claim (fact) and one plausible but false (fib), totaling over 850 pairs. Our analysis across 20 open-source and 2 proprietary models reveals a substantial gap relative to human performance. While subtitles provide a strong signal for narrative understanding, other textual sources (e.g., synopses) are less informative. In contrast, when visual information is distributed across the entire movie and jointly embedded with subtitles, models struggle to identify and effectively use the relevant content. However, when the visual input is restricted to claim-relevant visual content, models improve significantly, indicating substantial room for improvement in processing large multimodal contexts and distinguishing relevant from irrelevant information. Overall, our findings highlight persistent challenges in multimodal narrative understanding for current VLMs. We release our data and code to support further research in this direction.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.CL",
+      "cs.LG"
+    ],
+    "authors": [
+      "Emmanouil Zaranis",
+      "António Farinhas",
+      "Saul Santos",
+      "Beatriz Canaverde",
+      "Miguel Moura Ramos",
+      "Aditya K Surikuchi",
+      "André Viveiros",
+      "Baohao Liao",
+      "Elena Bueno-Benito",
+      "Nithin Sivakumaran",
+      "Pavlo Vasylenko",
+      "Shoubin Yu"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2506-06275",
     "paper_url": "https://arxiv.org/abs/2506.06275v2",
+    "pdf_url": "https://arxiv.org/pdf/2506.06275v2",
     "published_at": "2025-06-06T17:58:36Z",
     "related_urls": [],
     "review": "pending",
@@ -2647,12 +3372,25 @@
     "updated_at": "2026-10-19T17:59:05Z"
   },
   {
+    "abstract": "Vision-language models (VLMs) show promise for agricultural diagnosis but fail unpredictably in zero-shot settings. We test whether this stems from poor visual features or an inability to verbalize what the model already perceives, using a benchmark spanning classification and detection drawn from 118 AgML classification and 54 detection datasets. Linear probing shows agricultural features are linearly separable in frozen VLM vision towers, with Gemma-4-31B's encoder reaching F1-macro of 0.60--0.78 across tasks and approaching the vision-only DINOv3 backbone, indicating the bottleneck lies downstream of perception. We then test whether test-time scaling, an iterative in-context skill-memory loop, can close this gap without updating weights. Gains are modest and inconsistent. Skill-memory improves classification accuracy by up to 3.1 points on three of four tasks while regressing on species, with gains concentrated on classes seen during optimization and unseen classes regressing. Detection F1 is effectively unchanged (0.412 to 0.421), though an oracle filtering condition reaches 0.432 F1, revealing real headroom unconstrained prompting fails to surface. These results indicate VLMs see more agricultural features than they report, but test-time scaling alone fails to surface that hidden parametric knowledge, motivating agentic approaches grounded in external, retrievable knowledge.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Earl Ranario",
+      "Jared Smith",
+      "Lars Lundqvist",
+      "Urmil Jatin Chandarana",
+      "Bharath Sridhar",
+      "J Mason Earles"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2609-09417",
     "paper_url": "https://arxiv.org/abs/2609.09417v3",
+    "pdf_url": "https://arxiv.org/pdf/2609.09417v3",
     "published_at": "2026-09-08T20:15:53Z",
     "related_urls": [],
     "review": "pending",
@@ -2661,12 +3399,25 @@
     "updated_at": "2026-10-19T17:56:37Z"
   },
   {
+    "abstract": "Vision--language models (VLMs) promise to make computational pathology queryable and able to draft reports, but how much language adds beyond the vision backbone is unclear, because almost every system is evaluated by its developers on test sets of their own choosing. We grade published evidence by how it was produced and test four claims with controlled probes that reuse released checkpoints and public data, varying one input at a time. Report text adds prognostic signal: adding a frozen embedding of the stage-redacted report to a slide embedding raises the pooled C-index by 0.019 for progression-free interval and by 0.016 for overall survival across 1{,}633 TCGA patients, and restoring the stage statement adds nothing. Prompts add no measurable accuracy at inference: with features and pooling fixed, zero-shot classification is statistically indistinguishable from a supervised linear probe for lung and renal cancer subtyping. Slide-level question answering is barely grounded: SlideChat answers 74.82\\% of SlideBench-VQA(TCGA) items correctly with the slide and 74.41\\% without it, whereas its language backbone alone reaches 43.52\\%. Paraphrasing leaves accuracy unchanged but flips 8--23\\% of answers. Self-reported gains from agentic navigation and few-shot language priors cannot yet be attributed to language. Language thus adds real but narrow value, and we propose minimum controls that would expose these failure modes in future evaluations.",
+    "arxiv_categories": [
+      "cs.CV",
+      "q-bio.QM"
+    ],
+    "authors": [
+      "Wenhao Zhang",
+      "Zhongliang Zhou",
+      "Yi Ping",
+      "Zirui Wang",
+      "Sheng Li"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-26805",
     "paper_url": "https://arxiv.org/abs/2610.26805v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.26805v1",
     "published_at": "2026-10-19T17:48:31Z",
     "related_urls": [],
     "review": "pending",
@@ -2675,12 +3426,26 @@
     "updated_at": "2026-10-19T17:48:31Z"
   },
   {
+    "abstract": "When given an image and a text prompt, vision-language models (VLMs) can produce seemingly sophisticated text responses. However, they are also prone to hallucinate objects in their output, which can have detrimental consequences in safety-critical applications. To detect these hallucinations, certain methods interestingly leverage internal signals from the VLM as it generates the text response; potentially, these methods use the same signals that led to a hallucination to detect it. We conduct an in-depth analysis to understand the robustness of these detection methods. First, we show that a naive baseline of a generated word's token position in the VLM text response achieves competitive performance. Further, we reveal how some detection methods rely on token position and use this heuristic as a shortcut. Second, we explore detection methods' sensitivity to language and vision modalities. Our experiments suggest that strong detection performance is often driven by detecting language-based hallucinations, and when methods rely on token position, they tend to be less visually grounded and exhibit reduced robustness when hallucinations occur earlier in a text response. Lastly, we demonstrate that different detection methods can carry complementary signals; when ensembling methods together, adding weaker methods to an ensemble of higher performing ones still offers performance improvements. Altogether, while there may be useful internal VLM signals to detect hallucinations, our investigation reveals important limitations of the current methods that try to leverage them.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Allison Chen",
+      "William Yang",
+      "Salma Abdel Magid",
+      "Jonathan Williams",
+      "Olga Russakovsky",
+      "Esin Tureci"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-27041",
     "paper_url": "https://arxiv.org/abs/2610.27041v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.27041v1",
     "published_at": "2026-10-19T17:34:35Z",
     "related_urls": [],
     "review": "pending",
@@ -2689,12 +3454,22 @@
     "updated_at": "2026-10-19T17:34:35Z"
   },
   {
+    "abstract": "We study how vision-language models (VLMs) can learn to think and actively explore in 3D space. Instead of providing multi-view images, videos, or 3D representations to the model, we preserve the native visual encoding of VLMs, i.e., a single image, one at a time, just like humans, and treat the 3D representation only as an environment with which the model can interact through actions (e.g., move left) and observations (rendered images). Each rollout begins from an initial first-person view and a visual question. The model can then iteratively reason, navigate, and reorient its viewpoint before committing to a final answer. Following an initial trajectory-supervised finetuning, we apply reinforcement learning (RL) with rewards driven primarily by final-answer correctness. Crucially, RL provides no direct supervision over which viewpoints the model should visit or which exploration actions it should take. Instead, the model must learn an effective exploration policy solely from the extent to which its interactions improve performance. Across six 3D benchmarks, our model ACT3D achieves an average accuracy of 53.2% that improves its base Qwen model by 22.0% and surpasses proprietary Gemini 3.6 Flash. ACT3D also outperforms existing open-source 3D methods while using 50-70% fewer input frames, and generalizes to unseen domains with an average improvement of 5.9% over its supervised initialization. Further analysis reveals adaptive, question-conditioned exploration. Performance gains over the base model increase from 0.6% on questions answerable from the initial view to 16.3% on those requiring extensive exploration. ACT3D searches for occluded targets, avoids unnecessary exploration, and acquires complementary viewpoints for spatial comparisons. These findings demonstrate that outcome-based RL enables VLMs not only to reason over visual evidence, but also to learn when and how to acquire it.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Yijiang Li",
+      "Bingyang Wang",
+      "Nuno Vasconcelos"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-21783",
     "paper_url": "https://arxiv.org/abs/2610.21783v2",
+    "pdf_url": "https://arxiv.org/pdf/2610.21783v2",
     "published_at": "2026-10-15T12:38:48Z",
     "related_urls": [],
     "review": "pending",
@@ -2703,12 +3478,25 @@
     "updated_at": "2026-10-19T17:13:38Z"
   },
   {
+    "abstract": "Visual text compression (VTC) promises efficient long-context processing by rendering text into an image and re-encoding it with a vision-language model, often producing $3$--$20\\times$ fewer decoder tokens than subword tokenization. Yet token savings do not translate predictably into downstream utility: on some tasks the visual path matches or exceeds the text path, on others it collapses, and the compression ratio itself does not predict which regime will occur. The missing quantity is therefore not another summary of efficiency, but a principled measure of task-relevant information loss induced by visual encoding. We address this problem by formulating VTC in the language of measure transport. Treating text and visual tokens as empirical probability measures, we show that the ViT patch encoder induces a push-forward map whose transport cost decomposes into a precision cost from within-patch aggregation and a coverage cost from cross-patch fragmentation. Both terms are estimable from downstream-label-free probes. This formulation yields two operational consequences: a downstream-label-free routing criterion that selects whether to use the visual path for a given input or benchmark instance, and a transport-informed foveation mechanism that re-encodes high-cost regions at higher resolution. Across $24$ NLP datasets at Qwen3-4B, our label-free rule matches the per-dataset oracle on $17/24$ datasets ($70.8\\%$), and improves the average task score by $+3.3\\%$ with $-10.3\\%$ average tokens relative to a pure-LLM.",
+    "arxiv_categories": [
+      "cs.CV",
+      "cs.AI"
+    ],
+    "authors": [
+      "Lv Tang",
+      "Tianyi Zheng",
+      "Yang Liu",
+      "Bo Li",
+      "Xingyu Li"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2605-06708",
     "paper_url": "https://arxiv.org/abs/2605.06708v2",
+    "pdf_url": "https://arxiv.org/pdf/2605.06708v2",
     "published_at": "2026-05-06T19:02:27Z",
     "related_urls": [],
     "review": "pending",
@@ -2731,12 +3519,23 @@
     "updated_at": "2026-10-19T17:07:28Z"
   },
   {
+    "abstract": "Complementary-label learning (CLL) trains a classifier from labels that name a class an instance does not belong to. Such labels are cheap to collect from crowdworkers or vision-language models (VLMs), making them attractive for large-scale annotation. However, both sources can mistakenly assign the true class as the complementary label. Such annotation errors are particularly harmful in CLL because the model is explicitly trained to suppress the correct answer. Optimal transport (OT) data valuation identifies harmful samples by comparing training data with a clean validation set, but transferring it directly to CLL creates a semantic mismatch: label $c$ means not class $c$ in the training but class $c$ in the validation. We show that this makes the OT label groups noisy mixtures whose behavior depends on the noise rate. The transferred score is informative only at sufficiently high noise, becomes uninformative at the crossover rate $1/M$ for $M$ classes, and reverses below it, where practical CLL annotation typically operates. We propose CAVA, which introduces a complementary label cost and a label margin that isolates the contribution of each complementary label to the transport potential. The margin keeps a consistent direction across noise rates, detects diagonal noise with a parameter-free threshold of closed-form precision, and allows detected samples to be recycled as ordinary-label supervision. On synthetic and human-annotated benchmarks, CAVA separates diagonal noise almost perfectly where directly transferred OT valuation performs worse than random. With only a fraction of the clean validation data, it also improves every CLL objective we evaluate, showing that OT-based valuation becomes reliable once the semantics of complementary supervision are modeled explicitly.",
+    "arxiv_categories": [
+      "cs.LG",
+      "cs.CV"
+    ],
+    "authors": [
+      "Tan-Ha Mai",
+      "Hsuan-Tien Lin",
+      "Vu Nguyen"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-26734",
     "paper_url": "https://arxiv.org/abs/2610.26734v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.26734v1",
     "published_at": "2026-10-19T17:00:37Z",
     "related_urls": [],
     "review": "pending",
@@ -2786,12 +3585,23 @@
     "updated_at": "2026-10-19T16:42:54Z"
   },
   {
+    "abstract": "Composed Image Retrieval (CIR) retrieves products matching a reference image modified by natural language---a core capability for eCommerce search. Existing training-free methods fuse CLIP embeddings via arithmetic, but we identify a fundamental limitation: user text modifications are attribute-sparse---a user who types ``make it red with shorter sleeves'' specifies what to change but not what to keep (the floral pattern, the V-neck, the fit-and-flare silhouette). We introduce language-space fusion: a Vision-Language Model (VLM) jointly interprets the reference image and modification to generate a visually grounded product-title caption---e.g., ``Red floral fit-and-flare dress with short sleeves and V-neck''---that fills in the missing attributes from the image. Our method, CaptionFuse, requires no task-specific training and is model-agnostic. A controlled experiment confirms that attribute content--- not linguistic style---drives the gains: imperative and descriptive captions with identical attributes achieve equal R@10, while both outperform raw modifications by +6.5 points.",
+    "arxiv_categories": [
+      "cs.CV"
+    ],
+    "authors": [
+      "Zhao Gao",
+      "Mina Metias",
+      "Mohamed Noordeen Alaudeen",
+      "Bassel Saleh"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2610-26661",
     "paper_url": "https://arxiv.org/abs/2610.26661v1",
+    "pdf_url": "https://arxiv.org/pdf/2610.26661v1",
     "published_at": "2026-10-19T16:18:52Z",
     "related_urls": [],
     "review": "pending",
@@ -2800,12 +3610,24 @@
     "updated_at": "2026-10-19T16:18:52Z"
   },
   {
+    "abstract": "Can the robot use a plate to cut a cake if no knife is available? Tool use greatly expands robot capabilities, but to use tools creatively beyond their intended functions, the robot faces the challenge of $\\textit{open-world affordance grounding}$: select an open-category object to act as a tool and localize its specific region of action. To this end, we introduce GROW$^2$ (GROunding Which and Where), which leverages object parts as a natural abstraction to split the grounding process hierarchically into semantic and geometric levels, thus bypassing the need for data-heavy, end-to-end training. Semantically, GROW$^2$ harnesses the commonsense reasoning of Vision-Language Models (VLMs) to parse a natural-language task instruction, select a suitable object as the tool, and identify task-relevant parts on the tool and the target object. Geometrically, vision foundation models then ground the selected parts into precise 3D regions from a single RGB-D image. Experiments on established benchmarks show that GROW$^2$ outperforms state-of-the-art baselines on affordance prediction benchmarks. Further, it achieves zero-shot generalization over open-category objects and outperforms baselines in both simulated and real-world robot tool use experiments.",
+    "arxiv_categories": [
+      "cs.RO",
+      "cs.AI",
+      "cs.CV"
+    ],
+    "authors": [
+      "Yuhong Deng",
+      "Yuyao Liu",
+      "David Hsu"
+    ],
     "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
     "id": "arxiv-2606-30632",
     "paper_url": "https://arxiv.org/abs/2606.30632v2",
+    "pdf_url": "https://arxiv.org/pdf/2606.30632v2",
     "published_at": "2026-06-29T17:56:53Z",
     "related_urls": [],
     "review": "pending",
@@ -2921,18 +3743,35 @@
     "updated_at": "2026-10-19T09:52:02.000Z"
   },
   {
+    "abstract": "We call on the Document AI (DocAI) community to reevaluate current methodologies and embrace the challenge of creating more practically-oriented benchmarks. Document Understanding Dataset and Evaluation (DUDE) seeks to remediate the halted research progress in understanding visually-rich documents (VRDs). We present a new dataset with novelties related to types of questions, answers, and document layouts based on multi-industry, multi-domain, and multi-page VRDs of various origins, and dates. Moreover, we are pushing the boundaries of current methods by creating multi-task and multi-domain evaluation setups that more accurately simulate real-world situations where powerful generalization and adaptation under low-resource settings are desired. DUDE aims to set a new standard as a more practical, long-standing benchmark for the community, and we hope that it will lead to future extensions and contributions that address real-world challenges. Finally, our work illustrates the importance of finding more efficient ways to model language, images, and layout in DocAI.",
+    "authors": [
+      "{'fullname': 'Jordy Van Landeghem', 'username': ''}",
+      "{'fullname': 'Rubèn Tito', 'username': ''}",
+      "{'fullname': 'Lukasz Borchmann', 'username': ''}",
+      "{'fullname': 'Michal Pietruszka', 'username': ''}",
+      "{'fullname': 'Pawel Józiak', 'username': ''}",
+      "{'fullname': 'Rafal Powalski', 'username': ''}",
+      "{'fullname': 'Dawid Jurkiewicz', 'username': ''}",
+      "{'fullname': 'Mickaël Coustaty', 'username': '~Mickael_Coustaty1'}",
+      "{'fullname': 'Bertrand Anckaert', 'username': ''}",
+      "{'fullname': 'Ernest Valveny', 'username': ''}",
+      "{'fullname': 'Matthew B. Blaschko', 'username': ''}",
+      "{'fullname': 'Sien Moens', 'username': ''}"
+    ],
     "category": "document",
     "discovered_from": "openreview",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:17:19+00:00",
     "id": "openreview-648f863b7785bdd497ea",
     "paper_url": "https://openreview.net/forum?id=bi9S39JkyP",
+    "pdf_url": "https://openreview.net/pdf?id=bi9S39JkyP",
     "published_at": "2026-10-19T08:35:11.787000+00:00",
     "related_urls": [],
     "review": "pending",
     "source_url": "https://openreview.net/forum?id=bi9S39JkyP",
     "title": "Document Understanding Dataset and Evaluation (DUDE)",
-    "updated_at": "2026-10-19T08:35:36.259000+00:00"
+    "updated_at": "2026-10-19T08:35:36.259000+00:00",
+    "venue": "CoRR 2023"
   },
   {
     "category": "small-vlm",
@@ -3287,18 +4126,35 @@
     "updated_at": "2026-10-17T07:12:30Z"
   },
   {
+    "abstract": "",
+    "authors": [
+      "{'fullname': 'Liang Chen', 'username': ''}",
+      "{'fullname': 'Weichu Xie', 'username': ''}",
+      "{'fullname': 'Yiyan Liang', 'username': ''}",
+      "{'fullname': 'Hongfeng He', 'username': ''}",
+      "{'fullname': 'Hans Zhao', 'username': ''}",
+      "{'fullname': 'Zhibo Yang', 'username': ''}",
+      "{'fullname': 'Zhiqi Huang', 'username': ''}",
+      "{'fullname': 'Haoning Wu', 'username': ''}",
+      "{'fullname': 'Haoyu Lu', 'username': ''}",
+      "{'fullname': 'Y. Charles', 'username': ''}",
+      "{'fullname': 'Yiping Bao', 'username': ''}",
+      "{'fullname': 'Yuantao Fan', 'username': ''}"
+    ],
     "category": "small-vlm",
     "discovered_from": "openreview",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:17:19+00:00",
     "id": "openreview-9faa95b09f1202e172b3",
     "paper_url": "https://openreview.net/forum?id=TFEdV9udS0",
+    "pdf_url": "https://openreview.net/pdf?id=TFEdV9udS0",
     "published_at": "2026-10-17T03:21:43.925000+00:00",
     "related_urls": [],
     "review": "pending",
     "source_url": "https://openreview.net/forum?id=TFEdV9udS0",
     "title": "BabyVision: Visual Reasoning Beyond Language",
-    "updated_at": "2026-10-17T03:21:44.062000+00:00"
+    "updated_at": "2026-10-17T03:21:44.062000+00:00",
+    "venue": "CoRR 2026"
   },
   {
     "category": "document",
@@ -3496,12 +4352,23 @@
     "updated_at": "2026-10-16T02:41:47.000Z"
   },
   {
+    "abstract": "Most of the existing methods for video understanding primarily focus on videos only lasting tens of seconds, with limited exploration of techniques for handling long videos. The increased number of frames in long videos poses two main challenges: difficulty in locating key information and performing long-range reasoning. Thus, we propose DrVideo, a document-retrieval-based system designed for long video understanding. Our key idea is to convert the long-video understanding problem into a long-document understanding task so as to effectively leverage the power of large language models. Specifically, DrVideo first transforms a long video into a coarse text-based long document to initially retrieve key frames and then updates the documents with the augmented key frame information. It then employs an agent-based iterative loop to continuously search for missing information and augment the document until sufficient question-related information is gathered for making the final predictions in a chain-of-thought manner. Extensive experiments on long video benchmarks confirm the effectiveness of our method. DrVideo significantly outperforms existing LLM-based state-of-the-art methods on EgoSchema benchmark (3 minutes), MovieChat-1K benchmark (10 minutes), and the long split of Video-MME benchmark (average of 44 minutes).",
+    "authors": [
+      "Ziyu Ma",
+      "Chenhui Gou",
+      "Hengcan Shi",
+      "Bin Sun",
+      "Shutao Li",
+      "Hamid Rezatofighi",
+      "Jianfei Cai"
+    ],
     "category": "video",
     "discovered_from": "openreview",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:17:19+00:00",
     "id": "openreview-788b3858529592e4952b",
     "paper_url": "https://openreview.net/forum?id=j2iY8B86Ir",
+    "pdf_url": "https://openreview.net/pdf?id=j2iY8B86Ir",
     "published_at": "2025-03-10T16:29:59.697000+00:00",
     "related_urls": [
       "https://openreview.net/forum?id=4mbAJ48gLt"
@@ -3509,7 +4376,8 @@
     "review": "pending",
     "source_url": "https://openreview.net/forum?id=j2iY8B86Ir",
     "title": "DrVideo: Document Retrieval Based Long Video Understanding",
-    "updated_at": "2026-10-15T20:36:53.079000+00:00"
+    "updated_at": "2026-10-15T20:36:53.079000+00:00",
+    "venue": "CoRR 2024"
   },
   {
     "category": "document",
@@ -3566,18 +4434,25 @@
     "updated_at": "2026-10-15T11:59:05.000Z"
   },
   {
+    "abstract": "Any new medium, once it emerges, is used for more than the transmission of overt content alone. The information it carries typically operates on two levels: one is the content directly presented, while the other is the subtext beneath it-the implicit ideas and intentions the creator seeks to convey through the medium. Likewise, since video technologies became widely adopted, video has served not only as a powerful tool for recording and communicating visual information, but also as a vehicle for emotions, attitudes, and social meanings that are often difficult to articulate explicitly. Thus, the true meaning of many videos does not reside solely in what is shown on screen; it is often embedded in context, style of expression, and the viewer's social experience. Some forms of such video subtext are humorous, while others carry irony, mockery, or criticism. These implicit meanings can also be interpreted very differently across cultural backgrounds and social groups. However, most existing video understanding models still focus primarily on literal visual comprehension, such as recognizing objects, actions, or temporal relations, and lack a systematic ability to understand the metaphorical, ironic, and social meanings embedded in videos. To bridge this gap, we introduce ViMU, the first benchmark designed to systematically evaluate the subtext understanding capabilities of frontier models in videos. ViMU assesses whether video understanding models can go beyond literal perception to infer implicit meaning while grounding their interpretations in multimodal evidence and answering both open-ended and multiple-choice questions. Importantly, all questions are designed to be hint-free, ensuring that no key evidence is disclosed to models before answering.",
+    "authors": [
+      "{'fullname': 'Qi Li', 'username': ''}",
+      "{'fullname': 'Xinchao Wang', 'username': '~Xinchao_Wang1'}"
+    ],
     "category": "video",
     "discovered_from": "openreview",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:17:19+00:00",
     "id": "openreview-1fc34c4d20f9e68bdefd",
     "paper_url": "https://openreview.net/forum?id=1WJ5P1qDmm",
+    "pdf_url": "https://openreview.net/pdf?id=1WJ5P1qDmm",
     "published_at": "2026-10-15T08:44:47.871000+00:00",
     "related_urls": [],
     "review": "pending",
     "source_url": "https://openreview.net/forum?id=1WJ5P1qDmm",
     "title": "ViMU: Benchmarking Video Metaphorical Understanding",
-    "updated_at": "2026-10-15T08:45:00.241000+00:00"
+    "updated_at": "2026-10-15T08:45:00.241000+00:00",
+    "venue": "CoRR 2026"
   },
   {
     "category": "document",
@@ -3621,18 +4496,29 @@
     "updated_at": "2026-10-15T05:12:05.000Z"
   },
   {
+    "abstract": "While Large Multimodal Models (LMMs) have made significant progress, they remain largely text-centric, relying on language as their core reasoning modality. As a result, they are limited in their ability to handle reasoning tasks that are predominantly visual. Recent approaches have sought to address this by supervising intermediate visual steps with helper images, depth maps, or image crops. However, these strategies impose restrictive priors on what \"useful\" visual abstractions look like, add heavy annotation costs, and struggle to generalize across tasks. To address this critical limitation, we propose a task-agnostic mechanism that trains LMMs to discover and use visual reasoning tokens without explicit supervision. These tokens attend globally and re-encode the image in a task-adaptive way, enabling the model to extract relevant visual information without hand-crafted supervision. Our approach outperforms direct fine-tuning and achieves state-of-the-art results on a diverse range of vision-centric tasks -- including those where intermediate abstractions are hard to specify -- while also generalizing to multi-task instruction tuning.",
+    "authors": [
+      "{'fullname': 'Kelvin Li', 'username': '~Kelvin_Li2'}",
+      "{'fullname': 'Chuyi Shang', 'username': ''}",
+      "{'fullname': 'Leonid Karlinsky', 'username': ''}",
+      "{'fullname': 'Rogério Feris', 'username': ''}",
+      "{'fullname': 'Trevor Darrell', 'username': ''}",
+      "{'fullname': 'Roei Herzig', 'username': ''}"
+    ],
     "category": "small-vlm",
     "discovered_from": "openreview",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:17:19+00:00",
     "id": "openreview-e9937d176b69053048ba",
     "paper_url": "https://openreview.net/forum?id=zjg8VNLKPu",
+    "pdf_url": "https://openreview.net/pdf?id=zjg8VNLKPu",
     "published_at": "2026-10-15T03:28:06.505000+00:00",
     "related_urls": [],
     "review": "pending",
     "source_url": "https://openreview.net/forum?id=zjg8VNLKPu",
     "title": "Latent Implicit Visual Reasoning",
-    "updated_at": "2026-10-15T03:28:08.945000+00:00"
+    "updated_at": "2026-10-15T03:28:08.945000+00:00",
+    "venue": "CVPR 2026"
   },
   {
     "category": "document",
@@ -3649,32 +4535,53 @@
     "updated_at": "2026-10-14T19:46:50.000Z"
   },
   {
+    "abstract": "Recent advances in multimodal large language models (MLLMs) have pushed video understanding toward real-world assistance. Egocentric cooking is a demanding testbed for this goal, requiring fine-grained hand-object recognition, evolving state tracking, and sequential reasoning, yet existing video QA benchmarks largely emphasize general-purpose understanding or assume access to complete videos rather than past-only observations. To fill this gap, we present EgoChef, a benchmark comprising 61,328 open-ended question-answer pairs from 129 real-world videos and covering current-state perception, temporal reasoning, and operation-level understanding. Each question is anchored to a timestamp, with models restricted to video observed up to that point and future frames withheld. For reliable open-ended evaluation, we provide multiple reference answers through multi-model semantic fusion with human calibration. Across representative open- and closed-source MLLMs, the strongest model achieves only 55.68\\% overall accuracy, with temporal reasoning remaining particularly challenging. We believe EgoChef can serve as a focused benchmark for fine-grained and temporal understanding of egocentric cooking.",
+    "authors": [],
     "category": "video",
     "discovered_from": "openreview",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:17:19+00:00",
     "id": "openreview-2c041dbb9019a5691fbb",
     "paper_url": "https://openreview.net/forum?id=ZtTlctLmVI",
+    "pdf_url": "https://openreview.net/pdf?id=ZtTlctLmVI",
     "published_at": "2026-08-26T15:12:33.083000+00:00",
     "related_urls": [],
     "review": "pending",
     "source_url": "https://openreview.net/forum?id=ZtTlctLmVI",
     "title": "Benchmarking Egocentric Cooking Video Understanding",
-    "updated_at": "2026-10-14T17:47:41.725000+00:00"
+    "updated_at": "2026-10-14T17:47:41.725000+00:00",
+    "venue": "ICLR 2027 Conference Desk Rejected Submission"
   },
   {
+    "abstract": "End-to-end Vision-language Models (VLMs) often answer visual questions by exploiting spurious correlations instead of causal visual evidence, and can become more shortcut-prone when fine-tuned. We introduce VISTA (Visual-Information Separation for Text-based Analysis), a modular framework that decouples perception from reasoning via an explicit information bottleneck. A frozen VLM sensor is restricted to short, objective perception queries, while a text-only LLM reasoner decomposes each question, plans queries, and aggregates visual facts in natural language. This controlled interface defines a reward-aligned environment for training unbiased visual reasoning with reinforcement learning. Instantiated with Qwen2.5-VL and Llama3.2-Vision sensors, and trained with GRPO from only 641 curated multi-step questions, VISTA significantly improves robustness to real-world spurious correlations on SpuriVerse (+16.29% with Qwen-2.5-VL-7B and +6.77% with Llama-3.2-Vision-11B), while remaining competitive on MMVP and a balanced SeedBench subset. VISTA transfers robustly across unseen VLM sensors and is able to recognize and recover from VLM perception failures. Human analysis further shows that VISTA's reasoning traces are more neutral, less reliant on spurious attributes, and more explicitly grounded in visual evidence than end-to-end VLM baselines.",
+    "authors": [
+      "Zhaonan Li",
+      "Shijie Lu",
+      "Fei Wang",
+      "Jacob Dineen",
+      "Xiao Ye",
+      "Zhikun Xu",
+      "Siyi Liu",
+      "Young Min Cho",
+      "Bangzheng Li",
+      "Daniel Chang",
+      "Kenny Nguyen",
+      "Qizheng Yang"
+    ],
     "category": "small-vlm",
     "discovered_from": "openreview",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:17:19+00:00",
     "id": "openreview-023d58488bc5bd96c09b",
     "paper_url": "https://openreview.net/forum?id=fidpROIhn9",
+    "pdf_url": "https://openreview.net/pdf?id=fidpROIhn9",
     "published_at": "2026-03-12T05:09:59.309000+00:00",
     "related_urls": [],
     "review": "pending",
     "source_url": "https://openreview.net/forum?id=fidpROIhn9",
     "title": "Unbiased Visual Reasoning with Controlled Visual Inputs",
-    "updated_at": "2026-10-14T08:50:10+00:00"
+    "updated_at": "2026-10-14T08:50:10+00:00",
+    "venue": "CoRR 2025"
   },
   {
     "category": "video",
