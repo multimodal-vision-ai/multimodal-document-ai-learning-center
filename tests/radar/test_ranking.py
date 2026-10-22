@@ -58,6 +58,16 @@ class RankingTests(unittest.TestCase):
         ranked = rank_candidates([noise, unrelated], WEEK, NOW, limit=None)
         self.assertEqual(ranked, [])
 
+    def test_low_signal_date_stamped_hf_upload_is_not_featured(self):
+        record = item("hf-low-signal", "RKB109/multimodal-document-retrieval-20261021-model",
+                      "huggingface", "2026-10-21T10:00:00Z", "2026-10-22T10:00:00Z",
+                      category="document", url="https://huggingface.co/RKB109/multimodal-document-retrieval-20261021-model")
+        record.update({
+            "hf_downloads": 0, "hf_likes": 0, "hf_has_model_card": False,
+            "hf_tags": [], "hf_pipeline_tag": None
+        })
+        self.assertEqual(rank_candidates([record], WEEK, NOW, limit=None), [])
+
     def test_summary_counts_relevant_categories_and_new_papers(self):
         paper = item("arxiv-video", "Efficient Long Video Question Answering",
                      "arxiv", "2026-10-22T11:00:00Z", category="video",
