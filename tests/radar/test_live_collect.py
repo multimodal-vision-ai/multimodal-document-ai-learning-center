@@ -62,25 +62,52 @@ class CollectionIntegrationTests(unittest.TestCase):
 
 
 class SourcePriorityTests(unittest.TestCase):
-    def test_research_papers_first_and_source_limits(self):
+    def test_research_relevance_prioritizes_papers_and_excludes_generated_noise(self):
         import render
-        items = []
-        for source, count in (("github", 12), ("huggingface", 8), ("openreview", 8)):
-            for i in range(count):
-                items.append({
-                    "id": f"{source}-{i}",
-                    "review": "pending",
-                    "discovered_from": source,
-                    "title": f"Candidate {source} {i}",
-                    "source_url": "https://example.org/" + source + str(i),
-                    "published_at": "2026-10-21T00:00:00Z"
-                })
-        chosen = render.select_candidate_leads(items)
-        self.assertEqual(len(chosen), 10)
-        self.assertEqual(chosen[0]["discovered_from"], "openreview")
-        self.assertEqual(sum(x["discovered_from"] == "openreview" for x in chosen), 6)
-        self.assertEqual(sum(x["discovered_from"] == "huggingface" for x in chosen), 2)
-        self.assertEqual(sum(x["discovered_from"] == "github" for x in chosen), 2)
+        from datetime import datetime, timezone
+        now = datetime(2026, 10, 22, 12, tzinfo=timezone.utc)
+        items = [
+            {
+                "id": "arxiv-video-token-reduction", "review": "pending",
+                "discovered_from": "arxiv",
+                "title": "GazeLens for Efficient Egocentric Video Question Answering with Token Reduction",
+                "category": "video", "source_url": "https://arxiv.org/abs/2610.28502",
+                "published_at": "2026-10-22T11:00:00Z", "updated_at": "2026-10-22T11:00:00Z"
+            },
+            {
+                "id": "openreview-document-dataset", "review": "pending",
+                "discovered_from": "openreview",
+                "title": "Document Understanding Dataset and Evaluation",
+                "category": "document", "source_url": "https://openreview.net/forum?id=example",
+                "published_at": "2026-10-20T08:00:00Z", "updated_at": "2026-10-20T08:01:00Z"
+            },
+            {
+                "id": "github-video-rag", "review": "pending",
+                "discovered_from": "github",
+                "title": "video-search-and-summarization",
+                "category": "video", "source_url": "https://github.com/example/video-search-and-summarization",
+                "published_at": "2024-10-22T06:00:00Z", "updated_at": "2026-10-21T10:00:00Z"
+            },
+            {
+                "id": "hf-generated-noise", "review": "pending",
+                "discovered_from": "huggingface",
+                "title": "gianmaTest/generatedDigitalExps_1xJTmg_rnn_cnn1d_video_2",
+                "category": "video", "source_url": "https://huggingface.co/gianmaTest/generatedDigitalExps_1xJTmg_rnn_cnn1d_video_2",
+                "published_at": "2026-10-22T10:00:00Z", "updated_at": "2026-10-22T10:00:00Z"
+            },
+            {
+                "id": "unrelated-test", "review": "pending",
+                "discovered_from": "github", "title": "my-test-repo",
+                "category": "small-vlm", "source_url": "https://github.com/example/my-test-repo",
+                "published_at": "2026-10-22T10:00:00Z", "updated_at": "2026-10-22T10:00:00Z"
+            },
+        ]
+        chosen = render.select_candidate_leads(items, now=now, limit=15)
+        self.assertGreaterEqual(len(chosen), 3)
+        self.assertEqual(chosen[0]["id"], "arxiv-video-token-reduction")
+        self.assertTrue(any(x["id"] == "openreview-document-dataset" for x in chosen))
+        self.assertFalse(any("generatedDigitalExps" in x["title"] for x in chosen))
+        self.assertTrue(all(x["review"] == "pending" for x in chosen))
 
     def test_arxiv_falls_back_to_second_official_host(self):
         from datetime import datetime, timezone
