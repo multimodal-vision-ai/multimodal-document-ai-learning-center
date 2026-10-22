@@ -299,69 +299,115 @@ def chatgpt_home_section(chatgpt_reports, now, limit=3):
 
 
 def chatgpt_report_listing(report, report_type):
-    labels = {"daily": "每日预警", "weekly": "每周周报", "monthly": "月度选题"}
+    """Render a short, student-readable set of report cards."""
+    labels = {"weekly": "周报", "monthly": "月度总结"}
+    label = labels.get(report_type, "研究报告")
     if not isinstance(report, dict) or not report:
-        return f"尚无已存档的 ChatGPT{labels.get(report_type, '研究')}结果。"
+        return f'<div class="radar-empty-state">尚无已存档的 ChatGPT{label}结果。</div>'
     status = report.get("status")
-    generated = report.get("generated_at") or "时间未记录"
+    generated = escape(str(report.get("generated_at") or "时间未记录")[:10])
     if status == "no_high_value":
-        return f"最近一次 ChatGPT {labels.get(report_type, '研究')}任务于 **{escape(generated)}** 完成；未发现达到设定门槛的项目。"
-    if status != "completed":
-        return f"最近一次 ChatGPT {labels.get(report_type, '研究')}任务尚未形成可展示的结果（状态：{escape(status or '未知')}）。"
-    items = report.get("items", [])
-    if not items:
-        return f"最近一次 ChatGPT {labels.get(report_type, '研究')}任务于 **{escape(generated)}** 完成，但没有保存可展示的筛选条目。"
-    lines = [f"**生成时间：{escape(generated)}**。以下是该任务实际输出并保存的筛选结果："]
-    for item in items:
-        if not isinstance(item, dict):
-            continue
-        title_text = item.get("title", "未命名研究成果")
-        url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
-        links = []
-        for key, label in (("paper_url", "论文"), ("github_url", "GitHub"), ("huggingface_url", "Hugging Face")):
-            if item.get(key) and valid_url(item[key]):
-                links.append(link(item[key], label))
-        lines.append(
-            f"- **{link(url, title_text)}** — {escape(category_label(item.get('category')))}；"
-            f"筛选日期：{escape(str(item.get('screened_at') or generated)[:10])}"
+        return (
+            '<div class="radar-empty-state"><strong>本期未发现达到门槛的高价值项目。</strong>'
+            f'<p>任务已于 {generated} 完成；系统不会为了填满页面而推荐普通线索。</p></div>'
         )
-        for field, label in (
-            ("summary", "研究摘要"),
-            ("why_selected", "ChatGPT 入选理由"),
-            ("research_opportunity", "后续研究机会"),
-            ("gpu", "GPU 需求"),
-            ("parameters", "参数规模"),
-        ):
-            if item.get(field):
-                lines.append(f"    - {label}：{escape(item[field])}")
-        if links:
-            lines.append("    - 资源：" + " · ".join(links))
-    return "\n\n".join(lines)
+    if status != "completed":
+        return f'<div class="radar-empty-state">最近一次{label}尚无可展示结果。</div>'
+    items = [
+        item for item in report.get("items", [])
+        if isinstance(item, dict)
+        and item.get("selection_status", "selected") in ("selected", "chatgpt_selected", "recommended")
+    ]
+    if not items:
+        return (
+            '<div class="radar-empty-state"><strong>本期没有保存可展示的精选条目。</strong>'
+            f'<p>任务记录时间：{generated}。</p></div>'
+        )
+    cards = []
+    for item in items[:5]:
+        title_text = item.get("title", "未命名研究成果")
+        title_url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
+        title = link(title_url, title_text)
+        summary = item.get("summary") or item.get("abstract") or item.get("description") or ""
+        why = item.get("why_selected") or item.get("selection_rationale") or ""
+        opportunity = item.get("research_opportunity") or item.get("next_steps") or ""
+        screened_at = escape(str(item.get("screened_at") or report.get("generated_at") or "日期未记录")[:10])
+        meta = [
+            f'<span class="radar-brief-label">{escape(category_label(item.get("category")))}</span>',
+            f'<span>筛选日期：{screened_at}</span>'
+        ]
+        resource_meta = []
+        params = item.get("parameters") or item.get("parameter_scale")
+        gpu = item.get("gpu") or item.get("gpu_requirement")
+        if params:
+            resource_meta.append("参数：" + escape(params))
+        if gpu:
+            resource_meta.append("GPU：" + escape(gpu))
+        links = []
+        seen = set()
+        for key, link_label in (("paper_url", "论文"), ("github_url", "GitHub"), ("huggingface_url", "Hugging Face")):
+            url = item.get(key)
+            if url and url not in seen and valid_url(url):
+                seen.add(url)
+                links.append(link(url, link_label))
+        cards.append(
+            '<article class="radar-brief-card radar-weekly-card">'
+            f'<div class="radar-brief-meta">{"".join(meta)}</div>'
+            f'<h3>{title}</h3>'
+            + (f'<p>{escape(summary[:300])}</p>' if summary else "")
+            + (f'<p><strong>为什么值得关注：</strong>{escape(why[:280])}</p>' if why else "")
+            + (f'<p><strong>学生可尝试：</strong>{escape(opportunity[:280])}</p>' if opportunity else "")
+            + (f'<p class="radar-chatgpt-compute">{" · ".join(resource_meta)}</p>' if resource_meta else "")
+            + (f'<div class="radar-brief-links">{" · ".join(links)}</div>' if links else "")
+            + '</article>'
+        )
+    extra = (
+        f'<p class="radar-page-note">报告更新：{generated}。页面最多展示 5 项；'
+        '完整原始记录保留在共享档案中。</p>'
+    )
+    return '<div class="radar-brief-list">' + "".join(cards) + '</div>' + extra
 
 
 def stage_two_detail_listing(reports, queue):
+    """Render only evidence-validated second-stage picks, with scores at a glance."""
     selected, errors = collect_screened(reports, queue)
     if errors:
-        return "二次评价数据未通过证据与评分规范检查，无法作为科研精选展示。"
-    if not selected:
-        return "**目前没有符合四维科研价值评分标准的 ChatGPT 二次评价结果。** 自动候选不会直接晋升。"
-    lines = []
-    for item in selected:
-        details = item["evaluation_dimensions"]
-        scores = "、".join(
-            f'{label}{escape(details[key]["score"])}/10'
-            for key, label in (
-                ("innovation", "创新性"), ("open_source", "开源完整度"),
-                ("reproducibility", "复现可行性"), ("research_potential", "科研潜力")
-            )
+        return (
+            '<div class="radar-empty-state"><strong>本次科研价值复核未通过数据校验。</strong>'
+            '<p>相关记录暂不展示为推荐，请检查自动检查日志。</p></div>'
         )
-        links = " · ".join(link(url, "来源证据") for url in item["evidence_urls"][:4])
-        lines.append(f'- **{link(item["evidence_urls"][0], item["title"])}** — 科研价值辅助评分 **{item["value_score"]}/10**')
-        lines.append(f'    - 四维评分：{scores}')
-        lines.append(f'    - 理由：{escape(item["why_selected"])}')
-        lines.append(f'    - 研究方向：{escape(item["research_opportunity"])}')
-        lines.append(f'    - {links}')
-    return "\n".join(lines)
+    if not selected:
+        return (
+            '<div class="radar-empty-state"><strong>暂时没有项目通过科研价值复核。</strong>'
+            '<p>筛选要求：主题匹配度 ≥8.0、四维评分综合 ≥7.5/10，并具备可核查来源。'
+            '自动候选不会直接晋升为推荐。</p></div>'
+        )
+    cards = []
+    fields = (
+        ("创新性", "innovation"), ("开源", "open_source"),
+        ("复现", "reproducibility"), ("科研潜力", "research_potential")
+    )
+    for item in selected[:3]:
+        dimensions = item["evaluation_dimensions"]
+        scores = "".join(
+            f'<span>{label} {escape(dimensions[key]["score"])}/10</span>'
+            for label, key in fields
+        )
+        urls = [url for url in item["evidence_urls"][:3] if valid_url(url)]
+        evidence = " · ".join(link(url, "来源证据") for url in urls)
+        cards.append(
+            '<article class="radar-brief-card radar-reviewed-card">'
+            f'<div class="radar-brief-meta"><span class="radar-brief-label">科研价值复核</span>'
+            f'<span class="radar-brief-score">综合 {escape(item["value_score"])}/10</span></div>'
+            f'<h3>{link(urls[0] if urls else None, item["title"])}</h3>'
+            f'<p>{escape(item["summary"][:280])}</p>'
+            f'<div class="radar-brief-dimensions">{scores}</div>'
+            f'<p><strong>入选原因：</strong>{escape(item["why_selected"][:260])}</p>'
+            f'<p><strong>研究切入点：</strong>{escape(item["research_opportunity"][:260])}</p>'
+            f'<div class="radar-brief-links">{evidence}</div>'
+            '</article>'
+        )
+    return '<div class="radar-brief-list">' + "".join(cards) + '</div>'
 
 
 def stage_two_home_section(chatgpt_reports, queue):
@@ -463,18 +509,10 @@ def render(now=None):
     content = page.read_text(encoding="utf-8")
     content = replace(content, "STAGE_TWO", stage_two_detail_listing(chatgpt_reports, screening_queue))
     for marker, report_type in (
-        ("CHATGPT_DAILY", "daily"),
         ("CHATGPT_WEEKLY", "weekly"),
         ("CHATGPT_MONTHLY", "monthly"),
     ):
         content = replace(content, marker, chatgpt_report_listing(chatgpt_reports.get(report_type, {}), report_type))
-    blocks = {
-        "DAILY": research_listing(reports["daily"]["projects"], "最近24小时暂无达到预警门槛的已审核项目。"),
-        "WEEKLY": research_listing(reports["weekly"]["projects"], "最近7天暂无已审核的重点进展。"),
-        "MONTHLY": research_listing(reports["monthly"]["projects"], "最近30天暂无已审核的研究机会。"),
-    }
-    for marker, body in blocks.items():
-        content = replace(content, marker, indent(body))
     leads = []
     for item in select_candidate_leads(candidates, now):
         title = item.get("title", "Untitled")
