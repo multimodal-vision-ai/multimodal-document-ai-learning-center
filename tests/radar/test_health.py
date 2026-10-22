@@ -95,7 +95,7 @@ class HealthTests(unittest.TestCase):
             root=Path(d)
             q=snapshot(root)
             report=make_report(q)
-            report.update({"schema_version":1,"report_type":"daily","generated_at":NOW.isoformat()})
+            report.update({"schema_version":1,"screening_schema_version":1,"report_type":"daily","generated_at":NOW.isoformat()})
             save(root/"chatgpt-reviewed"/"latest-daily.json",report)
             event=root/"event.json"
             save(event,{"commits":[{"added":["research-radar/data/chatgpt-reviewed/latest-daily.json"],"modified":[],"removed":[]}]})
