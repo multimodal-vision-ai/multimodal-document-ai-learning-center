@@ -1,0 +1,53 @@
+# Research Radar: ChatGPT 二次科研评价与首页发布契约
+
+## 两阶段筛选（DEV）
+
+**第一阶段，GitHub 自动发现**：每天采集公开 arXiv/GitHub/HF/OpenReview 数据，去重并计算主题匹配度；`scripts/radar/reports.py` 从最近7天**≥8.0分**候选生成 `research-radar/data/screening-queue.json`，写入 `radar-data`。这不是科研质量评价。
+
+**第二阶段，ChatGPT 研究任务**：现有每日预警、每周周报、月度选题任务读取 `radar-data` 中的 `screening-queue.json`，逐项阅读相关官方论文、README、权重页及许可证，判断创新性、开源完整度、复现可行性、科研潜力，并记录原始证据。不能只读仓库标题就宣布“已核实”。
+
+将结果按照下列 JSON **schema v2** 写回 `radar-data/research-radar/data/chatgpt-reviewed/latest-{daily,weekly,monthly}.json`。已有 schema v1 历史报告继续显示为历史档案，**不会自动晋升为“通过第二轮评价”**。
+
+```json
+{
+  "schema_version": 1,
+  "screening_schema_version": 2,
+  "report_type": "daily",
+  "report_title": "ChatGPT 每日科研预警",
+  "first_stage_threshold": 8.0,
+  "status": "completed",
+  "generated_at": "2026-10-22T12:00:00Z",
+  "summary": "本次研究评价摘要",
+  "items": [
+    {
+      "candidate_id": "arxiv-XXXX-YYYY",
+      "title": "必须与screening-queue中条目名称一致",
+      "selection_status": "recommended",
+      "screened_at": "2026-10-22T12:00:00Z",
+      "summary": "至少15字的事实性研究概述",
+      "why_selected": "至少15字的有证据的研究价值判断",
+      "research_opportunity": "至少12字的后续可验证问题",
+      "evaluation_dimensions": {
+        "innovation": {"score": 8, "rationale": "基于论文方法对比的充分解释"},
+        "open_source": {"score": 8, "rationale": "基于代码权重数据及许可的解释"},
+        "reproducibility": {"score": 8, "rationale": "基于计算资源实验配置与依赖的解释"},
+        "research_potential": {"score": 8, "rationale": "基于后续科学问题的可验证解释"}
+      },
+      "confidence": "medium",
+      "evidence_urls": ["https://arxiv.org/abs/XXXX.YYYYY"],
+      "parameters": null,
+      "gpu_requirement": null,
+      "weights_open": null,
+      "training_code_open": null,
+      "data_open": null
+    }
+  ]
+}
+```
+
+- 评分权重：创新性30%、开源完整度25%、复现可行性25%、科研潜力20%。只有总分≥7.5、四个单项都≥5、置信度非low、有正文解释且包含候选原始来源证据的 `recommended` 项可上首页科研精选。
+- `not_recommended` 可以保留在报告里以说明舍弃原因，但不占用首页推荐名额。
+- 不能依靠评分系统证明事实真实性；`scripts/radar/screening.py` 检查的是**数据结构、证据 URL 的关联、分数门槛与关联 ID**，不是模型结论的科学真伪。
+- 若没有高价值项目，请写入 `status: "no_high_value"` 与 `items: []`；不得填充低质量项目。若没有在第一阶段队列中找到该论文，须先进入正常候选采集流程再考虑推荐，不能手动跳过8分门槛。
+- 若无法验证参数量、模型权重、训练代码、数据与 GPU 需求，一律设置 `null`，不得猜测。自动运行能否在 ChatGPT 中写入 GitHub，需以下一次计划任务实际运行日志为准。
+- `radar-data` 的 `.github/workflows/refresh-dev-preview-from-chatgpt-results.yml` 监听上述三个报告文件变动，先进行二次评价结构校验，再自动重建 DEV。正式 main 需要单独发布，当前不部署。

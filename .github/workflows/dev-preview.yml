@@ -65,6 +65,7 @@ jobs:
       - name: Render Research Radar snapshot
         run: |
           python -m unittest discover -s tests/radar -v
+          python scripts/radar/screening.py
           python scripts/radar/render.py
 
       - name: Override preview base URL in temporary runner copy
@@ -269,6 +270,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add research-radar/data/candidates.json research-radar/data/tasks.json
           git add research-radar/data/collection-status.json
+          git add research-radar/data/screening-queue.json
           for folder in daily weekly monthly; do
             if [ -d "research-radar/data/$folder" ]; then
               git add "research-radar/data/$folder"
