@@ -505,7 +505,7 @@
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
-      本周精选
+      重点推荐
     </span>
   </a>
   
@@ -514,7 +514,7 @@
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      科研价值复核
+      本周精选
     </span>
   </a>
   
@@ -524,6 +524,15 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       本月研究机会
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      待核验线索
     </span>
   </a>
   
@@ -2146,7 +2155,7 @@
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
-      本周精选
+      重点推荐
     </span>
   </a>
   
@@ -2155,7 +2164,7 @@
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      科研价值复核
+      本周精选
     </span>
   </a>
   
@@ -2165,6 +2174,15 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       本月研究机会
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      待核验线索
     </span>
   </a>
   
@@ -2196,14 +2214,8 @@
 
 
 <h1 id="_1">前沿动态<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>每周查看这里即可：<strong>先看本周精选，再看通过科研价值复核的项目，最后查看本月研究机会。</strong> 自动发现线索默认折叠，不等于科研推荐。</p>
-<h2 id="_2">本周精选<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<!-- RADAR:CHATGPT_WEEKLY-START -->
-<div class="radar-brief-list"><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-meta"><span class="radar-brief-label">文档理解</span><span>筛选日期：2026-10-19</span></div><h3><a href="https://arxiv.org/abs/2610.20335" target="_blank" rel="noopener noreferrer">RPD + SARA</a></h3><p>结构感知的统一文档解析方法，目标是更好保留文档布局和结构信息。已存档周报报告了 layout F1 为 0.9189、对比 LoRA baseline 的 0.7004；该数值应结合原论文的实验设置核验。</p><p><strong>价值点：</strong>原周报列为 A 优先级；模型权重和数据被记录为开放，且提供了 GitHub 与 Hugging Face 入口，适合作为文档解析的复现基线。</p><p><strong>学生切入：</strong>在跨版式、长文档、表格混排和扫描质量变化条件下复现布局指标；比较量化推理、LoRA 微调与结构约束对精度和显存的影响。</p><p class="radar-chatgpt-compute">参数：2B · GPU：T4 量化推理可行；LoRA 约需 24GB；全量训练至少约 40GB（按已存档周报记录，需实测复核）</p><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.20335" target="_blank" rel="noopener noreferrer">论文</a> · <a href="https://github.com/yufanchen96/RPD" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="https://huggingface.co/chen-doc-ai/Qwen3.5-2B_with_SARA" target="_blank" rel="noopener noreferrer">Hugging Face</a></div></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-meta"><span class="radar-brief-label">文档理解</span><span>筛选日期：2026-10-19</span></div><h3><a href="https://arxiv.org/abs/2610.20461" target="_blank" rel="noopener noreferrer">semCER</a></h3><p>面向 OCR 的语义严重度加权评测思路，试图区分对含义影响不同的识别错误，而不只把所有字符编辑视为等价。</p><p><strong>价值点：</strong>已存档周报记录了 T4 16GB 环境测试，并报告 FP32 约 46 edits/s；完整蒸馏流程尚未确认，适合开展可复现实验和评测方法研究。</p><p><strong>学生切入：</strong>检验语义严重度指标与下游信息抽取、文档问答质量之间的相关性，并在多语言、表格和票据 OCR 场景中进行对照。</p><p class="radar-chatgpt-compute">参数：0.8B · GPU：已存档周报记录 T4 16GB 可运行；约 46 edits/s 为 FP32 报告值，需按原设置复核</p><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.20461" target="_blank" rel="noopener noreferrer">论文</a> · <a href="https://github.com/nguyenx2t/semcer" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="https://huggingface.co/nguyenx2t/semcer-qwen3.5-0.8b" target="_blank" rel="noopener noreferrer">Hugging Face</a></div></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-meta"><span class="radar-brief-label">多模态小模型</span><span>筛选日期：2026-10-19</span></div><h3><a href="https://arxiv.org/abs/2610.22131" target="_blank" rel="noopener noreferrer">Intern-Decision</a></h3><p>面向结构化决策输出的小模型系列，强调一次生成结构化决策结果。</p><p><strong>价值点：</strong>已存档周报记录训练代码开放，并覆盖多个参数规模，适合在统一任务和资源预算下比较模型规模、结构约束与泛化能力。</p><p><strong>学生切入：</strong>设计未见过的字段 schema、长尾类别和格式扰动测试；比较不同规模模型的结构有效率、任务准确率和推理成本。</p><p class="radar-chatgpt-compute">参数：0.8B / 2B / 4B · GPU：0.8B/2B 推理可尝试 T4；4B 约需 24GB 显存（按已存档周报记录）</p><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.22131" target="_blank" rel="noopener noreferrer">论文</a> · <a href="https://github.com/internlm/Intern-Decision" target="_blank" rel="noopener noreferrer">GitHub</a></div></article></div>
-<p class="radar-page-note">报告更新：2026-10-19。仅展示前 3 项；完整原始记录保留在共享档案中。</p>
-<!-- RADAR:CHATGPT_WEEKLY-END -->
-
-<h2 id="_3">科研价值复核<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>先看已通过科研价值复核的重点推荐，再看本周精选与本月研究机会。待核验线索默认折叠；未经核验的自动发现不会直接进入推荐。</p>
+<h2 id="_2">重点推荐<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <div class="radar-review-intro">
 <p><strong>筛选流程：</strong>先按主题匹配度 ≥8.0 初筛，再评估创新性、开源完整度、复现可行性和科研潜力。</p>
 <p class="radar-review-threshold"><strong>入选条件：</strong>综合评分 ≥7.5/10，且原始证据与评分校验通过。<span>评分仅供研究参考，不等于同行评审。</span></p>
@@ -2213,11 +2225,18 @@
 <div class="radar-brief-list radar-review-list"><article class="radar-review-card"><header class="radar-review-card-head"><div class="radar-review-card-labels"><span class="radar-review-pill radar-review-pill-approved">通过复核</span><span class="radar-review-pill">主题匹配度 ≥8.0</span></div><div class="radar-review-overall"><span>综合评分</span><strong>7.75</strong><small>/10</small></div></header><h3 class="radar-review-title"><a href="https://arxiv.org/abs/2602.22779v4" target="_blank" rel="noopener noreferrer">TrajTok: Learning Trajectory Tokens enables better Video Understanding</a></h3><p class="radar-review-summary">TrajTok提出与视频模型联合训练的轨迹式视觉tokenizer，不依赖额外的精细跟踪前处理，并展示其作为视频编码器、适配器及VLM连接模块的多种用法。原论文及Apple研究页说明它试图在长视频推理中降低视觉token冗余。</p><div class="radar-review-score-grid" aria-label="四项评分"><div class="radar-review-score-item"><span class="radar-review-score-label">创新性</span><div class="radar-review-score-value"><strong>8.5</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">开源完整度</span><div class="radar-review-score-value"><strong>7.5</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">复现可行性</span><div class="radar-review-score-value"><strong>6.5</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">科研潜力</span><div class="radar-review-score-value"><strong>8.5</strong><span>/10</span></div></div></div><div class="radar-review-detail-grid"><section class="radar-review-detail radar-review-value"><h4>研究价值</h4><p>该方法针对长视频token数量随时长增长的算力瓶颈，具有方法创新性；可找到对应论文、公开代码及部分权重入口，且研究问题能够设计对照实验。当前尚未在本项目中独立复现实验，GPU配置仍需核实。</p></section><section class="radar-review-detail radar-review-student"><h4>学生切入点</h4><p>以统一视频数据和固定GPU预算比较轨迹token、均匀patch压缩及帧采样方法，评估时间定位、VideoQA正确率、token数、吞吐和显存，并分析短时局部运动与长时关系的泛化边界。</p></section></div><footer class="radar-review-sources"><strong>原始证据</strong><a href="https://arxiv.org/abs/2602.22779v4" target="_blank" rel="noopener noreferrer">主要来源</a> <span aria-hidden="true">·</span> <a href="https://machinelearning.apple.com/research/trajtok" target="_blank" rel="noopener noreferrer">补充来源 2</a> <span aria-hidden="true">·</span> <a href="https://github.com/hellomuffin/trajtok" target="_blank" rel="noopener noreferrer">补充来源 3</a></footer></article></div>
 <!-- RADAR:STAGE_TWO-END -->
 
+<h2 id="_3">本周精选<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<!-- RADAR:CHATGPT_WEEKLY-START -->
+<div class="radar-brief-list"><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-meta"><span class="radar-brief-label">文档理解</span><span>筛选日期：2026-10-19</span></div><h3><a href="https://arxiv.org/abs/2610.20335" target="_blank" rel="noopener noreferrer">RPD + SARA</a></h3><p>结构感知的统一文档解析方法，目标是更好保留文档布局和结构信息。已存档周报报告了 layout F1 为 0.9189、对比 LoRA baseline 的 0.7004；该数值应结合原论文的实验设置核验。</p><p><strong>价值点：</strong>原周报列为 A 优先级；模型权重和数据被记录为开放，且提供了 GitHub 与 Hugging Face 入口，适合作为文档解析的复现基线。</p><p><strong>学生切入：</strong>在跨版式、长文档、表格混排和扫描质量变化条件下复现布局指标；比较量化推理、LoRA 微调与结构约束对精度和显存的影响。</p><p class="radar-chatgpt-compute">参数：2B · GPU：T4 量化推理可行；LoRA 约需 24GB；全量训练至少约 40GB（按已存档周报记录，需实测复核）</p><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.20335" target="_blank" rel="noopener noreferrer">论文</a> · <a href="https://github.com/yufanchen96/RPD" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="https://huggingface.co/chen-doc-ai/Qwen3.5-2B_with_SARA" target="_blank" rel="noopener noreferrer">Hugging Face</a></div></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-meta"><span class="radar-brief-label">文档理解</span><span>筛选日期：2026-10-19</span></div><h3><a href="https://arxiv.org/abs/2610.20461" target="_blank" rel="noopener noreferrer">semCER</a></h3><p>面向 OCR 的语义严重度加权评测思路，试图区分对含义影响不同的识别错误，而不只把所有字符编辑视为等价。</p><p><strong>价值点：</strong>已存档周报记录了 T4 16GB 环境测试，并报告 FP32 约 46 edits/s；完整蒸馏流程尚未确认，适合开展可复现实验和评测方法研究。</p><p><strong>学生切入：</strong>检验语义严重度指标与下游信息抽取、文档问答质量之间的相关性，并在多语言、表格和票据 OCR 场景中进行对照。</p><p class="radar-chatgpt-compute">参数：0.8B · GPU：已存档周报记录 T4 16GB 可运行；约 46 edits/s 为 FP32 报告值，需按原设置复核</p><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.20461" target="_blank" rel="noopener noreferrer">论文</a> · <a href="https://github.com/nguyenx2t/semcer" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="https://huggingface.co/nguyenx2t/semcer-qwen3.5-0.8b" target="_blank" rel="noopener noreferrer">Hugging Face</a></div></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-meta"><span class="radar-brief-label">多模态小模型</span><span>筛选日期：2026-10-19</span></div><h3><a href="https://arxiv.org/abs/2610.22131" target="_blank" rel="noopener noreferrer">Intern-Decision</a></h3><p>面向结构化决策输出的小模型系列，强调一次生成结构化决策结果。</p><p><strong>价值点：</strong>已存档周报记录训练代码开放，并覆盖多个参数规模，适合在统一任务和资源预算下比较模型规模、结构约束与泛化能力。</p><p><strong>学生切入：</strong>设计未见过的字段 schema、长尾类别和格式扰动测试；比较不同规模模型的结构有效率、任务准确率和推理成本。</p><p class="radar-chatgpt-compute">参数：0.8B / 2B / 4B · GPU：0.8B/2B 推理可尝试 T4；4B 约需 24GB 显存（按已存档周报记录）</p><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.22131" target="_blank" rel="noopener noreferrer">论文</a> · <a href="https://github.com/internlm/Intern-Decision" target="_blank" rel="noopener noreferrer">GitHub</a></div></article></div>
+<p class="radar-page-note">报告更新：2026-10-19。仅展示前 3 项；完整原始记录保留在共享档案中。</p>
+<!-- RADAR:CHATGPT_WEEKLY-END -->
+
 <h2 id="_4">本月研究机会<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- RADAR:CHATGPT_MONTHLY-START -->
 <div class="radar-empty-state">最近一次月度总结尚无可展示结果。</div>
 <!-- RADAR:CHATGPT_MONTHLY-END -->
 
+<h2 id="_5">待核验线索<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <details class="radar-candidate-details">
 <summary>查看近期自动发现线索（主题匹配度 ≥8.0，尚未审核）</summary>
 <p>只显示最近 7 天内最多 15 条高匹配线索。<strong>匹配度只表示主题相关，不代表科研价值；未经核验的候选不会自动成为推荐。</strong></p>
