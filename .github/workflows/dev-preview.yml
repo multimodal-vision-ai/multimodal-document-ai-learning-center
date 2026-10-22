@@ -49,13 +49,13 @@ jobs:
           fi
 
       - name: Collect real public candidates (DEV branch only)
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python scripts/radar/collect.py
 
       - name: Refresh Issue snapshot and dated reports (DEV only)
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -127,13 +127,13 @@ jobs:
           retention-days: 7
 
       - name: Stage public Radar data for snapshot persistence (DEV only)
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
         run: |
           mkdir -p "$RUNNER_TEMP/radar-snapshot"
           cp -a research-radar/data/. "$RUNNER_TEMP/radar-snapshot/"
 
       - name: Upload data snapshot artifact (DEV only)
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
         uses: actions/upload-artifact@v4
         with:
           name: dev-radar-snapshot
@@ -187,6 +187,7 @@ jobs:
           echo "Fixed URL: https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview/index.html"
 
       - name: Checkout persistent Radar data branch
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
         uses: actions/checkout@v4
         with:
           ref: radar-data
@@ -194,12 +195,14 @@ jobs:
           persist-credentials: true
 
       - name: Download collected data snapshot
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
         uses: actions/download-artifact@v4
         with:
           name: dev-radar-snapshot
           path: ${{ runner.temp }}/radar-snapshot
 
       - name: Persist only generated public data to radar-data
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
         shell: bash
         run: |
           set -euo pipefail

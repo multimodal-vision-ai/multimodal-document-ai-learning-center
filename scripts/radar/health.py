@@ -17,7 +17,6 @@ from screening import report_items
 ROLLOUT_UTC = datetime(2026, 10, 22, 3, 54, tzinfo=timezone.utc)
 # First expected reports AFTER v2 rollout, including conservative delivery grace.
 FIRST_DEADLINES = {
-    "daily": datetime(2026, 10, 23, 10, 0, tzinfo=timezone.utc),
     "weekly": datetime(2026, 10, 27, 1, 0, tzinfo=timezone.utc),
     "monthly": datetime(2026, 11, 2, 1, 0, tzinfo=timezone.utc),
 }
@@ -52,7 +51,7 @@ def inspect(data_path=DATA, now=None):
         source_failures = ["Malformed source_failures field"]
     collector_age = (now - source_time) if source_time else None
     queue_age = (now - queue_time) if queue_time else None
-    if collector_age is None or queue_age is None or collector_age > timedelta(hours=36) or queue_age > timedelta(hours=36):
+    if collector_age is None or queue_age is None or collector_age > timedelta(days=9) or queue_age > timedelta(days=9):
         acquisition = "stale"
     elif source_failures:
         acquisition = "degraded"
@@ -71,7 +70,7 @@ def inspect(data_path=DATA, now=None):
         },
         "tasks": {},
     }
-    for kind in ("daily", "weekly", "monthly"):
+    for kind in ("weekly", "monthly"):
         report = load(data_path / "chatgpt-reviewed" / f"latest-{kind}.json", {})
         generated = as_utc(report.get("generated_at"))
         is_new = report.get("screening_schema_version") == 2

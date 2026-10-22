@@ -2,11 +2,11 @@
 
 ## 两阶段筛选（DEV）
 
-**第一阶段，GitHub 自动发现**：每天采集公开 arXiv/GitHub/HF/OpenReview 数据，去重并计算主题匹配度；`scripts/radar/reports.py` 从最近7天**≥8.0分**候选生成 `research-radar/data/screening-queue.json`，写入 `radar-data`。这不是科研质量评价。
+**第一阶段，GitHub 自动发现**：每周一次集中采集公开 arXiv/GitHub/HF/OpenReview 数据，去重并计算主题匹配度；`scripts/radar/reports.py` 从最近7天**≥8.0分**候选生成 `research-radar/data/screening-queue.json`，写入 `radar-data`。这不是科研质量评价。
 
-**第二阶段，ChatGPT 研究任务**：现有每日预警、每周周报、月度选题任务读取 `radar-data` 中的 `screening-queue.json`，逐项阅读相关官方论文、README、权重页及许可证，判断创新性、开源完整度、复现可行性、科研潜力，并记录原始证据。不能只读仓库标题就宣布“已核实”。
+**第二阶段，ChatGPT 研究任务**：现有每周周报、月度选题任务（每日预警已停用）读取 `radar-data` 中的 `screening-queue.json`，逐项阅读相关官方论文、README、权重页及许可证，判断创新性、开源完整度、复现可行性、科研潜力，并记录原始证据。不能只读仓库标题就宣布“已核实”。
 
-将结果按照下列 JSON **schema v2** 写回 `radar-data/research-radar/data/chatgpt-reviewed/latest-{daily,weekly,monthly}.json`。已有 schema v1 历史报告继续显示为历史档案，**不会自动晋升为“通过第二轮评价”**。
+将结果按照下列 JSON **schema v2** 写回 `radar-data/research-radar/data/chatgpt-reviewed/latest-{weekly,monthly}.json`。已有 schema v1 历史报告继续显示为历史档案，**不会自动晋升为“通过第二轮评价”**。
 
 ```json
 {
@@ -52,19 +52,19 @@
 - 若无法验证参数量、模型权重、训练代码、数据与 GPU 需求，一律设置 `null`，不得猜测。自动运行能否在 ChatGPT 中写入 GitHub，需以下一次计划任务实际运行日志为准。
 - `radar-data` 的 `.github/workflows/refresh-dev-preview-from-chatgpt-results.yml` 监听上述三个报告文件变动，先进行二次评价结构校验，再自动重建 DEV。正式 main 需要单独发布，当前不部署。
 
-## 持续无人值守验收（监控不能代替真实运行）
+## 低频运行与无人值守验收（2026-10-22 调整）
 
-`scripts/radar/health.py` 从 `radar-data` 已保存的数据计算每日、每周、每月三种任务的独立健康状态，并且在 DEV 首页显示「周期任务运行验收」。CI 运行 `python scripts/radar/health.py` 输出当前 JSON 诊断，不需要连接 OpenAI API，也不会直接篡改研究报告。模拟单元测试覆盖三周期通过、首次等待、超期、证据无效、数据源429降级、队列过期；**模拟结果不算 ChatGPT 真实计划任务通过**。
-
-新 v2 规范从 2026-10-22T03:54Z 开始：首个宽限截止点分别为日 2026-10-23T10:00Z、周 2026-10-27T01:00Z、月 2026-11-02T01:00Z。宽限时间用于认定无人值守故障，不改动各任务真实执行计划。第一份新规范报告必须携带 `screening_schema_version=2`、实际 `generated_at`、合法评价结果，`no_high_value` 且空列表也可视为完成输出。之后当日报告超过40小时、周报超过9天、月报超过35天未更新时展示超期。公开候选队列或采集数据超过36小时未更新显示 stale；arXiv等来源受限显示 degraded。
-
-ChatGPT 另有「科研雷达无人值守验收」每日条件检查任务：读取以上档案并核对 GitHub Actions 的自动触发/部署状态，仅当延误、同步失败或来源持续异常时通知。需进一步核验 ChatGPT 自动任务的真实执行历史，不能凭 GitHub 文件时间推断自动触发。跨日/周/月的真实运行结果只有在各自周期结束后才可完成最终验收。
-
-**架构边界**：只在 `dev` 和 `radar-data` 维护；默认分支 `main` 未变动。GitHub Actions 的 cron 不会因非默认分支上的 workflow 而定时运行；当前开发环境依赖已启用的 ChatGPT 计划任务写回及 `radar-data` 的 push 事件触发 DEV 页面重建。若将来要求不依赖 ChatGPT 任务执行环境的独立定时部署，需要明确批准生产分支的 GitHub Actions 或另配有凭证的外部调度系统。
+- **每周一北京时间 09:00**：ChatGPT 科研周报任务在 `dev` 分支创建或更新 `research-radar/weekly-run.json`，提交信息固定包含 `[radar-weekly-scan]`；该单次变更触发 DEV 构建中的网络采集、Issue 同步、≥8分候选队列更新，并存入 `radar-data`。普通 `dev` 代码推送只构建网站，**不再调用公开源采集**。
+- 随后同一次 ChatGPT 周报任务读取更新后的 `screening-queue.json`，对高匹配候选按四维科研价值判断写入 `latest-weekly.json`。该文件变更由 `radar-data` 的 push 工作流更新 DEV 页面。只有 GitHub 实际写入/构建成功才能称已同步，异步完成可能延迟；不得猜测。
+- **每月 1 日北京时间 09:00**：ChatGPT 月度任务基于近一个月的周报、历史已评价成果及必要的少量验证，生成 `latest-monthly.json` 与科研选题总结；**不再重复全网采集或重新扫描全部模型仓库**。
+- 每日预警与每日巡检均已停用。人工维护、代码变更和手动点击工作流依然可能构建 DEV，但不能算作周期性网络采集。
+- `scripts/radar/health.py` 和 DEV 首页只评估**周报和月报**是否按计划写入；周报超过9天、月报超过35天视为超期。队列/采集记录超过9天才算 stale，避免旧版36小时门槛造成频繁误报。原始日报仅作为历史档案保留。
+- cron 在非默认分支上不会被 GitHub Actions 自动执行；周报由 ChatGPT 计划任务主动写入触发标记。该步骤在下一次实际周报运行前不能宣称已自动成功。
+- 二次评价的科学判断仍要求原始证据、四维评分和来源匹配；单纯8分关键词候选不能成为首页科研精选。
 
 ## 发布证据文件
 
-独立的「科研雷达无人值守验收」任务每日检查三份报告和 GitHub Actions。它应把结果写入 `radar-data/research-radar/data/automation-health.json`，不要修改三个报告文件。这个文件会触发 DEV 页面重建，首页据此展示最后一次检查和发布证据。
+日常独立巡检已经停用。周报任务完成后检查周报与 GitHub Actions，月度任务完成后检查月报与页面；除非有明确异常，不另设每日扫描。它应把结果写入 `radar-data/research-radar/data/automation-health.json`，不要修改三个报告文件。这个文件会触发 DEV 页面重建，首页据此展示最后一次检查和发布证据。
 
 最低结构如下（所有时间必须是实际 UTC ISO 8601 时间，不得用预计时间冒充执行时间）：
 
@@ -76,7 +76,7 @@ ChatGPT 另有「科研雷达无人值守验收」每日条件检查任务：读
   "watchdog": {
     "last_run_at": "2026-10-22T12:00:00Z",
     "status": "completed",
-    "message": "本次检查覆盖了三份报告、Actions 记录和公开预览页面"
+    "message": "本次检查覆盖了周报与月报、Actions 记录和公开预览页面"
   },
   "publication": {
     "status": "success",
