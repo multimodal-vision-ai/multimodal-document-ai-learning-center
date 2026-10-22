@@ -156,7 +156,7 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("radar-review-detail-grid", first["radar/index.md"])
             self.assertIn("主要来源", first["radar/index.md"])
             self.assertIn("radar-review-intro", first["radar/index.md"])
-            self.assertIn("2026年第43周", first["radar/index.md"])
+            self.assertIn("2026年第42周", first["radar/index.md"])
             self.assertIn("历史档案检索", first["radar/index.md"])
             self.assertIn("radar-archive-toolbar", first["radar/index.md"])
             self.assertIn("radar-archive-details", first["radar/index.md"])
