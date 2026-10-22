@@ -276,6 +276,7 @@ jobs:
                && curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$radar_url" -o "$RUNNER_TEMP/dev-preview-radar.html" \
                && grep -q "DEV 预览版" "$RUNNER_TEMP/dev-preview-public.html" \
                && grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html" \
+               && grep -q "周期任务无人值守验收" "$RUNNER_TEMP/dev-preview-public.html" \
                && grep -q "高匹配自动候选" "$RUNNER_TEMP/dev-preview-radar.html"; then
               asset_url="$(python - "$radar_url" "$RUNNER_TEMP/dev-preview-radar.html" <<'PY'
           import re
