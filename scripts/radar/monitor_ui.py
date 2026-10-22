@@ -36,6 +36,11 @@ def widget(data_path, now):
     watchdog_time = watchdog.get("last_run_at") or "尚无独立巡检记录"
     watchdog_result = watchdog.get("status") or "unknown"
     pub_status = publication.get("status") or "unknown"
+    if pub_status == "success" and not (
+        publication.get("home_content_verified") is True
+        and publication.get("detail_content_verified") is True
+    ):
+        pub_status = "unknown"
     pub_labels = {
         "success": "最近一次报告发布与页面核验通过",
         "failed": "最近一次报告发布或页面核验失败",
