@@ -1,14 +1,8 @@
 # 前沿动态
 
-每周查看这里即可：**先看本周精选，再看通过科研价值复核的项目，最后查看本月研究机会。** 自动发现线索默认折叠，不等于科研推荐。
+先看已通过科研价值复核的重点推荐，再看本周精选与本月研究机会。待核验线索默认折叠；未经核验的自动发现不会直接进入推荐。
 
-## 本周精选
-
-<!-- RADAR:CHATGPT_WEEKLY-START -->
-尚无已存档的 ChatGPT 周报结果。
-<!-- RADAR:CHATGPT_WEEKLY-END -->
-
-## 科研价值复核
+## 重点推荐
 
 <div class="radar-review-intro">
 <p><strong>筛选流程：</strong>先按主题匹配度 ≥8.0 初筛，再评估创新性、开源完整度、复现可行性和科研潜力。</p>
@@ -19,11 +13,19 @@
 暂无通过四维科研价值复核的项目。
 <!-- RADAR:STAGE_TWO-END -->
 
+## 本周精选
+
+<!-- RADAR:CHATGPT_WEEKLY-START -->
+尚无已存档的 ChatGPT 周报结果。
+<!-- RADAR:CHATGPT_WEEKLY-END -->
+
 ## 本月研究机会
 
 <!-- RADAR:CHATGPT_MONTHLY-START -->
 尚无已存档的 ChatGPT 月度研究机会。
 <!-- RADAR:CHATGPT_MONTHLY-END -->
+
+## 待核验线索
 
 <details class="radar-candidate-details" markdown>
 <summary>查看近期自动发现线索（主题匹配度 ≥8.0，尚未审核）</summary>
@@ -37,3 +39,4 @@
 </details>
 
 <p class="radar-page-note">数据按周更新；月度总结单独更新。论文发布日期、项目更新日期与采集日期可能不同，请以原始来源为准。</p>
+
