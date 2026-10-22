@@ -1,0 +1,80 @@
+/* Research Radar weekly digest: clear period metadata and separate compute rows. */
+.md-typeset p.radar-section-period,
+.md-content__inner p.radar-section-period {
+  display: block !important;
+  width: fit-content;
+  max-width: 100%;
+  margin: .35rem 0 .85rem !important;
+  padding: .18rem .62rem !important;
+  border: 1px solid #c7d0ff !important;
+  border-radius: 999px !important;
+  background: #eef1ff !important;
+  color: #4054c5 !important;
+  font-size: .82rem !important;
+  font-weight: 650 !important;
+  line-height: 1.5 !important;
+  white-space: normal;
+}
+
+.md-typeset .radar-brief-heading .radar-brief-label,
+.md-content__inner .radar-brief-heading .radar-brief-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: .25rem .72rem !important;
+  border: 1px solid #4054c5 !important;
+  border-radius: .45rem !important;
+  background: #4054c5 !important;
+  color: #fff !important;
+  font-size: .82rem !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+  letter-spacing: .01em;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+}
+
+.md-content__inner:has(.radar-review-intro) .radar-chatgpt-compute {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: .45rem;
+  min-width: 0;
+  padding: .7rem .8rem;
+  border-radius: .5rem;
+  background: var(--md-code-bg-color);
+  color: var(--md-default-fg-color--light);
+  font-size: .84rem;
+  line-height: 1.6;
+}
+
+.md-content__inner:has(.radar-review-intro) .radar-resource-row {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: start;
+  column-gap: .45rem;
+  min-width: 0;
+  margin: 0;
+}
+
+.md-content__inner:has(.radar-review-intro) .radar-resource-row strong {
+  color: var(--md-default-fg-color);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.md-content__inner:has(.radar-review-intro) .radar-resource-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .md-typeset p.radar-section-period,
+  .md-content__inner p.radar-section-period {
+    width: fit-content;
+    margin: .25rem 0 .75rem !important;
+    font-size: .8rem !important;
+  }
+  .md-content__inner:has(.radar-review-intro) .radar-resource-row {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: .08rem;
+  }
+}
