@@ -82,11 +82,28 @@ def arxiv():
         published = entry.findtext("a:published", "", ns)
         updated = entry.findtext("a:updated", published, ns)
         title = entry.findtext("a:title", "", ns)
+        abstract = " ".join(entry.findtext("a:summary", "", ns).split())[:5000]
+        authors = [
+            " ".join(node.findtext("a:name", "", ns).split())
+            for node in entry.findall("a:author", ns)
+            if node.findtext("a:name", "", ns).strip()
+        ][:12]
+        categories = [node.attrib.get("term", "") for node in entry.findall("a:category", ns)]
+        pdf_url = next((
+            node.attrib.get("href", "").replace("http://", "https://")
+            for node in entry.findall("a:link", ns)
+            if node.attrib.get("title", "").lower() == "pdf"
+            or node.attrib.get("type", "") == "application/pdf"
+        ), "")
         if not valid_url(url) or not title or not recent(published, updated):
             continue
         ident = url.rstrip("/").split("/")[-1].split("v")[0]
-        results.append(candidate("arxiv-" + ident.replace(".", "-"), title, url,
-                                 published, "arxiv", paper_url=url, updated_at=updated))
+        results.append(candidate(
+            "arxiv-" + ident.replace(".", "-"), title, url, published, "arxiv",
+            paper_url=url, pdf_url=pdf_url if valid_url(pdf_url) else None,
+            updated_at=updated, abstract=abstract, authors=authors,
+            arxiv_categories=categories,
+        ))
     return results
 
 def github():
@@ -172,11 +189,22 @@ def openreview():
         response = json.loads(fetch("https://api2.openreview.net/notes/search?" + params))
         for note in response.get("notes", []):
             content = note.get("content") or {}
-            title = content.get("title", "")
-            if isinstance(title, dict):
-                title = title.get("value", "")
+            def field_value(name, default=""):
+                value = content.get(name, default)
+                return value.get("value", default) if isinstance(value, dict) else value
+
+            title = field_value("title", "")
             if not isinstance(title, str) or not title.strip():
                 continue
+            abstract = " ".join(str(field_value("abstract", "") or "").split())[:5000]
+            author_value = field_value("authors", [])
+            if isinstance(author_value, str):
+                authors = [author_value]
+            elif isinstance(author_value, list):
+                authors = [str(value) for value in author_value[:12]]
+            else:
+                authors = []
+            venue = field_value("venue", "")
             note_id = note.get("id")
             created_ms = note.get("tcdate") or note.get("cdate")
             updated_ms = note.get("tmdate") or note.get("mdate") or created_ms
@@ -187,9 +215,13 @@ def openreview():
             if not recent(created, modified):
                 continue
             url = "https://openreview.net/forum?id=" + str(note_id)
+            pdf_url = "https://openreview.net/pdf?id=" + str(note_id)
             key = hashlib.sha256(str(note_id).encode()).hexdigest()[:20]
-            found.append(candidate("openreview-" + key, title, url, created, "openreview",
-                                   paper_url=url, updated_at=modified))
+            found.append(candidate(
+                "openreview-" + key, title, url, created, "openreview",
+                paper_url=url, pdf_url=pdf_url, updated_at=modified,
+                abstract=abstract, authors=authors, venue=str(venue or ""),
+            ))
     return found
 
 def official_feeds():
