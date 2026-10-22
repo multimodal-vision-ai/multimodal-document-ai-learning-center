@@ -147,7 +147,7 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("radar-review-score-grid", first["radar/index.md"])
             self.assertIn("radar-review-detail-grid", first["radar/index.md"])
             self.assertIn("主要来源", first["radar/index.md"])
-            self.assertIn("radar-frontier-page", first["radar/index.md"])
+            self.assertIn("radar-review-intro", first["radar/index.md"])
             self.assertNotIn("日度统计", first["radar/index.md"])
             self.assertNotIn("历史每日预警", first["radar/index.md"])
             self.assertIn("<details class=\"radar-candidate-details\"", first["radar/index.md"])
