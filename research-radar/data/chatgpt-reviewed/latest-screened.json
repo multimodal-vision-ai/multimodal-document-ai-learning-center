@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "screening_schema_version": 2,
+  "report_type": "screened",
+  "report_title": "Learning Center ChatGPT 第二轮科研价值评价 · 初次端到端验证",
+  "first_stage_threshold": 8,
+  "status": "completed",
+  "generated_at": "2026-10-22T04:00:54Z",
+  "window_start": "2026-10-15T04:00:54Z",
+  "window_end": "2026-10-22T04:00:54Z",
+  "summary": "已对≥8分的第一轮候选开展小规模独立证据核验。当前仅TrajTok通过四维自动科研价值门槛；这不是对13个候选全部完审，也不是专家同行评审。GazeLens等尚待继续验证开源和复现条件。",
+  "items": [
+    {
+      "candidate_id": "arxiv-2602-22779",
+      "title": "TrajTok: Learning Trajectory Tokens enables better Video Understanding",
+      "selection_status": "recommended",
+      "screened_at": "2026-10-22T04:00:54Z",
+      "summary": "TrajTok提出与视频模型联合训练的轨迹式视觉tokenizer，不依赖额外的精细跟踪前处理，并展示其作为视频编码器、适配器及VLM连接模块的多种用法。原论文及Apple研究页说明它试图在长视频推理中降低视觉token冗余。",
+      "why_selected": "该方法针对长视频token数量随时长增长的算力瓶颈，具有方法创新性；可找到对应论文、公开代码及部分权重入口，且研究问题能够设计对照实验。当前尚未在本项目中独立复现实验，GPU配置仍需核实。",
+      "research_opportunity": "以统一视频数据和固定GPU预算比较轨迹token、均匀patch压缩及帧采样方法，评估时间定位、VideoQA正确率、token数、吞吐和显存，并分析短时局部运动与长时关系的泛化边界。",
+      "evaluation_dimensions": {
+        "innovation": {
+          "score": 8.5,
+          "rationale": "论文提出可端到端联合训练的轨迹tokenizer，将时空聚合直接融入视频模型，并展示多种下游接入方式；与依赖外部跟踪的先前方法构成明确差异。"
+        },
+        "open_source": {
+          "score": 7.5,
+          "rationale": "关联GitHub仓库公开segmenter、TrajViT及TrajVLM组件、训练/评测入口，并指向已发布的部分权重；尚未逐文件确认所有训练阶段和数据许可。"
+        },
+        "reproducibility": {
+          "score": 6.5,
+          "rationale": "代码说明包含分模块快速开始、部分checkpoint和训练/评估程序，但完整训练数据、GPU时间与复现精度尚未验证，不能推断单张T4能完整训练。"
+        },
+        "research_potential": {
+          "score": 8.5,
+          "rationale": "可做token预算—长视频精度—推理延迟的可复现实验，以及轨迹粒度、跨场景迁移与小VLM适配研究，兼具论文选题和端侧效率潜力。"
+        }
+      },
+      "confidence": "medium",
+      "evidence_urls": [
+        "https://arxiv.org/abs/2602.22779v4",
+        "https://machinelearning.apple.com/research/trajtok",
+        "https://github.com/hellomuffin/trajtok"
+      ],
+      "parameters": null,
+      "gpu_requirement": null,
+      "weights_open": true,
+      "training_code_open": true,
+      "data_open": null,
+      "evidence_caveats": "本次依据论文摘要、Apple研究页面和公开仓库README进行初步评价；未下载权重、执行训练或复现实验。公开仓库自称官方实现，仍建议科研立项前联系作者核验。不要与ICLR 2026另一篇同名TrajTok行为生成论文混淆。"
+    }
+  ]
+}
