@@ -3,7 +3,9 @@ name: Research Radar refresh pages
 on:
   workflow_dispatch:
   schedule:
-    - cron: "55 2 * * *"
+    # Refresh the page weekly and once at the start of each month; no daily rebuild.
+    - cron: "55 2 * * 1"
+    - cron: "55 2 1 * *"
 
 permissions:
   contents: read
