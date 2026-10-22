@@ -61,3 +61,35 @@
 ChatGPT 另有「科研雷达无人值守验收」每日条件检查任务：读取以上档案并核对 GitHub Actions 的自动触发/部署状态，仅当延误、同步失败或来源持续异常时通知。需进一步核验 ChatGPT 自动任务的真实执行历史，不能凭 GitHub 文件时间推断自动触发。跨日/周/月的真实运行结果只有在各自周期结束后才可完成最终验收。
 
 **架构边界**：只在 `dev` 和 `radar-data` 维护；默认分支 `main` 未变动。GitHub Actions 的 cron 不会因非默认分支上的 workflow 而定时运行；当前开发环境依赖已启用的 ChatGPT 计划任务写回及 `radar-data` 的 push 事件触发 DEV 页面重建。若将来要求不依赖 ChatGPT 任务执行环境的独立定时部署，需要明确批准生产分支的 GitHub Actions 或另配有凭证的外部调度系统。
+
+## 发布证据文件
+
+独立的「科研雷达无人值守验收」任务每日检查三份报告和 GitHub Actions。它应把结果写入 `radar-data/research-radar/data/automation-health.json`，不要修改三个报告文件。这个文件会触发 DEV 页面重建，首页据此展示最后一次检查和发布证据。
+
+最低结构如下（所有时间必须是实际 UTC ISO 8601 时间，不得用预计时间冒充执行时间）：
+
+```json
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-22T12:00:00Z",
+  "overall_status": "watching",
+  "watchdog": {
+    "last_run_at": "2026-10-22T12:00:00Z",
+    "status": "completed",
+    "message": "本次检查覆盖了三份报告、Actions 记录和公开预览页面"
+  },
+  "publication": {
+    "status": "success",
+    "checked_at": "2026-10-22T11:55:00Z",
+    "refresh_workflow_run_url": "https://github.com/owner/repo/actions/runs/123",
+    "dev_preview_workflow_run_url": "https://github.com/owner/repo/actions/runs/456",
+    "home_content_verified": true,
+    "detail_content_verified": true,
+    "message": "确认报告写回后对应的工作流成功，首页和详情页包含当前二次评价内容"
+  }
+}
+```
+
+`publication.status=success` 只有在能把报告提交与成功的刷新工作流关联起来，且公开首页和详情页均返回预期内容时才可写入。只返回 HTTP 200 或 HTML 非空不算内容验证。若无法确认，使用 `unknown` 或 `failed`，并说明证据缺口。
+
+共享档案的刷新工作流对新提交的 `latest-daily.json`、`latest-weekly.json`、`latest-monthly.json` 执行严格校验：新写入必须为 schema v2、时间戳有效、candidate ID 仍与当前 ≥8 分队列关联、四维评分与证据门槛通过；旧版历史档案可保留，但不算通过。
