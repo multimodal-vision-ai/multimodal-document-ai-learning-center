@@ -179,6 +179,7 @@ def open_state(value):
 
 
 def chatgpt_item_card(item, report_type, report_generated):
+    report_label = {"daily": "每日预警", "weekly": "每周周报", "monthly": "月度选题"}.get(report_type, "研究报告")
     title_text = item.get("title", "未命名研究成果")
     title_url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
     title = link(title_url, title_text)
@@ -212,7 +213,7 @@ def chatgpt_item_card(item, report_type, report_generated):
         '<article class="radar-feature-card radar-chatgpt-card">'
         '<div class="radar-feature-meta">'
         '<span class="radar-tag radar-tag-chatgpt">ChatGPT 已筛选</span>'
-        f'<span class="radar-event-label">{escape({"daily": "每日预警", "weekly": "每周周报", "monthly": "月度选题"}.get(report_type, "研究报告"))}</span>'
+        f'<span class="radar-event-label">{escape(report_label)}</span>'
         f'<span class="radar-event-label">{escape(category_label(item.get("category")))}</span>'
         '</div>'
         f'<h4>{title}</h4>'
@@ -467,6 +468,12 @@ def render(now=None):
 
     page = DOCS / "radar/index.md"
     content = page.read_text(encoding="utf-8")
+    for marker, report_type in (
+        ("CHATGPT_DAILY", "daily"),
+        ("CHATGPT_WEEKLY", "weekly"),
+        ("CHATGPT_MONTHLY", "monthly"),
+    ):
+        content = replace(content, marker, chatgpt_report_listing(chatgpt_reports.get(report_type, {}), report_type))
     blocks = {
         "DAILY": research_listing(reports["daily"]["projects"], "最近24小时暂无达到预警门槛的已审核项目。"),
         "WEEKLY": research_listing(reports["weekly"]["projects"], "最近7天暂无已审核的重点进展。"),
