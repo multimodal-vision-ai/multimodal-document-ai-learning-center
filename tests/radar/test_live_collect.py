@@ -150,6 +150,30 @@ class SourcePriorityTests(unittest.TestCase):
         self.assertEqual(entries[0]["github_license"], "Apache-2.0")
         self.assertIn("document-ai", entries[0]["github_topics"])
 
+    def test_openreview_captures_abstract_authors_and_pdf(self):
+        from datetime import datetime, timezone
+        now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+        note = {
+            "id": "document-note-123",
+            "tcdate": now_ms,
+            "tmdate": now_ms,
+            "content": {
+                "title": {"value": "Document Understanding Dataset and Evaluation"},
+                "abstract": {"value": "We introduce a dataset for document VLM evaluation."},
+                "authors": {"value": ["Alice Example", "Bob Example"]},
+                "venue": {"value": "ICLR 2027"}
+            }
+        }
+        config = {"openreview": {"enabled": True, "queries": ["document understanding"], "limit": 1}}
+        with patch.object(collect, "CONFIG", config):
+            with patch.object(collect, "fetch", return_value=json.dumps({"notes": [note]}).encode("utf-8")):
+                entries = collect.openreview()
+        self.assertEqual(len(entries), 1)
+        self.assertIn("dataset for document VLM", entries[0]["abstract"])
+        self.assertEqual(entries[0]["authors"], ["Alice Example", "Bob Example"])
+        self.assertEqual(entries[0]["venue"], "ICLR 2027")
+        self.assertEqual(entries[0]["pdf_url"], "https://openreview.net/pdf?id=document-note-123")
+
     def test_arxiv_falls_back_to_second_official_host(self):
         from datetime import datetime, timezone
         today = datetime.now(timezone.utc).isoformat()
@@ -157,6 +181,9 @@ class SourcePriorityTests(unittest.TestCase):
                 '<entry><title>Multimodal Document Parsing</title>'
                 '<id>https://arxiv.org/abs/2610.12345v2</id>'
                 f'<published>{today}</published><updated>{today}</updated>'
+                '<summary>Efficient document parsing and layout analysis.</summary>'
+                '<author><name>Alice Example</name></author>'
+                '<link title="pdf" href="https://arxiv.org/pdf/2610.12345" rel="related" type="application/pdf"/>'
                 '</entry></feed>').encode("utf-8")
         with patch.object(collect, "CONFIG", {"arxiv": {"enabled": True}}):
             with patch.object(collect, "fetch", side_effect=[
@@ -167,6 +194,9 @@ class SourcePriorityTests(unittest.TestCase):
         self.assertEqual(len(entries), 1)
         self.assertEqual(entries[0]["id"], "arxiv-2610-12345")
         self.assertEqual(entries[0]["review"], "pending")
+        self.assertIn("document parsing", entries[0]["abstract"])
+        self.assertEqual(entries[0]["authors"], ["Alice Example"])
+        self.assertEqual(entries[0]["pdf_url"], "https://arxiv.org/pdf/2610.12345")
 
 if __name__ == "__main__":
     unittest.main()

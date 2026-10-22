@@ -612,3 +612,5 @@
 
 .radar-feature-card .radar-feature-description{margin:.45rem 0;color:var(--mv-ink);font-size:.78rem;line-height:1.5}
 .radar-feature-card .radar-repo-signals{margin:.3rem 0;color:var(--mv-muted);font-size:.7rem}
+
+.radar-feature-card .radar-feature-authors,.radar-feature-card .radar-feature-venue{margin:.25rem 0;color:var(--mv-muted);font-size:.7rem;line-height:1.45}
