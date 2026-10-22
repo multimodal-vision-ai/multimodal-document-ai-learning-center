@@ -89,7 +89,33 @@ class RadarRenderTests(unittest.TestCase):
             save(data / "chatgpt-reviewed" / "latest-monthly.json", {
                 "status": "not_published", "generated_at": None, "items": []
             })
+            from screening import build_queue
             now = datetime(2026, 10, 21, 12, tzinfo=timezone.utc)
+            queue = build_queue([candidate], now)
+            self.assertEqual(queue["total"], 1)
+            save(data / "screening-queue.json", queue)
+            save(data / "chatgpt-reviewed" / "latest-daily.json", {
+                "screening_schema_version": 2,
+                "first_stage_threshold": 8.0,
+                "status": "completed",
+                "generated_at": "2026-10-21T11:00:00Z",
+                "items": [{
+                    "candidate_id": candidate["id"], "title": candidate["title"],
+                    "selection_status": "recommended",
+                    "summary": "Video-token reduction offers a testable efficiency-accuracy tradeoff.",
+                    "why_selected": "The paper addresses a significant reproducible efficiency research question.",
+                    "research_opportunity": "Compare long-video accuracy and compute on a fixed GPU budget.",
+                    "evaluation_dimensions": {
+                        k: {"score": 8.0, "rationale": "Supported by the paper and testable experimental setup."}
+                        for k in ("innovation", "open_source", "reproducibility", "research_potential")
+                    },
+                    "confidence": "medium",
+                    "evidence_urls": [candidate["source_url"]],
+                    "parameters": None, "gpu_requirement": None,
+                    "weights_open": None, "training_code_open": None,
+                    "data_open": None
+                }]
+            })
             with patch.object(render, "DOCS", docs), patch.object(render, "DATA", data):
                 render.render(now)
                 first = {str(p.relative_to(docs)): p.read_text(encoding="utf-8")
@@ -107,7 +133,9 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("本周高匹配线索", first["index.md"])
             self.assertIn("近7天≥8分候选", first["index.md"])
             self.assertNotIn("累计候选线索", first["index.md"])
-            self.assertIn("ChatGPT 已筛选研究结果", first["index.md"])
+            self.assertIn("ChatGPT 科研价值精选", first["index.md"])
+            self.assertIn("综合 8.0/10", first["index.md"])
+            self.assertIn("历史 ChatGPT 筛选档案", first["index.md"])
             self.assertIn("One Fact, Many Places", first["index.md"])
             self.assertIn("RPD+SARA", first["index.md"])
             self.assertIn("ChatGPT 已筛选结果", first["radar/index.md"])
