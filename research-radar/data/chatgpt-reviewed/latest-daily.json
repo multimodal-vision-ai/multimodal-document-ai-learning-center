@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "report_type": "daily",
+  "report_title": "ChatGPT 每日科研预警",
+  "status": "completed",
+  "generated_at": "2026-10-20T09:08:45Z",
+  "window_label": "该次任务生成时的最近24小时监测窗口；原始窗口起止时间未单独留档",
+  "summary": "已存档的每日科研预警筛选出 1 项值得进一步关注的工作。该记录为目前可检索到的最近一次 ChatGPT 日报结果，不应误认为 2026-10-22 当天刚刚完成的筛选。",
+  "items": [
+    {
+      "id": "arxiv-2610-26401",
+      "title": "One Fact, Many Places",
+      "category": "document",
+      "published_at": null,
+      "screened_at": "2026-10-20T09:08:45Z",
+      "selection_status": "selected",
+      "summary": "聚焦长文档 RAG 中冗余证据的评测问题，尤其是同一事实可能在多个位置重复出现时，如何评估系统对这些证据的处理能力。",
+      "why_selected": "已存档的 ChatGPT 每日预警将其列为值得关注的研究进展；它指向长文档检索中一个可明确构造测试条件、比较不同方法的评测问题。",
+      "research_opportunity": "可进一步设计不同证据重复率、跨章节分布和检索预算的对照实验，分析冗余证据对召回、答案忠实性与推理成本的影响；具体方法和实验结论应以论文原文为准。",
+      "paper_url": "https://arxiv.org/abs/2610.26401",
+      "source_url": "https://arxiv.org/abs/2610.26401",
+      "github_url": null,
+      "huggingface_url": null,
+      "parameters": null,
+      "gpu": null,
+      "weights_open": null,
+      "training_code_open": null,
+      "data_open": null,
+      "note": "模型规模、开源代码、数据与 GPU 需求未在已存档结果中可靠记录。"
+    }
+  ]
+}
