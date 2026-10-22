@@ -906,3 +906,86 @@
   border-bottom-left-radius:0;
   border-bottom-right-radius:0;
 }
+
+
+/* Weekly digest: one period label at the section heading, compact cards below. */
+.radar-section-period{
+  display:inline;
+  margin-left:.4rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.58em;
+  font-weight:500;
+  line-height:1.5;
+  vertical-align:baseline;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card{
+  grid-template-columns:minmax(10rem,.68fr) minmax(0,1.7fr);
+  grid-template-areas:
+    "heading summary"
+    "compute value"
+    "compute student"
+    "links links";
+  gap:.45rem 1rem;
+  align-items:start;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-heading{
+  grid-area:heading;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:.45rem;
+  min-width:0;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-heading .radar-brief-meta{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem;
+  grid-area:auto;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-heading h3{
+  margin:0!important;
+  font-size:1.08rem!important;
+  line-height:1.42!important;
+  overflow-wrap:anywhere;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-summary{
+  grid-area:summary;
+  margin:.05rem 0 .35rem!important;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-value{
+  grid-area:value;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-student{
+  grid-area:student;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-chatgpt-compute{
+  grid-area:compute;
+  align-self:start;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-links{
+  grid-area:links;
+  margin-top:.25rem;
+}
+@media(max-width:900px){
+  .radar-section-period{
+    display:block;
+    margin:.15rem 0 0;
+    font-size:.68em;
+  }
+  .md-content__inner:has(.radar-review-intro) .radar-brief-card{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:
+      "heading"
+      "summary"
+      "value"
+      "student"
+      "compute"
+      "links";
+    gap:.15rem;
+  }
+  .md-content__inner:has(.radar-review-intro) .radar-brief-heading{
+    gap:.3rem;
+    margin-bottom:.1rem;
+  }
+}
