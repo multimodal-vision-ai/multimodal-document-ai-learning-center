@@ -1,6 +1,24 @@
 [
   {
     "category": "video",
+    "description": "A comprehensive framework for evaluating video-based large language models, including dataset integration, evaluation metrics, and training modules.",
+    "discovered_from": "github",
+    "first_seen_at": "2026-10-22T00:37:50+00:00",
+    "github_forks": 0,
+    "github_language": null,
+    "github_license": null,
+    "github_stars": 0,
+    "github_topics": [],
+    "github_url": "https://github.com/karthikabinav/video-llm-evaluation-harness",
+    "id": "github-1231792927",
+    "published_at": "2026-05-07T09:41:09Z",
+    "review": "pending",
+    "source_url": "https://github.com/karthikabinav/video-llm-evaluation-harness",
+    "title": "karthikabinav/video-llm-evaluation-harness",
+    "updated_at": "2026-10-22T00:37:28Z"
+  },
+  {
+    "category": "video",
     "description": "Turns a YouTube link or a local video into a structured ODT, DOCX or PDF: speech recognised, slides pulled out of the frame, the whole thing organised by a language model.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -20,7 +38,7 @@
     "updated_at": "2026-10-22T00:30:29Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Open-source inference engine that runs language, vision, speech, image and video models from one container format, with a PyTorch and a Triton compute branch. Released for NVIDIA GPUs and CPU; Apple Silicon in progress.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -102,7 +120,7 @@
     "updated_at": "2026-10-22T00:19:46Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "gRPC VLM convert collector: Granite-Docling / SmolDocling-class page parse into the gRParse Document data plane",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -122,7 +140,7 @@
     "updated_at": "2026-10-22T00:07:17Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "VerbaScribe is a Windows desktop app for transcribing audio and video on your own computer. It recognizes speech, splits it by speaker, and can optionally summarize the transcript or answer questions about it with a local language model through Ollama.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -164,7 +182,7 @@
     "updated_at": "2026-10-21T22:36:35.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Pick a video on your machine, transcribe it with local whisper, translate the transcript into the language you want, and write a timed .srt/.vtt beside the file. Demux and the 16 kHz downmix are pure Rust (symphonia), so there is no ffmpeg to install, and both model hops default to on-device.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -235,7 +253,7 @@
     "updated_at": "2026-10-21T20:09:02.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "SANAD Arabic document VLM workbench with PaddleOCR-VL, Gemma, bilingual review UI and versioned model weights",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -255,7 +273,7 @@
     "updated_at": "2026-10-21T19:12:54Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "Vision-Language models — CLIP/SigLIP, Vision Transformers, modern VLMs, document AI (ColPali, Donut, layout-aware models)",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -275,7 +293,7 @@
     "updated_at": "2026-10-21T19:00:42Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "VLM Fine-Tuning for Identity Document Understanding | Qwen2-VL + LoRA (Unsloth) on MIDV-2020",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -295,7 +313,7 @@
     "updated_at": "2026-10-21T18:17:17Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "[WACV 2027] NACrash: A densely annotated North American crash video dataset and benchmark for multimodal large language models (4,024 dashcam videos, 33,920 QA pairs, 9 tasks).",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -323,7 +341,7 @@
     "updated_at": "2026-10-21T18:13:31Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Sign Language Recognition with Video Foundation Models: V-JEPA Transfer and Adaptation",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -403,7 +421,7 @@
     "updated_at": "2026-10-21T17:54:21.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Look-ahead live transcription for local video on Apple Silicon, captions are ready before the scene reaches them. Any language → English, fully offline after a one-time model download.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -553,7 +571,7 @@
     "updated_at": "2026-10-21T17:00:47.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Replicate — independent third-party profile of a public API surface, by API Evangelist. Replicate lets you run machine learning models in the cloud with a simple API. Thousands of open-source models are available, and you can run your own custom models at scale. Run image generation, language models, audio synthesis, video generation, and more with",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -856,7 +874,7 @@
     "updated_at": "2026-10-21T15:50:43.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "A research project on video anomaly detection and interpretability based on Visual-Language Models (VLM) + Prompt Engineering",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -876,7 +894,7 @@
     "updated_at": "2026-10-21T15:06:02Z"
   },
   {
-    "category": "small-vlm",
+    "category": "agent",
     "description": "A fully autonomous AI Agent/Python pipeline that utilizes Large Language Models (LLMs) like Gemini to generate content, produce videos, and automatically upload educational videos to YouTube.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -909,7 +927,7 @@
     "updated_at": "2026-10-21T14:26:49Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "The Almighty Sign Language: a real-time sign language recognition system that streams webcam video from a client laptop to a GPU server over a secure Cloudflare tunnel, runs a fully GPU-resident pipeline (nvJPEG decoding, fused custom CUDA kernels verified against reference implementations, and a TensorRT FP16 model),",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1169,7 +1187,7 @@
     "updated_at": "2026-10-21T09:52:38.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "Semark converts PDFs, Office files, HTML, and images into RAG-ready semantic Markdown using MinerU and VLM/LLM review, with chunks, source maps, and automatic document splitting.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1202,7 +1220,7 @@
     "updated_at": "2026-10-21T09:00:42Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "VTaMo: Video-Text Alignment Model for gloss-free Sign Language Translation",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1234,7 +1252,7 @@
     "updated_at": "2026-10-21T08:23:18Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Daily curated radar of AI model/voice/video releases and language-learning product launches, filtered for building a better French voice tutor.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1254,7 +1272,7 @@
     "updated_at": "2026-10-21T07:32:56Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "Visual-token compression for VLM document retrieval: 448 KB to 3.95 KB per page (113.5x) at 86.7% of baseline nDCG@5. ColPali/ColSmol, PyTorch, Qdrant.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1283,7 +1301,7 @@
     "updated_at": "2026-10-21T07:28:42Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Overshoot — independent third-party profile of a public API surface, by API Evangelist. Overshoot is a real-time video understanding API. Developers create a live video stream, publish frames over WebRTC (LiveKit), then query what the camera sees with vision-language models through an OpenAI-compatible chat completions endpoint — sub-200ms inferenc",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1317,7 +1335,7 @@
     "updated_at": "2026-10-21T05:48:31Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Lamina Labs — independent third-party profile of a public API surface, by API Evangelist. Lamina Labs is a San Francisco company (Y Combinator Spring 2026) building near-real-time video infrastructure for large language models. Its flagship product, Simi, turns prompts, documents, and AI-generated answers into whiteboard-style teaching videos in se",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1348,7 +1366,7 @@
     "updated_at": "2026-10-21T05:37:45Z"
   },
   {
-    "category": "small-vlm",
+    "category": "agent",
     "description": "Multi-agent visual defect inspector that grounds VLM observations in spec documents (RAG), cross-checks them, and asks a human before risky actions.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1410,7 +1428,7 @@
     "updated_at": "2026-10-21T03:40:22.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Anam.ai — independent third-party profile of a public API surface, by API Evangelist. Anam.ai is a real-time interactive AI avatar platform for building conversational video AI agents with photorealistic personas. Its proprietary CARA-4 avatar model streams over WebRTC with ultra-low latency (around 180ms) across 70+ languages, powering customer su",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1635,7 +1653,7 @@
     "updated_at": "2026-10-21T01:16:08.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "WebGPU compute kernels for image, video and language models in the browser: GEMM with in-kernel 4/8-bit dequantisation, flash attention, 3D convolution. Tuned on iPhone.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1712,7 +1730,7 @@
     "updated_at": "2026-10-21T00:55:26.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "video",
     "description": "Node-graph desktop app for local and online AI models - image, video, sound, 3D, language - with an AI 'Executor' that builds graphs for you. Windows, GPLv3.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -1810,7 +1828,7 @@
       "Manikantan Nambi",
       "Jeroen Vanbaar"
     ],
-    "category": "small-vlm",
+    "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -1836,7 +1854,7 @@
       "Yoonsoo Lee",
       "Shijian Lu"
     ],
-    "category": "agent",
+    "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -1891,7 +1909,7 @@
       "Zhe Peng",
       "Chang Liu"
     ],
-    "category": "small-vlm",
+    "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -1938,7 +1956,7 @@
       "Yiqing Shen",
       "Mathias Unberath"
     ],
-    "category": "video",
+    "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2005,7 +2023,7 @@
       "Da Cao",
       "Tat-Seng Chua"
     ],
-    "category": "video",
+    "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2217,7 +2235,7 @@
     "updated_at": "2026-10-20T14:22:47Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "Document GraphRAG: native extraction, rendered-page grounding and a VLM-derived outline for XLSX, PPTX, DOCX and PDF",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -2371,7 +2389,7 @@
       "Guodong Du",
       "Wanyu Lin"
     ],
-    "category": "small-vlm",
+    "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2400,7 +2418,7 @@
       "Pei Fu",
       "Qilong Wang"
     ],
-    "category": "small-vlm",
+    "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2505,7 +2523,7 @@
       "Youngwan Lee",
       "Sung Ju Hwang"
     ],
-    "category": "agent",
+    "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2558,7 +2576,7 @@
       "Dongsuk Jang",
       "Seunghyun Kim"
     ],
-    "category": "small-vlm",
+    "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2674,7 +2692,7 @@
       "Caifeng Shan",
       "Zhenan Sun"
     ],
-    "category": "small-vlm",
+    "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2733,7 +2751,7 @@
       "Dawei Leng",
       "Yuhui Yin"
     ],
-    "category": "document",
+    "category": "small-vlm",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2762,7 +2780,7 @@
       "Wenxin Yang",
       "Mohan Zhang"
     ],
-    "category": "small-vlm",
+    "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2949,7 +2967,7 @@
       "Wentao Zhang",
       "Weikang Li"
     ],
-    "category": "agent",
+    "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -2978,7 +2996,7 @@
       "Xingjiao Wu",
       "Liang He"
     ],
-    "category": "small-vlm",
+    "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -3026,7 +3044,7 @@
       "Daniel Weiner",
       "Raj Korpan"
     ],
-    "category": "small-vlm",
+    "category": "video",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -3104,7 +3122,7 @@
       "Fei Ni",
       "Jiankang Deng"
     ],
-    "category": "small-vlm",
+    "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -3259,7 +3277,7 @@
     "updated_at": "2026-10-19T19:43:09Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "A practical VLM for document intelligence",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -3463,7 +3481,7 @@
       "Bingyang Wang",
       "Nuno Vasconcelos"
     ],
-    "category": "small-vlm",
+    "category": "agent",
     "discovered_from": "arxiv",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:22:56+00:00",
@@ -3636,7 +3654,7 @@
     "updated_at": "2026-10-19T15:38:26Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "An enterprise-grade, offline-first legal document extraction system for the Public Attorney's Office (PAO). Built with FastAPI, PaddleOCR, and spaCy, featuring a Mistral VLM cloud failover.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -3774,7 +3792,7 @@
     "venue": "CoRR 2023"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "Isomorphic document text extraction (PDF/Office/images) — one parseDocument(), swappable raster/OCR/VLM adapters. Runs unchanged in browser, Node, and Deno/edge.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -3794,7 +3812,7 @@
     "updated_at": "2026-10-19T05:34:49Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "A Document AI based on VLM",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -3868,7 +3886,7 @@
     "updated_at": "2026-10-18T18:53:54.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "Vision-AI–powered REST API that reads P&ID documents, detects handwritten colour-coded markup annotations, and verifies whether each one was correctly applied in a revised document using Ollama VLM.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -3888,7 +3906,7 @@
     "updated_at": "2026-10-18T17:25:35Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "Convert PDF documents to Markdown using Docling, with VLM-generated picture descriptions.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -3908,7 +3926,7 @@
     "updated_at": "2026-10-18T12:00:44Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "OmniSense is an offline, local-first multimodal indoor visual assistant for visually impaired users. Features confidence-aware adaptive routing, local computer vision, on-device ML intent classification, SQLite visual memory, OCR document parsing, and indoor hazard detection without cloud VLM dependencies.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -3988,7 +4006,7 @@
     "updated_at": "2026-10-18T05:22:53.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "Production-ready structured document conversion engine based on Docling v2. Transforms PDF/Office into LLM-friendly Markdown with multi-process parallelization and multi-provider VLM image captioning.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -4008,7 +4026,7 @@
     "updated_at": "2026-10-18T00:35:48Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "Production-grade Document RAG with IBM Docling AST parsing, automated VLM table repair (Pixtral), dual-representation serialization, hybrid RRF retrieval, and sub-   2s latency.",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -4099,7 +4117,7 @@
     "updated_at": "2026-10-17T12:05:31.000Z"
   },
   {
-    "category": "small-vlm",
+    "category": "document",
     "description": "AI document intelligence - VLM extraction to structured JSON with field-level confidence, human review queue, evals, and per-document cost tracking",
     "discovered_from": "github",
     "evidence_urls": [],
@@ -4198,7 +4216,7 @@
     "updated_at": "2026-10-16T18:56:29Z"
   },
   {
-    "category": "document",
+    "category": "small-vlm",
     "discovered_from": "huggingface",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:17:18+00:00",
@@ -4568,7 +4586,7 @@
       "Kenny Nguyen",
       "Qizheng Yang"
     ],
-    "category": "small-vlm",
+    "category": "agent",
     "discovered_from": "openreview",
     "evidence_urls": [],
     "first_seen_at": "2026-10-21T07:17:19+00:00",
