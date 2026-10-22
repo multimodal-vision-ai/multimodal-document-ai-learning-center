@@ -93,8 +93,7 @@ class HealthTests(unittest.TestCase):
     def test_new_legacy_report_write_is_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
-            snapshot(root)
-            q=load_queue(root)
+            q=snapshot(root)
             report=make_report(q)
             report.update({"schema_version":1,"report_type":"daily","generated_at":NOW.isoformat()})
             save(root/"chatgpt-reviewed"/"latest-daily.json",report)
