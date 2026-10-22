@@ -8,12 +8,12 @@
     "message": "初始化占位记录。尚无独立周期任务巡检结果；此文件不代表每日、每周或每月 ChatGPT 任务已成功执行。"
   },
   "publication": {
-    "status": "unknown",
-    "checked_at": "2026-10-22T06:36:29Z",
-    "refresh_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/39734939921",
+    "status": "success",
+    "checked_at": "2026-10-22T06:38:08Z",
+    "refresh_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/39735122439",
     "dev_preview_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/39734322079",
     "home_content_verified": true,
     "detail_content_verified": true,
-    "message": "本次 automation-health.json 更新已触发 DEV 刷新工作流并成功完成；公开首页和详情页的二次评价/周期任务状态标记通过核验。但每日、每周、每月报告仍未全部生成新 schema v2，因此尚不能认定三条 ChatGPT 计划任务的真实报告写入链路已完成验收。"
+    "message": "最新的 schema v2 第二轮评价（TrajTok）已包含在当前 radar-data 提交中，刷新工作流成功完成，公开首页显示科研价值精选与周期任务面板，详情页显示二次评价区域。注意：daily/weekly/monthly 三个周期报告仍未全部完成 v2 首次运行，故不能据此认定三个周期任务均已通过持续自动运行验收。"
   }
 }
