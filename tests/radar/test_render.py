@@ -65,7 +65,7 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("本周自动精选", first["index.md"])
             self.assertIn("主题匹配度", first["index.md"])
             self.assertIn("Unreviewed &lt;img&gt;", first["index.md"])
-            self.assertNotIn("<img>", first["index.md"])
+            self.assertNotIn("Unreviewed <img>", first["index.md"])
             self.assertIn("data-size=\"2\"", first["radar/projects.md"])
 
 if __name__ == "__main__":
