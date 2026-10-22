@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "run_week": null,
+  "triggered_at": null,
+  "purpose": "Weekly GitHub scan is initiated only by ChatGPT weekly task; do not update daily."
+}
