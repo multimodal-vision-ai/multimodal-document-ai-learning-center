@@ -324,7 +324,7 @@ def chatgpt_report_listing(report, report_type):
             f'<p>任务记录时间：{generated}。</p></div>'
         )
     cards = []
-    for item in items[:5]:
+    for item in items[:3]:
         title_text = item.get("title", "未命名研究成果")
         title_url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
         title = link(title_url, title_text)
@@ -354,15 +354,15 @@ def chatgpt_report_listing(report, report_type):
             '<article class="radar-brief-card radar-weekly-card">'
             f'<div class="radar-brief-meta">{"".join(meta)}</div>'
             f'<h3>{title}</h3>'
-            + (f'<p>{escape(summary[:300])}</p>' if summary else "")
-            + (f'<p><strong>为什么值得关注：</strong>{escape(why[:280])}</p>' if why else "")
-            + (f'<p><strong>学生可尝试：</strong>{escape(opportunity[:280])}</p>' if opportunity else "")
-            + (f'<p class="radar-chatgpt-compute">{" · ".join(resource_meta)}</p>' if resource_meta else "")
+            + (f'<p>{escape(summary[:180])}</p>' if summary else "")
+            + (f'<p><strong>价值点：</strong>{escape(why[:160])}</p>' if why else "")
+            + (f'<p><strong>学生切入：</strong>{escape(opportunity[:180])}</p>' if opportunity else "")
+            + (f'<p class="radar-chatgpt-compute">{" · ".join(resource_meta)[:140]}</p>' if resource_meta else "")
             + (f'<div class="radar-brief-links">{" · ".join(links)}</div>' if links else "")
             + '</article>'
         )
     extra = (
-        f'<p class="radar-page-note">报告更新：{generated}。页面最多展示 5 项；'
+        f'<p class="radar-page-note">报告更新：{generated}。仅展示前 3 项；'
         '完整原始记录保留在共享档案中。</p>'
     )
     return '<div class="radar-brief-list">' + "".join(cards) + '</div>' + extra
@@ -400,10 +400,10 @@ def stage_two_detail_listing(reports, queue):
             f'<div class="radar-brief-meta"><span class="radar-brief-label">科研价值复核</span>'
             f'<span class="radar-brief-score">综合 {escape(item["value_score"])}/10</span></div>'
             f'<h3>{link(urls[0] if urls else None, item["title"])}</h3>'
-            f'<p>{escape(item["summary"][:280])}</p>'
+            f'<p>{escape(item["summary"][:180])}</p>'
             f'<div class="radar-brief-dimensions">{scores}</div>'
-            f'<p><strong>入选原因：</strong>{escape(item["why_selected"][:260])}</p>'
-            f'<p><strong>研究切入点：</strong>{escape(item["research_opportunity"][:260])}</p>'
+            f'<p><strong>价值点：</strong>{escape(item["why_selected"][:160])}</p>'
+            f'<p><strong>学生切入：</strong>{escape(item["research_opportunity"][:180])}</p>'
             f'<div class="radar-brief-links">{evidence}</div>'
             '</article>'
         )
