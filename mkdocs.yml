@@ -68,7 +68,7 @@ extra_javascript:
 nav:
   - 学习首页:
       - 欢迎: index.md
-      - 科研动态: radar/index.md
+      - 前沿动态: radar/index.md
       - 关于学习中心: about.md
   - 入门课程:
       - 课程首页: learning/README.md
