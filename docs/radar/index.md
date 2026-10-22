@@ -1,5 +1,7 @@
 # 前沿动态
 
+<div class="radar-frontier-page" markdown>
+
 每周查看这里即可：**先看 ChatGPT 筛选的重点成果，再看本月研究机会**。自动发现的候选线索默认折叠，不等于科研推荐。
 
 ## 本周精选
