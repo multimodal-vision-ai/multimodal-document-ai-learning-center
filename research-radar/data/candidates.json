@@ -1,21 +1,23 @@
 [
   {
     "category": "video",
-    "description": "A comprehensive framework for evaluating video-based large language models, including dataset integration, evaluation metrics, and training modules.",
+    "description": "VerbaScribe is a Windows desktop app for transcribing audio and video on your own computer. It recognizes speech, splits it by speaker, and can optionally summarize the transcript or answer questions about it with a local language model through Ollama.",
     "discovered_from": "github",
-    "first_seen_at": "2026-10-22T00:37:50+00:00",
+    "evidence_urls": [],
+    "first_seen_at": "2026-10-21T07:17:18+00:00",
     "github_forks": 0,
-    "github_language": null,
-    "github_license": null,
-    "github_stars": 0,
+    "github_language": "Python",
+    "github_license": "NOASSERTION",
+    "github_stars": 1,
     "github_topics": [],
-    "github_url": "https://github.com/karthikabinav/video-llm-evaluation-harness",
-    "id": "github-1231792927",
-    "published_at": "2026-05-07T09:41:09Z",
+    "github_url": "https://github.com/pravken/VerbaScribe",
+    "id": "github-1424719017",
+    "published_at": "2026-10-18T19:06:27Z",
+    "related_urls": [],
     "review": "pending",
-    "source_url": "https://github.com/karthikabinav/video-llm-evaluation-harness",
-    "title": "karthikabinav/video-llm-evaluation-harness",
-    "updated_at": "2026-10-22T00:37:28Z"
+    "source_url": "https://github.com/pravken/VerbaScribe",
+    "title": "pravken/VerbaScribe",
+    "updated_at": "2026-10-22T00:53:40Z"
   },
   {
     "category": "video",
@@ -35,7 +37,7 @@
     "review": "pending",
     "source_url": "https://github.com/kryadov/video2docs",
     "title": "kryadov/video2docs",
-    "updated_at": "2026-10-22T00:30:29Z"
+    "updated_at": "2026-10-22T00:53:11Z"
   },
   {
     "category": "video",
@@ -76,7 +78,7 @@
     "review": "pending",
     "source_url": "https://github.com/NeuroBrix/neurobrix",
     "title": "NeuroBrix/neurobrix",
-    "updated_at": "2026-10-22T00:24:10Z"
+    "updated_at": "2026-10-22T00:46:11Z"
   },
   {
     "category": "video",
@@ -117,7 +119,27 @@
     "review": "pending",
     "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
     "title": "NVIDIA-AI-Blueprints/video-search-and-summarization",
-    "updated_at": "2026-10-22T00:19:46Z"
+    "updated_at": "2026-10-22T00:41:03Z"
+  },
+  {
+    "category": "video",
+    "description": "A comprehensive framework for evaluating video-based large language models, including dataset integration, evaluation metrics, and training modules.",
+    "discovered_from": "github",
+    "evidence_urls": [],
+    "first_seen_at": "2026-10-22T00:37:50+00:00",
+    "github_forks": 0,
+    "github_language": null,
+    "github_license": null,
+    "github_stars": 0,
+    "github_topics": [],
+    "github_url": "https://github.com/karthikabinav/video-llm-evaluation-harness",
+    "id": "github-1231792927",
+    "published_at": "2026-05-07T09:41:09Z",
+    "related_urls": [],
+    "review": "pending",
+    "source_url": "https://github.com/karthikabinav/video-llm-evaluation-harness",
+    "title": "karthikabinav/video-llm-evaluation-harness",
+    "updated_at": "2026-10-22T00:37:28Z"
   },
   {
     "category": "document",
@@ -138,26 +160,6 @@
     "source_url": "https://github.com/ai-pipestream/grpc-vlm-convert",
     "title": "ai-pipestream/grpc-vlm-convert",
     "updated_at": "2026-10-22T00:07:17Z"
-  },
-  {
-    "category": "video",
-    "description": "VerbaScribe is a Windows desktop app for transcribing audio and video on your own computer. It recognizes speech, splits it by speaker, and can optionally summarize the transcript or answer questions about it with a local language model through Ollama.",
-    "discovered_from": "github",
-    "evidence_urls": [],
-    "first_seen_at": "2026-10-21T07:17:18+00:00",
-    "github_forks": 0,
-    "github_language": "Python",
-    "github_license": "NOASSERTION",
-    "github_stars": 1,
-    "github_topics": [],
-    "github_url": "https://github.com/pravken/VerbaScribe",
-    "id": "github-1424719017",
-    "published_at": "2026-10-18T19:06:27Z",
-    "related_urls": [],
-    "review": "pending",
-    "source_url": "https://github.com/pravken/VerbaScribe",
-    "title": "pravken/VerbaScribe",
-    "updated_at": "2026-10-21T23:47:05Z"
   },
   {
     "category": "video",

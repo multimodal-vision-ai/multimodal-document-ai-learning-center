@@ -7,7 +7,7 @@
       "category": "video",
       "description": "NVIDIA AI Blueprint for video search and summarization (VSS) is a GPU-accelerated reference architecture for building video analytics agents with real-time verified alerts, visual Q&A, and automated reporting. The VSS Blueprint uses vision language models (VLMs) such as NVIDIA Cosmos, LLMs such as NVIDIA Nemotron, RAG, and NVIDIA NIMs.",
       "discovered_from": "github",
-      "event_at": "2026-10-22T00:19:46+00:00",
+      "event_at": "2026-10-22T00:41:03+00:00",
       "event_label": "代码库近期提交",
       "github_license": "Apache-2.0",
       "github_stars": 1938,
@@ -57,7 +57,7 @@
       "review": "pending",
       "source_url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
       "title": "NVIDIA-AI-Blueprints/video-search-and-summarization",
-      "updated_at": "2026-10-22T00:19:46Z",
+      "updated_at": "2026-10-22T00:41:03Z",
       "venue": ""
     },
     {
@@ -67,7 +67,7 @@
       "category": "video",
       "description": "Turns a YouTube link or a local video into a structured ODT, DOCX or PDF: speech recognised, slides pulled out of the frame, the whole thing organised by a language model.",
       "discovered_from": "github",
-      "event_at": "2026-10-22T00:30:29+00:00",
+      "event_at": "2026-10-22T00:53:11+00:00",
       "event_label": "代码库近期提交",
       "github_license": "MIT",
       "github_stars": 13,
@@ -96,7 +96,7 @@
       "review": "pending",
       "source_url": "https://github.com/kryadov/video2docs",
       "title": "kryadov/video2docs",
-      "updated_at": "2026-10-22T00:30:29Z",
+      "updated_at": "2026-10-22T00:53:11Z",
       "venue": ""
     },
     {
@@ -106,7 +106,7 @@
       "category": "video",
       "description": "Open-source inference engine that runs language, vision, speech, image and video models from one container format, with a PyTorch and a Triton compute branch. Released for NVIDIA GPUs and CPU; Apple Silicon in progress.",
       "discovered_from": "github",
-      "event_at": "2026-10-22T00:24:10+00:00",
+      "event_at": "2026-10-22T00:46:11+00:00",
       "event_label": "代码库近期提交",
       "github_license": "Apache-2.0",
       "github_stars": 49,
@@ -156,7 +156,7 @@
       "review": "pending",
       "source_url": "https://github.com/NeuroBrix/neurobrix",
       "title": "NeuroBrix/neurobrix",
-      "updated_at": "2026-10-22T00:24:10Z",
+      "updated_at": "2026-10-22T00:46:11Z",
       "venue": ""
     }
   ],
@@ -174,14 +174,14 @@
       "github": 26,
       "huggingface": 2
     },
-    "window_end": "2026-10-22T00:37:51+00:00",
-    "window_start": "2026-10-21T00:37:51+00:00"
+    "window_end": "2026-10-22T01:01:46+00:00",
+    "window_start": "2026-10-21T01:01:46+00:00"
   },
   "empty": true,
   "empty_candidate_leads": false,
   "period": "daily",
   "projects": [],
   "research_topics": [],
-  "window_end": "2026-10-22T00:37:51+00:00",
-  "window_start": "2026-10-21T00:37:51+00:00"
+  "window_end": "2026-10-22T01:01:46+00:00",
+  "window_start": "2026-10-21T01:01:46+00:00"
 }
