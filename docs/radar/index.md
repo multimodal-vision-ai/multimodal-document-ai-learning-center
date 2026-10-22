@@ -7,8 +7,8 @@
 ## 重点推荐
 
 <div class="radar-review-intro">
-<p><strong>筛选流程：</strong>主题匹配度 ≥8.0 初筛，再评估创新性、开源完整度、复现可行性和科研潜力。</p>
-<p class="radar-review-threshold"><strong>入选条件：</strong>综合评分 ≥7.5/10，且原始证据与评分校验通过。<span>评分仅供研究参考，不等于同行评审。</span></p>
+<p><strong>推荐标准：</strong>主题相关度 ≥8/10，综合评分 ≥7.5/10。</p>
+<p class="radar-review-threshold"><strong>评分说明：</strong>综合评分由创新性、开源完整度、复现可行性和科研潜力四项加权得出，用于辅助选题，不代表同行评审结论。</p>
 </div>
 
 <!-- RADAR:STAGE_TWO-START -->
