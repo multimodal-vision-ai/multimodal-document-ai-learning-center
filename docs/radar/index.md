@@ -15,9 +15,11 @@
 暂无通过科研价值复核的项目。
 <!-- RADAR:STAGE_TWO-END -->
 
-## 本周精选 <span class="radar-section-period">（WEEKLY_PERIOD_LABEL）</span>
+## 本周精选
 
-<p class="radar-section-note">每期最多展示 3 项，突出研究价值、学生切入点和可核验的原始资源。</p>
+<p class="radar-section-period">WEEKLY_PERIOD_LABEL</p>
+
+<p class="radar-section-note">每期最多展示 3 项，突出研究价值、学生切入点和可核验的原始资源。资源配置为历史周报整理的参考值，尚未逐项独立实测；实际显存需求和吞吐量请在目标环境中复核。</p>
 
 <!-- RADAR:CHATGPT_WEEKLY-START -->
 尚无已存档的 ChatGPT 周报结果。
