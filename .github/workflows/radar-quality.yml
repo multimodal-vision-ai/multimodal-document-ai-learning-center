@@ -32,6 +32,8 @@ jobs:
           python-version: "3.11"
       - name: Research and discovery unit tests (mocked network)
         run: python -m unittest discover -s tests/radar -v
+      - name: Inspect daily weekly monthly scheduler health (read-only)
+        run: python scripts/radar/health.py
       - name: Render site from reviewed data
         run: python scripts/radar/render.py
       - name: Require deterministic output

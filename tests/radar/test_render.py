@@ -131,6 +131,8 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn("Unreviewed", first["radar/projects.md"])
             self.assertIn("已审核项目", first["index.md"])
             self.assertIn("本周高匹配线索", first["index.md"])
+            self.assertIn("周期任务运行验收", first["index.md"])
+            self.assertIn("待首次运行", first["index.md"])
             self.assertIn("近7天≥8分候选", first["index.md"])
             self.assertNotIn("累计候选线索", first["index.md"])
             self.assertIn("ChatGPT 科研价值精选", first["index.md"])

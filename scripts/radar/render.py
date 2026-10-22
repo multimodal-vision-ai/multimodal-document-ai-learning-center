@@ -7,6 +7,7 @@ from core import DATA, ROOT, load, valid_url, parse_dt
 from reports import build
 from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
 from screening import collect_screened, build_queue
+from monitor_ui import widget as monitor_widget
 
 DOCS = ROOT / "docs"
 
@@ -486,6 +487,7 @@ def homepage_block(approved, candidates, tasks, reports, collection_status, chat
 <div class="radar-home-meta"><span>最近成功采集：<time>{escape(last_run)}</time></span><span>本次来源命中：{source_text}</span></div>
 {health_html}
 {stage_two_home_section(chatgpt_reports, screening_queue)}
+{monitor_widget(DATA, now)}
 {stat_html}
 <details class="radar-legacy-archive"><summary>查看历史 ChatGPT 筛选档案（未按新标准复评）</summary>
 {chatgpt_home_section(chatgpt_reports, now)}
