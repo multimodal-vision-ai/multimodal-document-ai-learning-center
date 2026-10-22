@@ -31,7 +31,7 @@ class HealthTests(unittest.TestCase):
             snapshot(root)
             actual=inspect(root,NOW)
             self.assertEqual(actual["overall"],"watching")
-            self.assertEqual(actual["tasks"]["daily"]["status"],"awaiting_first_v2_run")
+            self.assertNotIn("daily",actual["tasks"])
             self.assertEqual(actual["tasks"]["weekly"]["status"],"awaiting_first_v2_run")
             self.assertEqual(actual["tasks"]["monthly"]["status"],"awaiting_first_v2_run")
     def test_future_missed_first_deadlines_become_overdue(self):
@@ -46,14 +46,14 @@ class HealthTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
             q=snapshot(root)
-            for kind in ("daily","weekly","monthly"):
+            for kind in ("weekly","monthly"):
                 r=make_report(q)
                 r["generated_at"]=NOW.isoformat()
                 save(root/"chatgpt-reviewed"/f"latest-{kind}.json",r)
             actual=inspect(root,NOW)
             self.assertEqual(actual["overall"],"reports_verified")
             self.assertTrue(all(x["status"]=="verified_report" for x in actual["tasks"].values()))
-            self.assertEqual(actual["tasks"]["daily"]["recommended_count"],1)
+            self.assertEqual(actual["tasks"]["weekly"]["recommended_count"],1)
     def test_no_high_value_is_successful_run_without_padded_recommendations(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
@@ -61,10 +61,10 @@ class HealthTests(unittest.TestCase):
             r=make_report(q,[])
             r["generated_at"]=NOW.isoformat()
             r["status"]="no_high_value"
-            save(root/"chatgpt-reviewed"/"latest-daily.json",r)
+            save(root/"chatgpt-reviewed"/"latest-weekly.json",r)
             actual=inspect(root,NOW)
-            self.assertEqual(actual["tasks"]["daily"]["status"],"verified_report")
-            self.assertEqual(actual["tasks"]["daily"]["recommended_count"],0)
+            self.assertEqual(actual["tasks"]["weekly"]["status"],"verified_report")
+            self.assertEqual(actual["tasks"]["weekly"]["recommended_count"],0)
     def test_invalid_second_stage_is_alerted(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
@@ -86,10 +86,18 @@ class HealthTests(unittest.TestCase):
     def test_stale_queue_is_alerted(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
-            snapshot(root,now=NOW-timedelta(days=3))
+            snapshot(root,now=NOW-timedelta(days=10))
             actual=inspect(root,NOW)
             self.assertEqual(actual["acquisition"]["status"],"stale")
             self.assertEqual(actual["overall"],"needs_attention")
+    def test_weekly_collection_older_than_three_days_is_not_mistaken_for_stale(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            snapshot(root,now=NOW-timedelta(days=3))
+            actual=inspect(root,NOW)
+            self.assertEqual(actual["acquisition"]["status"],"healthy")
+            self.assertEqual(actual["overall"],"watching")
+
     def test_new_legacy_report_write_is_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
