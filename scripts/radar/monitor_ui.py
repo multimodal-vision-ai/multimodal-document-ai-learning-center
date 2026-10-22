@@ -21,7 +21,7 @@ def widget(data_path, now):
         '<div class="radar-stat"><strong>' + _e(item["label"]) + '</strong>'
         '<span>' + _e(translated.get(item["status"], item["status"])) + '</span>'
         '<span>数据时间：' + _e(item["generated_at"] or "未记录") + '</span></div>'
-        for item in (status["tasks"][x] for x in ("daily", "weekly", "monthly"))
+        for item in (status["tasks"][x] for x in ("weekly", "monthly"))
     )
     source = status["acquisition"]
     failures = source.get("source_failures", [])
@@ -67,7 +67,7 @@ def widget(data_path, now):
     return (
         '<section class="radar-monitoring" aria-label="周期任务运行验收">'
         '<div class="radar-home-section-heading"><h3>周期任务运行验收</h3>'
-        '<span>每日 / 每周 / 每月独立核对</span></div>'
+        '<span>每周 / 每月独立核对</span></div>'
         '<p>来源状态：' + _e(source["status"]) + '；≥8分候选队列 '
         + _e(source["high_match_queue_count"]) + ' 项。</p>'
         '<div class="radar-stats">' + tasks + '</div>' + warning + evidence_html
