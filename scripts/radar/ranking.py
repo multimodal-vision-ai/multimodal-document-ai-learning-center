@@ -3,6 +3,7 @@
 This is a topic-matching heuristic, not a scientific-quality score or human review.
 """
 from datetime import datetime, timedelta, timezone
+import re
 from core import parse_dt, valid_url
 
 PAPER_SOURCES = {"arxiv", "openreview"}
@@ -77,19 +78,35 @@ def candidate_event(item, since, until):
     published = _date(item.get("published_at"))
     updated = _date(item.get("updated_at"))
 
-    if provider in PAPER_SOURCES:
+    if provider == "arxiv":
         if _in_window(published, since, until):
             return {
                 "event_at": published.isoformat(timespec="seconds"),
                 "event_label": "新论文 / 新投稿",
                 "is_new_paper": True,
             }
-        if (_in_window(updated, since, until) and published
+        # Only call an older arXiv record a version update when the canonical
+        # URL itself identifies a newer version (v2, v3, ...). A timestamp alone
+        # is not enough evidence of a substantive update.
+        import re
+        version = re.search(r"v(\d+)(?:$|[?#])", str(item.get("source_url") or ""))
+        has_new_version = bool(version and int(version.group(1)) > 1)
+        if (_in_window(updated, since, until) and published and has_new_version
                 and updated > published + timedelta(hours=1)):
             return {
                 "event_at": updated.isoformat(timespec="seconds"),
-                "event_label": "论文记录近期更新",
+                "event_label": "arXiv 版本更新",
                 "is_new_paper": False,
+            }
+        return None
+    if provider == "openreview":
+        # OpenReview tmdate can change because of reviews/discussion metadata;
+        # without explicit evidence, do not treat that as a paper update.
+        if _in_window(published, since, until):
+            return {
+                "event_at": published.isoformat(timespec="seconds"),
+                "event_label": "新论文 / 新投稿",
+                "is_new_paper": True,
             }
         return None
 
@@ -128,9 +145,15 @@ def score_candidate(item, event_at, now=None):
     """Return topic-match score (0-10) and evidence-based reasons; never a quality grade."""
     provider = str(item.get("discovered_from") or "").lower()
     title = str(item.get("title") or "")
+    tag_values = []
+    for key in ("tags", "github_topics", "hf_tags"):
+        value = item.get(key, [])
+        if isinstance(value, list):
+            tag_values.extend(map(str, value))
     text = " ".join(
         [title, str(item.get("description") or ""), str(item.get("abstract") or ""),
-         " ".join(map(str, item.get("tags", []))) if isinstance(item.get("tags"), list) else ""]
+         " ".join(tag_values), str(item.get("hf_pipeline_tag") or ""),
+         str(item.get("hf_library_name") or "")]
     ).lower()
 
     if any(term in text for term in NOISE_TERMS):
@@ -159,6 +182,41 @@ def score_candidate(item, event_at, now=None):
     if any(term in text for term in ARTIFACT_TERMS):
         points += 0.35
         reasons.append("成果类型：Benchmark / 数据集 / 评测")
+
+    if provider == "github":
+        description = str(item.get("description") or "").strip()
+        stars = int(item.get("github_stars") or 0)
+        if description:
+            points += 0.25
+        if stars >= 10:
+            points += 0.35
+            reasons.append(f"社区信号：{stars} stars")
+        if item.get("github_license"):
+            points += 0.15
+            reasons.append("仓库提供许可证元数据")
+        if "github_stars" in item and not description and stars == 0 and not item.get("github_topics"):
+            points -= 0.7
+            reasons.append("仓库描述与社区信号不足")
+
+    if provider == "huggingface":
+        downloads = int(item.get("hf_downloads") or 0)
+        likes = int(item.get("hf_likes") or 0)
+        has_card = item.get("hf_has_model_card")
+        tags = item.get("hf_tags") if isinstance(item.get("hf_tags"), list) else []
+        if downloads >= 100 or likes >= 5:
+            points += 0.45
+            reasons.append("模型仓库有一定下载 / 点赞信号")
+        if has_card is False and downloads < 5 and likes == 0:
+            points -= 2.0
+            reasons.append("模型卡与社区使用信号不足")
+        if (re.search(r"20\d{6}", title) and downloads < 10 and likes == 0
+                and has_card is not True):
+            points -= 3.5
+            reasons.append("名称疑似批量生成的日期标记")
+        if (downloads == 0 and likes == 0 and has_card is not True
+                and not item.get("hf_pipeline_tag") and not item.get("hf_library_name")):
+            points -= 2.0
+            reasons.append("模型卡、任务标签与社区使用信号不足")
 
     now = now or datetime.now(timezone.utc)
     age_hours = max(0.0, (now - event_at).total_seconds() / 3600)
@@ -201,6 +259,12 @@ def rank_candidates(items, since, until, limit=15, threshold=3.5):
             "paper_url": item.get("paper_url"),
             "github_url": item.get("github_url"),
             "huggingface_url": item.get("huggingface_url"),
+            "description": item.get("description") or item.get("abstract") or "",
+            "github_stars": item.get("github_stars"),
+            "github_license": item.get("github_license"),
+            "hf_downloads": item.get("hf_downloads"),
+            "hf_likes": item.get("hf_likes"),
+            "hf_has_model_card": item.get("hf_has_model_card"),
             "discovered_from": item.get("discovered_from", ""),
             "published_at": item.get("published_at"),
             "updated_at": item.get("updated_at"),

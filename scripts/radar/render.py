@@ -84,6 +84,22 @@ def candidate_card(item):
     event_date = escape(str(item.get("event_at") or "")[:10] or "日期未核实")
     score = escape(item.get("match_score", "—"))
     reasons = "；".join(item.get("match_reasons", [])[:4])
+    description = str(item.get("description") or "").strip()
+    description_html = (
+        f'<p class="radar-feature-description">{escape(description[:260])}</p>'
+        if description else ""
+    )
+    signals = []
+    if item.get("github_stars") is not None:
+        signals.append(f'{escape(item.get("github_stars"))} GitHub stars')
+        if item.get("github_license"):
+            signals.append("许可证：" + escape(item.get("github_license")))
+    if item.get("hf_downloads") is not None:
+        signals.append(f'下载 {escape(item.get("hf_downloads"))} · 点赞 {escape(item.get("hf_likes", 0))}')
+    signal_html = (
+        f'<p class="radar-repo-signals">{" · ".join(signals)}</p>'
+        if signals else ""
+    )
     links = []
     seen = set()
     for key, label in (
@@ -104,6 +120,8 @@ def candidate_card(item):
         f'<span class="radar-event-label">{event_label}</span>'
         '</div>'
         f'<h4>{title}</h4>'
+        f'{description_html}'
+        f'{signal_html}'
         f'<p class="radar-feature-reasons">筛选依据：{escape(reasons)}</p>'
         '<div class="radar-feature-footer">'
         f'<span class="radar-match-score">主题匹配度 {score}/10</span>'
