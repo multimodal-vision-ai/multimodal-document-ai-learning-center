@@ -369,7 +369,7 @@ def chatgpt_report_listing(report, report_type):
 
 
 def stage_two_detail_listing(reports, queue):
-    """Render only evidence-validated second-stage picks, with scores at a glance."""
+    """Render evidence-validated research picks in a scannable student-first card."""
     selected, errors = collect_screened(reports, queue)
     if errors:
         return (
@@ -379,35 +379,61 @@ def stage_two_detail_listing(reports, queue):
     if not selected:
         return (
             '<div class="radar-empty-state"><strong>暂时没有项目通过科研价值复核。</strong>'
-            '<p>筛选要求：主题匹配度 ≥8.0、四维评分综合 ≥7.5/10，并具备可核查来源。'
-            '自动候选不会直接晋升为推荐。</p></div>'
+            '<p>入选条件：主题匹配度 ≥8.0、综合评分 ≥7.5/10，且原始证据可核验。'
+            '自动发现的线索不会直接成为推荐。</p></div>'
         )
-    cards = []
     fields = (
-        ("创新性", "innovation"), ("开源", "open_source"),
-        ("复现", "reproducibility"), ("科研潜力", "research_potential")
+        ("创新性", "innovation"), ("开源完整度", "open_source"),
+        ("复现可行性", "reproducibility"), ("科研潜力", "research_potential")
     )
+    cards = []
     for item in selected[:3]:
         dimensions = item["evaluation_dimensions"]
         scores = "".join(
-            f'<span>{label} {escape(dimensions[key]["score"])}/10</span>'
+            '<div class="radar-review-score-item">'
+            f'<span class="radar-review-score-label">{label}</span>'
+            f'<div class="radar-review-score-value"><strong>{escape(dimensions[key]["score"])}</strong>'
+            '<span>/10</span></div></div>'
             for label, key in fields
         )
         urls = [url for url in item["evidence_urls"][:3] if valid_url(url)]
-        evidence = " · ".join(link(url, "来源证据") for url in urls)
+        evidence_links = []
+        for index, url in enumerate(urls):
+            label = "主要来源" if index == 0 else f"补充来源 {index + 1}"
+            evidence_links.append(link(url, label))
+        evidence = " <span aria-hidden=\"true\">·</span> ".join(evidence_links)
+        title = link(urls[0] if urls else None, item["title"])
+        summary = escape(str(item["summary"])[:220])
+        reason = escape(str(item["why_selected"])[:240])
+        opportunity = escape(str(item["research_opportunity"])[:240])
+        score = escape(item["value_score"])
         cards.append(
-            '<article class="radar-brief-card radar-reviewed-card">'
-            f'<div class="radar-brief-meta"><span class="radar-brief-label">科研价值复核</span>'
-            f'<span class="radar-brief-score">综合 {escape(item["value_score"])}/10</span></div>'
-            f'<h3>{link(urls[0] if urls else None, item["title"])}</h3>'
-            f'<p>{escape(item["summary"][:180])}</p>'
-            f'<div class="radar-brief-dimensions">{scores}</div>'
-            f'<p><strong>价值点：</strong>{escape(item["why_selected"][:160])}</p>'
-            f'<p><strong>学生切入：</strong>{escape(item["research_opportunity"][:180])}</p>'
-            f'<div class="radar-brief-links">{evidence}</div>'
+            '<article class="radar-review-card">'
+            '<header class="radar-review-card-head">'
+            '<div class="radar-review-card-labels">'
+            '<span class="radar-review-pill radar-review-pill-approved">通过复核</span>'
+            '<span class="radar-review-pill">主题匹配度 ≥8.0</span>'
+            '</div>'
+            f'<div class="radar-review-overall"><span>综合评分</span>'
+            f'<strong>{score}</strong><small>/10</small></div>'
+            '</header>'
+            f'<h3 class="radar-review-title">{title}</h3>'
+            f'<p class="radar-review-summary">{summary}</p>'
+            '<div class="radar-review-score-grid" aria-label="四项评分">'
+            f'{scores}</div>'
+            '<div class="radar-review-detail-grid">'
+            '<section class="radar-review-detail radar-review-value">'
+            '<h4>研究价值</h4>'
+            f'<p>{reason}</p></section>'
+            '<section class="radar-review-detail radar-review-student">'
+            '<h4>学生切入点</h4>'
+            f'<p>{opportunity}</p></section>'
+            '</div>'
+            f'<footer class="radar-review-sources"><strong>原始证据</strong>{evidence}</footer>'
             '</article>'
         )
-    return '<div class="radar-brief-list">' + "".join(cards) + '</div>'
+    return '<div class="radar-brief-list radar-review-list">' + "".join(cards) + '</div>'
+
 
 
 def stage_two_home_section(chatgpt_reports, queue):
