@@ -6,6 +6,7 @@ public API2 search, and explicitly configured official Atom/RSS feeds.
 import hashlib
 import json
 import os
+import re
 import sys
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
@@ -36,20 +37,35 @@ def recent(created, updated=None):
     return bool(dates) and max(dates) >= datetime.now(timezone.utc) - WINDOW
 
 def cat(title):
-    text = title.lower()
-    if any(s in text for s in ("video", "temporal", "streaming", "frame", "videolm")):
+    text = " " + re.sub(r"[^a-z0-9]+", " ", str(title or "").lower()).strip() + " "
+    def has(term):
+        normalized = re.sub(r"[^a-z0-9]+", " ", term.lower()).strip()
+        return f" {normalized} " in text
+
+    if any(has(term) for term in (
+        "video", "temporal", "streaming", "frame", "videolm", "egocentric",
+        "video language", "video qa", "video question answering", "video retrieval",
+    )):
         return "video"
-    if any(s in text for s in ("document", "ocr", "pdf", "layout", "table", "chart")):
+    if any(has(term) for term in (
+        "document", "ocr", "pdf", "layout", "table", "chart", "formula",
+        "docvqa", "invoice", "receipt", "document parsing", "document understanding",
+    )):
         return "document"
-    if any(s in text for s in ("agent", "decision", "reinforcement", "grpo")):
+    if any(has(term) for term in ("agent", "decision", "reinforcement", "grpo")):
         return "agent"
     return "small-vlm"
 
 def candidate(uid, title, url, published, provider, **extra):
+    context = " ".join([
+        str(title or ""), str(extra.get("description") or ""),
+        str(extra.get("abstract") or ""),
+        " ".join(map(str, extra.get("tags", []))) if isinstance(extra.get("tags"), list) else "",
+    ])
     return {
         "id": uid, "title": " ".join(title.split())[:300], "source_url": url,
         "published_at": published, "first_seen_at": iso_now(),
-        "category": cat(title), "review": "pending",
+        "category": cat(context), "review": "pending",
         "discovered_from": provider, **extra
     }
 
