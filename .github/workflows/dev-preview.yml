@@ -258,7 +258,7 @@ jobs:
                && ! grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html" \
                && grep -q "前沿动态" "$RUNNER_TEMP/dev-preview-radar.html" \
                && grep -q "本周精选" "$RUNNER_TEMP/dev-preview-radar.html" \
-               && grep -q "查看近期自动发现线索" "$RUNNER_TEMP/dev-preview-radar.html"; then
+               && grep -q "展开查看近期自动发现候选" "$RUNNER_TEMP/dev-preview-radar.html"; then
               asset_url="$(python - "$radar_url" "$RUNNER_TEMP/dev-preview-radar.html" <<'PY'
           import re
           import sys
@@ -280,6 +280,24 @@ jobs:
             fi
             sleep 15
           done
-          echo "::error::DEV preview failed the HTML content-type or asset check"
-          echo "The preview is not considered healthy until the browser receives rendered HTML."
+          echo "::error::DEV preview failed the HTML content-type, expected content, or asset check"
+          for diagnostic in "$RUNNER_TEMP/dev-home.headers" "$RUNNER_TEMP/dev-radar.headers"; do
+            if [ -f "$diagnostic" ]; then
+              echo "--- $diagnostic ---"
+              grep -iE '^(HTTP/|content-type:|location:)' "$diagnostic" || true
+            fi
+          done
+          if [ -f "$RUNNER_TEMP/dev-preview-public.html" ]; then
+            echo "--- welcome page markers ---"
+            for marker in "DEV 预览版" "前沿动态" "进入前沿动态" "科研雷达"; do
+              if grep -q "$marker" "$RUNNER_TEMP/dev-preview-public.html"; then echo "FOUND: $marker"; else echo "MISSING: $marker"; fi
+            done
+          fi
+          if [ -f "$RUNNER_TEMP/dev-preview-radar.html" ]; then
+            echo "--- Radar page markers ---"
+            for marker in "前沿动态" "本周精选" "展开查看近期自动发现候选"; do
+              if grep -q "$marker" "$RUNNER_TEMP/dev-preview-radar.html"; then echo "FOUND: $marker"; else echo "MISSING: $marker"; fi
+            done
+          fi
+          echo "The preview is not considered healthy until the browser receives rendered HTML and its stylesheet."
           exit 1
