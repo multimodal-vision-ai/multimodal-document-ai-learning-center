@@ -614,3 +614,39 @@
 .radar-feature-card .radar-repo-signals{margin:.3rem 0;color:var(--mv-muted);font-size:.7rem}
 
 .radar-feature-card .radar-feature-authors,.radar-feature-card .radar-feature-venue{margin:.25rem 0;color:var(--mv-muted);font-size:.7rem;line-height:1.45}
+
+
+/* Clear transition from the learning roadmap to current research. */
+.mv-home .mv-future-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin: 1.15rem 0 1.35rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid rgba(89, 101, 232, 0.18);
+  border-radius: 1rem;
+  background: linear-gradient(110deg, rgba(231, 246, 255, 0.82), rgba(245, 242, 255, 0.9));
+  box-shadow: 0 8px 24px rgba(31, 43, 92, 0.055);
+}
+.mv-home .mv-future-entry__copy {
+  min-width: 0;
+}
+.mv-home .mv-future-entry__copy p {
+  margin: 0.2rem 0 0;
+  color: var(--mv-muted);
+  line-height: 1.65;
+}
+.mv-home .mv-future-entry .md-button {
+  flex: 0 0 auto;
+  margin: 0;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+@media (max-width: 650px) {
+  .mv-home .mv-future-entry {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
