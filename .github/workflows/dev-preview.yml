@@ -1,0 +1,305 @@
+name: DEV Preview - isolated static build
+
+# No deployment to the repository's official GitHub Pages environment.
+# PRs only build an artifact. A push to dev additionally publishes the
+# generated site to the dev-preview branch, served via a dev-only proxy.
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - ".github/workflows/dev-preview.yml"
+      - "docs/**"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - "scripts/radar/**"
+      - "research-radar/**"
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: dev-preview
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build isolated DEV website
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code under review
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-docs.txt
+
+      - name: Install MkDocs dependencies
+        run: pip install -r requirements-docs.txt
+
+      - name: Hydrate optional research data (read-only)
+        run: |
+          if git ls-remote --exit-code --heads origin radar-data > /dev/null 2>&1; then
+            git fetch --no-tags --depth=1 origin radar-data
+            git archive FETCH_HEAD research-radar/data | tar -xf -
+          fi
+
+      - name: Collect real public candidates (DEV branch only)
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/radar/collect.py
+
+      - name: Refresh Issue snapshot and dated reports (DEV only)
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/radar/sync_tasks.py
+          python scripts/radar/reports.py
+
+      - name: Render Research Radar snapshot
+        run: |
+          python -m unittest discover -s tests/radar -v
+          python scripts/radar/screening.py
+          python scripts/radar/health.py
+          python scripts/radar/render.py
+
+      - name: Override preview base URL in temporary runner copy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path("mkdocs.yml")
+          text = path.read_text(encoding="utf-8")
+          target = (
+              "site_url: https://raw.githack.com/"
+              "multimodal-vision-ai/multimodal-document-ai-learning-center"
+              "/dev-preview/"
+          )
+          new, count = re.subn(r"(?m)^site_url: .*$", target, text)
+          if count != 1:
+              raise SystemExit("Could not locate exactly one MkDocs site_url")
+          path.write_text(new, encoding="utf-8")
+          PY
+
+      - name: Strict build with explicit HTML links
+        run: |
+          mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
+          python scripts/radar/verify_publication.py --site-dir "$RUNNER_TEMP/dev-site"
+
+      - name: Add visible DEV environment marking
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"]) / "dev-site"
+          banner = (
+              '<div role="note" style="position:relative;z-index:10;'
+              'padding:.4rem 1rem;text-align:center;background:#fef3c7;'
+              'color:#713f12;font:600 14px/1.5 system-ui,sans-serif">'
+              'DEV 预览版 · 来自 dev 分支 · 非正式发布站点'
+              '</div>'
+          )
+          count = 0
+          for path in root.rglob("*.html"):
+              body = path.read_text(encoding="utf-8")
+              start = body.find("<body")
+              if start == -1:
+                  continue
+              insert = body.find(">", start)
+              if insert == -1:
+                  continue
+              path.write_text(body[:insert+1] + banner + body[insert+1:], encoding="utf-8")
+              count += 1
+          if not (root / "index.html").exists() or count == 0:
+              raise SystemExit("MkDocs preview is missing HTML output")
+          print(f"Marked {count} pages as DEV-only")
+          PY
+
+      - name: Upload preview for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-preview-site
+          path: ${{ runner.temp }}/dev-site
+          retention-days: 7
+
+      - name: Stage public Radar data for snapshot persistence (DEV only)
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
+        run: |
+          mkdir -p "$RUNNER_TEMP/radar-snapshot"
+          cp -a research-radar/data/. "$RUNNER_TEMP/radar-snapshot/"
+
+      - name: Upload data snapshot artifact (DEV only)
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-radar-snapshot
+          path: ${{ runner.temp }}/radar-snapshot
+          retention-days: 3
+
+  publish:
+    name: Publish isolated DEV preview branch
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout source for authenticated push
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          persist-credentials: true
+
+      - name: Download built DEV site
+        uses: actions/download-artifact@v4
+        with:
+          name: dev-preview-site
+          path: ${{ runner.temp }}/dev-site
+
+      - name: Publish static files to dev-preview branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "$RUNNER_TEMP/dev-site/index.html"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin dev-preview > /dev/null 2>&1; then
+            git fetch --no-tags origin dev-preview
+            git switch -C dev-preview FETCH_HEAD
+          else
+            git switch --orphan dev-preview
+          fi
+          git rm -rf --ignore-unmatch . > /dev/null
+          git clean -fdx > /dev/null
+          cp -a "$RUNNER_TEMP/dev-site/." .
+          touch .nojekyll
+          git add -A
+          if git diff --cached --quiet; then
+            echo "DEV preview is already up to date."
+          else
+            git commit -m "docs(preview): refresh generated DEV site [skip ci]"
+            git push origin HEAD:refs/heads/dev-preview
+          fi
+          echo "Fixed DEV preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
+
+      - name: Checkout persistent Radar data branch
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
+        uses: actions/checkout@v4
+        with:
+          ref: radar-data
+          path: radar-store
+          persist-credentials: true
+
+      - name: Download collected data snapshot
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
+        uses: actions/download-artifact@v4
+        with:
+          name: dev-radar-snapshot
+          path: ${{ runner.temp }}/radar-snapshot
+
+      - name: Persist only generated public data to radar-data
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "$RUNNER_TEMP/radar-snapshot/candidates.json"
+          mkdir -p radar-store/research-radar/data
+          cp -a "$RUNNER_TEMP/radar-snapshot/." radar-store/research-radar/data/
+          cd radar-store
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research-radar/data/candidates.json research-radar/data/tasks.json
+          git add research-radar/data/collection-status.json
+          git add research-radar/data/screening-queue.json
+          for folder in daily weekly monthly; do
+            if [ -d "research-radar/data/$folder" ]; then
+              git add "research-radar/data/$folder"
+            fi
+          done
+          if git diff --cached --quiet; then
+            echo "Radar data snapshot unchanged."
+          else
+            git commit -m "data(radar): update candidate discovery and DEV reports [skip ci]"
+            pushed=0
+            for attempt in 1 2 3; do
+              if git push origin HEAD:refs/heads/radar-data; then
+                pushed=1
+                break
+              fi
+              echo "::warning::radar-data advanced concurrently; rebasing snapshot (attempt $attempt/3)"
+              git fetch origin radar-data
+              git rebase FETCH_HEAD
+              sleep 3
+            done
+            if [ "$pushed" -ne 1 ]; then
+              echo "::error::radar-data push did not succeed after retries"
+              exit 1
+            fi
+          fi
+
+      - name: Verify public DEV preview serves rendered HTML and assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview"
+          root_url="$base/index.html?preview_build=${GITHUB_SHA}"
+          radar_url="$base/radar/index.html?preview_build=${GITHUB_SHA}"
+          for attempt in 1 2 3 4 5 6; do
+            echo "Probing rendered DEV preview (attempt $attempt/6)"
+            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 -D "$RUNNER_TEMP/dev-home.headers" "$root_url" -o "$RUNNER_TEMP/dev-preview-public.html" \
+               && curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 -D "$RUNNER_TEMP/dev-radar.headers" "$radar_url" -o "$RUNNER_TEMP/dev-preview-radar.html" \
+               && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/dev-home.headers" \
+               && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/dev-radar.headers" \
+               && grep -q "DEV 预览版" "$RUNNER_TEMP/dev-preview-public.html" \
+               && ! grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html" \
+               && grep -q "前沿动态" "$RUNNER_TEMP/dev-preview-radar.html" \
+               && grep -q "本周精选" "$RUNNER_TEMP/dev-preview-radar.html" \
+               && grep -q "展开查看近期自动发现候选" "$RUNNER_TEMP/dev-preview-radar.html"; then
+              asset_url="$(python - "$radar_url" "$RUNNER_TEMP/dev-preview-radar.html" <<'PY'
+          import re
+          import sys
+          from urllib.parse import urljoin
+          base_url, file_path = sys.argv[1], sys.argv[2]
+          body = open(file_path, encoding="utf-8").read()
+          match = re.search(r'''href=["']([^"']+\.css[^"']*)["']''', body)
+          if not match:
+              raise SystemExit("No stylesheet URL found in Radar page")
+          print(urljoin(base_url, match.group(1)))
+          PY
+          )"
+              if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 25 "$asset_url" -o "$RUNNER_TEMP/dev-preview-radar.css" \
+                 && test -s "$RUNNER_TEMP/dev-preview-radar.css"; then
+                echo "DEV preview returns HTML content types and its stylesheet is accessible"
+                echo "Open: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
+                exit 0
+              fi
+            fi
+            sleep 15
+          done
+          echo "::error::DEV preview failed the HTML content-type, expected content, or asset check"
+          for diagnostic in "$RUNNER_TEMP/dev-home.headers" "$RUNNER_TEMP/dev-radar.headers"; do
+            if [ -f "$diagnostic" ]; then
+              echo "--- $diagnostic ---"
+              grep -iE '^(HTTP/|content-type:|location:)' "$diagnostic" || true
+            fi
+          done
+          if [ -f "$RUNNER_TEMP/dev-preview-public.html" ]; then
+            echo "--- welcome page markers ---"
+            for marker in "DEV 预览版" "前沿动态" "进入前沿动态" "科研雷达"; do
+              if grep -q "$marker" "$RUNNER_TEMP/dev-preview-public.html"; then echo "FOUND: $marker"; else echo "MISSING: $marker"; fi
+            done
+          fi
+          if [ -f "$RUNNER_TEMP/dev-preview-radar.html" ]; then
+            echo "--- Radar page markers ---"
+            for marker in "前沿动态" "本周精选" "展开查看近期自动发现候选"; do
+              if grep -q "$marker" "$RUNNER_TEMP/dev-preview-radar.html"; then echo "FOUND: $marker"; else echo "MISSING: $marker"; fi
+            done
+          fi
+          echo "The preview is not considered healthy until the browser receives rendered HTML and its stylesheet."
+          exit 1

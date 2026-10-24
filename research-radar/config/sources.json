@@ -1,0 +1,33 @@
+{
+  "arxiv": {
+    "enabled": true,
+    "query": "all:\"document understanding\" OR all:\"video language model\" OR all:\"vision language model\"",
+    "max_results": 60
+  },
+  "github": {
+    "enabled": true,
+    "queries": [
+      "document-vlm",
+      "video-language-model"
+    ],
+    "per_page": 20
+  },
+  "huggingface": {
+    "enabled": true,
+    "queries": [
+      "document",
+      "video"
+    ],
+    "limit": 20
+  },
+  "openreview": {
+    "enabled": true,
+    "queries": [
+      "document understanding",
+      "video understanding",
+      "visual reasoning"
+    ],
+    "limit": 20
+  },
+  "institution_feeds": []
+}

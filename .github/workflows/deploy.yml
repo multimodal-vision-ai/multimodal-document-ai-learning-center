@@ -33,8 +33,21 @@ jobs:
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
 
+      - name: Load reviewed radar data
+        run: |
+          if git ls-remote --exit-code --heads origin radar-data >/dev/null 2>&1; then
+            git fetch origin radar-data
+            git archive origin/radar-data research-radar/data | tar -xf -
+          fi
+          python -m unittest discover -s tests/radar -v
+          python scripts/radar/screening.py
+          python scripts/radar/render.py
+
       - name: Build site (strict)
         run: mkdocs build --strict
+
+      - name: Verify current publication content and four-dimensional gate
+        run: python scripts/radar/verify_publication.py --site-dir site --data-dir research-radar/data
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3

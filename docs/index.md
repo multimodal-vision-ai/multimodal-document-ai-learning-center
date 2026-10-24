@@ -77,6 +77,20 @@ shanshui_scene: 1
 | 视频理解 / Video Understanding | 复用 VLM、评测和实验管理能力 | 如何理解时间、事件、动作和长视频上下文？ |
 | 多模态智能应用 | 构建可复现 pipeline 与可信 Benchmark | 如何把感知、推理和智能体连接到真实场景？ |
 
+<div class="mv-future-entry" markdown>
+
+<div class="mv-future-entry__copy" markdown>
+
+**想了解这些方向的最新进展？**
+
+查看近期论文、开源实现与值得继续研究的问题，从课程学习衔接到真实科研。
+
+</div>
+
+[进入前沿动态 →](radar/index.md){ .md-button .md-button--primary }
+
+</div>
+
 !!! abstract "这里不是终点"
     文档理解是当前课程的训练场。你在这里形成的数据、模型、评测和研究表达能力，可以继续迁移到图像、视频、机器人与行业智能问题。
 

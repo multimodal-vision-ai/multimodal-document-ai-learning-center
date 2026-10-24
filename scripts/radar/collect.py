@@ -1,0 +1,330 @@
+"""Public-source candidate discovery. No automatic acceptance or scientific claims.
+
+Sources: arXiv Atom, GitHub public repository search, Hugging Face Hub, OpenReview
+public API2 search, and explicitly configured official Atom/RSS feeds.
+"""
+import hashlib
+import json
+import os
+import re
+import sys
+from datetime import datetime, timedelta, timezone
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+import xml.etree.ElementTree as ET
+from core import DATA, ROOT, iso_now, load, save, merge_candidates, parse_dt, valid_url
+
+CONFIG = load(ROOT / "research-radar/config/sources.json", {})
+UA = "MultimodalVisionResearchRadar/1.1 (GitHub: multimodal-vision-ai/multimodal-document-ai-learning-center)"
+WINDOW = timedelta(days=8)
+
+def fetch(url, headers=None):
+    request = Request(url, headers={
+        "User-Agent": UA, "Accept": "application/json", **(headers or {})
+    })
+    with urlopen(request, timeout=25) as response:
+        return response.read()
+
+def recent(created, updated=None):
+    dates = []
+    for value in (created, updated):
+        try:
+            if value:
+                dates.append(parse_dt(value))
+        except (ValueError, TypeError):
+            pass
+    return bool(dates) and max(dates) >= datetime.now(timezone.utc) - WINDOW
+
+def cat(title):
+    text = " " + re.sub(r"[^a-z0-9]+", " ", str(title or "").lower()).strip() + " "
+    def has(term):
+        normalized = re.sub(r"[^a-z0-9]+", " ", term.lower()).strip()
+        return f" {normalized} " in text
+
+    if any(has(term) for term in (
+        "video", "temporal", "streaming", "frame", "videolm", "egocentric",
+        "video language", "video qa", "video question answering", "video retrieval",
+    )):
+        return "video"
+    if any(has(term) for term in (
+        "document", "ocr", "pdf", "layout", "table", "chart", "formula",
+        "docvqa", "invoice", "receipt", "document parsing", "document understanding",
+    )):
+        return "document"
+    if any(has(term) for term in ("agent", "decision", "reinforcement", "grpo")):
+        return "agent"
+    return "small-vlm"
+
+def candidate(uid, title, url, published, provider, **extra):
+    context = " ".join([
+        str(title or ""), str(extra.get("description") or ""),
+        str(extra.get("abstract") or ""),
+        " ".join(map(str, extra.get("tags", []))) if isinstance(extra.get("tags"), list) else "",
+    ])
+    return {
+        "id": uid, "title": " ".join(title.split())[:300], "source_url": url,
+        "published_at": published, "first_seen_at": iso_now(),
+        "category": cat(context), "review": "pending",
+        "discovered_from": provider, **extra
+    }
+
+def arxiv():
+    config = CONFIG.get("arxiv", {})
+    if not config.get("enabled"):
+        return []
+    params = urlencode({
+        "search_query": config.get("query", 'all:"vision language model"'),
+        "start": 0, "max_results": min(int(config.get("max_results", 50)), 100),
+        "sortBy": "lastUpdatedDate", "sortOrder": "descending"
+    })
+    # The public arXiv API sometimes times out on the export host.
+    # Retry once via the canonical arxiv.org host; never invent results.
+    errors = []
+    root = None
+    for host in ("https://export.arxiv.org", "https://arxiv.org"):
+        try:
+            root = ET.fromstring(fetch(host + "/api/query?" + params,
+                                       {"Accept": "application/atom+xml"}))
+            break
+        except (TimeoutError, HTTPError, URLError, OSError, ET.ParseError) as exc:
+            errors.append(f"{host}: {type(exc).__name__}: {exc}")
+    if root is None:
+        raise RuntimeError("arXiv API unavailable on both hosts: " + "; ".join(errors))
+    ns = {"a": "http://www.w3.org/2005/Atom"}
+    results = []
+    for entry in root.findall("a:entry", ns):
+        url = entry.findtext("a:id", "", ns).replace("http://", "https://")
+        published = entry.findtext("a:published", "", ns)
+        updated = entry.findtext("a:updated", published, ns)
+        title = entry.findtext("a:title", "", ns)
+        abstract = " ".join(entry.findtext("a:summary", "", ns).split())[:5000]
+        authors = [
+            " ".join(node.findtext("a:name", "", ns).split())
+            for node in entry.findall("a:author", ns)
+            if node.findtext("a:name", "", ns).strip()
+        ][:12]
+        categories = [node.attrib.get("term", "") for node in entry.findall("a:category", ns)]
+        pdf_url = next((
+            node.attrib.get("href", "").replace("http://", "https://")
+            for node in entry.findall("a:link", ns)
+            if node.attrib.get("title", "").lower() == "pdf"
+            or node.attrib.get("type", "") == "application/pdf"
+        ), "")
+        if not valid_url(url) or not title or not recent(published, updated):
+            continue
+        ident = url.rstrip("/").split("/")[-1].split("v")[0]
+        results.append(candidate(
+            "arxiv-" + ident.replace(".", "-"), title, url, published, "arxiv",
+            paper_url=url, pdf_url=pdf_url if valid_url(pdf_url) else None,
+            updated_at=updated, abstract=abstract, authors=authors,
+            arxiv_categories=categories,
+        ))
+    return results
+
+def github():
+    config = CONFIG.get("github", {})
+    if not config.get("enabled"):
+        return []
+    headers = {"Accept": "application/vnd.github+json"}
+    if os.getenv("GITHUB_TOKEN"):
+        headers["Authorization"] = "Bearer " + os.environ["GITHUB_TOKEN"]
+    items = []
+    since = (datetime.now(timezone.utc) - WINDOW).strftime("%Y-%m-%d")
+    for query in config.get("queries", [])[:5]:
+        params = urlencode({
+            "q": query + " in:name,description pushed:>=" + since,
+            "sort": "updated", "order": "desc",
+            "per_page": min(int(config.get("per_page", 20)), 50)
+        })
+        payload = json.loads(fetch("https://api.github.com/search/repositories?" + params, headers))
+        for record in payload.get("items", []):
+            url, title = record.get("html_url"), record.get("full_name")
+            created, modified = record.get("created_at"), record.get("pushed_at")
+            if not title or not valid_url(url) or not created or not recent(created, modified):
+                continue
+            license = record.get("license") or {}
+            license_id = license.get("spdx_id") if isinstance(license, dict) else None
+            description = str(record.get("description") or "")[:1200]
+            items.append(candidate(
+                "github-" + str(record["id"]), title, url, created, "github",
+                github_url=url, updated_at=modified, description=description,
+                github_stars=int(record.get("stargazers_count") or 0),
+                github_forks=int(record.get("forks_count") or 0),
+                github_license=license_id,
+                github_language=record.get("language"),
+                github_topics=(record.get("topics") or [])[:20],
+            ))
+    return items
+
+def huggingface():
+    config = CONFIG.get("huggingface", {})
+    if not config.get("enabled"):
+        return []
+    found = []
+    for search in config.get("queries", [])[:5]:
+        params = urlencode({
+            "search": search, "limit": min(int(config.get("limit", 20)), 50),
+            "sort": "lastModified", "direction": -1
+        })
+        response = json.loads(fetch("https://huggingface.co/api/models?" + params))
+        for record in response:
+            name = record.get("id")
+            created = record.get("createdAt") or record.get("lastModified")
+            modified = record.get("lastModified") or created
+            if not name or not created or not recent(created, modified):
+                continue
+            url = "https://huggingface.co/" + name
+            key = hashlib.sha256(name.lower().encode()).hexdigest()[:20]
+            card_known = "cardData" in record or "card_data" in record
+            has_card = bool(record.get("cardData") or record.get("card_data")) if card_known else None
+            found.append(candidate(
+                "hf-" + key, name, url, created, "huggingface",
+                huggingface_url=url, updated_at=modified,
+                hf_downloads=int(record.get("downloads") or 0),
+                hf_likes=int(record.get("likes") or 0),
+                hf_tags=(record.get("tags") or [])[:30],
+                hf_pipeline_tag=record.get("pipeline_tag"),
+                hf_library_name=record.get("library_name"),
+                hf_has_model_card=has_card,
+            ))
+    return found
+
+def openreview():
+    """Public API2 search; failures are isolated from other sources."""
+    config = CONFIG.get("openreview", {})
+    if not config.get("enabled"):
+        return []
+    found = []
+    for term in config.get("queries", [])[:5]:
+        params = urlencode({
+            "term": term, "content": "title", "source": "forum",
+            "limit": min(int(config.get("limit", 25)), 50),
+            "sort": "tmdate:desc"
+        })
+        response = json.loads(fetch("https://api2.openreview.net/notes/search?" + params))
+        for note in response.get("notes", []):
+            content = note.get("content") or {}
+            def field_value(name, default=""):
+                value = content.get(name, default)
+                return value.get("value", default) if isinstance(value, dict) else value
+
+            title = field_value("title", "")
+            if not isinstance(title, str) or not title.strip():
+                continue
+            abstract = " ".join(str(field_value("abstract", "") or "").split())[:5000]
+            author_value = field_value("authors", [])
+            if isinstance(author_value, str):
+                authors = [author_value]
+            elif isinstance(author_value, list):
+                authors = [str(value) for value in author_value[:12]]
+            else:
+                authors = []
+            venue = field_value("venue", "")
+            note_id = note.get("id")
+            created_ms = note.get("tcdate") or note.get("cdate")
+            updated_ms = note.get("tmdate") or note.get("mdate") or created_ms
+            if not note_id or not created_ms:
+                continue
+            created = datetime.fromtimestamp(created_ms / 1000, timezone.utc).isoformat()
+            modified = datetime.fromtimestamp(updated_ms / 1000, timezone.utc).isoformat()
+            if not recent(created, modified):
+                continue
+            url = "https://openreview.net/forum?id=" + str(note_id)
+            pdf_url = "https://openreview.net/pdf?id=" + str(note_id)
+            key = hashlib.sha256(str(note_id).encode()).hexdigest()[:20]
+            found.append(candidate(
+                "openreview-" + key, title, url, created, "openreview",
+                paper_url=url, pdf_url=pdf_url, updated_at=modified,
+                abstract=abstract, authors=authors, venue=str(venue or ""),
+            ))
+    return found
+
+def official_feeds():
+    """Only approved feed URLs entered into config; RSS/Atom are not crawled blindly."""
+    feeds = CONFIG.get("institution_feeds", [])
+    found, errors = [], []
+    ns = {"a": "http://www.w3.org/2005/Atom"}
+    for feed in feeds[:15]:
+        name, url = feed.get("name", ""), feed.get("url", "")
+        if not name or not valid_url(url):
+            errors.append(f"invalid configured official feed: {name}")
+            continue
+        try:
+            root = ET.fromstring(fetch(url, {"Accept": "application/atom+xml,application/rss+xml"}))
+            is_atom = root.tag.endswith("feed")
+            entries = root.findall("a:entry", ns) if is_atom else root.findall("./channel/item")
+            for entry in entries[:50]:
+                if is_atom:
+                    title = entry.findtext("a:title", "", ns)
+                    published = entry.findtext("a:published", "", ns) or entry.findtext("a:updated", "", ns)
+                    updated = entry.findtext("a:updated", published, ns)
+                    links = entry.findall("a:link", ns)
+                    link = next((x.attrib.get("href") for x in links if x.attrib.get("rel", "alternate") == "alternate"), "")
+                else:
+                    title = entry.findtext("title", "")
+                    link = entry.findtext("link", "")
+                    published = entry.findtext("pubDate", "")
+                    updated = published
+                try:
+                    from email.utils import parsedate_to_datetime
+                    if published and not is_atom:
+                        published = parsedate_to_datetime(published).astimezone(timezone.utc).isoformat()
+                        updated = published
+                except (ValueError, TypeError):
+                    continue
+                if not title or not valid_url(link) or not recent(published, updated):
+                    continue
+                key = hashlib.sha256(link.encode()).hexdigest()[:20]
+                found.append(candidate("feed-" + key, title, link, published, "institution",
+                                       organization=name, updated_at=updated))
+        except (OSError, ET.ParseError, HTTPError, URLError, ValueError) as exc:
+            errors.append(f"{name}: {type(exc).__name__}: {exc}")
+    if errors:
+        for error in errors:
+            print("WARNING feed " + error, file=sys.stderr)
+    return found
+
+def main():
+    previous = load(DATA / "candidates.json", [])
+    findings, failed, success, counts = [], [], 0, {}
+    providers = [
+        ("arxiv", arxiv, CONFIG.get("arxiv", {}).get("enabled", False)),
+        ("github", github, CONFIG.get("github", {}).get("enabled", False)),
+        ("huggingface", huggingface, CONFIG.get("huggingface", {}).get("enabled", False)),
+        ("openreview", openreview, CONFIG.get("openreview", {}).get("enabled", False)),
+        ("official-feeds", official_feeds, bool(CONFIG.get("institution_feeds")))
+    ]
+    for name, fn, enabled in providers:
+        if not enabled:
+            continue
+        try:
+            items = fn()
+            findings.extend(items)
+            success += 1
+            counts[name] = len(items)
+            print(f"{name}: {len(items)} leads")
+        except Exception as exc:
+            failed.append(f"{name}: {type(exc).__name__}: {exc}")
+    if not success:
+        print("ERROR: no enabled discovery sources succeeded; old database preserved", file=sys.stderr)
+        for message in failed:
+            print(message, file=sys.stderr)
+        return 1
+    merged = merge_candidates(previous, findings)
+    save(DATA / "candidates.json", merged)
+    save(DATA / "collection-status.json", {
+        "last_successful_run_utc": iso_now(),
+        "source_counts": counts,
+        "source_failures": failed,
+        "candidate_records": len(merged),
+        "current_run_discovered": len(findings),
+        "review_policy": "all automated leads pending"
+    })
+    for message in failed:
+        print("WARNING " + message, file=sys.stderr)
+    print(f"Updated candidate index: {len(merged)} records; {len(findings)} observed leads. No automatic approvals.")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
