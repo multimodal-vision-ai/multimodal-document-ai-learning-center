@@ -733,6 +733,17 @@ def stage_two_detail_listing(reports, queue):
         reason = escape(clean_recommendation_text(item["why_selected"])[:300])
         opportunity = escape(clean_recommendation_text(item["research_opportunity"])[:300])
         score = escape(item["value_score"])
+        review_date = escape(str(item.get("screened_at") or item.get("_report_generated") or "未提供")[:10])
+        confidence = {"high": "高", "medium": "中", "low": "低"}.get(item.get("confidence"), "未提供")
+        source = {"screened": "公开来源四维科研评价", "daily": "每日四维科研评价",
+                  "weekly": "周度四维科研评价", "monthly": "月度四维科研评价"}.get(
+                      item.get("_report_type"), "四维科研评价")
+        provenance = (
+            '<p class="radar-review-provenance">'
+            f'评分来源：{escape(source)} · 评价时间：{review_date} · '
+            f'置信度：{escape(confidence)}（非实验复现认证）'
+            '</p>'
+        )
         cards.append(
             '<article class="radar-review-card">'
             '<header class="radar-review-card-head">'
@@ -741,6 +752,7 @@ def stage_two_detail_listing(reports, queue):
             f'<strong>{score}</strong><small>/10</small></div>'
             '</header>'
             f'<p class="radar-review-summary">{summary}</p>'
+            f'{provenance}'
             '<div class="radar-review-score-grid" aria-label="四项评分">'
             f'{scores}</div>'
             '<div class="radar-review-detail-grid">'
