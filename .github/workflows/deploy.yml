@@ -45,6 +45,9 @@ jobs:
       - name: Build site (strict)
         run: mkdocs build --strict
 
+      - name: Verify current publication content and four-dimensional gate
+        run: python scripts/radar/verify_publication.py --site-dir site --data-dir research-radar/data
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
