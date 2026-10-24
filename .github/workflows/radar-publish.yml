@@ -51,6 +51,7 @@ jobs:
           python scripts/radar/render.py
           pip install -r requirements-docs.txt
           mkdocs build --strict
+          python scripts/radar/verify_publication.py --site-dir site --data-dir research-radar/data
 
       - uses: actions/upload-pages-artifact@v3
         with:
