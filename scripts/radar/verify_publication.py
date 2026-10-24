@@ -6,6 +6,7 @@ from pathlib import Path
 
 from core import DATA, load
 from publication_gate import validate_snapshot
+from screening import collect_screened
 
 
 def verify(home_path, detail_path, data_dir=DATA):
@@ -33,9 +34,9 @@ def verify(home_path, detail_path, data_dir=DATA):
         errors.append("invalid current report: " + str(exc))
         return errors, 0
 
-    screened_items = states["screened"][1]
-    if screened_items:
-        first_title = html.escape(str(screened_items[0].get("title") or ""), quote=True)
+    current_items, _ = collect_screened(reports, queue)
+    if current_items:
+        first_title = html.escape(str(current_items[0].get("title") or ""), quote=True)
         if not first_title or first_title not in detail:
             errors.append("validated recommendation missing from current featured section")
     else:
@@ -58,7 +59,7 @@ def verify(home_path, detail_path, data_dir=DATA):
         if marker not in detail:
             errors.append(f"{kind} section missing")
 
-    return errors, len(screened_items)
+    return errors, len(current_items)
 
 
 def main():
