@@ -29,7 +29,7 @@ jobs:
       - name: Checkout shared radar data
         uses: actions/checkout@v4
         with:
-          ref: radar-data
+          ref: ${{ github.sha }}
           path: radar-store
 
       - name: Load shared radar data
@@ -188,6 +188,7 @@ jobs:
           done
 
       - name: Verify published DEV preview endpoints
+        working-directory: site-source
         run: |
           set -euo pipefail
           base="https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
@@ -197,17 +198,13 @@ jobs:
                && curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/radar/index.html" -o "$RUNNER_TEMP/public-radar.html" \
                && test -s "$RUNNER_TEMP/public-home.html" \
                && test -s "$RUNNER_TEMP/public-radar.html"; then
-              if grep -q "前沿动态" "$RUNNER_TEMP/public-home.html" \
-                 && grep -q "进入前沿动态" "$RUNNER_TEMP/public-home.html" \
-                 && grep -q "前沿动态" "$RUNNER_TEMP/public-radar.html" \
-                 && grep -q "重点推荐" "$RUNNER_TEMP/public-radar.html" \
-                 && grep -q "历史档案检索" "$RUNNER_TEMP/public-radar.html"; then
-                echo "Public DEV preview endpoints return the expected current research navigation and review content."
+              if python scripts/radar/verify_publication.py \
+                 --home-html "$RUNNER_TEMP/public-home.html" \
+                 --detail-html "$RUNNER_TEMP/public-radar.html" --data-dir research-radar/data; then
+                echo "Public DEV preview matches the validated report and queue snapshot."
                 exit 0
               fi
               echo "CDN returned HTML, but at least one expected content marker is missing; checking cache propagation."
-              echo "Home marker presence: stage2=$(grep -q '前沿动态' "$RUNNER_TEMP/public-home.html" && echo yes || echo no), watchdog=$(grep -q '进入前沿动态' "$RUNNER_TEMP/public-home.html" && echo yes || echo no)"
-              echo "Detail marker presence: stage2=$(grep -q '前沿动态' "$RUNNER_TEMP/public-radar.html" && echo yes || echo no)"
             fi
             sleep 10
           done

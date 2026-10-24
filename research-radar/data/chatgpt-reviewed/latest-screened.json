@@ -50,5 +50,6 @@
       "evidence_caveats": "本次依据论文摘要、Apple研究页面和公开仓库README进行初步评价；未下载权重、执行训练或复现实验。公开仓库自称官方实现，仍建议科研立项前联系作者核验。不要与ICLR 2026另一篇同名TrajTok行为生成论文混淆。"
     }
   ],
-  "publication_validation_policy": "four_dimension_v2_fail_closed"
+  "publication_validation_policy": "four_dimension_v2_fail_closed_with_snapshot_sha256",
+  "publication_validation_code_commit": "40cc2b7a413296fbd6e6203f60ff8437ba7e9bab"
 }
