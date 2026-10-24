@@ -1,31 +1,29 @@
-"""Verify the current Frontier Updates publication layout and reviewed report content."""
+"""Verify rendered DEV HTML against the current validated second-stage recommendation."""
 import argparse
 import html
 import sys
 from pathlib import Path
 
 from core import DATA, load
-from publication_gate import validate_snapshot
 from screening import collect_screened
+from publication_gate import snapshot_digest, validate_snapshot, LEGACY_NOTE
+
+HOME_MARKERS = ("从当前主线走向未来", "进入前沿动态")
+DETAIL_MARKERS = ("前沿动态", "重点推荐", "本周精选", "本月研究机会", "历史档案检索", "补充发现：待评估线索")
 
 
 def verify(home_path, detail_path, data_dir=DATA):
     errors = []
     home = Path(home_path).read_text(encoding="utf-8")
     detail = Path(detail_path).read_text(encoding="utf-8")
+    for label, body, markers in (("homepage", home, HOME_MARKERS), ("research updates", detail, DETAIL_MARKERS)):
+        for marker in markers:
+            if marker not in body:
+                errors.append(f"{label} is missing current navigation marker or section: {marker}")
 
-    for marker in ("从当前主线走向未来", "进入前沿动态"):
-        if marker not in home:
-            errors.append(f"homepage is missing current navigation marker: {marker}")
-    for marker in ("前沿动态", "重点推荐", "本周精选",
-                   "历史档案检索", "补充发现：待评估线索"):
-        if marker not in detail:
-            errors.append(f"Frontier Updates page is missing current section: {marker}")
-
-    base = Path(data_dir)
-    queue = load(base / "screening-queue.json", {})
+    queue = load(Path(data_dir) / "screening-queue.json", {})
     reports = {
-        kind: load(base / "chatgpt-reviewed" / f"latest-{kind}.json", {})
+        kind: load(Path(data_dir) / "chatgpt-reviewed" / f"latest-{kind}.json", {})
         for kind in ("screened", "daily", "weekly", "monthly")
     }
     try:
@@ -33,33 +31,35 @@ def verify(home_path, detail_path, data_dir=DATA):
     except ValueError as exc:
         errors.append("invalid current report: " + str(exc))
         return errors, 0
+    selected, _ = collect_screened(reports, queue)
+    if f'data-radar-snapshot="{snapshot_digest(reports, queue)}"' not in detail:
+        errors.append("rendered research updates do not match the report/queue snapshot")
+    def section(marker):
+        start, end = f"<!-- RADAR:{marker}-START -->", f"<!-- RADAR:{marker}-END -->"
+        return detail.split(start, 1)[1].split(end, 1)[0] if start in detail and end in detail else ""
 
-    current_items, _ = collect_screened(reports, queue)
-    if current_items:
-        first_title = html.escape(str(current_items[0].get("title") or ""), quote=True)
-        if not first_title or first_title not in detail:
-            errors.append("validated recommendation missing from current featured section")
+    recommendation_section = section("STAGE_TWO")
+    if selected:
+        for item in selected[:3]:
+            title = html.escape(str(item.get("title") or ""), quote=True)
+            if not title or title not in recommendation_section:
+                errors.append("validated recommendation is absent from the current recommendation section")
     else:
-        if not any(x in detail for x in (
-            "当前没有项目同时达到推荐标准", "推荐内容暂不可展示"
-        )):
-            errors.append("no-recommendation state is not visible")
-
-    for kind, marker in (("weekly", "本周精选"), ("monthly", "本月研究机会")):
+        placeholders = (
+            "当前没有项目同时达到推荐标准",
+        )
+        if not any(marker in recommendation_section for marker in placeholders):
+            errors.append("explicit no-recommendation placeholder is missing")
+    for kind, marker in (("weekly", "CHATGPT_WEEKLY"), ("monthly", "CHATGPT_MONTHLY")):
         state, items = states[kind]
-        if state == "legacy":
-            if "尚未按当前四维标准复评" not in detail:
-                errors.append(f"{kind} legacy content lacks explicit four-dimension warning")
-            # Never allow the old report's names as unqualified current recommendations.
-        elif state == "validated" and items:
-            for item in items:
-                title = html.escape(str(item.get("title") or ""), quote=True)
-                if title and title not in detail:
-                    errors.append(f"{kind} validated item not rendered: {title}")
-        if marker not in detail:
-            errors.append(f"{kind} section missing")
-
-    return errors, len(current_items)
+        body = section(marker)
+        if state == "legacy" and LEGACY_NOTE not in body:
+            errors.append(f"{kind} legacy content lacks explicit four-dimension warning")
+        if state == "validated":
+            for item in items[:3]:
+                if html.escape(str(item["title"]), quote=True) not in body:
+                    errors.append(f"{kind} validated item not rendered in its current section")
+    return errors, len(selected)
 
 
 def main():
@@ -75,15 +75,15 @@ def main():
     else:
         home_path, detail_path = args.home_html, args.detail_html
     if not home_path or not detail_path or not home_path.exists() or not detail_path.exists():
-        print("Homepage and Frontier Updates HTML files are required.", file=sys.stderr)
+        print("Homepage and research-radar detail HTML files are required.", file=sys.stderr)
         return 2
     errors, count = verify(home_path, detail_path, args.data_dir)
     if errors:
-        print("Frontier Updates publication validation failed:", file=sys.stderr)
+        print("DEV publication smoke test failed:", file=sys.stderr)
         for error in errors:
             print(" - " + error, file=sys.stderr)
         return 1
-    print(f"Publication validation passed: {count} strictly validated recommendation(s).")
+    print(f"DEV publication smoke test passed: {count} validated ChatGPT recommendation(s).")
     return 0
 
 

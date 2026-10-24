@@ -48,6 +48,7 @@ jobs:
         working-directory: site-source
         run: |
           python -m unittest discover -s tests/radar -v
+          python scripts/radar/screening.py
           python scripts/radar/render.py
           pip install -r requirements-docs.txt
           mkdocs build --strict

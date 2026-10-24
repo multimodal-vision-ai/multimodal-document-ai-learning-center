@@ -9,7 +9,7 @@ from core import DATA, ROOT, load, save, valid_url, parse_dt
 from reports import build
 from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
 from screening import collect_screened, build_queue
-from publication_gate import assess_report, validate_snapshot, LEGACY_NOTE
+from publication_gate import assess_report, validate_snapshot, snapshot_digest, LEGACY_NOTE
 
 DOCS = ROOT / "docs"
 
@@ -137,19 +137,26 @@ def _archive_key(report_type, report):
     return None
 
 
-def archive_latest_reports(reports, queue):
+def archive_latest_reports(reports, queue=None):
     """Persist completed weekly/monthly ChatGPT reports without overwriting history."""
+    queue = queue if queue is not None else load(DATA / "screening-queue.json", {})
+    states = validate_snapshot(reports, queue)
     archived = 0
     archive_root = DATA / "chatgpt-reviewed" / "archive"
     for kind in ("weekly", "monthly"):
         report = reports.get(kind, {}) if isinstance(reports, dict) else {}
-        if not isinstance(report, dict) or report.get("status") not in ("completed", "no_high_value"):
+        state, _ = states[kind]
+        if state != "validated":
             continue
+        if state == "validated":
+            # Keep the source association reproducible after the rolling queue changes.
+            report = dict(report)
+            ids = {item["candidate_id"] for item in report["items"]}
+            report["_screening_queue"] = {
+                "candidates": [item for item in queue.get("candidates", []) if item.get("id") in ids]
+            }
         if not report.get("generated_at"):
             continue
-        state, _ = assess_report(report, kind, queue)
-        if state != "validated":
-            continue  # Preserve existing old archives without creating new unreviewed ones.
         key = _archive_key(kind, report)
         if not key:
             continue
@@ -171,14 +178,18 @@ def archive_latest_reports(reports, queue):
     return archived
 
 
-def _archive_records(report_type, queue):
+def _archive_records(report_type, queue=None):
     folder = DATA / "chatgpt-reviewed" / "archive" / report_type
     records = []
+    queue = queue if queue is not None else load(DATA / "screening-queue.json", {})
     if not folder.exists():
         return records
     for path in folder.glob("*.json"):
         report = load(path, None)
-        if not isinstance(report, dict) or report.get("status") not in ("completed", "no_high_value"):
+        state, selected = assess_report(
+            report, report_type, report.get("_screening_queue", queue) if isinstance(report, dict) else queue
+        )
+        if state == "absent":
             continue
         anchor = report.get("window_start") or report.get("generated_at")
         dt = _period_datetime(anchor)
@@ -189,13 +200,10 @@ def _archive_records(report_type, queue):
         else:
             year = str(dt.year) if dt else ""
             sort_key = dt.timestamp() if dt else 0
-        try:
-            state, vetted = assess_report(report, report_type, queue)
-        except ValueError:
-            state, vetted = "unreviewed", []
-        items = vetted if state == "validated" else [
+        items = selected if state == "validated" else [
             item for item in report.get("items", [])
-            if isinstance(item, dict) and state == "legacy"
+            if isinstance(item, dict)
+            and item.get("selection_status", "selected") in ("selected", "chatgpt_selected", "recommended")
         ]
         search_parts = [report.get("report_title", ""), report.get("summary", "")]
         for item in items:
@@ -205,9 +213,10 @@ def _archive_records(report_type, queue):
                     search_parts.append(str(value)[:240])
         records.append({
             "kind": report_type,
-            "review_state": state,
             "path": path,
             "report": report,
+            "state": state,
+            "queue": report.get("_screening_queue", queue),
             "period_label": report_period_label(report_type, report),
             "window_label": (
                 f'{str(report.get("window_start") or "")[:10]} — {str(report.get("window_end") or report.get("generated_at") or "")[:10]}'
@@ -227,21 +236,13 @@ def _archive_records(report_type, queue):
     return sorted(records, key=lambda item: (item["sort_key"], item["path"].name), reverse=True)
 
 
-def archive_card(record, queue):
+def archive_card(record):
     kind = record["kind"]
     report = record["report"]
     count = len(record["items"])
-    count_label = "项精选" if kind == "weekly" else "项选题"
-    detail_html = (
-        chatgpt_report_listing(report, kind, limit=None, include_note=False,
-                               queue=queue, historical=True)
-        if record["review_state"] in ("legacy", "validated")
-        else '<p class="radar-empty-state">该历史报告未通过当前校验，暂不展示其候选条目。</p>'
-    )
-    unreviewed = (
-        f'<p class="radar-archive-review-note">{LEGACY_NOTE}，仅供历史参考，不代表推荐。</p>'
-        if record["review_state"] != "validated" else ""
-    )
+    count_label = "项历史资料" if record["state"] == "legacy" else ("项精选" if kind == "weekly" else "项选题")
+    detail_html = chatgpt_report_listing(report, kind, limit=None, include_note=False,
+                                         queue=record["queue"], historical=True)
     return (
         f'<article class="radar-archive-item" data-archive-type="{escape(kind)}" '
         f'data-archive-year="{escape(record["year"])}" '
@@ -253,8 +254,9 @@ def archive_card(record, queue):
         f'<span class="radar-archive-count">{count} {count_label}</span>'
         '</header>'
         f'<h4 class="radar-archive-title">{escape(record["title"])}</h4>'
+        + (f'<p class="radar-home-warning"><strong>{LEGACY_NOTE}</strong></p>' if record["state"] == "legacy" else "")
+        +
         f'<p class="radar-archive-summary">{escape(str(record["summary"])[:260])}</p>'
-        f'{unreviewed}'
         '<details class="radar-archive-details">'
         '<summary>展开查看本期内容</summary>'
         f'{detail_html}'
@@ -263,7 +265,7 @@ def archive_card(record, queue):
     )
 
 
-def archive_cards(report_type, queue):
+def archive_cards(report_type, queue=None):
     records = _archive_records(report_type, queue)
     if not records:
         label = "周报" if report_type == "weekly" else "月报"
@@ -272,7 +274,7 @@ def archive_cards(report_type, queue):
             f'暂未形成历史{label}档案。每期报告生成并通过校验后，会自动保存到历史记录。'
             '</div>'
         )
-    return '<div class="radar-archive-list">' + "".join(archive_card(record, queue) for record in records) + '</div>'
+    return '<div class="radar-archive-list">' + "".join(archive_card(record) for record in records) + '</div>'
 
 
 def candidate_card(item):
@@ -549,22 +551,31 @@ def clean_value_point(value):
     return text.strip(" ；;，,。")
 
 
+def rating_metadata(item, report):
+    source = item.get("scoring_source") or item.get("_scoring_source") or report.get("scoring_source") or "未提供"
+    evaluated = item.get("screened_at") or item.get("evaluated_at") or report.get("evaluated_at")
+    raw_confidence = item.get("confidence")
+    confidence = {"high": "高", "medium": "中", "low": "低"}.get(raw_confidence, raw_confidence or "未提供")
+    return (
+        '<p class="radar-rating-metadata radar-review-provenance">'
+        f'评分来源：{escape(source)} · '
+        f'评价时间：{escape(pretty_time(evaluated) if evaluated else "未提供")} · '
+        f'置信度：{escape(confidence)}</p>'
+    )
+
+
 def chatgpt_report_listing(report, report_type, limit=3, include_note=True, queue=None, historical=False):
     """Render compact report cards; weekly period metadata lives in the section heading."""
     labels = {"weekly": "周报", "monthly": "月度总结"}
     label = labels.get(report_type, "研究报告")
+    queue = queue if queue is not None else load(DATA / "screening-queue.json", {})
+    state, selected = assess_report(report, report_type, queue)
+    if state == "legacy" and not historical:
+        return (f'<div class="radar-empty-state"><strong>{LEGACY_NOTE}</strong>'
+                '<p>旧版报告已保留在历史档案，完成复评后再进入本期精选。</p></div>')
     if not isinstance(report, dict) or not report:
         return f'<div class="radar-empty-state">尚无已存档的 ChatGPT{label}结果。</div>'
     status = report.get("status")
-    if report.get("screening_schema_version") != 2 and not historical:
-        return ('<div class="radar-empty-state">当前尚无通过四维评价的'
-                f'{label}推荐。旧版报告已保留在历史档案，并标注“{LEGACY_NOTE}”。</div>')
-    if report.get("screening_schema_version") == 2:
-        state, validated_items = assess_report(report, report_type, queue or {})
-        if state != "validated":
-            raise ValueError(f"{report_type}: expected validated current report")
-    else:
-        validated_items = []
     generated_raw = report.get("generated_at")
     generated = escape(str(generated_raw or "时间未记录")[:10])
     period = escape(report_period_label(report_type, report))
@@ -579,11 +590,11 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True, queu
         return f'<div class="radar-empty-state">{message}</div>'
     if status != "completed":
         return f'<div class="radar-empty-state">最近一次{label}尚无可展示结果。</div>'
-    items = (
-        validated_items if report.get("screening_schema_version") == 2
-        else [item for item in report.get("items", []) if isinstance(item, dict)]
-        if historical else []
-    )
+    items = selected if state == "validated" else [
+        item for item in report.get("items", [])
+        if isinstance(item, dict)
+        and item.get("selection_status", "selected") in ("selected", "chatgpt_selected", "recommended")
+    ]
     if not items:
         if report_type == "weekly":
             return (
@@ -639,6 +650,7 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True, queu
             f'<div class="radar-brief-meta">{meta}</div>'
             f'<h3>{title}</h3>'
             '</div>'
+            + rating_metadata(item, report)
             + (f'<p class="radar-brief-summary">{escape(summary[:220])}</p>' if summary else "")
             + (f'<p class="radar-brief-value"><strong>价值点</strong>{escape(why[:220])}</p>' if why else "")
             + (f'<p class="radar-brief-student"><strong>学生切入</strong>{escape(opportunity[:240])}</p>' if opportunity else "")
@@ -733,17 +745,6 @@ def stage_two_detail_listing(reports, queue):
         reason = escape(clean_recommendation_text(item["why_selected"])[:300])
         opportunity = escape(clean_recommendation_text(item["research_opportunity"])[:300])
         score = escape(item["value_score"])
-        review_date = escape(str(item.get("screened_at") or item.get("_report_generated") or "未提供")[:10])
-        confidence = {"high": "高", "medium": "中", "low": "低"}.get(item.get("confidence"), "未提供")
-        source = {"screened": "公开来源四维科研评价", "daily": "每日四维科研评价",
-                  "weekly": "周度四维科研评价", "monthly": "月度四维科研评价"}.get(
-                      item.get("_report_type"), "四维科研评价")
-        provenance = (
-            '<p class="radar-review-provenance">'
-            f'评分来源：{escape(source)} · 评价时间：{review_date} · '
-            f'置信度：{escape(confidence)}（非实验复现认证）'
-            '</p>'
-        )
         cards.append(
             '<article class="radar-review-card">'
             '<header class="radar-review-card-head">'
@@ -751,8 +752,9 @@ def stage_two_detail_listing(reports, queue):
             f'<div class="radar-review-overall"><span>综合评分</span>'
             f'<strong>{score}</strong><small>/10</small></div>'
             '</header>'
+            + rating_metadata(item, {"generated_at": item.get("_report_generated")})
+            +
             f'<p class="radar-review-summary">{summary}</p>'
-            f'{provenance}'
             '<div class="radar-review-score-grid" aria-label="四项评分">'
             f'{scores}</div>'
             '<div class="radar-review-detail-grid">'
@@ -803,6 +805,8 @@ def stage_two_home_section(chatgpt_reports, queue):
                 f'<p class="radar-feature-reasons">入选原因：{reason}</p>'
                 f'<p class="radar-feature-reasons">后续研究：{opportunity}</p>'
                 f'<p class="radar-feature-reasons">{scores}</p>'
+                + rating_metadata(item, {"generated_at": item.get("_report_generated")})
+                +
                 f'<p class="radar-feature-reasons">证据状态：自动结构校验通过；'
                 f'可信度 {escape(item["confidence"])}，实验结论仍须复核</p>'
                 f'<div class="radar-feature-links">{links}</div>'
@@ -830,11 +834,16 @@ def render(now=None):
         kind: load(DATA / "chatgpt-reviewed" / f"latest-{kind}.json", {})
         for kind in ("screened", "daily", "weekly", "monthly")
     }
-    screening_queue = load(DATA / "screening-queue.json", None) or build_queue(candidates, now)
-    # No writes, HTML changes or archival side effects before validation.
+    stored_queue = load(DATA / "screening-queue.json", None)
+    screening_queue = stored_queue if stored_queue is not None else build_queue(candidates, now)
+    # Validate all inputs and existing archives before any writes, including new archives.
     validate_snapshot(chatgpt_reports, screening_queue)
-    archive_latest_reports(chatgpt_reports, screening_queue)
+    for kind in ("weekly", "monthly"):
+        _archive_records(kind, screening_queue)
     reports = build(projects, now, candidates)
+    if stored_queue is None:
+        save(DATA / "screening-queue.json", screening_queue)
+    archive_latest_reports(chatgpt_reports, screening_queue)
     approved = sorted((p for p in projects if p.get("review") == "approved"),
                       key=lambda p: (p.get("score") or 0, p.get("reviewed_at") or ""), reverse=True)
     rows = []
@@ -869,7 +878,9 @@ def render(now=None):
 
     page = DOCS / "radar/index.md"
     content = page.read_text(encoding="utf-8")
-    content = replace(content, "STAGE_TWO", stage_two_detail_listing(chatgpt_reports, screening_queue))
+    content = replace(content, "STAGE_TWO",
+                      f'<div data-radar-snapshot="{snapshot_digest(chatgpt_reports, screening_queue)}">'
+                      + stage_two_detail_listing(chatgpt_reports, screening_queue) + '</div>')
     content = content.replace("WEEKLY_PERIOD_LABEL", escape(weekly_heading_label(chatgpt_reports.get("weekly", {}))))
     for marker, report_type in (
         ("CHATGPT_WEEKLY", "weekly"),

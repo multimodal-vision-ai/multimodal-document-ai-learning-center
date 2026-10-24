@@ -67,10 +67,10 @@ def evaluate_item(item, queue):
     if not isinstance(item, dict):
         return False, ["item is not an object"], None
     cid = item.get("candidate_id")
-    original = _candidate_lookup(queue).get(cid)
+    original = _candidate_lookup(queue).get(cid) if isinstance(cid, str) else None
     if original is None:
         issues.append("candidate_id is absent from the >=8 first-stage queue")
-    elif float(original.get("match_score") or 0) < DISPLAY_MATCH_THRESHOLD:
+    elif not _score(original.get("match_score")) or original["match_score"] < DISPLAY_MATCH_THRESHOLD:
         issues.append("first-stage score is below 8.0")
 
     if item.get("selection_status") not in ("recommended", "not_recommended"):
@@ -161,22 +161,20 @@ def report_items(report, queue):
 
 def collect_screened(reports, queue):
     """Separate strictly validated AI results from legacy summaries."""
+    from publication_gate import assess_report
     entries, problems = [], []
     for kind in ("screened", "daily", "weekly", "monthly"):
         report = reports.get(kind, {})
-        # A prior review becomes a historical record once the current rolling
-        # queue is more than seven days newer. Do not block future builds when
-        # an old candidate leaves the discovery window.
-        run_date = _date(report.get("generated_at")) if isinstance(report, dict) else None
-        queue_date = _date(queue.get("generated_at"))
-        if run_date and queue_date and queue_date - run_date > timedelta(days=7):
+        try:
+            _, approved = assess_report(report, kind, queue)
+        except ValueError as exc:
+            problems.append(str(exc))
             continue
-        approved, errors = report_items(report, queue)
-        problems.extend(f"{kind}: {x}" for x in errors)
         for item in approved:
             item = dict(item)
             item["_report_type"] = kind
             item["_report_generated"] = report.get("generated_at")
+            item["_scoring_source"] = report.get("scoring_source")
             entries.append(item)
     entries.sort(key=lambda x: (x.get("_report_generated") or "", x.get("value_score") or 0), reverse=True)
     seen, unique = set(), []
@@ -192,7 +190,7 @@ def validate_storage(data_path=DATA):
     queue = load(data_path / "screening-queue.json", {})
     reports = {
         kind: load(data_path / "chatgpt-reviewed" / f"latest-{kind}.json", {})
-        for kind in ("daily", "weekly", "monthly")
+        for kind in ("screened", "daily", "weekly", "monthly")
     }
     _, issues = collect_screened(reports, queue)
     return issues

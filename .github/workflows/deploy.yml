@@ -40,6 +40,7 @@ jobs:
             git archive origin/radar-data research-radar/data | tar -xf -
           fi
           python -m unittest discover -s tests/radar -v
+          python scripts/radar/screening.py
           python scripts/radar/render.py
 
       - name: Build site (strict)

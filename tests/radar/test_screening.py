@@ -43,8 +43,10 @@ def screened(queue):
         "weights_open": None, "training_code_open": None, "data_open": None,
     }
 
-def report(queue, items=None):
+def report(queue, items=None, kind="screened"):
     return {
+        "schema_version": 1,
+        "report_type": kind,
         "screening_schema_version": 2,
         "first_stage_threshold": 8.0,
         "status": "completed",
@@ -89,7 +91,7 @@ class SecondStageTests(unittest.TestCase):
         q = build_queue([RESEARCH], NOW)
         old = {"status":"completed", "generated_at":"2026-10-20T09:08:45Z",
                "items":[{"title":"Legacy recommendation", "selection_status":"selected"}]}
-        results, errors = collect_screened({"daily":old, "weekly":report(q)}, q)
+        results, errors = collect_screened({"daily":old, "weekly":report(q, kind="weekly")}, q)
         self.assertEqual(errors, [])
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["candidate_id"], q["candidates"][0]["id"])
@@ -101,13 +103,14 @@ class SecondStageTests(unittest.TestCase):
         self.assertEqual(len(reviewed), 1)
         self.assertEqual(reviewed[0]["_report_type"], "screened")
 
-    def test_expired_review_does_not_block_new_queue(self):
+    def test_expired_invalid_review_cannot_bypass_validation(self):
         q = build_queue([RESEARCH], NOW)
         old = report(q)
         old["generated_at"] = "2026-10-01T12:00:00Z"
+        old["items"][0]["candidate_id"] = "missing-candidate"
         reviewed, issues = collect_screened({"screened": old}, q)
         self.assertEqual(reviewed, [])
-        self.assertEqual(issues, [])
+        self.assertTrue(any("candidate_id" in issue for issue in issues))
 
     def test_no_high_value_with_empty_results_is_valid(self):
         q = build_queue([RESEARCH], NOW)

@@ -156,10 +156,10 @@ class RadarRenderTests(unittest.TestCase):
             })
             with patch.object(render, "DOCS", docs), patch.object(render, "DATA", data):
                 render.render(now)
-                first = {str(p.relative_to(docs)): p.read_text(encoding="utf-8")
+                first = {p.relative_to(docs).as_posix(): p.read_text(encoding="utf-8")
                          for p in docs.rglob("*.md")}
                 render.render(now)
-                second = {str(p.relative_to(docs)): p.read_text(encoding="utf-8")
+                second = {p.relative_to(docs).as_posix(): p.read_text(encoding="utf-8")
                           for p in docs.rglob("*.md")}
             self.assertEqual(first, second)
             self.assertIn("radar-project-table", first["radar/projects.md"])

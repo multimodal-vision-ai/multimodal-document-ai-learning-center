@@ -88,7 +88,9 @@ jobs:
           PY
 
       - name: Strict build with explicit HTML links
-        run: mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
+        run: |
+          mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
+          python scripts/radar/verify_publication.py --site-dir "$RUNNER_TEMP/dev-site"
 
       - name: Add visible DEV environment marking
         run: |

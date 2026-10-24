@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts" / "radar"))
 
 from core import save
-from publication_gate import assess_report, validate_snapshot, LEGACY_NOTE
+from publication_gate import assess_report, validate_snapshot, snapshot_digest, LEGACY_NOTE
 from verify_publication import verify
 from test_archive import QUEUE, report
 
@@ -22,6 +22,8 @@ class PublicationVerificationTests(unittest.TestCase):
             home = root / "index.html"
             detail = root / "radar" / "index.html"
             detail.parent.mkdir(parents=True, exist_ok=True)
+            reports = {kind: {} for kind in ("screened", "daily", "weekly", "monthly")}
+            reports["weekly"], reports["screened"] = weekly or {}, screened or {}
             home.write_text(
                 "ChatGPT 科研价值精选 周期任务运行验收" if old_home
                 else "从当前主线走向未来 进入前沿动态",
@@ -30,7 +32,14 @@ class PublicationVerificationTests(unittest.TestCase):
             detail.write_text(
                 "前沿动态 重点推荐 本周精选 本月研究机会 历史档案检索 "
                 "补充发现：待评估线索 当前没有项目同时达到推荐标准 "
-                + LEGACY_NOTE + " Compact multimodal evaluation",
+                + f'<div data-radar-snapshot="{snapshot_digest(reports, QUEUE)}"></div>'
+                + "<!-- RADAR:STAGE_TWO-START -->"
+                + "当前没有项目同时达到推荐标准 Compact multimodal evaluation"
+                + "<!-- RADAR:STAGE_TWO-END -->"
+                + "<!-- RADAR:CHATGPT_WEEKLY-START -->"
+                + LEGACY_NOTE + " Compact multimodal evaluation"
+                + "<!-- RADAR:CHATGPT_WEEKLY-END -->"
+                + "<!-- RADAR:CHATGPT_MONTHLY-START --><!-- RADAR:CHATGPT_MONTHLY-END -->",
                 encoding="utf-8"
             )
             save(root / "screening-queue.json", QUEUE)

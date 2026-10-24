@@ -45,4 +45,6 @@ jobs:
       - name: Build MkDocs strictly
         run: |
           pip install -r requirements-docs.txt
+          python -m unittest discover -s tests/radar -p 'test_publication*.py' -v
           mkdocs build --strict
+          python scripts/radar/verify_publication.py --site-dir site
