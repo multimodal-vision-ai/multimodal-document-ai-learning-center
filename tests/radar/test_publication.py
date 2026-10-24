@@ -56,7 +56,7 @@ class PublicationVerificationTests(unittest.TestCase):
     def test_valid_four_dimension_weekly_report_is_accepted(self):
         errors, count = self._verify(weekly=report())
         self.assertEqual(errors, [])
-        self.assertEqual(count, 0)
+        self.assertEqual(count, 1)
 
     def test_legacy_report_is_only_historical(self):
         legacy = report()
