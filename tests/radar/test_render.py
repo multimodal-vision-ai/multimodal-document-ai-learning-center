@@ -200,6 +200,9 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("四项评分", first["radar/index.md"])
             self.assertIn("radar-review-card", first["radar/index.md"])
             self.assertIn("radar-review-score-grid", first["radar/index.md"])
+            self.assertIn("评分来源：", first["radar/index.md"])
+            self.assertIn("评价时间：", first["radar/index.md"])
+            self.assertIn("置信度：中", first["radar/index.md"])
             self.assertIn("radar-review-detail-grid", first["radar/index.md"])
             self.assertIn("相关资源", first["radar/index.md"])
             featured_section = first["radar/index.md"].split("## 本周精选", 1)[0]
