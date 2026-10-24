@@ -570,16 +570,21 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True, queu
     label = labels.get(report_type, "研究报告")
     queue = queue if queue is not None else load(DATA / "screening-queue.json", {})
     state, selected = assess_report(report, report_type, queue)
-    if state == "legacy" and not historical:
-        return (f'<div class="radar-empty-state"><strong>{LEGACY_NOTE}</strong>'
-                '<p>旧版报告已保留在历史档案，完成复评后再进入本期精选。</p></div>')
     if not isinstance(report, dict) or not report:
         return f'<div class="radar-empty-state">尚无已存档的 ChatGPT{label}结果。</div>'
     status = report.get("status")
     generated_raw = report.get("generated_at")
     generated = escape(str(generated_raw or "时间未记录")[:10])
     period = escape(report_period_label(report_type, report))
+    legacy_note = (
+        '<div class="radar-section-note radar-legacy-note" role="note">'
+        f'<strong>历史{label}回顾 · {LEGACY_NOTE}</strong>'
+        f'<p>以下为 {generated} 已保存报告的内容，沿用原报告结论。</p></div>'
+        if state == "legacy" and not historical else ""
+    )
     if status == "no_high_value":
+        if state == "legacy":
+            return legacy_note + '<div class="radar-empty-state">该历史报告未收录推荐条目。</div>'
         message = (
             '<strong>本期未发现达到门槛的高价值项目。</strong>'
             '<p>系统不会为了填满页面而推荐普通线索。</p>'
@@ -672,7 +677,7 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True, queu
             + (f' 当前页面展示前 {len(shown_items)} 项；' if limit is not None and len(items) > len(shown_items) else "")
             + '</p>'
         )
-    return '<div class="radar-brief-list">' + "".join(cards) + '</div>' + extra
+    return legacy_note + '<div class="radar-brief-list">' + "".join(cards) + '</div>' + extra
 
 
 def clean_recommendation_text(value):

@@ -91,7 +91,7 @@ class ReportArchiveTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 render.chatgpt_report_listing(invalid, "weekly", queue=QUEUE)
 
-    def test_legacy_is_retained_as_clearly_labeled_history_not_live_recommendation(self):
+    def test_legacy_cards_remain_visible_as_labelled_history_without_promotion(self):
         legacy = report()
         legacy.pop("screening_schema_version")
         legacy["generated_at"] = "2026-10-19T09:00:00Z"
@@ -107,7 +107,9 @@ class ReportArchiveTests(unittest.TestCase):
             self.assertIn("Compact multimodal evaluation", text)
             current = render.chatgpt_report_listing(legacy, "weekly", queue=QUEUE)
             self.assertIn(LEGACY_NOTE, current)
-            self.assertNotIn("Compact multimodal evaluation", current)
+            self.assertIn("Compact multimodal evaluation", current)
+            self.assertIn("历史周报回顾", current)
+            self.assertNotIn("完成复评后再进入", current)
 
     def test_new_legacy_and_missing_schema_are_rejected(self):
         r = report()

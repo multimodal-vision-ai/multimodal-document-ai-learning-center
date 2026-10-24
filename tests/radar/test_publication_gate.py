@@ -102,7 +102,7 @@ class PublicationTests(unittest.TestCase):
             render.render(NOW)
         self.assertFalse((self.data / "chatgpt-reviewed/archive").exists())
 
-    def test_legacy_is_labelled_in_history_and_excluded_from_current_lists(self):
+    def test_legacy_cards_remain_visible_with_date_and_without_stage_two_promotion(self):
         legacy = {"status": "completed", "generated_at": "2026-10-19T12:00:00Z",
                   "items": [{"title": "Legacy work", "selection_status": "selected"}]}
         self.write(legacy)
@@ -112,7 +112,12 @@ class PublicationTests(unittest.TestCase):
         page = (self.docs / "radar/index.md").read_text(encoding="utf-8")
         current = page.split("RADAR:CHATGPT_WEEKLY-START -->")[1].split("<!-- RADAR:CHATGPT_WEEKLY-END")[0]
         self.assertIn(LEGACY_NOTE, current)
-        self.assertNotIn("Legacy work", current)
+        self.assertIn("Legacy work", current)
+        self.assertIn("历史周报回顾", current)
+        self.assertIn("2026-10-19", current)
+        self.assertNotIn("完成复评后再进入", current)
+        featured = page.split("RADAR:STAGE_TWO-START -->")[1].split("<!-- RADAR:STAGE_TWO-END")[0]
+        self.assertNotIn("Legacy work", featured)
         history = render.archive_cards("weekly", self.queue)
         self.assertIn(LEGACY_NOTE, history)
         self.assertIn("Legacy work", history)
