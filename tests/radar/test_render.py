@@ -120,7 +120,7 @@ class RadarRenderTests(unittest.TestCase):
                     "research_opportunity": "在固定显存和长视频条件下评估记忆机制与时间定位。",
                     "selection_status": "selected"
                 }]
-            })
+            }
             save(data / "chatgpt-reviewed" / "latest-weekly.json", legacy_weekly)
             save(data / "chatgpt-reviewed" / "archive" / "weekly" / "2026-W42.json", legacy_weekly)
             save(data / "chatgpt-reviewed" / "latest-monthly.json", {
