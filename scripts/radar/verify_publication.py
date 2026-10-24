@@ -1,44 +1,64 @@
-"""Verify rendered DEV HTML against the current validated second-stage recommendation."""
+"""Verify the current Frontier Updates publication layout and reviewed report content."""
 import argparse
 import html
 import sys
 from pathlib import Path
 
 from core import DATA, load
-from screening import collect_screened
+from publication_gate import validate_snapshot
 
 
 def verify(home_path, detail_path, data_dir=DATA):
     errors = []
     home = Path(home_path).read_text(encoding="utf-8")
     detail = Path(detail_path).read_text(encoding="utf-8")
-    if "ChatGPT 科研价值精选" not in home:
-        errors.append("homepage is missing the second-stage scientific-curation section")
-    if "周期任务运行验收" not in home:
-        errors.append("homepage is missing the periodic-task monitor")
-    if "ChatGPT 科研价值精选" not in detail:
-        errors.append("research-radar detail page is missing the second-stage section")
 
-    queue = load(Path(data_dir) / "screening-queue.json", {})
+    for marker in ("从当前主线走向未来", "进入前沿动态"):
+        if marker not in home:
+            errors.append(f"homepage is missing current navigation marker: {marker}")
+    for marker in ("前沿动态", "重点推荐", "本周精选",
+                   "历史档案检索", "补充发现：待评估线索"):
+        if marker not in detail:
+            errors.append(f"Frontier Updates page is missing current section: {marker}")
+
+    base = Path(data_dir)
+    queue = load(base / "screening-queue.json", {})
     reports = {
-        kind: load(Path(data_dir) / "chatgpt-reviewed" / f"latest-{kind}.json", {})
+        kind: load(base / "chatgpt-reviewed" / f"latest-{kind}.json", {})
         for kind in ("screened", "daily", "weekly", "monthly")
     }
-    selected, validation_errors = collect_screened(reports, queue)
-    if validation_errors:
-        errors.extend("invalid report: " + error for error in validation_errors)
-    if selected:
-        title = html.escape(str(selected[0].get("title") or ""), quote=True)
-        if not title or (title not in home and title not in detail):
-            errors.append("highest-ranked validated ChatGPT recommendation is absent from rendered pages")
+    try:
+        states = validate_snapshot(reports, queue)
+    except ValueError as exc:
+        errors.append("invalid current report: " + str(exc))
+        return errors, 0
+
+    screened_items = states["screened"][1]
+    if screened_items:
+        first_title = html.escape(str(screened_items[0].get("title") or ""), quote=True)
+        if not first_title or first_title not in detail:
+            errors.append("validated recommendation missing from current featured section")
     else:
-        placeholders = (
-            "尚无通过四维科研价值核验的第二轮推荐",
-            "目前没有符合四维科研价值评分标准的 ChatGPT 二次评价结果",
-        )
-        if not any(marker in home or marker in detail for marker in placeholders):
-            errors.append("explicit no-recommendation placeholder is missing")
-    return errors, len(selected)
+        if not any(x in detail for x in (
+            "当前没有项目同时达到推荐标准", "推荐内容暂不可展示"
+        )):
+            errors.append("no-recommendation state is not visible")
+
+    for kind, marker in (("weekly", "本周精选"), ("monthly", "本月研究机会")):
+        state, items = states[kind]
+        if state == "legacy":
+            if "尚未按当前四维标准复评" not in detail:
+                errors.append(f"{kind} legacy content lacks explicit four-dimension warning")
+            # Never allow the old report's names as unqualified current recommendations.
+        elif state == "validated" and items:
+            for item in items:
+                title = html.escape(str(item.get("title") or ""), quote=True)
+                if title and title not in detail:
+                    errors.append(f"{kind} validated item not rendered: {title}")
+        if marker not in detail:
+            errors.append(f"{kind} section missing")
+
+    return errors, len(screened_items)
 
 
 def main():
@@ -54,15 +74,15 @@ def main():
     else:
         home_path, detail_path = args.home_html, args.detail_html
     if not home_path or not detail_path or not home_path.exists() or not detail_path.exists():
-        print("Homepage and research-radar detail HTML files are required.", file=sys.stderr)
+        print("Homepage and Frontier Updates HTML files are required.", file=sys.stderr)
         return 2
     errors, count = verify(home_path, detail_path, args.data_dir)
     if errors:
-        print("DEV publication smoke test failed:", file=sys.stderr)
+        print("Frontier Updates publication validation failed:", file=sys.stderr)
         for error in errors:
             print(" - " + error, file=sys.stderr)
         return 1
-    print(f"DEV publication smoke test passed: {count} validated ChatGPT recommendation(s).")
+    print(f"Publication validation passed: {count} strictly validated recommendation(s).")
     return 0
 
 
