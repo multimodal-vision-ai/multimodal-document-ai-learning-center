@@ -1,6 +1,7 @@
 name: Refresh DEV preview from ChatGPT research results
 
 on:
+  workflow_dispatch:
   push:
     branches: [radar-data]
     paths:
@@ -109,8 +110,11 @@ jobs:
           if not (root / "index.html").exists() or count == 0:
               raise SystemExit("Built DEV site is missing index.html")
           required = {
-              "index.html": ["ChatGPT 科研价值精选", "周期任务运行验收", "本周高匹配线索"],
-              "radar/index.html": ["ChatGPT 科研价值精选", "历史 ChatGPT 筛选档案"],
+              "index.html": ["从当前主线走向未来", "进入前沿动态"],
+              "radar/index.html": [
+                  "前沿动态", "重点推荐", "本周精选",
+                  "历史档案检索", "补充发现：待评估线索",
+              ],
           }
           for relative, markers in required.items():
               page = root / relative
@@ -175,24 +179,26 @@ jobs:
                && curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/radar/index.html" -o "$RUNNER_TEMP/public-radar.html" \
                && test -s "$RUNNER_TEMP/public-home.html" \
                && test -s "$RUNNER_TEMP/public-radar.html"; then
-              if grep -q "ChatGPT 科研价值精选" "$RUNNER_TEMP/public-home.html" \
-                 && grep -q "周期任务运行验收" "$RUNNER_TEMP/public-home.html" \
-                 && grep -q "ChatGPT 科研价值精选" "$RUNNER_TEMP/public-radar.html"; then
-                echo "Public DEV preview endpoints return the expected current research-curation and watchdog content."
+              if grep -q "前沿动态" "$RUNNER_TEMP/public-home.html" \
+                 && grep -q "进入前沿动态" "$RUNNER_TEMP/public-home.html" \
+                 && grep -q "前沿动态" "$RUNNER_TEMP/public-radar.html" \
+                 && grep -q "重点推荐" "$RUNNER_TEMP/public-radar.html" \
+                 && grep -q "历史档案检索" "$RUNNER_TEMP/public-radar.html"; then
+                echo "Public DEV preview endpoints return the expected current research navigation and review content."
                 exit 0
               fi
               echo "CDN returned HTML, but at least one expected content marker is missing; checking cache propagation."
-              echo "Home marker presence: stage2=$(grep -q 'ChatGPT 科研价值精选' "$RUNNER_TEMP/public-home.html" && echo yes || echo no), watchdog=$(grep -q '周期任务运行验收' "$RUNNER_TEMP/public-home.html" && echo yes || echo no)"
-              echo "Detail marker presence: stage2=$(grep -q 'ChatGPT 科研价值精选' "$RUNNER_TEMP/public-radar.html" && echo yes || echo no)"
+              echo "Home marker presence: stage2=$(grep -q '前沿动态' "$RUNNER_TEMP/public-home.html" && echo yes || echo no), watchdog=$(grep -q '进入前沿动态' "$RUNNER_TEMP/public-home.html" && echo yes || echo no)"
+              echo "Detail marker presence: stage2=$(grep -q '前沿动态' "$RUNNER_TEMP/public-radar.html" && echo yes || echo no)"
             fi
             sleep 10
           done
           echo "Stable CDN URL did not expose the new DEV content after retries. Checking cache-busted response for diagnosis."
           if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/index.html?verify=$GITHUB_SHA" -o "$RUNNER_TEMP/public-home-busted.html"; then
-            if grep -q "周期任务运行验收" "$RUNNER_TEMP/public-home-busted.html"; then
+            if grep -q "进入前沿动态" "$RUNNER_TEMP/public-home-busted.html"; then
               echo "::error::Cache-busted URL has current content, but stable CDN URL is stale; publication is not considered verified."
             else
-              echo "::error::Cache-busted URL also lacks the expected watchdog marker."
+              echo "::error::Cache-busted URL also lacks the current homepage navigation marker."
             fi
           else
             echo "::error::Public DEV preview endpoint failed after retries."
