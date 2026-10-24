@@ -57,6 +57,24 @@ jobs:
           python scripts/radar/screening.py
           python scripts/radar/render.py
 
+      - name: Persist strictly validated new archives
+        working-directory: radar-store
+        run: |
+          set -euo pipefail
+          src="../site-source/research-radar/data/chatgpt-reviewed/archive"
+          dst="research-radar/data/chatgpt-reviewed/archive"
+          if [ -d "$src" ]; then
+            mkdir -p "$dst"
+            cp -an "$src/." "$dst/"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add "$dst"
+            if ! git diff --cached --quiet; then
+              git commit -m "data(radar): archive validated reports [skip ci]"
+              git push origin HEAD:refs/heads/radar-data
+            fi
+          fi
+
       - name: Set the isolated DEV preview base URL
         working-directory: site-source
         run: |
