@@ -93,7 +93,7 @@ class RadarRenderTests(unittest.TestCase):
                     "selection_status": "selected"
                 }]
             })
-            save(data / "chatgpt-reviewed" / "latest-weekly.json", {
+            legacy_weekly = {
                 "status": "completed",
                 "generated_at": "2026-10-19T09:22:26Z",
                 "window_start": "2026-10-12",
@@ -121,6 +121,8 @@ class RadarRenderTests(unittest.TestCase):
                     "selection_status": "selected"
                 }]
             })
+            save(data / "chatgpt-reviewed" / "latest-weekly.json", legacy_weekly)
+            save(data / "chatgpt-reviewed" / "archive" / "weekly" / "2026-W42.json", legacy_weekly)
             save(data / "chatgpt-reviewed" / "latest-monthly.json", {
                 "status": "not_published", "generated_at": None, "items": []
             })
@@ -130,6 +132,7 @@ class RadarRenderTests(unittest.TestCase):
             self.assertEqual(queue["total"], 1)
             save(data / "screening-queue.json", queue)
             save(data / "chatgpt-reviewed" / "latest-daily.json", {
+                "schema_version": 1, "report_type": "daily",
                 "screening_schema_version": 2,
                 "first_stage_threshold": 8.0,
                 "status": "completed",
@@ -176,21 +179,22 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn('（2026年第42周，筛选日期：2026-10-19）', first["radar/index.md"])
             self.assertEqual(first["radar/index.md"].count("尚未逐项独立实测"), 1)
             weekly_section = first["radar/index.md"].split("<!-- RADAR:CHATGPT_WEEKLY-START -->", 1)[1].split("<!-- RADAR:CHATGPT_WEEKLY-END -->", 1)[0]
-            self.assertIn("radar-brief-heading", weekly_section)
+            self.assertIn("旧版报告已保留在历史档案", weekly_section)
+            self.assertNotIn("radar-brief-heading", weekly_section)
             self.assertNotIn("radar-period-badge", weekly_section)
             self.assertNotIn("筛选日期：", weekly_section)
             self.assertNotIn("报告周期：2026年第42周", weekly_section)
-            self.assertIn('<strong>参数量：</strong><span>2B</span>', weekly_section)
-            self.assertIn('<strong>GPU需求：</strong><span>T4 量化推理可行；LoRA 约 24GB；全量训练至少 40GB</span>', weekly_section)
+            self.assertNotIn('<strong>参数量：</strong><span>2B</span>', weekly_section)
+            self.assertNotIn("GPU需求：", weekly_section)
             self.assertNotIn("按已存档周报记录", weekly_section)
             self.assertNotIn("原周报", weekly_section)
             self.assertNotIn("已存档周报", weekly_section)
             self.assertNotIn("A 优先级", weekly_section)
             self.assertNotIn("需实测复核", weekly_section)
-            self.assertIn("radar-resource-row", weekly_section)
+            self.assertIn("尚未按当前四维标准复评", first["radar/index.md"])
             self.assertIn("本月研究机会", first["radar/index.md"])
             self.assertIn("radar-brief-card", first["radar/index.md"])
-            self.assertIn("MaLoW", first["radar/index.md"])
+            self.assertIn("MaLoW", first["radar/index.md"])  # Historical only
             self.assertIn("https://arxiv.org/abs/2610.22070", first["radar/index.md"])
             self.assertIn("Unreviewed", first["radar/index.md"])
             self.assertIn("四项评分", first["radar/index.md"])
@@ -217,7 +221,7 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn('data-archive-type="weekly"', first["radar/index.md"])
             self.assertIn("RADAR:WEEKLY_ARCHIVE-START", (ROOT / "docs" / "radar" / "index.md").read_text(encoding="utf-8"))
             weekly_archive_files = list((data / "chatgpt-reviewed" / "archive" / "weekly").glob("*.json"))
-            self.assertEqual(len(weekly_archive_files), 1)
+            self.assertEqual(len(weekly_archive_files), 1)  # Existing legacy files kept, not re-created
             monthly_archive_dir = data / "chatgpt-reviewed" / "archive" / "monthly"
             self.assertFalse(monthly_archive_dir.exists() and list(monthly_archive_dir.glob("*.json")))
             self.assertNotIn("日度统计", first["radar/index.md"])
