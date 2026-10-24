@@ -159,6 +159,7 @@ jobs:
           persist-credentials: true
 
       - name: Publish rebuilt static preview
+        id: publish_preview
         working-directory: preview
         env:
           SITE_DIR: ${{ runner.temp }}/chatgpt-dev-site
@@ -178,6 +179,7 @@ jobs:
             git commit -m "docs(preview): publish updated ChatGPT research results [skip ci]"
             git push origin HEAD:refs/heads/dev-preview
           fi
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Purge preview CDN cache
         run: |
@@ -187,35 +189,54 @@ jobs:
             curl --fail --location --silent --show-error --connect-timeout 10 --max-time 25 "$base/$path" -o /dev/null
           done
 
-      - name: Verify published DEV preview endpoints
+      - name: Verify published DEV snapshot endpoints
+        working-directory: site-source
+        env:
+          PREVIEW_COMMIT: ${{ steps.publish_preview.outputs.commit_sha }}
+        run: |
+          set -euo pipefail
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$PREVIEW_COMMIT"
+          for attempt in 1 2 3 4 5 6; do
+            echo "Checking immutable public DEV snapshot (attempt $attempt/6)"
+            if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 -D "$RUNNER_TEMP/home.headers" "$base/index.html" -o "$RUNNER_TEMP/public-home.html" \
+               && curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 -D "$RUNNER_TEMP/radar.headers" "$base/radar/index.html" -o "$RUNNER_TEMP/public-radar.html" \
+               && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/home.headers" \
+               && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/radar.headers" \
+               && python scripts/radar/verify_publication.py --home-html "$RUNNER_TEMP/public-home.html" --detail-html "$RUNNER_TEMP/public-radar.html" --data-dir research-radar/data; then
+              asset_url="$(python - "$base/radar/index.html" "$RUNNER_TEMP/public-radar.html" <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+          from urllib.parse import urljoin
+          body = Path(sys.argv[2]).read_text(encoding="utf-8")
+          match = re.search(r'''href=["']([^"']+\.css[^"']*)["']''', body)
+          if not match:
+              raise SystemExit("No stylesheet found")
+          print(urljoin(sys.argv[1], match.group(1)))
+          PY
+          )"
+              if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$asset_url" -o "$RUNNER_TEMP/public.css" && test -s "$RUNNER_TEMP/public.css"; then
+                echo "Verified HTML, stylesheet, and exact report/queue snapshot: $base/radar/index.html"
+                echo "## Verified DEV preview" >> "$GITHUB_STEP_SUMMARY"
+                echo "[Frontier Updates]($base/radar/index.html)" >> "$GITHUB_STEP_SUMMARY"
+                echo "[Home]($base/index.html)" >> "$GITHUB_STEP_SUMMARY"
+                exit 0
+              fi
+            fi
+            sleep 15
+          done
+          echo "::error::Published immutable DEV preview failed HTML, asset, or snapshot validation."
+          exit 1
+
+      - name: Inspect fixed CDN alias cache
         working-directory: site-source
         run: |
           set -euo pipefail
           base="https://cdn.jsdelivr.net/gh/multimodal-vision-ai/multimodal-document-ai-learning-center@dev-preview"
-          for attempt in 1 2 3 4 5 6 7 8 9 10; do
-            echo "Checking public DEV preview content (attempt $attempt/10)"
-            if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/index.html" -o "$RUNNER_TEMP/public-home.html" \
-               && curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/radar/index.html" -o "$RUNNER_TEMP/public-radar.html" \
-               && test -s "$RUNNER_TEMP/public-home.html" \
-               && test -s "$RUNNER_TEMP/public-radar.html"; then
-              if python scripts/radar/verify_publication.py \
-                 --home-html "$RUNNER_TEMP/public-home.html" \
-                 --detail-html "$RUNNER_TEMP/public-radar.html" --data-dir research-radar/data; then
-                echo "Public DEV preview matches the validated report and queue snapshot."
-                exit 0
-              fi
-              echo "CDN returned HTML, but at least one expected content marker is missing; checking cache propagation."
-            fi
-            sleep 10
-          done
-          echo "Stable CDN URL did not expose the new DEV content after retries. Checking cache-busted response for diagnosis."
-          if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/index.html?verify=$GITHUB_SHA" -o "$RUNNER_TEMP/public-home-busted.html"; then
-            if grep -q "进入前沿动态" "$RUNNER_TEMP/public-home-busted.html"; then
-              echo "::error::Cache-busted URL has current content, but stable CDN URL is stale; publication is not considered verified."
-            else
-              echo "::error::Cache-busted URL also lacks the current homepage navigation marker."
-            fi
+          if curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/index.html" -o "$RUNNER_TEMP/alias-home.html" \
+             && curl --fail --location --silent --show-error --connect-timeout 10 --max-time 20 "$base/radar/index.html" -o "$RUNNER_TEMP/alias-radar.html" \
+             && python scripts/radar/verify_publication.py --home-html "$RUNNER_TEMP/alias-home.html" --detail-html "$RUNNER_TEMP/alias-radar.html" --data-dir research-radar/data; then
+            echo "Fixed CDN alias also matches the published snapshot."
           else
-            echo "::error::Public DEV preview endpoint failed after retries."
+            echo "::warning::Fixed CDN alias is stale or unavailable. Use the immutable DEV URLs in the job summary."
           fi
-          exit 1

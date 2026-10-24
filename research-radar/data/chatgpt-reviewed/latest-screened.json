@@ -51,5 +51,6 @@
     }
   ],
   "publication_validation_policy": "four_dimension_v2_fail_closed_with_snapshot_sha256",
-  "publication_validation_code_commit": "40cc2b7a413296fbd6e6203f60ff8437ba7e9bab"
+  "publication_validation_code_commit": "40cc2b7a413296fbd6e6203f60ff8437ba7e9bab",
+  "publication_preview_verification": "immutable_preview_commit_and_report_queue_sha256"
 }
