@@ -61,6 +61,8 @@
     
       <link rel="stylesheet" href="../stylesheets/model-playground.css">
     
+      <link rel="stylesheet" href="../stylesheets/model-playground-guide-v1.css">
+    
       <link rel="stylesheet" href="../stylesheets/model-demo-sidebar-native-v2.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -2227,6 +2229,9 @@
   <div class="mpg-workspace-body">
     <p class="mpg-label">选择文档模型</p>
     <div class="mpg-models" data-mpg="models" role="group" aria-label="选择文档模型"></div>
+    <details class="mpg-help">
+      <summary>操作指南 <span>官方公共样例 · 自定义素材上传要求</span></summary>
+      <div class="mpg-help-content">
     <div class="mpg-test-row">
       <div class="mpg-test-card mpg-public">
         <h3>① 使用官方公开测试素材</h3>
@@ -2240,6 +2245,8 @@
         <p class="mpg-advisory" data-mpg="advisory"></p>
       </div>
     </div>
+      </div>
+    </details>
     <div class="mpg-model-heading"><strong data-mpg="title"></strong><span data-mpg="scale"></span></div>
     <div class="mpg-actions">
       <button type="button" class="mpg-primary" data-mpg="start">加载真实演示</button>
