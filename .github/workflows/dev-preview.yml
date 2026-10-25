@@ -308,7 +308,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview"
+          # raw.githack may cache branch paths; query strings do not invalidate it.
+          # Verify this exact published build using the immutable dev-preview commit.
+          preview_sha="$(git rev-parse HEAD)"
+          echo "Verifying published model demo snapshot: $preview_sha"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$preview_sha"
           for direction in document video; do
             page="$base/model-demos/$direction.html?preview_build=${GITHUB_SHA}"
             success=0
@@ -341,7 +345,11 @@ jobs:
               sleep 12
             done
             if [ "$success" -ne 1 ]; then
-              echo "::error::DEV $direction model demo page unavailable or wrong content"
+              echo "::error::DEV $direction model demo page unavailable or wrong content at pinned preview SHA $preview_sha"
+              echo "Response headers:"
+              sed -n '1,24p' "$RUNNER_TEMP/demo-$direction.headers" 2>/dev/null || true
+              echo "Relevant HTML markers:"
+              grep -Eo 'model-playground-quota-v1.css|ZeroGPU quota exceeded|mpg-help vis-quota-help' "$RUNNER_TEMP/demo-$direction.html" 2>/dev/null | sort -u || true
               exit 1
             fi
           done
@@ -355,7 +363,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview"
+          # raw.githack may cache branch paths; query strings do not invalidate it.
+          # Verify this exact published build using the immutable dev-preview commit.
+          preview_sha="$(git rev-parse HEAD)"
+          echo "Verifying published model demo snapshot: $preview_sha"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$preview_sha"
           page="$base/model-demos/vision.html?preview_build=${GITHUB_SHA}"
           success=0
           for attempt in 1 2 3 4 5 6; do
@@ -380,7 +392,8 @@ jobs:
             sleep 12
           done
           if [ "$success" -ne 1 ]; then
-            echo "::error::Vision demo page is absent, stale, or missing required navigation/assets"
+            echo "::error::Vision demo page is absent, stale, or missing required navigation/assets at pinned preview SHA $preview_sha"
+            sed -n '1,24p' "$RUNNER_TEMP/vision-demo.headers" 2>/dev/null || true
             exit 1
           fi
           for asset in stylesheets/vision-demo-v3.css stylesheets/model-playground-quota-v1.css js/vision-demo-v1.js; do
