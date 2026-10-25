@@ -62,7 +62,7 @@ extra_css:
   - stylesheets/radar-v2.css
   - stylesheets/radar-v4.css
   - stylesheets/model-playground.css
-  - stylesheets/model-demo-nav.css
+  - stylesheets/model-demo-sidebar-native-v2.css
 
 extra_javascript:
   - js/visitor.js
