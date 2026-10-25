@@ -318,8 +318,10 @@ jobs:
                 && grep -q "mpg-workspace" "$RUNNER_TEMP/demo-$direction.html" \
                 && grep -q "模型演示" "$RUNNER_TEMP/demo-$direction.html" \
                 && grep -q "model-demo-sidebar-native-v2.css" "$RUNNER_TEMP/demo-$direction.html" \
-                && grep -q "model-playground-guide-v1.css" "$RUNNER_TEMP/demo-$direction.html" \
+                && grep -q "model-playground-guide-v2.css" "$RUNNER_TEMP/demo-$direction.html" \
                 && grep -q '<details class="mpg-help">' "$RUNNER_TEMP/demo-$direction.html" \
+                && grep -q 'class="mpg-help-caret"' "$RUNNER_TEMP/demo-$direction.html" \
+                && ! grep -q 'href="../stylesheets/model-playground-guide-v1.css"' "$RUNNER_TEMP/demo-$direction.html" \
                 && ! grep -q '<details class="mpg-help" open' "$RUNNER_TEMP/demo-$direction.html" \
                 && ! grep -q 'href="../stylesheets/model-demo-nav.css"' "$RUNNER_TEMP/demo-$direction.html"; then
                 if [ "$direction" = "document" ]; then
@@ -339,7 +341,7 @@ jobs:
               exit 1
             fi
           done
-          for asset in stylesheets/model-playground.css stylesheets/model-playground-guide-v1.css stylesheets/model-demo-sidebar-native-v2.css js/model-playground.js; do
+          for asset in stylesheets/model-playground.css stylesheets/model-playground-guide-v2.css stylesheets/model-demo-sidebar-native-v2.css js/model-playground.js; do
             curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
             test -s "$RUNNER_TEMP/$(basename "$asset")"
           done
