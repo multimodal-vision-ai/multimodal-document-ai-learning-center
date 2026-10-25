@@ -316,7 +316,9 @@ jobs:
               if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 -D "$RUNNER_TEMP/demo-$direction.headers" "$page" -o "$RUNNER_TEMP/demo-$direction.html" \
                 && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/demo-$direction.headers" \
                 && grep -q "mpg-workspace" "$RUNNER_TEMP/demo-$direction.html" \
-                && grep -q "模型演示" "$RUNNER_TEMP/demo-$direction.html"; then
+                && grep -q "模型演示" "$RUNNER_TEMP/demo-$direction.html" \
+                && grep -q "model-demo-sidebar-native-v2.css" "$RUNNER_TEMP/demo-$direction.html" \
+                && ! grep -q 'href="../stylesheets/model-demo-nav.css"' "$RUNNER_TEMP/demo-$direction.html"; then
                 if [ "$direction" = "document" ]; then
                   grep -q 'data-mpg-kind="doc"' "$RUNNER_TEMP/demo-$direction.html"
                   ! grep -q 'data-mpg-kind="video"' "$RUNNER_TEMP/demo-$direction.html"
@@ -334,7 +336,7 @@ jobs:
               exit 1
             fi
           done
-          for asset in stylesheets/model-playground.css js/model-playground.js; do
+          for asset in stylesheets/model-playground.css stylesheets/model-demo-sidebar-native-v2.css js/model-playground.js; do
             curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
             test -s "$RUNNER_TEMP/$(basename "$asset")"
           done
