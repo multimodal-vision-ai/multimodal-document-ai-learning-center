@@ -1,6 +1,7 @@
 /* Model Playground: scoped to the two independent workspaces. */
 .mpg{max-width:1100px;margin:0 auto 3rem;color:#1a2231;font:inherit}
 .mpg *{box-sizing:border-box}
+.mpg [hidden]{display:none!important}
 .mpg-intro{display:flex;gap:1.4rem;justify-content:space-between;align-items:flex-start;margin:0 0 1.4rem}
 .mpg-intro h1{font-size:1.75rem;line-height:1.25;letter-spacing:-.025em;margin:0 0 .45rem}
 .mpg-intro h1 span{font-size:.55em;font-weight:500;letter-spacing:0;color:#8992a2;vertical-align:middle}
