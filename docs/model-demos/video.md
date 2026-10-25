@@ -54,7 +54,7 @@ hide:
   </div>
 </section>
 
-<p class="mpg-sibling">还想体验文档解析？<a href="../document/">进入文档理解 →</a></p>
+<p class="mpg-state">切换方向：请使用左侧「模型演示」下的文档理解 / 视频理解导航。</p>
 
 <div class="mpg-footnote">
   <strong>真实模型 · 公共样例 · 独立上传 · 按需加载</strong>
