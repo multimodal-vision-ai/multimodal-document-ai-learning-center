@@ -63,7 +63,7 @@
     
       <link rel="stylesheet" href="../stylesheets/model-playground-guide-v2.css">
     
-      <link rel="stylesheet" href="../stylesheets/vision-demo-v1.css">
+      <link rel="stylesheet" href="../stylesheets/vision-demo-v2.css">
     
       <link rel="stylesheet" href="../stylesheets/model-demo-sidebar-native-v2.css">
     
@@ -2296,6 +2296,20 @@
     </div>
 
     <p class="mpg-state" data-vis="status" role="status" aria-live="polite">尚未加载 · 不消耗外部演示资源</p>
+
+    <details class="mpg-help vis-quota-help">
+      <summary><span class="mpg-help-caret" aria-hidden="true">▸</span><strong>遇到 ZeroGPU quota exceeded？</strong><span class="mpg-help-caption">查看额度不足的处理方法</span></summary>
+      <div class="vis-quota-content">
+        <p><strong>这通常是第三方免费 GPU 配额不足，不代表你的文件或模型有错误。</strong>如提示 <code>20s requested vs. 0s left</code>，表示本次任务预留 20 秒、当前剩余 0 秒。</p>
+        <ol>
+          <li>先点上方 <strong>“在新标签页打开”</strong>，进入当前模型的 Hugging Face 原始页面；在 <a href="https://huggingface.co/login" target="_blank" rel="noopener noreferrer">Hugging Face 登录</a>后再提交视频。免费账号可以使用，不要求购买 Pro。</li>
+          <li>若已登录仍显示配额不足，请等待免费额度恢复（官方规则为首次 GPU 使用后约 24 小时重置）；换其他公开演示也不保证能避开共享配额。</li>
+          <li>若嵌入页显示 <code>0:00:00</code> 但仍报错，可能是嵌入窗口未识别账号登录状态；请优先在原始 Hugging Face 页面操作，而不是连续刷新。</li>
+        </ol>
+        <p class="vis-quota-security">不需要在本学习中心输入 Access Token，也不要将个人 Token 发给教师或他人。短视频有助于减少处理负担，但不保证解决配额不足。</p>
+        <p class="vis-quota-source">官方说明：<a href="https://huggingface.co/docs/hub/spaces-zerogpu" target="_blank" rel="noopener noreferrer">ZeroGPU 使用额度与重置规则</a></p>
+      </div>
+    </details>
 
     <div class="mpg-compare">
       <strong>本次观察重点：</strong><span data-vis="compare">观察每个检测框对应的目标、类别和置信度；再切换实例分割或姿态模型，比较输出差异。</span>
