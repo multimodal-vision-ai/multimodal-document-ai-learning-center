@@ -361,7 +361,10 @@ jobs:
               && grep -q 'data-vis-workspace' "$RUNNER_TEMP/vision-demo.html" \
               && grep -q '<details class="mpg-help">' "$RUNNER_TEMP/vision-demo.html" \
               && grep -q 'model-playground-guide-v2.css' "$RUNNER_TEMP/vision-demo.html" \
-              && grep -q 'vision-demo-v1.css' "$RUNNER_TEMP/vision-demo.html" \
+              && grep -q 'vision-demo-v2.css' "$RUNNER_TEMP/vision-demo.html" \
+              && grep -q 'vis-quota-help' "$RUNNER_TEMP/vision-demo.html" \
+              && grep -q 'ZeroGPU quota exceeded' "$RUNNER_TEMP/vision-demo.html" \
+              && ! grep -q 'href="../stylesheets/vision-demo-v1.css"' "$RUNNER_TEMP/vision-demo.html" \
               && grep -q 'vision-demo-v1.js' "$RUNNER_TEMP/vision-demo.html" \
               && grep -q '视觉感知' "$RUNNER_TEMP/vision-demo.html" \
               && grep -q '文档理解' "$RUNNER_TEMP/vision-demo.html" \
@@ -375,7 +378,7 @@ jobs:
             echo "::error::Vision demo page is absent, stale, or missing required navigation/assets"
             exit 1
           fi
-          for asset in stylesheets/vision-demo-v1.css js/vision-demo-v1.js; do
+          for asset in stylesheets/vision-demo-v2.css js/vision-demo-v1.js; do
             curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
               "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
             test -s "$RUNNER_TEMP/$(basename "$asset")"
