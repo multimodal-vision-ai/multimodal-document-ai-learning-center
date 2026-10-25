@@ -61,11 +61,13 @@ extra_css:
   - stylesheets/radar.css
   - stylesheets/radar-v2.css
   - stylesheets/radar-v4.css
+  - stylesheets/model-playground.css
 
 extra_javascript:
   - js/visitor.js
   - js/shanshui.js
   - js/radar.js
+  - js/model-playground.js
 
 nav:
   - 学习首页:
