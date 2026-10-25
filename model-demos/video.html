@@ -63,7 +63,9 @@
     
       <link rel="stylesheet" href="../stylesheets/model-playground-guide-v2.css">
     
-      <link rel="stylesheet" href="../stylesheets/vision-demo-v2.css">
+      <link rel="stylesheet" href="../stylesheets/vision-demo-v3.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground-quota-v1.css">
     
       <link rel="stylesheet" href="../stylesheets/model-demo-sidebar-native-v2.css">
     
@@ -2286,6 +2288,21 @@
       </div>
     </div>
     <p class="mpg-state" data-mpg="status" aria-live="polite">尚未加载 · 不消耗外部演示资源</p>
+
+    <details class="mpg-help vis-quota-help">
+      <summary><span class="mpg-help-caret" aria-hidden="true">▸</span><strong>遇到 ZeroGPU quota exceeded？</strong><span class="mpg-help-caption">查看额度不足或加载失败的解决方法</span></summary>
+      <div class="vis-quota-content">
+        <p><strong>这是第三方服务资源或配额问题，不一定是模型或你上传的素材有问题。</strong>只有出现 <code>ZeroGPU quota exceeded</code> 时，才表示该演示的免费 GPU 额度不足；其他演示也可能采用 CPU 或普通 GPU 服务。</p>
+        <ol>
+          <li>点击上方 <strong>“在新标签页打开”</strong>，进入当前模型的官方 Space 页面。在 <a href="https://huggingface.co/login" target="_blank" rel="noopener noreferrer">Hugging Face 官网登录</a>免费账号，再用公开示例或授权素材尝试。</li>
+          <li>如果显示 <code>20s requested vs. 0s left</code>，表示本次任务需要 20 秒、当前余额为零。需要等待额度恢复；提示 <code>0:00:00</code> 不保证可立即重试。</li>
+          <li>若页面休眠、排队、空白或其他错误，请稍后重试，并留意原演示的状态说明；本站无法代替第三方增加额度。</li>
+        </ol>
+        <p class="vis-quota-security">不要在本学习中心输入、粘贴或分享个人 Access Token。缩小图片、压缩短视频可减轻处理负担，但无法保证解除配额限制。</p>
+        <p class="vis-quota-source">参考：<a href="https://huggingface.co/docs/hub/spaces-zerogpu" target="_blank" rel="noopener noreferrer">Hugging Face ZeroGPU 说明</a></p>
+      </div>
+    </details>
+
     <div class="mpg-compare"><strong>可重复对比：</strong>使用同一段短视频、同一个问题测试事件描述和动作顺序判断，区分观察到的事实与模型猜测。</div>
     <div class="mpg-guide"><strong>学生观察任务</strong><p>让模型概括事件，再追问“哪个动作先发生”，检验答案是否有原视频证据。</p></div>
   </div>
