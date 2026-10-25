@@ -1,0 +1,79 @@
+/* Scoped sidebar hierarchy for Learning Home > Model Playground.
+   Match the actual subpage URLs so other MkDocs navigation groups retain their theme defaults.
+   :has() is supported by current Chrome, Edge, Firefox and Safari. */
+.md-sidebar--primary .md-nav[data-md-level="1"] > .md-nav__list > .md-nav__item--nested:has(> .md-nav[data-md-level="2"] a[href*="model-demos/"]) {
+  margin: .45rem .15rem .55rem 0;
+  padding: 0 0 .1rem;
+}
+
+/* Parent heading: clearly a section, not another content-page link. */
+.md-sidebar--primary .md-nav[data-md-level="1"] > .md-nav__list > .md-nav__item--nested:has(> .md-nav[data-md-level="2"] a[href*="model-demos/"]) > label.md-nav__link {
+  display: flex;
+  align-items: center;
+  gap: .43rem;
+  width: 100%;
+  margin: .15rem 0 .45rem;
+  padding: .56rem .65rem;
+  border: 1px solid rgba(89, 101, 232, .14);
+  border-left: 3px solid #5965e8;
+  border-radius: .45rem;
+  background: rgba(89, 101, 232, .065);
+  color: var(--md-default-fg-color);
+  font-size: .76rem;
+  font-weight: 740;
+  line-height: 1.4;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+.md-sidebar--primary .md-nav[data-md-level="1"] > .md-nav__list > .md-nav__item--nested:has(> .md-nav[data-md-level="2"] a[href*="model-demos/"]) > label.md-nav__link:hover {
+  background: rgba(89, 101, 232, .11);
+}
+.md-sidebar--primary .md-nav[data-md-level="1"] > .md-nav__list > .md-nav__item--nested:has(> .md-nav[data-md-level="2"] a[href*="model-demos/"]) > label.md-nav__link::before {
+  content: "";
+  flex: 0 0 .36rem;
+  width: .36rem;
+  height: .36rem;
+  border-radius: 2px;
+  background: #5965e8;
+}
+
+/* Child pages: indent + connecting guide + clear selected state. */
+.md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href*="model-demos/"]) > .md-nav__list {
+  margin: 0 0 0 .74rem;
+  padding: .05rem 0 .08rem .68rem;
+  border-left: 2px solid rgba(89, 101, 232, .22);
+}
+.md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href*="model-demos/"]) > .md-nav__list > .md-nav__item {
+  margin: .11rem 0;
+}
+.md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href*="model-demos/"]) > .md-nav__list > .md-nav__item > a.md-nav__link {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: .48rem .64rem;
+  border-radius: .43rem;
+  border: 1px solid transparent;
+  color: var(--md-default-fg-color--light);
+  font-size: .725rem;
+  line-height: 1.5;
+  transition: background-color .15s ease, color .15s ease;
+}
+.md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href*="model-demos/"]) > .md-nav__list > .md-nav__item > a.md-nav__link:hover {
+  background: rgba(89, 101, 232, .07);
+  color: var(--md-default-fg-color);
+}
+.md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href*="model-demos/"]) > .md-nav__list > .md-nav__item > a.md-nav__link--active {
+  border-color: rgba(89, 101, 232, .16);
+  background: rgba(89, 101, 232, .12);
+  color: #3f46c8;
+  font-weight: 740;
+}
+.md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href*="model-demos/"]) > .md-nav__list > .md-nav__item > a.md-nav__link:focus-visible,
+.md-sidebar--primary .md-nav[data-md-level="1"] > .md-nav__list > .md-nav__item--nested:has(> .md-nav[data-md-level="2"] a[href*="model-demos/"]) > label.md-nav__link:focus-visible {
+  outline: 2px solid #5965e8;
+  outline-offset: 2px;
+}
+
+/* Keep the same restrained hierarchy in dark mode. */
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href*="model-demos/"]) > .md-nav__list > .md-nav__item > a.md-nav__link--active {
+  color: #c7ccff;
+}
