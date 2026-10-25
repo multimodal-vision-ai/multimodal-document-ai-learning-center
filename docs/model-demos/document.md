@@ -54,7 +54,7 @@ hide:
   </div>
 </section>
 
-<p class="mpg-sibling">还想体验视频理解？<a href="../video/">进入视频理解 →</a></p>
+<p class="mpg-state">切换方向：请使用左侧「模型演示」下的文档理解 / 视频理解导航。</p>
 
 <div class="mpg-footnote">
   <strong>真实模型 · 公共样例 · 独立上传 · 按需加载</strong>
