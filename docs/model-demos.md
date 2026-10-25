@@ -1,44 +1,103 @@
-# 模型演示｜文档理解与视频理解
+---
+hide:
+  - toc
+---
 
-本页聚合已经上线的第三方真实模型演示，重点展示 **2B 以下小模型**在文档理解、视频理解方面的能力。学生不必安装环境或自行申请 GPU，可直接尝试下列公开交互界面。
+<div class="mpg" id="model-playground">
 
-!!! info "体验须知"
-    - 建议先使用各演示自带的示例。**不要上传个人隐私、保密材料或未经授权的视频。**
-    - 免费公共演示可能排队、休眠、限流或暂时不可用；嵌入失败时请点击“独立打开”。
-    - 模型及 GPU 由第三方提供，学习中心不保证运行时间、匿名访问额度及第三方数据处理政策。
+<header class="mpg-intro">
+  <div>
+    <h1>模型演示 <span>Model Playground</span></h1>
+    <p>文档理解和视频理解采用上下两个独立工作区，支持选择不同模型、使用官方公开示例或上传自有素材测试；两区可以同时加载。</p>
+  </div>
+  <div class="mpg-intro-tag">专注 2B 以下轻量模型</div>
+</header>
 
-## 文档理解
+<section class="mpg-workspace" data-mpg-kind="doc" aria-label="文档理解工作区">
+  <header class="mpg-workspace-head">
+    <p class="mpg-eyebrow">WORKSPACE 01 · DOCUMENT AI</p>
+    <h2>▤ 文档理解</h2>
+    <p>观察 OCR、版面、表格与公式的结构化解析结果。</p>
+  </header>
+  <div class="mpg-workspace-body">
+    <p class="mpg-label">选择文档模型</p>
+    <div class="mpg-models" data-mpg="models" role="group" aria-label="选择文档模型"></div>
+    <div class="mpg-test-row">
+      <div class="mpg-test-card mpg-public">
+        <h3>① 使用官方公开测试素材</h3>
+        <p data-mpg="example-intro"></p>
+        <div class="mpg-chips" data-mpg="example-chips"></div>
+        <p data-mpg="example-howto"></p>
+      </div>
+      <div class="mpg-test-card">
+        <h3>② 上传自己的素材</h3>
+        <ul data-mpg="upload-rules"></ul>
+        <p class="mpg-advisory" data-mpg="advisory"></p>
+      </div>
+    </div>
+    <div class="mpg-model-heading"><strong data-mpg="title"></strong><span data-mpg="scale"></span></div>
+    <div class="mpg-actions">
+      <button type="button" class="mpg-primary" data-mpg="start">加载真实演示</button>
+      <button type="button" class="mpg-secondary" data-mpg="stop" disabled>收起内嵌演示</button>
+      <a data-mpg="external" href="https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo" target="_blank" rel="noopener noreferrer">在新标签页打开 ↗</a>
+    </div>
+    <div class="mpg-viewer" data-mpg="viewer">
+      <div class="mpg-empty" data-mpg="empty">
+        <div class="mpg-empty-icon" aria-hidden="true">▤</div>
+        <strong>文档演示尚未加载</strong>
+        <p>点击“加载真实演示”，在此显示第三方交互界面；上传与解析在第三方服务中完成。</p>
+      </div>
+    </div>
+    <p class="mpg-state" data-mpg="status" aria-live="polite">尚未加载 · 不消耗外部演示资源</p>
+    <div class="mpg-compare"><strong>可重复对比：</strong>将同一张公开授权的文档图片分别提交给两种文档模型，比较文字、表格、公式和阅读顺序。不同演示自带的示例不一定相同。</div>
+    <div class="mpg-guide"><strong>学生观察任务</strong><p>先测试公开论文或表格样例，再使用自有图片；记录至少一个正确结果和一个失败案例。</p></div>
+  </div>
+</section>
 
-### Granite Docling 258M
+<section class="mpg-workspace mpg-video" data-mpg-kind="video" aria-label="视频理解工作区">
+  <header class="mpg-workspace-head">
+    <p class="mpg-eyebrow">WORKSPACE 02 · VIDEO AI</p>
+    <h2>▣ 视频理解</h2>
+    <p>观察视频内容描述、动作先后关系与自然语言问答的真实输出。</p>
+  </header>
+  <div class="mpg-workspace-body">
+    <p class="mpg-label">选择视频模型</p>
+    <div class="mpg-models" data-mpg="models" role="group" aria-label="选择视频模型"></div>
+    <div class="mpg-test-row">
+      <div class="mpg-test-card mpg-public">
+        <h3>① 使用官方公开测试素材</h3>
+        <p data-mpg="example-intro"></p>
+        <div class="mpg-chips" data-mpg="example-chips"></div>
+        <p data-mpg="example-howto"></p>
+      </div>
+      <div class="mpg-test-card">
+        <h3>② 上传自己的素材</h3>
+        <ul data-mpg="upload-rules"></ul>
+        <p class="mpg-advisory" data-mpg="advisory"></p>
+      </div>
+    </div>
+    <div class="mpg-model-heading"><strong data-mpg="title"></strong><span data-mpg="scale"></span></div>
+    <div class="mpg-actions">
+      <button type="button" class="mpg-primary" data-mpg="start">加载真实演示</button>
+      <button type="button" class="mpg-secondary" data-mpg="stop" disabled>收起内嵌演示</button>
+      <a data-mpg="external" href="https://huggingface.co/spaces/echarlaix/vision-langage-openvino" target="_blank" rel="noopener noreferrer">在新标签页打开 ↗</a>
+    </div>
+    <div class="mpg-viewer" data-mpg="viewer">
+      <div class="mpg-empty" data-mpg="empty">
+        <div class="mpg-empty-icon" aria-hidden="true">▣</div>
+        <strong>视频演示尚未加载</strong>
+        <p>可上传自己准备的授权短视频。当前第三方演示自带示例主要为图像问答，非视频样例。</p>
+      </div>
+    </div>
+    <p class="mpg-state" data-mpg="status" aria-live="polite">尚未加载 · 不消耗外部演示资源</p>
+    <div class="mpg-compare"><strong>可重复对比：</strong>使用同一段短视频、同一个问题测试事件描述和动作顺序判断，区分观察到的事实与模型猜测。</div>
+    <div class="mpg-guide"><strong>学生观察任务</strong><p>让模型概括事件，再追问“哪个动作先发生”，检验答案是否有原视频证据。</p></div>
+  </div>
+</section>
 
-适合观察文档版面、表格、公式和结构化转换；参数规模约 **258M**。
+<div class="mpg-footnote">
+  <strong>真实模型 · 公共样例 · 独立上传 · 按需加载</strong>
+  <p>模型在第三方 Hugging Face Spaces 上运行，可能排队、休眠或有匿名配额限制。若嵌入失败，请使用“在新标签页打开”。请勿上传隐私、保密或未经授权的素材。</p>
+</div>
 
-[独立打开 IBM Granite Docling 演示](https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo){ target="_blank" }
-
-<iframe src="https://ibm-granite-granite-docling-258m-demo.hf.space" title="Granite Docling 文档理解演示" width="100%" height="680" loading="lazy" style="border:1px solid #d9dee8;border-radius:10px;" allow="clipboard-read;clipboard-write"></iframe>
-
-### PaddleOCR-VL 1.6
-
-适合体验 OCR、复杂版面、图表、表格与公式识别；参数规模约 **0.9B**。
-
-[独立打开 PaddleOCR-VL 在线演示](https://huggingface.co/spaces/PaddlePaddle/PaddleOCR-VL-1.6_Online_Demo){ target="_blank" }
-
-<iframe src="https://paddlepaddle-paddleocr-vl-1-6-online-demo.hf.space" title="PaddleOCR-VL 文档理解演示" width="100%" height="680" loading="lazy" style="border:1px solid #d9dee8;border-radius:10px;" allow="clipboard-read;clipboard-write"></iframe>
-
-## 视频理解
-
-### SmolVLM2 256M — OpenVINO
-
-上传短视频并输入自然语言问题，观察内容描述、事件概括与时序理解的正确性。模型规模约 **256M**，演示实现运行于 CPU；其抽帧策略与完整逐帧分析不同。
-
-[独立打开 SmolVLM2 视频理解演示](https://huggingface.co/spaces/echarlaix/vision-langage-openvino){ target="_blank" }
-
-<iframe src="https://echarlaix-vision-langage-openvino.hf.space" title="SmolVLM2 视频理解演示" width="100%" height="680" loading="lazy" style="border:1px solid #d9dee8;border-radius:10px;" allow="clipboard-read;clipboard-write"></iframe>
-
-## 学生可以尝试的三个问题
-
-1. **文档结构**：两栏论文或含表格、公式的页面，哪些区域识别准确？哪些被遗漏？
-2. **视频事件**：模型能否正确回答“发生了什么”和“哪个动作先发生”？
-3. **错误与证据**：记录输入、模型、时间、原始输出及错误，不将合理生成的语言直接视为事实。
-
-> 上述入口是第三方托管的在线模型界面，并非本学习中心自行部署的 GPU 服务；同一演示中模型版本和可用功能可能变化。
+</div>
