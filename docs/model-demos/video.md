@@ -23,7 +23,7 @@ hide:
     <p class="mpg-label">选择视频模型</p>
     <div class="mpg-models" data-mpg="models" role="group" aria-label="选择视频模型"></div>
     <details class="mpg-help">
-      <summary>操作指南 <span>官方公共样例 · 自定义素材上传要求</span></summary>
+      <summary><span class="mpg-help-caret" aria-hidden="true">▸</span><strong>操作指南</strong><span class="mpg-help-caption">官方公共样例 · 自定义素材上传要求</span></summary>
       <div class="mpg-help-content">
     <div class="mpg-test-row">
       <div class="mpg-test-card mpg-public">
