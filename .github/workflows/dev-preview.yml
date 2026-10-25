@@ -304,26 +304,38 @@ jobs:
           echo "The preview is not considered healthy until the browser receives rendered HTML and its stylesheet."
           exit 1
 
-      - name: Verify model playground is publicly reachable
+      - name: Verify both model demo pages are publicly reachable
         shell: bash
         run: |
           set -euo pipefail
           base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview"
-          page="$base/model-demos.html?preview_build=${GITHUB_SHA}"
-          for attempt in 1 2 3 4 5 6; do
-            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 -D "$RUNNER_TEMP/model-demo.headers" "$page" -o "$RUNNER_TEMP/model-demo.html" \
-              && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/model-demo.headers" \
-              && grep -q "mpg-workspace" "$RUNNER_TEMP/model-demo.html" \
-              && grep -q "文档理解" "$RUNNER_TEMP/model-demo.html" \
-              && grep -q "视频理解" "$RUNNER_TEMP/model-demo.html"; then
-              for asset in stylesheets/model-playground.css js/model-playground.js; do
-                curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
-                test -s "$RUNNER_TEMP/$(basename "$asset")"
-              done
-              echo "Verified DEV model demo HTML and JS/CSS assets: $page"
-              exit 0
+          for direction in document video; do
+            page="$base/model-demos/$direction.html?preview_build=${GITHUB_SHA}"
+            success=0
+            for attempt in 1 2 3 4 5 6; do
+              if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 -D "$RUNNER_TEMP/demo-$direction.headers" "$page" -o "$RUNNER_TEMP/demo-$direction.html" \
+                && grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/demo-$direction.headers" \
+                && grep -q "mpg-workspace" "$RUNNER_TEMP/demo-$direction.html" \
+                && grep -q "模型演示" "$RUNNER_TEMP/demo-$direction.html"; then
+                if [ "$direction" = "document" ]; then
+                  grep -q 'data-mpg-kind="doc"' "$RUNNER_TEMP/demo-$direction.html"
+                  ! grep -q 'data-mpg-kind="video"' "$RUNNER_TEMP/demo-$direction.html"
+                else
+                  grep -q 'data-mpg-kind="video"' "$RUNNER_TEMP/demo-$direction.html"
+                  ! grep -q 'data-mpg-kind="doc"' "$RUNNER_TEMP/demo-$direction.html"
+                fi
+                success=1
+                break
+              fi
+              sleep 12
+            done
+            if [ "$success" -ne 1 ]; then
+              echo "::error::DEV $direction model demo page unavailable or wrong content"
+              exit 1
             fi
-            sleep 12
           done
-          echo "::error::Model demo public DEV preview is not reachable or has missing content"
-          exit 1
+          for asset in stylesheets/model-playground.css js/model-playground.js; do
+            curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
+            test -s "$RUNNER_TEMP/$(basename "$asset")"
+          done
+          echo "Both independent DEV demo pages and required CSS/JS assets verified."
