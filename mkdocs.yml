@@ -63,6 +63,8 @@ extra_css:
   - stylesheets/radar-v4.css
   - stylesheets/model-playground.css
   - stylesheets/model-playground-guide-v2.css
+  - stylesheets/vision-demo-v3.css
+  - stylesheets/model-playground-quota-v1.css
   - stylesheets/model-demo-sidebar-native-v2.css
 
 extra_javascript:
@@ -70,6 +72,7 @@ extra_javascript:
   - js/shanshui.js
   - js/radar.js
   - js/model-playground.js
+  - js/vision-demo-v1.js
 
 nav:
   - 学习首页:
@@ -77,6 +80,7 @@ nav:
       - 模型演示:
           - 文档理解: model-demos/document.md
           - 视频理解: model-demos/video.md
+          - 视觉感知: model-demos/vision.md
       - 前沿动态: radar/index.md
       - 关于学习中心: about.md
   - 入门课程:
