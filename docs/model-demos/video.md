@@ -22,6 +22,9 @@ hide:
   <div class="mpg-workspace-body">
     <p class="mpg-label">选择视频模型</p>
     <div class="mpg-models" data-mpg="models" role="group" aria-label="选择视频模型"></div>
+    <details class="mpg-help">
+      <summary>操作指南 <span>官方公共样例 · 自定义素材上传要求</span></summary>
+      <div class="mpg-help-content">
     <div class="mpg-test-row">
       <div class="mpg-test-card mpg-public">
         <h3>① 使用官方公开测试素材</h3>
@@ -35,6 +38,8 @@ hide:
         <p class="mpg-advisory" data-mpg="advisory"></p>
       </div>
     </div>
+      </div>
+    </details>
     <div class="mpg-model-heading"><strong data-mpg="title"></strong><span data-mpg="scale"></span></div>
     <div class="mpg-actions">
       <button type="button" class="mpg-primary" data-mpg="start">加载真实演示</button>
