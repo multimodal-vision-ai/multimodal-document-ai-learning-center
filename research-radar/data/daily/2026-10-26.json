@@ -95,7 +95,7 @@
       "category": "video",
       "description": "Local AI inference for NVIDIA GPUs on Linux. One native engine runs Qwen3.5/3.6 language and Wan2.1/2.2 video models from the checkpoints you download. Sealed, checksummed packages in Releases.",
       "discovered_from": "github",
-      "event_at": "2026-10-25T23:23:43+00:00",
+      "event_at": "2026-10-26T01:37:44+00:00",
       "event_label": "代码库近期提交",
       "github_license": "NOASSERTION",
       "github_stars": 0,
@@ -138,7 +138,7 @@
       "review": "pending",
       "source_url": "https://github.com/veizikhq/veizik-cuda",
       "title": "veizikhq/veizik-cuda",
-      "updated_at": "2026-10-25T23:23:43Z",
+      "updated_at": "2026-10-26T01:37:44Z",
       "venue": ""
     }
   ],
@@ -154,14 +154,14 @@
     "source_counts": {
       "github": 4
     },
-    "window_end": "2026-10-26T01:00:23+00:00",
-    "window_start": "2026-10-25T01:00:23+00:00"
+    "window_end": "2026-10-26T01:45:32+00:00",
+    "window_start": "2026-10-25T01:45:32+00:00"
   },
   "empty": true,
   "empty_candidate_leads": false,
   "period": "daily",
   "projects": [],
   "research_topics": [],
-  "window_end": "2026-10-26T01:00:23+00:00",
-  "window_start": "2026-10-25T01:00:23+00:00"
+  "window_end": "2026-10-26T01:45:32+00:00",
+  "window_start": "2026-10-25T01:45:32+00:00"
 }

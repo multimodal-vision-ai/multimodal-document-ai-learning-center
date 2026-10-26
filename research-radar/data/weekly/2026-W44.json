@@ -336,69 +336,29 @@
       "venue": ""
     },
     {
-      "abstract": "Vision-language models (VLMs) can perform a broad range of tasks across diverse settings, yet their performance in agentic contexts remains poorly understood. Although online evaluations in simulators and real-world environments are essential for measuring interactive agent performance, they are costly and challenging to scale. Complementary offline VQA benchmarks can enable faster and more reliable comparisons across agentic domains, yet existing benchmarks remain limited and fragmented. To address this gap, we introduce AgentVQA, an offline benchmark for evaluating VLMs on realistic agentic scenarios across five agent domains: Web Agents, Robotics, Egocentric Videos, Games, and Spatial Planning. We build AgentVQA by manually selecting 1000 challenging, real-world agent examples from 23 source datasets and adapting them for reliable offline evaluation. The resulting benchmark preserves realistic scenarios from interactive environments across diverse domains, and its model rankings track those from corresponding online evaluations. Across the 22 evaluated models, the best achieves only 58.5% accuracy. Our cross-domain analysis shows that errors are driven primarily by failures to ground and maintain accurate representations of the current and evolving visual state, including localizing relevant UI elements, interpreting motion, tracking state changes over time, and inferring 3D spatial relationships, rather than by task misinterpretation or downstream logical reasoning.",
-      "arxiv_categories": [
-        "cs.CV"
-      ],
-      "authors": [
-        "Advait Gupta",
-        "Sachin Konan",
-        "Tom Yin",
-        "Gabriel Sarch",
-        "Zhuang Liu"
-      ],
-      "category": "video",
-      "description": "Vision-language models (VLMs) can perform a broad range of tasks across diverse settings, yet their performance in agentic contexts remains poorly understood. Although online evaluations in simulators and real-world environments are essential for measuring interactive agent performance, they are costly and challenging to scale. Complementary offline VQA benchmarks can enable faster and more reliable comparisons across agentic domains, yet existing benchmarks remain limited and fragmented. To address this gap, we introduce AgentVQA, an offline benchmark for evaluating VLMs on realistic agentic scenarios across five agent domains: Web Agents, Robotics, Egocentric Videos, Games, and Spatial Planning. We build AgentVQA by manually selecting 1000 challenging, real-world agent examples from 23 source datasets and adapting them for reliable offline evaluation. The resulting benchmark preserves realistic scenarios from interactive environments across diverse domains, and its model rankings track those from corresponding online evaluations. Across the 22 evaluated models, the best achieves only 58.5% accuracy. Our cross-domain analysis shows that errors are driven primarily by failures to ground and maintain accurate representations of the current and evolving visual state, including localizing relevant UI elements, interpreting motion, tracking state changes over time, and inferring 3D spatial relationships, rather than by task misinterpretation or downstream logical reasoning.",
-      "discovered_from": "arxiv",
-      "event_at": "2026-10-22T16:13:35+00:00",
-      "event_label": "新论文 / 新投稿",
-      "github_license": null,
-      "github_stars": null,
-      "github_topics": [],
-      "github_url": null,
-      "hf_downloads": null,
-      "hf_has_model_card": null,
-      "hf_library_name": null,
-      "hf_likes": null,
-      "hf_pipeline_tag": null,
-      "huggingface_url": null,
-      "id": "arxiv-2610-31494",
-      "is_new_paper": true,
-      "match_reasons": [
-        "来源：arXiv",
-        "主题：视频理解",
-        "主题：多模态小模型",
-        "成果类型：Benchmark / 数据集 / 评测",
-        "时间：近7天"
-      ],
-      "match_score": 8.0,
-      "paper_url": "https://arxiv.org/abs/2610.31494v1",
-      "pdf_url": "https://arxiv.org/pdf/2610.31494v1",
-      "priority_tier": 0,
-      "published_at": "2026-10-22T16:13:35Z",
-      "review": "pending",
-      "source_url": "https://arxiv.org/abs/2610.31494v1",
-      "title": "AgentVQA: A Unified Benchmark for Agentic Visual Understanding",
-      "updated_at": "2026-10-22T16:13:35Z",
-      "venue": ""
-    },
-    {
-      "abstract": "Object counting in videos remains a poorly characterized capability of multimodal large language models. Counting questions are included in many existing VideoQA benchmarks, but the ground-truth count distributions in these benchmarks are heavily skewed toward small values. Across the nine benchmarks we survey, the median ground-truth count is at most five, and the three most frequent values together account for between 45% and 93% of the videos. The resulting mean accuracy is then dominated by the most frequent counts; a value-dependent bias at a rare count contributes negligibly to the average and remains invisible. We introduce CountVideoBench, a benchmark of 2,600 synthetic videos covering 26 cardinalities in the interval [5, 50] (100 videos each), grouped into six clusters of consecutive counts that span the range while enabling near-neighbor comparisons. Each video contains a single class of static objects under a controlled camera motion, removing object motion and reducing recognition as confounds. We evaluate sixteen video-language models from nine architecture families in a zero-shot setting. No model exceeds 27.6% Exact Match. The dependence of accuracy on cardinality varies across models, ranging from monotonic decline to a non-monotonic peak-and-collapse pattern, which rules out increasing difficulty with cardinality as the dominant explanation of counting failure. Every model further concentrates its predictions on its own set of preferred integers, with accuracy peaks coinciding with these values and collapsing at adjacent counts. These findings highlight the need for balanced, diagnostic counting benchmarks to reliably assess this fundamental visual capability.",
+      "abstract": "Vision language models (VLMs) have been increasingly adopted in consumer smart-home camera systems to interpret recorded videos and provide insights. However, video clips captured from smart-home cameras are different from curated web videos dominating existing VLM benchmarks. Smart-home video clips often do not contain subtitles or narration and are captured from different viewing angles, under various lighting conditions, and in diverse scenarios. However, the capabilities of the model in this domain, under sparse visual signals and limited context, are not fully assessed by existing VLM benchmarks. To close this gap, we introduce OpenHome, a visual-only, four-option multiple-choice benchmark for evaluating smart-home video understanding. It contains 2,254 questions on 1,118 real-world video clips and organizes 10 tasks into three capability levels. Perception evaluates visible content, Reasoning evaluates causal, spatial, and temporal relationships, and Insight evaluates subject intent, supporting evidence and appropriate homeowner responses. Based on the dataset, we describe the task design, data pipeline and evaluation protocol, and report results for 32 closed-source and open-weight VLMs. The best model, Gemini 4 Argon, reaches 81.2% overall accuracy. Frontier closed-source models outperform open-weight models on every level. The best closed-source model leads the best open-weight model by 16.3% on Perception, 22.4% on Reasoning and 37.4% on Insight.",
       "arxiv_categories": [
         "cs.CV",
-        "cs.AI",
-        "cs.LG"
+        "cs.AI"
       ],
       "authors": [
-        "Marc Chapus",
-        "Carlos Crispim-Junior",
-        "Véronique Eglin",
-        "Atilla Baskurt"
+        "Xianglong Wang",
+        "Neil Rodrigues",
+        "Pei Guo",
+        "Yiru Fang",
+        "Kevin Beussman",
+        "Shuyang Wang",
+        "Jingzhi Wang",
+        "Liangju Li",
+        "Shunyao Xu",
+        "Zhongwei Cheng",
+        "Wei Li",
+        "Lin Chen"
       ],
       "category": "video",
-      "description": "Object counting in videos remains a poorly characterized capability of multimodal large language models. Counting questions are included in many existing VideoQA benchmarks, but the ground-truth count distributions in these benchmarks are heavily skewed toward small values. Across the nine benchmarks we survey, the median ground-truth count is at most five, and the three most frequent values together account for between 45% and 93% of the videos. The resulting mean accuracy is then dominated by the most frequent counts; a value-dependent bias at a rare count contributes negligibly to the average and remains invisible. We introduce CountVideoBench, a benchmark of 2,600 synthetic videos covering 26 cardinalities in the interval [5, 50] (100 videos each), grouped into six clusters of consecutive counts that span the range while enabling near-neighbor comparisons. Each video contains a single class of static objects under a controlled camera motion, removing object motion and reducing recognition as confounds. We evaluate sixteen video-language models from nine architecture families in a zero-shot setting. No model exceeds 27.6% Exact Match. The dependence of accuracy on cardinality varies across models, ranging from monotonic decline to a non-monotonic peak-and-collapse pattern, which rules out increasing difficulty with cardinality as the dominant explanation of counting failure. Every model further concentrates its predictions on its own set of preferred integers, with accuracy peaks coinciding with these values and collapsing at adjacent counts. These findings highlight the need for balanced, diagnostic counting benchmarks to reliably assess this fundamental visual capability.",
+      "description": "Vision language models (VLMs) have been increasingly adopted in consumer smart-home camera systems to interpret recorded videos and provide insights. However, video clips captured from smart-home cameras are different from curated web videos dominating existing VLM benchmarks. Smart-home video clips often do not contain subtitles or narration and are captured from different viewing angles, under various lighting conditions, and in diverse scenarios. However, the capabilities of the model in this domain, under sparse visual signals and limited context, are not fully assessed by existing VLM benchmarks. To close this gap, we introduce OpenHome, a visual-only, four-option multiple-choice benchmark for evaluating smart-home video understanding. It contains 2,254 questions on 1,118 real-world video clips and organizes 10 tasks into three capability levels. Perception evaluates visible content, Reasoning evaluates causal, spatial, and temporal relationships, and Insight evaluates subject intent, supporting evidence and appropriate homeowner responses. Based on the dataset, we describe the task design, data pipeline and evaluation protocol, and report results for 32 closed-source and open-weight VLMs. The best model, Gemini 4 Argon, reaches 81.2% overall accuracy. Frontier closed-source models outperform open-weight models on every level. The best closed-source model leads the best open-weight model by 16.3% on Perception, 22.4% on Reasoning and 37.4% on Insight.",
       "discovered_from": "arxiv",
-      "event_at": "2026-10-20T15:20:28+00:00",
+      "event_at": "2026-10-22T23:04:49+00:00",
       "event_label": "新论文 / 新投稿",
       "github_license": null,
       "github_stars": null,
@@ -410,7 +370,7 @@
       "hf_likes": null,
       "hf_pipeline_tag": null,
       "huggingface_url": null,
-      "id": "arxiv-2610-28356",
+      "id": "arxiv-2610-31986",
       "is_new_paper": true,
       "match_reasons": [
         "来源：arXiv",
@@ -420,36 +380,35 @@
         "时间：近7天"
       ],
       "match_score": 8.0,
-      "paper_url": "https://arxiv.org/abs/2610.28356v2",
-      "pdf_url": "https://arxiv.org/pdf/2610.28356v2",
+      "paper_url": "https://arxiv.org/abs/2610.31986v1",
+      "pdf_url": "https://arxiv.org/pdf/2610.31986v1",
       "priority_tier": 0,
-      "published_at": "2026-10-20T15:20:28Z",
+      "published_at": "2026-10-22T23:04:49Z",
       "review": "pending",
-      "source_url": "https://arxiv.org/abs/2610.28356v2",
-      "title": "CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models",
-      "updated_at": "2026-10-21T11:52:51Z",
+      "source_url": "https://arxiv.org/abs/2610.31986v1",
+      "title": "OpenHome: From Perception to Insight in Smart-Home Camera Videos",
+      "updated_at": "2026-10-22T23:04:49Z",
       "venue": ""
     },
     {
-      "abstract": "Anticipating how users will interact with their surroundings is essential for proactive systems that provide timely assistance in AR, VR, and embodied applications. Prior work typically forecasts hand-object interactions directly from historical observations, leaving intention and contact geometry implicit. However, similar observation histories can precede semantically or geometrically distinct futures. Inspired by behavioral evidence that gaze can provide early cues for underlying intention, we propose Gaze2HOI, a gaze-aware framework that formulates hand-object interaction forecasting as a hierarchical problem comprising intention inference, contact grounding, and coupled hand-object motion generation. Specifically, Gaze2HOI first weights gaze cues by fixation strength and recency, and uses them to modulate the visual representations of a vision-language model (VLM) through Temporal Gaze Saliency Modulation (TGSM), thereby reducing semantic ambiguity in intention inference. Subsequently, an Anticipatory Contact Grounding (ACG) module maps these structured intentions into explicit contact, support, and placement fields, effectively mitigating geometric ambiguity. Driven by these explicit conditions, a diffusion-based model jointly generates the 6-DoF object trajectories and future articulated motion of both hands. To evaluate Gaze2HOI, we further introduce EgoAIM, a phase-aware benchmark that organizes egocentric hand-object interactions into four phases defined by evolving hand-object relations and provides fine-grained intention annotations. Extensive experiments demonstrate that Gaze2HOI achieves state-of-the-art performance in both intention inference and motion forecasting, even approaching oracle-level end-to-end performance in specific interaction phases. Project page: https://gaze2hoi.github.io/.",
+      "abstract": "Traffic safety videos provide rich evidence for understanding interactions between pedestrians and vehicles, but synthetic-to-real evaluation makes this setting challenging because models must learn from simulated scenes and generalize to real-world traffic. In this work, we present StateBridge, a traffic video-language framework designed to operate under this synthetic-only training protocol. Our approach uses phase-aware clip construction, pedestrian and vehicle track summaries, and structured prompts to ground vision-language models in stable traffic evidence rather than appearance alone. We fine-tune public vision-language models on synthetic captioning and visual question answering examples, then combine their outputs through fact-locked caption fusion and evidence-diverse VQA consensus to improve consistency across actor roles, behavioral phases, and question types. StateBridge achieves an official S2 score of 55.4679 on AI City Challenge 2026 Track 2 using only synthetic training data. These results demonstrate the effectiveness of structured evidence transfer for traffic safety captioning and visual question answering.",
       "arxiv_categories": [
         "cs.CV"
       ],
       "authors": [
-        "Chuanyang Ma",
-        "Chenye Wang",
-        "Yixuan Wang",
-        "Huiling Zhou",
-        "Xingqun Qi",
-        "Muyi Sun",
-        "Man Zhang",
-        "Caifeng Shan",
-        "Zhenan Sun"
+        "Blessing Agyei Kyem",
+        "Richard Dzinyela",
+        "Joshua Kofi Asamoah",
+        "Eugene Denteh",
+        "Andrews Danyo",
+        "Solomon Owusu-Ansah",
+        "Dickson Gyimah Asiedu",
+        "Armstrong Aboah"
       ],
       "category": "video",
-      "description": "Anticipating how users will interact with their surroundings is essential for proactive systems that provide timely assistance in AR, VR, and embodied applications. Prior work typically forecasts hand-object interactions directly from historical observations, leaving intention and contact geometry implicit. However, similar observation histories can precede semantically or geometrically distinct futures. Inspired by behavioral evidence that gaze can provide early cues for underlying intention, we propose Gaze2HOI, a gaze-aware framework that formulates hand-object interaction forecasting as a hierarchical problem comprising intention inference, contact grounding, and coupled hand-object motion generation. Specifically, Gaze2HOI first weights gaze cues by fixation strength and recency, and uses them to modulate the visual representations of a vision-language model (VLM) through Temporal Gaze Saliency Modulation (TGSM), thereby reducing semantic ambiguity in intention inference. Subsequently, an Anticipatory Contact Grounding (ACG) module maps these structured intentions into explicit contact, support, and placement fields, effectively mitigating geometric ambiguity. Driven by these explicit conditions, a diffusion-based model jointly generates the 6-DoF object trajectories and future articulated motion of both hands. To evaluate Gaze2HOI, we further introduce EgoAIM, a phase-aware benchmark that organizes egocentric hand-object interactions into four phases defined by evolving hand-object relations and provides fine-grained intention annotations. Extensive experiments demonstrate that Gaze2HOI achieves state-of-the-art performance in both intention inference and motion forecasting, even approaching oracle-level end-to-end performance in specific interaction phases. Project page: https://gaze2hoi.github.io/.",
+      "description": "Traffic safety videos provide rich evidence for understanding interactions between pedestrians and vehicles, but synthetic-to-real evaluation makes this setting challenging because models must learn from simulated scenes and generalize to real-world traffic. In this work, we present StateBridge, a traffic video-language framework designed to operate under this synthetic-only training protocol. Our approach uses phase-aware clip construction, pedestrian and vehicle track summaries, and structured prompts to ground vision-language models in stable traffic evidence rather than appearance alone. We fine-tune public vision-language models on synthetic captioning and visual question answering examples, then combine their outputs through fact-locked caption fusion and evidence-diverse VQA consensus to improve consistency across actor roles, behavioral phases, and question types. StateBridge achieves an official S2 score of 55.4679 on AI City Challenge 2026 Track 2 using only synthetic training data. These results demonstrate the effectiveness of structured evidence transfer for traffic safety captioning and visual question answering.",
       "discovered_from": "arxiv",
-      "event_at": "2026-10-20T08:59:54+00:00",
+      "event_at": "2026-10-22T20:52:22+00:00",
       "event_label": "新论文 / 新投稿",
       "github_license": null,
       "github_stars": null,
@@ -461,7 +420,7 @@
       "hf_likes": null,
       "hf_pipeline_tag": null,
       "huggingface_url": null,
-      "id": "arxiv-2610-27877",
+      "id": "arxiv-2610-31898",
       "is_new_paper": true,
       "match_reasons": [
         "来源：arXiv",
@@ -471,38 +430,92 @@
         "时间：近7天"
       ],
       "match_score": 8.0,
-      "paper_url": "https://arxiv.org/abs/2610.27877v1",
-      "pdf_url": "https://arxiv.org/pdf/2610.27877v1",
+      "paper_url": "https://arxiv.org/abs/2610.31898v1",
+      "pdf_url": "https://arxiv.org/pdf/2610.31898v1",
       "priority_tier": 0,
-      "published_at": "2026-10-20T08:59:54Z",
+      "published_at": "2026-10-22T20:52:22Z",
       "review": "pending",
-      "source_url": "https://arxiv.org/abs/2610.27877v1",
-      "title": "Gaze2HOI: Gaze-Aware Intention Disambiguation for Egocentric Hand-Object Interaction Forecasting",
-      "updated_at": "2026-10-20T08:59:54Z",
+      "source_url": "https://arxiv.org/abs/2610.31898v1",
+      "title": "StateBridge: Phase- and Track-Grounded Reasoning for Synthetic-to-Real Traffic Video Captioning and VQA",
+      "updated_at": "2026-10-22T20:52:22Z",
+      "venue": ""
+    },
+    {
+      "abstract": "How do children learn the meanings of the simple, concrete words that form a majority of their early vocabulary? Statistical information about many word meanings can be recovered from the gradual accumulation of information about the co-occurrence of words with their referents, a proposal known as ``cross-situational learning''. Contrastive vision--language models allow this learning strategy to be tested on egocentric video data capturing children's early real-life experiences with visual and linguistic inputs. Initial successes of this method on small datasets provide a proof-of-concept, but vision models struggle to learn robust visual representations when trained on these same egocentric videos. How dependent is cross-situational word learning performance on the quality of the model's visual representations? And can cross-situational models scale to larger and more diverse datasets? To address these questions, we trained models on the BabyView corpus, including 2,441 hours of longitudinal egocentric video from 48 children. Models trained on this dataset learned object--label mappings, but performance was far higher when they used internet-pretrained visual representations as opposed to when visual representations were learned solely from the developmental video data. Further, the majority of the learning signal was carried by a small proportion of utterances that described a visible referent. Models learned lexical representations that showed recognizable human-like semantic structure, but model performance showed substantially different trajectories over training experiences than those observed in children. Cross-situational learning is a viable word learning strategy for early noun vocabulary, but constructing developmentally plausible models will require understanding how to learn high-quality visual representations from naturalistic data.",
+      "arxiv_categories": [
+        "cs.CL"
+      ],
+      "authors": [
+        "Michael C. Frank",
+        "Alvin W. M. Tan",
+        "Khai Loong Aw",
+        "Robert Z. Sparks",
+        "Victor Moreno",
+        "Grace Keene-Lee",
+        "Meesha R. Ryan",
+        "Tarun Sepuri",
+        "Jane Yang",
+        "Virginia A. Marchman",
+        "Daniel L. K. Yamins",
+        "Bria Long"
+      ],
+      "category": "video",
+      "description": "How do children learn the meanings of the simple, concrete words that form a majority of their early vocabulary? Statistical information about many word meanings can be recovered from the gradual accumulation of information about the co-occurrence of words with their referents, a proposal known as ``cross-situational learning''. Contrastive vision--language models allow this learning strategy to be tested on egocentric video data capturing children's early real-life experiences with visual and linguistic inputs. Initial successes of this method on small datasets provide a proof-of-concept, but vision models struggle to learn robust visual representations when trained on these same egocentric videos. How dependent is cross-situational word learning performance on the quality of the model's visual representations? And can cross-situational models scale to larger and more diverse datasets? To address these questions, we trained models on the BabyView corpus, including 2,441 hours of longitudinal egocentric video from 48 children. Models trained on this dataset learned object--label mappings, but performance was far higher when they used internet-pretrained visual representations as opposed to when visual representations were learned solely from the developmental video data. Further, the majority of the learning signal was carried by a small proportion of utterances that described a visible referent. Models learned lexical representations that showed recognizable human-like semantic structure, but model performance showed substantially different trajectories over training experiences than those observed in children. Cross-situational learning is a viable word learning strategy for early noun vocabulary, but constructing developmentally plausible models will require understanding how to learn high-quality visual representations from naturalistic data.",
+      "discovered_from": "arxiv",
+      "event_at": "2026-10-22T19:24:51+00:00",
+      "event_label": "新论文 / 新投稿",
+      "github_license": null,
+      "github_stars": null,
+      "github_topics": [],
+      "github_url": null,
+      "hf_downloads": null,
+      "hf_has_model_card": null,
+      "hf_library_name": null,
+      "hf_likes": null,
+      "hf_pipeline_tag": null,
+      "huggingface_url": null,
+      "id": "arxiv-2610-31842",
+      "is_new_paper": true,
+      "match_reasons": [
+        "来源：arXiv",
+        "主题：视频理解",
+        "主题：多模态小模型",
+        "成果类型：Benchmark / 数据集 / 评测",
+        "时间：近7天"
+      ],
+      "match_score": 8.0,
+      "paper_url": "https://arxiv.org/abs/2610.31842v1",
+      "pdf_url": "https://arxiv.org/pdf/2610.31842v1",
+      "priority_tier": 0,
+      "published_at": "2026-10-22T19:24:51Z",
+      "review": "pending",
+      "source_url": "https://arxiv.org/abs/2610.31842v1",
+      "title": "Scaling cross-situational word learning on children's naturalistic experiences",
+      "updated_at": "2026-10-22T19:24:51Z",
       "venue": ""
     }
   ],
   "candidate_summary": {
     "category_counts": {
-      "document": 5,
-      "video": 15
+      "document": 6,
+      "video": 20
     },
-    "new_papers_count": 11,
-    "relevant_count": 20,
+    "new_papers_count": 14,
+    "relevant_count": 26,
     "selection_note": "Rule-based topic relevance only; not a scientific-quality score or human approval.",
     "selection_threshold": 8.0,
     "source_counts": {
-      "arxiv": 14,
+      "arxiv": 20,
       "github": 6
     },
-    "window_end": "2026-10-26T01:00:23+00:00",
-    "window_start": "2026-10-19T01:00:23+00:00"
+    "window_end": "2026-10-26T01:45:32+00:00",
+    "window_start": "2026-10-19T01:45:32+00:00"
   },
   "empty": true,
   "empty_candidate_leads": false,
   "period": "weekly",
   "projects": [],
   "research_topics": [],
-  "window_end": "2026-10-26T01:00:23+00:00",
-  "window_start": "2026-10-19T01:00:23+00:00"
+  "window_end": "2026-10-26T01:45:32+00:00",
+  "window_start": "2026-10-19T01:45:32+00:00"
 }
