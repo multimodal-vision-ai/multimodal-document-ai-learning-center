@@ -1,5 +1,4 @@
 """Regression tests for persistent rolling Top 3 selection (no network calls)."""
-import copy
 import sys
 import tempfile
 import unittest
@@ -8,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "radar"))
 
-from core import load, save
+from core import save
 from top3 import bootstrap_top3, update_top3_state, state_path
 
 NOW = datetime(2026, 10, 26, 12, tzinfo=timezone.utc)
@@ -160,6 +159,24 @@ class PersistentTop3Tests(unittest.TestCase):
         self.assertEqual([x["value_score"] for x in after["items"]],
                          [x["value_score"] for x in before["items"]])
         self.assertEqual(after["updated_at"], before["updated_at"])
+
+    def test_first_run_recovers_previous_top3_from_archive_before_empty_latest_week(self):
+        previous = make_report(
+            self.queue,
+            [(self.queue["candidates"][0]["id"], 9.0),
+             (self.queue["candidates"][1]["id"], 8.5),
+             (self.queue["candidates"][2]["id"], 8.0)],
+            "2026-10-19T10:00:00Z",
+        )
+        archived = {
+            **previous,
+            "_screening_queue": {"candidates": self.queue["candidates"]},
+        }
+        save(self.data / "chatgpt-reviewed/archive/weekly/2026-W43.json", archived)
+        empty_week = make_report(self.queue, [], "2026-10-26T10:00:00Z")
+        state = self.update(empty_week)
+        self.assertEqual([item["value_score"] for item in state["items"]], [9.0, 8.5, 8.0])
+        self.assertEqual(state["last_evaluated_report_at"], "2026-10-26T10:00:00Z")
 
     def test_repeated_candidate_does_not_duplicate_or_rewrite_incumbent(self):
         initial = make_report(
