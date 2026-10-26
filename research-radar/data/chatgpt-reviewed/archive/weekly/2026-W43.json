@@ -1,0 +1,219 @@
+{
+  "_screening_queue": {
+    "candidates": [
+      {
+        "abstract": "Object counting in videos remains a poorly characterized capability of multimodal large language models. Counting questions are included in many existing VideoQA benchmarks, but the ground-truth count distributions in these benchmarks are heavily skewed toward small values. Across the nine benchmarks we survey, the median ground-truth count is at most five, and the three most frequent values together account for between 45% and 93% of the videos. The resulting mean accuracy is then dominated by the most frequent counts; a value-dependent bias at a rare count contributes negligibly to the average and remains invisible. We introduce CountVideoBench, a benchmark of 2,600 synthetic videos covering 26 cardinalities in the interval [5, 50] (100 videos each), grouped into six clusters of consecutive counts that span the range while enabling near-neighbor comparisons. Each video contains a single class of static objects under a controlled camera motion, removing object motion and reducing recognition as confounds. We evaluate sixteen video-language models from nine architecture families in a zero-shot setting. No model exceeds 27.6% Exact Match. The dependence of accuracy on cardinality varies across models, ranging from monotonic decline to a non-monotonic peak-and-collapse pattern, which rules out increasing difficulty with cardinality as the dominant explanation of counting failure. Every model further concentrates its predictions on its own set of preferred integers, with accuracy peaks coinciding with these values and collapsing at adjacent counts. These findings highlight the need for balanced, diagnostic counting benchmarks to reliably assess this fundamental visual capability.",
+        "category": "video",
+        "description": "Object counting in videos remains a poorly characterized capability of multimodal large language models. Counting questions are included in many existing VideoQA benchmarks, but the ground-truth count distributions in these benchmarks are heavily skewed toward small values. Across the nine benchmarks we survey, the median ground-truth count is at most five, and the three most frequent values together account for between 45% and 93% of the videos. The resulting mean accuracy is then dominated by the most frequent counts; a value-dependent bias at a rare count contributes negligibly to the average and remains invisible. We introduce CountVideoBench, a benchmark of 2,600 synthetic videos covering 26 cardinalities in the interval [5, 50] (100 videos each), grouped into six clusters of consecutive counts that span the range while enabling near-neighbor comparisons. Each video contains a single class of static objects under a controlled camera motion, removing object motion and reducing recognition as confounds. We evaluate sixteen video-language models from nine architecture families in a zero-shot setting. No model exceeds 27.6% Exact Match. The dependence of accuracy on cardinality varies across models, ranging from monotonic decline to a non-monotonic peak-and-collapse pattern, which rules out increasing difficulty with cardinality as the dominant explanation of counting failure. Every model further concentrates its predictions on its own set of preferred integers, with accuracy peaks coinciding with these values and collapsing at adjacent counts. These findings highlight the need for balanced, diagnostic counting benchmarks to reliably assess this fundamental visual capability.",
+        "discovered_from": "arxiv",
+        "event_at": "2026-10-20T15:20:28+00:00",
+        "event_label": "新论文 / 新投稿",
+        "github_license": null,
+        "github_stars": null,
+        "github_url": null,
+        "hf_downloads": null,
+        "huggingface_url": null,
+        "id": "arxiv-2610-28356",
+        "match_reasons": [
+          "来源：arXiv",
+          "主题：视频理解",
+          "主题：多模态小模型",
+          "成果类型：Benchmark / 数据集 / 评测",
+          "时间：近7天"
+        ],
+        "match_score": 8.0,
+        "paper_url": "https://arxiv.org/abs/2610.28356v2",
+        "pdf_url": "https://arxiv.org/pdf/2610.28356v2",
+        "priority_tier": 0,
+        "published_at": "2026-10-20T15:20:28Z",
+        "source_url": "https://arxiv.org/abs/2610.28356v2",
+        "title": "CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models"
+      },
+      {
+        "abstract": "Tokenization in video models, typically through patchification, generates an excessive and redundant number of tokens. This severely limits video efficiency and scalability. While recent trajectory-based tokenizers offer a promising solution by decoupling video duration from token count, they rely on complex external segmentation and tracking pipelines that are slow and task-agnostic. We propose TrajTok, an end-to-end video tokenizer module that is fully integrated and co-trained with video models for a downstream objective, dynamically adapting its token granularity to semantic complexity, independent of video duration. TrajTok contains a unified segmenter that performs implicit clustering over pixels in both space and time to directly produce object trajectories in a single forward pass. By prioritizing downstream adaptability over pixel-perfect segmentation fidelity, TrajTok is lightweight and efficient, yet empirically improves video understanding performance. With TrajTok, we implement a video CLIP model trained from scratch (TrajViT2). It achieves the best accuracy at scale across both classification and retrieval benchmarks, while maintaining efficiency comparable to the best token-merging methods. TrajTok also proves to be a versatile component beyond its role as a tokenizer. We show that it can be seamlessly integrated as either a probing head for pretrained visual features (TrajAdapter) or an alignment connector in vision-language models (TrajVLM) with especially strong performance in long-video reasoning.",
+        "category": "video",
+        "description": "Tokenization in video models, typically through patchification, generates an excessive and redundant number of tokens. This severely limits video efficiency and scalability. While recent trajectory-based tokenizers offer a promising solution by decoupling video duration from token count, they rely on complex external segmentation and tracking pipelines that are slow and task-agnostic. We propose TrajTok, an end-to-end video tokenizer module that is fully integrated and co-trained with video models for a downstream objective, dynamically adapting its token granularity to semantic complexity, independent of video duration. TrajTok contains a unified segmenter that performs implicit clustering over pixels in both space and time to directly produce object trajectories in a single forward pass. By prioritizing downstream adaptability over pixel-perfect segmentation fidelity, TrajTok is lightweight and efficient, yet empirically improves video understanding performance. With TrajTok, we implement a video CLIP model trained from scratch (TrajViT2). It achieves the best accuracy at scale across both classification and retrieval benchmarks, while maintaining efficiency comparable to the best token-merging methods. TrajTok also proves to be a versatile component beyond its role as a tokenizer. We show that it can be seamlessly integrated as either a probing head for pretrained visual features (TrajAdapter) or an alignment connector in vision-language models (TrajVLM) with especially strong performance in long-video reasoning.",
+        "discovered_from": "arxiv",
+        "event_at": "2026-10-19T19:43:09+00:00",
+        "event_label": "arXiv 版本更新",
+        "github_license": null,
+        "github_stars": null,
+        "github_url": null,
+        "hf_downloads": null,
+        "huggingface_url": null,
+        "id": "arxiv-2602-22779",
+        "match_reasons": [
+          "来源：arXiv",
+          "主题：视频理解",
+          "主题：多模态小模型",
+          "方法关键词：高效化 / 压缩 / 低成本训练",
+          "时间：近7天"
+        ],
+        "match_score": 8.6,
+        "paper_url": "https://arxiv.org/abs/2602.22779v4",
+        "pdf_url": "https://arxiv.org/pdf/2602.22779v4",
+        "priority_tier": 1,
+        "published_at": "2026-02-26T09:15:34Z",
+        "source_url": "https://arxiv.org/abs/2602.22779v4",
+        "title": "TrajTok: Learning Trajectory Tokens enables better Video Understanding"
+      },
+      {
+        "abstract": "Chinese historical documents are invaluable cultural treasures, but their complexity poses significant comprehension challenges for non-specialists. Despite the success of Large Language Models (LLMs) and Large Vision-Language Models (LVLMs) in modern document tasks, their capabilities in Long (full-book) Historical Document understanding remain largely unexplored. To bridge this gap, we introduce LongHisDoc, the first benchmark tailored for long historical document understanding. LongHisDoc comprises 1,012 expert-annotated QA pairs derived from 101 PDF documents, with an average of 85.1 pages and 42,776.4 tokens per document. It spans 10 categories and features four QA types: single-page, cross-page, multi-hop, and unanswerable. Answering these questions requires integrating multimodal evidence from text, layout, and visual elements. Our evaluation reveals that the top-performing LVLM and LLM achieve only 62.9% and 69.9% accuracy, respectively, highlighting a substantial performance gap. Furthermore, we assess various modal retrievers and the end-to-end RAG performance to provide references for Retrieval-Augmented Generation (RAG) systems. We believe that LongHisDoc serves as a comprehensive benchmark to catalyze future research in full-book historical document understanding. The benchmark and evaluation code are available at https://huggingface.co/datasets/qweq12433454/LongHisDoc and https://github.com/SCUT-DLVCLab/LongHisDoc.",
+        "category": "document",
+        "description": "Chinese historical documents are invaluable cultural treasures, but their complexity poses significant comprehension challenges for non-specialists. Despite the success of Large Language Models (LLMs) and Large Vision-Language Models (LVLMs) in modern document tasks, their capabilities in Long (full-book) Historical Document understanding remain largely unexplored. To bridge this gap, we introduce LongHisDoc, the first benchmark tailored for long historical document understanding. LongHisDoc comprises 1,012 expert-annotated QA pairs derived from 101 PDF documents, with an average of 85.1 pages and 42,776.4 tokens per document. It spans 10 categories and features four QA types: single-page, cross-page, multi-hop, and unanswerable. Answering these questions requires integrating multimodal evidence from text, layout, and visual elements. Our evaluation reveals that the top-performing LVLM and LLM achieve only 62.9% and 69.9% accuracy, respectively, highlighting a substantial performance gap. Furthermore, we assess various modal retrievers and the end-to-end RAG performance to provide references for Retrieval-Augmented Generation (RAG) systems. We believe that LongHisDoc serves as a comprehensive benchmark to catalyze future research in full-book historical document understanding. The benchmark and evaluation code are available at https://huggingface.co/datasets/qweq12433454/LongHisDoc and https://github.com/SCUT-DLVCLab/LongHisDoc.",
+        "discovered_from": "arxiv",
+        "event_at": "2026-10-20T09:06:09+00:00",
+        "event_label": "arXiv 版本更新",
+        "github_license": null,
+        "github_stars": null,
+        "github_url": null,
+        "hf_downloads": null,
+        "huggingface_url": null,
+        "id": "arxiv-2610-14531",
+        "match_reasons": [
+          "来源：arXiv",
+          "主题：文档理解",
+          "主题：多模态小模型",
+          "成果类型：Benchmark / 数据集 / 评测",
+          "时间：近7天"
+        ],
+        "match_score": 8.0,
+        "paper_url": "https://arxiv.org/abs/2610.14531v2",
+        "pdf_url": "https://arxiv.org/pdf/2610.14531v2",
+        "priority_tier": 1,
+        "published_at": "2026-10-10T03:44:08Z",
+        "source_url": "https://arxiv.org/abs/2610.14531v2",
+        "title": "LongHisDoc: A Comprehensive Benchmark for Chinese Long Historical Document Understanding"
+      }
+    ]
+  },
+  "collection_generated_at": "2026-10-26T01:00:23+00:00",
+  "first_stage_threshold": 8,
+  "generated_at": "2026-10-26T01:02:44.619Z",
+  "items": [
+    {
+      "candidate_id": "arxiv-2610-28356",
+      "confidence": "high",
+      "data_open": true,
+      "evaluation_dimensions": {
+        "innovation": {
+          "rationale": "论文用26个均衡数量组、相邻数比较和受控相机运动排除数据集频率混杂，较常规VideoQA平均准确率更有诊断价值，但场景简化明显。",
+          "score": 8.4
+        },
+        "open_source": {
+          "rationale": "官方CountVideoBench仓库含MIT许可证、模型独立uv.lock、评测与人工核查结果；HF发布CC-BY-4.0完整视频，第三方模型权重仍受各自许可约束。",
+          "score": 9.3
+        },
+        "reproducibility": {
+          "rationale": "官方脚本支持--limit、--streaming、断点续跑及固定数据revision；但完整视频约139GB，多数7B以上基线需要NVIDIA GPU，复现全部16模型和API结果成本较高。",
+          "score": 8
+        },
+        "research_potential": {
+          "rationale": "可研究计数偏置来源、视觉token预算、分辨率、时间采样与数值校准，形成可检验的消融实验；需新增真实场景验证外部效度。",
+          "score": 8.8
+        }
+      },
+      "evidence_urls": [
+        "https://arxiv.org/abs/2610.28356v2",
+        "https://github.com/CountVideoBench/CountVideoBench",
+        "https://huggingface.co/datasets/countvideobench/CountVideoBench"
+      ],
+      "gpu_requirement": null,
+      "parameters": null,
+      "research_opportunity": "在相同帧数、分辨率和推理预算下检验整数偏置与视觉token压缩、帧采样、遮挡及物体运动的因果关系；构建置信度校准和跨场景迁移实验，避免把合成静态场景的结果直接推广到真实监控。",
+      "screened_at": "2026-10-26T01:02:44.619Z",
+      "selection_status": "recommended",
+      "summary": "构建2600条Blender合成视频、覆盖26种物体数量的平衡计数基准，检验视频语言模型偏好特定整数、相邻数量准确率突降的系统偏差；论文报告16个模型最高精确匹配率仅27.6%。",
+      "title": "CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models",
+      "training_code_open": null,
+      "weights_open": null,
+      "why_selected": "论文、官方MIT评测代码、带uv.lock的模型复现脚本及CC-BY-4.0视频数据均可交叉核验；均衡计数实验能够形成低门槛、可证伪的研究生实验，并可用流式下载避免一次性获取139GB。"
+    },
+    {
+      "candidate_id": "arxiv-2610-14531",
+      "confidence": "high",
+      "data_open": true,
+      "evaluation_dimensions": {
+        "innovation": {
+          "rationale": "论文将全书跨页、多跳、不可回答与古籍版式难题合为有证据页的统一评测；相对已有古籍OCR/单页理解基准，研究问题更接近真实长文档应用。",
+          "score": 8.2
+        },
+        "open_source": {
+          "rationale": "官方GitHub提供推理、答案抽取和评分脚本；HF公开101文档页面图像、OCR及问答数据，许可CC BY-NC-ND 4.0仅适合合规非商业研究且限制改编分发。",
+          "score": 8.5
+        },
+        "reproducibility": {
+          "rationale": "数据约1.69GB且评测步骤清晰；但原流程部分使用GPT-4o抽取答案，API费用及不同模型推理资源需单独核算，尚未确认全本地无API的逐项复现。",
+          "score": 7.8
+        },
+        "research_potential": {
+          "rationale": "跨页证据定位、古籍版式噪声、OCR与视觉互补、可解释拒答、长文档压缩均有明确实验变量，适合文档理解研究生形成独立创新点。",
+          "score": 9
+        }
+      },
+      "evidence_urls": [
+        "https://arxiv.org/abs/2610.14531v2",
+        "https://github.com/SCUT-DLVCLab/LongHisDoc",
+        "https://huggingface.co/datasets/qweq12433454/LongHisDoc"
+      ],
+      "gpu_requirement": null,
+      "parameters": null,
+      "research_opportunity": "比较OCR文本检索、页面图像检索与融合检索的证据召回、答案正确率及拒答校准；引入低质量扫描、异体字和版式噪声，测量小型VLM与结构化RAG的性能和成本边界。",
+      "screened_at": "2026-10-26T01:02:44.619Z",
+      "selection_status": "recommended",
+      "summary": "面向中国古籍全书理解的LongHisDoc评测集含101部历史文献、1012条专家标注问答，区分单页、跨页、多跳与不可回答问题；同时评估文字OCR、版式和视觉证据的检索与回答。",
+      "title": "LongHisDoc: A Comprehensive Benchmark for Chinese Long Historical Document Understanding",
+      "training_code_open": null,
+      "weights_open": null,
+      "why_selected": "论文、官方评测代码和HF数据集均已核实，页面图像、OCR和证据页标注可用于可重复的跨页RAG研究；研究价值集中在多模态证据定位，而不是单纯扩展上下文窗口。"
+    },
+    {
+      "candidate_id": "arxiv-2602-22779",
+      "confidence": "medium",
+      "data_open": null,
+      "evaluation_dimensions": {
+        "innovation": {
+          "rationale": "论文提出与下游目标联合训练的时空轨迹聚合，绕开外部显式分割跟踪流水线，并允许动态token粒度，兼具方法新意与长视频可扩展性。",
+          "score": 8.8
+        },
+        "open_source": {
+          "rationale": "官方GitHub以Apache-2.0发布分割器、TrajViT-v2和TrajVLM训练/评测代码；HF有前两者权重，但TrajVLM README明确称完整checkpoint仍待发布，混合训练语料并非全部可核验。",
+          "score": 8
+        },
+        "reproducibility": {
+          "rationale": "分割器和小规模TrajViT-v2可做局部推理/评测；官方模型卡记录分割器预训练2节点×8 H100、TrajVLM预训练同级资源，完整训练不适合单卡高校复现。",
+          "score": 6.2
+        },
+        "research_potential": {
+          "rationale": "轨迹token与低成本VLM结合可形成跨帧一致性、对象粒度自适应、视频时序定位和计算预算控制等多个可证伪研究课题。",
+          "score": 9
+        }
+      },
+      "evidence_urls": [
+        "https://arxiv.org/abs/2602.22779v4",
+        "https://github.com/hellomuffin/trajtok",
+        "https://github.com/hellomuffin/trajtok/blob/main/trajvlm/README.md",
+        "https://huggingface.co/michaelzch001/trajtok-segmenter",
+        "https://huggingface.co/michaelzch001/trajtok-trajvitv2"
+      ],
+      "gpu_requirement": "官方分割器预训练为2节点×8 H100 80GB；TrajVLM预训练亦为2节点×8 H100。单GPU推理的显存下限尚未实测。",
+      "parameters": null,
+      "research_opportunity": "以已发布约59M参数分割器为起点，比较固定patch、均匀帧采样和轨迹token在短视频问答及目标持续跟踪中的准确率、token数、峰值显存与端到端延迟；优先做冻结骨干/轻量连接器而非16张H100级全量预训练。",
+      "screened_at": "2026-10-26T01:02:44.619Z",
+      "selection_status": "recommended",
+      "summary": "TrajTok以可学习的时空轨迹token替代密集patch token，发布分割器、TrajViT-v2实验权重及TrajVLM训练代码，探索长视频中语义结构与token预算的联合优化；原始论文早于本周，本周队列因版本更新再次纳入。",
+      "title": "TrajTok: Learning Trajectory Tokens enables better Video Understanding",
+      "training_code_open": true,
+      "weights_open": true,
+      "why_selected": "官方Apache-2.0代码和HF分割器、TrajViT-v2模型卡提供可核对的结构、训练配置与局部权重；其轨迹token思想与0.5B–4B视频理解研究方向高度吻合，但完整TrajVLM权重尚未发布，不能宣称全流程低成本复现。"
+    }
+  ],
+  "report_title": "2026年第44周｜文档理解、视频理解与多模态小模型科研周报",
+  "report_type": "weekly",
+  "schema_version": 1,
+  "screening_schema_version": 2,
+  "status": "completed",
+  "summary": "2026年第44周公开源采集于2026-10-26T01:00:23+00:00完成；本轮队列共20条主题匹配≥8.0候选。对论文正文、官方代码、模型卡、许可证、数据与资源需求进行二次核查后，精选3项：CountVideoBench（受控视频计数偏置）、LongHisDoc（古籍跨页多模态证据）、TrajTok（轨迹token视频压缩）。分数只代表当前证据下的研究优先级，尚未执行本地复现实验。",
+  "window_end": "2026-10-26",
+  "window_start": "2026-10-19"
+}
