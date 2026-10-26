@@ -192,12 +192,7 @@ def update_top3_state(reports, queue, data_dir=DATA, now=None):
             None,
         )
         if existing_index is not None:
-            incumbent = items[existing_index]
-            if candidate_score > float(incumbent["value_score"]):
-                items[existing_index] = _prepare_item(
-                    candidate, generated_at,
-                    incumbent.get("top3_selected_at") or incumbent.get("_report_generated"),
-                )
+            # A repeated weekly mention is not a new resource; preserve the incumbent entry.
             continue
 
         prepared = _prepare_item(candidate, generated_at, generated_at or _timestamp(now))
