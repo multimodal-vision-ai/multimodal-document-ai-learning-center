@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "checked_at": null,
+  "checked_at": "2026-10-26T01:04:24.588Z",
   "overall_status": "watching",
   "watchdog": {
-    "last_run_at": null,
-    "status": "not_run",
-    "message": "初始化占位记录。尚无独立周期任务巡检结果；此文件不代表每日、每周或每月 ChatGPT 任务已成功执行。"
+    "last_run_at": "2026-10-26T01:04:24.588Z",
+    "status": "completed",
+    "message": "2026-W44 weekly marker committed to dev once; radar-data queue refreshed at 2026-10-26T01:00:23Z with 20 >=8 candidates and no reported source failures; ChatGPT reviewed 3 and wrote schema v2 weekly report. No daily scan was triggered."
   },
   "publication": {
-    "status": "success",
-    "checked_at": "2026-10-22T06:38:08Z",
-    "refresh_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/39735122439",
-    "dev_preview_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/39734322079",
-    "home_content_verified": true,
-    "detail_content_verified": true,
-    "message": "最新的 schema v2 第二轮评价（TrajTok）已包含在当前 radar-data 提交中，刷新工作流成功完成，公开首页显示科研价值精选与周期任务面板，详情页显示二次评价区域。注意：daily/weekly/monthly 三个周期报告仍未全部完成 v2 首次运行，故不能据此认定三个周期任务均已通过持续自动运行验收。"
+    "status": "unknown",
+    "checked_at": "2026-10-26T01:04:24.588Z",
+    "refresh_workflow_run_url": null,
+    "dev_preview_workflow_run_url": null,
+    "home_content_verified": false,
+    "detail_content_verified": false,
+    "message": "GitHub dev-preview branch now contains 2026-W44 and exact scores 8.61, 8.33, 7.99 (commit 5933025e73c07d3868a978aab8872c8a0bd48569). Public raw.githack branch alias still served an older week at inspection; immutable public endpoint and Actions completion could not be independently confirmed. Do not mark public synchronization success yet."
   }
 }
