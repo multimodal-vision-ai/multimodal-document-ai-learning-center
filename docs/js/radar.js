@@ -55,49 +55,65 @@
       year.dataset.radarArchiveYears = yearValues.join(",");
     }
 
+    const pagination = document.getElementById("radar-archive-pagination");
+    const previous = document.getElementById("radar-archive-prev");
+    const next = document.getElementById("radar-archive-next");
+    const pageLabel = document.getElementById("radar-archive-page");
+    const pageSize = 6;
+    let page = 1;
+
     const refresh = () => {
       const keyword = search.value.trim().toLowerCase();
       const typeValue = type.value;
       const yearValue = year.value;
-      let visibleCount = 0;
-
-      items.forEach(item => {
+      const matched = items.filter(item => {
         const searchable = (item.dataset.archiveText || item.textContent || "").toLowerCase();
-        const matches = (!keyword || searchable.includes(keyword)) &&
+        return (!keyword || searchable.includes(keyword)) &&
           (!typeValue || item.dataset.archiveType === typeValue) &&
           (!yearValue || item.dataset.archiveYear === yearValue);
-        item.hidden = !matches;
-        if (matches) visibleCount++;
       });
-
+      const pages = Math.max(1, Math.ceil(matched.length / pageSize));
+      page = Math.min(page, pages);
+      const pageItems = new Set(matched.slice((page - 1) * pageSize, page * pageSize));
+      items.forEach(item => { item.hidden = !pageItems.has(item); });
       document.querySelectorAll(".radar-archive-section").forEach(section => {
-        const sectionType = section.dataset.archiveSection;
         const sectionItems = Array.from(section.querySelectorAll(".radar-archive-item"));
-        const typeMatches = !typeValue || typeValue === sectionType;
-        const hasArchiveItems = sectionItems.length > 0;
-        const hasVisibleItems = sectionItems.some(item => !item.hidden);
-        section.hidden = !typeMatches || (hasArchiveItems && !hasVisibleItems);
+        const typeMatches = !typeValue || typeValue === section.dataset.archiveSection;
+        section.hidden = !typeMatches || (sectionItems.length > 0 &&
+          !sectionItems.some(item => !item.hidden));
       });
-
       const count = document.getElementById("radar-archive-count");
       if (count) {
-        count.textContent = keyword || typeValue || yearValue
-          ? "匹配 " + visibleCount + " 条 / 共 " + items.length + " 条档案"
-          : "共 " + items.length + " 条历史档案";
+        count.textContent = (keyword || typeValue || yearValue ? "匹配 " : "共 ") +
+          matched.length + " 条历史档案" +
+          (matched.length ? " · 当前显示 " + Math.min(pageSize, matched.length - (page - 1) * pageSize) + " 期" : "");
       }
-
       const noResults = document.getElementById("radar-archive-no-results");
-      if (noResults) {
-        const filtering = Boolean(keyword || typeValue || yearValue);
-        noResults.hidden = !(filtering && visibleCount === 0);
+      if (noResults) noResults.hidden = matched.length !== 0 || !(keyword || typeValue || yearValue);
+      if (pagination && previous && next && pageLabel) {
+        pagination.hidden = matched.length <= pageSize;
+        previous.disabled = page <= 1;
+        next.disabled = page >= pages;
+        pageLabel.textContent = "第 " + page + " / " + pages + " 页";
       }
     };
 
     [search, type, year].forEach(control => {
       if (control.dataset.radarArchiveAttached) return;
-      control.addEventListener(control === search ? "input" : "change", refresh);
+      control.addEventListener(control === search ? "input" : "change", () => {
+        page = 1;
+        refresh();
+      });
       control.dataset.radarArchiveAttached = "1";
     });
+    if (previous && !previous.dataset.radarArchiveAttached) {
+      previous.addEventListener("click", () => { page = Math.max(1, page - 1); refresh(); });
+      previous.dataset.radarArchiveAttached = "1";
+    }
+    if (next && !next.dataset.radarArchiveAttached) {
+      next.addEventListener("click", () => { page += 1; refresh(); });
+      next.dataset.radarArchiveAttached = "1";
+    }
     refresh();
   }
 
