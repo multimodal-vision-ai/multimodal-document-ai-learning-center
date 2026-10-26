@@ -8,7 +8,7 @@ on:
     - cron: "55 2 1 * *"
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -53,6 +53,40 @@ jobs:
           pip install -r requirements-docs.txt
           mkdocs build --strict
           python scripts/radar/verify_publication.py --site-dir site --data-dir research-radar/data
+
+      - name: Persist rolling Top 3 state to radar-data
+        shell: bash
+        run: |
+          set -euo pipefail
+          source="site-source/research-radar/data/chatgpt-reviewed/top3.json"
+          target="radar-store/research-radar/data/chatgpt-reviewed/top3.json"
+          test -f "$source"
+          mkdir -p "$(dirname "$target")"
+          cp "$source" "$target"
+          cd radar-store
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research-radar/data/chatgpt-reviewed/top3.json
+          if git diff --cached --quiet; then
+            echo "Persistent Top 3 state is unchanged."
+          else
+            git commit -m "data(radar): persist rolling Top 3 shortlist [skip ci]"
+            pushed=0
+            for attempt in 1 2 3; do
+              if git push origin HEAD:refs/heads/radar-data; then
+                pushed=1
+                break
+              fi
+              echo "::warning::radar-data advanced concurrently; rebasing Top 3 state (attempt $attempt/3)"
+              git fetch origin radar-data
+              git rebase FETCH_HEAD
+              sleep 3
+            done
+            if [ "$pushed" -ne 1 ]; then
+              echo "::error::Top 3 state push did not succeed after retries"
+              exit 1
+            fi
+          fi
 
       - uses: actions/upload-pages-artifact@v3
         with:
