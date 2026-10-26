@@ -1,8 +1,8 @@
 name: DEV Preview - isolated static build
 
 # No deployment to the repository's official GitHub Pages environment.
-# PRs only build an artifact. A push to dev additionally publishes the
-# generated site to the dev-preview branch, served via a dev-only proxy.
+# PRs publish to isolated dev-preview-pr-N branches; dev pushes publish the
+# shared dev-preview branch. Neither path deploys to the official Pages site.
 on:
   pull_request:
     branches: [dev]
@@ -25,6 +25,8 @@ jobs:
   build:
     name: Build isolated DEV website
     runs-on: ubuntu-latest
+    env:
+      PREVIEW_BRANCH: ${{ github.event_name == 'pull_request' && format('dev-preview-pr-{0}', github.event.pull_request.number) || 'dev-preview' }}
     permissions:
       contents: read
     steps:
@@ -80,10 +82,11 @@ jobs:
           import re
           path = Path("mkdocs.yml")
           text = path.read_text(encoding="utf-8")
+          branch = os.environ["PREVIEW_BRANCH"]
           target = (
               "site_url: https://raw.githack.com/"
-              "multimodal-vision-ai/multimodal-document-ai-learning-center"
-              "/dev-preview/"
+              "multimodal-vision-ai/multimodal-document-ai-learning-center/"
+              f"{branch}/"
           )
           new, count = re.subn(r"(?m)^site_url: .*$", target, text)
           if count != 1:
@@ -149,8 +152,14 @@ jobs:
   publish:
     name: Publish isolated DEV preview branch
     needs: build
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+    if: >-
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.base.ref == 'dev' &&
+       github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name != 'pull_request' && github.ref == 'refs/heads/dev')
     runs-on: ubuntu-latest
+    env:
+      PREVIEW_BRANCH: ${{ github.event_name == 'pull_request' && format('dev-preview-pr-{0}', github.event.pull_request.number) || 'dev-preview' }}
     permissions:
       contents: write
     steps:
@@ -173,11 +182,11 @@ jobs:
           test -f "$RUNNER_TEMP/dev-site/index.html"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git ls-remote --exit-code --heads origin dev-preview > /dev/null 2>&1; then
-            git fetch --no-tags origin dev-preview
-            git switch -C dev-preview FETCH_HEAD
+          if git ls-remote --exit-code --heads origin "refs/heads/$PREVIEW_BRANCH" > /dev/null 2>&1; then
+            git fetch --no-tags origin "$PREVIEW_BRANCH"
+            git switch -C "$PREVIEW_BRANCH" FETCH_HEAD
           else
-            git switch --orphan dev-preview
+            git switch --orphan "$PREVIEW_BRANCH"
           fi
           git rm -rf --ignore-unmatch . > /dev/null
           git clean -fdx > /dev/null
@@ -188,9 +197,9 @@ jobs:
             echo "DEV preview is already up to date."
           else
             git commit -m "docs(preview): refresh generated DEV site [skip ci]"
-            git push origin HEAD:refs/heads/dev-preview
+            git push origin "HEAD:refs/heads/$PREVIEW_BRANCH"
           fi
-          echo "Fixed DEV preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview/index.html"
+          echo "DEV preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$PREVIEW_BRANCH/index.html"
 
       - name: Checkout persistent Radar data branch
         if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
@@ -252,7 +261,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$PREVIEW_BRANCH"
           root_url="$base/index.html?preview_build=${GITHUB_SHA}"
           radar_url="$base/radar/index.html?preview_build=${GITHUB_SHA}"
           for attempt in 1 2 3 4 5 6; do
