@@ -1,113 +1,130 @@
 {
   "schema_version": 1,
+  "screening_schema_version": 2,
   "report_type": "weekly",
-  "report_title": "文档理解、视频理解与多模态小模型科研周报",
+  "report_title": "2026年第44周｜文档理解、视频理解与多模态小模型科研周报",
+  "first_stage_threshold": 8,
   "status": "completed",
-  "generated_at": "2026-10-19T09:22:26Z",
-  "window_start": "2026-10-12",
-  "window_end": "2026-10-19",
-  "summary": "这份已存档周报筛选出 5 项适合高校实验室进一步评估的工作，覆盖结构感知文档解析、OCR 语义严重度评测、小模型结构化决策，以及低成本视频理解和参数记忆。",
+  "generated_at": "2026-10-26T01:02:44.619Z",
+  "window_start": "2026-10-19",
+  "window_end": "2026-10-26",
+  "collection_generated_at": "2026-10-26T01:00:23+00:00",
+  "summary": "2026年第44周公开源采集于2026-10-26T01:00:23+00:00完成；本轮队列共20条主题匹配≥8.0候选。对论文正文、官方代码、模型卡、许可证、数据与资源需求进行二次核查后，精选3项：CountVideoBench（受控视频计数偏置）、LongHisDoc（古籍跨页多模态证据）、TrajTok（轨迹token视频压缩）。分数只代表当前证据下的研究优先级，尚未执行本地复现实验。",
   "items": [
     {
-      "id": "rpd-sara",
-      "title": "RPD + SARA",
-      "category": "document",
-      "parameters": "2B",
-      "published_at": null,
-      "screened_at": "2026-10-19T09:22:26Z",
-      "selection_status": "selected",
-      "summary": "结构感知的统一文档解析方法，目标是更好保留文档布局和结构信息。已存档周报报告了 layout F1 为 0.9189、对比 LoRA baseline 的 0.7004；该数值应结合原论文的实验设置核验。",
-      "why_selected": "提供 GitHub 与 Hugging Face 资源入口，可用于核查模型权重、数据和复现流程；适合作为文档解析任务的基线候选。",
-      "research_opportunity": "在跨版式、长文档、表格混排和扫描质量变化条件下复现布局指标；比较量化推理、LoRA 微调与结构约束对精度和显存的影响。",
-      "paper_url": "https://arxiv.org/abs/2610.20335",
-      "source_url": "https://arxiv.org/abs/2610.20335",
-      "github_url": "https://github.com/yufanchen96/RPD",
-      "huggingface_url": "https://huggingface.co/chen-doc-ai/Qwen3.5-2B_with_SARA",
-      "gpu": "T4 量化推理可行；LoRA 约需 24GB；全量训练至少约 40GB（按已存档周报记录，需实测复核）",
-      "weights_open": true,
-      "training_code_open": null,
-      "data_open": true,
-      "priority": "A"
-    },
-    {
-      "id": "semcer",
-      "title": "semCER",
-      "category": "document",
-      "parameters": "0.8B",
-      "published_at": null,
-      "screened_at": "2026-10-19T09:22:26Z",
-      "selection_status": "selected",
-      "summary": "面向 OCR 的语义严重度加权评测思路，试图区分对含义影响不同的识别错误，而不只把所有字符编辑视为等价。",
-      "why_selected": "参考性能数据为：T4 16GB 环境下 FP32 约 46 edits/s；该结果与完整蒸馏流程仍待独立核实，可从性能复现和评测方法入手。",
-      "research_opportunity": "检验语义严重度指标与下游信息抽取、文档问答质量之间的相关性，并在多语言、表格和票据 OCR 场景中进行对照。",
-      "paper_url": "https://arxiv.org/abs/2610.20461",
-      "source_url": "https://arxiv.org/abs/2610.20461",
-      "github_url": "https://github.com/nguyenx2t/semcer",
-      "huggingface_url": "https://huggingface.co/nguyenx2t/semcer-qwen3.5-0.8b",
-      "gpu": "已存档周报记录 T4 16GB 可运行；约 46 edits/s 为 FP32 报告值，需按原设置复核",
-      "weights_open": true,
-      "training_code_open": null,
-      "data_open": null
-    },
-    {
-      "id": "intern-decision",
-      "title": "Intern-Decision",
-      "category": "small-vlm",
-      "parameters": "0.8B / 2B / 4B",
-      "published_at": null,
-      "screened_at": "2026-10-19T09:22:26Z",
-      "selection_status": "selected",
-      "summary": "面向结构化决策输出的小模型系列，强调一次生成结构化决策结果。",
-      "why_selected": "项目涉及多个参数规模的模型，可在统一任务和资源预算下比较模型规模、结构约束与泛化能力；实验前应确认训练代码是否可获取。",
-      "research_opportunity": "设计未见过的字段 schema、长尾类别和格式扰动测试；比较不同规模模型的结构有效率、任务准确率和推理成本。",
-      "paper_url": "https://arxiv.org/abs/2610.22131",
-      "source_url": "https://arxiv.org/abs/2610.22131",
-      "github_url": "https://github.com/internlm/Intern-Decision",
-      "huggingface_url": null,
-      "gpu": "0.8B/2B 推理可尝试 T4；4B 约需 24GB 显存（按已存档周报记录）",
-      "weights_open": true,
-      "training_code_open": true,
-      "data_open": null,
-      "note": "Hugging Face 模型合集的准确链接未在已存档周报中记录。"
-    },
-    {
-      "id": "malow",
-      "title": "MaLoW",
-      "category": "video",
-      "parameters": "0.8B–9B",
-      "published_at": null,
-      "screened_at": "2026-10-19T09:22:26Z",
-      "selection_status": "selected",
-      "summary": "面向视频理解的参数记忆与动态 LoRA 方向，探索如何在有限模型容量下保留和调用视频上下文信息。",
-      "why_selected": "该方法面向较小模型规模，适合研究长视频记忆、参数效率与视频 token 预算之间的权衡；开展实验前应先确认训练代码和数据是否可获取。",
-      "research_opportunity": "在固定显存和长视频输入条件下，比较记忆模块、帧采样和 token 预算对 VideoQA、时间定位与长程信息召回的影响。",
-      "paper_url": "https://arxiv.org/abs/2610.22070",
-      "source_url": "https://arxiv.org/abs/2610.22070",
-      "github_url": "https://github.com/dragonlzm/MaLoW",
-      "huggingface_url": "https://huggingface.co/collections/zhuomingliu/malow",
-      "gpu": "0.8B/2B 可尝试 T4 推理；4B 约需 24GB 显存（按已存档周报记录）",
-      "weights_open": true,
-      "training_code_open": null,
-      "data_open": null
-    },
-    {
-      "id": "videojev",
-      "title": "VideoJev",
-      "category": "video",
-      "parameters": "4B",
-      "published_at": null,
-      "screened_at": "2026-10-19T09:22:26Z",
-      "selection_status": "selected",
-      "summary": "面向视频的直接候选评分与缓存思路，尝试减少视频理解中重复或低价值计算。",
-      "why_selected": "论文和 GitHub 项目提供了可追溯的研究入口，适合评估直接视频决策与候选缓存的计算收益；T4 可运行性仍需实测确认。",
-      "research_opportunity": "在固定视频长度、采样策略和显存预算下比较准确率、吞吐、延迟与缓存命中率，并检查训练流程的可复现性。",
-      "paper_url": "https://arxiv.org/abs/2610.18615",
-      "source_url": "https://arxiv.org/abs/2610.18615",
-      "github_url": "https://github.com/juicepan-haha/VideoJev",
-      "huggingface_url": null,
-      "gpu": "建议约 24GB 显存；T4 未验证；全量训练据已存档周报记录需要多 GPU",
+      "candidate_id": "arxiv-2610-28356",
+      "title": "CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models",
+      "selection_status": "recommended",
+      "screened_at": "2026-10-26T01:02:44.619Z",
+      "summary": "构建2600条Blender合成视频、覆盖26种物体数量的平衡计数基准，检验视频语言模型偏好特定整数、相邻数量准确率突降的系统偏差；论文报告16个模型最高精确匹配率仅27.6%。",
+      "why_selected": "论文、官方MIT评测代码、带uv.lock的模型复现脚本及CC-BY-4.0视频数据均可交叉核验；均衡计数实验能够形成低门槛、可证伪的研究生实验，并可用流式下载避免一次性获取139GB。",
+      "research_opportunity": "在相同帧数、分辨率和推理预算下检验整数偏置与视觉token压缩、帧采样、遮挡及物体运动的因果关系；构建置信度校准和跨场景迁移实验，避免把合成静态场景的结果直接推广到真实监控。",
+      "evaluation_dimensions": {
+        "innovation": {
+          "score": 8.4,
+          "rationale": "论文用26个均衡数量组、相邻数比较和受控相机运动排除数据集频率混杂，较常规VideoQA平均准确率更有诊断价值，但场景简化明显。"
+        },
+        "open_source": {
+          "score": 9.3,
+          "rationale": "官方CountVideoBench仓库含MIT许可证、模型独立uv.lock、评测与人工核查结果；HF发布CC-BY-4.0完整视频，第三方模型权重仍受各自许可约束。"
+        },
+        "reproducibility": {
+          "score": 8,
+          "rationale": "官方脚本支持--limit、--streaming、断点续跑及固定数据revision；但完整视频约139GB，多数7B以上基线需要NVIDIA GPU，复现全部16模型和API结果成本较高。"
+        },
+        "research_potential": {
+          "score": 8.8,
+          "rationale": "可研究计数偏置来源、视觉token预算、分辨率、时间采样与数值校准，形成可检验的消融实验；需新增真实场景验证外部效度。"
+        }
+      },
+      "confidence": "high",
+      "evidence_urls": [
+        "https://arxiv.org/abs/2610.28356v2",
+        "https://github.com/CountVideoBench/CountVideoBench",
+        "https://huggingface.co/datasets/countvideobench/CountVideoBench"
+      ],
+      "parameters": null,
+      "gpu_requirement": null,
       "weights_open": null,
       "training_code_open": null,
+      "data_open": true
+    },
+    {
+      "candidate_id": "arxiv-2610-14531",
+      "title": "LongHisDoc: A Comprehensive Benchmark for Chinese Long Historical Document Understanding",
+      "selection_status": "recommended",
+      "screened_at": "2026-10-26T01:02:44.619Z",
+      "summary": "面向中国古籍全书理解的LongHisDoc评测集含101部历史文献、1012条专家标注问答，区分单页、跨页、多跳与不可回答问题；同时评估文字OCR、版式和视觉证据的检索与回答。",
+      "why_selected": "论文、官方评测代码和HF数据集均已核实，页面图像、OCR和证据页标注可用于可重复的跨页RAG研究；研究价值集中在多模态证据定位，而不是单纯扩展上下文窗口。",
+      "research_opportunity": "比较OCR文本检索、页面图像检索与融合检索的证据召回、答案正确率及拒答校准；引入低质量扫描、异体字和版式噪声，测量小型VLM与结构化RAG的性能和成本边界。",
+      "evaluation_dimensions": {
+        "innovation": {
+          "score": 8.2,
+          "rationale": "论文将全书跨页、多跳、不可回答与古籍版式难题合为有证据页的统一评测；相对已有古籍OCR/单页理解基准，研究问题更接近真实长文档应用。"
+        },
+        "open_source": {
+          "score": 8.5,
+          "rationale": "官方GitHub提供推理、答案抽取和评分脚本；HF公开101文档页面图像、OCR及问答数据，许可CC BY-NC-ND 4.0仅适合合规非商业研究且限制改编分发。"
+        },
+        "reproducibility": {
+          "score": 7.8,
+          "rationale": "数据约1.69GB且评测步骤清晰；但原流程部分使用GPT-4o抽取答案，API费用及不同模型推理资源需单独核算，尚未确认全本地无API的逐项复现。"
+        },
+        "research_potential": {
+          "score": 9,
+          "rationale": "跨页证据定位、古籍版式噪声、OCR与视觉互补、可解释拒答、长文档压缩均有明确实验变量，适合文档理解研究生形成独立创新点。"
+        }
+      },
+      "confidence": "high",
+      "evidence_urls": [
+        "https://arxiv.org/abs/2610.14531v2",
+        "https://github.com/SCUT-DLVCLab/LongHisDoc",
+        "https://huggingface.co/datasets/qweq12433454/LongHisDoc"
+      ],
+      "parameters": null,
+      "gpu_requirement": null,
+      "weights_open": null,
+      "training_code_open": null,
+      "data_open": true
+    },
+    {
+      "candidate_id": "arxiv-2602-22779",
+      "title": "TrajTok: Learning Trajectory Tokens enables better Video Understanding",
+      "selection_status": "recommended",
+      "screened_at": "2026-10-26T01:02:44.619Z",
+      "summary": "TrajTok以可学习的时空轨迹token替代密集patch token，发布分割器、TrajViT-v2实验权重及TrajVLM训练代码，探索长视频中语义结构与token预算的联合优化；原始论文早于本周，本周队列因版本更新再次纳入。",
+      "why_selected": "官方Apache-2.0代码和HF分割器、TrajViT-v2模型卡提供可核对的结构、训练配置与局部权重；其轨迹token思想与0.5B–4B视频理解研究方向高度吻合，但完整TrajVLM权重尚未发布，不能宣称全流程低成本复现。",
+      "research_opportunity": "以已发布约59M参数分割器为起点，比较固定patch、均匀帧采样和轨迹token在短视频问答及目标持续跟踪中的准确率、token数、峰值显存与端到端延迟；优先做冻结骨干/轻量连接器而非16张H100级全量预训练。",
+      "evaluation_dimensions": {
+        "innovation": {
+          "score": 8.8,
+          "rationale": "论文提出与下游目标联合训练的时空轨迹聚合，绕开外部显式分割跟踪流水线，并允许动态token粒度，兼具方法新意与长视频可扩展性。"
+        },
+        "open_source": {
+          "score": 8,
+          "rationale": "官方GitHub以Apache-2.0发布分割器、TrajViT-v2和TrajVLM训练/评测代码；HF有前两者权重，但TrajVLM README明确称完整checkpoint仍待发布，混合训练语料并非全部可核验。"
+        },
+        "reproducibility": {
+          "score": 6.2,
+          "rationale": "分割器和小规模TrajViT-v2可做局部推理/评测；官方模型卡记录分割器预训练2节点×8 H100、TrajVLM预训练同级资源，完整训练不适合单卡高校复现。"
+        },
+        "research_potential": {
+          "score": 9,
+          "rationale": "轨迹token与低成本VLM结合可形成跨帧一致性、对象粒度自适应、视频时序定位和计算预算控制等多个可证伪研究课题。"
+        }
+      },
+      "confidence": "medium",
+      "evidence_urls": [
+        "https://arxiv.org/abs/2602.22779v4",
+        "https://github.com/hellomuffin/trajtok",
+        "https://github.com/hellomuffin/trajtok/blob/main/trajvlm/README.md",
+        "https://huggingface.co/michaelzch001/trajtok-segmenter",
+        "https://huggingface.co/michaelzch001/trajtok-trajvitv2"
+      ],
+      "parameters": null,
+      "gpu_requirement": "官方分割器预训练为2节点×8 H100 80GB；TrajVLM预训练亦为2节点×8 H100。单GPU推理的显存下限尚未实测。",
+      "weights_open": true,
+      "training_code_open": true,
       "data_open": null
     }
   ]
