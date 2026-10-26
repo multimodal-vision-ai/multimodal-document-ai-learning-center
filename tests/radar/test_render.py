@@ -180,7 +180,10 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn("Unreviewed", first["index.md"])
             radar_page = first["radar/index.md"]
             self.assertIn("# 前沿动态", radar_page)
-            self.assertIn("## 本期重点推荐", radar_page)
+            self.assertIn("## 重点推荐", radar_page)
+            self.assertNotIn("## 本期重点推荐", radar_page)
+            self.assertIn("跨周滚动维护", radar_page)
+            self.assertNotIn("WEEKLY_PERIOD_LABEL", radar_page)
             self.assertNotIn("## 本周精选", radar_page)
             self.assertNotIn("RADAR:CHATGPT_WEEKLY", radar_page)
             self.assertIn("2026年第43周", radar_page)
