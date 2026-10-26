@@ -79,6 +79,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import os
           import re
           path = Path("mkdocs.yml")
           text = path.read_text(encoding="utf-8")
