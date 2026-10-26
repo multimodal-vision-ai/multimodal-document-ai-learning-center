@@ -161,7 +161,7 @@ class PersistentTop3Tests(unittest.TestCase):
                          [x["value_score"] for x in before["items"]])
         self.assertEqual(after["updated_at"], before["updated_at"])
 
-    def test_higher_revision_of_same_candidate_does_not_duplicate(self):
+    def test_repeated_candidate_does_not_duplicate_or_rewrite_incumbent(self):
         initial = make_report(
             self.queue,
             [(self.queue["candidates"][0]["id"], 8.0),
@@ -169,7 +169,7 @@ class PersistentTop3Tests(unittest.TestCase):
              (self.queue["candidates"][2]["id"], 9.0)],
             "2026-10-19T10:00:00Z",
         )
-        self.update(initial)
+        before = self.update(initial)
         revised = make_report(
             self.queue, [(self.queue["candidates"][0]["id"], 8.7)],
             "2026-10-26T10:00:00Z",
@@ -177,9 +177,9 @@ class PersistentTop3Tests(unittest.TestCase):
         state = self.update(revised)
         ids = [item["candidate_id"] for item in state["items"]]
         self.assertEqual(len(ids), len(set(ids)))
-        self.assertEqual(state["items"][0]["value_score"], 9.0)
-        self.assertEqual(state["items"][1]["value_score"], 8.7)
-        self.assertEqual(state["items"][2]["value_score"], 8.5)
+        self.assertEqual([item["value_score"] for item in state["items"]], [9.0, 8.5, 8.0])
+        self.assertEqual([item["candidate_id"] for item in state["items"]],
+                         [item["candidate_id"] for item in before["items"]])
 
 
 if __name__ == "__main__":
