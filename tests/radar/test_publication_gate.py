@@ -29,13 +29,13 @@ class PublicationTests(unittest.TestCase):
             "# 多模态视觉AI学习中心\n\n从当前主线走向未来\n\n[进入前沿动态](radar/index.md)\n", encoding="utf-8"
         )
         sections = "# 前沿动态\n\n## 重点推荐\n\n"
-        for marker, heading in (("STAGE_TWO", ""), ("CHATGPT_WEEKLY", "本周精选"),
-                                ("CHATGPT_MONTHLY", "本月研究机会"),
-                                ("WEEKLY_ARCHIVE", "历史档案检索"), ("MONTHLY_ARCHIVE", "历史月报"),
-                                ("CANDIDATES", "补充发现：待评估线索")):
+        for marker, heading in (("STAGE_TWO", ""), ("CHATGPT_MONTHLY", "本月研究机会"),
+                                ("WEEKLY_ARCHIVE", "历史科研档案"), ("MONTHLY_ARCHIVE", "历史月报"),
+                                ("CANDIDATES", "待复核研究线索")):
             if heading:
                 sections += f"\n## {heading}\n\n"
             sections += f"<!-- RADAR:{marker}-START -->\n<!-- RADAR:{marker}-END -->\n\n"
+        sections += '<nav id="radar-archive-pagination" hidden></nav>\n'
         (self.docs / "radar/index.md").write_text(sections, encoding="utf-8")
         for name, marker in (("projects", "PROJECTS"), ("tasks", "TASKS")):
             (self.docs / f"radar/{name}.md").write_text(
@@ -110,20 +110,34 @@ class PublicationTests(unittest.TestCase):
         save(self.data / "chatgpt-reviewed/archive/weekly/legacy.json", legacy)
         render.render(NOW)
         page = (self.docs / "radar/index.md").read_text(encoding="utf-8")
-        current = page.split("RADAR:CHATGPT_WEEKLY-START -->")[1].split("<!-- RADAR:CHATGPT_WEEKLY-END")[0]
-        self.assertIn(LEGACY_NOTE, current)
-        self.assertIn("Legacy work", current)
-        self.assertIn("历史周报回顾", current)
-        self.assertIn("2026-10-19", current)
-        self.assertNotIn("完成复评后再进入", current)
+        self.assertNotIn("RADAR:CHATGPT_WEEKLY-START", page)
+        self.assertIn("Legacy work", page)
+        self.assertIn(LEGACY_NOTE, page)
+        self.assertIn("2026-10-19", page)
         featured = page.split("RADAR:STAGE_TWO-START -->")[1].split("<!-- RADAR:STAGE_TWO-END")[0]
         self.assertNotIn("Legacy work", featured)
+        self.assertIn("目前尚无重点推荐项目", featured)
         history = render.archive_cards("weekly", self.queue)
         self.assertIn(LEGACY_NOTE, history)
         self.assertIn("Legacy work", history)
         for label in ("评分来源", "评价时间", "置信度"):
             self.assertIn(f"{label}：未提供", history)
         self.assertEqual(collect_screened({"weekly": legacy}, self.queue), ([], []))
+
+    def test_persistent_top3_survives_a_week_without_high_value_items(self):
+        render.render(NOW)
+        page = (self.docs / "radar/index.md").read_text(encoding="utf-8")
+        featured = page.split("RADAR:STAGE_TWO-START -->")[1].split("<!-- RADAR:STAGE_TWO-END")[0]
+        self.assertEqual(featured.count('class="radar-review-card"'), 1)
+        self.assertIn(RESEARCH["title"], featured)
+        self.assertNotIn("## 本周精选", page)
+        self.write({**self.good, "status": "no_high_value", "items": []})
+        render.render(NOW)
+        page = (self.docs / "radar/index.md").read_text(encoding="utf-8")
+        featured = page.split("RADAR:STAGE_TWO-START -->")[1].split("<!-- RADAR:STAGE_TWO-END")[0]
+        self.assertEqual(featured.count('class="radar-review-card"'), 1)
+        self.assertIn(RESEARCH["title"], featured)
+        self.assertNotIn("目前尚无重点推荐项目", featured)
 
     def test_archive_keeps_frozen_source_queue_and_rejects_bad_existing_v2(self):
         render.archive_latest_reports({"weekly": self.good}, self.queue)
@@ -172,7 +186,7 @@ class PublicationTests(unittest.TestCase):
         built = subprocess.run([sys.executable, "-m", "mkdocs", "build", "--strict",
                                 "--no-directory-urls", "--config-file", str(config)], capture_output=True)
         self.assertEqual(built.returncode, 0, built.stderr)
-        self.assertEqual(verify(home, detail, self.data), ([], 0))
+        self.assertEqual(verify(home, detail, self.data), ([], 1))
 
 
 if __name__ == "__main__":
