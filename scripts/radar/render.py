@@ -10,6 +10,7 @@ from reports import build
 from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
 from screening import collect_screened, build_queue
 from publication_gate import assess_report, validate_snapshot, snapshot_digest, LEGACY_NOTE
+from top3 import update_top3_state, load_top3_state, top3_digest
 
 DOCS = ROOT / "docs"
 
@@ -552,7 +553,8 @@ def clean_value_point(value):
 
 
 def rating_metadata(item, report):
-    source = item.get("scoring_source") or item.get("_scoring_source") or report.get("scoring_source") or "未提供"
+    source = (item.get("scoring_source") or item.get("_scoring_source") or report.get("scoring_source")
+              or ("ChatGPT 四维科研价值评价" if item.get("evaluation_dimensions") else "未提供"))
     evaluated = item.get("screened_at") or item.get("evaluated_at") or report.get("evaluated_at")
     raw_confidence = item.get("confidence")
     confidence = {"high": "高", "medium": "中", "low": "低"}.get(raw_confidence, raw_confidence or "未提供")
@@ -712,19 +714,11 @@ def evidence_label(url):
     return "相关资源"
 
 
-def stage_two_detail_listing(reports, queue):
-    """Render a student-first shortlist with direct value, next steps and named resources."""
-    selected, errors = collect_screened(reports, queue)
-    if errors:
-        return (
-            '<div class="radar-empty-state"><strong>推荐内容暂不可展示。</strong>'
-            '<p>相关来源或评分信息需要进一步核查，完成后再更新。</p></div>'
-        )
+def _render_recommendation_items(selected, empty_title, empty_copy):
     if not selected:
         return (
-            '<div class="radar-empty-state"><strong>当前没有项目同时达到推荐标准。</strong>'
-            '<p>本栏优先展示主题相关度高、研究来源可查且具有明确学生切入点的工作；'
-            '自动发现的候选不会直接列为推荐。</p></div>'
+            f'<div class="radar-empty-state"><strong>{escape(empty_title)}</strong>'
+            f'<p>{escape(empty_copy)}</p></div>'
         )
     fields = (
         ("创新性", "innovation"), ("开源完整度", "open_source"),
@@ -741,9 +735,7 @@ def stage_two_detail_listing(reports, queue):
             for label, key in fields
         )
         urls = [url for url in item["evidence_urls"][:3] if valid_url(url)]
-        evidence_links = [
-            link(url, evidence_label(url)) for url in urls
-        ]
+        evidence_links = [link(url, evidence_label(url)) for url in urls]
         evidence = " ".join(evidence_links)
         title = link(urls[0] if urls else None, item["title"])
         summary = escape(clean_recommendation_text(item["summary"])[:260])
@@ -758,22 +750,47 @@ def stage_two_detail_listing(reports, queue):
             f'<strong>{score}</strong><small>/10</small></div>'
             '</header>'
             + rating_metadata(item, {"generated_at": item.get("_report_generated")})
-            +
-            f'<p class="radar-review-summary">{summary}</p>'
-            '<div class="radar-review-score-grid" aria-label="四项评分">'
-            f'{scores}</div>'
-            '<div class="radar-review-detail-grid">'
-            '<section class="radar-review-detail radar-review-value">'
-            '<h4>为什么值得研究</h4>'
-            f'<p>{reason}</p></section>'
-            '<section class="radar-review-detail radar-review-student">'
-            '<h4>学生可以怎么做</h4>'
-            f'<p>{opportunity}</p></section>'
-            '</div>'
-            f'<footer class="radar-review-sources"><strong>论文与项目资源</strong>{evidence}</footer>'
-            '</article>'
+            + f'<p class="radar-review-summary">{summary}</p>'
+            + '<div class="radar-review-score-grid" aria-label="四项评分">'
+            + f'{scores}</div>'
+            + '<div class="radar-review-detail-grid">'
+            + '<section class="radar-review-detail radar-review-value">'
+            + '<h4>为什么值得研究</h4>'
+            + f'<p>{reason}</p></section>'
+            + '<section class="radar-review-detail radar-review-student">'
+            + '<h4>学生可以怎么做</h4>'
+            + f'<p>{opportunity}</p></section>'
+            + '</div>'
+            + f'<footer class="radar-review-sources"><strong>论文与项目资源</strong>{evidence}</footer>'
+            + '</article>'
         )
     return '<div class="radar-brief-list radar-review-list">' + "".join(cards) + '</div>'
+
+
+def stage_two_detail_listing(reports, queue):
+    """Render a report's validated candidates for isolated unit tests and diagnostics."""
+    selected, errors = collect_screened(reports, queue)
+    if errors:
+        return (
+            '<div class="radar-empty-state"><strong>推荐内容暂不可展示。</strong>'
+            '<p>相关来源或评分信息需要进一步核查，完成后再更新。</p></div>'
+        )
+    return _render_recommendation_items(
+        selected,
+        "本期暂无通过四维科研评价的推荐项目。",
+        "自动发现的候选不会直接列为推荐；只有通过四维评价的资源才可进入推荐。",
+    )
+
+
+def top3_detail_listing(state):
+    """Render the persistent cross-week Top 3, independent of the latest report."""
+    items = state.get("items", []) if isinstance(state, dict) else []
+    return _render_recommendation_items(
+        items,
+        "目前尚无重点推荐项目。",
+        "榜单只收录通过四维科研评价的资源。榜单未满 3 项时可补充空位；榜单已满时，"
+        "新资源的综合评分必须严格高于当前最低分才会替换。没有更高分资源时，现有推荐保持不变。",
+    )
 
 
 def stage_two_home_section(chatgpt_reports, queue):
@@ -841,13 +858,15 @@ def render(now=None):
     }
     stored_queue = load(DATA / "screening-queue.json", None)
     screening_queue = stored_queue if stored_queue is not None else build_queue(candidates, now)
-    # Validate all inputs and existing archives before any writes, including new archives.
+    # Validate current reports, existing archives, and the persistent Top 3 before any writes.
+    load_top3_state(DATA)
     validate_snapshot(chatgpt_reports, screening_queue)
     for kind in ("weekly", "monthly"):
         _archive_records(kind, screening_queue)
     reports = build(projects, now, candidates)
     if stored_queue is None:
         save(DATA / "screening-queue.json", screening_queue)
+    top3_state = update_top3_state(chatgpt_reports, screening_queue, data_dir=DATA, now=now)
     archive_latest_reports(chatgpt_reports, screening_queue)
     approved = sorted((p for p in projects if p.get("review") == "approved"),
                       key=lambda p: (p.get("score") or 0, p.get("reviewed_at") or ""), reverse=True)
@@ -884,14 +903,11 @@ def render(now=None):
     page = DOCS / "radar/index.md"
     content = page.read_text(encoding="utf-8")
     content = replace(content, "STAGE_TWO",
-                      f'<div data-radar-snapshot="{snapshot_digest(chatgpt_reports, screening_queue)}">'
-                      + stage_two_detail_listing(chatgpt_reports, screening_queue) + '</div>')
-    content = content.replace("WEEKLY_PERIOD_LABEL", escape(weekly_heading_label(chatgpt_reports.get("weekly", {}))))
-    for marker, report_type in (
-        ("CHATGPT_WEEKLY", "weekly"),
-        ("CHATGPT_MONTHLY", "monthly"),
-    ):
-        content = replace(content, marker, chatgpt_report_listing(chatgpt_reports.get(report_type, {}), report_type, queue=screening_queue))
+                      f'<div data-radar-snapshot="{snapshot_digest(chatgpt_reports, screening_queue)}" '
+                      f'data-radar-top3-snapshot="{top3_digest(top3_state)}">'
+                      + top3_detail_listing(top3_state) + '</div>')
+    content = replace(content, "CHATGPT_MONTHLY",
+                      chatgpt_report_listing(chatgpt_reports.get("monthly", {}), "monthly", queue=screening_queue))
     content = replace(content, "WEEKLY_ARCHIVE", archive_cards("weekly", screening_queue))
     content = replace(content, "MONTHLY_ARCHIVE", archive_cards("monthly", screening_queue))
     leads = []
