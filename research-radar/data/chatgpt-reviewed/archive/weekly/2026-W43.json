@@ -89,7 +89,7 @@
   },
   "collection_generated_at": "2026-10-26T01:00:23+00:00",
   "first_stage_threshold": 8,
-  "generated_at": "2026-10-26T01:02:44.619Z",
+  "generated_at": "2026-10-26T01:05:33.980Z",
   "items": [
     {
       "candidate_id": "arxiv-2610-28356",
@@ -208,12 +208,12 @@
       "why_selected": "官方Apache-2.0代码和HF分割器、TrajViT-v2模型卡提供可核对的结构、训练配置与局部权重；其轨迹token思想与0.5B–4B视频理解研究方向高度吻合，但完整TrajVLM权重尚未发布，不能宣称全流程低成本复现。"
     }
   ],
-  "report_title": "2026年第44周｜文档理解、视频理解与多模态小模型科研周报",
+  "report_title": "2026年第43周｜文档理解、视频理解与多模态小模型科研周报",
   "report_type": "weekly",
   "schema_version": 1,
   "screening_schema_version": 2,
   "status": "completed",
-  "summary": "2026年第44周公开源采集于2026-10-26T01:00:23+00:00完成；本轮队列共20条主题匹配≥8.0候选。对论文正文、官方代码、模型卡、许可证、数据与资源需求进行二次核查后，精选3项：CountVideoBench（受控视频计数偏置）、LongHisDoc（古籍跨页多模态证据）、TrajTok（轨迹token视频压缩）。分数只代表当前证据下的研究优先级，尚未执行本地复现实验。",
+  "summary": "2026年第43周（2026-10-19至2026-10-26，周一发布）公开源采集于2026-10-26T01:00:23+00:00完成；本轮队列共20条主题匹配≥8.0候选。对论文正文、官方代码、模型卡、许可证、数据与资源需求进行二次核查后，精选3项：CountVideoBench（受控视频计数偏置）、LongHisDoc（古籍跨页多模态证据）、TrajTok（轨迹token视频压缩）。分数只代表当前证据下的研究优先级，尚未执行本地复现实验。",
   "window_end": "2026-10-26",
   "window_start": "2026-10-19"
 }
