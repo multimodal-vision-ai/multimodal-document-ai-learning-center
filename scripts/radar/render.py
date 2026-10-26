@@ -552,7 +552,8 @@ def clean_value_point(value):
 
 
 def rating_metadata(item, report):
-    source = item.get("scoring_source") or item.get("_scoring_source") or report.get("scoring_source") or "未提供"
+    source = (item.get("scoring_source") or item.get("_scoring_source") or report.get("scoring_source")
+              or ("ChatGPT 四维科研价值评价" if item.get("evaluation_dimensions") else "未提供"))
     evaluated = item.get("screened_at") or item.get("evaluated_at") or report.get("evaluated_at")
     raw_confidence = item.get("confidence")
     confidence = {"high": "高", "medium": "中", "low": "低"}.get(raw_confidence, raw_confidence or "未提供")
@@ -722,7 +723,7 @@ def stage_two_detail_listing(reports, queue):
         )
     if not selected:
         return (
-            '<div class="radar-empty-state"><strong>当前没有项目同时达到推荐标准。</strong>'
+            '<div class="radar-empty-state"><strong>本期暂无通过四维科研评价的推荐项目。</strong>'
             '<p>本栏优先展示主题相关度高、研究来源可查且具有明确学生切入点的工作；'
             '自动发现的候选不会直接列为推荐。</p></div>'
         )
@@ -885,13 +886,10 @@ def render(now=None):
     content = page.read_text(encoding="utf-8")
     content = replace(content, "STAGE_TWO",
                       f'<div data-radar-snapshot="{snapshot_digest(chatgpt_reports, screening_queue)}">'
-                      + stage_two_detail_listing(chatgpt_reports, screening_queue) + '</div>')
+                      + stage_two_detail_listing({"weekly": chatgpt_reports.get("weekly", {})}, screening_queue) + '</div>')
     content = content.replace("WEEKLY_PERIOD_LABEL", escape(weekly_heading_label(chatgpt_reports.get("weekly", {}))))
-    for marker, report_type in (
-        ("CHATGPT_WEEKLY", "weekly"),
-        ("CHATGPT_MONTHLY", "monthly"),
-    ):
-        content = replace(content, marker, chatgpt_report_listing(chatgpt_reports.get(report_type, {}), report_type, queue=screening_queue))
+    content = replace(content, "CHATGPT_MONTHLY",
+                      chatgpt_report_listing(chatgpt_reports.get("monthly", {}), "monthly", queue=screening_queue))
     content = replace(content, "WEEKLY_ARCHIVE", archive_cards("weekly", screening_queue))
     content = replace(content, "MONTHLY_ARCHIVE", archive_cards("monthly", screening_queue))
     leads = []

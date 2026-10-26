@@ -259,7 +259,7 @@ jobs:
                && grep -q "DEV 预览版" "$RUNNER_TEMP/dev-preview-public.html" \
                && ! grep -q "科研雷达" "$RUNNER_TEMP/dev-preview-public.html" \
                && grep -q "前沿动态" "$RUNNER_TEMP/dev-preview-radar.html" \
-               && grep -q "本周精选" "$RUNNER_TEMP/dev-preview-radar.html" \
+               && grep -q "本期重点推荐" "$RUNNER_TEMP/dev-preview-radar.html" \
                && grep -q "展开查看近期自动发现候选" "$RUNNER_TEMP/dev-preview-radar.html"; then
               asset_url="$(python - "$radar_url" "$RUNNER_TEMP/dev-preview-radar.html" <<'PY'
           import re
@@ -297,7 +297,7 @@ jobs:
           fi
           if [ -f "$RUNNER_TEMP/dev-preview-radar.html" ]; then
             echo "--- Radar page markers ---"
-            for marker in "前沿动态" "本周精选" "展开查看近期自动发现候选"; do
+            for marker in "前沿动态" "本期重点推荐" "展开查看近期自动发现候选"; do
               if grep -q "$marker" "$RUNNER_TEMP/dev-preview-radar.html"; then echo "FOUND: $marker"; else echo "MISSING: $marker"; fi
             done
           fi

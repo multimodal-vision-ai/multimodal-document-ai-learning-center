@@ -9,7 +9,7 @@ from screening import collect_screened
 from publication_gate import snapshot_digest, validate_snapshot, LEGACY_NOTE
 
 HOME_MARKERS = ("从当前主线走向未来", "进入前沿动态")
-DETAIL_MARKERS = ("前沿动态", "重点推荐", "本周精选", "本月研究机会", "历史档案检索", "补充发现：待评估线索")
+DETAIL_MARKERS = ("前沿动态", "本期重点推荐", "本月研究机会", "历史科研档案", "待复核研究线索")
 
 
 def verify(home_path, detail_path, data_dir=DATA):
@@ -31,7 +31,13 @@ def verify(home_path, detail_path, data_dir=DATA):
     except ValueError as exc:
         errors.append("invalid current report: " + str(exc))
         return errors, 0
-    selected, _ = collect_screened(reports, queue)
+    selected, _ = collect_screened({"weekly": reports.get("weekly", {})}, queue)
+    if "## 本周精选" in detail or "RADAR:CHATGPT_WEEKLY-START" in detail:
+        errors.append("obsolete duplicate weekly recommendation section is still published")
+    if detail.count('class="radar-review-card"') > 3:
+        errors.append("current recommendations exceed the three-item display cap")
+    if "radar-archive-pagination" not in detail:
+        errors.append("archive pagination control is missing")
     if f'data-radar-snapshot="{snapshot_digest(reports, queue)}"' not in detail:
         errors.append("rendered research updates do not match the report/queue snapshot")
     def section(marker):
@@ -46,11 +52,11 @@ def verify(home_path, detail_path, data_dir=DATA):
                 errors.append("validated recommendation is absent from the current recommendation section")
     else:
         placeholders = (
-            "当前没有项目同时达到推荐标准",
+            "本期暂无通过四维科研评价的推荐项目",
         )
         if not any(marker in recommendation_section for marker in placeholders):
             errors.append("explicit no-recommendation placeholder is missing")
-    for kind, marker in (("weekly", "CHATGPT_WEEKLY"), ("monthly", "CHATGPT_MONTHLY")):
+    for kind, marker in (("monthly", "CHATGPT_MONTHLY"),):
         state, items = states[kind]
         body = section(marker)
         if state == "legacy" and LEGACY_NOTE not in body:
