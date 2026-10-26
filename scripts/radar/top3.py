@@ -139,8 +139,48 @@ def _prepare_item(item, generated_at, selected_at=None):
     return result
 
 
+def _bootstrap_baseline(data_dir, current_report, current_queue):
+    """Use the most recent earlier archive when latest-weekly has already advanced."""
+    folder = Path(data_dir) / "chatgpt-reviewed" / "archive" / "weekly"
+    if not folder.exists():
+        return current_report, current_queue
+
+    current_generated = None
+    if isinstance(current_report, dict) and current_report.get("generated_at"):
+        try:
+            current_generated = parse_dt(current_report["generated_at"])
+        except (ValueError, TypeError, OverflowError):
+            current_generated = None
+
+    archived_reports = []
+    for archive_path in folder.glob("*.json"):
+        archived = load(archive_path, None)
+        if not isinstance(archived, dict) or not archived.get("generated_at"):
+            continue
+        try:
+            archived_generated = parse_dt(archived["generated_at"])
+        except (ValueError, TypeError, OverflowError):
+            continue
+        if current_generated is not None and archived_generated >= current_generated:
+            continue
+        archive_queue = archived.get("_screening_queue")
+        if not isinstance(archive_queue, dict) or not isinstance(archive_queue.get("candidates"), list):
+            archive_queue = current_queue
+        try:
+            _weekly_candidates(archived, archive_queue)
+        except ValueError:
+            continue
+        archived_reports.append((archived_generated, archived, archive_queue))
+
+    if not archived_reports:
+        return current_report, current_queue
+    archived_reports.sort(key=lambda entry: entry[0], reverse=True)
+    _, baseline_report, baseline_queue = archived_reports[0]
+    return baseline_report, baseline_queue
+
+
 def bootstrap_top3(data_dir=DATA, reports=None, queue=None, now=None):
-    """Seed the persistent list from the currently published weekly report, once only."""
+    """Seed once from the last published weekly history, then compare the current report."""
     path = state_path(data_dir)
     if path.exists():
         return validate_top3_state(load(path))
@@ -152,8 +192,9 @@ def bootstrap_top3(data_dir=DATA, reports=None, queue=None, now=None):
             "weekly": load(Path(data_dir) / "chatgpt-reviewed" / "latest-weekly.json", {})
         }
     report = reports.get("weekly", {}) if isinstance(reports, dict) else {}
-    generated_at = report.get("generated_at") if isinstance(report, dict) else None
-    candidates = _weekly_candidates(report, queue)
+    baseline_report, baseline_queue = _bootstrap_baseline(data_dir, report, queue)
+    generated_at = baseline_report.get("generated_at") if isinstance(baseline_report, dict) else None
+    candidates = _weekly_candidates(baseline_report, baseline_queue)
     items = [
         _prepare_item(item, generated_at, generated_at or _timestamp(now))
         for item in candidates[:3]
