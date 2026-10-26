@@ -210,6 +210,7 @@ def update_top3_state(reports, queue, data_dir=DATA, now=None):
                 items[lowest_index] = prepared
         items.sort(key=lambda item: float(item["value_score"]), reverse=True)
 
+    items.sort(key=lambda item: float(item["value_score"]), reverse=True)
     state["items"] = items
     if generated_at:
         state["last_evaluated_report_at"] = generated_at
