@@ -1,15 +1,16 @@
 """Verify rendered DEV HTML against the current validated second-stage recommendation."""
 import argparse
 import html
+import re
 import sys
 from pathlib import Path
 
 from core import DATA, load
-from screening import collect_screened
 from publication_gate import snapshot_digest, validate_snapshot, LEGACY_NOTE
+from top3 import load_top3_state, top3_digest
 
 HOME_MARKERS = ("从当前主线走向未来", "进入前沿动态")
-DETAIL_MARKERS = ("前沿动态", "本期重点推荐", "本月研究机会", "历史科研档案", "待复核研究线索")
+DETAIL_MARKERS = ("前沿动态", "重点推荐", "本月研究机会", "历史科研档案", "待复核研究线索")
 
 
 def verify(home_path, detail_path, data_dir=DATA):
@@ -28,11 +29,16 @@ def verify(home_path, detail_path, data_dir=DATA):
     }
     try:
         states = validate_snapshot(reports, queue)
+        top3_state = load_top3_state(data_dir)
     except ValueError as exc:
-        errors.append("invalid current report: " + str(exc))
+        errors.append("invalid current report or Top 3 state: " + str(exc))
         return errors, 0
-    selected, _ = collect_screened({"weekly": reports.get("weekly", {})}, queue)
-    if "## 本周精选" in detail or "RADAR:CHATGPT_WEEKLY-START" in detail:
+    if top3_state is None:
+        errors.append("persistent Top 3 state is missing")
+        top3_items = []
+    else:
+        top3_items = top3_state["items"]
+    if re.search(r"<h[23][^>]*>\s*本周精选\s*</h[23]>", detail):
         errors.append("obsolete duplicate weekly recommendation section is still published")
     if detail.count('class="radar-review-card"') > 3:
         errors.append("current recommendations exceed the three-item display cap")
@@ -40,22 +46,23 @@ def verify(home_path, detail_path, data_dir=DATA):
         errors.append("archive pagination control is missing")
     if f'data-radar-snapshot="{snapshot_digest(reports, queue)}"' not in detail:
         errors.append("rendered research updates do not match the report/queue snapshot")
+    if top3_state is not None and f'data-radar-top3-snapshot="{top3_digest(top3_state)}"' not in detail:
+        errors.append("rendered Top 3 does not match the persistent Top 3 state")
     def section(marker):
         start, end = f"<!-- RADAR:{marker}-START -->", f"<!-- RADAR:{marker}-END -->"
         return detail.split(start, 1)[1].split(end, 1)[0] if start in detail and end in detail else ""
 
     recommendation_section = section("STAGE_TWO")
-    if selected:
-        for item in selected[:3]:
+    rendered_count = recommendation_section.count('class="radar-review-card"')
+    if rendered_count != len(top3_items):
+        errors.append("rendered recommendation count does not match persistent Top 3")
+    if top3_items:
+        for item in top3_items:
             title = html.escape(str(item.get("title") or ""), quote=True)
             if not title or title not in recommendation_section:
-                errors.append("validated recommendation is absent from the current recommendation section")
-    else:
-        placeholders = (
-            "本期暂无通过四维科研评价的推荐项目",
-        )
-        if not any(marker in recommendation_section for marker in placeholders):
-            errors.append("explicit no-recommendation placeholder is missing")
+                errors.append("persistent Top 3 item is absent from the recommendation section")
+    elif "目前尚无重点推荐项目" not in recommendation_section:
+        errors.append("explicit empty Top 3 placeholder is missing")
     for kind, marker in (("monthly", "CHATGPT_MONTHLY"),):
         state, items = states[kind]
         body = section(marker)
@@ -65,7 +72,7 @@ def verify(home_path, detail_path, data_dir=DATA):
             for item in items[:3]:
                 if html.escape(str(item["title"]), quote=True) not in body:
                     errors.append(f"{kind} validated item not rendered in its current section")
-    return errors, len(selected)
+    return errors, len(top3_items)
 
 
 def main():
