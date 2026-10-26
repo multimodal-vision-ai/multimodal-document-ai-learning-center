@@ -116,7 +116,7 @@ class PublicationTests(unittest.TestCase):
         self.assertIn("2026-10-19", page)
         featured = page.split("RADAR:STAGE_TWO-START -->")[1].split("<!-- RADAR:STAGE_TWO-END")[0]
         self.assertNotIn("Legacy work", featured)
-        self.assertIn("本期暂无通过四维科研评价的推荐项目", featured)
+        self.assertIn("目前尚无重点推荐项目", featured)
         history = render.archive_cards("weekly", self.queue)
         self.assertIn(LEGACY_NOTE, history)
         self.assertIn("Legacy work", history)
