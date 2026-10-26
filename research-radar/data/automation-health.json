@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-26T01:04:24.588Z",
+  "checked_at": "2026-10-26T01:08:15.006Z",
   "overall_status": "watching",
   "watchdog": {
-    "last_run_at": "2026-10-26T01:04:24.588Z",
+    "last_run_at": "2026-10-26T01:08:15.006Z",
     "status": "completed",
-    "message": "2026-W44 weekly marker committed to dev once; radar-data queue refreshed at 2026-10-26T01:00:23Z with 20 >=8 candidates and no reported source failures; ChatGPT reviewed 3 and wrote schema v2 weekly report. No daily scan was triggered."
+    "message": "2026-W44 single scan trigger verified; 2026-10-26T01:00:23Z fresh queue: 20 >=8 candidates, 136 new source records, 0 source failures. Weekly report for 2026-W43 (previous 7-day window) validated and written; one canonical W43 archive retained."
   },
   "publication": {
     "status": "unknown",
-    "checked_at": "2026-10-26T01:04:24.588Z",
+    "checked_at": "2026-10-26T01:08:15.006Z",
     "refresh_workflow_run_url": null,
     "dev_preview_workflow_run_url": null,
     "home_content_verified": false,
     "detail_content_verified": false,
-    "message": "GitHub dev-preview branch now contains 2026-W44 and exact scores 8.61, 8.33, 7.99 (commit 5933025e73c07d3868a978aab8872c8a0bd48569). Public raw.githack branch alias still served an older week at inspection; immutable public endpoint and Actions completion could not be independently confirmed. Do not mark public synchronization success yet."
+    "message": "GitHub dev-preview branch contains current 2026-W43 report with three exact scores 8.61/8.33/7.99 and a single W43 archive; preview head 9f17253e99f4210fdfacfae23178330149487b86. Public raw.githack alias was observed serving a stale prior report, and immutable public URL plus Actions run completion were not independently verifiable. Public synchronization success is not claimed."
   }
 }
