@@ -1,10 +1,12 @@
 # 前沿动态
 
 <div class="radar-page-intro">
-<p>聚焦值得学生复现和继续研究的多模态视觉 AI 工作。先看重点推荐，再看本周精选和本月研究机会；历史周报、月报可按关键词、年份检索并展开查看。</p>
+<p>聚焦值得学生复现和继续研究的多模态视觉 AI 工作。重点推荐采用跨周滚动 Top 3：新资源只有在通过四维评价且综合评分严格高于当前榜单最低分时才替换原推荐；每周历史报告独立归档，供参考查阅。</p>
 </div>
 
 ## 重点推荐
+
+<p class="radar-current-note">跨周滚动维护，最多 3 项。只有新资源综合评分严格高于当前榜单最低分时，才会替换低分项；未达到替换条件时，现有 Top 3 保持不变。每周历史推荐独立归档，不随榜单变化而改写。</p>
 
 <div class="radar-review-intro">
 <p><strong>推荐标准：</strong>主题相关度 ≥8/10，综合评分 ≥7.5/10。</p>
@@ -15,16 +17,6 @@
 暂无通过科研价值复核的项目。
 <!-- RADAR:STAGE_TWO-END -->
 
-## 本周精选
-
-<p class="radar-section-period">WEEKLY_PERIOD_LABEL</p>
-
-<p class="radar-section-note">每期最多展示 3 项，突出研究价值、学生切入点和可核验的原始资源。资源配置为历史周报整理的参考值，尚未逐项独立实测；实际显存需求和吞吐量请在目标环境中复核。</p>
-
-<!-- RADAR:CHATGPT_WEEKLY-START -->
-尚无已存档的 ChatGPT 周报结果。
-<!-- RADAR:CHATGPT_WEEKLY-END -->
-
 ## 本月研究机会
 
 <p class="radar-section-note">月度报告用于归纳值得持续跟进的研究方向；没有已完成报告时，不以自动采集线索代替。</p>
@@ -33,9 +25,9 @@
 尚无已存档的 ChatGPT 月度研究机会。
 <!-- RADAR:CHATGPT_MONTHLY-END -->
 
-## 历史档案检索
+## 历史科研档案
 
-<p class="radar-section-note">历史报告按期保存。输入关键词，或选择周报/月报和年份；点击单条记录即可展开当期完整精选内容。</p>
+<p class="radar-section-note">各期周报与月报持续归档。支持按关键词、年份和类型检索；默认每页展示 6 期，可展开阅读完整评价。</p>
 
 <div class="radar-archive-toolbar" role="search" aria-label="历史档案检索">
   <label class="radar-archive-field radar-archive-keyword">
@@ -77,11 +69,17 @@
 <!-- RADAR:MONTHLY_ARCHIVE-END -->
 </div>
 
-## 补充发现：待评估线索
+<nav id="radar-archive-pagination" class="radar-archive-pagination" aria-label="历史科研档案分页" hidden>
+  <button id="radar-archive-prev" type="button">上一页</button>
+  <span id="radar-archive-page" aria-live="polite">第 1 页</span>
+  <button id="radar-archive-next" type="button">下一页</button>
+</nav>
+
+## 待复核研究线索
 
 <div class="radar-candidate-purpose">
-<p><strong>栏目用途：</strong>补充发现本周精选可能尚未覆盖的近期论文、开源代码和模型发布，作为后续科研价值评估的候选池。</p>
-<p><strong>请注意：</strong>这里不是推荐清单，也不是备用项目库。主题匹配度 ≥8.0 只表示与研究方向相关，尚未完成创新性、开源完整度、代码可运行性、复现成本和科研价值评估。学生确定选题时，请优先参考上方的“重点推荐”和“本周精选”。</p>
+<p><strong>栏目用途：</strong>记录近期尚未完成二次科研评价的论文、开源代码和模型发布，仅作为候选线索。</p>
+<p><strong>请注意：</strong>这里不是推荐清单，也不是备用项目库。主题匹配度 ≥8.0 只表示与研究方向相关，尚未完成创新性、开源完整度、代码可运行性、复现成本和科研价值评估。学生确定选题时，请优先参考上方的“重点推荐”。</p>
 </div>
 
 <details class="radar-candidate-details" markdown>
@@ -95,4 +93,4 @@
 
 </details>
 
-<p class="radar-page-note">周编号采用年度 52 周显示规则，ISO 第 53 周并入第 52 周；周报按报告周期起始日标记，月报按报告周期起始月份标记。历史档案只追加保存，不因最新一期更新而覆盖旧记录。</p>
+<p class="radar-page-note">周编号采用年度 52 周显示规则，ISO 第 53 周并入第 52 周；周次按报告研究周期起始日标记，月报按报告周期起始月份标记。历史档案只追加保存，不因最新一期更新而覆盖旧记录。</p>

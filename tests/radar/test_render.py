@@ -131,7 +131,7 @@ class RadarRenderTests(unittest.TestCase):
             queue = build_queue([candidate], now)
             self.assertEqual(queue["total"], 1)
             save(data / "screening-queue.json", queue)
-            save(data / "chatgpt-reviewed" / "latest-daily.json", {
+            valid_daily = {
                 "schema_version": 1, "report_type": "daily",
                 "screening_schema_version": 2,
                 "first_stage_threshold": 8.0,
@@ -153,6 +153,11 @@ class RadarRenderTests(unittest.TestCase):
                     "weights_open": None, "training_code_open": None,
                     "data_open": None
                 }]
+            }
+            save(data / "chatgpt-reviewed" / "latest-daily.json", valid_daily)
+            save(data / "chatgpt-reviewed" / "latest-weekly.json", {
+                **valid_daily, "report_type": "weekly",
+                "window_start": "2026-10-19", "window_end": "2026-10-26"
             })
             with patch.object(render, "DOCS", docs), patch.object(render, "DATA", data):
                 render.render(now)
@@ -173,66 +178,40 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn("周期任务运行验收", first["index.md"])
             self.assertNotIn("RPD+SARA", first["index.md"])
             self.assertNotIn("Unreviewed", first["index.md"])
-            self.assertIn("# 前沿动态", first["radar/index.md"])
-            self.assertIn("本周精选", first["radar/index.md"])
-            self.assertIn('## 本周精选\n\n<p class="radar-section-period">2026年第42周，筛选日期：2026-10-19</p>', first["radar/index.md"])
-            self.assertNotIn('（2026年第42周，筛选日期：2026-10-19）', first["radar/index.md"])
-            self.assertEqual(first["radar/index.md"].count("尚未逐项独立实测"), 1)
-            weekly_section = first["radar/index.md"].split("<!-- RADAR:CHATGPT_WEEKLY-START -->", 1)[1].split("<!-- RADAR:CHATGPT_WEEKLY-END -->", 1)[0]
-            self.assertIn("历史周报回顾", weekly_section)
-            self.assertIn("尚未按当前四维标准复评", weekly_section)
-            self.assertIn("radar-brief-heading", weekly_section)
-            self.assertNotIn("radar-period-badge", weekly_section)
-            self.assertNotIn("筛选日期：", weekly_section)
-            self.assertNotIn("报告周期：2026年第42周", weekly_section)
-            self.assertIn('<strong>参数量：</strong><span>2B</span>', weekly_section)
-            self.assertIn("GPU需求：", weekly_section)
-            self.assertNotIn("按已存档周报记录", weekly_section)
-            self.assertNotIn("原周报", weekly_section)
-            self.assertNotIn("已存档周报", weekly_section)
-            self.assertNotIn("A 优先级", weekly_section)
-            self.assertNotIn("需实测复核", weekly_section)
-            self.assertIn("尚未按当前四维标准复评", first["radar/index.md"])
-            self.assertIn("本月研究机会", first["radar/index.md"])
-            self.assertIn("radar-brief-card", first["radar/index.md"])
-            self.assertIn("MaLoW", first["radar/index.md"])  # Historical only
-            self.assertIn("https://arxiv.org/abs/2610.22070", first["radar/index.md"])
-            self.assertIn("Unreviewed", first["radar/index.md"])
-            self.assertIn("四项评分", first["radar/index.md"])
-            self.assertIn("radar-review-card", first["radar/index.md"])
-            self.assertIn("radar-review-score-grid", first["radar/index.md"])
-            self.assertIn("评分来源：", first["radar/index.md"])
-            self.assertIn("评价时间：", first["radar/index.md"])
-            self.assertIn("置信度：中", first["radar/index.md"])
-            self.assertIn("radar-review-detail-grid", first["radar/index.md"])
-            self.assertIn("相关资源", first["radar/index.md"])
-            featured_section = first["radar/index.md"].split("## 本周精选", 1)[0]
-            self.assertIn("推荐标准", featured_section)
-            self.assertIn("评分说明", featured_section)
-            self.assertIn("为什么值得研究", featured_section)
+            radar_page = first["radar/index.md"]
+            self.assertIn("# 前沿动态", radar_page)
+            self.assertIn("## 重点推荐", radar_page)
+            self.assertNotIn("## 本期重点推荐", radar_page)
+            self.assertIn("跨周滚动维护", radar_page)
+            self.assertNotIn("WEEKLY_PERIOD_LABEL", radar_page)
+            self.assertNotIn("## 本周精选", radar_page)
+            self.assertNotIn("RADAR:CHATGPT_WEEKLY", radar_page)
+            self.assertIn("2026年第43周", radar_page)
+            self.assertIn("本月研究机会", radar_page)
+            self.assertIn("历史科研档案", radar_page)
+            self.assertIn("待复核研究线索", radar_page)
+            self.assertIn('id="radar-archive-pagination"', radar_page)
+            self.assertIn('data-archive-type="weekly"', radar_page)
+            self.assertIn("RADAR:WEEKLY_ARCHIVE-START", (ROOT / "docs" / "radar" / "index.md").read_text(encoding="utf-8"))
+            featured_section = radar_page.split("<!-- RADAR:STAGE_TWO-START -->", 1)[1].split("<!-- RADAR:STAGE_TWO-END -->", 1)[0]
+            self.assertEqual(featured_section.count('class="radar-review-card"'), 1)
+            self.assertIn("Unreviewed", featured_section)
+            self.assertIn("四项评分", featured_section)
+            self.assertIn("ChatGPT 四维科研价值评价", featured_section)
             self.assertIn("学生可以怎么做", featured_section)
             self.assertIn("论文与项目资源", featured_section)
-            self.assertNotIn("主要来源", featured_section)
-            self.assertNotIn("补充来源", featured_section)
-            self.assertNotIn("通过复核", featured_section)
-            self.assertNotIn("主题匹配度 ≥8.0", featured_section)
-            self.assertNotIn("原始证据", featured_section)
-            self.assertIn("radar-review-intro", first["radar/index.md"])
-            self.assertIn("2026年第42周", first["radar/index.md"])
-            self.assertIn("历史档案检索", first["radar/index.md"])
-            self.assertIn("radar-archive-toolbar", first["radar/index.md"])
-            self.assertIn("radar-archive-details", first["radar/index.md"])
-            self.assertIn('data-archive-type="weekly"', first["radar/index.md"])
-            self.assertIn("RADAR:WEEKLY_ARCHIVE-START", (ROOT / "docs" / "radar" / "index.md").read_text(encoding="utf-8"))
+            self.assertNotIn("RPD+SARA", featured_section)
+            self.assertIn("RPD+SARA", radar_page)  # Old record exists in archive
+            self.assertIn("尚未按当前四维标准复评", radar_page)
+            self.assertIn("MaLoW", radar_page)
+            self.assertIn("Unreviewed", radar_page)
+            self.assertIn('<details class="radar-candidate-details"', radar_page)
+            self.assertNotIn("[浏览项目库]", radar_page)
+            self.assertNotIn("[查看研究任务]", radar_page)
             weekly_archive_files = list((data / "chatgpt-reviewed" / "archive" / "weekly").glob("*.json"))
-            self.assertEqual(len(weekly_archive_files), 1)  # Existing legacy files kept, not re-created
+            self.assertEqual(len(weekly_archive_files), 2)
             monthly_archive_dir = data / "chatgpt-reviewed" / "archive" / "monthly"
             self.assertFalse(monthly_archive_dir.exists() and list(monthly_archive_dir.glob("*.json")))
-            self.assertNotIn("日度统计", first["radar/index.md"])
-            self.assertNotIn("历史每日预警", first["radar/index.md"])
-            self.assertIn("<details class=\"radar-candidate-details\"", first["radar/index.md"])
-            self.assertNotIn("[浏览项目库]", first["radar/index.md"])
-            self.assertNotIn("[查看研究任务]", first["radar/index.md"])
             config = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
             self.assertIn("radar/projects.md", config)
             self.assertIn("radar/tasks.md", config)

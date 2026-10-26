@@ -12,6 +12,8 @@ sys.path.insert(0, str(ROOT / "scripts" / "radar"))
 from core import save
 from publication_gate import assess_report, validate_snapshot, snapshot_digest, LEGACY_NOTE
 from verify_publication import verify
+import render
+from top3 import update_top3_state, top3_digest
 from test_archive import QUEUE, report
 
 
@@ -24,29 +26,40 @@ class PublicationVerificationTests(unittest.TestCase):
             detail.parent.mkdir(parents=True, exist_ok=True)
             reports = {kind: {} for kind in ("screened", "daily", "weekly", "monthly")}
             reports["weekly"], reports["screened"] = weekly or {}, screened or {}
+            save(root / "screening-queue.json", QUEUE)
+            if weekly:
+                save(root / "chatgpt-reviewed/latest-weekly.json", weekly)
+            if screened:
+                save(root / "chatgpt-reviewed/latest-screened.json", screened)
+            try:
+                top3_state = update_top3_state(reports, QUEUE, data_dir=root)
+            except ValueError:
+                top3_state = {
+                    "schema_version": 1,
+                    "policy": "replace-only-if-strictly-higher",
+                    "updated_at": "2026-10-22T12:00:00Z",
+                    "last_evaluated_report_at": None,
+                    "items": [],
+                }
+                save(root / "chatgpt-reviewed/top3.json", top3_state)
             home.write_text(
                 "ChatGPT 科研价值精选 周期任务运行验收" if old_home
                 else "从当前主线走向未来 进入前沿动态",
                 encoding="utf-8"
             )
             detail.write_text(
-                "前沿动态 重点推荐 本周精选 本月研究机会 历史档案检索 "
-                "补充发现：待评估线索 当前没有项目同时达到推荐标准 "
-                + f'<div data-radar-snapshot="{snapshot_digest(reports, QUEUE)}"></div>'
+                "前沿动态 重点推荐 本月研究机会 历史科研档案 待复核研究线索 "
+                + '<nav id="radar-archive-pagination" hidden></nav>'
+                + f'<div data-radar-snapshot="{snapshot_digest(reports, QUEUE)}" '
+                + f'data-radar-top3-snapshot="{top3_digest(top3_state)}"></div>'
                 + "<!-- RADAR:STAGE_TWO-START -->"
-                + "当前没有项目同时达到推荐标准 Compact multimodal evaluation"
+                + render.top3_detail_listing(top3_state)
                 + "<!-- RADAR:STAGE_TWO-END -->"
-                + "<!-- RADAR:CHATGPT_WEEKLY-START -->"
-                + LEGACY_NOTE + " Compact multimodal evaluation"
-                + "<!-- RADAR:CHATGPT_WEEKLY-END -->"
+                + "<!-- RADAR:WEEKLY_ARCHIVE-START -->"
+                + LEGACY_NOTE + "<!-- RADAR:WEEKLY_ARCHIVE-END -->"
                 + "<!-- RADAR:CHATGPT_MONTHLY-START --><!-- RADAR:CHATGPT_MONTHLY-END -->",
                 encoding="utf-8"
             )
-            save(root / "screening-queue.json", QUEUE)
-            if weekly:
-                save(root / "chatgpt-reviewed/latest-weekly.json", weekly)
-            if screened:
-                save(root / "chatgpt-reviewed/latest-screened.json", screened)
             return verify(home, detail, root)
 
     def test_current_page_markers_pass_old_markers_rejected(self):
