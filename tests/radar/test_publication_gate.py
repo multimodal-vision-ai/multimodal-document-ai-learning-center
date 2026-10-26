@@ -28,7 +28,7 @@ class PublicationTests(unittest.TestCase):
         (self.docs / "index.md").write_text(
             "# 多模态视觉AI学习中心\n\n从当前主线走向未来\n\n[进入前沿动态](radar/index.md)\n", encoding="utf-8"
         )
-        sections = "# 前沿动态\n\n## 本期重点推荐\n\n"
+        sections = "# 前沿动态\n\n## 重点推荐\n\n"
         for marker, heading in (("STAGE_TWO", ""), ("CHATGPT_MONTHLY", "本月研究机会"),
                                 ("WEEKLY_ARCHIVE", "历史科研档案"), ("MONTHLY_ARCHIVE", "历史月报"),
                                 ("CANDIDATES", "待复核研究线索")):
@@ -116,7 +116,7 @@ class PublicationTests(unittest.TestCase):
         self.assertIn("2026-10-19", page)
         featured = page.split("RADAR:STAGE_TWO-START -->")[1].split("<!-- RADAR:STAGE_TWO-END")[0]
         self.assertNotIn("Legacy work", featured)
-        self.assertIn("本期暂无通过四维科研评价的推荐项目", featured)
+        self.assertIn("目前尚无重点推荐项目", featured)
         history = render.archive_cards("weekly", self.queue)
         self.assertIn(LEGACY_NOTE, history)
         self.assertIn("Legacy work", history)
@@ -124,7 +124,7 @@ class PublicationTests(unittest.TestCase):
             self.assertIn(f"{label}：未提供", history)
         self.assertEqual(collect_screened({"weekly": legacy}, self.queue), ([], []))
 
-    def test_latest_weekly_only_and_no_high_value_clears_featured_cards(self):
+    def test_persistent_top3_survives_a_week_without_high_value_items(self):
         render.render(NOW)
         page = (self.docs / "radar/index.md").read_text(encoding="utf-8")
         featured = page.split("RADAR:STAGE_TWO-START -->")[1].split("<!-- RADAR:STAGE_TWO-END")[0]
@@ -135,9 +135,9 @@ class PublicationTests(unittest.TestCase):
         render.render(NOW)
         page = (self.docs / "radar/index.md").read_text(encoding="utf-8")
         featured = page.split("RADAR:STAGE_TWO-START -->")[1].split("<!-- RADAR:STAGE_TWO-END")[0]
-        self.assertEqual(featured.count('class="radar-review-card"'), 0)
-        self.assertIn("本期暂无通过四维科研评价的推荐项目", featured)
-        self.assertIn(RESEARCH["title"], page)
+        self.assertEqual(featured.count('class="radar-review-card"'), 1)
+        self.assertIn(RESEARCH["title"], featured)
+        self.assertNotIn("目前尚无重点推荐项目", featured)
 
     def test_archive_keeps_frozen_source_queue_and_rejects_bad_existing_v2(self):
         render.archive_latest_reports({"weekly": self.good}, self.queue)
@@ -186,7 +186,7 @@ class PublicationTests(unittest.TestCase):
         built = subprocess.run([sys.executable, "-m", "mkdocs", "build", "--strict",
                                 "--no-directory-urls", "--config-file", str(config)], capture_output=True)
         self.assertEqual(built.returncode, 0, built.stderr)
-        self.assertEqual(verify(home, detail, self.data), ([], 0))
+        self.assertEqual(verify(home, detail, self.data), ([], 1))
 
 
 if __name__ == "__main__":
