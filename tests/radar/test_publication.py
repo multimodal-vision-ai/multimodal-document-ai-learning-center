@@ -30,15 +30,14 @@ class PublicationVerificationTests(unittest.TestCase):
                 encoding="utf-8"
             )
             detail.write_text(
-                "前沿动态 重点推荐 本周精选 本月研究机会 历史档案检索 "
-                "补充发现：待评估线索 当前没有项目同时达到推荐标准 "
+                "前沿动态 本期重点推荐 本月研究机会 历史科研档案 待复核研究线索 "
+                + '<nav id="radar-archive-pagination" hidden></nav>'
                 + f'<div data-radar-snapshot="{snapshot_digest(reports, QUEUE)}"></div>'
                 + "<!-- RADAR:STAGE_TWO-START -->"
-                + "当前没有项目同时达到推荐标准 Compact multimodal evaluation"
+                + "本期暂无通过四维科研评价的推荐项目 Compact multimodal evaluation"
                 + "<!-- RADAR:STAGE_TWO-END -->"
-                + "<!-- RADAR:CHATGPT_WEEKLY-START -->"
-                + LEGACY_NOTE + " Compact multimodal evaluation"
-                + "<!-- RADAR:CHATGPT_WEEKLY-END -->"
+                + "<!-- RADAR:WEEKLY_ARCHIVE-START -->"
+                + LEGACY_NOTE + "<!-- RADAR:WEEKLY_ARCHIVE-END -->"
                 + "<!-- RADAR:CHATGPT_MONTHLY-START --><!-- RADAR:CHATGPT_MONTHLY-END -->",
                 encoding="utf-8"
             )
