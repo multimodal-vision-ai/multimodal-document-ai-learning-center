@@ -178,6 +178,7 @@ def update_top3_state(reports, queue, data_dir=DATA, now=None):
         state = bootstrap_top3(data_dir, reports=reports, queue=queue, now=now)
 
     before = json.dumps(state, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    original_items = copy.deepcopy(state["items"])
     items = copy.deepcopy(state["items"])
     report = reports.get("weekly", {}) if isinstance(reports, dict) else {}
     generated_at = report.get("generated_at") if isinstance(report, dict) else None
@@ -216,8 +217,8 @@ def update_top3_state(reports, queue, data_dir=DATA, now=None):
         state["last_evaluated_report_at"] = generated_at
     after_items = json.dumps(state, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     if before != after_items:
-        # The list's change time only moves when the stored list or evaluation marker changes.
-        if items != load_top3_state(data_dir)["items"] if path.exists() else True:
+        # The list's change time only moves when the ranked recommendations actually change.
+        if items != original_items:
             state["updated_at"] = _timestamp(now)
         validate_top3_state(state)
         save(path, state)
