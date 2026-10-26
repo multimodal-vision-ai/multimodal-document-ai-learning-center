@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "run_week": null,
-  "triggered_at": null,
-  "purpose": "Weekly GitHub scan is initiated only by ChatGPT weekly task; do not update daily."
+  "run_week": "2026-W44",
+  "triggered_at": "2026-10-26T00:59:54.212Z",
+  "purpose": "Weekly ChatGPT-initiated public-source scan, deduplication and >=8.0 topic screening; one trigger per week, dev only."
 }
