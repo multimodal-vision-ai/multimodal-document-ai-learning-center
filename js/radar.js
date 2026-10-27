@@ -35,6 +35,7 @@
 
   function setupArchiveSearch() {
     const search = document.getElementById("radar-archive-search");
+    const searchButton = document.getElementById("radar-archive-search-button");
     const type = document.getElementById("radar-archive-type");
     const year = document.getElementById("radar-archive-year");
     const period = document.getElementById("radar-archive-period");
@@ -220,7 +221,19 @@
     }
     if (!search.dataset.radarArchiveAttached) {
       search.addEventListener("input", refresh);
+      // Enter runs the search instead of inserting an unintended newline.
+      // Shift+Enter remains available when a multiline query is deliberately needed.
+      search.addEventListener("keydown", event => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          refresh();
+        }
+      });
       search.dataset.radarArchiveAttached = "1";
+    }
+    if (searchButton && !searchButton.dataset.radarArchiveAttached) {
+      searchButton.addEventListener("click", refresh);
+      searchButton.dataset.radarArchiveAttached = "1";
     }
   }
 

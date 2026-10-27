@@ -751,6 +751,44 @@
   font:inherit;
   font-size:.82rem;
 }
+.radar-archive-search-row{
+  display:flex;
+  align-items:stretch;
+  gap:.5rem;
+  width:100%;
+  min-width:0;
+}
+.radar-archive-field .radar-archive-search-row textarea{
+  flex:1 1 auto;
+  width:100%;
+  min-width:0;
+}
+.radar-archive-search-button{
+  flex:0 0 auto;
+  align-self:stretch;
+  min-width:4.5rem;
+  padding:.45rem .9rem;
+  border:1px solid var(--md-primary-fg-color);
+  border-radius:.45rem;
+  background:var(--md-primary-fg-color);
+  color:var(--md-primary-bg-color);
+  font:inherit;
+  font-size:.82rem;
+  font-weight:700;
+  cursor:pointer;
+}
+.radar-archive-search-button:hover{
+  filter:brightness(.96);
+}
+.radar-archive-search-button:focus-visible{
+  outline:2px solid var(--md-accent-fg-color);
+  outline-offset:2px;
+}
+.radar-archive-search-hint{
+  font-size:.68rem;
+  font-weight:400;
+  color:var(--md-default-fg-color--light);
+}
 .radar-archive-field textarea{
   display:block;
   box-sizing:border-box;
