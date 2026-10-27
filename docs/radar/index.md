@@ -52,7 +52,7 @@
   </label>
   <label class="radar-archive-field radar-archive-keyword">
     <span>关键词（可选）</span>
-    <input id="radar-archive-search" type="search" placeholder="在所选报告中搜索…" autocomplete="off">
+    <textarea id="radar-archive-search" rows="1" placeholder="在所选报告中搜索…" autocomplete="off" aria-label="在所选报告中搜索关键词"></textarea>
   </label>
   <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">请先选择年份和报告类型，再选择期次</p>
 </div>
