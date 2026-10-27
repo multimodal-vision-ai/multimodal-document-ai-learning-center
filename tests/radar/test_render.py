@@ -196,6 +196,7 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn("Unreviewed", first["index.md"])
             radar_page = first["radar/index.md"]
             visible_radar_text = re.sub(r"<!--.*?-->|<[^>]*>", "", radar_page, flags=re.S)
+            visible_radar_text = re.sub(r"\]\([^)]+\)", "]", visible_radar_text)
             self.assertNotRegex(visible_radar_text, r"(?i)ChatGPT")
             self.assertIn("# 前沿动态", radar_page)
             self.assertIn("## 重点推荐", radar_page)
