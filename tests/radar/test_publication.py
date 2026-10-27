@@ -18,7 +18,7 @@ from test_archive import QUEUE, report
 
 
 class PublicationVerificationTests(unittest.TestCase):
-    def _verify(self, weekly=None, screened=None, old_home=False):
+    def _verify(self, weekly=None, screened=None, old_home=False, include_archive_controls=True):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             home = root / "index.html"
@@ -49,7 +49,9 @@ class PublicationVerificationTests(unittest.TestCase):
             )
             detail.write_text(
                 "前沿动态 重点推荐 本月研究机会 历史科研档案 待复核研究线索 "
-                + '<nav id="radar-archive-pagination" hidden></nav>'
+                + ('<input id="radar-archive-search"><button id="radar-archive-search-submit"></button>'
+                   '<select id="radar-archive-year"></select><select id="radar-archive-type"></select>'
+                   '<select id="radar-archive-period"></select>' if include_archive_controls else '')
                 + f'<div data-radar-snapshot="{snapshot_digest(reports, QUEUE)}" '
                 + f'data-radar-top3-snapshot="{top3_digest(top3_state)}"></div>'
                 + "<!-- RADAR:STAGE_TWO-START -->"
@@ -68,6 +70,10 @@ class PublicationVerificationTests(unittest.TestCase):
         self.assertEqual(count, 0)
         errors, _ = self._verify(old_home=True)
         self.assertTrue(any("navigation marker" in e for e in errors))
+
+    def test_missing_archive_search_controls_are_rejected(self):
+        errors, _ = self._verify(include_archive_controls=False)
+        self.assertTrue(any("archive search controls are incomplete" in error for error in errors))
 
     def test_low_open_source_is_rejected_by_publication_verifier(self):
         data = report()
