@@ -579,6 +579,7 @@ def clean_value_point(value):
 def rating_metadata(item, report):
     source = (item.get("scoring_source") or item.get("_scoring_source") or report.get("scoring_source")
               or ("四维科研价值评价" if item.get("evaluation_dimensions") else "未提供"))
+    source = re.sub(r"ChatGPT", "", str(source), flags=re.I).strip() or "未提供"
     evaluated = item.get("screened_at") or item.get("evaluated_at") or report.get("evaluated_at")
     raw_confidence = item.get("confidence")
     confidence = {"high": "高", "medium": "中", "low": "低"}.get(raw_confidence, raw_confidence or "未提供")
