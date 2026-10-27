@@ -2,6 +2,7 @@
 import sys
 import tempfile
 import unittest
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
@@ -15,6 +16,20 @@ DIMENSIONS = {"innovation": 10, "openness": 9, "compute": 8,
               "reproducibility": 9, "extension": 9, "commercialization": 8}
 
 class RadarRenderTests(unittest.TestCase):
+
+    def test_strip_visible_branding_preserves_links_and_archive_markers(self):
+        source = (
+            "ChatGPT is a research assistant. "
+            "[reference](https://example.org/ChatGPT) "
+            "<!-- RADAR:CHATGPT_MONTHLY-START -->"
+            "<span>ChatGPT label</span>"
+        )
+        cleaned = render.strip_visible_branding(source)
+        visible = re.sub(r"<!--.*?-->|<[^>]*>", "", cleaned, flags=re.S)
+        self.assertNotRegex(visible, r"(?i)ChatGPT")
+        self.assertIn("https://example.org/ChatGPT", cleaned)
+        self.assertIn("<!-- RADAR:CHATGPT_MONTHLY-START -->", cleaned)
+
     def test_value_points_use_student_facing_language(self):
         examples = [
             "原周报列为 A 优先级；模型权重和数据被记录为开放，且提供了 GitHub 与 Hugging Face 入口，适合作为文档解析的复现基线。",
@@ -179,6 +194,8 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn("RPD+SARA", first["index.md"])
             self.assertNotIn("Unreviewed", first["index.md"])
             radar_page = first["radar/index.md"]
+            visible_radar_text = re.sub(r"<!--.*?-->|<[^>]*>", "", radar_page, flags=re.S)
+            self.assertNotRegex(visible_radar_text, r"(?i)ChatGPT")
             self.assertIn("# 前沿动态", radar_page)
             self.assertIn("## 重点推荐", radar_page)
             self.assertNotIn("## 本期重点推荐", radar_page)
