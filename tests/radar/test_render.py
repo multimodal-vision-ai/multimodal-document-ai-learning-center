@@ -35,23 +35,51 @@ class RadarRenderTests(unittest.TestCase):
         paper_url = "https://arxiv.org/abs/2610.14531v2"
         github_url = "https://github.com/SCUT-DLVCLab/LongHisDoc"
         dataset_url = "https://huggingface.co/datasets/qweq12433454/LongHisDoc"
+        title = "LongHisDoc: A Comprehensive Benchmark for Chinese Long Historical Document Understanding"
+        queue = {
+            "candidates": [{
+                "id": "arxiv-2610-14531",
+                "title": title,
+                "source_url": paper_url,
+                "paper_url": paper_url,
+                "github_url": github_url,
+                "huggingface_url": dataset_url,
+                "match_score": 8.5,
+            }]
+        }
+        dimensions = {
+            key: {"score": 8.0, "rationale": "Supported by published evidence and testable."}
+            for key in ("innovation", "open_source", "reproducibility", "research_potential")
+        }
         report = {
+            "schema_version": 1,
+            "screening_schema_version": 2,
+            "first_stage_threshold": 8.0,
+            "report_type": "weekly",
             "status": "completed",
             "generated_at": "2026-10-26T01:05:33Z",
             "window_start": "2026-10-19",
             "window_end": "2026-10-26",
             "items": [{
-                "title": "LongHisDoc: A Comprehensive Benchmark for Chinese Long Historical Document Understanding",
-                "selection_status": "selected",
+                "candidate_id": "arxiv-2610-14531",
+                "title": title,
+                "selection_status": "recommended",
                 "summary": "A benchmark for long historical document understanding.",
                 "why_selected": "The benchmark supports reproducible evaluation.",
                 "research_opportunity": "Evaluate cross-page evidence retrieval.",
+                "evaluation_dimensions": dimensions,
+                "confidence": "medium",
                 "evidence_urls": [paper_url, github_url, dataset_url],
+                "parameters": None,
+                "gpu_requirement": None,
+                "weights_open": None,
+                "training_code_open": None,
+                "data_open": None,
             }],
         }
 
         html = render.chatgpt_report_listing(
-            report, "weekly", limit=None, include_note=False, queue={}, historical=True
+            report, "weekly", limit=None, include_note=False, queue=queue, historical=True
         )
 
         self.assertIn("论文与项目资源", html)
