@@ -110,6 +110,71 @@
       period.value = available.includes(oldValue) ? oldValue : "";
     }
 
+    function clearKeywordHighlights() {
+      items.forEach(item => {
+        item.querySelectorAll("mark.radar-search-hit").forEach(mark => {
+          mark.replaceWith(document.createTextNode(mark.textContent || ""));
+        });
+        item.normalize();
+      });
+    }
+
+    function highlightKeywordMatches() {
+      const keyword = search.value.trim();
+      if (!keyword) return 0;
+      const needle = keyword.toLocaleLowerCase();
+      const visibleItems = items.filter(item => !item.hidden);
+      let matchCount = 0;
+      let firstHit = null;
+
+      visibleItems.forEach(item => {
+        const walker = document.createTreeWalker(item, NodeFilter.SHOW_TEXT);
+        const textNodes = [];
+        while (walker.nextNode()) {
+          const node = walker.currentNode;
+          const parent = node.parentElement;
+          if (!node.nodeValue || !node.nodeValue.toLocaleLowerCase().includes(needle)) continue;
+          if (parent && parent.closest("script,style,textarea,select,button,mark")) continue;
+          textNodes.push(node);
+        }
+
+        textNodes.forEach(node => {
+          const original = node.nodeValue || "";
+          const lower = original.toLocaleLowerCase();
+          const fragment = document.createDocumentFragment();
+          let cursor = 0;
+          let index = lower.indexOf(needle, cursor);
+          while (index !== -1) {
+            if (index > cursor) fragment.appendChild(document.createTextNode(original.slice(cursor, index)));
+            const mark = document.createElement("mark");
+            mark.className = "radar-search-hit";
+            mark.textContent = original.slice(index, index + keyword.length);
+            fragment.appendChild(mark);
+            if (!firstHit) firstHit = mark;
+            matchCount += 1;
+            cursor = index + keyword.length;
+            index = lower.indexOf(needle, cursor);
+          }
+          if (cursor < original.length) fragment.appendChild(document.createTextNode(original.slice(cursor)));
+          if (node.parentNode) node.parentNode.replaceChild(fragment, node);
+        });
+      });
+
+      if (firstHit) {
+        firstHit.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      if (count && matchCount > 0) {
+        count.textContent += " · 已定位 " + matchCount + " 处关键词";
+      }
+      return matchCount;
+    }
+
+    function runKeywordSearch() {
+      clearKeywordHighlights();
+      refresh();
+      highlightKeywordMatches();
+    }
+
     function refresh() {
       const keyword = search.value.trim().toLowerCase();
       const typeValue = type.value;
@@ -220,19 +285,22 @@
       period.dataset.radarArchiveAttached = "1";
     }
     if (!search.dataset.radarArchiveAttached) {
-      search.addEventListener("input", refresh);
+      search.addEventListener("input", () => {
+        clearKeywordHighlights();
+        refresh();
+      });
       // Enter runs the search instead of inserting an unintended newline.
       // Shift+Enter remains available when a multiline query is deliberately needed.
       search.addEventListener("keydown", event => {
         if (event.key === "Enter" && !event.shiftKey) {
           event.preventDefault();
-          refresh();
+          runKeywordSearch();
         }
       });
       search.dataset.radarArchiveAttached = "1";
     }
     if (searchButton && !searchButton.dataset.radarArchiveAttached) {
-      searchButton.addEventListener("click", refresh);
+      searchButton.addEventListener("click", runKeywordSearch);
       searchButton.dataset.radarArchiveAttached = "1";
     }
   }

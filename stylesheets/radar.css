@@ -836,6 +836,17 @@
   gap:.55rem;
   margin:.55rem 0 .9rem;
 }
+.radar-archive-item mark.radar-search-hit{
+  padding:.02em .08em;
+  border-radius:.18em;
+  background:#ffe58a;
+  color:#242424;
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+}
+.radar-archive-item mark.radar-search-hit:target{
+  outline:2px solid var(--md-primary-fg-color);
+}
 .radar-archive-item{
   min-width:0;
   padding:.78rem .85rem;
