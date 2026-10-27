@@ -67,12 +67,12 @@ shanshui_scene: 7
 
     ### 从已有成果继续，而不是重新开始
 
-    - 把[项目 01](../experiments/Experiment_01/README.md)中的 Prompt 对照扩展成更可靠的文档评测；
+    - 把[项目 01](../../experiments/Experiment_01/README.md)中的 Prompt 对照扩展成更可靠的文档评测；
     - 把 Week 8–10 的训练 runs 整理成“方法—效果—成本—失败”决策报告；
     - 把 Week 11 的最小论文复现转化为一个受控改进实验；
     - 把文档中的空间证据问题迁移到短视频，先形成任务定义和最小 baseline。
 
-    完成设计后，对照[Week 12](../learning/00_12_Week_Bootcamp.md#week-12)整理作品，并按[展厅发布清单](#publish-capstone)准备展示。
+    完成设计后，对照[Week 12](../../learning/00_12_Week_Bootcamp.md#week-12)整理作品，并按[展厅发布清单](#publish-capstone)准备展示。
 
     ---
 
