@@ -417,7 +417,7 @@ def chatgpt_item_card(item, report_type, report_generated):
     return (
         '<article class="radar-feature-card radar-chatgpt-card">'
         '<div class="radar-feature-meta">'
-        '<span class="radar-tag radar-tag-chatgpt">ChatGPT 已筛选</span>'
+        '<span class="radar-tag radar-tag-chatgpt">已完成评价</span>'
         f'<span class="radar-event-label">{escape(report_label)}</span>'
         f'<span class="radar-event-label">{escape(category_label(item.get("category")))}</span>'
         '</div>'
@@ -470,33 +470,33 @@ def chatgpt_home_section(chatgpt_reports, now, limit=3):
     )
     if not cards:
         cards = (
-            '<div class="radar-empty-state"><strong>尚无 ChatGPT 任务筛选结果写入共享档案。</strong>'
-            '<p>本区域只展示每日预警、周报和选题任务实际生成并保存的结果，不会把爬虫候选冒充为 ChatGPT 推荐。</p></div>'
+            '<div class="radar-empty-state"><strong>尚无科研评价结果写入共享档案。</strong>'
+            '<p>本区域只展示已生成并保存的研究评价结果，不会把自动采集候选冒充为推荐。</p></div>'
         )
     if latest_report_time:
         age = now.astimezone(timezone.utc) - latest_report_time
         time_text = latest_report_time.strftime("%Y-%m-%d %H:%M UTC")
         if age > timedelta(hours=36):
             status = (
-                f'<div class="radar-home-warning" role="status">最近一次 ChatGPT 结果存档：{escape(time_text)}。'
+                f'<div class="radar-home-warning" role="status">最近一次科研评价结果存档：{escape(time_text)}。'
                 '该快照已超过 36 小时；下次计划任务成功写入后，此处才会更新为新结果。</div>'
             )
         else:
             status = f'<div class="radar-home-health" role="status">最近一次 ChatGPT 结果存档：{escape(time_text)}</div>'
     else:
         status = (
-            '<div class="radar-home-warning" role="status">尚未记录 ChatGPT 任务结果的生成时间；'
-            '自动采集候选不会替代 ChatGPT 的科研判断。</div>'
+            '<div class="radar-home-warning" role="status">尚未记录科研评价结果的生成时间；'
+            '自动采集候选不会替代科研判断。</div>'
         )
     return f"""
 <section class="radar-home-card radar-chatgpt-section" aria-labelledby="radar-chatgpt-title">
-<div class="radar-home-section-heading"><h3 id="radar-chatgpt-title">历史 ChatGPT 筛选档案（待四维复评）</h3>
+<div class="radar-home-section-heading"><h3 id="radar-chatgpt-title">历史科研筛选档案（待四维复评）</h3>
 <span>每日预警 · 周报 · 月度选题</span></div>
-<p>此处保存过去 ChatGPT 研究任务曾筛选的成果；这些条目未必具有按当前四维标准计算的科研价值评分，不能直接算作第二轮通过的推荐。</p>
+<p>此处保存过去研究任务曾筛选的成果；这些条目未必具有按当前四维标准计算的科研价值评分，不能直接算作第二轮通过的推荐。</p>
 {status}
 <div class="radar-feature-grid radar-chatgpt-grid">{cards}</div>
-<div class="radar-home-actions"><a class="radar-home-action-primary" href="radar/index.html#chatgpt-reviewed">查看全部 ChatGPT 筛选结果与理由 →</a></div>
-<p class="radar-home-footnote">ChatGPT 筛选是研究辅助判断，不等同于同行评审；所有项目仍应保留原始来源与可核验证据。未知的参数规模、权重、训练代码、数据和 GPU 需求会明确标为未核实。</p>
+<div class="radar-home-actions"><a class="radar-home-action-primary" href="radar/index.html#chatgpt-reviewed">查看全部筛选结果与理由 →</a></div>
+<p class="radar-home-footnote">科研价值筛选是研究辅助判断，不等同于同行评审；所有项目仍应保留原始来源与可核验证据。未知的参数规模、权重、训练代码、数据和 GPU 需求会明确标为未核实。</p>
 </section>
 """
 
@@ -558,7 +558,9 @@ def clean_value_point(value):
 
 def rating_metadata(item, report):
     source = (item.get("scoring_source") or item.get("_scoring_source") or report.get("scoring_source")
-              or ("ChatGPT 四维科研价值评价" if item.get("evaluation_dimensions") else "未提供"))
+              or ("四维科研价值评价" if item.get("evaluation_dimensions") else "未提供"))
+    source = str(source).replace("ChatGPT ", "").replace("ChatGPT", "").replace("chatgpt ", "").replace("chatgpt", "").strip()
+    source = source or ("四维科研价值评价" if item.get("evaluation_dimensions") else "未提供")
     evaluated = item.get("screened_at") or item.get("evaluated_at") or report.get("evaluated_at")
     raw_confidence = item.get("confidence")
     confidence = {"high": "高", "medium": "中", "low": "低"}.get(raw_confidence, raw_confidence or "未提供")
@@ -577,7 +579,7 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True, queu
     queue = queue if queue is not None else load(DATA / "screening-queue.json", {})
     state, selected = assess_report(report, report_type, queue)
     if not isinstance(report, dict) or not report:
-        return f'<div class="radar-empty-state">尚无已存档的 ChatGPT{label}结果。</div>'
+        return f'<div class="radar-empty-state">尚无已存档的{label}报告。</div>'
     status = report.get("status")
     generated_raw = report.get("generated_at")
     generated = escape(str(generated_raw or "时间未记录")[:10])
@@ -824,7 +826,7 @@ def stage_two_home_section(chatgpt_reports, queue):
     elif not reviewed:
         body = ('<div class="radar-empty-state"><strong>尚无通过四维科研价值核验的第二轮推荐。</strong>'
                 '<p>第一轮匹配度 ≥8.0 的候选不会自动晋升为推荐。'
-                '待 ChatGPT 计划任务提交带证据、逐项评分的报告后，本区域自动更新。</p></div>')
+                '待研究评价任务提交带证据、逐项评分的报告后，本区域自动更新。</p></div>')
     else:
         cards = []
         for item in reviewed[:3]:
@@ -843,7 +845,7 @@ def stage_two_home_section(chatgpt_reports, queue):
             cards.append(
                 '<article class="radar-feature-card radar-chatgpt-card">'
                 '<div class="radar-feature-meta"><span class="radar-tag radar-tag-chatgpt">'
-                'ChatGPT 二次评价</span>'
+                '四维科研价值评价</span>'
                 f'<span class="radar-match-score">综合 {escape(item["value_score"])}/10</span></div>'
                 f'<h4>{link(title_url, item["title"])}</h4>'
                 f'<p>{escape(item["summary"])}</p>'
@@ -859,12 +861,12 @@ def stage_two_home_section(chatgpt_reports, queue):
             )
         body = '<div class="radar-feature-grid radar-chatgpt-grid">' + "".join(cards) + '</div>'
     return (
-        '<section class="radar-chatgpt-priority" aria-label="ChatGPT 二次筛选科研精选">'
-        '<div class="radar-home-section-heading"><h3>ChatGPT 科研价值精选 · 第二轮</h3>'
+        '<section class="radar-chatgpt-priority" aria-label="四维科研价值精选">'
+        '<div class="radar-home-section-heading"><h3>科研价值精选 · 第二轮</h3>'
         '<span>先按主题 ≥8 分初筛，再按科研价值四维评分（推荐 ≥7.5）</span></div>'
         + body
         + '<p class="radar-home-footnote">创新性30%、开源完整度25%、复现可行性25%、'
-        '科研潜力20%；所有结论附原始来源。分数是 ChatGPT 辅助研究评价，不是同行评审。</p>'
+        '科研潜力20%；所有结论附原始来源。分数是辅助研究评价，不是同行评审。</p>'
         '</section>'
     )
 
