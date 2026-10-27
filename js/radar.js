@@ -119,6 +119,36 @@
       items.forEach(item => { item.hidden = true; });
       sections.forEach(section => { section.hidden = true; });
 
+      // A keyword can search the archive even before a specific period is selected.
+      // Any selected year/type narrows the search; a fully selected period uses the
+      // single-period behavior below.
+      if (keyword && !completeSelection) {
+        const matches = items.filter(item => {
+          if (yearValue && item.dataset.archiveYear !== yearValue) return false;
+          if (typeValue && item.dataset.archiveType !== typeValue) return false;
+          const searchable = (item.dataset.archiveText || item.textContent || "").toLowerCase();
+          return searchable.includes(keyword);
+        });
+        matches.forEach(item => {
+          item.hidden = false;
+          const section = sections.find(value => value.dataset.archiveSection === item.dataset.archiveType);
+          if (section) section.hidden = false;
+        });
+        if (count) {
+          const scope = yearValue || typeValue
+            ? "符合当前筛选条件的历史报告"
+            : "全部历史报告";
+          count.textContent = "关键词匹配 " + matches.length + " 期（" + scope + "）";
+        }
+        if (noResults) {
+          noResults.textContent = matches.length
+            ? "已显示匹配的历史报告；可继续选择年份、报告类型或期次缩小范围。"
+            : "没有找到匹配的历史报告，请尝试其他关键词或调整筛选条件。";
+          noResults.hidden = matches.length > 0;
+        }
+        return;
+      }
+
       if (!completeSelection) {
         let message;
         if (!yearValue) {
