@@ -712,7 +712,7 @@
 /* Searchable, expandable history for the saved weekly and monthly reports. */
 .radar-archive-toolbar{
   display:grid;
-  grid-template-columns:minmax(6.5rem,.7fr) minmax(7rem,.8fr) minmax(7rem,.8fr) minmax(12rem,1.45fr);
+  grid-template-columns:minmax(0,.7fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.45fr);
   align-items:end;
   gap:.65rem;
   margin:.7rem 0 .55rem;
@@ -731,7 +731,8 @@
   font-weight:700;
 }
 .radar-archive-field input,
-.radar-archive-field select{
+.radar-archive-field select,
+.radar-archive-field textarea{
   box-sizing:border-box;
   width:100%;
   min-width:0;
@@ -743,6 +744,17 @@
   color:var(--md-default-fg-color);
   font:inherit;
   font-size:.82rem;
+}
+.radar-archive-field textarea{
+  display:block;
+  max-width:100%;
+  min-height:2.35rem;
+  max-height:10rem;
+  line-height:1.45;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+  resize:vertical;
+  overflow-y:hidden;
 }
 .radar-archive-field select:disabled{
   opacity:.65;
