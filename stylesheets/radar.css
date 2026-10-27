@@ -1,0 +1,1076 @@
+.radar-home-card{margin:1.2rem 0;padding:1rem 1.2rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.6rem;background:var(--md-code-bg-color)}.radar-home-card .radar-stats{display:flex;flex-wrap:wrap;gap:.75rem;margin:.75rem 0}.radar-home-card .radar-stat{min-width:7rem;flex:1;padding:.6rem;background:var(--md-default-bg-color);border-radius:.3rem}.radar-stat strong{display:block;font-size:1.4rem}.radar-controls{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin:1.2rem 0}.radar-controls input,.radar-controls select{border:1px solid var(--md-default-fg-color--lightest);background:var(--md-default-bg-color);color:var(--md-default-fg-color);padding:.45rem .6rem;border-radius:.35rem}.radar-controls input{min-width:12rem;flex:1}.radar-controls label{font-size:.8rem}.radar-table-wrap{width:100%;overflow-x:auto}.radar-table-wrap table{min-width:680px}.radar-table-wrap tr[hidden]{display:none}.radar-table-wrap details{font-size:.8rem}.radar-note{color:var(--md-default-fg-color--light);font-size:.85rem}
+
+/* Distinguish actual ChatGPT task outputs from crawler-only candidates. */
+.radar-chatgpt-section{border-color:var(--md-primary-fg-color--light);background:var(--md-default-bg-color)}
+.radar-chatgpt-grid{margin-top:1rem}
+.radar-chatgpt-card{border-top:3px solid var(--md-primary-fg-color)}
+.radar-tag-chatgpt{background:var(--md-primary-fg-color);color:var(--md-primary-bg-color)}
+.radar-chatgpt-compute{font-size:.8rem;color:var(--md-default-fg-color--light);margin:.4rem 0}
+.radar-chatgpt-section .radar-home-section-heading{margin-top:.3rem}
+
+/* Evidence for the last unattended report-to-preview publication. */
+.radar-monitoring{margin:1rem 0;padding:.9rem 1rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.55rem;background:var(--md-default-bg-color)}
+.radar-publish-evidence{margin:.7rem 0;padding:.7rem .85rem;border-left:3px solid var(--md-primary-fg-color);background:var(--md-code-bg-color);overflow-wrap:anywhere}
+.radar-publish-evidence p{margin:.35rem 0;font-size:.82rem}
+
+
+/* Student-first layout for the Frontier Updates page. */
+.radar-page-intro{font-size:.94rem;color:var(--md-default-fg-color--light)}
+.radar-brief-score{font-weight:700;color:var(--md-primary-fg-color)}
+.radar-brief-label{display:inline-flex;align-items:center;padding:.15rem .5rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:999px;background:var(--md-code-bg-color);font-size:.74rem;white-space:nowrap}
+.radar-brief-dimensions{display:flex;gap:.35rem;flex-wrap:wrap;margin:.55rem 0}
+.radar-brief-dimensions span{padding:.18rem .42rem;border-radius:.3rem;background:var(--md-code-bg-color);font-size:.75rem}
+
+/* Scope all layout rules to this page, identified by its review guide. */
+.md-content__inner:has(.radar-review-intro){
+  box-sizing:border-box;
+  max-width:60rem;
+  margin-inline:auto;
+}
+.md-content__inner:has(.radar-review-intro)>h1{
+  margin:0 0 .45rem;
+  font-size:clamp(1.8rem,2.8vw,2.25rem);
+  line-height:1.25;
+  letter-spacing:-.02em;
+}
+.md-content__inner:has(.radar-review-intro)>h1+p{
+  max-width:58rem;
+  margin:.25rem 0 1.2rem;
+  padding:.72rem .9rem;
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:0 .55rem .55rem 0;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.9rem;
+  line-height:1.65;
+}
+.md-content__inner:has(.radar-review-intro)>h2{
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  margin:1.8rem 0 .7rem;
+  padding-bottom:.42rem;
+  border-bottom:1px solid var(--md-default-fg-color--lightest);
+  font-size:1.28rem;
+  line-height:1.35;
+  letter-spacing:-.01em;
+}
+.md-content__inner:has(.radar-review-intro)>h2::before{
+  content:"";
+  flex:0 0 .22rem;
+  height:1.05em;
+  border-radius:999px;
+  background:var(--md-primary-fg-color);
+}
+.md-content__inner:has(.radar-review-intro)>p{
+  max-width:60rem;
+  line-height:1.65;
+}
+
+/* Selection criteria: readable but visually secondary to the recommendations. */
+.radar-review-intro{
+  max-width:58rem;
+  margin:.65rem 0 .9rem;
+  padding:.75rem .9rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.55rem;
+  background:var(--md-default-bg-color);
+}
+.radar-review-intro p{
+  margin:.15rem 0;
+  font-size:.84rem;
+  line-height:1.6;
+}
+.radar-review-threshold span{
+  display:inline;
+  margin-left:.3rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.78rem;
+}
+
+/* Weekly/monthly selections: one consistent row per item, not an uneven 2+1 grid. */
+.md-content__inner:has(.radar-review-intro) .radar-brief-list:not(.radar-review-list){
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:.7rem;
+  width:100%;
+  max-width:58rem;
+  margin:.8rem 0 1.1rem;
+}
+.radar-brief-card{
+  display:grid;
+  grid-template-columns:minmax(10rem,.78fr) minmax(0,1.65fr);
+  grid-template-areas:
+    "meta summary"
+    "title value"
+    "compute student"
+    "links links";
+  align-items:start;
+  gap:.22rem 1.05rem;
+  box-sizing:border-box;
+  min-width:0;
+  padding:.9rem 1rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.7rem;
+  background:var(--md-default-bg-color);
+  box-shadow:0 3px 14px rgba(30,45,90,.045);
+}
+.radar-brief-meta{
+  grid-area:meta;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem .5rem;
+  margin:.05rem 0 .15rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.74rem;
+  line-height:1.45;
+}
+.radar-brief-card>h3{
+  grid-area:title;
+  min-width:0;
+  margin:.25rem 0 .45rem;
+  font-size:1.05rem;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+.radar-brief-card>h3 a{
+  font-weight:700;
+  text-decoration:none;
+}
+.radar-brief-card>h3 a:hover{text-decoration:underline}
+.radar-brief-card>p{
+  min-width:0;
+  margin:.12rem 0 .35rem;
+  font-size:.84rem;
+  line-height:1.58;
+  overflow-wrap:anywhere;
+}
+.radar-brief-card>p:nth-of-type(1){
+  grid-area:summary;
+  color:var(--md-default-fg-color--light);
+}
+.radar-brief-card>p:nth-of-type(2){
+  grid-area:value;
+  padding:.52rem .62rem;
+  border-radius:.45rem;
+  background:var(--md-code-bg-color);
+}
+.radar-brief-card>p:nth-of-type(3){
+  grid-area:student;
+  padding:.52rem .62rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.45rem;
+}
+.radar-brief-card>p:nth-of-type(2) strong,
+.radar-brief-card>p:nth-of-type(3) strong{
+  color:var(--md-primary-fg-color);
+}
+.radar-brief-card>p.radar-chatgpt-compute{
+  grid-area:compute;
+  margin:.12rem 0 .25rem;
+  padding:.45rem .58rem;
+  border-radius:.4rem;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.75rem;
+  line-height:1.5;
+}
+.radar-brief-links{
+  grid-area:links;
+  margin-top:.25rem;
+  padding-top:.55rem;
+  border-top:1px solid var(--md-default-fg-color--lightest);
+  font-size:.8rem;
+  line-height:1.8;
+}
+.radar-brief-links a{
+  display:inline-block;
+  margin:.1rem .12rem .1rem 0;
+  padding:.12rem .48rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:999px;
+  background:var(--md-default-bg-color);
+  font-weight:650;
+  text-decoration:none;
+}
+.radar-brief-links a:hover{
+  border-color:var(--md-primary-fg-color);
+  text-decoration:none;
+}
+
+/* Evidence-reviewed recommendations: score, value, student task and sources are distinct. */
+.radar-review-list{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:.8rem;
+  width:100%;
+  max-width:58rem;
+  margin:.85rem 0 1.2rem;
+}
+.radar-review-card{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  padding:.95rem 1rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.75rem;
+  background:var(--md-default-bg-color);
+  box-shadow:0 4px 16px rgba(30,45,90,.05);
+}
+.radar-review-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.6rem;
+  flex-wrap:wrap;
+  margin-bottom:.45rem;
+}
+.radar-review-card-labels{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem;
+}
+.radar-review-pill{
+  display:inline-flex;
+  align-items:center;
+  padding:.18rem .5rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:999px;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.7rem;
+  line-height:1.45;
+}
+.radar-review-pill-approved{
+  border-color:rgba(38,143,91,.22);
+  background:rgba(38,143,91,.1);
+  color:#218052;
+  font-weight:700;
+}
+.radar-review-overall{
+  display:inline-flex;
+  align-items:baseline;
+  gap:.25rem;
+  padding:.3rem .55rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.5rem;
+  background:var(--md-code-bg-color);
+  white-space:nowrap;
+}
+.radar-review-overall>span,
+.radar-review-overall>small{
+  color:var(--md-default-fg-color--light);
+  font-size:.7rem;
+}
+.radar-review-overall>strong{
+  color:var(--md-primary-fg-color);
+  font-size:1.15rem;
+  line-height:1.2;
+  font-variant-numeric:tabular-nums;
+}
+.radar-review-title{
+  margin:.25rem 0 .45rem!important;
+  font-size:1.08rem!important;
+  line-height:1.4!important;
+  overflow-wrap:anywhere;
+}
+.radar-review-title a{font-weight:750;text-decoration:none}
+.radar-review-title a:hover{text-decoration:underline}
+.radar-review-summary{
+  margin:.3rem 0 .7rem!important;
+  color:var(--md-default-fg-color--light);
+  font-size:.85rem;
+  line-height:1.6;
+}
+.radar-review-score-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.45rem;
+  margin:.65rem 0 .8rem;
+}
+.radar-review-score-item{
+  min-width:0;
+  padding:.5rem .6rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.5rem;
+  background:var(--md-code-bg-color);
+}
+.radar-review-score-label{
+  display:block;
+  margin-bottom:.22rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.72rem;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+.radar-review-score-value{
+  display:flex;
+  align-items:baseline;
+  gap:.2rem;
+}
+.radar-review-score-value strong{
+  font-size:1.05rem;
+  line-height:1.2;
+  font-variant-numeric:tabular-nums;
+}
+.radar-review-score-value span{
+  color:var(--md-default-fg-color--light);
+  font-size:.68rem;
+}
+.radar-review-detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.55rem;
+  margin:.75rem 0;
+}
+.radar-review-detail{
+  min-width:0;
+  padding:.65rem .75rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.55rem;
+  background:var(--md-default-bg-color);
+}
+.radar-review-detail h4{
+  margin:0 0 .3rem!important;
+  font-size:.82rem!important;
+  line-height:1.4!important;
+}
+.radar-review-value h4{color:var(--md-primary-fg-color)}
+.radar-review-student h4{color:var(--md-default-fg-color)}
+.radar-review-detail p{
+  margin:0!important;
+  font-size:.82rem;
+  line-height:1.58;
+  overflow-wrap:anywhere;
+}
+.radar-review-sources{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem .5rem;
+  margin-top:.7rem;
+  padding-top:.6rem;
+  border-top:1px solid var(--md-default-fg-color--lightest);
+  font-size:.78rem;
+}
+.radar-review-sources>strong{
+  margin-right:.1rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.72rem;
+}
+.radar-review-sources a{
+  display:inline-block;
+  padding:.12rem .48rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:999px;
+  background:var(--md-code-bg-color);
+  font-weight:650;
+  text-decoration:none;
+}
+.radar-review-sources a:hover{
+  border-color:var(--md-primary-fg-color);
+  text-decoration:none;
+}
+
+/* Empty states and unreviewed leads stay visible but deliberately secondary. */
+.radar-empty-state{
+  margin:.75rem 0 1rem;
+  padding:.72rem .85rem;
+  border:1px dashed var(--md-default-fg-color--lightest);
+  border-radius:.55rem;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.84rem;
+  line-height:1.6;
+}
+.radar-candidate-details{
+  margin:.75rem 0 1rem;
+  padding:.65rem .8rem;
+  border:1px dashed var(--md-default-fg-color--lightest);
+  border-radius:.6rem;
+  background:var(--md-default-bg-color);
+}
+.radar-candidate-details>summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.65rem;
+  cursor:pointer;
+  list-style:none;
+  font-size:.88rem;
+  font-weight:700;
+  line-height:1.5;
+}
+.radar-candidate-details>summary::-webkit-details-marker{display:none}
+.radar-candidate-details>summary::after{
+  content:"+";
+  flex:0 0 auto;
+  color:var(--md-primary-fg-color);
+  font-size:1.1rem;
+  line-height:1;
+}
+.radar-candidate-details[open]>summary{
+  margin-bottom:.6rem;
+  padding-bottom:.55rem;
+  border-bottom:1px solid var(--md-default-fg-color--lightest);
+}
+.radar-candidate-details[open]>summary::after{content:"−"}
+.radar-candidate-details>p{
+  margin:.45rem 0;
+  color:var(--md-default-fg-color--light);
+  font-size:.81rem;
+  line-height:1.6;
+}
+.radar-candidate-details ul{
+  margin:.55rem 0 0;
+  padding:0;
+  list-style:none;
+}
+.radar-candidate-details li{
+  margin:.45rem 0;
+  padding:.48rem .62rem;
+  border-left:2px solid var(--md-default-fg-color--lightest);
+  border-radius:.35rem;
+  background:var(--md-code-bg-color);
+  font-size:.81rem;
+  line-height:1.58;
+  overflow-wrap:anywhere;
+}
+.radar-candidate-details li a{font-weight:650}
+.radar-page-note{
+  margin:1rem 0 .5rem;
+  padding-top:.6rem;
+  border-top:1px solid var(--md-default-fg-color--lightest);
+  color:var(--md-default-fg-color--light);
+  font-size:.76rem;
+  line-height:1.6;
+}
+
+/* At narrower widths, keep every card in a single readable column. */
+@media(max-width:900px){
+  .md-content__inner:has(.radar-review-intro){max-width:100%}
+  .md-content__inner:has(.radar-review-intro) .radar-brief-list,
+  .radar-review-list{max-width:100%}
+  .radar-brief-card{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:
+      "meta"
+      "title"
+      "summary"
+      "value"
+      "student"
+      "compute"
+      "links";
+    gap:.08rem;
+    padding:.85rem;
+  }
+  .radar-brief-card>h3{margin:.15rem 0 .35rem}
+  .radar-brief-card>p:nth-of-type(1),
+  .radar-brief-card>p:nth-of-type(2),
+  .radar-brief-card>p:nth-of-type(3),
+  .radar-brief-card>p.radar-chatgpt-compute{margin:.18rem 0}
+  .radar-review-card{padding:.85rem}
+  .radar-review-score-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .radar-review-detail-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:380px){
+  .radar-review-card-head{align-items:flex-start}
+  .radar-review-overall{margin-left:auto}
+  .radar-review-score-item{padding:.45rem}
+  .radar-review-card-labels{gap:.25rem}
+  .radar-review-pill{font-size:.66rem}
+  .radar-candidate-details{padding:.55rem .65rem}
+}
+
+
+/* Final compact layout for the current recommendation and report archive. */
+.md-content__inner:has(.radar-review-intro) .radar-review-card{
+  width:100%;
+  max-width:58rem;
+  box-sizing:border-box;
+  margin:.7rem 0 1rem;
+  padding:1rem 1.05rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.72rem;
+  background:var(--md-default-bg-color);
+  box-shadow:0 3px 12px rgba(30,45,90,.045);
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.65rem;
+  flex-wrap:wrap;
+  margin-bottom:.55rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-card-labels{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-title{
+  margin:.15rem 0 .4rem!important;
+  font-size:1.08rem!important;
+  line-height:1.42!important;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-summary{
+  margin:.3rem 0 .65rem!important;
+  color:var(--md-default-fg-color--light);
+  font-size:.86rem;
+  line-height:1.62;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-score-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:.5rem;
+  margin:.7rem 0 .8rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-score-item{
+  min-width:0;
+  padding:.55rem .65rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.52rem;
+  background:var(--md-code-bg-color);
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-score-label{
+  display:block;
+  margin-bottom:.18rem;
+  font-size:.73rem;
+  line-height:1.45;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-score-value{
+  display:flex;
+  align-items:baseline;
+  gap:.2rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-score-value strong{
+  font-size:1.08rem;
+  line-height:1.2;
+  font-variant-numeric:tabular-nums;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-detail-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:.6rem;
+  margin:.7rem 0;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-detail{
+  min-width:0;
+  padding:.68rem .75rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.55rem;
+  background:var(--md-default-bg-color);
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-detail h4{
+  margin:0 0 .28rem!important;
+  font-size:.83rem!important;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-detail p{
+  margin:0!important;
+  font-size:.83rem;
+  line-height:1.6;
+}
+.radar-period-badge{
+  display:inline-flex;
+  align-items:center;
+  padding:.2rem .55rem;
+  border:1px solid rgba(70,90,190,.2);
+  border-radius:999px;
+  background:rgba(70,90,190,.08);
+  color:var(--md-primary-fg-color);
+  font-size:.73rem;
+  font-weight:750;
+  line-height:1.4;
+  white-space:nowrap;
+}
+.radar-section-note{
+  margin:.15rem 0 .75rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.84rem;
+  line-height:1.6;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-list:not(.radar-review-list){
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:.65rem;
+  max-width:58rem;
+  margin:.65rem 0 .9rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card{
+  grid-template-columns:minmax(9.5rem,.72fr) minmax(0,1.7fr);
+  grid-template-areas:
+    "meta summary"
+    "title value"
+    "compute student"
+    "links links";
+  gap:.25rem 1rem;
+  min-width:0;
+  padding:.85rem .95rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.65rem;
+  background:var(--md-default-bg-color);
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card>h3{
+  grid-area:title;
+  margin:.2rem 0 .35rem;
+  font-size:1.02rem;
+  line-height:1.42;
+  overflow-wrap:anywhere;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card>p{
+  min-width:0;
+  margin:.15rem 0 .3rem;
+  font-size:.82rem;
+  line-height:1.58;
+  overflow-wrap:anywhere;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-summary{
+  grid-area:summary;
+  color:var(--md-default-fg-color--light);
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-value{
+  grid-area:value;
+  padding:.5rem .6rem;
+  border-radius:.45rem;
+  background:var(--md-code-bg-color);
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-student{
+  grid-area:student;
+  padding:.5rem .6rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.45rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-value strong,
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-student strong{
+  display:block;
+  margin-bottom:.18rem;
+  color:var(--md-primary-fg-color);
+  font-size:.75rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-chatgpt-compute{
+  grid-area:compute;
+  padding:.45rem .58rem;
+  border-radius:.4rem;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.75rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-meta{
+  grid-area:meta;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem;
+  font-size:.74rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-links{
+  grid-area:links;
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem;
+  margin-top:.25rem;
+  padding-top:.55rem;
+  border-top:1px solid var(--md-default-fg-color--lightest);
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-links a,
+.radar-review-sources a{
+  display:inline-flex;
+  align-items:center;
+  padding:.15rem .5rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:999px;
+  background:var(--md-code-bg-color);
+  font-size:.77rem;
+  font-weight:650;
+  text-decoration:none;
+}
+.radar-review-sources{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem .5rem;
+  margin-top:.65rem;
+  padding-top:.55rem;
+  border-top:1px solid var(--md-default-fg-color--lightest);
+  font-size:.78rem;
+}
+.radar-review-sources>strong{
+  margin-right:.15rem;
+  color:var(--md-default-fg-color--light);
+  font-size:.73rem;
+}
+
+/* Searchable, expandable history for the saved weekly and monthly reports. */
+.radar-archive-toolbar{
+  display:grid;
+  grid-template-columns:minmax(6.5rem,.7fr) minmax(7rem,.8fr) minmax(7rem,.8fr) minmax(12rem,1.45fr);
+  align-items:end;
+  gap:.65rem;
+  margin:.7rem 0 .55rem;
+  padding:.8rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.7rem;
+  background:var(--md-code-bg-color);
+}
+.radar-archive-field{
+  display:flex;
+  flex-direction:column;
+  gap:.28rem;
+  min-width:0;
+  color:var(--md-default-fg-color--light);
+  font-size:.75rem;
+  font-weight:700;
+}
+.radar-archive-field input,
+.radar-archive-field select{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:2.35rem;
+  padding:.48rem .58rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.45rem;
+  background:var(--md-default-bg-color);
+  color:var(--md-default-fg-color);
+  font:inherit;
+  font-size:.82rem;
+}
+.radar-archive-field select:disabled{
+  opacity:.65;
+  cursor:not-allowed;
+}
+.radar-archive-countline{
+  grid-column:1/-1;
+  margin:0!important;
+  color:var(--md-default-fg-color--light);
+  font-size:.75rem;
+}
+.radar-archive-section{
+  max-width:58rem;
+  margin:.8rem 0 1.15rem;
+}
+.radar-archive-section>h3{
+  margin:.8rem 0 .55rem;
+  font-size:1rem;
+}
+.radar-archive-list{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:.55rem;
+  margin:.55rem 0 .9rem;
+}
+.radar-archive-item{
+  min-width:0;
+  padding:.78rem .85rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.65rem;
+  background:var(--md-default-bg-color);
+}
+.radar-archive-item[hidden],
+.radar-archive-section[hidden],
+.radar-archive-no-results[hidden]{
+  display:none!important;
+}
+.radar-archive-head{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem .5rem;
+  margin-bottom:.35rem;
+}
+.radar-archive-kind{
+  color:var(--md-default-fg-color--light);
+  font-size:.73rem;
+}
+.radar-archive-count{
+  margin-left:auto;
+  color:var(--md-default-fg-color--light);
+  font-size:.74rem;
+  white-space:nowrap;
+}
+.radar-archive-title{
+  margin:.15rem 0 .3rem!important;
+  font-size:.95rem!important;
+  line-height:1.45!important;
+  overflow-wrap:anywhere;
+}
+.radar-archive-summary{
+  margin:.2rem 0 .55rem!important;
+  color:var(--md-default-fg-color--light);
+  font-size:.81rem;
+  line-height:1.58;
+}
+.radar-archive-details{
+  margin-top:.35rem;
+  border-top:1px solid var(--md-default-fg-color--lightest);
+}
+.radar-archive-details>summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.5rem;
+  padding:.55rem 0 .05rem;
+  cursor:pointer;
+  list-style:none;
+  color:var(--md-primary-fg-color);
+  font-size:.8rem;
+  font-weight:700;
+}
+.radar-archive-details>summary::-webkit-details-marker{display:none}
+.radar-archive-details>summary::after{
+  content:"+";
+  font-size:1.1rem;
+  line-height:1;
+}
+.radar-archive-details[open]>summary::after{content:"−"}
+.radar-archive-details[open]>.radar-brief-list{margin-top:.55rem}
+.radar-archive-details .radar-page-note{font-size:.73rem}
+.radar-archive-no-results{margin:.55rem 0}
+.radar-archive-empty{margin:.5rem 0;font-size:.8rem}
+@media(max-width:900px){
+  .md-content__inner:has(.radar-review-intro) .radar-review-score-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .md-content__inner:has(.radar-review-intro) .radar-review-detail-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  .md-content__inner:has(.radar-review-intro) .radar-brief-card{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:
+      "meta"
+      "title"
+      "summary"
+      "value"
+      "student"
+      "compute"
+      "links";
+    gap:.08rem;
+  }
+  .radar-archive-toolbar{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  }
+  .radar-archive-keyword{grid-column:1/-1}
+}
+@media(max-width:520px){
+  .md-content__inner:has(.radar-review-intro) .radar-review-card{padding:.8rem}
+  .md-content__inner:has(.radar-review-intro) .radar-review-card-head{align-items:flex-start}
+  .md-content__inner:has(.radar-review-intro) .radar-review-score-item{padding:.45rem .5rem}
+  .radar-archive-toolbar{grid-template-columns:minmax(0,1fr)}
+  .radar-archive-keyword{grid-column:auto}
+  .radar-archive-countline{grid-column:auto}
+}
+
+.radar-archive-date{
+  color:var(--md-default-fg-color--light);
+  font-size:.72rem;
+  font-variant-numeric:tabular-nums;
+}
+
+
+/* Explain why the supplementary candidate pool exists before students expand it. */
+.radar-candidate-purpose{
+  max-width:58rem;
+  margin:.45rem 0 .75rem;
+  padding:.7rem .85rem;
+  border-left:3px solid var(--md-primary-fg-color);
+  border-radius:.35rem;
+  background:var(--md-code-bg-color);
+  color:var(--md-default-fg-color--light);
+  font-size:.82rem;
+  line-height:1.65;
+}
+.radar-candidate-purpose p{
+  margin:.15rem 0;
+}
+.radar-candidate-purpose strong{
+  color:var(--md-default-fg-color);
+}
+.radar-candidate-details{
+  max-width:58rem;
+  margin:.55rem 0 1rem;
+}
+.radar-candidate-details>summary{
+  padding:.65rem .8rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.5rem;
+  background:var(--md-default-bg-color);
+  font-size:.86rem;
+  font-weight:650;
+}
+.radar-candidate-details[open]>summary{
+  border-bottom-left-radius:0;
+  border-bottom-right-radius:0;
+}
+
+
+/* Weekly digest: one period label at the section heading, compact cards below. */
+.radar-section-period{
+  display:inline-block;
+  margin-left:.45rem;
+  padding:.16rem .55rem;
+  border:1px solid var(--md-primary-fg-color);
+  border-radius:999px;
+  background:var(--md-code-bg-color);
+  color:var(--md-primary-fg-color);
+  font-size:.68em;
+  font-weight:650;
+  line-height:1.5;
+  vertical-align:middle;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card{
+  grid-template-columns:minmax(10rem,.68fr) minmax(0,1.7fr);
+  grid-template-areas:
+    "heading summary"
+    "compute value"
+    "compute student"
+    "links links";
+  gap:.45rem 1rem;
+  align-items:start;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-heading{
+  grid-area:heading;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:.45rem;
+  min-width:0;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-heading .radar-brief-meta{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.35rem;
+  grid-area:auto;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-heading h3{
+  margin:0!important;
+  font-size:1.08rem!important;
+  line-height:1.42!important;
+  overflow-wrap:anywhere;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-summary{
+  grid-area:summary;
+  margin:.05rem 0 .35rem!important;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-value{
+  grid-area:value;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-student{
+  grid-area:student;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-chatgpt-compute{
+  grid-area:compute;
+  align-self:start;
+}
+.md-content__inner:has(.radar-review-intro) .radar-brief-card .radar-brief-links{
+  grid-area:links;
+  margin-top:.25rem;
+}
+@media(max-width:900px){
+  .radar-section-period{
+    display:block;
+    margin:.15rem 0 0;
+    font-size:.68em;
+  }
+  .md-content__inner:has(.radar-review-intro) .radar-brief-card{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:
+      "heading"
+      "summary"
+      "value"
+      "student"
+      "compute"
+      "links";
+    gap:.15rem;
+  }
+  .md-content__inner:has(.radar-review-intro) .radar-brief-heading{
+    gap:.3rem;
+    margin-bottom:.1rem;
+  }
+}
+
+
+/* Make each research category immediately scannable on the weekly cards. */
+.md-content__inner:has(.radar-review-intro) .radar-brief-heading .radar-brief-label{
+  padding:.24rem .68rem;
+  border:1px solid var(--md-primary-fg-color);
+  border-radius:.45rem;
+  background:var(--md-primary-fg-color);
+  color:#fff;
+  font-size:.8rem;
+  font-weight:700;
+  line-height:1.45;
+  letter-spacing:.01em;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);
+}
+@media(max-width:900px){
+  .radar-section-period{
+    display:block;
+    width:fit-content;
+    margin:.35rem 0 0;
+    font-size:.78rem;
+  }
+}
+
+
+/* Student-first layout for the featured recommendations. */
+.md-content__inner:has(.radar-review-intro) .radar-review-card-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: .65rem;
+  margin-bottom: .55rem;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-title {
+  min-width: 0;
+  margin: 0 !important;
+  font-size: 1.08rem !important;
+  line-height: 1.42 !important;
+  overflow-wrap: anywhere;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-overall {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-summary {
+  margin: .3rem 0 .65rem !important;
+  color: var(--md-default-fg-color--light);
+  font-size: .88rem;
+  line-height: 1.65;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-detail h4 {
+  font-size: .86rem !important;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-detail p {
+  font-size: .85rem;
+  line-height: 1.65;
+}
+.md-content__inner:has(.radar-review-intro) .radar-review-sources > strong {
+  color: var(--md-default-fg-color);
+  font-size: .76rem;
+}
+@media (max-width: 760px) {
+  .md-content__inner:has(.radar-review-intro) .radar-review-score-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 520px) {
+  .md-content__inner:has(.radar-review-intro) .radar-review-card-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .md-content__inner:has(.radar-review-intro) .radar-review-overall {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
+}
