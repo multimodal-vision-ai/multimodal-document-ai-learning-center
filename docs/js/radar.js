@@ -156,10 +156,11 @@
 
     function refresh() {
       const keyword = submittedKeyword.trim().toLowerCase().replace(/\s+/g, " ");
+      const terms = keyword.split(/\s+/).filter(Boolean);
       const typeValue = type.value;
       const yearValue = year.value;
       const periodValue = period.value;
-      const completeSelection = Boolean(yearValue && typeValue && periodValue);
+      const hasYearAndType = Boolean(yearValue && typeValue);
 
       items.forEach(item => {
         clearArchiveHighlights(item);
@@ -167,57 +168,95 @@
       });
       sections.forEach(section => { section.hidden = true; });
 
-      if (!completeSelection) {
-        let message;
-        if (!yearValue) {
-          message = "请先选择年份。";
-        } else if (!typeValue) {
-          message = "请选择周报或月报。";
-        } else if (period.disabled) {
-          message = typeValue === "weekly" ? "该年份暂无可展示的周报。" : "该年份暂无可展示的月报。";
-        } else {
-          message = "请选择期次。";
-        }
+      if (!hasYearAndType) {
+        const message = !yearValue
+          ? "请先选择年份。"
+          : "请选择周报或月报。";
         if (count) count.textContent = message;
         if (noResults) {
-          noResults.textContent = message + " 选择完成后，将只显示该期报告。";
+          noResults.textContent = message + " 选择年份和报告类型后，可选择期次查看，或输入关键词搜索。";
           noResults.hidden = false;
         }
         return;
       }
 
-      const periodItems = items.filter(item =>
-        item.dataset.archiveYear === yearValue &&
-        item.dataset.archiveType === typeValue &&
-        item.dataset.archivePeriod === periodValue
-      );
-      // Preserve the existing rule: show only the newest saved report for the selected period.
-      const selected = periodItems[0];
-      const searchable = selected
-        ? (selected.textContent || "").toLowerCase().replace(/\s+/g, " ")
-        : "";
-      const keywordMatches = !keyword || searchable.includes(keyword);
-      const visible = Boolean(selected && keywordMatches);
-      let keywordCount = 0;
-      if (keyword && visible) {
-        keywordCount = highlightArchiveKeyword(selected, submittedKeyword.trim());
+      if (period.disabled) {
+        const message = typeValue === "weekly"
+          ? "该年份暂无可展示的周报。"
+          : "该年份暂无可展示的月报。";
+        if (count) count.textContent = message;
+        if (noResults) {
+          noResults.textContent = message;
+          noResults.hidden = false;
+        }
+        return;
       }
 
-      if (visible) {
-        selected.hidden = false;
+      // If a period is selected, restrict the search to it. Otherwise, a submitted
+      // keyword searches every period of the selected year and report type.
+      if (!periodValue && terms.length === 0) {
+        const message = "请选择期次，或输入关键词后点击搜索。";
+        if (count) count.textContent = message;
+        if (noResults) {
+          noResults.textContent = message;
+          noResults.hidden = false;
+        }
+        return;
+      }
+
+      const scopedItems = items.filter(item =>
+        item.dataset.archiveYear === yearValue &&
+        item.dataset.archiveType === typeValue &&
+        (!periodValue || item.dataset.archivePeriod === periodValue)
+      );
+
+      // Multiple saved revisions may exist for a period. Keep only the newest one,
+      // which is the first matching archive card in document order.
+      const seenPeriods = new Set();
+      const latestItems = scopedItems.filter(item => {
+        const value = item.dataset.archivePeriod;
+        if (!value || seenPeriods.has(value)) return false;
+        seenPeriods.add(value);
+        return true;
+      });
+
+      const matches = latestItems.filter(item => {
+        if (terms.length === 0) return true;
+        const searchable = (item.textContent || "").toLowerCase().replace(/\s+/g, " ");
+        return terms.every(term => searchable.includes(term));
+      });
+
+      let keywordCount = 0;
+      matches.forEach(item => {
+        item.hidden = false;
+        if (terms.length) {
+          terms.forEach(term => {
+            keywordCount += highlightArchiveKeyword(item, term);
+          });
+        }
+      });
+
+      if (matches.length > 0) {
         const section = sections.find(value => value.dataset.archiveSection === typeValue);
         if (section) section.hidden = false;
         if (count) {
-          count.textContent = "当前选择：" + yearValue + " 年 · " +
-            (typeValue === "weekly" ? "第 " + periodValue + " 周报" : "第 " + periodValue + " 月报") +
-            " · 显示 1 期" + (keyword ? " · 已定位 " + keywordCount + " 处关键词" : "");
+          const reportLabel = typeValue === "weekly" ? "周报" : "月报";
+          const scopeLabel = periodValue
+            ? "第 " + periodValue + (typeValue === "weekly" ? " 周" : " 月")
+            : yearValue + " 年全部" + reportLabel;
+          count.textContent = "当前范围：" + yearValue + " 年 · " + scopeLabel +
+            (terms.length
+              ? " · 匹配 " + matches.length + " 期 · 高亮 " + keywordCount + " 处关键词"
+              : " · 显示 1 期");
         }
         if (noResults) noResults.hidden = true;
       } else {
-        if (count) count.textContent = "当前期次未找到匹配报告";
+        if (count) count.textContent = "未找到匹配的历史报告";
         if (noResults) {
-          noResults.textContent = keyword
-            ? "所选报告中没有匹配该关键词的内容，请清除关键词后重试。"
+          noResults.textContent = terms.length
+            ? "在所选年份和报告类型的" + (periodValue ? "该期报告" : "历史报告") +
+              "中，未找到同时包含关键词“" + terms.join("、") +
+              "”的内容。请尝试更换关键词或选择其他年份、报告类型。"
             : "所选期次暂时没有可展示的历史报告。";
           noResults.hidden = false;
         }
