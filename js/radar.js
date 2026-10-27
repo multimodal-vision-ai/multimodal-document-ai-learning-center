@@ -258,7 +258,7 @@
       });
       search.addEventListener("input", () => {
         search.style.height = "auto";
-        search.style.height = Math.min(search.scrollHeight, 192) + "px";
+        search.style.height = Math.min(search.scrollHeight, 128) + "px";
       });
       search.dataset.radarArchiveAttached = "1";
     }
