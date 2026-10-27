@@ -183,7 +183,7 @@
       period.dataset.radarArchiveAttached = "1";
     }
     function submitSearch() {
-      submittedKeyword = search.value.trim().replace(/\\s+/g, " ").toLowerCase();
+      submittedKeyword = search.value.trim().replace(/\s+/g, " ").toLowerCase();
       refresh();
     }
     if (!searchSubmit.dataset.radarArchiveAttached) {
