@@ -45,19 +45,19 @@
     </select>
   </label>
   <label class="radar-archive-field">
-    <span>具体期次</span>
+    <span>期次</span>
     <select id="radar-archive-period" disabled>
-      <option value="">请先选择年份和类型</option>
+      <option value="">先选择年份和报告类型</option>
     </select>
   </label>
   <label class="radar-archive-field radar-archive-keyword">
     <span>关键词（可选）</span>
     <input id="radar-archive-search" type="search" placeholder="在所选报告中搜索…" autocomplete="off">
   </label>
-  <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">请选择年份、报告类型和具体期次</p>
+  <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">请先选择年份和报告类型，再选择期次</p>
 </div>
 
-<p id="radar-archive-no-results" class="radar-empty-state radar-archive-no-results">请依次选择年份、报告类型和具体期次；页面将只展示对应的一份历史报告。</p>
+<p id="radar-archive-no-results" class="radar-empty-state radar-archive-no-results">请先选择年份和报告类型，再选择期次；页面将只展示对应的一份历史报告。</p>
 
 <div class="radar-archive-section" data-archive-section="weekly" hidden>
 <h3>历史周报</h3>
