@@ -74,9 +74,45 @@
       const escaped = keyword
         .split(/\s+/)
         .filter(Boolean)
-        .map(part => part.replace(/[.*+?^$()|[\]\\]/g, "\\    const count = document.getElementById("radar-archive-count");
-    const noResults = document.getElementById("radar-archive-no-results");
-
+        .map(part => part.replace(/[.*+?^$()|[\]\\]/g, "\\$&"))
+        .join("\\s+");
+      if (!escaped) return 0;
+      const pattern = new RegExp(escaped, "gi");
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          const parent = node.parentElement;
+          if (!parent || !node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          if (parent.closest("script, style, noscript, textarea, button, mark, .radar-archive-search-help")) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          pattern.lastIndex = 0;
+          return pattern.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      let total = 0;
+      nodes.forEach(node => {
+        const value = node.nodeValue || "";
+        pattern.lastIndex = 0;
+        let match;
+        let cursor = 0;
+        const fragment = document.createDocumentFragment();
+        while ((match = pattern.exec(value)) !== null) {
+          if (match.index > cursor) fragment.appendChild(document.createTextNode(value.slice(cursor, match.index)));
+          const mark = document.createElement("mark");
+          mark.className = "radar-archive-highlight";
+          mark.textContent = match[0];
+          fragment.appendChild(mark);
+          cursor = match.index + match[0].length;
+          total += 1;
+          if (!match[0].length) pattern.lastIndex += 1;
+        }
+        if (cursor < value.length) fragment.appendChild(document.createTextNode(value.slice(cursor)));
+        if (cursor > 0) node.parentNode.replaceChild(fragment, node);
+      });
+      return total;
+    }
     function updatePeriodOptions() {"))
         .join("\\s+");
       if (!escaped) return 0;
