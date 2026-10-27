@@ -27,33 +27,39 @@
 
 ## 历史科研档案
 
-<p class="radar-section-note">各期周报与月报持续归档。支持按关键词、年份和类型检索；默认每页展示 6 期，可展开阅读完整评价。</p>
+<p class="radar-section-note">按“年份 → 报告类型 → 具体期次”查看历史报告。每次只展示所选的一个月报或周报，历史记录保持原样保存。</p>
 
-<div class="radar-archive-toolbar" role="search" aria-label="历史档案检索">
-  <label class="radar-archive-field radar-archive-keyword">
-    <span>关键词</span>
-    <input id="radar-archive-search" type="search" placeholder="搜索标题、方法、研究方向…" autocomplete="off">
+<div class="radar-archive-toolbar" role="search" aria-label="历史档案按期次检索">
+  <label class="radar-archive-field">
+    <span>年份</span>
+    <select id="radar-archive-year">
+      <option value="">选择年份</option>
+    </select>
   </label>
   <label class="radar-archive-field">
     <span>报告类型</span>
     <select id="radar-archive-type">
-      <option value="">全部类型</option>
-      <option value="weekly">历史周报</option>
-      <option value="monthly">历史月报</option>
+      <option value="">选择类型</option>
+      <option value="weekly">周报</option>
+      <option value="monthly">月报</option>
     </select>
   </label>
   <label class="radar-archive-field">
-    <span>年份</span>
-    <select id="radar-archive-year">
-      <option value="">全部年份</option>
+    <span>具体期次</span>
+    <select id="radar-archive-period" disabled>
+      <option value="">请先选择年份和类型</option>
     </select>
   </label>
-  <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">正在读取历史档案…</p>
+  <label class="radar-archive-field radar-archive-keyword">
+    <span>关键词（可选）</span>
+    <input id="radar-archive-search" type="search" placeholder="在所选报告中搜索…" autocomplete="off">
+  </label>
+  <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">请选择年份、报告类型和具体期次</p>
 </div>
 
-<p id="radar-archive-no-results" class="radar-empty-state radar-archive-no-results" hidden>没有找到匹配的历史档案。请尝试其他关键词，或清除筛选条件。</p>
+<p id="radar-archive-no-results" class="radar-empty-state radar-archive-no-results">请依次选择年份、报告类型和具体期次；页面将只展示对应的一份历史报告。</p>
 
-<div class="radar-archive-section" data-archive-section="weekly">
+<div class="radar-archive-section" data-archive-section="weekly" hidden>
 <h3>历史周报</h3>
 
 <!-- RADAR:WEEKLY_ARCHIVE-START -->
@@ -61,19 +67,13 @@
 <!-- RADAR:WEEKLY_ARCHIVE-END -->
 </div>
 
-<div class="radar-archive-section" data-archive-section="monthly">
+<div class="radar-archive-section" data-archive-section="monthly" hidden>
 <h3>历史月报</h3>
 
 <!-- RADAR:MONTHLY_ARCHIVE-START -->
 <div class="radar-empty-state radar-archive-empty">暂未形成历史月报档案。每期报告生成并通过校验后，会自动保存到历史记录。</div>
 <!-- RADAR:MONTHLY_ARCHIVE-END -->
 </div>
-
-<nav id="radar-archive-pagination" class="radar-archive-pagination" aria-label="历史科研档案分页" hidden>
-  <button id="radar-archive-prev" type="button">上一页</button>
-  <span id="radar-archive-page" aria-live="polite">第 1 页</span>
-  <button id="radar-archive-next" type="button">下一页</button>
-</nav>
 
 ## 待复核研究线索
 
