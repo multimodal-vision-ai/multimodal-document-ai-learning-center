@@ -26,6 +26,7 @@ class RadarRenderTests(unittest.TestCase):
         )
         cleaned = render.strip_visible_branding(source)
         visible = re.sub(r"<!--.*?-->|<[^>]*>", "", cleaned, flags=re.S)
+        visible = re.sub(r"\]\([^)]+\)", "]", visible)
         self.assertNotRegex(visible, r"(?i)ChatGPT")
         self.assertIn("https://example.org/ChatGPT", cleaned)
         self.assertIn("<!-- RADAR:CHATGPT_MONTHLY-START -->", cleaned)
