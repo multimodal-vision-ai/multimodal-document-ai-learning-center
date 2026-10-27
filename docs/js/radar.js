@@ -59,6 +59,21 @@
     const count = document.getElementById("radar-archive-count");
     const noResults = document.getElementById("radar-archive-no-results");
 
+    function resizeArchiveSearch() {
+      // Keep the field within its grid cell; grow vertically and wrap long queries.
+      const maxHeight = 160;
+      search.style.height = "auto";
+      const contentHeight = search.scrollHeight;
+      search.style.height = Math.min(contentHeight, maxHeight) + "px";
+      search.style.overflowY = contentHeight > maxHeight ? "auto" : "hidden";
+    }
+
+    if (!search.dataset.radarAutoResizeAttached) {
+      search.addEventListener("input", resizeArchiveSearch);
+      search.dataset.radarAutoResizeAttached = "1";
+    }
+    resizeArchiveSearch();
+
     function updatePeriodOptions() {
       const oldValue = period.value;
       const yearValue = year.value;
