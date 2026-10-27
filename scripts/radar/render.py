@@ -482,7 +482,7 @@ def chatgpt_home_section(chatgpt_reports, now, limit=3):
                 '该快照已超过 36 小时；下次计划任务成功写入后，此处才会更新为新结果。</div>'
             )
         else:
-            status = f'<div class="radar-home-health" role="status">最近一次 ChatGPT 结果存档：{escape(time_text)}</div>'
+            status = f'<div class="radar-home-health" role="status">最近一次科研评价结果存档：{escape(time_text)}</div>'
     else:
         status = (
             '<div class="radar-home-warning" role="status">尚未记录科研评价结果的生成时间；'
