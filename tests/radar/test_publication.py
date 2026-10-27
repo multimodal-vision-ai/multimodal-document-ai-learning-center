@@ -49,7 +49,7 @@ class PublicationVerificationTests(unittest.TestCase):
             )
             detail.write_text(
                 "前沿动态 重点推荐 本月研究机会 历史科研档案 待复核研究线索 "
-                + '<select id="radar-archive-period"><option value="">选择具体期次</option></select>'
+                + '<select id="radar-archive-period"><option value="">先选择年份和报告类型</option></select>'
                 + f'<div data-radar-snapshot="{snapshot_digest(reports, QUEUE)}" '
                 + f'data-radar-top3-snapshot="{top3_digest(top3_state)}"></div>'
                 + "<!-- RADAR:STAGE_TWO-START -->"
