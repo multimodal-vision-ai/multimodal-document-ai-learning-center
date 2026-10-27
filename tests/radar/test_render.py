@@ -190,8 +190,11 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("本月研究机会", radar_page)
             self.assertIn("历史科研档案", radar_page)
             self.assertIn("待复核研究线索", radar_page)
-            self.assertIn('id="radar-archive-pagination"', radar_page)
+            self.assertIn('id="radar-archive-period"', radar_page)
+            self.assertNotIn('id="radar-archive-pagination"', radar_page)
             self.assertIn('data-archive-type="weekly"', radar_page)
+            self.assertIn('data-archive-period="42"', radar_page)
+            self.assertIn('data-archive-period="43"', radar_page)
             self.assertIn("RADAR:WEEKLY_ARCHIVE-START", (ROOT / "docs" / "radar" / "index.md").read_text(encoding="utf-8"))
             featured_section = radar_page.split("<!-- RADAR:STAGE_TWO-START -->", 1)[1].split("<!-- RADAR:STAGE_TWO-END -->", 1)[0]
             self.assertEqual(featured_section.count('class="radar-review-card"'), 1)
