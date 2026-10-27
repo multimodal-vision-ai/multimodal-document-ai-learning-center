@@ -2,6 +2,7 @@
 import sys
 import tempfile
 import unittest
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
@@ -15,6 +16,21 @@ DIMENSIONS = {"innovation": 10, "openness": 9, "compute": 8,
               "reproducibility": 9, "extension": 9, "commercialization": 8}
 
 class RadarRenderTests(unittest.TestCase):
+
+    def test_strip_visible_branding_preserves_links_and_archive_markers(self):
+        source = (
+            "ChatGPT is a research assistant. "
+            "[reference](https://example.org/ChatGPT) "
+            "<!-- RADAR:CHATGPT_MONTHLY-START -->"
+            "<span>ChatGPT label</span>"
+        )
+        cleaned = render.strip_visible_branding(source)
+        visible = re.sub(r"<!--.*?-->|<[^>]*>", "", cleaned, flags=re.S)
+        visible = re.sub(r"\]\([^)]+\)", "]", visible)
+        self.assertNotRegex(visible, r"(?i)ChatGPT")
+        self.assertIn("https://example.org/ChatGPT", cleaned)
+        self.assertIn("<!-- RADAR:CHATGPT_MONTHLY-START -->", cleaned)
+
     def test_value_points_use_student_facing_language(self):
         examples = [
             "原周报列为 A 优先级；模型权重和数据被记录为开放，且提供了 GitHub 与 Hugging Face 入口，适合作为文档解析的复现基线。",
@@ -179,6 +195,9 @@ class RadarRenderTests(unittest.TestCase):
             self.assertNotIn("RPD+SARA", first["index.md"])
             self.assertNotIn("Unreviewed", first["index.md"])
             radar_page = first["radar/index.md"]
+            visible_radar_text = re.sub(r"<!--.*?-->|<[^>]*>", "", radar_page, flags=re.S)
+            visible_radar_text = re.sub(r"\]\([^)]+\)", "]", visible_radar_text)
+            self.assertNotRegex(visible_radar_text, r"(?i)ChatGPT")
             self.assertIn("# 前沿动态", radar_page)
             self.assertIn("## 重点推荐", radar_page)
             self.assertNotIn("## 本期重点推荐", radar_page)
@@ -191,6 +210,25 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("历史科研档案", radar_page)
             self.assertIn("待复核研究线索", radar_page)
             self.assertIn('id="radar-archive-period"', radar_page)
+            self.assertIn('<textarea id="radar-archive-search" rows="1"', radar_page)
+            self.assertIn("输入关键词，搜索历史周报和月报", radar_page)
+            self.assertIn('id="radar-archive-search-button"', radar_page)
+            self.assertIn(">搜索</button>", radar_page)
+            self.assertIn("按 Enter 搜索；按 Shift + Enter 换行。", radar_page)
+            self.assertNotIn('<input id="radar-archive-search"', radar_page)
+            radar_js = (ROOT / "docs" / "js" / "radar.js").read_text(encoding="utf-8")
+            self.assertIn("if (keyword && !completeSelection)", radar_js)
+            self.assertIn("关键词匹配 ", radar_js)
+            self.assertIn('search.addEventListener("input", () => {', radar_js)
+            self.assertIn("clearKeywordHighlights();", radar_js)
+            self.assertIn('searchButton.addEventListener("click", runKeywordSearch)', radar_js)
+            self.assertIn('event.key === "Enter" && !event.shiftKey', radar_js)
+            self.assertIn("event.preventDefault()", radar_js)
+            self.assertIn("function highlightKeywordMatches()", radar_js)
+            self.assertIn('mark.className = "radar-search-hit"', radar_js)
+            self.assertIn('firstHit.scrollIntoView({ behavior: "smooth", block: "center" })', radar_js)
+            radar_css = (ROOT / "docs" / "stylesheets" / "radar.css").read_text(encoding="utf-8")
+            self.assertIn(".radar-archive-item mark.radar-search-hit", radar_css)
             self.assertIn("<span>期次</span>", radar_page)
             self.assertNotIn("<span>具体期次</span>", radar_page)
             self.assertNotIn('id="radar-archive-pagination"', radar_page)
@@ -202,7 +240,8 @@ class RadarRenderTests(unittest.TestCase):
             self.assertEqual(featured_section.count('class="radar-review-card"'), 1)
             self.assertIn("Unreviewed", featured_section)
             self.assertIn("四项评分", featured_section)
-            self.assertIn("ChatGPT 四维科研价值评价", featured_section)
+            self.assertIn("四维科研价值评价", featured_section)
+            self.assertNotIn("ChatGPT", featured_section)
             self.assertIn("学生可以怎么做", featured_section)
             self.assertIn("论文与项目资源", featured_section)
             self.assertNotIn("RPD+SARA", featured_section)
