@@ -97,7 +97,7 @@
     }
 
     function refresh() {
-      const keyword = submittedKeyword.trim().toLowerCase().replace(/\\s+/g, " ");
+      const keyword = submittedKeyword.trim().toLowerCase().replace(/\s+/g, " ");
       const typeValue = type.value;
       const yearValue = year.value;
       const periodValue = period.value;
@@ -133,18 +133,18 @@
       // A period may have archived revisions. Display only its newest saved record.
       const selected = periodItems[0];
       const searchable = selected
-        ? (selected.dataset.archiveText || selected.textContent || "").toLowerCase().replace(/\\s+/g, " ")
+        ? (selected.dataset.archiveText || selected.textContent || "").toLowerCase().replace(/\s+/g, " ")
         : "";
       const keywordMatches = !keyword || searchable.includes(keyword);
-      const visible = selected && keywordMatches;
-      const escapedKeyword = keyword.replace(/[.*+?^\\$\\{\\}()|[\\]\\\\]/g, "\\\\      const searchable = selected
-        ? (selected.dataset.archiveText || selected.textContent || "").toLowerCase()
-        : "";
-      const keywordMatches = !keyword || searchable.includes(keyword);
-      const visible = selected && keywordMatches;");
-      const keywordCount = keyword && visible
-        ? (searchable.match(new RegExp(escapedKeyword, "g")) || []).length
-        : 0;
+      const visible = Boolean(selected && keywordMatches);
+      let keywordCount = 0;
+      if (keyword && visible) {
+        let offset = 0;
+        while ((offset = searchable.indexOf(keyword, offset)) !== -1) {
+          keywordCount += 1;
+          offset += Math.max(keyword.length, 1);
+        }
+      }
 
       if (visible) {
         selected.hidden = false;
@@ -166,7 +166,6 @@
         }
       }
     }
-
     updatePeriodOptions();
     refresh();
 
