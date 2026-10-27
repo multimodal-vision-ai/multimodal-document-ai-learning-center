@@ -210,6 +210,8 @@ class RadarRenderTests(unittest.TestCase):
             self.assertIn("历史科研档案", radar_page)
             self.assertIn("待复核研究线索", radar_page)
             self.assertIn('id="radar-archive-period"', radar_page)
+            self.assertIn('<textarea id="radar-archive-search" rows="1"', radar_page)
+            self.assertNotIn('<input id="radar-archive-search"', radar_page)
             self.assertIn("<span>期次</span>", radar_page)
             self.assertNotIn("<span>具体期次</span>", radar_page)
             self.assertNotIn('id="radar-archive-pagination"', radar_page)
