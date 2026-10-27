@@ -35,11 +35,13 @@
 
   function setupArchiveSearch() {
     const search = document.getElementById("radar-archive-search");
+    const searchSubmit = document.getElementById("radar-archive-search-submit");
     const type = document.getElementById("radar-archive-type");
     const year = document.getElementById("radar-archive-year");
     const period = document.getElementById("radar-archive-period");
-    if (!search || !type || !year || !period) return;
+    if (!search || !searchSubmit || !type || !year || !period) return;
 
+    let submittedKeyword = "";
     const items = Array.from(document.querySelectorAll(".radar-archive-item"));
     const sections = Array.from(document.querySelectorAll(".radar-archive-section"));
     const yearValues = [...new Set(items.map(item => item.dataset.archiveYear).filter(Boolean))]
@@ -95,7 +97,7 @@
     }
 
     function refresh() {
-      const keyword = search.value.trim().toLowerCase();
+      const keyword = submittedKeyword.trim().toLowerCase().replace(/\\s+/g, " ");
       const typeValue = type.value;
       const yearValue = year.value;
       const periodValue = period.value;
@@ -131,10 +133,18 @@
       // A period may have archived revisions. Display only its newest saved record.
       const selected = periodItems[0];
       const searchable = selected
-        ? (selected.dataset.archiveText || selected.textContent || "").toLowerCase()
+        ? (selected.dataset.archiveText || selected.textContent || "").toLowerCase().replace(/\\s+/g, " ")
         : "";
       const keywordMatches = !keyword || searchable.includes(keyword);
       const visible = selected && keywordMatches;
+      const escapedKeyword = keyword.replace(/[.*+?^\\$\\{\\}()|[\\]\\\\]/g, "\\\\      const searchable = selected
+        ? (selected.dataset.archiveText || selected.textContent || "").toLowerCase()
+        : "";
+      const keywordMatches = !keyword || searchable.includes(keyword);
+      const visible = selected && keywordMatches;");
+      const keywordCount = keyword && visible
+        ? (searchable.match(new RegExp(escapedKeyword, "g")) || []).length
+        : 0;
 
       if (visible) {
         selected.hidden = false;
@@ -143,7 +153,7 @@
         if (count) {
           count.textContent = "当前选择：" + yearValue + " 年 · " +
             (typeValue === "weekly" ? "第 " + periodValue + " 周报" : "第 " + periodValue + " 月报") +
-            " · 显示 1 期";
+            " · 显示 1 期" + (keyword ? " · 已定位 " + keywordCount + " 处关键词" : "");
         }
         if (noResults) noResults.hidden = true;
       } else {
@@ -173,8 +183,25 @@
       period.addEventListener("change", refresh);
       period.dataset.radarArchiveAttached = "1";
     }
+    function submitSearch() {
+      submittedKeyword = search.value.trim().replace(/\\s+/g, " ").toLowerCase();
+      refresh();
+    }
+    if (!searchSubmit.dataset.radarArchiveAttached) {
+      searchSubmit.addEventListener("click", submitSearch);
+      searchSubmit.dataset.radarArchiveAttached = "1";
+    }
     if (!search.dataset.radarArchiveAttached) {
-      search.addEventListener("input", refresh);
+      search.addEventListener("keydown", event => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          submitSearch();
+        }
+      });
+      search.addEventListener("input", () => {
+        search.style.height = "auto";
+        search.style.height = Math.min(search.scrollHeight, 192) + "px";
+      });
       search.dataset.radarArchiveAttached = "1";
     }
   }
