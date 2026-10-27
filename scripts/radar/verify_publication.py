@@ -42,8 +42,10 @@ def verify(home_path, detail_path, data_dir=DATA):
         errors.append("obsolete duplicate weekly recommendation section is still published")
     if detail.count('class="radar-review-card"') > 3:
         errors.append("current recommendations exceed the three-item display cap")
-    if "radar-archive-pagination" not in detail:
-        errors.append("archive pagination control is missing")
+    if 'id="radar-archive-period"' not in detail:
+        errors.append("archive period selector is missing")
+    if 'id="radar-archive-pagination"' in detail:
+        errors.append("obsolete archive pagination control is still present")
     if f'data-radar-snapshot="{snapshot_digest(reports, queue)}"' not in detail:
         errors.append("rendered research updates do not match the report/queue snapshot")
     if top3_state is not None and f'data-radar-top3-snapshot="{top3_digest(top3_state)}"' not in detail:

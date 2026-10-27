@@ -197,9 +197,11 @@ def _archive_records(report_type, queue=None):
         if report_type == "weekly":
             week_info = week_year_number(anchor)
             year = str(week_info[0]) if week_info else ""
+            period_number = str(week_info[1]) if week_info else ""
             sort_key = dt.timestamp() if dt else 0
         else:
             year = str(dt.year) if dt else ""
+            period_number = str(dt.month) if dt else ""
             sort_key = dt.timestamp() if dt else 0
         items = selected if state == "validated" else [
             item for item in report.get("items", [])
@@ -225,6 +227,7 @@ def _archive_records(report_type, queue=None):
                 else str(report.get("generated_at") or "日期未记录")[:10]
             ),
             "year": year,
+            "period_number": period_number,
             "sort_key": sort_key,
             "title": report.get("report_title") or ("每周科研周报" if report_type == "weekly" else "月度研究机会"),
             "summary": report.get("summary") or (
@@ -247,6 +250,7 @@ def archive_card(record):
     return (
         f'<article class="radar-archive-item" data-archive-type="{escape(kind)}" '
         f'data-archive-year="{escape(record["year"])}" '
+        f'data-archive-period="{escape(record["period_number"])}" '
         f'data-archive-text="{escape(record["search_text"])}">'
         '<header class="radar-archive-head">'
         f'<span class="radar-period-badge">{escape(record["period_label"])}</span>'
