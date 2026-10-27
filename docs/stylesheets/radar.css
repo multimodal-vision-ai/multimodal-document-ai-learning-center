@@ -712,7 +712,7 @@
 /* Searchable, expandable history for the saved weekly and monthly reports. */
 .radar-archive-toolbar{
   display:grid;
-  grid-template-columns:minmax(0,.7fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.45fr);
+  grid-template-columns:repeat(3,minmax(0,1fr));
   align-items:end;
   gap:.65rem;
   margin:.7rem 0 .55rem;
@@ -729,6 +729,12 @@
   color:var(--md-default-fg-color--light);
   font-size:.75rem;
   font-weight:700;
+}
+/* The keyword editor always gets its own full-width row, independent of viewport width. */
+.radar-archive-keyword{
+  grid-column:1/-1;
+  width:100%;
+  min-width:0;
 }
 .radar-archive-field input,
 .radar-archive-field select,
@@ -747,13 +753,25 @@
 }
 .radar-archive-field textarea{
   display:block;
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
   max-width:100%;
   min-height:2.35rem;
   max-height:10rem;
-  line-height:1.45;
+  padding:.55rem .65rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.45rem;
+  background:var(--md-default-bg-color);
+  color:var(--md-default-fg-color);
+  font:inherit;
+  font-size:.82rem;
+  font-weight:400;
+  line-height:1.5;
   overflow-wrap:anywhere;
   white-space:pre-wrap;
-  resize:vertical;
+  resize:none;
+  overflow-x:hidden;
   overflow-y:hidden;
 }
 .radar-archive-field select:disabled{
@@ -877,7 +895,7 @@
   .md-content__inner:has(.radar-review-intro) .radar-review-card-head{align-items:flex-start}
   .md-content__inner:has(.radar-review-intro) .radar-review-score-item{padding:.45rem .5rem}
   .radar-archive-toolbar{grid-template-columns:minmax(0,1fr)}
-  .radar-archive-keyword{grid-column:auto}
+  .radar-archive-keyword{grid-column:1/-1}
   .radar-archive-countline{grid-column:auto}
 }
 
