@@ -1,0 +1,23 @@
+/* Shared across document, video and visual perception demos.
+   One-line expandable help: keep the demonstration as the primary task. */
+.mpg .vis-quota-help { margin: .45rem 0 .88rem; }
+.mpg .vis-quota-help > summary { font-size: .66rem; }
+.mpg .vis-quota-help > summary > strong { font-weight: 600; font-size: .66rem; }
+.mpg .vis-quota-help > summary > .mpg-help-caption { font-size: .62rem; }
+.mpg .vis-quota-content {
+  padding: .75rem .9rem;
+  margin: .38rem 0 .55rem;
+  border: 1px solid #e1e8f1;
+  border-radius: 8px;
+  background: #fafbfd;
+  color: #46536a;
+  font-size: .67rem;
+  line-height: 1.7;
+}
+.mpg .vis-quota-content p { margin: 0 0 .55rem; }
+.mpg .vis-quota-content ol { padding-left: 1.25rem; margin: 0 0 .55rem; list-style: decimal; }
+.mpg .vis-quota-content li { margin-bottom: .36rem; }
+.mpg .vis-quota-content a { color: var(--md-accent-fg-color); text-decoration: underline; }
+.mpg .vis-quota-content code { white-space: normal; overflow-wrap: anywhere; }
+.mpg .vis-quota-content .vis-quota-security { color: #59667b; }
+.mpg .vis-quota-content .vis-quota-source { margin: .3rem 0 0; font-size: .62rem; }
