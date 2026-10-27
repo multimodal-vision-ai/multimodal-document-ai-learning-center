@@ -136,6 +136,13 @@ nav:
       - 论文索引: resources/papers.md
       - 数据集索引: resources/datasets.md
       - 工具清单: resources/tools.md
-  - 成果展厅: projects/README.md
+  - 成果展厅:
+      - 展厅总览: projects/README.md
+      - 研究项目:
+          - 文档理解: projects/document-ai/README.md
+          - 视觉理解: projects/vision-ai/README.md
+          - 类脑智能: projects/brain-inspired/README.md
+      - 自研模型体验: projects/self-developed-models/README.md
+      - 学生作品: projects/student-work/README.md
 
 copyright: Copyright &copy; 2026 Multimodal Vision AI Lab.
