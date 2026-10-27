@@ -620,7 +620,12 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True, queu
     cards = []
     for item in shown_items:
         title_text = item.get("title", "未命名研究成果")
+        evidence_urls = item.get("evidence_urls")
+        if not isinstance(evidence_urls, list):
+            evidence_urls = []
         title_url = item.get("paper_url") or item.get("source_url") or item.get("github_url")
+        if not valid_url(title_url):
+            title_url = next((url for url in evidence_urls if valid_url(url)), None)
         title = link(title_url, title_text)
         summary = item.get("summary") or item.get("abstract") or item.get("description") or ""
         why = clean_value_point(item.get("why_selected") or item.get("selection_rationale") or "")
@@ -649,12 +654,26 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True, queu
                 f'<div class="radar-resource-row"><strong>GPU需求：</strong><span>{escape(gpu_display)}</span></div>'
             )
         links = []
-        seen = set()
-        for key, link_label in (("paper_url", "论文"), ("github_url", "GitHub"), ("huggingface_url", "Hugging Face")):
+        seen_urls = set()
+        seen_labels = set()
+        for key, link_label in (("paper_url", "论文"), ("github_url", "GitHub 仓库"), ("huggingface_url", "模型/数据")):
             url = item.get(key)
-            if url and url not in seen and valid_url(url):
-                seen.add(url)
+            if url and url not in seen_urls and valid_url(url):
+                seen_urls.add(url)
+                seen_labels.add(link_label)
                 links.append(link(url, link_label))
+        # Newer reviewed snapshots preserve resource URLs in evidence_urls instead of
+        # duplicating them into paper_url/github_url/huggingface_url fields.
+        # Recover one link per resource type so historical archive cards stay useful.
+        for url in evidence_urls:
+            if not valid_url(url) or url in seen_urls:
+                continue
+            link_label = evidence_label(url)
+            if link_label in seen_labels:
+                continue
+            seen_urls.add(url)
+            seen_labels.add(link_label)
+            links.append(link(url, link_label))
         cards.append(
             '<article class="radar-brief-card radar-weekly-card">'
             '<div class="radar-brief-heading">'
@@ -666,7 +685,7 @@ def chatgpt_report_listing(report, report_type, limit=3, include_note=True, queu
             + (f'<p class="radar-brief-value"><strong>价值点</strong>{escape(why[:220])}</p>' if why else "")
             + (f'<p class="radar-brief-student"><strong>学生切入</strong>{escape(opportunity[:240])}</p>' if opportunity else "")
             + (f'<div class="radar-chatgpt-compute">{"".join(resource_meta)}</div>' if resource_meta else "")
-            + (f'<div class="radar-brief-links">{"".join(links)}</div>' if links else "")
+            + (f'<div class="radar-brief-links"><strong>论文与项目资源</strong> {"".join(links)}</div>' if links else "")
             + '</article>'
         )
     if not include_note:
