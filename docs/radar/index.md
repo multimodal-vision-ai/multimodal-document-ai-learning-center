@@ -52,7 +52,11 @@
   </label>
   <label class="radar-archive-field radar-archive-keyword">
     <span>关键词搜索（可选）</span>
-    <textarea id="radar-archive-search" rows="1" placeholder="输入关键词，搜索历史周报和月报…" autocomplete="off" aria-label="搜索历史周报和月报"></textarea>
+    <div class="radar-archive-search-row">
+      <textarea id="radar-archive-search" rows="1" placeholder="输入关键词，搜索历史周报和月报…" autocomplete="off" aria-label="搜索历史周报和月报"></textarea>
+      <button id="radar-archive-search-button" class="radar-archive-search-button" type="button">搜索</button>
+    </div>
+    <span class="radar-archive-search-hint">按 Enter 搜索；按 Shift + Enter 换行。</span>
   </label>
   <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">请先选择年份和报告类型，再选择期次</p>
 </div>
