@@ -1,7 +1,7 @@
 # 前沿动态
 
 <div class="radar-page-intro">
-<p>聚焦值得学生复现和继续研究的多模态视觉 AI 工作。重点推荐采用跨周滚动 Top 3：新资源只有在通过四维评价且综合评分严格高于当前榜单最低分时才替换原推荐；每周历史报告独立归档，供参考查阅。</p>
+<p>聚焦值得学生复现与深入研究的多模态视觉 AI 工作。重点推荐经四维科研价值评价筛选的 Top 3 项目，严格择优替换；每周/每月报告独立归档，便于查阅。</p>
 </div>
 
 ## 重点推荐
@@ -22,38 +22,48 @@
 <p class="radar-section-note">月度报告用于归纳值得持续跟进的研究方向；没有已完成报告时，不以自动采集线索代替。</p>
 
 <!-- RADAR:CHATGPT_MONTHLY-START -->
-尚无已存档的 ChatGPT 月度研究机会。
+尚无已存档的月度研究机会。
 <!-- RADAR:CHATGPT_MONTHLY-END -->
 
 ## 历史科研档案
 
-<p class="radar-section-note">各期周报与月报持续归档。支持按关键词、年份和类型检索；默认每页展示 6 期，可展开阅读完整评价。</p>
+<p class="radar-section-note">按“年份 → 报告类型 → 具体期次”查看历史报告。每次只展示所选的一个月报或周报，历史记录保持原样保存。</p>
 
-<div class="radar-archive-toolbar" role="search" aria-label="历史档案检索">
-  <label class="radar-archive-field radar-archive-keyword">
-    <span>关键词</span>
-    <input id="radar-archive-search" type="search" placeholder="搜索标题、方法、研究方向…" autocomplete="off">
+<div class="radar-archive-toolbar" role="search" aria-label="历史档案按期次检索">
+  <label class="radar-archive-field">
+    <span>年份</span>
+    <select id="radar-archive-year">
+      <option value="">选择年份</option>
+    </select>
   </label>
   <label class="radar-archive-field">
     <span>报告类型</span>
     <select id="radar-archive-type">
-      <option value="">全部类型</option>
-      <option value="weekly">历史周报</option>
-      <option value="monthly">历史月报</option>
+      <option value="">选择类型</option>
+      <option value="weekly">周报</option>
+      <option value="monthly">月报</option>
     </select>
   </label>
   <label class="radar-archive-field">
-    <span>年份</span>
-    <select id="radar-archive-year">
-      <option value="">全部年份</option>
+    <span>期次</span>
+    <select id="radar-archive-period" disabled>
+      <option value="">先选择年份和报告类型</option>
     </select>
   </label>
-  <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">正在读取历史档案…</p>
+  <div class="radar-archive-keyword-block">
+    <label class="radar-archive-keyword-label" for="radar-archive-search">关键词搜索（可选）</label>
+    <div class="radar-archive-search-row">
+      <textarea id="radar-archive-search" rows="1" placeholder="搜索标题、方法、研究方向…" autocomplete="off" aria-describedby="radar-archive-search-help"></textarea>
+      <button id="radar-archive-search-submit" type="button" class="radar-archive-search-button">搜索</button>
+    </div>
+    <p id="radar-archive-search-help" class="radar-archive-search-help">按 Enter 搜索；按 Shift + Enter 换行。</p>
+  </div>
+  <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">请先选择年份和报告类型，再选择期次</p>
 </div>
 
-<p id="radar-archive-no-results" class="radar-empty-state radar-archive-no-results" hidden>没有找到匹配的历史档案。请尝试其他关键词，或清除筛选条件。</p>
+<p id="radar-archive-no-results" class="radar-empty-state radar-archive-no-results">请先选择年份和报告类型，再选择期次；页面将只展示对应的一份历史报告。</p>
 
-<div class="radar-archive-section" data-archive-section="weekly">
+<div class="radar-archive-section" data-archive-section="weekly" hidden>
 <h3>历史周报</h3>
 
 <!-- RADAR:WEEKLY_ARCHIVE-START -->
@@ -61,19 +71,13 @@
 <!-- RADAR:WEEKLY_ARCHIVE-END -->
 </div>
 
-<div class="radar-archive-section" data-archive-section="monthly">
+<div class="radar-archive-section" data-archive-section="monthly" hidden>
 <h3>历史月报</h3>
 
 <!-- RADAR:MONTHLY_ARCHIVE-START -->
 <div class="radar-empty-state radar-archive-empty">暂未形成历史月报档案。每期报告生成并通过校验后，会自动保存到历史记录。</div>
 <!-- RADAR:MONTHLY_ARCHIVE-END -->
 </div>
-
-<nav id="radar-archive-pagination" class="radar-archive-pagination" aria-label="历史科研档案分页" hidden>
-  <button id="radar-archive-prev" type="button">上一页</button>
-  <span id="radar-archive-page" aria-live="polite">第 1 页</span>
-  <button id="radar-archive-next" type="button">下一页</button>
-</nav>
 
 ## 待复核研究线索
 

@@ -40,3 +40,58 @@
   .md-typeset .radar-current-note { font-size: .8rem; }
   .md-typeset .radar-archive-pagination { gap: .5rem; }
 }
+
+/* Archive search: compact controls while preserving the approved two-row layout. */
+.md-typeset .radar-archive-search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6.25rem;
+  align-items: stretch;
+  gap: .55rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+.md-typeset .radar-archive-search-row textarea {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 3rem;
+  min-height: 3rem;
+  max-height: 8rem;
+  padding: .45rem .7rem;
+  font-size: .88rem;
+  line-height: 1.4;
+  resize: vertical;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+.md-typeset .radar-archive-search-button {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 3rem;
+  min-height: 3rem;
+  padding: .4rem .35rem;
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.md-typeset mark.radar-archive-highlight {
+  padding: .04em .12em;
+  border-radius: .18em;
+  background: #ffe58a;
+  color: #332600;
+  box-shadow: 0 0 0 1px rgba(150, 105, 0, .12);
+}
+@media (max-width: 520px) {
+  .md-typeset .radar-archive-search-row {
+    grid-template-columns: minmax(0, 1fr) 5.5rem;
+    gap: .45rem;
+  }
+  .md-typeset .radar-archive-search-button {
+    font-size: .78rem;
+  }
+}

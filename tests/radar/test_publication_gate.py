@@ -35,7 +35,9 @@ class PublicationTests(unittest.TestCase):
             if heading:
                 sections += f"\n## {heading}\n\n"
             sections += f"<!-- RADAR:{marker}-START -->\n<!-- RADAR:{marker}-END -->\n\n"
-        sections += '<nav id="radar-archive-pagination" hidden></nav>\n'
+        sections += '<input id="radar-archive-search"><button id="radar-archive-search-submit"></button>\n'
+        sections += '<select id="radar-archive-year"></select><select id="radar-archive-type"></select>\n'
+        sections += '<select id="radar-archive-period"></select>\n'
         (self.docs / "radar/index.md").write_text(sections, encoding="utf-8")
         for name, marker in (("projects", "PROJECTS"), ("tasks", "TASKS")):
             (self.docs / f"radar/{name}.md").write_text(
