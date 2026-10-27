@@ -143,6 +143,7 @@
     [year, type].forEach(control => {
       if (control.dataset.radarArchiveAttached) return;
       control.addEventListener("change", () => {
+        period.value = "";
         updatePeriodOptions();
         refresh();
       });
