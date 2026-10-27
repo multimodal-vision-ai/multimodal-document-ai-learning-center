@@ -711,10 +711,14 @@
 
 /* Searchable, expandable history for the saved weekly and monthly reports. */
 .radar-archive-toolbar{
-  display:grid;
-  grid-template-columns:minmax(6.5rem,.7fr) minmax(7rem,.8fr) minmax(7rem,.8fr) minmax(12rem,1.45fr);
-  align-items:end;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-end;
   gap:.65rem;
+  box-sizing:border-box;
+  width:100%;
+  max-width:100%;
+  min-width:0;
   margin:.7rem 0 .55rem;
   padding:.8rem;
   border:1px solid var(--md-default-fg-color--lightest);
@@ -723,12 +727,17 @@
 }
 .radar-archive-field{
   display:flex;
+  flex:0 1 11rem;
   flex-direction:column;
   gap:.28rem;
-  min-width:0;
+  min-width:8rem;
   color:var(--md-default-fg-color--light);
   font-size:.75rem;
   font-weight:700;
+}
+.radar-archive-keyword{
+  flex:1 1 16rem;
+  min-width:16rem;
 }
 .radar-archive-field input,
 .radar-archive-field select{
@@ -749,7 +758,8 @@
   cursor:not-allowed;
 }
 .radar-archive-countline{
-  grid-column:1/-1;
+  flex:1 0 100%;
+  min-width:0;
   margin:0!important;
   color:var(--md-default-fg-color--light);
   font-size:.75rem;
@@ -855,18 +865,24 @@
       "links";
     gap:.08rem;
   }
-  .radar-archive-toolbar{
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  .radar-archive-keyword{
+    flex:1 1 100%;
+    min-width:0;
   }
-  .radar-archive-keyword{grid-column:1/-1}
+  .radar-archive-field:not(.radar-archive-keyword){
+    flex:1 1 12rem;
+    min-width:0;
+  }
 }
 @media(max-width:520px){
   .md-content__inner:has(.radar-review-intro) .radar-review-card{padding:.8rem}
   .md-content__inner:has(.radar-review-intro) .radar-review-card-head{align-items:flex-start}
   .md-content__inner:has(.radar-review-intro) .radar-review-score-item{padding:.45rem .5rem}
-  .radar-archive-toolbar{grid-template-columns:minmax(0,1fr)}
-  .radar-archive-keyword{grid-column:auto}
-  .radar-archive-countline{grid-column:auto}
+  .radar-archive-field,
+  .radar-archive-keyword{
+    flex:1 1 100%;
+    min-width:0;
+  }
 }
 
 .radar-archive-date{
