@@ -77,10 +77,20 @@
         option.textContent = typeValue === "weekly" ? "第 " + value + " 周" : "第 " + value + " 月";
         period.appendChild(option);
       });
-      period.disabled = !yearValue || !typeValue || available.length === 0;
-      period.options[0].textContent = !yearValue || !typeValue
-        ? "请先选择年份和类型"
-        : (available.length ? "选择具体期次" : "该年份暂无此类报告");
+      const hasYear = Boolean(yearValue);
+      const hasType = Boolean(typeValue);
+      period.disabled = !hasYear || !hasType || available.length === 0;
+      if (!hasYear && !hasType) {
+        period.options[0].textContent = "先选择年份和报告类型";
+      } else if (!hasYear) {
+        period.options[0].textContent = "先选择年份";
+      } else if (!hasType) {
+        period.options[0].textContent = "先选择报告类型";
+      } else if (available.length) {
+        period.options[0].textContent = "选择期次";
+      } else {
+        period.options[0].textContent = typeValue === "weekly" ? "该年份暂无周报" : "该年份暂无月报";
+      }
       period.value = available.includes(oldValue) ? oldValue : "";
     }
 
@@ -95,9 +105,19 @@
       sections.forEach(section => { section.hidden = true; });
 
       if (!completeSelection) {
-        if (count) count.textContent = "请选择年份、报告类型和具体期次";
+        let message;
+        if (!yearValue) {
+          message = "请先选择年份。";
+        } else if (!typeValue) {
+          message = "请选择周报或月报。";
+        } else if (period.disabled) {
+          message = typeValue === "weekly" ? "该年份暂无可展示的周报。" : "该年份暂无可展示的月报。";
+        } else {
+          message = "请选择期次。";
+        }
+        if (count) count.textContent = message;
         if (noResults) {
-          noResults.textContent = "请依次选择年份、报告类型和具体期次；页面将只展示对应的一份历史报告。";
+          noResults.textContent = message + " 选择完成后，将只显示该期报告。";
           noResults.hidden = false;
         }
         return;
