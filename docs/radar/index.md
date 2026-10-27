@@ -50,10 +50,14 @@
       <option value="">先选择年份和报告类型</option>
     </select>
   </label>
-  <label class="radar-archive-field radar-archive-keyword">
-    <span>关键词（可选）</span>
-    <input id="radar-archive-search" type="search" placeholder="在所选报告中搜索…" autocomplete="off">
-  </label>
+  <div class="radar-archive-keyword-block">
+    <label class="radar-archive-keyword-label" for="radar-archive-search">关键词搜索（可选）</label>
+    <div class="radar-archive-search-row">
+      <textarea id="radar-archive-search" rows="1" placeholder="搜索标题、方法、研究方向…" autocomplete="off" aria-describedby="radar-archive-search-help"></textarea>
+      <button id="radar-archive-search-submit" type="button" class="radar-archive-search-button">搜索</button>
+    </div>
+    <p id="radar-archive-search-help" class="radar-archive-search-help">按 Enter 搜索；按 Shift + Enter 换行。</p>
+  </div>
   <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">请先选择年份和报告类型，再选择期次</p>
 </div>
 
