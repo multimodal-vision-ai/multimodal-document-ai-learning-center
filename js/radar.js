@@ -37,84 +37,126 @@
     const search = document.getElementById("radar-archive-search");
     const type = document.getElementById("radar-archive-type");
     const year = document.getElementById("radar-archive-year");
-    if (!search || !type || !year) return;
+    const period = document.getElementById("radar-archive-period");
+    if (!search || !type || !year || !period) return;
 
     const items = Array.from(document.querySelectorAll(".radar-archive-item"));
-    const yearValues = [...new Set(
-      items.map(item => item.dataset.archiveYear).filter(Boolean)
-    )].sort((a, b) => Number(b) - Number(a));
+    const sections = Array.from(document.querySelectorAll(".radar-archive-section"));
+    const yearValues = [...new Set(items.map(item => item.dataset.archiveYear).filter(Boolean))]
+      .sort((a, b) => Number(b) - Number(a));
 
     if (year.dataset.radarArchiveYears !== yearValues.join(",")) {
       while (year.options.length > 1) year.remove(1);
       yearValues.forEach(value => {
         const option = document.createElement("option");
         option.value = value;
-        option.textContent = value;
+        option.textContent = value + " 年";
         year.appendChild(option);
       });
       year.dataset.radarArchiveYears = yearValues.join(",");
     }
 
-    const pagination = document.getElementById("radar-archive-pagination");
-    const previous = document.getElementById("radar-archive-prev");
-    const next = document.getElementById("radar-archive-next");
-    const pageLabel = document.getElementById("radar-archive-page");
-    const pageSize = 6;
-    let page = 1;
+    const count = document.getElementById("radar-archive-count");
+    const noResults = document.getElementById("radar-archive-no-results");
 
-    const refresh = () => {
+    function updatePeriodOptions() {
+      const oldValue = period.value;
+      const yearValue = year.value;
+      const typeValue = type.value;
+      const available = [...new Set(items
+        .filter(item => item.dataset.archiveYear === yearValue &&
+          item.dataset.archiveType === typeValue)
+        .map(item => item.dataset.archivePeriod)
+        .filter(Boolean))]
+        .sort((a, b) => Number(b) - Number(a));
+
+      while (period.options.length > 1) period.remove(1);
+      available.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = typeValue === "weekly" ? "第 " + value + " 周" : "第 " + value + " 月";
+        period.appendChild(option);
+      });
+      period.disabled = !yearValue || !typeValue || available.length === 0;
+      period.options[0].textContent = !yearValue || !typeValue
+        ? "请先选择年份和类型"
+        : (available.length ? "选择具体期次" : "该年份暂无此类报告");
+      period.value = available.includes(oldValue) ? oldValue : "";
+    }
+
+    function refresh() {
       const keyword = search.value.trim().toLowerCase();
       const typeValue = type.value;
       const yearValue = year.value;
-      const matched = items.filter(item => {
-        const searchable = (item.dataset.archiveText || item.textContent || "").toLowerCase();
-        return (!keyword || searchable.includes(keyword)) &&
-          (!typeValue || item.dataset.archiveType === typeValue) &&
-          (!yearValue || item.dataset.archiveYear === yearValue);
-      });
-      const pages = Math.max(1, Math.ceil(matched.length / pageSize));
-      page = Math.min(page, pages);
-      const pageItems = new Set(matched.slice((page - 1) * pageSize, page * pageSize));
-      items.forEach(item => { item.hidden = !pageItems.has(item); });
-      document.querySelectorAll(".radar-archive-section").forEach(section => {
-        const sectionItems = Array.from(section.querySelectorAll(".radar-archive-item"));
-        const typeMatches = !typeValue || typeValue === section.dataset.archiveSection;
-        section.hidden = !typeMatches || (sectionItems.length > 0 &&
-          !sectionItems.some(item => !item.hidden));
-      });
-      const count = document.getElementById("radar-archive-count");
-      if (count) {
-        count.textContent = (keyword || typeValue || yearValue ? "匹配 " : "共 ") +
-          matched.length + " 条历史档案" +
-          (matched.length ? " · 当前显示 " + Math.min(pageSize, matched.length - (page - 1) * pageSize) + " 期" : "");
-      }
-      const noResults = document.getElementById("radar-archive-no-results");
-      if (noResults) noResults.hidden = matched.length !== 0 || !(keyword || typeValue || yearValue);
-      if (pagination && previous && next && pageLabel) {
-        pagination.hidden = matched.length <= pageSize;
-        previous.disabled = page <= 1;
-        next.disabled = page >= pages;
-        pageLabel.textContent = "第 " + page + " / " + pages + " 页";
-      }
-    };
+      const periodValue = period.value;
+      const completeSelection = Boolean(yearValue && typeValue && periodValue);
 
-    [search, type, year].forEach(control => {
+      items.forEach(item => { item.hidden = true; });
+      sections.forEach(section => { section.hidden = true; });
+
+      if (!completeSelection) {
+        if (count) count.textContent = "请选择年份、报告类型和具体期次";
+        if (noResults) {
+          noResults.textContent = "请依次选择年份、报告类型和具体期次；页面将只展示对应的一份历史报告。";
+          noResults.hidden = false;
+        }
+        return;
+      }
+
+      const periodItems = items.filter(item =>
+        item.dataset.archiveYear === yearValue &&
+        item.dataset.archiveType === typeValue &&
+        item.dataset.archivePeriod === periodValue
+      );
+      // A period may have archived revisions. Display only its newest saved record.
+      const selected = periodItems[0];
+      const searchable = selected
+        ? (selected.dataset.archiveText || selected.textContent || "").toLowerCase()
+        : "";
+      const keywordMatches = !keyword || searchable.includes(keyword);
+      const visible = selected && keywordMatches;
+
+      if (visible) {
+        selected.hidden = false;
+        const section = sections.find(value => value.dataset.archiveSection === typeValue);
+        if (section) section.hidden = false;
+        if (count) {
+          count.textContent = "当前选择：" + yearValue + " 年 · " +
+            (typeValue === "weekly" ? "第 " + periodValue + " 周报" : "第 " + periodValue + " 月报") +
+            " · 显示 1 期";
+        }
+        if (noResults) noResults.hidden = true;
+      } else {
+        if (count) count.textContent = "当前期次未找到匹配报告";
+        if (noResults) {
+          noResults.textContent = keyword
+            ? "所选报告中没有匹配该关键词的内容，请清除关键词后重试。"
+            : "所选期次暂时没有可展示的历史报告。";
+          noResults.hidden = false;
+        }
+      }
+    }
+
+    updatePeriodOptions();
+    refresh();
+
+    [year, type].forEach(control => {
       if (control.dataset.radarArchiveAttached) return;
-      control.addEventListener(control === search ? "input" : "change", () => {
-        page = 1;
+      control.addEventListener("change", () => {
+        period.value = "";
+        updatePeriodOptions();
         refresh();
       });
       control.dataset.radarArchiveAttached = "1";
     });
-    if (previous && !previous.dataset.radarArchiveAttached) {
-      previous.addEventListener("click", () => { page = Math.max(1, page - 1); refresh(); });
-      previous.dataset.radarArchiveAttached = "1";
+    if (!period.dataset.radarArchiveAttached) {
+      period.addEventListener("change", refresh);
+      period.dataset.radarArchiveAttached = "1";
     }
-    if (next && !next.dataset.radarArchiveAttached) {
-      next.addEventListener("click", () => { page += 1; refresh(); });
-      next.dataset.radarArchiveAttached = "1";
+    if (!search.dataset.radarArchiveAttached) {
+      search.addEventListener("input", refresh);
+      search.dataset.radarArchiveAttached = "1";
     }
-    refresh();
   }
 
   function setup() {
