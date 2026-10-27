@@ -35,6 +35,26 @@ def save_page(relative, text):
     if target.read_text(encoding="utf-8-sig") != text:
         target.write_text(text, encoding="utf-8")
 
+def strip_visible_branding(content):
+    """Remove product-name mentions from visible page copy, preserving links and HTML markers."""
+    destinations = []
+
+    def stash_destination(match):
+        destinations.append(match.group(2))
+        return f"{match.group(1)}RADARLINKDEST{len(destinations) - 1}TOKEN{match.group(3)}"
+
+    protected = re.sub(r"(!?\[[^\]]*\]\()([^)]+)(\))", stash_destination, content)
+    parts = re.split(r"(<!--.*?-->|<[^>]*>)", protected, flags=re.S)
+    for index, part in enumerate(parts):
+        if part.startswith("<!--") or part.startswith("<"):
+            continue
+        parts[index] = re.sub(r"ChatGPT", "", part, flags=re.I)
+    result = "".join(parts)
+    for index, destination in enumerate(destinations):
+        result = result.replace(f"RADARLINKDEST{index}TOKEN", destination)
+    return result
+
+
 def params_min(text):
     match = re.search(r"(\d+(?:\.\d+)?)\s*[Bb]\b", str(text or ""))
     return float(match.group(1)) if match else None
@@ -482,7 +502,7 @@ def chatgpt_home_section(chatgpt_reports, now, limit=3):
                 '该快照已超过 36 小时；下次计划任务成功写入后，此处才会更新为新结果。</div>'
             )
         else:
-            status = f'<div class="radar-home-health" role="status">最近一次 ChatGPT 结果存档：{escape(time_text)}</div>'
+            status = f'<div class="radar-home-health" role="status">最近一次科研筛选结果存档：{escape(time_text)}</div>'
     else:
         status = (
             '<div class="radar-home-warning" role="status">尚未记录科研筛选结果的生成时间；'
@@ -934,6 +954,7 @@ def render(now=None):
                    " 下方仅展示近7天≥8.0分的自动候选（最多15条）；其余原始线索保留在后台。匹配度不是科研质量评分。")
     content = replace(content, "CANDIDATES", status_line + "\n\n" +
                       ("\n".join(leads) if leads else "近7天暂无主题匹配度达到 8.0 的自动候选。"))
+    content = strip_visible_branding(content)
     save_page("radar/index.md", content)
 
     page = DOCS / "radar/tasks.md"
