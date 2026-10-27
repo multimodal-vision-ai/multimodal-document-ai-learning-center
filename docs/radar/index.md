@@ -1,7 +1,7 @@
 # 前沿动态
 
 <div class="radar-page-intro">
-<p>聚焦值得学生复现和继续研究的多模态视觉 AI 工作。重点推荐采用跨周滚动 Top 3：新资源只有在通过四维评价且综合评分严格高于当前榜单最低分时才替换原推荐；每周历史报告独立归档，供参考查阅。</p>
+<p>聚焦值得学生复现与深入研究的多模态视觉 AI 工作。重点推荐经四维科研价值评价筛选的 Top 3 项目，严格择优替换；每周/每月报告独立归档，便于查阅。</p>
 </div>
 
 ## 重点推荐
@@ -22,7 +22,7 @@
 <p class="radar-section-note">月度报告用于归纳值得持续跟进的研究方向；没有已完成报告时，不以自动采集线索代替。</p>
 
 <!-- RADAR:CHATGPT_MONTHLY-START -->
-尚无已存档的 ChatGPT 月度研究机会。
+尚无已存档的月度研究机会。
 <!-- RADAR:CHATGPT_MONTHLY-END -->
 
 ## 历史科研档案
@@ -50,10 +50,14 @@
       <option value="">先选择年份和报告类型</option>
     </select>
   </label>
-  <label class="radar-archive-field radar-archive-keyword">
-    <span>关键词（可选）</span>
-    <input id="radar-archive-search" type="search" placeholder="在所选报告中搜索…" autocomplete="off">
-  </label>
+  <div class="radar-archive-keyword-block">
+    <label class="radar-archive-keyword-label" for="radar-archive-search">关键词搜索（可选）</label>
+    <div class="radar-archive-search-row">
+      <textarea id="radar-archive-search" rows="1" placeholder="搜索标题、方法、研究方向…" autocomplete="off" aria-describedby="radar-archive-search-help"></textarea>
+      <button id="radar-archive-search-submit" type="button" class="radar-archive-search-button">搜索</button>
+    </div>
+    <p id="radar-archive-search-help" class="radar-archive-search-help">按 Enter 搜索；按 Shift + Enter 换行。</p>
+  </div>
   <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">请先选择年份和报告类型，再选择期次</p>
 </div>
 

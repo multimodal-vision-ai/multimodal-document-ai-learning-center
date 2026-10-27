@@ -131,7 +131,7 @@ def _prepare_item(item, generated_at, selected_at=None):
     result["_report_type"] = "weekly"
     result["_report_generated"] = result.get("_report_generated") or generated_at
     result["_scoring_source"] = (
-        result.get("_scoring_source") or "ChatGPT 四维科研价值评价"
+        result.get("_scoring_source") or "四维科研价值评价"
     )
     result["top3_selected_at"] = (
         selected_at or result.get("top3_selected_at") or generated_at or iso_now()

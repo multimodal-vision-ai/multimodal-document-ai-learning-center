@@ -31,6 +31,66 @@ class RadarRenderTests(unittest.TestCase):
         self.assertIn("T4 16GB", cleaned[1])
         self.assertIn("开放权重与数据", cleaned[2])
 
+    def test_historical_weekly_cards_render_resource_links_from_evidence_urls(self):
+        paper_url = "https://arxiv.org/abs/2610.14531v2"
+        github_url = "https://github.com/SCUT-DLVCLab/LongHisDoc"
+        dataset_url = "https://huggingface.co/datasets/qweq12433454/LongHisDoc"
+        title = "LongHisDoc: A Comprehensive Benchmark for Chinese Long Historical Document Understanding"
+        queue = {
+            "candidates": [{
+                "id": "arxiv-2610-14531",
+                "title": title,
+                "source_url": paper_url,
+                "paper_url": paper_url,
+                "github_url": github_url,
+                "huggingface_url": dataset_url,
+                "match_score": 8.5,
+            }]
+        }
+        dimensions = {
+            key: {"score": 8.0, "rationale": "Supported by published evidence and testable."}
+            for key in ("innovation", "open_source", "reproducibility", "research_potential")
+        }
+        report = {
+            "schema_version": 1,
+            "screening_schema_version": 2,
+            "first_stage_threshold": 8.0,
+            "report_type": "weekly",
+            "status": "completed",
+            "generated_at": "2026-10-26T01:05:33Z",
+            "window_start": "2026-10-19",
+            "window_end": "2026-10-26",
+            "items": [{
+                "candidate_id": "arxiv-2610-14531",
+                "title": title,
+                "selection_status": "recommended",
+                "summary": "A benchmark for long historical document understanding.",
+                "why_selected": "The benchmark supports reproducible evaluation.",
+                "research_opportunity": "Evaluate cross-page evidence retrieval.",
+                "evaluation_dimensions": dimensions,
+                "confidence": "medium",
+                "evidence_urls": [paper_url, github_url, dataset_url],
+                "parameters": None,
+                "gpu_requirement": None,
+                "weights_open": None,
+                "training_code_open": None,
+                "data_open": None,
+            }],
+        }
+
+        html = render.chatgpt_report_listing(
+            report, "weekly", limit=None, include_note=False, queue=queue, historical=True
+        )
+
+        self.assertIn("论文与项目资源", html)
+        self.assertIn(f'<h3><a href="{paper_url}"', html)
+        self.assertIn(f'href="{paper_url}"', html)
+        self.assertIn(f'href="{github_url}"', html)
+        self.assertIn(f'href="{dataset_url}"', html)
+        self.assertIn(">论文</a>", html)
+        self.assertIn(">GitHub 仓库</a>", html)
+        self.assertIn(">模型/数据</a>", html)
+
     def test_recommendation_copy_is_student_facing(self):
         raw = (
             "TrajTok减少冗余视觉token。原论文及Apple研究页说明它试图在长视频推理中降低视觉token冗余。"
@@ -202,7 +262,8 @@ class RadarRenderTests(unittest.TestCase):
             self.assertEqual(featured_section.count('class="radar-review-card"'), 1)
             self.assertIn("Unreviewed", featured_section)
             self.assertIn("四项评分", featured_section)
-            self.assertIn("ChatGPT 四维科研价值评价", featured_section)
+            self.assertIn("四维科研价值评价", featured_section)
+            self.assertNotIn("ChatGPT", featured_section)
             self.assertIn("学生可以怎么做", featured_section)
             self.assertIn("论文与项目资源", featured_section)
             self.assertNotIn("RPD+SARA", featured_section)
