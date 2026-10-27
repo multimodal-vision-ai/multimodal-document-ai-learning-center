@@ -31,6 +31,38 @@ class RadarRenderTests(unittest.TestCase):
         self.assertIn("T4 16GB", cleaned[1])
         self.assertIn("开放权重与数据", cleaned[2])
 
+    def test_historical_weekly_cards_render_resource_links_from_evidence_urls(self):
+        paper_url = "https://arxiv.org/abs/2610.14531v2"
+        github_url = "https://github.com/SCUT-DLVCLab/LongHisDoc"
+        dataset_url = "https://huggingface.co/datasets/qweq12433454/LongHisDoc"
+        report = {
+            "status": "completed",
+            "generated_at": "2026-10-26T01:05:33Z",
+            "window_start": "2026-10-19",
+            "window_end": "2026-10-26",
+            "items": [{
+                "title": "LongHisDoc: A Comprehensive Benchmark for Chinese Long Historical Document Understanding",
+                "selection_status": "selected",
+                "summary": "A benchmark for long historical document understanding.",
+                "why_selected": "The benchmark supports reproducible evaluation.",
+                "research_opportunity": "Evaluate cross-page evidence retrieval.",
+                "evidence_urls": [paper_url, github_url, dataset_url],
+            }],
+        }
+
+        html = render.chatgpt_report_listing(
+            report, "weekly", limit=None, include_note=False, queue={}, historical=True
+        )
+
+        self.assertIn("论文与项目资源", html)
+        self.assertIn(f'<h3><a href="{paper_url}"', html)
+        self.assertIn(f'href="{paper_url}"', html)
+        self.assertIn(f'href="{github_url}"', html)
+        self.assertIn(f'href="{dataset_url}"', html)
+        self.assertIn(">论文</a>", html)
+        self.assertIn(">GitHub 仓库</a>", html)
+        self.assertIn(">模型/数据</a>", html)
+
     def test_recommendation_copy_is_student_facing(self):
         raw = (
             "TrajTok减少冗余视觉token。原论文及Apple研究页说明它试图在长视频推理中降低视觉token冗余。"
