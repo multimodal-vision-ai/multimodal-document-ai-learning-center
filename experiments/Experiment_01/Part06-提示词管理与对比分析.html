@@ -1,0 +1,3008 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Multimodal Vision AI Learning Center — 从文档理解出发，探索图像、视频与多模态智能">
+      
+      
+        <meta name="author" content="谭国平教授团队 · Multimodal Vision AI Lab">
+      
+      
+        <link rel="canonical" href="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-51/experiments/Experiment_01/Part06-%E6%8F%90%E7%A4%BA%E8%AF%8D%E7%AE%A1%E7%90%86%E4%B8%8E%E5%AF%B9%E6%AF%94%E5%88%86%E6%9E%90.html">
+      
+      
+        <link rel="prev" href="Part05-%E6%A8%A1%E5%9E%8B%E5%87%86%E5%A4%87%E4%B8%8E%E6%8E%A8%E7%90%86.html">
+      
+      
+        <link rel="next" href="Part07-Bechmark%E8%AF%84%E6%B5%8B%E4%B8%8E%E6%80%BB%E7%BB%93.html">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Part 06：完成受控对比 - 多模态视觉AI学习中心</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/shanshui.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/radar.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/radar-v2.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/radar-v4.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/radar-v5.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/model-playground.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/model-playground-guide-v2.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/vision-demo-v3.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/model-playground-quota-v1.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/model-demo-sidebar-native-v2.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr"><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#part-6prompt-engineering-prompt-design-and-comparative-experiments" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="多模态视觉AI学习中心" class="md-header__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            多模态视觉AI学习中心
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part 06：完成受控对比
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../index.html" class="md-tabs__link">
+          
+  
+  
+  学习首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../learning/index.html" class="md-tabs__link">
+          
+  
+  
+  入门课程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/index.html" class="md-tabs__link">
+          
+  
+  
+  动手教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../index.html" class="md-tabs__link">
+          
+  
+  
+  项目实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reading/index.html" class="md-tabs__link">
+          
+  
+  
+  论文导读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../resources/index.html" class="md-tabs__link">
+          
+  
+  
+  学习资源
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../projects/index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  成果展厅
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="多模态视觉AI学习中心" class="md-nav__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    多模态视觉AI学习中心
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习首页
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            学习首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    欢迎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    模型演示
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            模型演示
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../model-demos/document.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../model-demos/video.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视频理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../model-demos/vision.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉感知
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../radar/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    前沿动态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于学习中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    入门课程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            入门课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    课程首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/00_12_Week_Bootcamp.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    12 周自主路线
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            基础工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/01_Git_and_GitHub.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git 与 GitHub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/02_Python_Environment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Python 与可复现环境
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/03_HuggingFace.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hugging Face Hub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/04_Kaggle.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kaggle Notebook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/05_Transformers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Transformers 推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/05-1_AI_Assisted_Coding.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI 辅助编程与验证
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档智能专题
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档智能专题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/06-1_Qwen3.5-VL-0.8B.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Qwen3.5-0.8B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/06-2_Docling.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docling 文档解析
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/07_Doc_AI.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Document AI 与评测
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    后训练与实验追踪
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            后训练与实验追踪
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/08_Post_Training.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LoRA、评测与 W&B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    自主学习支持
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            自主学习支持
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/10_Assessment_and_Submission.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主评估与证据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/11_Learning_Log_Template.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主学习记录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learning/09_FAQ.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    常见问题
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    动手教程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            动手教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个教程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档评测：OmniDocBench Markdown
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    后训练路线：Qwen3.5-VL SFT/GRPO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目实战
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            项目实战
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目 01：文档理解评测
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            项目 01：文档理解评测
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目控制台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Part01-%E5%AE%9E%E9%AA%8C%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 01：确定目标与准备
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Part02-%E5%88%9B%E5%BB%BAGithub%E7%A7%91%E7%A0%94%E9%A1%B9%E7%9B%AE%E4%BB%93%E5%BA%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 02：创建 GitHub 项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Part03-%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 03：构建项目目录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Part04-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 04：准备实验数据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Part05-%E6%A8%A1%E5%9E%8B%E5%87%86%E5%A4%87%E4%B8%8E%E6%8E%A8%E7%90%86.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 05：完成首次推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 06：完成受控对比
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="Part06-%E6%8F%90%E7%A4%BA%E8%AF%8D%E7%AE%A1%E7%90%86%E4%B8%8E%E5%AF%B9%E6%AF%94%E5%88%86%E6%9E%90.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 06：完成受控对比
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#learning-objectives" class="md-nav__link">
+    <span class="md-ellipsis">
+      一、本部分学习目标（Learning Objectives）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      二、实验任务
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      三、实验数据准备（Operations）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      五、建立 Prompt 管理目录（Operations）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      七、任务覆盖扩展：文字提取（Optional）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      九、任务覆盖扩展：表格识别（Optional）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-operations_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      十一、建立 Prompt 对照表（Operations）
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Part07-Bechmark%E8%AF%84%E6%B5%8B%E4%B8%8E%E6%80%BB%E7%BB%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 07：评测与项目总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    论文导读
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            论文导读
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reading/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    快速选读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reading/00_surveys.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    领域地图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    核心原理
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            核心原理
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reading/01_foundation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    模型基石
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reading/03_vlm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉语言
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档研究
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档研究
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reading/02_document-ai.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档智能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reading/04_doctags.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    结构表示
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reading/05_benchmark-2026.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    评测选型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习资源
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            学习资源
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    按问题找资源
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/official-sources.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    官方文档与平台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/courses.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    推荐课程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/papers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    论文索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/datasets.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    数据集索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/tools.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工具清单
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../projects/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    成果展厅
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#learning-objectives" class="md-nav__link">
+    <span class="md-ellipsis">
+      一、本部分学习目标（Learning Objectives）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      二、实验任务
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      三、实验数据准备（Operations）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      五、建立 Prompt 管理目录（Operations）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      七、任务覆盖扩展：文字提取（Optional）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      九、任务覆盖扩展：表格识别（Optional）
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-operations_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      十一、建立 Prompt 对照表（Operations）
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+                  
+
+
+  
+    <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/edit/dev/docs/experiments/Experiment_01/Part06-提示词管理与对比分析.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="part-6prompt-engineering-prompt-design-and-comparative-experiments">Part 6：Prompt Engineering 与多组实验（Prompt Design and Comparative Experiments）<a class="headerlink" href="#part-6prompt-engineering-prompt-design-and-comparative-experiments" title="Permanent link">&para;</a></h1>
+<p><a class="md-button" href="Part05-%E6%A8%A1%E5%9E%8B%E5%87%86%E5%A4%87%E4%B8%8E%E6%8E%A8%E7%90%86.html">上一关：完成首次推理</a>
+<a class="md-button" href="index.html">返回项目控制台</a>
+<a class="md-button md-button--primary" href="Part07-Bechmark%E8%AF%84%E6%B5%8B%E4%B8%8E%E6%80%BB%E7%BB%93.html">下一关：评测与总结</a></p>
+<blockquote>
+<p><strong>本关核心产出</strong>：三组受控运行、run manifest 与证据支持的观察 · <strong>预计时间</strong>：2–3 小时</p>
+</blockquote>
+<div class="admonition success">
+<p class="admonition-title">本关通过条件</p>
+<p>三组实验使用相同模型 revision、相同样例和相同 generation config，只改变 Prompt 约束；每个 run 都能从 manifest 找到 Prompt、输入、metadata 和未经修改的原始输出。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">不同任务不等于受控对比</p>
+<p>“OCR、转 Markdown、找表格、总结”回答的是不同问题，不能直接比较哪个 Prompt 更好。本关的核心实验必须保持任务相同，只改变一个 Prompt 因素；后文五类 Prompt 可以作为完成核心实验后的任务覆盖扩展。</p>
+</div>
+<hr />
+<h2 id="learning-objectives">一、本部分学习目标（Learning Objectives）<a class="headerlink" href="#learning-objectives" title="Permanent link">&para;</a></h2>
+<p>完成本部分后，你应该能够：</p>
+<ul>
+<li>理解 Prompt Engineering 的基本思想；</li>
+<li>为同一张文档设计不同 Prompt；</li>
+<li>比较不同 Prompt 的输出结果；</li>
+<li>学会记录实验过程；</li>
+<li>建立 Prompt 管理规范；</li>
+<li>完成第一份实验分析报告。</li>
+</ul>
+<hr />
+<h2 id="_1">二、实验任务<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>本部分需要完成以下任务：</p>
+<ol>
+<li>准备测试图片；</li>
+<li>设计多组 Prompt；</li>
+<li>运行多次推理；</li>
+<li>保存每次实验结果；</li>
+<li>比较模型输出；</li>
+<li>编写实验分析报告；</li>
+<li>提交 GitHub。</li>
+</ol>
+<hr />
+<h2 id="operations">三、实验数据准备（Operations）<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h2>
+<p>进入：</p>
+<p>```text id="p6s001"
+data/samples/
+<div class="highlight"><pre><span></span><code>确认至少准备以下三类图片：
+
+```text id="p6s002"
+sample_01.jpg    普通文档
+
+sample_02.jpg    包含表格
+
+sample_03.jpg    包含图片和文字
+</code></pre></div></p>
+<p>建议图片命名统一采用：</p>
+<p>```text id="p6s003"
+sample_01.jpg</p>
+<p>sample_02.jpg</p>
+<p>sample_03.jpg
+<div class="highlight"><pre><span></span><code>不要使用中文文件名。
+
+---
+
+## 四、先完成三组受控实验（Required Experiment）
+
+选择同一个任务，例如“将文档转写为 Markdown”，固定模型、3–5 个样例与 generation config，只改变 Prompt 约束：
+
+| Prompt version | 唯一变化 | 需要观察什么 |
+| --- | --- | --- |
+| P1｜基础指令 | 只说明任务 | 内容完整度与幻觉 |
+| P2｜结构约束 | 明确标题、段落、表格的输出格式 | 结构保持与格式遵循 |
+| P3｜证据约束 | 在 P2 基础上要求不确定时标记 `[UNCERTAIN]` | 无依据回答与漏项 |
+
+为每个样例运行 P1、P2、P3，并创建 `experiments/2026-Experiment01/run_manifest.csv`：
+
+```text
+run_id,sample_id,model_id,model_revision,prompt_version,generation_config_path,raw_output,status
+</code></pre></div></p>
+<p>推荐命名：<code>p1_sample_text_01</code>、<code>p2_sample_text_01</code>。这样 Part 07 可以直接按 <code>sample_id</code> 对齐三组结果。</p>
+<div class="admonition tip">
+<p class="admonition-title">最小成功</p>
+<p>资源不足时，先用 1 个样例完成 P1/P2/P3，确认结果文件不会覆盖；再扩展到其余样例。</p>
+</div>
+<hr />
+<h2 id="prompt-operations">五、建立 Prompt 管理目录（Operations）<a class="headerlink" href="#prompt-operations" title="Permanent link">&para;</a></h2>
+<p>进入：</p>
+<p>```text id="p6s004"
+experiments/</p>
+<p>2026-Experiment01/
+<div class="highlight"><pre><span></span><code>创建：
+
+```text id="p6s005"
+prompts/
+
+results/
+
+analysis/
+</code></pre></div></p>
+<p>最终目录如下：</p>
+<p>```text id="p6s006"
+2026-Experiment01/</p>
+<p>├── prompts/</p>
+<p>├── results/</p>
+<p>├── analysis/</p>
+<p>├── experiment.md</p>
+<p>├── prompts.md</p>
+<p>└── results.md
+<div class="highlight"><pre><span></span><code>---
+
+## 六、任务覆盖扩展：文档描述（Optional）
+
+创建文件：
+
+```text id="p6s007"
+prompts/
+
+prompt_01.md
+</code></pre></div></p>
+<p>填写：</p>
+<p>```text id="p6s008"
+Describe this document.
+<div class="highlight"><pre><span></span><code>运行程序。
+
+保存输出。
+
+输出文件：
+
+```text id="p6s009"
+results/
+
+result_prompt01.md
+</code></pre></div></p>
+<hr />
+<h2 id="optional">七、任务覆盖扩展：文字提取（Optional）<a class="headerlink" href="#optional" title="Permanent link">&para;</a></h2>
+<p>创建：</p>
+<p>```text id="p6s010"
+prompts/</p>
+<p>prompt_02.md
+<div class="highlight"><pre><span></span><code>填写：
+
+```text id="p6s011"
+Extract all text from this document.
+</code></pre></div></p>
+<p>运行程序。</p>
+<p>保存：</p>
+<p>```text id="p6s012"
+results/</p>
+<p>result_prompt02.md
+<div class="highlight"><pre><span></span><code>---
+
+## 八、任务覆盖扩展：Markdown 转写（Optional）
+
+创建：
+
+```text id="p6s013"
+prompts/
+
+prompt_03.md
+</code></pre></div></p>
+<p>填写：</p>
+<p>```text id="p6s014"
+Convert this document into Markdown.
+<div class="highlight"><pre><span></span><code>运行程序。
+
+保存：
+
+```text id="p6s015"
+results/
+
+result_prompt03.md
+</code></pre></div></p>
+<hr />
+<h2 id="optional_1">九、任务覆盖扩展：表格识别（Optional）<a class="headerlink" href="#optional_1" title="Permanent link">&para;</a></h2>
+<p>创建：</p>
+<p>```text id="p6s016"
+prompts/</p>
+<p>prompt_04.md
+<div class="highlight"><pre><span></span><code>填写：
+
+```text id="p6s017"
+Identify all tables in this document.
+</code></pre></div></p>
+<p>运行程序。</p>
+<p>保存：</p>
+<p>```text id="p6s018"
+results/</p>
+<p>result_prompt04.md
+<div class="highlight"><pre><span></span><code>---
+
+## 十、任务覆盖扩展：内容总结（Optional）
+
+创建：
+
+```text id="p6s019"
+prompts/
+
+prompt_05.md
+</code></pre></div></p>
+<p>填写：</p>
+<p>```text id="p6s020"
+Summarize the content of this document.
+<div class="highlight"><pre><span></span><code>运行程序。
+
+保存：
+
+```text id="p6s021"
+results/
+
+result_prompt05.md
+</code></pre></div></p>
+<hr />
+<h2 id="prompt-operations_1">十一、建立 Prompt 对照表（Operations）<a class="headerlink" href="#prompt-operations_1" title="Permanent link">&para;</a></h2>
+<p>进入：</p>
+<p>```text id="p6s022"
+analysis/
+<div class="highlight"><pre><span></span><code>创建：
+
+```text id="p6s023"
+prompt_comparison.md
+</code></pre></div></p>
+<p>填写：</p>
+<p>```markdown id="p6s024"</p>
+<h1 id="prompt-comparison">Prompt Comparison<a class="headerlink" href="#prompt-comparison" title="Permanent link">&para;</a></h1>
+<table>
+<thead>
+<tr>
+<th>Prompt</th>
+<th>Objective</th>
+<th>Output Quality</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td>基础指令</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>P2</td>
+<td>增加结构约束</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>P3</td>
+<td>增加不确定性标记</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><div class="highlight"><pre><span></span><code>实验完成后补充内容。
+
+---
+
+## 十二、比较实验结果（Operations）
+
+先按相同 `sample_id` 横向阅读 P1、P2、P3 的结果，再跨样例检查同一现象是否重复出现。
+
+重点比较以下内容。任务覆盖扩展的五类输出单独分析，不与受控实验混在同一结论中。
+
+### 输出长度
+
+观察：
+
+* 是否输出完整；
+* 是否遗漏内容。
+
+---
+
+### OCR 效果
+
+观察：
+
+* 是否识别所有文字；
+* 是否存在乱码。
+
+---
+
+### Markdown 效果
+
+观察：
+
+* 标题是否正确；
+* 列表是否正确；
+* 表格是否正确。
+
+---
+
+### 表格识别
+
+观察：
+
+* 是否找到表格；
+* 是否恢复表格结构。
+
+---
+
+### 内容理解
+
+观察：
+
+* 是否能够理解文档主题；
+* 是否能够完成总结。
+
+---
+
+## 十三、建立实验分析报告（Operations）
+
+进入：
+
+```text id="p6s025"
+analysis/
+</code></pre></div></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>创建：</p>
+<p>```text id="p6s026"
+experiment_analysis.md
+<div class="highlight"><pre><span></span><code>填写：
+
+```markdown id="p6s027"
+# Experiment Analysis
+
+## Objective
+
+Compare different prompts.
+
+## Dataset
+
+OmniDocBench Sample
+
+## Model
+
+Qwen/Qwen3.5-0.8B
+
+## Prompt Comparison
+
+### P1 — 基础指令
+
+...
+
+### P2 — 结构约束
+
+...
+
+### P3 — 证据约束
+
+...
+
+## Conclusion
+
+- 哪个变化在多数样例上重复出现？
+- 哪些观察只有个例证据？
+- 结果支持或反驳了 project_plan.md 中的哪项预期？
+- 还不能得出什么结论？
+</code></pre></div></p>
+<hr />
+<h2 id="operations_1">十四、更新实验日志（Operations）<a class="headerlink" href="#operations_1" title="Permanent link">&para;</a></h2>
+<p>编辑：</p>
+<p>```text id="p6s028"
+experiment.md
+<div class="highlight"><pre><span></span><code>新增内容：
+
+```markdown id="p6s029"
+## Experiment 02
+
+Prompt Comparison
+
+Completed.
+</code></pre></div></p>
+<p>编辑：</p>
+<p>```text id="p6s030"
+results.md
+<div class="highlight"><pre><span></span><code>补充：
+
+```markdown id="p6s031"
+P1/P2/P3 controlled runs have been completed.
+
+All outputs have been saved.
+</code></pre></div></p>
+<hr />
+<h2 id="expected-results">十五、检查实验目录（Expected Results）<a class="headerlink" href="#expected-results" title="Permanent link">&para;</a></h2>
+<p>实验目录应如下：</p>
+<p>```text id="p6s032"
+2026-Experiment01/</p>
+<p>├── prompts/</p>
+<p>│   ├── prompt_01.md</p>
+<p>│   ├── prompt_02.md</p>
+<p>│   └── prompt_03.md</p>
+<p>├── results/</p>
+<p>│   ├── p1_sample_text_01.txt</p>
+<p>│   ├── p2_sample_text_01.txt</p>
+<p>│   └── p3_sample_text_01.txt</p>
+<p>├── analysis/</p>
+<p>│   ├── prompt_comparison.md</p>
+<p>│   └── experiment_analysis.md</p>
+<p>└── run_manifest.csv
+<div class="highlight"><pre><span></span><code>---
+
+## 十六、Git 提交（Operations）
+
+执行：
+
+```bash id="p6s033"
+git status
+</code></pre></div></p>
+<p>确认新增文件。</p>
+<p>执行：</p>
+<p>```bash id="p6s034"
+git add .
+<div class="highlight"><pre><span></span><code>执行：
+
+```bash id="p6s035"
+git commit -m "feat: complete prompt engineering experiments"
+</code></pre></div></p>
+<p>执行：</p>
+<p><code>bash id="p6s036"
+git push</code></p>
+<p>确认 GitHub 已同步。</p>
+<hr />
+<h2 id="common-errors">十七、常见问题（Common Errors）<a class="headerlink" href="#common-errors" title="Permanent link">&para;</a></h2>
+<h3 id="_2">问题一<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>Prompt 修改后输出没有变化。</p>
+<p>检查：</p>
+<p>是否重新运行程序。</p>
+<hr />
+<h3 id="_3">问题二<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>Prompt 文件编码错误。</p>
+<p>建议：</p>
+<p>统一采用 UTF-8 编码。</p>
+<hr />
+<h3 id="_4">问题三<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>实验结果覆盖。</p>
+<p>建议：</p>
+<p>每个 Prompt 保存独立输出文件。</p>
+<p>不要覆盖已有结果。</p>
+<hr />
+<h3 id="_5">问题四<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>分析报告内容过少。</p>
+<p>至少完成：</p>
+<ul>
+<li>Prompt；</li>
+<li>输出结果；</li>
+<li>优点；</li>
+<li>不足；</li>
+<li>改进建议。</li>
+</ul>
+<hr />
+<h2 id="deliverables">十八、本部分成果（Deliverables）<a class="headerlink" href="#deliverables" title="Permanent link">&para;</a></h2>
+<p>完成本部分后，应提交：</p>
+<ul>
+<li>三组同任务、单变量 Prompt；</li>
+<li>每组 Prompt 在相同样例上的原始结果；</li>
+<li>run_manifest.csv；</li>
+<li>Prompt 对照表；</li>
+<li>实验分析报告；</li>
+<li>更新后的实验日志；</li>
+<li>Git Commit 记录。</li>
+</ul>
+<hr />
+<h2 id="checklist">十九、自我检查列表（Checklist）<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1/P2/P3 Prompt 完成</td>
+<td>□</td>
+</tr>
+<tr>
+<td>同样例受控运行完成</td>
+<td>□</td>
+</tr>
+<tr>
+<td>run_manifest.csv 完成</td>
+<td>□</td>
+</tr>
+<tr>
+<td>输出结果保存</td>
+<td>□</td>
+</tr>
+<tr>
+<td>Prompt 对照表完成</td>
+<td>□</td>
+</tr>
+<tr>
+<td>实验分析报告完成</td>
+<td>□</td>
+</tr>
+<tr>
+<td>GitHub 已同步</td>
+<td>□</td>
+</tr>
+</tbody>
+</table>
+<p>全部完成后，进入下一部分。</p>
+<hr />
+<h2 id="_6">二十、本部分小结<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>本部分完成了第一次 Prompt Engineering 实验，并建立了 Prompt 管理、实验分析和结果对比的基本流程。</p>
+<hr />
+<h2 id="_7">下一部分<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p><strong>Part 7：小规模评测与实验总结（Evaluation and Project Summary）</strong></p>
+<p>下一部分将完成：</p>
+<ul>
+<li>Benchmark 数据准备；</li>
+<li>模型推理结果整理；</li>
+<li>初步性能评测；</li>
+<li>项目总结；</li>
+<li>实验自查；</li>
+<li>Experiment 01 完整归档。</li>
+</ul>
+<p>➡️ <a href="Part07-Bechmark%E8%AF%84%E6%B5%8B%E4%B8%8E%E6%80%BB%E7%BB%93.html">进入 Part 07：Benchmark评测与总结</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+  
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Multimodal Vision AI Lab.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../../js/visitor.js"></script>
+      
+        <script src="../../js/shanshui.js"></script>
+      
+        <script src="../../js/radar.js"></script>
+      
+        <script src="../../js/model-playground.js"></script>
+      
+        <script src="../../js/vision-demo-v1.js"></script>
+      
+    
+  </body>
+</html>

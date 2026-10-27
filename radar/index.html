@@ -1,0 +1,2536 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Multimodal Vision AI Learning Center — 从文档理解出发，探索图像、视频与多模态智能">
+      
+      
+        <meta name="author" content="谭国平教授团队 · Multimodal Vision AI Lab">
+      
+      
+        <link rel="canonical" href="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-51/radar/index.html">
+      
+      
+        <link rel="prev" href="../model-demos/vision.html">
+      
+      
+        <link rel="next" href="../about.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>前沿动态 - 多模态视觉AI学习中心</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../stylesheets/shanshui.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar-v2.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar-v4.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar-v5.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground-guide-v2.css">
+    
+      <link rel="stylesheet" href="../stylesheets/vision-demo-v3.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground-quota-v1.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-demo-sidebar-native-v2.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr"><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="多模态视觉AI学习中心" class="md-header__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            多模态视觉AI学习中心
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              前沿动态
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../index.html" class="md-tabs__link">
+          
+  
+  
+  学习首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../learning/index.html" class="md-tabs__link">
+          
+  
+  
+  入门课程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/index.html" class="md-tabs__link">
+          
+  
+  
+  动手教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../experiments/index.html" class="md-tabs__link">
+          
+  
+  
+  项目实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reading/index.html" class="md-tabs__link">
+          
+  
+  
+  论文导读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../resources/index.html" class="md-tabs__link">
+          
+  
+  
+  学习资源
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../projects/index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  成果展厅
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="多模态视觉AI学习中心" class="md-nav__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    多模态视觉AI学习中心
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习首页
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            学习首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    欢迎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    模型演示
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            模型演示
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-demos/document.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-demos/video.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视频理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-demos/vision.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉感知
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    前沿动态
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="index.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    前沿动态
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      重点推荐
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      本月研究机会
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      历史科研档案
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      待复核研究线索
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于学习中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    入门课程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            入门课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    课程首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/00_12_Week_Bootcamp.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    12 周自主路线
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            基础工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/01_Git_and_GitHub.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git 与 GitHub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/02_Python_Environment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Python 与可复现环境
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/03_HuggingFace.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hugging Face Hub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/04_Kaggle.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kaggle Notebook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/05_Transformers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Transformers 推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/05-1_AI_Assisted_Coding.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI 辅助编程与验证
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档智能专题
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档智能专题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/06-1_Qwen3.5-VL-0.8B.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Qwen3.5-0.8B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/06-2_Docling.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docling 文档解析
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/07_Doc_AI.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Document AI 与评测
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    后训练与实验追踪
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            后训练与实验追踪
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/08_Post_Training.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LoRA、评测与 W&B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    自主学习支持
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            自主学习支持
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/10_Assessment_and_Submission.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主评估与证据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/11_Learning_Log_Template.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主学习记录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/09_FAQ.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    常见问题
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    动手教程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            动手教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个教程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档评测：OmniDocBench Markdown
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    后训练路线：Qwen3.5-VL SFT/GRPO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目实战
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            项目实战
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目 01：文档理解评测
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            项目 01：文档理解评测
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目控制台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part01-%E5%AE%9E%E9%AA%8C%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 01：确定目标与准备
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part02-%E5%88%9B%E5%BB%BAGithub%E7%A7%91%E7%A0%94%E9%A1%B9%E7%9B%AE%E4%BB%93%E5%BA%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 02：创建 GitHub 项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part03-%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 03：构建项目目录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part04-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 04：准备实验数据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part05-%E6%A8%A1%E5%9E%8B%E5%87%86%E5%A4%87%E4%B8%8E%E6%8E%A8%E7%90%86.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 05：完成首次推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part06-%E6%8F%90%E7%A4%BA%E8%AF%8D%E7%AE%A1%E7%90%86%E4%B8%8E%E5%AF%B9%E6%AF%94%E5%88%86%E6%9E%90.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 06：完成受控对比
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part07-Bechmark%E8%AF%84%E6%B5%8B%E4%B8%8E%E6%80%BB%E7%BB%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 07：评测与项目总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    论文导读
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            论文导读
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    快速选读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/00_surveys.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    领域地图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    核心原理
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            核心原理
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/01_foundation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    模型基石
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/03_vlm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉语言
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档研究
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档研究
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/02_document-ai.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档智能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/04_doctags.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    结构表示
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/05_benchmark-2026.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    评测选型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习资源
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            学习资源
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    按问题找资源
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/official-sources.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    官方文档与平台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/courses.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    推荐课程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/papers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    论文索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/datasets.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    数据集索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/tools.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工具清单
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    成果展厅
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      重点推荐
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      本月研究机会
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      历史科研档案
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      待复核研究线索
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+                  
+
+
+  
+    <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/edit/dev/docs/radar/index.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="_1">前沿动态<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<div class="radar-page-intro">
+<p>聚焦值得学生复现和继续研究的多模态视觉 AI 工作。重点推荐采用跨周滚动 Top 3：新资源只有在通过四维评价且综合评分严格高于当前榜单最低分时才替换原推荐；每周历史报告独立归档，供参考查阅。</p>
+</div>
+
+<h2 id="_2">重点推荐<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p class="radar-current-note">跨周滚动维护，最多 3 项。只有新资源综合评分严格高于当前榜单最低分时，才会替换低分项；未达到替换条件时，现有 Top 3 保持不变。每周历史推荐独立归档，不随榜单变化而改写。</p>
+
+<div class="radar-review-intro">
+<p><strong>推荐标准：</strong>主题相关度 ≥8/10，综合评分 ≥7.5/10。</p>
+<p class="radar-review-threshold"><strong>评分说明：</strong>综合评分由创新性、开源完整度、复现可行性和科研潜力四项加权得出，用于辅助选题，不代表同行评审结论。</p>
+</div>
+
+<!-- RADAR:STAGE_TWO-START -->
+<div data-radar-snapshot="3bf9e353833a8bfd786f68811114cc444ec9fefba38681250d36379d32fe843f" data-radar-top3-snapshot="597844c19c1af5917f322ce1416603d7e2bbf4f8bb4907b60b30d36d0ac770ac"><div class="radar-brief-list radar-review-list"><article class="radar-review-card"><header class="radar-review-card-head"><h3 class="radar-review-title"><a href="https://arxiv.org/abs/2610.28356v2" target="_blank" rel="noopener noreferrer">CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models</a></h3><div class="radar-review-overall"><span>综合评分</span><strong>8.61</strong><small>/10</small></div></header><p class="radar-rating-metadata radar-review-provenance">评分来源：ChatGPT 四维科研价值评价 · 评价时间：2026-10-26 01:02 UTC · 置信度：高</p><p class="radar-review-summary">构建2600条Blender合成视频、覆盖26种物体数量的平衡计数基准，检验视频语言模型偏好特定整数、相邻数量准确率突降的系统偏差；论文报告16个模型最高精确匹配率仅27.6%。</p><div class="radar-review-score-grid" aria-label="四项评分"><div class="radar-review-score-item"><span class="radar-review-score-label">创新性</span><div class="radar-review-score-value"><strong>8.4</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">开源完整度</span><div class="radar-review-score-value"><strong>9.3</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">复现可行性</span><div class="radar-review-score-value"><strong>8</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">科研潜力</span><div class="radar-review-score-value"><strong>8.8</strong><span>/10</span></div></div></div><div class="radar-review-detail-grid"><section class="radar-review-detail radar-review-value"><h4>为什么值得研究</h4><p>论文、官方MIT评测代码、带uv.lock的模型复现脚本及CC-BY-4.0视频数据均可交叉核验；均衡计数实验能够形成低门槛、可证伪的研究生实验，并可用流式下载避免一次性获取139GB。</p></section><section class="radar-review-detail radar-review-student"><h4>学生可以怎么做</h4><p>在相同帧数、分辨率和推理预算下检验整数偏置与视觉token压缩、帧采样、遮挡及物体运动的因果关系；构建置信度校准和跨场景迁移实验，避免把合成静态场景的结果直接推广到真实监控。</p></section></div><footer class="radar-review-sources"><strong>论文与项目资源</strong><a href="https://arxiv.org/abs/2610.28356v2" target="_blank" rel="noopener noreferrer">论文</a> <a href="https://github.com/CountVideoBench/CountVideoBench" target="_blank" rel="noopener noreferrer">GitHub 仓库</a> <a href="https://huggingface.co/datasets/countvideobench/CountVideoBench" target="_blank" rel="noopener noreferrer">模型/数据</a></footer></article><article class="radar-review-card"><header class="radar-review-card-head"><h3 class="radar-review-title"><a href="https://arxiv.org/abs/2610.14531v2" target="_blank" rel="noopener noreferrer">LongHisDoc: A Comprehensive Benchmark for Chinese Long Historical Document Understanding</a></h3><div class="radar-review-overall"><span>综合评分</span><strong>8.33</strong><small>/10</small></div></header><p class="radar-rating-metadata radar-review-provenance">评分来源：ChatGPT 四维科研价值评价 · 评价时间：2026-10-26 01:02 UTC · 置信度：高</p><p class="radar-review-summary">面向中国古籍全书理解的LongHisDoc评测集含101部历史文献、1012条专家标注问答，区分单页、跨页、多跳与不可回答问题；同时评估文字OCR、版式和视觉证据的检索与回答。</p><div class="radar-review-score-grid" aria-label="四项评分"><div class="radar-review-score-item"><span class="radar-review-score-label">创新性</span><div class="radar-review-score-value"><strong>8.2</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">开源完整度</span><div class="radar-review-score-value"><strong>8.5</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">复现可行性</span><div class="radar-review-score-value"><strong>7.8</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">科研潜力</span><div class="radar-review-score-value"><strong>9</strong><span>/10</span></div></div></div><div class="radar-review-detail-grid"><section class="radar-review-detail radar-review-value"><h4>为什么值得研究</h4><p>论文、官方评测代码和HF数据集均已核实，页面图像、OCR和证据页标注可用于可重复的跨页RAG研究；研究价值集中在多模态证据定位，而不是单纯扩展上下文窗口。</p></section><section class="radar-review-detail radar-review-student"><h4>学生可以怎么做</h4><p>比较OCR文本检索、页面图像检索与融合检索的证据召回、答案正确率及拒答校准；引入低质量扫描、异体字和版式噪声，测量小型VLM与结构化RAG的性能和成本边界。</p></section></div><footer class="radar-review-sources"><strong>论文与项目资源</strong><a href="https://arxiv.org/abs/2610.14531v2" target="_blank" rel="noopener noreferrer">论文</a> <a href="https://github.com/SCUT-DLVCLab/LongHisDoc" target="_blank" rel="noopener noreferrer">GitHub 仓库</a> <a href="https://huggingface.co/datasets/qweq12433454/LongHisDoc" target="_blank" rel="noopener noreferrer">模型/数据</a></footer></article><article class="radar-review-card"><header class="radar-review-card-head"><h3 class="radar-review-title"><a href="https://arxiv.org/abs/2602.22779v4" target="_blank" rel="noopener noreferrer">TrajTok: Learning Trajectory Tokens enables better Video Understanding</a></h3><div class="radar-review-overall"><span>综合评分</span><strong>7.99</strong><small>/10</small></div></header><p class="radar-rating-metadata radar-review-provenance">评分来源：ChatGPT 四维科研价值评价 · 评价时间：2026-10-26 01:02 UTC · 置信度：中</p><p class="radar-review-summary">TrajTok以可学习的时空轨迹token替代密集patch token，发布分割器、TrajViT-v2实验权重及TrajVLM训练代码，探索长视频中语义结构与token预算的联合优化；原始论文早于本周，本周队列因版本更新再次纳入。</p><div class="radar-review-score-grid" aria-label="四项评分"><div class="radar-review-score-item"><span class="radar-review-score-label">创新性</span><div class="radar-review-score-value"><strong>8.8</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">开源完整度</span><div class="radar-review-score-value"><strong>8</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">复现可行性</span><div class="radar-review-score-value"><strong>6.2</strong><span>/10</span></div></div><div class="radar-review-score-item"><span class="radar-review-score-label">科研潜力</span><div class="radar-review-score-value"><strong>9</strong><span>/10</span></div></div></div><div class="radar-review-detail-grid"><section class="radar-review-detail radar-review-value"><h4>为什么值得研究</h4><p>官方Apache-2.0代码和HF分割器、TrajViT-v2模型卡提供可核对的结构、训练配置与局部权重；其轨迹token思想与0.5B–4B视频理解研究方向高度吻合，但完整TrajVLM权重尚未发布，不能宣称全流程低成本复现。</p></section><section class="radar-review-detail radar-review-student"><h4>学生可以怎么做</h4><p>以已发布约59M参数分割器为起点，比较固定patch、均匀帧采样和轨迹token在短视频问答及目标持续跟踪中的准确率、token数、峰值显存与端到端延迟；优先做冻结骨干/轻量连接器而非16张H100级全量预训练。</p></section></div><footer class="radar-review-sources"><strong>论文与项目资源</strong><a href="https://arxiv.org/abs/2602.22779v4" target="_blank" rel="noopener noreferrer">论文</a> <a href="https://github.com/hellomuffin/trajtok" target="_blank" rel="noopener noreferrer">GitHub 仓库</a> <a href="https://github.com/hellomuffin/trajtok/blob/main/trajvlm/README.md" target="_blank" rel="noopener noreferrer">GitHub 仓库</a></footer></article></div></div>
+<!-- RADAR:STAGE_TWO-END -->
+
+<h2 id="_3">本月研究机会<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p class="radar-section-note">月度报告用于归纳值得持续跟进的研究方向；没有已完成报告时，不以自动采集线索代替。</p>
+
+<!-- RADAR:CHATGPT_MONTHLY-START -->
+<div class="radar-empty-state">最近一次月度总结尚无可展示结果。</div>
+<!-- RADAR:CHATGPT_MONTHLY-END -->
+
+<h2 id="_4">历史科研档案<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p class="radar-section-note">按“年份 → 报告类型 → 具体期次”查看历史报告。每次只展示所选的一个月报或周报，历史记录保持原样保存。</p>
+
+<div class="radar-archive-toolbar" role="search" aria-label="历史档案按期次检索">
+  <label class="radar-archive-field">
+    <span>年份</span>
+    <select id="radar-archive-year">
+      <option value="">选择年份</option>
+    </select>
+  </label>
+  <label class="radar-archive-field">
+    <span>报告类型</span>
+    <select id="radar-archive-type">
+      <option value="">选择类型</option>
+      <option value="weekly">周报</option>
+      <option value="monthly">月报</option>
+    </select>
+  </label>
+  <label class="radar-archive-field">
+    <span>具体期次</span>
+    <select id="radar-archive-period" disabled>
+      <option value="">请先选择年份和类型</option>
+    </select>
+  </label>
+  <label class="radar-archive-field radar-archive-keyword">
+    <span>关键词（可选）</span>
+    <input id="radar-archive-search" type="search" placeholder="在所选报告中搜索…" autocomplete="off">
+  </label>
+  <p id="radar-archive-count" class="radar-archive-countline" aria-live="polite">请选择年份、报告类型和具体期次</p>
+</div>
+
+<p id="radar-archive-no-results" class="radar-empty-state radar-archive-no-results">请依次选择年份、报告类型和具体期次；页面将只展示对应的一份历史报告。</p>
+
+<div class="radar-archive-section" data-archive-section="weekly" hidden>
+<h3>历史周报</h3>
+
+<!-- RADAR:WEEKLY_ARCHIVE-START -->
+<div class="radar-archive-list"><article class="radar-archive-item" data-archive-type="weekly" data-archive-year="2026" data-archive-period="43" data-archive-text="2026年第43周｜文档理解、视频理解与多模态小模型科研周报 2026年第43周（2026-10-19至2026-10-26，周一发布）公开源采集于2026-10-26t01:00:23+00:00完成；本轮队列共20条主题匹配≥8.0候选。对论文正文、官方代码、模型卡、许可证、数据与资源需求进行二次核查后，精选3项：countvideobench（受控视频计数偏置）、longhisdoc（古籍跨页多模态证据）、trajtok（轨迹token视频压缩）。分数只代表当前证据下的研究优先级，尚未执行本地复现实验。 countvideobench: a benchmark to evaluate prediction biases on the object counting task by video-language models 构建2600条blender合成视频、覆盖26种物体数量的平衡计数基准，检验视频语言模型偏好特定整数、相邻数量准确率突降的系统偏差；论文报告16个模型最高精确匹配率仅27.6%。 论文、官方mit评测代码、带uv.lock的模型复现脚本及cc-by-4.0视频数据均可交叉核验；均衡计数实验能够形成低门槛、可证伪的研究生实验，并可用流式下载避免一次性获取139gb。 在相同帧数、分辨率和推理预算下检验整数偏置与视觉token压缩、帧采样、遮挡及物体运动的因果关系；构建置信度校准和跨场景迁移实验，避免把合成静态场景的结果直接推广到真实监控。 longhisdoc: a comprehensive benchmark for chinese long historical document understanding 面向中国古籍全书理解的longhisdoc评测集含101部历史文献、1012条专家标注问答，区分单页、跨页、多跳与不可回答问题；同时评估文字ocr、版式和视觉证据的检索与回答。 论文、官方评测代码和hf数据集均已核实，页面图像、ocr和证据页标注可用于可重复的跨页rag研究；研究价值集中在多模态证据定位，而不是单纯扩展上下文窗口。 比较ocr文本检索、页面图像检索与融合检索的证据召回、答案正确率及拒答校准；引入低质量扫描、异体字和版式噪声，测量小型vlm与结构化rag的性能和成本边界。 trajtok: learning trajectory tokens enables better video understanding trajtok以可学习的时空轨迹token替代密集patch token，发布分割器、trajvit-v2实验权重及trajvlm训练代码，探索长视频中语义结构与token预算的联合优化；原始论文早于本周，本周队列因版本更新再次纳入。 官方apache-2.0代码和hf分割器、trajvit-v2模型卡提供可核对的结构、训练配置与局部权重；其轨迹token思想与0.5b–4b视频理解研究方向高度吻合，但完整trajvlm权重尚未发布，不能宣称全流程低成本复现。 以已发布约59m参数分割器为起点，比较固定patch、均匀帧采样和轨迹token在短视频问答及目标持续跟踪中的准确率、token数、峰值显存与端到端延迟；优先做冻结骨干/轻量连接器而非16张h100级全量预训练。"><header class="radar-archive-head"><span class="radar-period-badge">2026年第43周</span><span class="radar-archive-date">2026-10-19 — 2026-10-26</span><span class="radar-archive-kind">周报</span><span class="radar-archive-count">3 项精选</span></header><h4 class="radar-archive-title">2026年第43周｜文档理解、视频理解与多模态小模型科研周报</h4><p class="radar-archive-summary">2026年第43周（2026-10-19至2026-10-26，周一发布）公开源采集于2026-10-26T01:00:23+00:00完成；本轮队列共20条主题匹配≥8.0候选。对论文正文、官方代码、模型卡、许可证、数据与资源需求进行二次核查后，精选3项：CountVideoBench（受控视频计数偏置）、LongHisDoc（古籍跨页多模态证据）、TrajTok（轨迹token视频压缩）。分数只代表当前证据下的研究优先级，尚未执行本地复现实验。</p><details class="radar-archive-details"><summary>展开查看本期内容</summary><div class="radar-brief-list"><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-heading"><div class="radar-brief-meta"><span class="radar-brief-label">多模态视觉智能</span></div><h3>CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models</h3></div><p class="radar-rating-metadata radar-review-provenance">评分来源：ChatGPT 四维科研价值评价 · 评价时间：2026-10-26 01:02 UTC · 置信度：高</p><p class="radar-brief-summary">构建2600条Blender合成视频、覆盖26种物体数量的平衡计数基准，检验视频语言模型偏好特定整数、相邻数量准确率突降的系统偏差；论文报告16个模型最高精确匹配率仅27.6%。</p><p class="radar-brief-value"><strong>价值点</strong>论文、官方MIT评测代码、带uv.lock的模型复现脚本及CC-BY-4.0视频数据均可交叉核验；均衡计数实验能够形成低门槛、可证伪的研究生实验，并可用流式下载避免一次性获取139GB</p><p class="radar-brief-student"><strong>学生切入</strong>在相同帧数、分辨率和推理预算下检验整数偏置与视觉token压缩、帧采样、遮挡及物体运动的因果关系；构建置信度校准和跨场景迁移实验，避免把合成静态场景的结果直接推广到真实监控。</p></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-heading"><div class="radar-brief-meta"><span class="radar-brief-label">多模态视觉智能</span></div><h3>LongHisDoc: A Comprehensive Benchmark for Chinese Long Historical Document Understanding</h3></div><p class="radar-rating-metadata radar-review-provenance">评分来源：ChatGPT 四维科研价值评价 · 评价时间：2026-10-26 01:02 UTC · 置信度：高</p><p class="radar-brief-summary">面向中国古籍全书理解的LongHisDoc评测集含101部历史文献、1012条专家标注问答，区分单页、跨页、多跳与不可回答问题；同时评估文字OCR、版式和视觉证据的检索与回答。</p><p class="radar-brief-value"><strong>价值点</strong>论文、官方评测代码和HF数据集均已核实，页面图像、OCR和证据页标注可用于可重复的跨页RAG研究；研究价值集中在多模态证据定位，而不是单纯扩展上下文窗口</p><p class="radar-brief-student"><strong>学生切入</strong>比较OCR文本检索、页面图像检索与融合检索的证据召回、答案正确率及拒答校准；引入低质量扫描、异体字和版式噪声，测量小型VLM与结构化RAG的性能和成本边界。</p></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-heading"><div class="radar-brief-meta"><span class="radar-brief-label">多模态视觉智能</span></div><h3>TrajTok: Learning Trajectory Tokens enables better Video Understanding</h3></div><p class="radar-rating-metadata radar-review-provenance">评分来源：ChatGPT 四维科研价值评价 · 评价时间：2026-10-26 01:02 UTC · 置信度：中</p><p class="radar-brief-summary">TrajTok以可学习的时空轨迹token替代密集patch token，发布分割器、TrajViT-v2实验权重及TrajVLM训练代码，探索长视频中语义结构与token预算的联合优化；原始论文早于本周，本周队列因版本更新再次纳入。</p><p class="radar-brief-value"><strong>价值点</strong>官方Apache-2.0代码和HF分割器、TrajViT-v2模型卡提供可核对的结构、训练配置与局部权重；其轨迹token思想与0.5B–4B视频理解研究方向高度吻合，但完整TrajVLM权重尚未发布，不能宣称全流程低成本复现</p><p class="radar-brief-student"><strong>学生切入</strong>以已发布约59M参数分割器为起点，比较固定patch、均匀帧采样和轨迹token在短视频问答及目标持续跟踪中的准确率、token数、峰值显存与端到端延迟；优先做冻结骨干/轻量连接器而非16张H100级全量预训练。</p><div class="radar-chatgpt-compute"><div class="radar-resource-row"><strong>GPU需求：</strong><span>官方分割器预训练为2节点×8 H100 80GB；TrajVLM预训练亦为2节点×8 H100。单GPU推理的显存下限尚未实测。</span></div></div></article></div></details></article><article class="radar-archive-item" data-archive-type="weekly" data-archive-year="2026" data-archive-period="42" data-archive-text="文档理解、视频理解与多模态小模型科研周报 这份已存档周报筛选出 5 项适合高校实验室进一步评估的工作，覆盖结构感知文档解析、ocr 语义严重度评测、小模型结构化决策，以及低成本视频理解和参数记忆。 rpd + sara 结构感知的统一文档解析方法，目标是更好保留文档布局和结构信息。已存档周报报告了 layout f1 为 0.9189、对比 lora baseline 的 0.7004；该数值应结合原论文的实验设置核验。 提供 github 与 hugging face 资源入口，可用于核查模型权重、数据和复现流程；适合作为文档解析任务的基线候选。 在跨版式、长文档、表格混排和扫描质量变化条件下复现布局指标；比较量化推理、lora 微调与结构约束对精度和显存的影响。 semcer 面向 ocr 的语义严重度加权评测思路，试图区分对含义影响不同的识别错误，而不只把所有字符编辑视为等价。 参考性能数据为：t4 16gb 环境下 fp32 约 46 edits/s；该结果与完整蒸馏流程仍待独立核实，可从性能复现和评测方法入手。 检验语义严重度指标与下游信息抽取、文档问答质量之间的相关性，并在多语言、表格和票据 ocr 场景中进行对照。 intern-decision 面向结构化决策输出的小模型系列，强调一次生成结构化决策结果。 项目涉及多个参数规模的模型，可在统一任务和资源预算下比较模型规模、结构约束与泛化能力；实验前应确认训练代码是否可获取。 设计未见过的字段 schema、长尾类别和格式扰动测试；比较不同规模模型的结构有效率、任务准确率和推理成本。 malow 面向视频理解的参数记忆与动态 lora 方向，探索如何在有限模型容量下保留和调用视频上下文信息。 该方法面向较小模型规模，适合研究长视频记忆、参数效率与视频 token 预算之间的权衡；开展实验前应先确认训练代码和数据是否可获取。 在固定显存和长视频输入条件下，比较记忆模块、帧采样和 token 预算对 videoqa、时间定位与长程信息召回的影响。 videojev 面向视频的直接候选评分与缓存思路，尝试减少视频理解中重复或低价值计算。 论文和 github 项目提供了可追溯的研究入口，适合评估直接视频决策与候选缓存的计算收益；t4 可运行性仍需实测确认。 在固定视频长度、采样策略和显存预算下比较准确率、吞吐、延迟与缓存命中率，并检查训练流程的可复现性。"><header class="radar-archive-head"><span class="radar-period-badge">2026年第42周</span><span class="radar-archive-date">2026-10-12 — 2026-10-19</span><span class="radar-archive-kind">周报</span><span class="radar-archive-count">5 项历史资料</span></header><h4 class="radar-archive-title">文档理解、视频理解与多模态小模型科研周报</h4><p class="radar-home-warning"><strong>尚未按当前四维标准复评</strong></p><p class="radar-archive-summary">这份已存档周报筛选出 5 项适合高校实验室进一步评估的工作，覆盖结构感知文档解析、OCR 语义严重度评测、小模型结构化决策，以及低成本视频理解和参数记忆。</p><details class="radar-archive-details"><summary>展开查看本期内容</summary><div class="radar-brief-list"><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-heading"><div class="radar-brief-meta"><span class="radar-brief-label">文档理解</span></div><h3><a href="https://arxiv.org/abs/2610.20335" target="_blank" rel="noopener noreferrer">RPD + SARA</a></h3></div><p class="radar-rating-metadata radar-review-provenance">评分来源：未提供 · 评价时间：2026-10-19 09:22 UTC · 置信度：未提供</p><p class="radar-brief-summary">结构感知的统一文档解析方法，目标是更好保留文档布局和结构信息。已存档周报报告了 layout F1 为 0.9189、对比 LoRA baseline 的 0.7004；该数值应结合原论文的实验设置核验。</p><p class="radar-brief-value"><strong>价值点</strong>提供 GitHub 与 Hugging Face 资源入口，可用于核查模型权重、数据和复现流程；适合作为文档解析任务的基线候选</p><p class="radar-brief-student"><strong>学生切入</strong>在跨版式、长文档、表格混排和扫描质量变化条件下复现布局指标；比较量化推理、LoRA 微调与结构约束对精度和显存的影响。</p><div class="radar-chatgpt-compute"><div class="radar-resource-row"><strong>参数量：</strong><span>2B</span></div><div class="radar-resource-row"><strong>GPU需求：</strong><span>T4 量化推理可行；LoRA 约需 24GB；全量训练至少约 40GB</span></div></div><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.20335" target="_blank" rel="noopener noreferrer">论文</a><a href="https://github.com/yufanchen96/RPD" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://huggingface.co/chen-doc-ai/Qwen3.5-2B_with_SARA" target="_blank" rel="noopener noreferrer">Hugging Face</a></div></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-heading"><div class="radar-brief-meta"><span class="radar-brief-label">文档理解</span></div><h3><a href="https://arxiv.org/abs/2610.20461" target="_blank" rel="noopener noreferrer">semCER</a></h3></div><p class="radar-rating-metadata radar-review-provenance">评分来源：未提供 · 评价时间：2026-10-19 09:22 UTC · 置信度：未提供</p><p class="radar-brief-summary">面向 OCR 的语义严重度加权评测思路，试图区分对含义影响不同的识别错误，而不只把所有字符编辑视为等价。</p><p class="radar-brief-value"><strong>价值点</strong>参考性能数据为：T4 16GB 环境下 FP32 约 46 edits/s；该结果与完整蒸馏流程仍待独立核实，可从性能复现和评测方法入手</p><p class="radar-brief-student"><strong>学生切入</strong>检验语义严重度指标与下游信息抽取、文档问答质量之间的相关性，并在多语言、表格和票据 OCR 场景中进行对照。</p><div class="radar-chatgpt-compute"><div class="radar-resource-row"><strong>参数量：</strong><span>0.8B</span></div><div class="radar-resource-row"><strong>GPU需求：</strong><span>T4 16GB 可运行；约 46 edits/s 为 FP32 报告值</span></div></div><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.20461" target="_blank" rel="noopener noreferrer">论文</a><a href="https://github.com/nguyenx2t/semcer" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://huggingface.co/nguyenx2t/semcer-qwen3.5-0.8b" target="_blank" rel="noopener noreferrer">Hugging Face</a></div></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-heading"><div class="radar-brief-meta"><span class="radar-brief-label">多模态小模型</span></div><h3><a href="https://arxiv.org/abs/2610.22131" target="_blank" rel="noopener noreferrer">Intern-Decision</a></h3></div><p class="radar-rating-metadata radar-review-provenance">评分来源：未提供 · 评价时间：2026-10-19 09:22 UTC · 置信度：未提供</p><p class="radar-brief-summary">面向结构化决策输出的小模型系列，强调一次生成结构化决策结果。</p><p class="radar-brief-value"><strong>价值点</strong>项目涉及多个参数规模的模型，可在统一任务和资源预算下比较模型规模、结构约束与泛化能力；实验前应确认训练代码是否可获取</p><p class="radar-brief-student"><strong>学生切入</strong>设计未见过的字段 schema、长尾类别和格式扰动测试；比较不同规模模型的结构有效率、任务准确率和推理成本。</p><div class="radar-chatgpt-compute"><div class="radar-resource-row"><strong>参数量：</strong><span>0.8B / 2B / 4B</span></div><div class="radar-resource-row"><strong>GPU需求：</strong><span>0.8B/2B 推理可尝试 T4；4B 约需 24GB 显存</span></div></div><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.22131" target="_blank" rel="noopener noreferrer">论文</a><a href="https://github.com/internlm/Intern-Decision" target="_blank" rel="noopener noreferrer">GitHub</a></div></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-heading"><div class="radar-brief-meta"><span class="radar-brief-label">视频理解</span></div><h3><a href="https://arxiv.org/abs/2610.22070" target="_blank" rel="noopener noreferrer">MaLoW</a></h3></div><p class="radar-rating-metadata radar-review-provenance">评分来源：未提供 · 评价时间：2026-10-19 09:22 UTC · 置信度：未提供</p><p class="radar-brief-summary">面向视频理解的参数记忆与动态 LoRA 方向，探索如何在有限模型容量下保留和调用视频上下文信息。</p><p class="radar-brief-value"><strong>价值点</strong>该方法面向较小模型规模，适合研究长视频记忆、参数效率与视频 token 预算之间的权衡；开展实验前应先确认训练代码和数据是否可获取</p><p class="radar-brief-student"><strong>学生切入</strong>在固定显存和长视频输入条件下，比较记忆模块、帧采样和 token 预算对 VideoQA、时间定位与长程信息召回的影响。</p><div class="radar-chatgpt-compute"><div class="radar-resource-row"><strong>参数量：</strong><span>0.8B–9B</span></div><div class="radar-resource-row"><strong>GPU需求：</strong><span>0.8B/2B 可尝试 T4 推理；4B 约需 24GB 显存</span></div></div><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.22070" target="_blank" rel="noopener noreferrer">论文</a><a href="https://github.com/dragonlzm/MaLoW" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://huggingface.co/collections/zhuomingliu/malow" target="_blank" rel="noopener noreferrer">Hugging Face</a></div></article><article class="radar-brief-card radar-weekly-card"><div class="radar-brief-heading"><div class="radar-brief-meta"><span class="radar-brief-label">视频理解</span></div><h3><a href="https://arxiv.org/abs/2610.18615" target="_blank" rel="noopener noreferrer">VideoJev</a></h3></div><p class="radar-rating-metadata radar-review-provenance">评分来源：未提供 · 评价时间：2026-10-19 09:22 UTC · 置信度：未提供</p><p class="radar-brief-summary">面向视频的直接候选评分与缓存思路，尝试减少视频理解中重复或低价值计算。</p><p class="radar-brief-value"><strong>价值点</strong>论文和 GitHub 项目提供了可追溯的研究入口，适合评估直接视频决策与候选缓存的计算收益；T4 可运行性仍需实测确认</p><p class="radar-brief-student"><strong>学生切入</strong>在固定视频长度、采样策略和显存预算下比较准确率、吞吐、延迟与缓存命中率，并检查训练流程的可复现性。</p><div class="radar-chatgpt-compute"><div class="radar-resource-row"><strong>参数量：</strong><span>4B</span></div><div class="radar-resource-row"><strong>GPU需求：</strong><span>建议约 24GB 显存；T4 未验证；全量训练需要多 GPU</span></div></div><div class="radar-brief-links"><a href="https://arxiv.org/abs/2610.18615" target="_blank" rel="noopener noreferrer">论文</a><a href="https://github.com/juicepan-haha/VideoJev" target="_blank" rel="noopener noreferrer">GitHub</a></div></article></div></details></article></div>
+<!-- RADAR:WEEKLY_ARCHIVE-END -->
+</div>
+
+<div class="radar-archive-section" data-archive-section="monthly" hidden>
+<h3>历史月报</h3>
+
+<!-- RADAR:MONTHLY_ARCHIVE-START -->
+<div class="radar-empty-state radar-archive-empty">暂未形成历史月报档案。每期报告生成并通过校验后，会自动保存到历史记录。</div>
+<!-- RADAR:MONTHLY_ARCHIVE-END -->
+</div>
+
+<h2 id="_5">待复核研究线索<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<div class="radar-candidate-purpose">
+<p><strong>栏目用途：</strong>记录近期尚未完成二次科研评价的论文、开源代码和模型发布，仅作为候选线索。</p>
+<p><strong>请注意：</strong>这里不是推荐清单，也不是备用项目库。主题匹配度 ≥8.0 只表示与研究方向相关，尚未完成创新性、开源完整度、代码可运行性、复现成本和科研价值评估。学生确定选题时，请优先参考上方的“重点推荐”。</p>
+</div>
+
+<details class="radar-candidate-details">
+<summary>展开查看近期自动发现候选（近 7 天，最多 15 条）</summary>
+<p>候选来自公开论文、代码仓库和模型平台等来源。只有经过后续复核且符合科研质量要求的线索，才会考虑进入正式推荐。</p>
+<!-- RADAR:CANDIDATES-START -->
+<p><strong>最近一次公开源采集（UTC）：2026-10-26T01:45:31+00:00</strong>；成功来源 4；异常来源 0；近7天主题匹配度 ≥8.0 的候选 24 条。 下方仅展示近7天≥8.0分的自动候选（最多15条）；其余原始线索保留在后台。匹配度不是科研质量评分。</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2610.31385v1" target="_blank" rel="noopener noreferrer">A Task-Centric Survey of Long-Document Visual Question Answering: Taxonomy, Evolution, and Future Directions</a> — 新论文 / 新投稿 · 2026-10-22；主题匹配度 10.0/10（规则初筛，未审核）；来源：arXiv；主题：文档理解；主题：视频理解；主题：多模态小模型</li>
+<li><a href="https://arxiv.org/abs/2610.32423v1" target="_blank" rel="noopener noreferrer">Cycle-of-Thought: Self-Evaluative Iterative Reasoning for Table Visual Question Answering in Document Images</a> — 新论文 / 新投稿 · 2026-10-23；主题匹配度 8.9/10（规则初筛，未审核）；来源：arXiv；主题：文档理解；主题：多模态小模型；方法关键词：高效化 / 压缩 / 低成本训练</li>
+<li><a href="https://arxiv.org/abs/2610.30834v1" target="_blank" rel="noopener noreferrer">RECAP: Looking Once Is Not Enough for Vision-Language Reasoning</a> — 新论文 / 新投稿 · 2026-10-22；主题匹配度 8.9/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；方法关键词：高效化 / 压缩 / 低成本训练</li>
+<li><a href="https://arxiv.org/abs/2610.32486v1" target="_blank" rel="noopener noreferrer">Efficient Zero-Shot Video Anomaly Detection via Signal-Aware Adaptive Fusion (SAAF)</a> — 新论文 / 新投稿 · 2026-10-23；主题匹配度 8.6/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；方法关键词：高效化 / 压缩 / 低成本训练</li>
+<li><a href="https://arxiv.org/abs/2610.31478v1" target="_blank" rel="noopener noreferrer">MoG-VLM: Efficient Video Anomaly Detection through Motion-Guided Vision-Language Models</a> — 新论文 / 新投稿 · 2026-10-22；主题匹配度 8.6/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；方法关键词：高效化 / 压缩 / 低成本训练</li>
+<li><a href="https://arxiv.org/abs/2610.30909v1" target="_blank" rel="noopener noreferrer">TwinStore: A Synthetic Consumer Platform Using Vision--Language Models</a> — 新论文 / 新投稿 · 2026-10-22；主题匹配度 8.6/10（规则初筛，未审核）；来源：arXiv；主题：文档理解；主题：多模态小模型；方法关键词：高效化 / 压缩 / 低成本训练</li>
+<li><a href="https://arxiv.org/abs/2610.28502v1" target="_blank" rel="noopener noreferrer">GazeLens for Efficient Egocentric Video Question Answering with Simple Gaze-Driven Adaptive Token Reduction</a> — 新论文 / 新投稿 · 2026-10-20；主题匹配度 8.6/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；方法关键词：高效化 / 压缩 / 低成本训练</li>
+<li><a href="https://arxiv.org/abs/2610.31986v1" target="_blank" rel="noopener noreferrer">OpenHome: From Perception to Insight in Smart-Home Camera Videos</a> — 新论文 / 新投稿 · 2026-10-22；主题匹配度 8.0/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；成果类型：Benchmark / 数据集 / 评测</li>
+<li><a href="https://arxiv.org/abs/2610.31898v1" target="_blank" rel="noopener noreferrer">StateBridge: Phase- and Track-Grounded Reasoning for Synthetic-to-Real Traffic Video Captioning and VQA</a> — 新论文 / 新投稿 · 2026-10-22；主题匹配度 8.0/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；成果类型：Benchmark / 数据集 / 评测</li>
+<li><a href="https://arxiv.org/abs/2610.31842v1" target="_blank" rel="noopener noreferrer">Scaling cross-situational word learning on children&#x27;s naturalistic experiences</a> — 新论文 / 新投稿 · 2026-10-22；主题匹配度 8.0/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；成果类型：Benchmark / 数据集 / 评测</li>
+<li><a href="https://arxiv.org/abs/2610.31494v1" target="_blank" rel="noopener noreferrer">AgentVQA: A Unified Benchmark for Agentic Visual Understanding</a> — 新论文 / 新投稿 · 2026-10-22；主题匹配度 8.0/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；成果类型：Benchmark / 数据集 / 评测</li>
+<li><a href="https://arxiv.org/abs/2610.28356v2" target="_blank" rel="noopener noreferrer">CountVideoBench: A Benchmark to Evaluate Prediction Biases on the Object Counting task by Video-Language Models</a> — 新论文 / 新投稿 · 2026-10-20；主题匹配度 8.0/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；成果类型：Benchmark / 数据集 / 评测</li>
+<li><a href="https://arxiv.org/abs/2610.27877v1" target="_blank" rel="noopener noreferrer">Gaze2HOI: Gaze-Aware Intention Disambiguation for Egocentric Hand-Object Interaction Forecasting</a> — 新论文 / 新投稿 · 2026-10-20；主题匹配度 8.0/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；成果类型：Benchmark / 数据集 / 评测</li>
+<li><a href="https://arxiv.org/abs/2610.27496v1" target="_blank" rel="noopener noreferrer">Evaluating Social Reasoning in Embodied Vision-Language Models</a> — 新论文 / 新投稿 · 2026-10-20；主题匹配度 8.0/10（规则初筛，未审核）；来源：arXiv；主题：视频理解；主题：多模态小模型；成果类型：Benchmark / 数据集 / 评测</li>
+<li><a href="https://arxiv.org/abs/2605.31196v2" target="_blank" rel="noopener noreferrer">Probing Collision Grounding in Vision-Language Models for Safe Human-Robot Collaboration</a> — arXiv 版本更新 · 2026-10-23；主题匹配度 10.0/10（规则初筛，未审核）；来源：arXiv；主题：文档理解；主题：视频理解；主题：多模态小模型</li>
+</ul>
+<!-- RADAR:CANDIDATES-END -->
+</details>
+<p class="radar-page-note">周编号采用年度 52 周显示规则，ISO 第 53 周并入第 52 周；周次按报告研究周期起始日标记，月报按报告周期起始月份标记。历史档案只追加保存，不因最新一期更新而覆盖旧记录。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+  
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Multimodal Vision AI Lab.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../js/visitor.js"></script>
+      
+        <script src="../js/shanshui.js"></script>
+      
+        <script src="../js/radar.js"></script>
+      
+        <script src="../js/model-playground.js"></script>
+      
+        <script src="../js/vision-demo-v1.js"></script>
+      
+    
+  </body>
+</html>
