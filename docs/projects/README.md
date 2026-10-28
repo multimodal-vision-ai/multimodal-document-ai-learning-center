@@ -43,17 +43,17 @@ shanshui_scene: 7
 
 浏览团队正在开展的研究方向，查看项目介绍与演示材料。
 
-<div class="grid cards" markdown>
+<div class="grid cards mv-showcase-project-grid" markdown>
 
 -   **文档理解**
 
-    解析复杂文档中的文字、版面与表格。
+    解析复杂文档中的文字/印章/签名/捺印/表格/版面等结构化信息。
 
     [查看项目与演示视频](document-ai/README.md)
 
 -   **视觉理解**
 
-    图像内容理解、场景分析与视觉推理。
+    图像/视频等内容的理解、分析与推理。
 
     展示材料筹备中 · [查看研究方向](vision-ai/README.md)
 
