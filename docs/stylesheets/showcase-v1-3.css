@@ -51,3 +51,8 @@
 .md-typeset .mv-self-models__note p{margin:0}
 @media screen and (max-width:58em){.md-typeset .mv-self-models__grid{grid-template-columns:minmax(0,1fr) !important}}
 @media screen and (max-width:28em){.md-typeset .mv-self-models__card{padding:.7rem}.md-typeset .mv-self-models__doc-preview,.md-typeset .mv-self-models__video-preview{gap:.18rem}.md-typeset .mv-self-models__stage-label{font-size:.53rem}.md-typeset .mv-self-models__doctags{font-size:.55rem}}
+
+/* Showcase V1.3 · original-material DocTags promotional cover */
+.md-typeset .mv-self-models__promo-cover{margin:0;min-width:0;max-width:100%}
+.md-typeset .mv-self-models__promo-cover img{display:block;width:100%;height:auto;max-width:100%;border-radius:.65rem;border:1px solid rgba(57,102,192,.18);background:#f0f5fc}
+.md-typeset .mv-self-models__promo-cover figcaption{margin:.45rem .12rem 0;font-size:.66rem;line-height:1.55;color:var(--md-default-fg-color--light)}

@@ -24,9 +24,12 @@ shanshui_scene: 7
   </div>
 </div>
 
-<div class="mv-self-models__tags"><span>DocTags</span><span>文档理解</span><span class="mv-self-models__tag--muted">方案示意</span></div>
+<div class="mv-self-models__tags"><span>DocTags</span><span>文档理解</span><span class="mv-self-models__tag--muted">真实样例 · 宣传封面</span></div>
 
-<div class="mv-self-models__doc-preview" aria-label="文档输入、版面分析、结构化标签输出的示意流程"><div class="mv-self-models__doc-stage"><div class="mv-self-models__stage-label">原始文档</div><div class="mv-self-models__paper"><div class="mv-self-models__paper-title"></div><div class="mv-self-models__paper-line"></div><div class="mv-self-models__paper-line short"></div><div class="mv-self-models__paper-paragraph"></div><div class="mv-self-models__paper-table"></div></div></div><div class="mv-self-models__doc-stage"><div class="mv-self-models__stage-label">结构定位</div><div class="mv-self-models__layout-paper"><div class="mv-self-models__layout-title">标题</div><div class="mv-self-models__layout-text">段落</div><div class="mv-self-models__layout-text second">正文</div><div class="mv-self-models__layout-table">表格</div></div></div><div class="mv-self-models__doc-stage"><div class="mv-self-models__stage-label">DocTags 表达</div><div class="mv-self-models__doctags"><span>&lt;title&gt;</span><span>&lt;text&gt;</span><span>&lt;loc&gt;</span><span>&lt;table&gt;</span><small>结构标签示意</small></div></div></div>
+<figure class="mv-self-models__promo-cover">
+  <img src="../assets/projects/doctags/document-structure-demo-v13.webp" width="2048" height="990" loading="eager" decoding="async" alt="基于上传的三张原始资料制作的结构化文档解析宣传封面：左侧民事起诉状，中间版面元素定位，右侧 DocTags 输出">
+  <figcaption>真实文档样例、版面识别标注与 DocTags 文本的三阶段合成展示；不代表经过独立评测的准确率。</figcaption>
+</figure>
 
 [查看文档理解项目与现有视频](document-ai/README.md){ .md-button .mv-self-models__action }
 
