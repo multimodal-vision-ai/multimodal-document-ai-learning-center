@@ -67,6 +67,7 @@ extra_css:
   - stylesheets/vision-demo-v3.css
   - stylesheets/model-playground-quota-v1.css
   - stylesheets/model-demo-sidebar-native-v2.css
+  - stylesheets/showcase-project-grid-v1-2.css
 
 extra_javascript:
   - js/visitor.js
