@@ -6,7 +6,7 @@ shanshui_scene: 7
 
 <div class="mv-showcase" markdown>
 
-# 自研模型体验
+# 自研模型展示
 
 本栏目集中展示经过审核的团队自研模型及 Hugging Face Spaces。模型推理、上传和对比界面由各项目的 Space 独立提供，学习中心负责统一介绍与入口。
 
