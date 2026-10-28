@@ -6,7 +6,7 @@ shanshui_scene: 7
 
 <div class="mv-self-models" markdown>
 
-<p class="mv-self-models__eyebrow">成果展厅 · 实验室研究能力</p>
+<p class="mv-self-models__eyebrow">模型展示</p>
 
 # 自研模型展示
 
