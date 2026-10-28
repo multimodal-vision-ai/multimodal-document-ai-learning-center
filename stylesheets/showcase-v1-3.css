@@ -3,7 +3,7 @@
 .md-typeset .mv-self-models__eyebrow {margin:0 0 .4rem;color:#5069bc;font-weight:700;font-size:.75rem;letter-spacing:.04em}
 .md-typeset .mv-self-models > h1 {font-size:clamp(1.65rem,3vw,2.15rem);letter-spacing:.025em;margin:.25rem 0 .35rem}
 .md-typeset .mv-self-models > p {font-size:.84rem;line-height:1.65}
-.md-typeset .mv-self-models__grid {display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:.85rem;margin:1.25rem 0 1rem}
+.md-typeset .mv-self-models__grid {display:grid !important;grid-template-columns:minmax(0,1fr) !important;gap:1.15rem;margin:1.25rem 0 1rem}
 .md-typeset .mv-self-models__card {min-width:0;display:flex;flex-direction:column;margin:0;padding:1.05rem;border:1px solid rgba(67,97,179,.16);border-radius:1rem;background:var(--md-default-bg-color);box-shadow:0 7px 26px rgba(37,55,102,.065)}
 .md-typeset .mv-self-models__card--video {border-color:rgba(119,79,214,.2)}
 .md-typeset .mv-self-models__card-head {display:flex;align-items:center;gap:.72rem;min-width:0}
