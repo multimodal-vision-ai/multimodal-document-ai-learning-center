@@ -2278,7 +2278,7 @@
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
-      更多成果入口
+      更多展示
     </span>
   </a>
   
@@ -2428,7 +2428,7 @@
   
   
   <span class="md-ellipsis">
-    自研模型体验
+    自研模型展示
     
   </span>
   
@@ -2509,7 +2509,7 @@
         <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
-      更多成果入口
+      更多展示
     </span>
   </a>
   
@@ -2572,32 +2572,49 @@
 </div>
 <h2 id="featured-projects">研究项目<a class="headerlink" href="#featured-projects" title="Permanent link">&para;</a></h2>
 <p>浏览团队正在开展的研究方向，查看项目介绍与演示材料。</p>
-<div class="grid cards mv-showcase-project-grid">
-<ul>
-<li>
-<p><strong>文档理解</strong></p>
-<p>解析复杂文档中的文字/印章/签名/捺印/表格/版面等结构化信息。</p>
-<p><a href="document-ai/index.html">查看项目与演示视频</a></p>
-</li>
-<li>
-<p><strong>视觉理解</strong></p>
-<p>图像/视频等内容的理解、分析与推理。</p>
-<p>展示材料筹备中 · <a href="vision-ai/index.html">查看研究方向</a></p>
-</li>
-<li>
-<p><strong>类脑智能</strong></p>
-<p>类脑网络、自适应学习与智能决策。</p>
-<p><a href="brain-inspired/index.html">查看项目与演示视频</a></p>
-</li>
-</ul>
+<div class="mv-showcase-project-row" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin:1rem 0 1.8rem">
+<div class="mv-showcase-project-card" style="min-width:0;padding:1rem 1.1rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.6rem;background:var(--md-default-bg-color)">
+
+**文档理解**
+
+解析复杂文档中的文字/印章/签名/捺印/表格/版面等结构化信息。
+
+[查看项目与演示视频](document-ai/README.md)
+
 </div>
-<h2 id="_2">更多成果入口<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<div class="mv-showcase-project-card" style="min-width:0;padding:1rem 1.1rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.6rem;background:var(--md-default-bg-color)">
+
+**视觉理解**
+
+图像/视频等内容的理解、分析与推理。
+
+展示材料筹备中 · [查看研究方向](vision-ai/README.md)
+
+</div>
+<div class="mv-showcase-project-card" style="min-width:0;padding:1rem 1.1rem;border:1px solid var(--md-default-fg-color--lightest);border-radius:.6rem;background:var(--md-default-bg-color)">
+
+**类脑智能**
+
+类脑网络、自适应学习与智能决策。
+
+[查看项目与演示视频](brain-inspired/README.md)
+
+</div>
+</div>
+<style>
+@media screen and (max-width: 44.984375em) {
+  .md-typeset .mv-showcase .mv-showcase-project-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+</style>
+<h2 id="_2">更多展示<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <div class="grid cards">
 <ul>
 <li>
-<p><strong>自研模型体验</strong></p>
+<p><strong>自研模型展示</strong></p>
 <p>学生独立开发 Hugging Face Space，审核通过后在此提供体验入口。</p>
-<p><a href="self-developed-models/index.html">查看模型体验</a></p>
+<p><a href="self-developed-models/index.html">查看模型展示</a></p>
 </li>
 <li>
 <p><strong>学生作品</strong></p>
@@ -2609,7 +2626,6 @@
 <div id="design-capstone"></div>
 <div id="publish-capstone"></div>
 <div id="student-capstones"></div>
-<p>旧版 Capstone 指南已整理至<a href="student-work/index.html#design-capstone">学生作品与提交指南</a>。</p>
 </div>
 
 
