@@ -650,19 +650,3 @@
     gap: 0.75rem;
   }
 }
-
-/* Showcase V1.2: Material card grid layout lives on the nested UL, not the wrapper DIV. */
-.md-typeset .mv-showcase .mv-showcase-project-grid.grid.cards > ul {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-.md-typeset .mv-showcase .mv-showcase-project-grid.grid.cards > ul > li {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-@media screen and (max-width: 44.984375em) {
-  .md-typeset .mv-showcase .mv-showcase-project-grid.grid.cards > ul {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
