@@ -15,6 +15,6 @@ shanshui_scene: 7
 
 与[学习首页的视觉感知模型演示](../../model-demos/vision.md)不同，本栏目将只展示团队自身研究项目及其实际成果。
 
-[返回展厅总览](../README.md)
+[返回自研模型展示](../README.md)
 
 </div>

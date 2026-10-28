@@ -6,11 +6,40 @@ shanshui_scene: 7
 
 <div class="mv-showcase" markdown>
 
-# 学生作品
+<div class="mv-showcase-hero" markdown>
+
+<p class="mv-showcase-kicker">学生作品</p>
+
+# 把好奇心做成可验证作品
+
+> **看证据 · 找问题 · 做作品**
+
+<div class="grid cards mv-showcase-principles" markdown>
+
+-   **验证效果**
+
+    追溯结果依据
+
+-   **分析失败**
+
+    发现改进空间
+
+-   **形成问题**
+
+    启动自己的 Capstone
+
+</div>
+
+<div class="mv-showcase-actions" markdown>
+
+[浏览学生作品](#student-capstones){ .md-button .md-button--primary }
+[设计自己的 Capstone](#design-capstone){ .md-button }
+
+</div>
+
+## 学生作品 { #student-capstones }
 
 展示经审核的学生科研实践成果。成果应当能回答：研究了什么问题、采用什么方法、得到了什么证据、还有哪些局限。
-
-## 学生 Capstone { #student-capstones }
 
 !!! info "这里等待第一批可复现作品"
     展厅不按模型大小或最高分选择项目。只要问题清楚、证据可信、限制诚实，并且能够帮助后来者提出更好的问题，就值得在这里展示。
@@ -130,6 +159,6 @@ shanshui_scene: 7
     </div>
     ```
 
-[返回展厅总览](../README.md)
+[返回自研模型展示](../README.md)
 
 </div>

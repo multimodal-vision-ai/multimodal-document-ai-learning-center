@@ -69,6 +69,6 @@ shanshui_scene: 7
 
 ---
 
-[返回展厅总览](../README.md)
+[返回自研模型展示](../README.md)
 
 </div>
