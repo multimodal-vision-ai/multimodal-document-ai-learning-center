@@ -26,6 +26,8 @@ jobs:
           cache-dependency-path: requirements-docs.txt
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
+      - name: Validate Kaggle pilot notebook syntax and student links
+        run: python scripts/kaggle/validate_doctags_pilot.py
       - name: Validate navigation and internal links
         run: mkdocs build --strict
 
