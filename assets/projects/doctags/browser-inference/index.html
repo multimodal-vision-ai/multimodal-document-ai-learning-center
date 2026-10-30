@@ -32,6 +32,46 @@ progress{width:100%;height:8px;margin:10px 0 2px;accent-color:#326bc6}
 .links{background:#f6f9fc;border-radius:9px;padding:11px 14px;line-height:1.8;font-size:12px;color:#62738a}
 a{color:#1762bf}
 @media(max-width:760px){.cols{grid-template-columns:1fr}main{padding:10px}#view{height:390px}.card{padding:14px}}
+
+/* V1.6 · side-by-side original vs reconstructed document */
+#view{height:245px;max-height:34vh}
+.comparison{margin-top:18px;padding:20px}
+.compare-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.compare-top h2{font-size:18px;margin:0}
+.compare-controls{display:flex;gap:13px;align-items:center;flex-wrap:wrap}
+.compare-controls label{font-size:12px;color:#475f81;display:flex;gap:6px;align-items:center;cursor:pointer}
+.compare-controls input{accent-color:#255fc0}
+.compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.compare-col{min-width:0;border:1px solid #dbe5f2;background:#f7f9fd;border-radius:11px;overflow:hidden}
+.compare-col-header{display:flex;justify-content:space-between;align-items:center;gap:7px;min-height:46px;background:#edf3fb;border-bottom:1px solid #dce6f3;padding:10px 14px}
+.compare-col-header strong{font-size:13px;color:#16335b}
+.compare-col-header small{white-space:nowrap}
+.compare-scroll{height:min(66vh,660px);min-height:330px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;background:#edf1f8}
+.compare-scroll canvas{display:block;width:100%;height:auto;box-shadow:0 4px 18px #213e6110;background:white}
+.rendered-document{margin:0;min-height:100%;background:white;padding:28px 30px 60px;overflow-wrap:anywhere;font-size:14px;line-height:1.75;color:#23354e}
+.rendered-document h1{font-size:25px;line-height:1.35;color:#122e50;margin:0 0 22px}
+.rendered-document h2{font-size:20px;color:#183b63;margin:22px 0 10px}
+.rendered-document h3{font-size:17px;margin:18px 0 9px;color:#213956}
+.rendered-document h4,.rendered-document h5{font-size:15px;margin:14px 0 8px}
+.rendered-document p{margin:8px 0 14px}
+.rendered-document .render-block{border-left:3px solid transparent;border-radius:4px;transition:background-color .12s;scroll-margin:22px;white-space:pre-wrap}
+.rendered-document .render-block:hover,.rendered-document .render-block:focus-visible{border-left-color:#3e6fdb;background:#eaf1ff;outline:none}
+.rendered-document .render-placeholder{padding:18px;margin:10px 0;border:1px dashed #b9cbe5;border-radius:10px;color:#637995;background:#f5f8fc;font-size:12px}
+.rendered-document .render-tbl{margin:18px 0;max-width:100%;overflow:auto;white-space:normal}
+.rendered-document table{border-collapse:collapse;table-layout:auto;width:100%;font-size:12px}
+.rendered-document th,.rendered-document td{border:1px solid #bdcee3;padding:7px 9px;vertical-align:top;white-space:pre-wrap;min-width:45px}
+.rendered-document th{background:#eaf1fa;font-weight:700}
+.rendered-document tbody tr:nth-child(even){background:#f7f9fd}
+.rendered-document ul,.rendered-document ol{padding-left:22px}
+.rendered-document pre{white-space:pre-wrap}
+.rendered-document .unknown-region{font-size:12px;background:#f2f6fb;border:1px dashed #c9d8e9;padding:14px;border-radius:8px;color:#667a92}
+#compareStatus{margin:12px 0 2px;font-size:12px;color:#566c89;line-height:1.6}
+#rawDetails{margin-top:16px;border:1px solid #dfebf8;border-radius:12px;background:#fff;overflow:hidden}
+#rawDetails summary{cursor:pointer;font-weight:700;color:#244a78;font-size:13px;padding:13px 16px;user-select:none}
+#rawDetails .raw-interior{border-top:1px solid #e4ebf5;padding:12px 16px}
+#rawDetails #tags{height:auto;min-height:140px;max-height:400px}
+@media(max-width:820px){.compare-grid{grid-template-columns:1fr}.comparison{padding:13px}.compare-scroll{height:450px;min-height:240px}.rendered-document{padding:21px}.compare-col-header{min-height:41px}}
+
 </style>
 </head>
 <body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
@@ -63,9 +103,7 @@ a{color:#1762bf}
 <section>
 <div class="row"><button class="primary" id="run" disabled>开始真正推理</button><button id="saveDT" disabled>下载 DocTags (.dt)</button></div>
 <div class="status" id="status" role="status">尚未推理。这里不会展示预置的伪造结果。</div>
-<h3 style="font-size:13px">DocTags 原始输出</h3>
-<pre id="tags">模型生成的标签将出现在这里。</pre>
-<p><small id="timing"></small></p>
+<p class="muted" style="margin-top:12px">完成后，下方将并排显示原始文档与结构化渲染结果；原始 DocTags 在页面底部折叠查看。</p>
 </section>
 <div class="links">
 <b>如果设备不支持或执行失败：</b><br>
@@ -75,6 +113,40 @@ a{color:#1762bf}
 </div>
 </div>
 </div>
+
+<section class="card comparison" aria-label="推理结果对照">
+  <div class="compare-top">
+    <div>
+      <h2>03 · 推理结果对照</h2>
+      <p class="muted" style="margin:5px 0 0">左侧为原始输入，右侧为 DocTags 重建的结构化阅读视图。标题、正文、表格和阅读顺序可直接对照。</p>
+    </div>
+    <div class="compare-controls">
+      <label><input id="bounds" type="checkbox" checked> 显示位置框</label>
+      <label title="两侧按滚动比例同步，仅用于辅助浏览；并不代表内容逐行匹配"><input id="sync" type="checkbox"> 比例同步滚动</label>
+    </div>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <div class="compare-col-header"><strong>原始文档</strong><small>图像及定位标注</small></div>
+      <div class="compare-scroll" id="originalScroll"><canvas id="compareCanvas" role="img" aria-label="用于对照的原始文档和位置框"></canvas></div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-col-header"><strong>推理后结构化结果</strong><small>按模型输出重建</small></div>
+      <div class="compare-scroll" id="renderScroll"><article id="rendered" class="rendered-document" aria-live="polite"><div class="render-placeholder">尚未运行推理。点击右上方“开始真正推理”后，这里才显示模型生成的标题、段落和表格。</div></article></div>
+    </div>
+  </div>
+  <div id="compareStatus" role="status">对照区已准备就绪。右侧不会显示事先制作的推理结果。</div>
+  <p class="muted" style="margin-top:7px">说明：重建结果侧重语义结构，不是原稿的像素级复制。悬停右侧元素可在左侧定位其对应区域；存在合并单元格或不完整 DocTags 时会提示降级。无需 GPU 的样例回放仍可在成果展厅使用。</p>
+</section>
+<details id="rawDetails">
+  <summary>04 · 查看 DocTags 原始输出与技术诊断（展开）</summary>
+  <div class="raw-interior">
+    <p class="muted">这里保留完整模型输出，便于研究人员核对解析差异和定位标注。</p>
+    <pre id="tags">模型生成的标签将出现在这里。</pre>
+    <p><small id="timing"></small></p>
+  </div>
+</details>
+
 <p style="text-align:center"><small>MVAI Learning Center · Browser WebGPU technical preview · 未经实际 GPU 推理验收不得标记为正式可用</small></p>
 </main>
 <script>
@@ -89,12 +161,168 @@ if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) 
 }
 </script>
 <canvas id="source" hidden></canvas>
+<script src="./doctags-renderer.js"></script>
 <script type="module">
 import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
 let model,processor,loaded=false,busy=false,imageReady=false,result="",name="synthetic-document.png";
 const palette={title:"#2c62d0",text:"#159b72",table:"#c08423",otsl:"#c08423",seal:"#cd4762"};
+
+/* V1.6 visual reconstruction: never render model text as trusted HTML. */
+const compare=$("compareCanvas"),comp=compare.getContext("2d");
+const leftPane=$("originalScroll"),rightPane=$("renderScroll"),rendered=$("rendered");
+const documentParser=globalThis.MVAIDocTags;
+let regions=[],blocks=[],activeLocation=null,syncing=false,renderGood=false;
+const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",otsl:"#c78b31",table:"#c78b31",seal:"#d74b73"};
+function leftDraw(loc=null) {
+  compare.width=src.width;compare.height=src.height;
+  comp.drawImage(src,0,0);if(!src.width || !src.height)return;
+  const scaleX=src.width/500,scaleY=src.height/500;
+  if ($("bounds").checked && result) {
+    for (const block of regions.slice(0,280)) {
+      const [x1,y1,x2,y2]=block.loc;
+      comp.strokeStyle=BOXC[block.type]||"#4f77ae";
+      comp.lineWidth=Math.max(2,src.width/480);
+      comp.strokeRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
+    }
+  }
+  if (loc) {
+    const [x1,y1,x2,y2]=loc;
+    comp.fillStyle="rgba(55,112,230,.15)";
+    comp.fillRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
+    comp.strokeStyle="#e06422";comp.lineWidth=Math.max(3,src.width/220);
+    comp.strokeRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
+  }
+}
+function renderTable(table) {
+  if (!table?.rows?.length) return null;
+  const wrap=document.createElement("div");wrap.className="render-tbl";
+  const t=document.createElement("table"),tbody=document.createElement("tbody");
+  const owners=table.rows.map(()=>[]),expanded=new Set();
+  for(let r=0;r<table.rows.length;r++){
+    const tr=document.createElement("tr");
+    for(let col=0;col<table.rows[r].length;col++){
+      const cell=table.rows[r][col],type=cell.type;
+      if(type==="lcel"||type==="ucel"||type==="xcel"){
+        const left=owners[r][col-1]||null,above=r>0?owners[r-1][col]:null;
+        let parent=null;
+        if(type==="lcel") parent=left?.row===r?left:null;
+        else if(type==="ucel") parent=above;
+        else parent=above||left;
+        if(parent){
+          owners[r][col]=parent;
+          if(type==="lcel"&&parent.row===r)parent.node.colSpan++;
+          if((type==="ucel"||type==="xcel")&&parent.row<r&&!expanded.has(r+":"+parent.key)){
+            parent.node.rowSpan++;expanded.add(r+":"+parent.key);
+          }
+          continue;
+        }
+      }
+      const head=["ched","rhed","srow"].includes(type);
+      const td=document.createElement(head?"th":"td");
+      if(head)td.scope=type==="rhed"?"row":"col";
+      td.textContent=cell.text||"";
+      tr.appendChild(td);
+      owners[r][col]={node:td,row:r,key:r+":"+col};
+    }
+    tbody.appendChild(tr);
+  }
+  t.appendChild(tbody);wrap.appendChild(t);
+  return wrap;
+}
+function addBlock(block,index) {
+  const kind=block.type;
+  let element;
+  if(kind==="otsl"||kind==="table") {
+    element=renderTable(block.table);
+    if(!element) {
+      element=document.createElement("div");element.className="unknown-region";
+      element.textContent="模型返回了表格标签，但本预览未能可靠重建表格；请查看下方原始 DocTags。";
+    }
+  }else if(kind==="title") element=document.createElement("h1");
+  else if(kind.startsWith("section_header_level_")) {
+    const level=Math.min(5,Number(kind.slice(-1))+1);
+    element=document.createElement("h"+level);
+  }else if(kind==="text"||kind==="caption"||kind==="footnote"||kind==="page_header"||kind==="page_footer")element=document.createElement("p");
+  else if(kind==="list_item")element=document.createElement("li");
+  else if(kind==="code")element=document.createElement("pre");
+  else if(kind==="ordered_list"||kind==="unordered_list"){
+    element=document.createElement(kind==="ordered_list"?"ol":"ul");
+    const items=[...block.text.matchAll(/<list_item>([\s\S]*?)<\/list_item>/gi)];
+    if(items.length){for(const item of items){const li=document.createElement("li");li.textContent=documentParser.clean(item[1]);element.appendChild(li);}}
+    else{const li=document.createElement("li");li.textContent=block.text;element.appendChild(li);}
+  }else if(["picture","figure"].includes(kind)){
+    element=document.createElement("div");element.className="unknown-region";
+    element.textContent="图像区域（模型已标出，但本页面不虚构重建图片）";
+  }else if(kind==="checkbox_selected"||kind==="checkbox_unselected"){
+    element=document.createElement("p");element.textContent=(kind==="checkbox_selected"?"☑ ":"☐ ")+block.text;
+  }else{
+    element=document.createElement("p");
+  }
+  if(!["otsl","table","ordered_list","unordered_list","picture","figure","checkbox_selected","checkbox_unselected"].includes(kind)){
+    element.textContent=block.text;
+  }
+  element.classList.add("render-block");
+  element.tabIndex=0;
+  element.dataset.blockIndex=String(index);
+  element.title=block.loc?"悬停定位至原文位置":"模型未给出该元素的有效位置框";
+  return element;
+}
+function renderComparison(tags){
+  rendered.replaceChildren();
+  regions=documentParser.rects(tags);
+  const parsed=documentParser.parse(tags);blocks=parsed.blocks;
+  if(!blocks.length){
+    const placeholder=document.createElement("div");placeholder.className="render-placeholder";
+    placeholder.textContent="模型输出尚不包含可重建的结构块；请展开下方原始 DocTags 核对内容。";
+    rendered.appendChild(placeholder);renderGood=false;
+    $("compareStatus").textContent="未识别到可渲染结构；原始 DocTags 已保留。";
+  }else{
+    blocks.forEach((block,i)=>rendered.appendChild(addBlock(block,i)));
+    renderGood=true;
+    const tables=blocks.filter(x=>x.type==="otsl"||x.type==="table");
+    const uncertain=tables.some(x=>x.table?.hasMerges||x.table?.truncated);
+    $("compareStatus").textContent="已按模型结果重建："+blocks.length+" 个结构块（含 "+tables.length+
+      " 个表格）；识别位置框："+regions.length+" 个。"+(uncertain?" 检测到复杂合并单元格，表格跨度仅作尽力预览，请以原图和原始输出核对。":"");
+  }
+  activeLocation=null;leftDraw();leftPane.scrollTop=0;rightPane.scrollTop=0;
+}
+function resetComparison(){
+  regions=[];blocks=[];renderGood=false;activeLocation=null;
+  rendered.replaceChildren();
+  const blank=document.createElement("div");blank.className="render-placeholder";
+  blank.textContent="尚未运行推理。点击右上方“开始真正推理”后，这里才显示模型生成的标题、正文和表格。";
+  rendered.appendChild(blank);
+  $("compareStatus").textContent="等待模型真实输出；不会显示预制的重建结果。";
+  leftDraw();rightPane.scrollTop=0;
+}
+rendered.addEventListener("pointerover",event=>{
+  const node=event.target.closest(".render-block[data-block-index]");
+  if(!node||!rendered.contains(node))return;
+  const index=Number(node.dataset.blockIndex),block=blocks[index];if(!block?.loc)return;
+  activeLocation=block.loc;leftDraw(activeLocation);
+  const scroller=leftPane,center=block.loc[1]/500*scroller.scrollHeight - scroller.clientHeight*.32;
+  scroller.scrollTo({top:Math.max(0,center),behavior:"smooth"});
+});
+rendered.addEventListener("pointerleave",()=>{activeLocation=null;leftDraw()});
+rendered.addEventListener("focusin",event=>{
+  const node=event.target.closest(".render-block[data-block-index]");
+  const block=blocks[Number(node?.dataset.blockIndex)];if(block?.loc){activeLocation=block.loc;leftDraw(activeLocation);}
+});
+rendered.addEventListener("focusout",()=>{activeLocation=null;leftDraw()});
+$("bounds").onchange=()=>leftDraw(activeLocation);
+function syncScroll(from,to){
+  if(!$("sync").checked||syncing)return;
+  syncing=true;
+  const maxFrom=Math.max(1,from.scrollHeight-from.clientHeight);
+  const maxTo=Math.max(0,to.scrollHeight-to.clientHeight);
+  to.scrollTop=(from.scrollTop/maxFrom)*maxTo;
+  queueMicrotask(()=>{syncing=false});
+}
+leftPane.addEventListener("scroll",()=>syncScroll(leftPane,rightPane));
+rightPane.addEventListener("scroll",()=>syncScroll(rightPane,leftPane));
+
 function show(tags=""){
   preview.width=src.width;preview.height=src.height;v.drawImage(src,0,0);let count=0;
   const regex=/<([A-Za-z][\w-]*)><loc_(\d+)><loc_(\d+)><loc_(\d+)><loc_(\d+)>/g;let m;
@@ -123,10 +351,10 @@ function makeSample(){
   [["Metric","Baseline","Proposed"],["Pages","20","20"],["Runtime","3.5s","2.8s"],["Score","0.71","0.76"]].forEach((row,i)=>row.forEach((text,j)=>{c.fillStyle="#183451";c.font="20px Arial";c.fillText(text,xs[j]+13,y+i*hh+40)}));
   c.fillStyle="#183451";c.font="bold 25px Arial";c.fillText("3. Conclusion",65,785);
   c.font="20px Arial";c.fillText("This is a generated, privacy-safe test page.",65,842);
-  imageReady=true;name="synthetic-document.png";$("fileName").textContent="合成样例 · 900×1100";
+  imageReady=true;name="synthetic-document.png";$("fileName").textContent="合成样例 · 900×1100";resetComparison();
   clearResult();show();$("run").disabled=!loaded;
 }
-function clearResult(){result="";$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveImg").disabled=true;$("timing").textContent="";}
+function clearResult(){result="";$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveImg").disabled=true;$("timing").textContent="";resetComparison();}
 function status(text){$("status").textContent=text;}
 $("sample").onclick=makeSample;
 $("file").onchange=async event=>{
@@ -134,13 +362,13 @@ $("file").onchange=async event=>{
     if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>12*1024*1024)throw Error("仅允许 12 MB 以内的 PNG、JPG、WebP");
     const im=await createImageBitmap(file),scale=Math.min(1,1500/Math.max(im.width,im.height));
     src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);im.close?.();
-    name=file.name;imageReady=true;clearResult();show();
+    name=file.name;imageReady=true;clearResult();show();leftDraw();
     $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";$("run").disabled=!loaded;
   }catch(e){status("读取失败："+e.message)}
 };
-$("clear").onclick=()=>show();
+$("clear").onclick=()=>{$("bounds").checked=false;show();leftDraw();};
 function download(blob,filename){const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
-$("saveImg").onclick=()=>preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png");
+$("saveImg").onclick=()=>{if(result)show(result);preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png")};
 $("saveDT").onclick=()=>{if(result)download(new Blob([result],{type:"text/plain;charset=utf-8"}),"mvai-doctags-result.dt")};
 async function detect(){if(!window.isSecureContext||!navigator.gpu){$("device").textContent="当前设备不支持 WebGPU 或不在安全页面。可使用 Kaggle。";return}
 try{const adapter=await navigator.gpu.requestAdapter({powerPreference:"high-performance"});
@@ -175,7 +403,7 @@ const generated=await model.generate({...inputs,max_new_tokens:2048,do_sample:fa
 const tokens=generated.slice(null,[inputs.input_ids.dims.at(-1),null]);
 result=(processor.batch_decode(tokens,{skip_special_tokens:false})[0]||streamed).replace(/<\|end_of_text\|>$/,"").trim();
 if(!result)throw Error("模型返回空结果");
-$("tags").textContent=result;const boxes=show(result),seconds=((performance.now()-start)/1000).toFixed(1);
+$("tags").textContent=result;const boxes=show(result),seconds=((performance.now()-start)/1000).toFixed(1);renderComparison(result);
 $("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
 $("timing").textContent="GPU 推理约 "+seconds+" 秒 · 输入："+name+" · 带坐标标签 "+boxes+" 个";
 status("推理完成；请检查输出准确性，特别是中文文字、表格和阅读顺序。");
