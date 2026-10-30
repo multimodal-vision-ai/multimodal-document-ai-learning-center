@@ -77,6 +77,17 @@ a{color:#1762bf}
 </div>
 <p style="text-align:center"><small>MVAI Learning Center · Browser WebGPU technical preview · 未经实际 GPU 推理验收不得标记为正式可用</small></p>
 </main>
+<script>
+/* HF Static Space fallback links: keep Kaggle and the existing sample reachable
+   before the new demo has been merged into Learning Center main. */
+if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) {
+  const base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-showcase-v1-4-kaggle-pilot-20261030";
+  const sample=document.querySelector('a[href="../interactive-demo/index.html"]');
+  const kaggle=document.querySelector('a[href="../../../../projects/doctags-kaggle/index.html"]');
+  if(sample)sample.href=base+"/assets/projects/doctags/interactive-demo/index.html";
+  if(kaggle)kaggle.href=base+"/projects/doctags-kaggle/index.html";
+}
+</script>
 <canvas id="source" hidden></canvas>
 <script type="module">
 import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
