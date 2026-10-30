@@ -57,7 +57,7 @@
       } else {
         const text=clean(body);
         if (text || ["picture","figure","checkbox_selected","checkbox_unselected"].includes(type))
-          blocks.push({type,loc:valid?loc:null,text,hasContent:!!text});
+          blocks.push({type,loc:valid?loc:null,text,raw:body,hasContent:!!text});
       }
     }
     return {blocks,truncated:blocks.length>=400,hasStructuredBlocks:blocks.length>0};
