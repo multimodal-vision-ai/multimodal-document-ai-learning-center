@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MVAI · DocTags 浏览器端推理实验</title>
+<style>
+:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#193251;background:#f4f7fc}*{box-sizing:border-box}
+body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+main{max-width:1200px;margin:auto;padding:20px}
+header{background:linear-gradient(115deg,#152e54,#305c9d);border-radius:16px;padding:23px 25px;color:white}
+header h1{font-size:clamp(22px,3vw,30px);margin:5px 0}
+header p{color:#deebfe;line-height:1.65;font-size:13px;max-width:760px}
+.label{font-size:11px;letter-spacing:.08em;color:#b7d3ff;text-transform:uppercase}
+.note{border:1px solid #dfebfa;background:white;color:#5c708a;border-radius:11px;padding:12px;margin:15px 0;line-height:1.7;font-size:12px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:15px;align-items:start}
+.card{background:white;border-radius:14px;padding:18px;border:1px solid #e1e7f3;min-width:0}
+.card h2{margin:0 0 5px;font-size:16px}
+.muted{font-size:12px;color:#61768e;line-height:1.6}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:13px 0}
+button,.file{border:1px solid #c9d8ed;background:white;color:#225182;font-weight:650;padding:9px 12px;border-radius:9px;font-size:12px}
+.primary{background:#255fc0;color:white;border-color:#255fc0}
+.file{position:relative;display:inline-flex;overflow:hidden;cursor:pointer}
+.file input{position:absolute;inset:0;opacity:0;cursor:pointer}
+#view{height:510px;max-height:65vh;border:1px solid #d9e4f1;background:#f5f8fc;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#preview{max-width:100%;max-height:100%;object-fit:contain}
+small{color:#68809a;font-size:11px;line-height:1.5}
+section+section{border-top:1px solid #e1e7f1;margin-top:16px;padding-top:15px}
+.status{background:#f1f5fb;border-radius:9px;padding:10px;color:#3a5880;font-size:12px;white-space:pre-wrap;line-height:1.6}
+select{max-width:100%;padding:8px;border:1px solid #ccdaec;border-radius:8px;background:white;font-size:12px}
+progress{width:100%;height:8px;margin:10px 0 2px;accent-color:#326bc6}
+#tags{height:260px;overflow:auto;background:#0e1930;color:#caf7de;border-radius:9px;padding:13px;font:11px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.links{background:#f6f9fc;border-radius:9px;padding:11px 14px;line-height:1.8;font-size:12px;color:#62738a}
+a{color:#1762bf}
+@media(max-width:760px){.cols{grid-template-columns:1fr}main{padding:10px}#view{height:390px}.card{padding:14px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="label">MVAI LEARNING CENTER · DOCUMENT AI · BROWSER INFERENCE</div>
+<h1>DocTags 浏览器端实时推理</h1>
+<p>无需账号，使用你自己电脑上的 WebGPU 加载 IBM Granite Docling 258M ONNX。上传单页文档图片并生成新的 DocTags 和位置标注。该功能是公开基线技术预览，不是实验室自研权重。</p>
+</header>
+<div class="note"><b>实验须知：</b>模型按需下载，首次点击加载后可能消耗约 1GB 或更多网络流量，并要求较充足的显卡内存。请使用桌面端支持 WebGPU 的浏览器，优先测试无个人信息合成样例。不要上传未经授权或含敏感个人信息的文档；当前版本未完成 GPU 端到端设备验收。</div>
+<div class="cols">
+<div class="card">
+<h2>01 · 文档输入</h2><p class="muted">默认提供一张无个人信息的合成报告；也可以选择自己已经脱敏的 PNG、JPG、WebP 单页图片。</p>
+<div class="row"><button id="sample" class="primary">使用合成样例</button><label class="file">选择本地图片<input id="file" type="file" accept="image/png,image/jpeg,image/webp"></label></div>
+<div id="view"><canvas id="preview" aria-label="文档输入与解析标注预览" role="img"></canvas></div>
+<p><small id="fileName">合成样例</small></p>
+<div class="row"><button id="clear">只显示原图</button><button id="saveImg" disabled>保存标注图 PNG</button></div>
+<p class="muted">输出为 DocTags 文本中的位置标签框，不等同于已通过标注准确率测试。</p>
+</div>
+<div class="card">
+<h2>02 · WebGPU 推理</h2><p class="muted">网页不会自动下载模型。请先确认设备检测结果，再按需加载。</p>
+<div class="status" id="device" role="status">正在检测 WebGPU…</div>
+<section>
+<label for="dtype" class="muted">模型配置（加载前选择）</label>
+<div class="row"><select id="dtype"><option value="quality">稳定优先 · fp32 解码器</option><option value="compact">省显存 · q4 解码器（可能重复输出）</option></select><button class="primary" id="load" disabled>加载模型</button></div>
+<progress id="progress" value="0" max="100"></progress>
+<p><small id="downloadStatus" aria-live="polite">尚未下载模型。</small></p>
+</section>
+<section>
+<div class="row"><button class="primary" id="run" disabled>开始真正推理</button><button id="saveDT" disabled>下载 DocTags (.dt)</button></div>
+<div class="status" id="status" role="status">尚未推理。这里不会展示预置的伪造结果。</div>
+<h3 style="font-size:13px">DocTags 原始输出</h3>
+<pre id="tags">模型生成的标签将出现在这里。</pre>
+<p><small id="timing"></small></p>
+</section>
+<div class="links">
+<b>如果设备不支持或执行失败：</b><br>
+<a href="../interactive-demo/index.html" target="_blank" rel="noopener">无需登录查看已有解析样例</a><br>
+<a href="../../../../projects/doctags-kaggle/index.html" target="_blank" rel="noopener">使用个人 Kaggle GPU 推理</a><br>
+<a href="https://huggingface.co/onnx-community/granite-docling-258M-ONNX" target="_blank" rel="noopener">查看 IBM 公共基线权重与许可</a>
+</div>
+</div>
+</div>
+<p style="text-align:center"><small>MVAI Learning Center · Browser WebGPU technical preview · 未经实际 GPU 推理验收不得标记为正式可用</small></p>
+</main>
+<canvas id="source" hidden></canvas>
+<script type="module">
+import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
+const $=id=>document.getElementById(id);
+const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
+let model,processor,loaded=false,busy=false,imageReady=false,result="",name="synthetic-document.png";
+const palette={title:"#2c62d0",text:"#159b72",table:"#c08423",otsl:"#c08423",seal:"#cd4762"};
+function show(tags=""){
+  preview.width=src.width;preview.height=src.height;v.drawImage(src,0,0);let count=0;
+  const regex=/<([A-Za-z][\w-]*)><loc_(\d+)><loc_(\d+)><loc_(\d+)><loc_(\d+)>/g;let m;
+  while((m=regex.exec(tags))!==null){
+    const [l,t,r,b]=m.slice(2).map(Number);if([l,t,r,b].some(n=>n>500)||r<=l||b<=t)continue;
+    const x=l*src.width/500,y=t*src.height/500,w=(r-l)*src.width/500,h=(b-t)*src.height/500;
+    v.lineWidth=Math.max(2,src.width/360);v.strokeStyle=palette[m[1]]||"#7658c5";v.strokeRect(x,y,w,h);
+    if(count<120){v.font="bold "+Math.max(13,src.width/70)+"px sans-serif";const label=m[1];const ty=Math.max(18,y);
+      v.fillStyle=v.strokeStyle;v.fillRect(x,ty-17,v.measureText(label).width+13,18);v.fillStyle="white";v.fillText(label,x+5,ty-4);}
+    count++;
+  }
+  return count;
+}
+function makeSample(){
+  src.width=900;src.height=1100;c.fillStyle="white";c.fillRect(0,0,src.width,src.height);
+  c.fillStyle="#173154";c.font="bold 36px Arial";c.fillText("RESEARCH SUMMARY",65,95);
+  c.font="23px Arial";c.fillText("Synthetic example, no personal data",65,151);
+  c.fillStyle="#7795bc";c.fillRect(65,177,760,3);
+  c.fillStyle="#173154";c.font="bold 25px Arial";c.fillText("1. Objective",65,247);
+  c.font="20px Arial";c.fillText("Compare document parsing on public examples.",65,302);
+  c.font="bold 25px Arial";c.fillText("2. Experiment summary",65,388);
+  const xs=[65,370,610,825],y=444,hh=65;
+  c.fillStyle="#ecf2fb";c.fillRect(xs[0],y,xs[3]-xs[0],hh);
+  c.strokeStyle="#91a4bc";for(let i=0;i<=4;i++){c.beginPath();c.moveTo(xs[0],y+i*hh);c.lineTo(xs[3],y+i*hh);c.stroke()}
+  for(const x of xs){c.beginPath();c.moveTo(x,y);c.lineTo(x,y+4*hh);c.stroke()}
+  [["Metric","Baseline","Proposed"],["Pages","20","20"],["Runtime","3.5s","2.8s"],["Score","0.71","0.76"]].forEach((row,i)=>row.forEach((text,j)=>{c.fillStyle="#183451";c.font="20px Arial";c.fillText(text,xs[j]+13,y+i*hh+40)}));
+  c.fillStyle="#183451";c.font="bold 25px Arial";c.fillText("3. Conclusion",65,785);
+  c.font="20px Arial";c.fillText("This is a generated, privacy-safe test page.",65,842);
+  imageReady=true;name="synthetic-document.png";$("fileName").textContent="合成样例 · 900×1100";
+  clearResult();show();$("run").disabled=!loaded;
+}
+function clearResult(){result="";$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveImg").disabled=true;$("timing").textContent="";}
+function status(text){$("status").textContent=text;}
+$("sample").onclick=makeSample;
+$("file").onchange=async event=>{
+  try{const file=event.target.files[0];if(!file)return;
+    if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>12*1024*1024)throw Error("仅允许 12 MB 以内的 PNG、JPG、WebP");
+    const im=await createImageBitmap(file),scale=Math.min(1,1500/Math.max(im.width,im.height));
+    src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);im.close?.();
+    name=file.name;imageReady=true;clearResult();show();
+    $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";$("run").disabled=!loaded;
+  }catch(e){status("读取失败："+e.message)}
+};
+$("clear").onclick=()=>show();
+function download(blob,filename){const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+$("saveImg").onclick=()=>preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png");
+$("saveDT").onclick=()=>{if(result)download(new Blob([result],{type:"text/plain;charset=utf-8"}),"mvai-doctags-result.dt")};
+async function detect(){if(!window.isSecureContext||!navigator.gpu){$("device").textContent="当前设备不支持 WebGPU 或不在安全页面。可使用 Kaggle。";return}
+try{const adapter=await navigator.gpu.requestAdapter({powerPreference:"high-performance"});
+if(adapter){$("device").textContent="检测到 WebGPU 适配器；不保证模型能加载或显存足够。";$("load").disabled=false}
+else $("device").textContent="未找到可用 GPU 适配器；请使用 Kaggle。"}
+catch(e){$("device").textContent="WebGPU 初始化失败："+e.message}}
+$("load").onclick=async()=>{
+if(busy||loaded)return;busy=true;$("load").disabled=true;$("dtype").disabled=true;
+$("downloadStatus").textContent="正在加载模型和下载权重…";
+const progress={};
+try{
+processor=await AutoProcessor.from_pretrained("onnx-community/granite-docling-258M-ONNX");
+model=await AutoModelForVision2Seq.from_pretrained("onnx-community/granite-docling-258M-ONNX",{
+device:"webgpu",
+dtype:{embed_tokens:"fp16",vision_encoder:"fp32",decoder_model_merged:$("dtype").value==="compact"?"q4":"fp32"},
+progress_callback:d=>{if(d.status==="progress"&&d.file&&d.total){
+progress[d.file]={loaded:d.loaded,total:d.total};const p=Object.values(progress),total=p.reduce((s,x)=>s+x.total,0),done=p.reduce((s,x)=>s+x.loaded,0);
+if(total){$("progress").value=Math.min(100,Math.round(100*done/total));$("downloadStatus").textContent="模型下载约 "+$("progress").value+"%（仅文件传输估算）";}}}
+});
+loaded=true;$("progress").value=100;$("downloadStatus").textContent="模型已加载。";$("load").textContent="已加载";$("run").disabled=!imageReady;
+}catch(e){console.error(e);$("downloadStatus").textContent="模型加载失败："+e.message;$("load").disabled=false;$("dtype").disabled=false}
+finally{busy=false}
+};
+$("run").onclick=async()=>{
+if(busy||!loaded||!imageReady)return;
+busy=true;$("run").disabled=true;clearResult();status("WebGPU 正在运行真实推理…");const start=performance.now();
+try{
+const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
+const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
+const inputs=await processor(prompt,[raw],{do_image_splitting:true});let streamed="";
+const generated=await model.generate({...inputs,max_new_tokens:2048,do_sample:false,streamer:new TextStreamer(processor.tokenizer,{skip_prompt:true,skip_special_tokens:false,callback_function:chunk=>{streamed+=chunk;$("tags").textContent=streamed}})});
+const tokens=generated.slice(null,[inputs.input_ids.dims.at(-1),null]);
+result=(processor.batch_decode(tokens,{skip_special_tokens:false})[0]||streamed).replace(/<\|end_of_text\|>$/,"").trim();
+if(!result)throw Error("模型返回空结果");
+$("tags").textContent=result;const boxes=show(result),seconds=((performance.now()-start)/1000).toFixed(1);
+$("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
+$("timing").textContent="GPU 推理约 "+seconds+" 秒 · 输入："+name+" · 带坐标标签 "+boxes+" 个";
+status("推理完成；请检查输出准确性，特别是中文文字、表格和阅读顺序。");
+}catch(e){console.error(e);status("推理失败："+e.message+"。请改用 Kaggle 或换设备重试。");$("tags").textContent="本次没有可核验的完整模型输出。";}
+finally{busy=false;$("run").disabled=!loaded}
+};
+makeSample();detect();
+</script>
+</body>
+</html>

@@ -33,11 +33,13 @@ shanshui_scene: 7
 
 [免登录体验｜查看 DocTags 解析样例](../assets/projects/doctags/interactive-demo/index.html){ .md-button .mv-self-models__action }
 
+[浏览器直接推理｜免登录实验版](doctags-browser/README.md){ .md-button .mv-self-models__action }
+
 [使用 Kaggle 免费 GPU｜亲自运行模型](doctags-kaggle/README.md){ .md-button .mv-self-models__action }
 
 [查看文档理解项目与现有视频](document-ai/README.md)
 
-**Kaggle 推理试点说明：** 当前使用 IBM Granite Docling 258M 公开基线验证运行流程，不是实验室自研权重。Notebook 发布并实测后才会提供直接打开的 Kaggle 项目地址。
+**公开基线试点说明：** 浏览器端用访问者自己的 WebGPU，Kaggle 端用个人 GPU。 两种推理方式都使用 IBM Granite Docling 258M 公开基线，并非实验室自研模型。浏览器端还需实际设备验收；Kaggle Notebook 发布并实测后才会提供直接打开的项目地址。
 
 <div class="mv-self-models__embedded-demo">
   <p><strong>DocTags 解析样例交互演示</strong> <span>已有结果回放 · 非实时推理</span></p>
@@ -70,7 +72,7 @@ shanshui_scene: 7
 </div>
 
 <div class="mv-self-models__note" markdown>
-**展示说明：** 文档卡片使用已提供的真实材料展示既有解析结果；视频卡片仍为方案示意。样例体验不产生新推理，Kaggle 入口提供公开基线的独立 GPU 试运行。尚未部署实验室自研权重，也没有虚构的性能指标。
+**展示说明：** 文档卡片使用已提供的真实材料展示既有解析结果；视频卡片仍为方案示意。样例体验不产生新推理，浏览器和 Kaggle 入口均属于公开基线试运行。尚未部署实验室自研权重，也没有虚构的性能指标。
 </div>
 
 [实验室 Hugging Face Organization](https://huggingface.co/multimodal-vision-ai) · [文档理解研究项目](document-ai/README.md) · [学生作品与 Capstone](student-work/README.md)
