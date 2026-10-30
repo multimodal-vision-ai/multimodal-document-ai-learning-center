@@ -16,6 +16,14 @@ GUIDE = ROOT / "docs/projects/doctags-browser/README.md"
 data = HTML.read_text(encoding="utf-8")
 assert data == SPACE.read_text(encoding="utf-8"), "HF Space and Learning Center must use the same inference code"
 assert "sdk: static" in SPACE_README.read_text(encoding="utf-8")
+PARSER = ROOT / "docs/assets/projects/doctags/browser-inference/doctags-renderer.js"
+HF_PARSER = ROOT / "hf-spaces/mvai-doctags-webgpu/doctags-renderer.js"
+assert PARSER.read_bytes() == HF_PARSER.read_bytes(), "DocTags parsers diverged"
+assert 'src="./doctags-renderer.js"' in data, "Parser module not loaded"
+assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Missing comparison panes"
+assert 'id="rawDetails"' in data, "Raw DocTags should be collapsible"
+assert "renderComparison(result)" in data, "Real model output must drive rendering"
+assert "rendered.addEventListener" in data, "Source-to-result hover mapping missing"
 assert 'id="load"' in data and 'id="run"' in data
 assert "onnx-community/granite-docling-258M-ONNX" in data
 assert "AutoModelForVision2Seq.from_pretrained" in data
@@ -34,4 +42,6 @@ with tempfile.TemporaryDirectory() as tmp:
     file = Path(tmp) / "browser-inference.mjs"
     file.write_text(js, encoding="utf-8")
     subprocess.run(["node", "--check", str(file)], check=True)
-print("Browser inference Static Space: content contract + Node JS syntax PASS")
+subprocess.run(["node", "--check", str(PARSER)], check=True)
+subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_render_parser.cjs")], check=True)
+print("Browser inference Static Space: content contract + parser fixture + Node JS syntax PASS")
