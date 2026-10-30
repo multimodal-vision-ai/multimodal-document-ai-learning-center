@@ -33,6 +33,14 @@ shanshui_scene: 7
 
 [查看文档理解项目与现有视频](document-ai/README.md){ .md-button .mv-self-models__action }
 
+<div class="mv-self-models__embedded-demo">
+  <p><strong>DocTags 解析样例交互演示</strong> <span>已有结果回放 · 非实时推理</span></p>
+  <iframe src="../assets/projects/doctags/interactive-demo/index.html" title="DocTags 文档结构化解析交互样例" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-modals allow-popups" width="100%" height="760"></iframe>
+  <p class="mv-self-models__embedded-hint">当前为 Learning Center 站内 DEV 演示。Hugging Face Organization 的 Static Space 版本已准备好，待具备组织写权限后发布并替换为真实 Space 嵌入地址。</p>
+</div>
+
+
+
 </article>
 
 <article class="mv-self-models__card mv-self-models__card--video" markdown>
