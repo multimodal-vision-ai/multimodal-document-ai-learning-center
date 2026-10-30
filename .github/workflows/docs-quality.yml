@@ -28,6 +28,8 @@ jobs:
         run: pip install -r requirements-docs.txt
       - name: Validate Kaggle pilot notebook syntax and student links
         run: python scripts/kaggle/validate_doctags_pilot.py
+      - name: Validate browser inference JavaScript and HF Space package
+        run: python scripts/kaggle/validate_browser_doctags_pilot.py
       - name: Validate navigation and internal links
         run: mkdocs build --strict
 
