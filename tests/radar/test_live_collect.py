@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "radar"))
@@ -113,8 +114,8 @@ class SourcePriorityTests(unittest.TestCase):
     def test_huggingface_metadata_is_saved_for_quality_screening(self):
         record = {
             "id": "Lab/document-vlm-small",
-            "createdAt": "2026-10-22T00:00:00Z",
-            "lastModified": "2026-10-22T00:10:00Z",
+            "createdAt": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
+            "lastModified": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
             "downloads": 25, "likes": 2,
             "tags": ["transformers", "document", "vision-language"],
             "pipeline_tag": "image-text-to-text",
@@ -135,8 +136,8 @@ class SourcePriorityTests(unittest.TestCase):
         record = {
             "id": 42, "full_name": "lab/document-vlm",
             "html_url": "https://github.com/lab/document-vlm",
-            "created_at": "2026-10-21T00:00:00Z",
-            "pushed_at": "2026-10-22T00:00:00Z",
+            "created_at": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
+            "pushed_at": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
             "description": "Document VLM parsing and evaluation",
             "stargazers_count": 25, "forks_count": 4,
             "license": {"spdx_id": "Apache-2.0"},
