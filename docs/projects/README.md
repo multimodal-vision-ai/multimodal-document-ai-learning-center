@@ -31,7 +31,13 @@ shanshui_scene: 7
   <figcaption>真实文档样例、版面识别标注与 DocTags 文本的三阶段合成展示；不代表经过独立评测的准确率。</figcaption>
 </figure>
 
-[查看文档理解项目与现有视频](document-ai/README.md){ .md-button .mv-self-models__action }
+[免登录体验｜查看 DocTags 解析样例](../assets/projects/doctags/interactive-demo/index.html){ .md-button .mv-self-models__action }
+
+[使用 Kaggle 免费 GPU｜亲自运行模型](doctags-kaggle/README.md){ .md-button .mv-self-models__action }
+
+[查看文档理解项目与现有视频](document-ai/README.md)
+
+**Kaggle 推理试点说明：** 当前使用 IBM Granite Docling 258M 公开基线验证运行流程，不是实验室自研权重。Notebook 发布并实测后才会提供直接打开的 Kaggle 项目地址。
 
 <div class="mv-self-models__embedded-demo">
   <p><strong>DocTags 解析样例交互演示</strong> <span>已有结果回放 · 非实时推理</span></p>
@@ -64,7 +70,7 @@ shanshui_scene: 7
 </div>
 
 <div class="mv-self-models__note" markdown>
-**展示说明：** 上述两张卡片为前端效果示意，没有使用真实推理截图、准确率或置信度。通过成果审核后，再替换为真实模型截图与 HF Space 入口。
+**展示说明：** 文档卡片使用已提供的真实材料展示既有解析结果；视频卡片仍为方案示意。样例体验不产生新推理，Kaggle 入口提供公开基线的独立 GPU 试运行。尚未部署实验室自研权重，也没有虚构的性能指标。
 </div>
 
 [实验室 Hugging Face Organization](https://huggingface.co/multimodal-vision-ai) · [文档理解研究项目](document-ai/README.md) · [学生作品与 Capstone](student-work/README.md)
