@@ -31,6 +31,30 @@ assert "activeKey!==selectedKey()" in data, "Running unselected GPU model must b
 assert "recordResult(runHistory,record)" in data, "Same-input history must be recorded"
 assert "inputRevision++;resetHistory()" in data, "Image change must invalidate old run history"
 assert "renderComparison(result)" in data, "V1.6 live reconstruction must remain"
+
+# V1.7.1: balanced top workspace, collapsed advanced features, accessible help.
+assert '<div class="cols workspace">' in data, "Workspace layout not present"
+assert ".cols.workspace{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch" in data, "Two-panel balanced layout is missing"
+assert ".workspace>.card{display:flex;flex-direction:column" in data, "Workspace cards must fill matching rows"
+assert 'class="card input-panel"' in data and 'class="card inference-panel"' in data
+assert '<div class="panel-heading">' in data and 'class="info-tip"' in data
+assert ".info-tip:focus-within>.tip-pop" in data, "Keyboard tooltip support missing"
+assert ".info-tip:hover>.tip-pop" in data, "Mouse hover tooltip support missing"
+assert 'id="modelHelp"' in data, "Dynamic model selection help lost"
+assert 'id="cacheManager"' in data, "Cache controls must be collapsible"
+assert 'id="modelManage"' in data, "Model registration must be collapsible"
+assert 'id="compareDetails"' in data, "Multi-model comparisons must default to collapsed"
+assert 'id="rawDetails"' in data, "Raw DocTags must default to collapsed"
+for detail_id in ("modelManage", "cacheManager", "rawDetails", "compareDetails"):
+    assert not re.search(r'<details[^>]*\bid="'+detail_id+r'"[^>]*\bopen\b', data), f"{detail_id} must be closed by default"
+ids = re.findall(r'\bid="([^"]+)"', data)
+assert len(ids) == len(set(ids)), f"Duplicated HTML IDs: {[x for x in set(ids) if ids.count(x)>1]}"
+assert "首次加载模型可能下载 1 GB 以上文件" in data, "Important traffic warning not visible"
+assert "模型加载失败：" in data and "推理失败：" in data, "Critical errors must remain visible"
+assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Original/result rendering must remain"
+assert "updateHistory({" in data and "refreshHistorySelectors()" in data, "Multi-model result history lost"
+assert "浏览器 Cache Storage" in data, "Cache explanation lost"
+
 assert 'src="./doctags-renderer.js"' in data, "Parser module not loaded"
 assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Missing comparison panes"
 assert 'id="rawDetails"' in data, "Raw DocTags should be collapsible"
