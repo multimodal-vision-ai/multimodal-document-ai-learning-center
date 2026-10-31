@@ -28,6 +28,9 @@ jobs:
           for file in README.md index.html doctags-renderer.js model-registry.js; do
             test -s "hf-spaces/mvai-doctags-webgpu/$file"
           done
+          for kind in doc table code image formula chart arabic japanese chinese; do
+            test -s "hf-spaces/mvai-doctags-webgpu/samples/$kind.svg"
+          done
           python scripts/kaggle/validate_browser_doctags_pilot.py
 
       - name: Check Hugging Face publish permission
@@ -44,7 +47,7 @@ jobs:
             echo "::notice title=HF publishing not enabled::Create a Public Static Space multimodal-vision-ai/mvai-doctags-webgpu, add a repository secret named HF_TOKEN, then rerun this workflow. DEV source is already safe; no public HF deployment was attempted."
           fi
 
-      - name: Publish four-file Static Space bundle
+      - name: Publish Static Space bundle with nine built-in samples
         if: steps.hf.outputs.enabled == 'true'
         uses: huggingface/hub-sync@v0.3.0
         with:
