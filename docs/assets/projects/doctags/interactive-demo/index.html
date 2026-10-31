@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MVAI DocTags 结构化解析 · 交互样例</title>
+<style>
+:root{font-family:Inter,"Microsoft YaHei",system-ui,sans-serif;color:#152c54;background:#f6f8ff}*{box-sizing:border-box}body{margin:0}button{font:inherit;cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #8095fb;outline-offset:2px}
+.shell{padding:16px;max-width:1250px;margin:0 auto}.head{display:flex;justify-content:space-between;gap:12px;align-items:center}.head h1{font-size:clamp(1.25rem,2.5vw,1.75rem);margin:3px 0 5px}.head p{margin:0;color:#607699;font-size:.83rem}.overline{color:#3e68c6;font-weight:800;font-size:.67rem;letter-spacing:.09em}.flag{border-radius:999px;padding:9px 12px;background:#e8f0ff;color:#3f5b9a;font-size:.72rem;font-weight:750;white-space:nowrap}
+.summary{background:#edf4ff;border-radius:11px;margin:13px 0;padding:11px 14px;color:#52668d;font-size:.83rem;line-height:1.6}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;background:white;border:1px solid #dde5f4;border-bottom:0;padding:11px;border-radius:15px 15px 0 0}.tabs button{border:0;border-radius:9px;padding:11px 4px;background:#eef2fb;color:#4a6290;font-size:.8rem;font-weight:750}.tabs button[aria-selected=true]{color:white;background:linear-gradient(110deg,#256ceb,#6548d8)}
+.content{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(240px,.75fr);gap:18px;min-height:440px;padding:16px;border:1px solid #dde5f4;border-radius:0 0 15px 15px;background:white}.image-zone{position:relative;background:#edf2fa;border-radius:12px;min-width:0;display:flex;align-items:center;justify-content:center;padding:14px;min-height:400px}.stage-image{display:block;max-width:100%;max-height:490px;object-fit:contain;box-shadow:0 7px 22px #25407224;border-radius:4px}.image-zone button{position:absolute;right:16px;top:16px;padding:7px 10px;background:white;border-radius:8px;border:1px solid #cddaf0;color:#39588b;font-size:.74rem;font-weight:800}
+.compare{position:relative;width:min(390px,100%);aspect-ratio:530/690;overflow:hidden;box-shadow:0 7px 22px #25407224}.compare[hidden],.stage-image[hidden]{display:none!important}.compare img{position:absolute;inset:0;width:100%;height:100%}.overlay{position:absolute;inset:0;clip-path:inset(0 50% 0 0)}.compare input{position:absolute;z-index:3;inset:0;width:100%;height:100%;opacity:.01;cursor:col-resize}.seam{position:absolute;z-index:2;top:0;bottom:0;left:50%;border-left:3px solid white;pointer-events:none}
+.description{padding:13px 4px;display:flex;flex-direction:column}.step{font-weight:800;color:#5276db;font-size:.75rem}.description h2{font-size:1.28rem;line-height:1.3;margin:12px 0}.description p{font-size:.86rem;color:#5a7091;line-height:1.85}.rows{margin-top:8px}.rows div{display:flex;justify-content:space-between;border-top:1px solid #e7edf6;padding:11px 0;gap:10px;font-size:.81rem}.rows span{color:#8898b2}.rows b{text-align:right}.footnote{margin-top:auto;padding:10px;background:#f0f4fb;border-radius:9px;color:#697b9c;font-size:.75rem;line-height:1.55}footer{margin:12px 0 0;display:flex;justify-content:space-between;gap:8px;color:#8998ad;font-size:.7rem}
+dialog{border:0;border-radius:14px;background:#f7faff;max-height:93vh;max-width:92vw;padding:12px;box-shadow:0 20px 90px #06152e80}dialog::backdrop{background:#06152ed8}dialog img{max-width:100%;max-height:79vh;display:block;margin:auto}dialog header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:9px}dialog button{border:1px solid #d4def1;border-radius:7px;background:white;padding:8px 12px}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+@media(max-width:760px){.head{flex-direction:column;align-items:flex-start}.tabs{gap:4px;padding:7px}.tabs button{font-size:.72rem;padding:10px 2px}.content{grid-template-columns:1fr;padding:10px;gap:3px}.image-zone{min-height:320px;padding:12px}.stage-image{max-height:440px}.description{padding:8px}.description h2{margin:6px 0}.description p{margin:3px 0 12px}.footnote{margin-top:12px}footer{flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header class="head"><div><div class="overline">MVAI LAB · DOCUMENT UNDERSTANDING</div><h1>DocTags 文档结构化解析</h1><p>同一份文档的原始页面、版面标注与结构化输出</p></div><span class="flag">已有样例回放 · 非实时推理</span></header>
+<p class="summary">根据实验室提供的三阶段素材制作。点击阶段切换或拖动对照滑块，直观观察<strong>文档结构、空间位置及 DocTags 表达</strong>；不支持上传新文件或运行模型。</p>
+<nav class="tabs" aria-label="文档解析阶段" role="tablist">
+<button type="button" data-tab="source" role="tab" aria-selected="true">01 原始文档</button>
+<button type="button" data-tab="annotated" role="tab" aria-selected="false">02 版面标注</button>
+<button type="button" data-tab="tags" role="tab" aria-selected="false">03 DocTags 输出</button>
+<button type="button" data-tab="compare" role="tab" aria-selected="false">↔ 对照检查</button>
+</nav>
+<section class="content">
+<div class="image-zone"><img class="stage-image" id="stage-image" alt="原始复杂文档局部展示"><div id="compare" class="compare" hidden><img id="raw-comparison" alt="原始文档"><div id="overlay" class="overlay"><img id="labeled-comparison" alt="结构标注"></div><div class="seam" id="seam"></div><label for="ratio" class="visually-hidden">原图与结构标注对照比例</label><input id="ratio" type="range" min="0" max="100" value="50" aria-label="拖动对照分界线"></div><button id="enlarge" type="button">↗ 放大</button></div>
+<div class="description"><span class="step" id="stage-no">阶段 01 / 03</span><h2 id="stage-title">原始复杂文档</h2><p id="stage-copy"></p><div class="rows" id="facts"></div><p class="footnote" id="stage-hint"></p></div>
+</section>
+<footer><span>MVAI · 多模态视觉 AI 学习中心</span><span>展示既有样例，并非模型性能证明 · 公开素材请核对授权</span></footer>
+</main>
+<dialog id="zoom-dialog"><header><strong id="zoom-title">放大查看</strong><button type="button" id="zoom-close">关闭 ×</button></header><img id="zoom-image" alt="放大查看文档细节"></dialog>
+<script>
+"use strict";
+const descriptions={
+source:{no:"阶段 01 / 03",title:"原始复杂文档",text:"示例原图包含正文、表格、批注、手写签名、印章与捺印。复杂文档不仅需要文字识别，还需要理解空间结构。",facts:[["原始输入","扫描文档"],["主要难点","复杂版面与手写区域"],["对照目标","保留证据位置"]],hint:"样例已经提供，并非实时上传的检测结果。"},
+annotated:{no:"阶段 02 / 03",title:"版面结构识别结果",text:"展示现有结构标注：title、text、seal、otsl、fingerprint 等类别与区域位置。可以观察识别框和原始文档的对应关系。",facts:[["主要输出","结构标注框"],["示例类别","标题、正文、表格、印章"],["核心价值","定位和类型"]],hint:"标注结果来自已提供的截图，未执行新的检测。"},
+tags:{no:"阶段 03 / 03",title:"DocTags 结构化表示",text:"展示已提供的 DocTags 输出截图。通过元素标签和 loc 位置信息，将文档内容与结构、空间位置联系起来。",facts:[["输出形式","DocTags 文本"],["结构要素","title / text / otsl"],["定位信息","loc 坐标标签"]],hint:"这是原始结果的图像截取，不保证所有元素被完整展示。"},
+compare:{no:"对照模式",title:"滑动检查区域定位",text:"对比同一页文档的原始图与结构标注，通过滑块检查标题、正文、表格等区域是否位于相应页面位置。",facts:[["左侧","标注结果"],["右侧","原始页面"],["交互","拖动滑块"]],hint:"图像仅供视觉对照，不计算模型识别准确率。"}
+};
+const crops={source:[30,155,535,680],annotated:[603,186,475,660],tags:[1105,180,915,670]};
+const cover=new Image();
+cover.src="../document-structure-demo-v13.webp";
+const images={};let selected="source";
+function makeCrop(x,y,w,h){
+ const scale=2; const c=document.createElement("canvas"); c.width=w*scale;c.height=h*scale;
+ const ctx=c.getContext("2d");ctx.imageSmoothingQuality="high";ctx.drawImage(cover,x,y,w,h,0,0,c.width,c.height);
+ return c.toDataURL("image/png");
+}
+function ready(){
+ for(const [key,rect] of Object.entries(crops)) images[key]=makeCrop(...rect);
+ const r=document.getElementById("raw-comparison"),l=document.getElementById("labeled-comparison");
+ r.src=images.source;l.src=images.annotated;show("source");
+}
+function show(key){
+ if(!Object.prototype.hasOwnProperty.call(descriptions,key))return;
+ selected=key;const d=descriptions[key];
+ document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.tab===key)));
+ document.getElementById("stage-no").textContent=d.no;
+ document.getElementById("stage-title").textContent=d.title;
+ document.getElementById("stage-copy").textContent=d.text;
+ document.getElementById("stage-hint").textContent=d.hint;
+ const box=document.getElementById("facts");box.replaceChildren();
+ d.facts.forEach(([a,b])=>{const div=document.createElement("div"),aEl=document.createElement("span"),bEl=document.createElement("b");aEl.textContent=a;bEl.textContent=b;div.append(aEl,bEl);box.append(div)});
+ const comparing=key==="compare",img=document.getElementById("stage-image");
+ img.hidden=comparing; document.getElementById("compare").hidden=!comparing;
+ if(!comparing){img.src=images[key]||cover.src;img.alt=d.title;}
+}
+document.querySelectorAll("[data-tab]").forEach(btn=>btn.addEventListener("click",()=>show(btn.dataset.tab)));
+const ratio=document.getElementById("ratio");ratio.addEventListener("input",()=>{
+ document.getElementById("overlay").style.clipPath="inset(0 "+(100-Number(ratio.value))+"% 0 0)";
+ document.getElementById("seam").style.left=ratio.value+"%";
+});
+document.getElementById("enlarge").addEventListener("click",()=>{
+ const box=document.getElementById("zoom-dialog");document.getElementById("zoom-image").src=images[selected==="compare"?"annotated":selected]||cover.src;
+ document.getElementById("zoom-title").textContent=descriptions[selected].title;box.showModal();
+});
+document.getElementById("zoom-close").addEventListener("click",()=>document.getElementById("zoom-dialog").close());
+cover.onload=ready; if(cover.complete&&cover.naturalWidth) ready();
+</script>
+</body></html>
