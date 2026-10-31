@@ -111,10 +111,13 @@ class SourcePriorityTests(unittest.TestCase):
         self.assertTrue(all(x["review"] == "pending" for x in chosen))
 
     def test_huggingface_metadata_is_saved_for_quality_screening(self):
+        from datetime import datetime, timezone
+        # Freshness is relative to execution time; fixed October 2026 dates expire.
+        fresh_at = datetime.now(timezone.utc).isoformat()
         record = {
             "id": "Lab/document-vlm-small",
-            "createdAt": "2026-10-22T00:00:00Z",
-            "lastModified": "2026-10-22T00:10:00Z",
+            "createdAt": fresh_at,
+            "lastModified": fresh_at,
             "downloads": 25, "likes": 2,
             "tags": ["transformers", "document", "vision-language"],
             "pipeline_tag": "image-text-to-text",
@@ -132,11 +135,14 @@ class SourcePriorityTests(unittest.TestCase):
         self.assertIn("document", entries[0]["hf_tags"])
 
     def test_github_metadata_is_saved_for_quality_screening(self):
+        from datetime import datetime, timezone
+        # Only the clock fixture moves; collection policy and metadata checks are unchanged.
+        fresh_at = datetime.now(timezone.utc).isoformat()
         record = {
             "id": 42, "full_name": "lab/document-vlm",
             "html_url": "https://github.com/lab/document-vlm",
-            "created_at": "2026-10-21T00:00:00Z",
-            "pushed_at": "2026-10-22T00:00:00Z",
+            "created_at": fresh_at,
+            "pushed_at": fresh_at,
             "description": "Document VLM parsing and evaluation",
             "stargazers_count": 25, "forks_count": 4,
             "license": {"spdx_id": "Apache-2.0"},
