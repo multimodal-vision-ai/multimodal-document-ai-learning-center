@@ -30,6 +30,15 @@ assert "await model.dispose?.()" in data, "Old WebGPU model not released on swit
 assert "activeKey!==selectedKey()" in data, "Running unselected GPU model must be prevented"
 assert "recordResult(runHistory,record)" in data, "Same-input history must be recorded"
 assert "inputRevision++;resetHistory()" in data, "Image change must invalidate old run history"
+# V1.9 official sample gallery must be complete and safe on input switching.
+for kind in ("doc","table","code","image","formula","chart","arabic","japanese","chinese"):
+    assert 'data-sample="'+kind+'"' in data, f"IBM official sample missing: {kind}"
+assert data.count('class="sample-tile"') == 9, "Official 9-sample gallery must remain complete"
+assert "granite-docling-258m-demo/resolve/main/data/images/" in data, "Source must be IBM's public original repository"
+assert "id=\"syntheticFallback\"" in data and 'makeSample("summary")' in data, "Offline synthetic fallback missing"
+assert "sampleSelectionSerial" in data and "if(ticket!==sampleSelectionSerial)" in data, "Asynchronous sample switching needs stale-response protection"
+assert 'inputRevision++;resetHistory();imageReady=true;name="ibm-demo-"' in data, "Official sample change must reset model result history"
+assert "await model.generate" in data, "Sample selector must not replace real inference"
 assert "renderComparison(result)" in data, "V1.6 live reconstruction must remain"
 
 # V1.7.1: balanced top workspace, collapsed advanced features, accessible help.
