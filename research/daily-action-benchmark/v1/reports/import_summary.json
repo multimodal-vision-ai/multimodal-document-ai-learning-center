@@ -1,0 +1,28 @@
+{
+  "clips": 160,
+  "subject_counts": {
+    "S1": 32,
+    "S2": 48,
+    "S3": 43,
+    "S4": 37
+  },
+  "section_counts": {
+    "ADL": 81,
+    "Fall": 79
+  },
+  "by_class": {
+    "sitting": 77,
+    "sleeping": 15,
+    "reading": 20,
+    "walking": 57,
+    "standing": 60,
+    "falling": 77,
+    "drinking": 12,
+    "exercising": 11,
+    "writing": 8,
+    "eating": 7
+  },
+  "phone_call": 3,
+  "phone_use": 7,
+  "missing": 0
+}
