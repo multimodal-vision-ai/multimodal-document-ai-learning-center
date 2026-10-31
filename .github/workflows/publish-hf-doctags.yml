@@ -54,3 +54,26 @@ jobs:
           repo_type: space
           space_sdk: static
           subdirectory: hf-spaces/mvai-doctags-webgpu
+
+      - name: Verify public HF Space homepage
+        if: steps.hf.outputs.enabled == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/"
+          found=false
+          for attempt in $(seq 1 12); do
+            if curl -fsSL --max-time 15 "$base" -o /tmp/mvai-hf-docs.html; then
+              if grep -q '实时文档结构化解析-DocTags' /tmp/mvai-hf-docs.html &&
+                 grep -q 'model-registry.js' /tmp/mvai-hf-docs.html; then
+                found=true
+                echo "Public Static Space HTML verified on attempt $attempt."
+                break
+              fi
+            fi
+            sleep 10
+          done
+          if [[ "$found" != "true" ]]; then
+            echo "::warning title=Public Space not yet verified::HF upload succeeded, but the public hf.space URL did not pass the HTML content probe. Check Space build status and test it manually."
+          fi
+

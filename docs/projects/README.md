@@ -10,7 +10,7 @@ shanshui_scene: 7
 
 # 自研模型展示
 
-展示实验室正在研发的文档结构化解析与视频行为识别方向。以下为**版式和效果示意**，并非正式模型推理结果。
+展示实验室文档结构化解析与视频行为识别的研究方向。文档部分提供真实样例与基于公开基线模型的浏览器端推理实验；视频卡片仍为功能示意。公开基线结果不代表实验室自研模型性能。
 
 <div class="mv-self-models__grid" markdown>
 
@@ -31,20 +31,30 @@ shanshui_scene: 7
   <figcaption>真实文档样例、版面识别标注与 DocTags 文本的三阶段合成展示；不代表经过独立评测的准确率。</figcaption>
 </figure>
 
+[打开 HF 实时推理｜免登录](https://huggingface.co/spaces/multimodal-vision-ai/mvai-doctags-webgpu){ .md-button .md-button--primary .mv-self-models__action }
+
 [免登录体验｜查看 DocTags 解析样例](../assets/projects/doctags/interactive-demo/index.html){ .md-button .mv-self-models__action }
 
-[浏览器直接推理｜免登录实验版](doctags-browser/README.md){ .md-button .mv-self-models__action }
+[站内 WebGPU 推理｜备用入口](doctags-browser/README.md){ .md-button .mv-self-models__action }
 
 [使用 Kaggle 免费 GPU｜亲自运行模型](doctags-kaggle/README.md){ .md-button .mv-self-models__action }
 
 [查看文档理解项目与现有视频](document-ai/README.md)
 
-**公开基线试点说明：** 浏览器端用访问者自己的 WebGPU，Kaggle 端用个人 GPU。 两种推理方式都使用 IBM Granite Docling 258M 公开基线，并非实验室自研模型。浏览器端还需实际设备验收；Kaggle Notebook 发布并实测后才会提供直接打开的项目地址。
+**公开基线说明：** HF Space 和站内浏览器入口目前采用 IBM Granite Docling 258M 公开权重，使用访问者本机 WebGPU；Kaggle 入口使用个人 GPU。自研模型权重尚未接入，实际推理质量需由体验者核验。
 
 <div class="mv-self-models__embedded-demo">
   <p><strong>DocTags 解析样例交互演示</strong> <span>已有结果回放 · 非实时推理</span></p>
   <iframe src="../assets/projects/doctags/interactive-demo/index.html" title="DocTags 文档结构化解析交互样例" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-modals allow-popups" width="100%" height="760"></iframe>
-  <p class="mv-self-models__embedded-hint">当前为 Learning Center 站内 DEV 演示。Hugging Face Organization 的 Static Space 版本已准备好，待具备组织写权限后发布并替换为真实 Space 嵌入地址。</p>
+  <p class="mv-self-models__embedded-hint">上方为已有样例的交互回放，无需模型下载。下面的 HF Space 才执行浏览器端真实推理；两者互不混淆。</p>
+  <details class="mv-self-models__hf-expand">
+    <summary>在本页体验 Hugging Face 实时推理 <span>WebGPU · 技术预览</span></summary>
+    <div class="mv-self-models__hf-body">
+      <p>需要浏览器 WebGPU 与充足的设备内存；首次加载会下载模型文件。如果嵌入页面无法访问 GPU，请使用 <a href="https://huggingface.co/spaces/multimodal-vision-ai/mvai-doctags-webgpu" target="_blank" rel="noopener noreferrer">独立 HF Space 页面</a>。</p>
+      <iframe src="https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/" title="HF DocTags 浏览器端实时结构化解析与多模型对比" loading="lazy" allow="webgpu; fullscreen; clipboard-write" referrerpolicy="strict-origin-when-cross-origin" width="100%" height="960"></iframe>
+      <p class="mv-self-models__embedded-hint">运行的是 IBM Granite Docling 258M 公开基线；未来兼容的自研 ONNX 模型可在该平台扩展。对外展示前请勿上传未经授权的敏感文档。</p>
+    </div>
+  </details>
 </div>
 
 
