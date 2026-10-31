@@ -28,8 +28,8 @@ jobs:
           for file in README.md index.html doctags-renderer.js model-registry.js; do
             test -s "hf-spaces/mvai-doctags-webgpu/$file"
           done
-          for kind in doc table code image formula chart arabic japanese chinese; do
-            test -s "hf-spaces/mvai-doctags-webgpu/samples/$kind.svg"
+          for file in new_arxiv.png image-2.jpg code.jpg lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg 87664.png 06236926002285.png ar_page_0.png japanse_4_ibm.png zh_page_0.png; do
+            test -s "hf-spaces/mvai-doctags-webgpu/samples/$file"
           done
           python scripts/kaggle/validate_browser_doctags_pilot.py
 
