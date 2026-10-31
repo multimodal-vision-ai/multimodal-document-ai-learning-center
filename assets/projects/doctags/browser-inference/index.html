@@ -218,7 +218,7 @@ a{color:#1762bf}
 /* HF Static Space fallback links: keep Kaggle and the existing sample reachable
    before the new demo has been merged into Learning Center main. */
 if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) {
-  const base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-showcase-v1-4-kaggle-pilot-20261030";
+  const base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-showcase-v1-6-render-20261030";
   const sample=document.querySelector('a[href="../interactive-demo/index.html"]');
   const kaggle=document.querySelector('a[href="../../../../projects/doctags-kaggle/index.html"]');
   if(sample)sample.href=base+"/assets/projects/doctags/interactive-demo/index.html";
@@ -608,7 +608,7 @@ try{
 };
 $("run").onclick=async()=>{
 if(busy||!loaded||!imageReady||activeKey!==selectedKey())return;
-busy=true;$("run").disabled=true;clearResult();status("WebGPU 正在运行真实推理…");const start=performance.now();
+busy=true;refreshLoadButtons();clearResult();status("WebGPU 正在运行真实推理…");const start=performance.now();
 try{
 const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
 const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
