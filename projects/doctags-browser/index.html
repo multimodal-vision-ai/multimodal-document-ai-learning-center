@@ -2427,6 +2427,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#v171" class="md-nav__link">
+    <span class="md-ellipsis">
+      V1.7.1 精简交互界面
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2481,6 +2490,14 @@
 <h2 id="hf-organization">接入 HF Organization<a class="headerlink" href="#hf-organization" title="Permanent link">&para;</a></h2>
 <p>与此页面相同的可部署源码位于仓库的 hf-spaces/mvai-doctags-webgpu 目录。Organization 创建 <strong>Static Space</strong> 后上传 README.md、index.html、doctags-renderer.js、model-registry.js 四个文件即可部署。不需要 HF 付费 GPU。</p>
 <p><strong>V1.6 对照区只在模型真实生成结果后才显示重建内容，不会加载预设的“标准答案”。</strong> 网页结构化渲染不是逐像素复刻 PDF，不得将左右视觉差异直接视为定量准确率指标。</p>
+<h2 id="v171">V1.7.1 精简交互界面<a class="headerlink" href="#v171" title="Permanent link">&para;</a></h2>
+<ul>
+<li>桌面端 <strong>01 文档输入</strong> 与 <strong>02 WebGPU 推理</strong> 等宽、等高并顶端对齐；移动端上下排列。</li>
+<li>标题旁的 <strong>ⓘ</strong> 支持鼠标悬停、点击及键盘聚焦查看完整提示。首次模型下载可能超过 1 GB 的提醒仍以简短文字直接显示。</li>
+<li><strong>模型管理 / 本地缓存 / 备用体验</strong> 默认折叠；加载失败和 GPU 不支持等错误仍直接显示。</li>
+<li><strong>03 原图与结构化结果对照</strong> 保持展开；<strong>04 DocTags 原始输出</strong> 和 <strong>05 多模型结果对比</strong> 默认折叠。</li>
+<li>加载、缓存、切换、真实推理、同图对比及失败降级逻辑保留；上传文档及解析结果只在当前页面会话内存中保存。</li>
+</ul>
 <p><a href="../index.html">返回成果展厅</a></p>
 
 
