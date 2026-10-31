@@ -1,0 +1,15 @@
+/* Research project cards: exactly three columns on desktop; single column on mobile. */
+.md-typeset .mv-showcase .mv-showcase-project-grid.grid.cards > ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.md-typeset .mv-showcase .mv-showcase-project-grid.grid.cards > ul > li {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media screen and (max-width: 44.984375em) {
+  .md-typeset .mv-showcase .mv-showcase-project-grid.grid.cards > ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
