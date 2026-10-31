@@ -1,0 +1,24 @@
+{
+  "clips": 160,
+  "events": 356,
+  "pilot_candidates": 38,
+  "source_subjects": {
+    "S1": 32,
+    "S2": 48,
+    "S3": 43,
+    "S4": 37
+  },
+  "data_sections": {
+    "ADL": 81,
+    "Fall": 79
+  },
+  "all_media_listed_on_github": true,
+  "source_csv_parse_warnings": 3,
+  "event_quality_invalid": 1,
+  "phone_call_description_only_count": 3,
+  "phone_use_description_only_count": 7,
+  "failed_checks": [],
+  "nonfatal_warnings": [
+    "flagged invalid: gmd24_s2_adl_06_e01"
+  ]
+}
