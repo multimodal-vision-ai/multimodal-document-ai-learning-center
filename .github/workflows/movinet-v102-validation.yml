@@ -28,9 +28,12 @@ jobs:
       - name: Install isolated validation dependencies
         run: |
           python -m pip install -r experiments/movinet-v102/requirements.txt
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           ffmpeg -version | head -n 1
       - name: Real model and labeled video inference
         run: |
+          set -o pipefail
           python experiments/movinet-v102/validate.py 2>&1 | tee movinet_validation.log
       - name: Upload machine-readable evidence (no source videos or models)
         if: always()
