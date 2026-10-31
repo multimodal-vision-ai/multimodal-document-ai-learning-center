@@ -235,7 +235,7 @@ main{max-width:1260px}
   <div class="card input-panel">
     <div class="panel-heading">
       <h2>01 · 文档输入</h2>
-      <details class="info-tip"><summary aria-label="文档格式及隐私说明">ⓘ</summary><div class="tip-pop">默认提供九类本站内置的原创文档样例，并保留合成摘要备用。可上传已授权、已脱敏的 PNG、JPG、WebP 单页图片，最大 12 MB。用户上传文件在本机浏览器处理，不会自动发送到实验室服务器。所有示例图片从本站资源目录加载，无需访问外部图片服务。</div></details>
+      <details class="info-tip"><summary aria-label="文档格式及隐私说明">ⓘ</summary><div class="tip-pop">默认提供九类源自 IBM Granite Docling DEMO 的真实图片样例，文件已在本站本地托管，并保留合成摘要备用。可上传已授权、已脱敏的 PNG、JPG、WebP 单页图片，最大 12 MB。用户上传文件在本机浏览器处理，不会自动发送到实验室服务器。所有示例图片从本站资源目录加载，无需访问外部图片服务。</div></details>
     </div>
     <div class="row input-actions">
       <span class="sample-label">选择示例文档</span>
@@ -256,7 +256,8 @@ main{max-width:1260px}
       </div>
       <button id="sampleNext" class="sample-scroll" type="button" aria-label="向右浏览样例">›</button>
     </div>
-    <small class="sample-hint">9 类原创示例文档，随页面从本站加载，无需访问外部图片服务器；点击缩略图即可切换。<button id="syntheticFallback" class="sample-fallback" type="button">恢复合成摘要</button></small>
+    <small class="sample-hint">9 类官方真实样例已随本站发布，无需从外部图片服务器重复下载；点击缩略图即可切换。<button id="syntheticFallback" class="sample-fallback" type="button">恢复合成摘要</button></small>
+    <small class="sample-source">样例来源：<a href="https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo" target="_blank" rel="noopener noreferrer">IBM Granite Docling 官方 DEMO</a> · 本项目本地托管</small>
     <div id="view"><canvas id="preview" aria-label="文档输入与解析标注预览" role="img"></canvas></div>
     <div class="input-footer">
       <small id="fileName">合成样例</small>
@@ -676,18 +677,18 @@ function show(tags=""){
   }
   return count;
 }
-// Original, self-contained sample SVGs hosted alongside this page, never fetched from other sites.
+// Official IBM Space demo samples mirrored as PNG/JPEG files in this project's static assets.
 const sampleBase="./samples/";
 const localSamples=[
-  {id:"doc",file:"doc.svg",label:"整页文档"},
-  {id:"table",file:"table.svg",label:"表格识别"},
-  {id:"code",file:"code.svg",label:"代码识别"},
-  {id:"image",file:"image.svg",label:"图片理解"},
-  {id:"formula",file:"formula.svg",label:"公式识别"},
-  {id:"chart",file:"chart.svg",label:"图表提取"},
-  {id:"arabic",file:"arabic.svg",label:"阿拉伯语"},
-  {id:"japanese",file:"japanese.svg",label:"日语"},
-  {id:"chinese",file:"chinese.svg",label:"中文文档"}
+  {id:"doc",file:"new_arxiv.png",label:"整页文档"},
+  {id:"table",file:"image-2.jpg",label:"表格识别"},
+  {id:"code",file:"code.jpg",label:"代码识别"},
+  {id:"image",file:"lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg",label:"图片理解"},
+  {id:"formula",file:"87664.png",label:"公式识别"},
+  {id:"chart",file:"06236926002285.png",label:"图表提取"},
+  {id:"arabic",file:"ar_page_0.png",label:"阿拉伯语"},
+  {id:"japanese",file:"japanse_4_ibm.png",label:"日语"},
+  {id:"chinese",file:"zh_page_0.png",label:"中文文档"}
 ];
 let sampleSelectionSerial=0;
 const sampleTypes=["summary","table","code","formula","chart","mixed"];
@@ -795,8 +796,7 @@ async function loadLocalSample(kind){
   $("run").disabled=true;
   status("正在打开内置示例："+sample.label+"…");
   try{
-    // Same-origin SVGs use browser image decoding, then are rasterized to the existing
-    // input Canvas. This keeps WebGPU input as pixels and supports SVG in Chromium.
+    // Official PNG/JPEG images are hosted locally and rasterized into the existing Canvas.
     const image=new Image();
     image.decoding="async";
     image.src=sampleBase+sample.file;
@@ -807,7 +807,7 @@ async function loadLocalSample(kind){
     src.width=Math.round(image.naturalWidth*scale);
     src.height=Math.round(image.naturalHeight*scale);
     c.drawImage(image,0,0,src.width,src.height);
-    inputRevision++;resetHistory();imageReady=true;name="mvai-sample-"+sample.file.replace(".svg",".png");
+    inputRevision++;resetHistory();imageReady=true;name="ibm-demo-"+sample.file;
     $("file").value="";highlightSample(kind);
     clearResult();show();leftDraw();
     $("fileName").textContent="内置样例 · "+sample.label+" · "+src.width+"×"+src.height;
