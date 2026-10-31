@@ -30,25 +30,31 @@ assert "await model.dispose?.()" in data, "Old WebGPU model not released on swit
 assert "activeKey!==selectedKey()" in data, "Running unselected GPU model must be prevented"
 assert "recordResult(runHistory,record)" in data, "Same-input history must be recorded"
 assert "inputRevision++;resetHistory()" in data, "Image change must invalidate old run history"
-# V1.9 nine self-contained document assets, same-origin loading and safe input resets.
-from xml.etree import ElementTree as ET
-sample_ids = ("doc","table","code","image","formula","chart","arabic","japanese","chinese")
-for kind in sample_ids:
-    assert 'data-sample="'+kind+'"' in data, f"Sample tile missing: {kind}"
-    for directory in (HTML.parent / "samples", SPACE.parent / "samples"):
-        asset=directory / (kind+".svg")
-        assert asset.is_file() and asset.stat().st_size > 500, f"Sample asset missing: {asset}"
-        svg = ET.parse(asset).getroot()
-        assert svg.tag == "{http://www.w3.org/2000/svg}svg", f"Invalid sample SVG: {asset}"
-    assert (HTML.parent / "samples" / (kind+".svg")).read_bytes() == (SPACE.parent / "samples" / (kind+".svg")).read_bytes(), f"Mirrored sample differs: {kind}"
-assert data.count('class="sample-tile"') == len(sample_ids), "Nine original sample choices required"
-assert 'sampleBase="./samples/"' in data, "Sample assets should be same-origin"
-assert "granite-docling-258m-demo/resolve/main/data/images/" not in data, "External image server must not be contacted"
-assert 'await image.decode()' in data and 'c.drawImage(image,0,0,src.width,src.height)' in data, "Selected SVG must be rasterized into inference input"
-assert 'id="syntheticFallback"' in data and 'makeSample("summary")' in data, "Local fallback missing"
-assert "sampleSelectionSerial" in data and "if(ticket!==sampleSelectionSerial)" in data, "Asynchronous sample switching needs stale-response protection"
-assert 'inputRevision++;resetHistory();imageReady=true;name="mvai-sample-"' in data, "New document selection must reset result history"
-assert "await model.generate" in data, "Sample selector must not replace real inference"
+# V1.9: Nine original official IBM demo images hosted locally and mirrored in Space.
+sample_files = {
+    "doc": "new_arxiv.png", "table": "image-2.jpg", "code": "code.jpg",
+    "image": "lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg",
+    "formula": "87664.png", "chart": "06236926002285.png",
+    "arabic": "ar_page_0.png", "japanese": "japanse_4_ibm.png",
+    "chinese": "zh_page_0.png",
+}
+for kind, filename in sample_files.items():
+    assert 'data-sample="'+kind+'"' in data, f"Missing IBM example: {kind}"
+    paths = [HTML.parent / "samples" / filename, SPACE.parent / "samples" / filename]
+    for asset in paths:
+        assert asset.is_file() and asset.stat().st_size > 1000, f"Missing image: {asset}"
+        signature = asset.read_bytes()[:8]
+        assert signature.startswith(b"\\x89PNG\\r\\n\\x1a\\n") if filename.endswith(".png") else signature.startswith(b"\\xff\\xd8\\xff"), f"Invalid file type: {asset}"
+    assert paths[0].read_bytes() == paths[1].read_bytes(), f"Mirrored file differs: {kind}"
+assert data.count('class="sample-tile"') == 9, "Nine IBM examples required"
+assert 'sampleBase="./samples/"' in data, "Examples must be served from same origin"
+assert "granite-docling-258m-demo/resolve/main/data/images/" not in data, "No external image fetch from UI"
+assert 'await image.decode()' in data and 'c.drawImage(image,0,0,src.width,src.height)' in data, "Image must enter original model input Canvas"
+assert 'id="syntheticFallback"' in data and 'makeSample("summary")' in data, "Synthetic fallback missing"
+assert "sampleSelectionSerial" in data and "if(ticket!==sampleSelectionSerial)" in data, "Stale-response protection missing"
+assert 'inputRevision++;resetHistory();imageReady=true;name="ibm-demo-"' in data, "Switch must invalidate old results"
+assert "IBM Granite Docling 官方 DEMO" in data, "Example source credit missing"
+assert "await model.generate" in data, "WebGPU model inference must remain real"
 assert "renderComparison(result)" in data, "V1.6 live reconstruction must remain"
 
 # V1.7.1: balanced top workspace, collapsed advanced features, accessible help.
