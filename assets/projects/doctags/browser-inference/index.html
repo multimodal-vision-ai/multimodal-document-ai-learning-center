@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MVAI · 实时文档结构化解析-DocTags</title>
+<style>
+:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#193251;background:#f4f7fc}*{box-sizing:border-box}
+body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+main{max-width:1200px;margin:auto;padding:20px}
+header{background:linear-gradient(115deg,#152e54,#305c9d);border-radius:16px;padding:23px 25px;color:white}
+header h1{font-size:clamp(22px,3vw,30px);margin:5px 0}
+header p{color:#deebfe;line-height:1.65;font-size:13px;max-width:760px}
+.label{font-size:11px;letter-spacing:.08em;color:#b7d3ff;text-transform:uppercase}
+.note{border:1px solid #dfebfa;background:white;color:#5c708a;border-radius:11px;padding:12px;margin:15px 0;line-height:1.7;font-size:12px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:15px;align-items:start}
+.card{background:white;border-radius:14px;padding:18px;border:1px solid #e1e7f3;min-width:0}
+.card h2{margin:0 0 5px;font-size:16px}
+.muted{font-size:12px;color:#61768e;line-height:1.6}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:13px 0}
+button,.file{border:1px solid #c9d8ed;background:white;color:#225182;font-weight:650;padding:9px 12px;border-radius:9px;font-size:12px}
+.primary{background:#255fc0;color:white;border-color:#255fc0}
+.file{position:relative;display:inline-flex;overflow:hidden;cursor:pointer}
+.file input{position:absolute;inset:0;opacity:0;cursor:pointer}
+#view{height:510px;max-height:65vh;border:1px solid #d9e4f1;background:#f5f8fc;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#preview{max-width:100%;max-height:100%;object-fit:contain}
+small{color:#68809a;font-size:11px;line-height:1.5}
+section+section{border-top:1px solid #e1e7f1;margin-top:16px;padding-top:15px}
+.status{background:#f1f5fb;border-radius:9px;padding:10px;color:#3a5880;font-size:12px;white-space:pre-wrap;line-height:1.6}
+select{max-width:100%;padding:8px;border:1px solid #ccdaec;border-radius:8px;background:white;font-size:12px}
+progress{width:100%;height:8px;margin:10px 0 2px;accent-color:#326bc6}
+#tags{height:260px;overflow:auto;background:#0e1930;color:#caf7de;border-radius:9px;padding:13px;font:11px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.links{background:#f6f9fc;border-radius:9px;padding:11px 14px;line-height:1.8;font-size:12px;color:#62738a}
+a{color:#1762bf}
+@media(max-width:760px){.cols{grid-template-columns:1fr}main{padding:10px}#view{height:390px}.card{padding:14px}}
+
+/* V1.6 · side-by-side original vs reconstructed document */
+#view{height:245px;max-height:34vh}
+.comparison{margin-top:18px;padding:20px}
+.compare-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.compare-top h2{font-size:18px;margin:0}
+.compare-controls{display:flex;gap:13px;align-items:center;flex-wrap:wrap}
+.compare-controls label{font-size:12px;color:#475f81;display:flex;gap:6px;align-items:center;cursor:pointer}
+.compare-controls input{accent-color:#255fc0}
+.compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.compare-col{min-width:0;border:1px solid #dbe5f2;background:#f7f9fd;border-radius:11px;overflow:hidden}
+.compare-col-header{display:flex;justify-content:space-between;align-items:center;gap:7px;min-height:46px;background:#edf3fb;border-bottom:1px solid #dce6f3;padding:10px 14px}
+.compare-col-header strong{font-size:13px;color:#16335b}
+.compare-col-header small{white-space:nowrap}
+.compare-scroll{height:min(66vh,660px);min-height:330px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;background:#edf1f8}
+.compare-scroll canvas{display:block;width:100%;height:auto;box-shadow:0 4px 18px #213e6110;background:white}
+.rendered-document{margin:0;min-height:100%;background:white;padding:28px 30px 60px;overflow-wrap:anywhere;font-size:14px;line-height:1.75;color:#23354e}
+.rendered-document h1{font-size:25px;line-height:1.35;color:#122e50;margin:0 0 22px}
+.rendered-document h2{font-size:20px;color:#183b63;margin:22px 0 10px}
+.rendered-document h3{font-size:17px;margin:18px 0 9px;color:#213956}
+.rendered-document h4,.rendered-document h5{font-size:15px;margin:14px 0 8px}
+.rendered-document p{margin:8px 0 14px}
+.rendered-document .render-block{border-left:3px solid transparent;border-radius:4px;transition:background-color .12s;scroll-margin:22px;white-space:pre-wrap}
+.rendered-document .render-block:hover,.rendered-document .render-block:focus-visible{border-left-color:#3e6fdb;background:#eaf1ff;outline:none}
+.rendered-document .render-placeholder{padding:18px;margin:10px 0;border:1px dashed #b9cbe5;border-radius:10px;color:#637995;background:#f5f8fc;font-size:12px}
+.rendered-document .render-tbl{margin:18px 0;max-width:100%;overflow:auto;white-space:normal}
+.rendered-document table{border-collapse:collapse;table-layout:auto;width:100%;font-size:12px}
+.rendered-document th,.rendered-document td{border:1px solid #bdcee3;padding:7px 9px;vertical-align:top;white-space:pre-wrap;min-width:45px}
+.rendered-document th{background:#eaf1fa;font-weight:700}
+.rendered-document tbody tr:nth-child(even){background:#f7f9fd}
+.rendered-document ul,.rendered-document ol{padding-left:22px}
+.rendered-document pre{white-space:pre-wrap}
+.rendered-document .unknown-region{font-size:12px;background:#f2f6fb;border:1px dashed #c9d8e9;padding:14px;border-radius:8px;color:#667a92}
+#compareStatus{margin:12px 0 2px;font-size:12px;color:#566c89;line-height:1.6}
+#rawDetails{margin-top:16px;border:1px solid #dfebf8;border-radius:12px;background:#fff;overflow:hidden}
+#rawDetails summary{cursor:pointer;font-weight:700;color:#244a78;font-size:13px;padding:13px 16px;user-select:none}
+#rawDetails .raw-interior{border-top:1px solid #e4ebf5;padding:12px 16px}
+#rawDetails #tags{height:auto;min-height:140px;max-height:400px}
+@media(max-width:820px){.compare-grid{grid-template-columns:1fr}.comparison{padding:13px}.compare-scroll{height:450px;min-height:240px}.rendered-document{padding:21px}.compare-col-header{min-height:41px}}
+
+/* V1.7 · browser-cached multi-model selection and same-input model comparison */
+.model-chooser{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:end;margin:12px 0 6px}
+.model-chooser label{display:block;font-size:12px;font-weight:700;color:#24446d;margin-bottom:6px}
+.model-chooser select{width:100%;min-height:39px}
+.model-manage{border:1px solid #d7e5f5;border-radius:9px;padding:10px 12px;margin:10px 0;background:#f9fbff}
+.model-manage summary{font-size:12px;color:#31578a;font-weight:700;cursor:pointer}
+.model-manage p{margin:8px 0;font-size:11px;color:#67809a;line-height:1.6}
+.model-inputs{display:flex;flex-wrap:wrap;gap:8px}
+.model-inputs input{min-width:0;flex:1 1 170px;border:1px solid #cad9eb;border-radius:8px;padding:8px;font-size:12px}
+.cache-explain{background:#f4f7fc;border-radius:9px;padding:10px;font-size:11px;line-height:1.65;color:#526e91;margin-top:10px}
+.cache-actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+#cacheInfo{font-size:11px;line-height:1.6;color:#536e8b;white-space:pre-wrap}
+.session-compare{margin-top:18px;padding:18px}
+.session-compare .compare-top{margin-bottom:8px}
+.session-compare .selector-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.session-compare .selector-grid label{display:block;font-size:11px;font-weight:700;color:#567191;margin-bottom:6px}
+.session-compare select{width:100%}
+.session-compare .run-columns{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.session-compare .run-column{min-width:0;border:1px solid #dce5f3;border-radius:10px;overflow:hidden;background:#fff}
+.session-compare .run-head{padding:12px;background:#edf4ff;color:#28476f;font-weight:700;font-size:12px}
+.session-compare .run-body{height:430px;overflow:auto}
+.session-compare .run-body .rendered-document{padding:18px;min-height:100%}
+.session-compare .compare-diagnostic{font-size:11px;color:#657b94;margin-top:9px;line-height:1.7}
+@media(max-width:760px){.model-chooser{grid-template-columns:1fr}.session-compare .run-columns{grid-template-columns:1fr}.session-compare .run-body{height:330px}.session-compare{padding:14px}}
+
+
+
+/* V1.7.1 · clean, balanced workspace and accessible inline help */
+main{max-width:1260px}
+.cols.workspace{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:18px}
+.workspace>.card{display:flex;flex-direction:column;min-width:0;min-height:570px;padding:21px}
+.workspace>.card h2{font-size:19px;letter-spacing:0;line-height:1.3;margin:0}
+.panel-heading{display:flex;gap:8px;align-items:center;min-height:34px;margin:0 0 14px}
+.info-tip{position:relative;display:inline-block;vertical-align:middle;flex:0 0 auto;z-index:2}
+.info-tip summary{list-style:none;display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid #b5c9e4;border-radius:50%;font-size:12px;font-weight:700;color:#4c6e9b;background:#f2f6fc;cursor:help;line-height:1}
+.info-tip summary::-webkit-details-marker{display:none}
+.info-tip summary:focus-visible{outline:2px solid #3476e7;outline-offset:3px}
+.tip-pop{display:none;position:absolute;z-index:50;top:calc(100% + 8px);left:0;width:min(310px,calc(100vw - 65px));padding:12px 14px;border:1px solid #cad9ed;border-radius:10px;box-shadow:0 12px 26px #24467120;background:#fff;color:#395574;font-size:12px;line-height:1.65;font-weight:400;text-align:left;letter-spacing:normal}
+.info-tip:hover>.tip-pop,.info-tip:focus-within>.tip-pop,.info-tip[open]>.tip-pop{display:block}
+.field-heading .info-tip .tip-pop{left:0}
+.compact-notice .tip-pop{left:0}
+.compact-notice{display:flex;gap:7px;align-items:center;font-size:12px;padding:9px 13px;line-height:1.45}
+.compact-notice strong{white-space:nowrap;color:#24558e}
+.workspace .row{margin:0;gap:9px}
+.input-panel .input-actions{margin:1px 0 14px}
+.input-panel #view{flex:1 1 auto;height:auto;min-height:315px;max-height:none;background:#f6f8fc}
+.input-panel #preview{display:block;width:auto;height:auto;max-width:100%;max-height:100%}
+.input-footer{margin-top:auto;padding-top:13px}
+.input-footer>small{display:block;line-height:1.4;margin-bottom:12px}
+.input-secondary{margin:0}
+.workspace button,.workspace .file{min-height:38px;padding:9px 14px}
+.workspace select{min-height:38px}
+.workspace .status{padding:10px 12px;font-size:12px;line-height:1.45}
+.device-status{margin-bottom:16px;min-height:38px}
+.inference-panel .control-fields{display:flex;flex-direction:column;gap:0;flex:1 1 auto}
+.inference-panel .control-fields>select{width:100%}
+.field-heading{display:flex;align-items:center;gap:7px;margin:0 0 7px}
+.field-heading label{font-size:12px;font-weight:700;color:#24446d}
+.inference-panel #modelSelect{margin-bottom:18px}
+.config-row{display:flex;gap:10px;margin:0 0 10px!important}
+.config-row select{flex:1 1 0;min-width:0}
+.config-row button{flex:0 0 auto}
+.load-metrics{margin:3px 0 20px}
+.load-metrics progress{display:block;margin:0 0 7px}
+.load-metrics small{display:block;min-height:15px}
+.run-actions{margin:0 0 11px!important}
+.inference-status{margin:0 0 10px}
+.inference-panel .support{margin-top:auto;border-top:1px solid #e6edf6;padding-top:6px}
+.compact-details{margin:0;border:0;border-bottom:1px solid #e8eef7;background:transparent;border-radius:0}
+.compact-details:last-child{border-bottom:0}
+.compact-details>summary{display:flex;align-items:center;gap:9px;padding:10px 3px;cursor:pointer;font-size:12px;font-weight:700;color:#285583}
+.compact-details>summary span{font-size:11px;color:#8493a8;font-weight:400}
+.compact-details[open]>summary{color:#173f78}
+.compact-details .details-inner{padding:3px 2px 13px;font-size:12px;color:#62768e}
+.compact-details .details-inner p{margin:5px 0 12px;line-height:1.6;font-size:12px}
+.model-manage{margin:0;border-radius:0;padding:0;background:transparent}
+.model-manage summary{font-size:12px}
+.model-inputs{gap:8px}
+.model-inputs input{padding:9px}
+.cache-manager .cache-actions{margin:6px 0}
+.cache-manager #cacheInfo:empty{display:none}
+.help-links .links{padding:8px 0 2px;background:transparent}
+.help-links a{display:block;margin:3px 0}
+.comparison .compare-top{margin-bottom:12px}
+.comparison .compare-top .inline-info{margin-left:2px}
+#compareStatus{font-size:12px;margin-top:12px}
+.advanced-collapsed{display:block;margin-top:18px;border:1px solid #dee8f5;border-radius:12px;padding:0;background:white;overflow:visible}
+.advanced-collapsed>summary{display:flex;align-items:center;gap:9px;padding:16px 18px;font-weight:700;color:#244d7f;cursor:pointer;list-style:none;font-size:14px}
+.advanced-collapsed>summary::-webkit-details-marker{display:none}
+.advanced-collapsed>summary::before{content:"▸";color:#7a9bbf}
+.advanced-collapsed[open]>summary::before{content:"▾"}
+.advanced-collapsed>summary .compact-count{margin-left:auto;font-size:11px;color:#7a8da8;font-weight:400}
+.advanced-collapsed .collapsed-content{border-top:1px solid #e6eef8;padding:14px 18px 18px}
+.advanced-collapsed .collapsed-content .session-compare{margin-top:0;border:0;padding:0}
+.advanced-collapsed .collapsed-content .session-compare .compare-top{display:none}
+.advanced-collapsed #historyCount{font-size:11px;color:#6884a3}
+@media(max-width:820px){
+ .cols.workspace{grid-template-columns:minmax(0,1fr);gap:12px}
+ .workspace>.card{min-height:0;padding:16px}
+ .input-panel #view{height:380px;min-height:275px;flex:none}
+ .workspace>.card h2{font-size:18px}
+ .tip-pop{left:0;width:min(290px,calc(100vw - 65px))}
+ .compact-notice{flex-wrap:wrap}
+}
+
+
+/* V1.7.2 · concise inference metrics and proportional two-model scroll */
+.run-metrics{display:flex;gap:8px 18px;align-items:center;flex-wrap:wrap;margin:7px 0 8px;padding:8px 12px;border:1px solid #dce8f7;border-radius:8px;background:#f5f9ff;color:#2e507e;font-size:12px;line-height:1.5}
+.run-metrics[hidden]{display:none!important}
+.run-metrics>span{font-variant-numeric:tabular-nums}
+.history-tools{display:flex;align-items:center;gap:8px;justify-content:flex-start;margin:10px 0 13px}
+.history-sync-toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;color:#34527c;font-size:12px;font-weight:600;white-space:nowrap}
+.history-sync-toggle input{accent-color:#255fc0;width:15px;height:15px;cursor:pointer}
+.history-tools .tip-pop{left:0}
+
+/* V1.7.3 · model-extensible platform header: contextual, accessible help */
+.hero-heading{display:flex;align-items:center;gap:11px;flex-wrap:wrap;min-height:48px}
+.hero-heading h1{margin:3px 0 2px;min-width:0}
+.hero-heading .hero-help{z-index:60}
+.hero-heading .hero-help summary{width:21px;height:21px;cursor:pointer;font-size:13px;border-color:#b5d0f9;background:#ffffff1c;color:#eff6ff}
+.hero-heading .hero-help .tip-pop{left:auto;right:0;top:calc(100% + 12px);width:min(410px,calc(100vw - 48px));box-shadow:0 16px 35px #081f4666;color:#294764;background:white;line-height:1.8}
+@media(max-width:700px){.hero-heading{gap:8px}.hero-heading h1{font-size:clamp(21px,5vw,28px)}}
+</style>
+</head>
+<body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+<main>
+<header>
+<div class="label">MVAI LEARNING CENTER · DOCUMENT AI · MULTI-MODEL LAB</div>
+<div class="hero-heading">
+  <h1>实时文档结构化解析-DocTags</h1>
+  <details class="info-tip hero-help">
+    <summary aria-label="查看平台功能及多模型扩展说明" title="平台说明">ⓘ</summary>
+    <div class="tip-pop" role="note">
+      本平台面向文档结构化解析与多模型能力对比：对同一文档选择兼容模型，查看 DocTags、版面定位及结构化渲染结果，并比较不同模型的解析效果。
+      当前内置 IBM Granite Docling 258M 公开基线；后续可以接入经过适配和验证的自研模型。
+      支持的模型在访问者浏览器中使用 WebGPU 推理，当前仍属实验功能。模型兼容性和解析准确率须按实际结果核验。
+    </div>
+  </details>
+</div>
+</header>
+<div class="notice compact-notice"><strong>技术预览</strong> · 首次加载模型可能下载 1 GB 以上文件。<details class="info-tip"><summary aria-label="查看下载、兼容性与隐私提醒">ⓘ</summary><div class="tip-pop">建议使用支持 WebGPU 的桌面浏览器和稳定网络。模型下载后可复用浏览器缓存，但显存实例仍需初始化。请勿上传含敏感个人信息或未经授权的文档；模型兼容性与解析准确率尚待系统验收。</div></details></div>
+<div class="cols workspace">
+  <div class="card input-panel">
+    <div class="panel-heading">
+      <h2>01 · 文档输入</h2>
+      <details class="info-tip"><summary aria-label="文档格式及隐私说明">ⓘ</summary><div class="tip-pop">默认使用无个人信息的合成样例。可上传已授权、已脱敏的 PNG、JPG、WebP 单页图片，最大 12 MB。上传文件在本页面的浏览器内处理，不会自动发送到实验室服务器。</div></details>
+    </div>
+    <div class="row input-actions">
+      <button id="sample" class="primary" type="button">使用合成样例</button>
+      <label class="file">选择本地图片<input id="file" type="file" accept="image/png,image/jpeg,image/webp" aria-label="选择本地文档图片"></label>
+    </div>
+    <div id="view"><canvas id="preview" aria-label="文档输入与解析标注预览" role="img"></canvas></div>
+    <div class="input-footer">
+      <small id="fileName">合成样例</small>
+      <div class="row input-secondary">
+        <button id="clear" type="button">只显示原图</button>
+        <button id="saveImg" type="button" disabled>保存标注图 PNG</button>
+      </div>
+    </div>
+  </div>
+  <div class="card inference-panel">
+    <div class="panel-heading">
+      <h2>02 · WebGPU 推理</h2>
+      <details class="info-tip"><summary aria-label="WebGPU 推理与数据说明">ⓘ</summary><div class="tip-pop">模型在访问者本机使用 WebGPU 计算，不需要实验室 GPU。浏览器可能因显存、驱动或算子兼容性导致运行失败。这里展示 IBM 公开基线模型，不是实验室自研权重。</div></details>
+    </div>
+    <div class="status device-status" id="device" role="status" aria-live="polite">正在检测 WebGPU…</div>
+    <div class="control-fields">
+      <div class="field-heading">
+        <label for="modelSelect">选择推理模型</label>
+        <details class="info-tip"><summary aria-label="模型选择说明">ⓘ</summary><div class="tip-pop" id="modelHelp">内置 IBM Granite Docling 258M 公开基线。后续可添加使用相同处理器与 DocTags 协议的公开 ONNX 模型，不保证所有 HF 模型兼容。</div></details>
+      </div>
+      <select id="modelSelect" aria-label="选择推理模型"></select>
+      <div class="field-heading">
+        <label for="dtype">模型配置</label>
+        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">fp32：优先保证推理一致性，但显存要求较高；q4：尝试减少部分解码权重的显存占用，可能影响输出质量。两种配置是同一模型的不同精度。</div></details>
+      </div>
+      <div class="row config-row">
+        <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option></select>
+        <button class="primary" id="load" type="button" disabled>加载模型</button>
+      </div>
+      <div class="load-metrics">
+        <progress id="progress" value="0" max="100" aria-label="模型加载进度"></progress>
+        <small id="downloadStatus" aria-live="polite">尚未加载模型</small>
+      </div>
+      <div class="row run-actions">
+        <button class="primary" id="run" type="button" disabled>开始推理</button>
+        <button id="saveDT" type="button" disabled>下载 DocTags</button>
+      </div>
+      <div class="status inference-status" id="status" role="status" aria-live="polite">等待推理</div>
+      <div id="runMetrics" class="run-metrics" role="status" aria-live="polite" hidden>
+        <span id="runModelSize"></span><span id="runDuration"></span>
+      </div>
+    </div>
+    <div class="support">
+      <details class="compact-details model-manage" id="modelManage">
+        <summary>模型管理 <span>添加 / 移除兼容 ONNX 模型</span></summary>
+        <div class="details-inner">
+          <p>仅接受公开且与当前 DocTags processor、提示词和输入输出接口兼容的 ONNX 仓库。登记不代表兼容或下载成功。不要填写访问令牌。</p>
+          <div class="model-inputs">
+            <input id="newModelName" type="text" maxlength="70" placeholder="显示名称" aria-label="自定义模型名称">
+            <input id="newModelRepo" type="text" maxlength="120" placeholder="org/compatible-docling-onnx" aria-label="公开 Hugging Face 模型仓库 ID">
+            <button id="addModel" type="button">添加</button>
+            <button id="removeModel" type="button" disabled>移除选中模型</button>
+          </div>
+          <p id="registryState" role="status"></p>
+        </div>
+      </details>
+      <details class="compact-details cache-manager" id="cacheManager">
+        <summary>本地缓存 <span>查看 / 保留模型文件</span></summary>
+        <div class="details-inner">
+          <p>权重文件通常可通过浏览器 Cache Storage 复用，但重开页面后仍需重新初始化 GPU 实例；浏览器可自动清理缓存，不同站点域名不能共享缓存。</p>
+          <div class="cache-actions">
+            <button id="cacheCheck" type="button">查看模型缓存信息</button>
+            <button id="cachePersist" type="button">请求保留站点存储</button>
+          </div>
+          <div id="cacheInfo" role="status" aria-live="polite"></div>
+        </div>
+      </details>
+      <details class="compact-details help-links">
+        <summary>帮助与备用体验</summary>
+        <div class="details-inner links">
+          <a href="../interactive-demo/index.html" target="_blank" rel="noopener">免登录查看已有解析样例</a>
+          <a href="../../../../projects/doctags-kaggle/index.html" target="_blank" rel="noopener">使用个人 Kaggle GPU 推理</a>
+          <a href="https://huggingface.co/onnx-community/granite-docling-258M-ONNX" target="_blank" rel="noopener">IBM 公开基线模型说明</a>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<section class="card comparison" aria-label="推理结果对照">
+  <div class="compare-top">
+    <div>
+      <h2>03 · 推理结果对照</h2>
+      <details class="info-tip inline-info"><summary aria-label="结果对照说明">ⓘ</summary><div class="tip-pop">左侧为原图和位置框，右侧据真实生成的 DocTags 重建标题、段落、表格和阅读顺序。重建不是像素级复制。</div></details>
+    </div>
+    <div class="compare-controls">
+      <label><input id="bounds" type="checkbox" checked> 显示位置框</label>
+      <label title="两侧按滚动比例同步，仅用于辅助浏览；并不代表内容逐行匹配"><input id="sync" type="checkbox"> 比例同步滚动</label>
+    </div>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <div class="compare-col-header"><strong>原始文档</strong><small>图像及定位标注</small></div>
+      <div class="compare-scroll" id="originalScroll"><canvas id="compareCanvas" role="img" aria-label="用于对照的原始文档和位置框"></canvas></div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-col-header"><strong>推理后结构化结果</strong><small>按模型输出重建</small></div>
+      <div class="compare-scroll" id="renderScroll"><article id="rendered" class="rendered-document" aria-live="polite"><div class="render-placeholder">尚未运行推理。点击右上方“开始真正推理”后，这里才显示模型生成的标题、段落和表格。</div></article></div>
+    </div>
+  </div>
+  <div id="compareStatus" role="status">对照区已准备就绪。右侧不会显示事先制作的推理结果。</div>
+  
+</section>
+<details id="rawDetails" class="advanced-collapsed">
+  <summary>04 · DocTags 原始输出与技术诊断</summary>
+  <div class="raw-interior">
+    
+    <pre id="tags">模型生成的标签将出现在这里。</pre>
+    <p><small id="timing"></small></p>
+  </div>
+</details>
+
+
+<details class="advanced-collapsed" id="compareDetails">
+ <summary>05 · 多模型结果对比 <small id="historyCount" class="compact-count" role="status">暂无推理记录</small></summary>
+ <div class="collapsed-content">
+ <section class="card session-compare" aria-label="多模型相同输入结果对比">
+ <div class="selector-grid">
+  <div><label for="compareA">结果 A</label><select id="compareA" disabled><option>等待推理结果</option></select></div>
+  <div><label for="compareB">结果 B</label><select id="compareB" disabled><option>等待推理结果</option></select></div>
+ </div>
+ <div class="history-tools">
+   <label class="history-sync-toggle"><input id="historySync" type="checkbox"> 按比例同步滚动</label>
+   <details class="info-tip"><summary aria-label="多模型同步滚动说明">ⓘ</summary><div class="tip-pop">两份解析结果按各自滚动范围的相同比例同步，方便比较长文档。不同模型的段落数量和阅读顺序可能不同，因此不表示精确内容匹配。</div></details>
+ </div>
+ <div class="run-columns">
+  <div class="run-column"><div class="run-head" id="compareNameA">模型 A</div><div class="run-body" id="compareBodyA"><article class="rendered-document"><div class="render-placeholder">请先完成一次真实推理。</div></article></div></div>
+  <div class="run-column"><div class="run-head" id="compareNameB">模型 B</div><div class="run-body" id="compareBodyB"><article class="rendered-document"><div class="render-placeholder">请再运行一个模型，或切换另一种精度配置。</div></article></div></div>
+ </div>
+ <p class="compare-diagnostic" id="compareDiagnostic">这里只保存当前页面内同一输入图片的推理结果；更换图片或刷新页面会清空对比历史，不会将私人文档文本写入浏览器持久存储。不同模型的结构块数量不能直接代表准确率。</p>
+</section>
+ </div>
+</details>
+
+<p style="text-align:center"><small>MVAI Learning Center · Browser WebGPU technical preview · 未经实际 GPU 推理验收不得标记为正式可用</small></p>
+</main>
+<script>
+/* HF Static Space fallback links: keep Kaggle and the existing sample reachable
+   before the new demo has been merged into Learning Center main. */
+if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) {
+  const base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-showcase-v1-7-model-manager-20261031";
+  const sample=document.querySelector('a[href="../interactive-demo/index.html"]');
+  const kaggle=document.querySelector('a[href="../../../../projects/doctags-kaggle/index.html"]');
+  if(sample)sample.href=base+"/assets/projects/doctags/interactive-demo/index.html";
+  if(kaggle)kaggle.href=base+"/projects/doctags-kaggle/index.html";
+}
+</script>
+<canvas id="source" hidden></canvas>
+<script src="./doctags-renderer.js"></script>
+<script src="./model-registry.js"></script>
+<script type="module">
+import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
+env.useBrowserCache = true; // Cache Storage; browser may evict under quota pressure
+const $=id=>document.getElementById(id);
+const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
+let model,processor,loaded=false,busy=false,imageReady=false,result="",name="synthetic-document.png";
+const registry=globalThis.MVAIModelRegistry;
+let gpuDetected=false,activeKey=null,activeModelName="",inputRevision=0,runHistory=[];
+let customModels=registry.restore(localStorage);
+const LAST_KEY="mvai-doctags-successful-loads-v1"; // only model keys, no documents
+function readLoadKeys(){try{return JSON.parse(localStorage.getItem(LAST_KEY)||"[]").filter(s=>typeof s==="string").slice(-30)}catch{return []}}
+function markSuccessfulLoad(key){try{localStorage.setItem(LAST_KEY,JSON.stringify([...new Set([...readLoadKeys(),key])].slice(-30)))}catch{}}
+function allModels(){return [registry.BUILTIN,...customModels];}
+function selectedModel(){return allModels().find(m=>m.id===$("modelSelect").value)||registry.BUILTIN;}
+function selectedKey(){return registry.key(selectedModel().id,$("dtype").value);}
+function clearRunMetrics(){
+  $("runMetrics").hidden=true;
+  $("runModelSize").textContent="";
+  $("runDuration").textContent="";
+}
+function showRunMetrics(modelId,seconds){
+  $("runModelSize").textContent="模型大小（参数量）："+registry.modelSizeLabel(modelId);
+  $("runDuration").textContent="推理时长："+Number(seconds).toFixed(1)+" 秒";
+  $("runMetrics").hidden=false;
+}
+function refreshLoadButtons(){
+  const already=loaded&&activeKey===selectedKey();
+  $("load").disabled=busy||!gpuDetected||already;
+  $("load").textContent=already?"已加载":"加载所选模型";
+  $("run").disabled=busy||!imageReady||!already;
+  $("modelSelect").disabled=busy;
+  $("dtype").disabled=busy;
+  $("addModel").disabled=busy;
+  $("removeModel").disabled=busy||selectedModel().builtIn;
+  $("modelHelp").textContent=already
+    ?"所选模型已在当前 GPU 会话中就绪；直接点击开始真正推理。"
+    :"模型："+selectedModel().name+"。"+(selectedModel().checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同。";
+}
+function renderModelOptions(prefer){
+  const select=$("modelSelect");select.replaceChildren();
+  const loadedBefore=readLoadKeys();
+  for(const m of allModels()){
+    const option=document.createElement("option");option.value=m.id;
+    option.textContent=m.name+(loadedBefore.some(k=>k.startsWith(m.id+"::"))?" · 曾成功加载":"")+(m.checked?"":" · 待验证");
+    select.appendChild(option);
+  }
+  const opt=document.createElement("option");opt.disabled=true;opt.textContent="未来自研模型 · 待接入 ONNX 权重";select.appendChild(opt);
+  select.value=allModels().some(m=>m.id===prefer)?prefer:registry.BUILTIN.id;
+  refreshLoadButtons();
+}
+function resetHistory(){
+  runHistory=[];
+  refreshHistorySelectors();
+}
+function updateHistory(record){
+  runHistory=registry.recordResult(runHistory,record);
+  refreshHistorySelectors();
+}
+function refreshHistorySelectors(){
+  const list=runHistory.filter(item=>item.documentRevision===inputRevision);
+  $("historyCount").textContent=list.length+" 组真实推理记录（当前输入）";
+  for(const id of ["compareA","compareB"]){
+    const sel=$(id),before=sel.value;sel.replaceChildren();
+    if(!list.length){sel.add(new Option("等待推理结果",""));sel.disabled=true;continue;}
+    for(const item of list)sel.add(new Option(item.label+" · "+item.seconds+"s",item.key));
+    sel.disabled=false;
+    if(list.some(i=>i.key===before))sel.value=before;
+  }
+  if(list.length){
+    if(!$("compareA").value)$("compareA").value=list[0].key;
+    if(!$("compareB").value)$("compareB").value=list.at(-1).key;
+    // When a second model arrives, automatically compare the first against the newest.
+    if(list.length>1&&$("compareA").value===$("compareB").value){
+      $("compareA").value=list[0].key;$("compareB").value=list.at(-1).key;
+    }
+  }
+  displayHistoryComparison();
+}
+function compareRecord(which){
+  const sel=$("compare"+which),pane=$("compareBody"+which),heading=$("compareName"+which);
+  const value=runHistory.find(r=>r.key===sel.value&&r.documentRevision===inputRevision);
+  pane.replaceChildren();pane.scrollTop=0;
+  if(!value){heading.textContent="模型 "+which;const holder=document.createElement("article");holder.className="rendered-document";
+    const tip=document.createElement("div");tip.className="render-placeholder";tip.textContent="等待该模型完成一次推理。";holder.appendChild(tip);pane.appendChild(holder);return null;}
+  heading.textContent=value.label+" · "+value.seconds+" 秒";
+  const article=document.createElement("article");article.className="rendered-document";
+  const parsed=documentParser.parse(value.tags);
+  if(parsed.blocks.length){parsed.blocks.forEach((block,i)=>article.appendChild(addBlock(block,i)));}
+  else {const tip=document.createElement("div");tip.className="render-placeholder";tip.textContent="DocTags 无可重建结构，可下载原始输出核对。";article.appendChild(tip);}
+  pane.appendChild(article);
+  return {value,counts:{blocks:parsed.blocks.length,tables:parsed.blocks.filter(b=>["otsl","table"].includes(b.type)).length}};
+}
+function displayHistoryComparison(){
+  const a=compareRecord("A"),b=compareRecord("B");
+  if(a&&b)$("compareDiagnostic").textContent="A：结构块 "+a.counts.blocks+"、表格 "+a.counts.tables+"；B：结构块 "+b.counts.blocks+"、表格 "+b.counts.tables+"。结果仅来自同一输入图片的实际模型输出，块数不是准确率。刷新或换图会清除对比记录。";
+  else $("compareDiagnostic").textContent="顺序运行第二个兼容模型或同一模型的其他精度配置，即可对比。仅保存当前页面内的结果，不持久保存文档内容。";
+  expectedMirrorTop.clear();
+  if($("historySync").checked)syncHistoryScroll($("compareBodyA"),$("compareBodyB"));
+}
+
+const palette={title:"#2c62d0",text:"#159b72",table:"#c08423",otsl:"#c08423",seal:"#cd4762"};
+
+/* V1.6 visual reconstruction: never render model text as trusted HTML. */
+const compare=$("compareCanvas"),comp=compare.getContext("2d");
+const leftPane=$("originalScroll"),rightPane=$("renderScroll"),rendered=$("rendered");
+const documentParser=globalThis.MVAIDocTags;
+let regions=[],blocks=[],activeLocation=null,syncing=false,renderGood=false;
+const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",otsl:"#c78b31",table:"#c78b31",seal:"#d74b73"};
+function leftDraw(loc=null) {
+  compare.width=src.width;compare.height=src.height;
+  comp.drawImage(src,0,0);if(!src.width || !src.height)return;
+  const scaleX=src.width/500,scaleY=src.height/500;
+  if ($("bounds").checked && result) {
+    for (const block of regions.slice(0,280)) {
+      const [x1,y1,x2,y2]=block.loc;
+      comp.strokeStyle=BOXC[block.type]||"#4f77ae";
+      comp.lineWidth=Math.max(2,src.width/480);
+      comp.strokeRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
+    }
+  }
+  if (loc) {
+    const [x1,y1,x2,y2]=loc;
+    comp.fillStyle="rgba(55,112,230,.15)";
+    comp.fillRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
+    comp.strokeStyle="#e06422";comp.lineWidth=Math.max(3,src.width/220);
+    comp.strokeRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
+  }
+}
+function renderTable(table) {
+  if (!table?.rows?.length) return null;
+  const wrap=document.createElement("div");wrap.className="render-tbl";
+  const t=document.createElement("table"),tbody=document.createElement("tbody");
+  const owners=table.rows.map(()=>[]),expanded=new Set();
+  for(let r=0;r<table.rows.length;r++){
+    const tr=document.createElement("tr");
+    for(let col=0;col<table.rows[r].length;col++){
+      const cell=table.rows[r][col],type=cell.type;
+      if(type==="lcel"||type==="ucel"||type==="xcel"){
+        const left=owners[r][col-1]||null,above=r>0?owners[r-1][col]:null;
+        let parent=null;
+        if(type==="lcel") parent=left?.row===r?left:null;
+        else if(type==="ucel") parent=above;
+        else parent=above||left;
+        if(parent){
+          owners[r][col]=parent;
+          if(type==="lcel"&&parent.row===r)parent.node.colSpan++;
+          if((type==="ucel"||type==="xcel")&&parent.row<r&&!expanded.has(r+":"+parent.key)){
+            parent.node.rowSpan++;expanded.add(r+":"+parent.key);
+          }
+          continue;
+        }
+      }
+      const head=["ched","rhed","srow"].includes(type);
+      const td=document.createElement(head?"th":"td");
+      if(head)td.scope=type==="rhed"?"row":"col";
+      td.textContent=cell.text||"";
+      tr.appendChild(td);
+      owners[r][col]={node:td,row:r,key:r+":"+col};
+    }
+    tbody.appendChild(tr);
+  }
+  t.appendChild(tbody);wrap.appendChild(t);
+  return wrap;
+}
+function addBlock(block,index) {
+  const kind=block.type;
+  let element;
+  if(kind==="otsl"||kind==="table") {
+    element=renderTable(block.table);
+    if(!element) {
+      element=document.createElement("div");element.className="unknown-region";
+      element.textContent="模型返回了表格标签，但本预览未能可靠重建表格；请查看下方原始 DocTags。";
+    }
+  }else if(kind==="title") element=document.createElement("h1");
+  else if(kind.startsWith("section_header_level_")) {
+    const level=Math.min(5,Number(kind.slice(-1))+1);
+    element=document.createElement("h"+level);
+  }else if(kind==="text"||kind==="caption"||kind==="footnote"||kind==="page_header"||kind==="page_footer")element=document.createElement("p");
+  else if(kind==="list_item")element=document.createElement("li");
+  else if(kind==="code")element=document.createElement("pre");
+  else if(kind==="ordered_list"||kind==="unordered_list"){
+    element=document.createElement(kind==="ordered_list"?"ol":"ul");
+    const items=[...block.text.matchAll(/<list_item>([\s\S]*?)<\/list_item>/gi)];
+    if(items.length){for(const item of items){const li=document.createElement("li");li.textContent=documentParser.clean(item[1]);element.appendChild(li);}}
+    else{const li=document.createElement("li");li.textContent=block.text;element.appendChild(li);}
+  }else if(["picture","figure"].includes(kind)){
+    element=document.createElement("div");element.className="unknown-region";
+    element.textContent="图像区域（模型已标出，但本页面不虚构重建图片）";
+  }else if(kind==="checkbox_selected"||kind==="checkbox_unselected"){
+    element=document.createElement("p");element.textContent=(kind==="checkbox_selected"?"☑ ":"☐ ")+block.text;
+  }else{
+    element=document.createElement("p");
+  }
+  if(!["otsl","table","ordered_list","unordered_list","picture","figure","checkbox_selected","checkbox_unselected"].includes(kind)){
+    element.textContent=block.text;
+  }
+  element.classList.add("render-block");
+  element.tabIndex=0;
+  element.dataset.blockIndex=String(index);
+  element.title=block.loc?"悬停定位至原文位置":"模型未给出该元素的有效位置框";
+  return element;
+}
+function renderComparison(tags){
+  rendered.replaceChildren();
+  regions=documentParser.rects(tags);
+  const parsed=documentParser.parse(tags);blocks=parsed.blocks;
+  if(!blocks.length){
+    const placeholder=document.createElement("div");placeholder.className="render-placeholder";
+    placeholder.textContent="模型输出尚不包含可重建的结构块；请展开下方原始 DocTags 核对内容。";
+    rendered.appendChild(placeholder);renderGood=false;
+    $("compareStatus").textContent="未识别到可渲染结构；原始 DocTags 已保留。";
+  }else{
+    blocks.forEach((block,i)=>rendered.appendChild(addBlock(block,i)));
+    renderGood=true;
+    const tables=blocks.filter(x=>x.type==="otsl"||x.type==="table");
+    const uncertain=tables.some(x=>x.table?.hasMerges||x.table?.truncated);
+    $("compareStatus").textContent="已按模型结果重建："+blocks.length+" 个结构块（含 "+tables.length+
+      " 个表格）；识别位置框："+regions.length+" 个。"+(uncertain?" 检测到复杂合并单元格，表格跨度仅作尽力预览，请以原图和原始输出核对。":"");
+  }
+  activeLocation=null;leftDraw();leftPane.scrollTop=0;rightPane.scrollTop=0;
+}
+function resetComparison(){
+  regions=[];blocks=[];renderGood=false;activeLocation=null;
+  rendered.replaceChildren();
+  const blank=document.createElement("div");blank.className="render-placeholder";
+  blank.textContent="尚未运行推理。点击右上方“开始真正推理”后，这里才显示模型生成的标题、正文和表格。";
+  rendered.appendChild(blank);
+  $("compareStatus").textContent="等待模型真实输出；不会显示预制的重建结果。";
+  leftDraw();rightPane.scrollTop=0;
+}
+rendered.addEventListener("pointerover",event=>{
+  const node=event.target.closest(".render-block[data-block-index]");
+  if(!node||!rendered.contains(node))return;
+  const index=Number(node.dataset.blockIndex),block=blocks[index];if(!block?.loc)return;
+  activeLocation=block.loc;leftDraw(activeLocation);
+  const scroller=leftPane,center=block.loc[1]/500*scroller.scrollHeight - scroller.clientHeight*.32;
+  scroller.scrollTo({top:Math.max(0,center),behavior:"smooth"});
+});
+rendered.addEventListener("pointerleave",()=>{activeLocation=null;leftDraw()});
+rendered.addEventListener("focusin",event=>{
+  const node=event.target.closest(".render-block[data-block-index]");
+  const block=blocks[Number(node?.dataset.blockIndex)];if(block?.loc){activeLocation=block.loc;leftDraw(activeLocation);}
+});
+rendered.addEventListener("focusout",()=>{activeLocation=null;leftDraw()});
+$("bounds").onchange=()=>leftDraw(activeLocation);
+function syncScroll(from,to){
+  if(!$("sync").checked||syncing)return;
+  syncing=true;
+  const maxFrom=Math.max(1,from.scrollHeight-from.clientHeight);
+  const maxTo=Math.max(0,to.scrollHeight-to.clientHeight);
+  to.scrollTop=(from.scrollTop/maxFrom)*maxTo;
+  queueMicrotask(()=>{syncing=false});
+}
+leftPane.addEventListener("scroll",()=>syncScroll(leftPane,rightPane));
+rightPane.addEventListener("scroll",()=>syncScroll(rightPane,leftPane));
+
+function show(tags=""){
+  preview.width=src.width;preview.height=src.height;v.drawImage(src,0,0);let count=0;
+  const regex=/<([A-Za-z][\w-]*)><loc_(\d+)><loc_(\d+)><loc_(\d+)><loc_(\d+)>/g;let m;
+  while((m=regex.exec(tags))!==null){
+    const [l,t,r,b]=m.slice(2).map(Number);if([l,t,r,b].some(n=>n>500)||r<=l||b<=t)continue;
+    const x=l*src.width/500,y=t*src.height/500,w=(r-l)*src.width/500,h=(b-t)*src.height/500;
+    v.lineWidth=Math.max(2,src.width/360);v.strokeStyle=palette[m[1]]||"#7658c5";v.strokeRect(x,y,w,h);
+    if(count<120){v.font="bold "+Math.max(13,src.width/70)+"px sans-serif";const label=m[1];const ty=Math.max(18,y);
+      v.fillStyle=v.strokeStyle;v.fillRect(x,ty-17,v.measureText(label).width+13,18);v.fillStyle="white";v.fillText(label,x+5,ty-4);}
+    count++;
+  }
+  return count;
+}
+function makeSample(){
+  src.width=900;src.height=1100;c.fillStyle="white";c.fillRect(0,0,src.width,src.height);
+  c.fillStyle="#173154";c.font="bold 36px Arial";c.fillText("RESEARCH SUMMARY",65,95);
+  c.font="23px Arial";c.fillText("Synthetic example, no personal data",65,151);
+  c.fillStyle="#7795bc";c.fillRect(65,177,760,3);
+  c.fillStyle="#173154";c.font="bold 25px Arial";c.fillText("1. Objective",65,247);
+  c.font="20px Arial";c.fillText("Compare document parsing on public examples.",65,302);
+  c.font="bold 25px Arial";c.fillText("2. Experiment summary",65,388);
+  const xs=[65,370,610,825],y=444,hh=65;
+  c.fillStyle="#ecf2fb";c.fillRect(xs[0],y,xs[3]-xs[0],hh);
+  c.strokeStyle="#91a4bc";for(let i=0;i<=4;i++){c.beginPath();c.moveTo(xs[0],y+i*hh);c.lineTo(xs[3],y+i*hh);c.stroke()}
+  for(const x of xs){c.beginPath();c.moveTo(x,y);c.lineTo(x,y+4*hh);c.stroke()}
+  [["Metric","Baseline","Proposed"],["Pages","20","20"],["Runtime","3.5s","2.8s"],["Score","0.71","0.76"]].forEach((row,i)=>row.forEach((text,j)=>{c.fillStyle="#183451";c.font="20px Arial";c.fillText(text,xs[j]+13,y+i*hh+40)}));
+  c.fillStyle="#183451";c.font="bold 25px Arial";c.fillText("3. Conclusion",65,785);
+  c.font="20px Arial";c.fillText("This is a generated, privacy-safe test page.",65,842);
+  inputRevision++;resetHistory();imageReady=true;name="synthetic-document.png";$("fileName").textContent="合成样例 · 900×1100";resetComparison();
+  clearResult();show();$("run").disabled=!loaded;
+}
+function clearResult(){result="";$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveImg").disabled=true;$("timing").textContent="";clearRunMetrics();resetComparison();}
+function status(text){$("status").textContent=text;}
+$("sample").onclick=makeSample;
+$("file").onchange=async event=>{
+  try{const file=event.target.files[0];if(!file)return;
+    if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>12*1024*1024)throw Error("仅允许 12 MB 以内的 PNG、JPG、WebP");
+    const im=await createImageBitmap(file),scale=Math.min(1,1500/Math.max(im.width,im.height));
+    src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);im.close?.();
+    inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();
+    $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";$("run").disabled=!loaded;
+  }catch(e){status("读取失败："+e.message)}
+};
+$("clear").onclick=()=>{$("bounds").checked=false;show();leftDraw();};
+function download(blob,filename){const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+$("saveImg").onclick=()=>{if(result)show(result);preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png")};
+$("saveDT").onclick=()=>{if(result)download(new Blob([result],{type:"text/plain;charset=utf-8"}),"mvai-doctags-result.dt")};
+
+$("modelSelect").addEventListener("change",()=>{clearRunMetrics();refreshLoadButtons();$("downloadStatus").textContent=loaded&&activeKey===selectedKey()?"已在 GPU 中加载；可直接推理。":"请选择加载所选模型；如权重仍在磁盘缓存中，将尽量避免重新下载。";});
+$("dtype").addEventListener("change",()=>{clearRunMetrics();refreshLoadButtons();});
+$("addModel").addEventListener("click",()=>{
+  const status=$("registryState");
+  try{
+    const entry=registry.normalise({id:$("newModelRepo").value.trim(),name:$("newModelName").value.trim()});
+    customModels=registry.save(localStorage,[...customModels,entry]);
+    renderModelOptions(entry.id);
+    status.textContent="已登记 "+entry.name+"。请先验证其 DocTags 接口与 ONNX 权重兼容；仅登记并不代表已下载。";
+    $("newModelName").value="";$("newModelRepo").value="";
+  }catch(err){status.textContent="登记失败："+err.message;}
+});
+$("removeModel").addEventListener("click",()=>{
+  const entry=selectedModel();if(entry.builtIn)return;
+  try{customModels=registry.save(localStorage,customModels.filter(m=>m.id!==entry.id));renderModelOptions(registry.BUILTIN.id);
+    $("registryState").textContent="已移除模型登记；浏览器磁盘缓存没有被删除。";}catch(err){$("registryState").textContent=err.message;}
+});
+$("cacheCheck").addEventListener("click",async()=>{
+  let parts=[];
+  try{
+    if("caches" in window){
+      const keys=await caches.keys();const key=env.cacheKey||"transformers-cache";
+      const candidates=keys.filter(k=>k===key||k.startsWith(key+"-"));
+      let totalFiles=0,modelFiles=0;
+      for(const candidate of candidates){
+        const entries=await (await caches.open(candidate)).keys();
+        totalFiles+=entries.length;
+        modelFiles+=entries.filter(req=>decodeURIComponent(req.url).includes(selectedModel().id)).length;
+      }
+      parts.push("Cache Storage："+(candidates.length?"检测到缓存目录":"未检测到对应缓存目录")+"；文件条目 "+totalFiles+"；所选仓库相关条目 "+modelFiles+"（不保证文件齐全）。");
+    }else parts.push("当前浏览器未提供 Cache API。");
+    if(navigator.storage?.estimate){
+      const est=await navigator.storage.estimate(),mb=n=>Math.round((n||0)/1048576);
+      parts.push("本站点所有存储（估算）：已用 "+mb(est.usage)+" MB / 配额 "+mb(est.quota)+" MB；包含其他内容，并非模型独占。");
+    }
+  }catch(err){parts.push("缓存检查失败："+err.message)}
+  $("cacheInfo").textContent=parts.join("\n");
+});
+$("cachePersist").addEventListener("click",async()=>{
+  try{
+    if(!navigator.storage?.persist)throw Error("当前浏览器不支持持久存储请求");
+    const granted=await navigator.storage.persist();
+    $("cacheInfo").textContent=granted?"浏览器已授予本站点持久存储权限；仍不保证跨域共享或完全离线可用。":"浏览器未授予持久存储；仍可使用默认 Cache API，但可能自动清理。";
+  }catch(err){$("cacheInfo").textContent="存储请求失败："+err.message;}
+});
+$("compareA").addEventListener("change",displayHistoryComparison);
+$("compareB").addEventListener("change",displayHistoryComparison);
+
+/* Two-way proportional scrolling with suppression of mirrored scroll events. */
+const historyPaneA=$("compareBodyA"), historyPaneB=$("compareBodyB");
+const expectedMirrorTop=new Map();
+function syncHistoryScroll(source,target){
+  if(!$("historySync").checked)return;
+  const expected=expectedMirrorTop.get(source);
+  if(expected!==undefined){
+    expectedMirrorTop.delete(source);
+    if(Math.abs(source.scrollTop-expected)<2)return;
+  }
+  const next=registry.proportionalPosition(source.scrollTop,source.scrollHeight,source.clientHeight,target.scrollHeight,target.clientHeight);
+  if(Math.abs(target.scrollTop-next)<1)return;
+  expectedMirrorTop.set(target,next);
+  target.scrollTop=next;
+}
+historyPaneA.addEventListener("scroll",()=>syncHistoryScroll(historyPaneA,historyPaneB),{passive:true});
+historyPaneB.addEventListener("scroll",()=>syncHistoryScroll(historyPaneB,historyPaneA),{passive:true});
+$("historySync").addEventListener("change",()=>{
+  expectedMirrorTop.clear();
+  if($("historySync").checked)syncHistoryScroll(historyPaneA,historyPaneB);
+});
+
+
+async function detect(){if(!window.isSecureContext||!navigator.gpu){$("device").textContent="当前设备不支持 WebGPU 或不在安全页面。可使用 Kaggle。";return}
+try{const adapter=await navigator.gpu.requestAdapter({powerPreference:"high-performance"});
+if(adapter){$("device").textContent="WebGPU 已就绪";gpuDetected=true;refreshLoadButtons()}
+else $("device").textContent="未找到可用 GPU 适配器；请使用 Kaggle。"}
+catch(e){$("device").textContent="WebGPU 初始化失败："+e.message}}
+$("load").onclick=async()=>{
+if(busy||!gpuDetected)return;
+const entry=selectedModel(),key=selectedKey(),precision=$("dtype").value;
+if(loaded&&activeKey===key){refreshLoadButtons();return;}
+busy=true;clearRunMetrics();refreshLoadButtons();$("downloadStatus").textContent="切换模型中：释放旧 GPU 实例并准备加载 "+entry.name+"…";
+$("progress").value=0;
+const progress={};
+try{
+  if(model){await model.dispose?.();model=null;}
+  processor=null;loaded=false;activeKey=null;
+  processor=await AutoProcessor.from_pretrained(entry.id);
+  model=await AutoModelForVision2Seq.from_pretrained(entry.id,{
+    device:"webgpu",
+    dtype:{embed_tokens:"fp16",vision_encoder:"fp32",decoder_model_merged:precision==="compact"?"q4":"fp32"},
+    progress_callback:d=>{
+      if(d.status==="progress"&&d.file&&d.total){
+        progress[d.file]={loaded:d.loaded,total:d.total};
+        const files=Object.values(progress);
+        const total=files.reduce((s,x)=>s+x.total,0),done=files.reduce((s,x)=>s+x.loaded,0);
+        if(total){$("progress").value=Math.min(100,Math.round(100*done/total));$("downloadStatus").textContent=entry.name+"：下载约 "+$("progress").value+"%（如已有缓存则可能直接读取）";}
+      }
+    }
+  });
+  loaded=true;activeKey=key;activeModelName=entry.name;
+  $("progress").value=100;
+  markSuccessfulLoad(key);
+  $("downloadStatus").textContent="模型已加载 · 可开始推理";
+}catch(err){
+  console.error("Model load failure",err);
+  loaded=false;activeKey=null;model=null;processor=null;
+  $("downloadStatus").textContent="模型加载失败："+err.message+"。自定义仓库需要兼容 ONNX 权重与 DocTags processor。旧 GPU 模型已释放；可以重新选择其他模型。";
+}finally{busy=false;renderModelOptions(entry.id);}
+};
+$("run").onclick=async()=>{
+if(busy||!loaded||!imageReady||activeKey!==selectedKey())return;
+busy=true;refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
+try{
+const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
+const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
+const inputs=await processor(prompt,[raw],{do_image_splitting:true});let streamed="";
+const generated=await model.generate({...inputs,max_new_tokens:2048,do_sample:false,streamer:new TextStreamer(processor.tokenizer,{skip_prompt:true,skip_special_tokens:false,callback_function:chunk=>{streamed+=chunk;$("tags").textContent=streamed}})});
+const tokens=generated.slice(null,[inputs.input_ids.dims.at(-1),null]);
+result=(processor.batch_decode(tokens,{skip_special_tokens:false})[0]||streamed).replace(/<\|end_of_text\|>$/,"").trim();
+if(!result)throw Error("模型返回空结果");
+$("tags").textContent=result;const boxes=show(result),seconds=((performance.now()-start)/1000).toFixed(1);renderComparison(result);
+$("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
+$("timing").textContent="GPU 推理约 "+seconds+" 秒 · 模型："+activeModelName+" · 输入："+name+" · 带坐标标签 "+boxes+" 个";
+updateHistory({
+ key:activeKey,modelId:selectedModel().id,documentRevision:inputRevision,tags:result,
+ seconds:Number(seconds),label:activeModelName+" · "+($("dtype").value==="quality"?"fp32":"q4")
+});
+showRunMetrics(selectedModel().id,seconds);
+status("推理完成 · 请查看下方对照结果");
+}catch(e){console.error(e);status("推理失败："+e.message+"。请改用 Kaggle 或换设备重试。");$("tags").textContent="本次没有可核验的完整模型输出。";}
+finally{busy=false;refreshLoadButtons()}
+};
+renderModelOptions(registry.BUILTIN.id);makeSample();detect();
+</script>
+</body>
+</html>
