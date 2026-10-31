@@ -1,0 +1,52 @@
+name: Daily Action Benchmark V1 - Source Verification
+on:
+  push:
+    branches:
+      - data/daily-action-benchmark-v1
+    paths:
+      - 'research/daily-action-benchmark/v1/manifests/**'
+      - 'research/daily-action-benchmark/v1/tools/**'
+      - '.github/workflows/daily-action-benchmark-v1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout isolated benchmark branch
+        uses: actions/checkout@v4
+        with:
+          ref: data/daily-action-benchmark-v1
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify manifest integrity
+        run: python research/daily-action-benchmark/v1/tools/validate.py
+      - name: Install FFmpeg for video content audit
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Download 14 selected source videos only for decode and checksum validation
+        run: python research/daily-action-benchmark/v1/tools/probe.py
+      - name: Upload only metadata reports (never human video files)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-action-benchmark-v1-source-validation
+          path: |
+            research/daily-action-benchmark/v1/reports/integrity_check.json
+            research/daily-action-benchmark/v1/reports/media_probe_latest.json
+          retention-days: 30
+      - name: Commit verified report metadata to isolated branch
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/daily-action-benchmark/v1/reports/integrity_check.json
+          git add research/daily-action-benchmark/v1/reports/media_probe_latest.json
+          git diff --staged --quiet || { git commit -m "test(benchmark): save real source-video verification metadata"; git push origin HEAD:data/daily-action-benchmark-v1; }
