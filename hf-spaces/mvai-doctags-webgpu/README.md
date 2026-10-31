@@ -13,7 +13,7 @@ license: apache-2.0
 
 本 Space 定位为可扩展的文档结构化解析与多模型对比平台。当前使用 IBM Granite Docling 258M 的 ONNX 公开权重、Transformers.js 与浏览器 WebGPU；未来可接入经过适配与验证的实验室自研模型。
 不是实验室自研权重，不依赖 Hugging Face 托管 GPU，不需要用户登录。
-九类原创示例文档以 SVG 静态文件随本站发布，不需要从其他服务下载图片；另保留浏览器端生成的合成摘要备用。第一次加载模型时需主动点击，浏览器可能下载约 1GB 或更多权重。
+九类原始 PNG/JPEG 演示图片由 IBM Granite Docling 官方 DEMO 镜像至本站 `samples/` 目录；不再反复请求官方服务器。另保留浏览器合成摘要备用。首次加载模型可能下载 1 GB 或更多权重。
 设备兼容性、中文解析和输出准确率尚未完成完整验收；只在开发预览中使用。
 
 ## V1.6 结构化结果对照
@@ -38,6 +38,8 @@ license: apache-2.0
 页面主标题统一为 **实时文档结构化解析-DocTags**。多模型平台定位和当前公开基线来源只在标题旁的 ⓘ 帮助提示中展示；支持鼠标悬停、点击和键盘聚焦，避免把当前 IBM 基线写成平台唯一支持模型。
 
 
-## V1.9 内置示例文档图库
+## V1.9 本地样例图库
 
-文档输入区提供九类原创测试样例：整页文档、表格、代码、图片、公式、图表，以及阿拉伯语、日语和中文文档。文件保存在 `samples/`，与网页同域部署；SVG 在浏览器中渲染后进入 Canvas，复用现有 WebGPU 推理和结果对比流程。切换输入时清除上一文档的结果与 A/B 历史。除模型权重外，不依赖外部图片服务。
+页面包含九类 IBM Granite Docling 官方演示文档：整页文档、表格、代码、图像、公式、图表、阿拉伯语、日语和中文文档，均为 PNG/JPEG 格式，保存在 `samples/` 中。从本站加载并送入 Canvas，切换示例时清空上一文档的推理结果和 A/B 对比历史。
+
+图片来源：[IBM Granite Docling Demo](https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/tree/main/data/images)，原项目 [Apache-2.0](https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/blob/main/README.md)。图像如包含其他权利人的内容，仍以原始素材许可为准。所有样例仅用于本平台科研展示与测试，不代表实验室自研模型性能。
