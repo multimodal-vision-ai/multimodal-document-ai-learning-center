@@ -1,0 +1,16 @@
+IBM Granite Docling 258M demo — sample files used for research demonstration
+Source: https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/tree/main/data/images
+Source revision: 83fb166
+Repository license declaration: Apache-2.0 (https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/blob/main/README.md)
+Images may include third-party material: original rights and notices remain applicable.
+Exact imported bytes and SHA-256 checksums:
+
+new_arxiv.png: 523477 bytes; sha256=15e72aca956d9e796788eaa4b0debb9ae988ca7a9637ae3b6df1e6ce671d73d0
+image-2.jpg: 46439 bytes; sha256=ddb9c749499e74b7a2753d5e2907485021ec83e8f87627f9b0a909b095d5b057
+code.jpg: 73273 bytes; sha256=f12a94ce0603cd33057b41ea49aeb76d294149e3591867cb6dd37f75c9c1e6ca
+lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg: 152186 bytes; sha256=54600a354f6e1384821f45a7a7e22e51e918e95ed45d3d2cc963903a0ce09781
+87664.png: 70218 bytes; sha256=cd349148c12e8bc5b16944a2208751eb612140d6a7afba9b189991d2d0bbd19f
+06236926002285.png: 61330 bytes; sha256=2a6aee80400e5b6ae61ac0221fa3369a5e25f0a2dd08928cc1716a59082caab2
+ar_page_0.png: 620329 bytes; sha256=22dd5e43d683b1fd0b57b844120a2fa9268b059a06a12f33b2d14f44febeb60a
+japanse_4_ibm.png: 354375 bytes; sha256=f6b44e73839134fd363dfe35d8cada812e2085cb5b92f1fb20ffff715d0b61ec
+zh_page_0.png: 410930 bytes; sha256=ca064a6500cfe11804151c130d8673acf4cd26ebad94c623d18bee80fb8ff265
