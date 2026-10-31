@@ -19,6 +19,18 @@ assert "sdk: static" in SPACE_README.read_text(encoding="utf-8")
 PARSER = ROOT / "docs/assets/projects/doctags/browser-inference/doctags-renderer.js"
 HF_PARSER = ROOT / "hf-spaces/mvai-doctags-webgpu/doctags-renderer.js"
 assert PARSER.read_bytes() == HF_PARSER.read_bytes(), "DocTags parsers diverged"
+REGISTRY = ROOT / "docs/assets/projects/doctags/browser-inference/model-registry.js"
+HF_REGISTRY = ROOT / "hf-spaces/mvai-doctags-webgpu/model-registry.js"
+assert REGISTRY.read_bytes() == HF_REGISTRY.read_bytes(), "Model registries diverged"
+assert 'src="./model-registry.js"' in data, "Model registry must be loaded"
+for control in ('modelSelect','newModelRepo','addModel','cacheCheck','cachePersist','compareA','compareB','compareBodyA','compareBodyB'):
+    assert 'id="'+control+'"' in data, f"Missing V1.7 control {control}"
+assert "env.useBrowserCache = true" in data, "Browser cache not enabled"
+assert "await model.dispose?.()" in data, "Old WebGPU model not released on switch"
+assert "activeKey!==selectedKey()" in data, "Running unselected GPU model must be prevented"
+assert "recordResult(runHistory,record)" in data, "Same-input history must be recorded"
+assert "inputRevision++;resetHistory()" in data, "Image change must invalidate old run history"
+assert "renderComparison(result)" in data, "V1.6 live reconstruction must remain"
 assert 'src="./doctags-renderer.js"' in data, "Parser module not loaded"
 assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Missing comparison panes"
 assert 'id="rawDetails"' in data, "Raw DocTags should be collapsible"
@@ -43,5 +55,7 @@ with tempfile.TemporaryDirectory() as tmp:
     file.write_text(js, encoding="utf-8")
     subprocess.run(["node", "--check", str(file)], check=True)
 subprocess.run(["node", "--check", str(PARSER)], check=True)
+subprocess.run(["node", "--check", str(REGISTRY)], check=True)
+subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_model_registry.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_render_parser.cjs")], check=True)
 print("Browser inference Static Space: content contract + parser fixture + Node JS syntax PASS")

@@ -21,3 +21,10 @@ license: apache-2.0
 完成 WebGPU 推理后，新增原图与结构化阅读结果的并排展示。解析 DocTags 中的标题、段落与 OTSL 表格、对应位置框；原始标签置于折叠栏。内容并非像素级原稿复刻，复杂合并表格或截断输出需人工核对。
 
 上传时必须将 `index.html` 和 `doctags-renderer.js` 放在 Space 仓库根目录，与 `README.md` 同级；仅上传 HTML 将无法渲染结果。
+
+## V1.7 多模型与本地缓存
+
+- 内置 Granite Docling 258M 公开基线，允许登记未来公开、兼容的 DocTags ONNX 权重；并非任意 Hugging Face 模型均可加载。
+- 浏览器 Cache API 缓存模型文件（浏览器可自动清理），单模型占用 GPU 显存，切换时尝试释放旧模型；刷新后需重新初始化。
+- 同一图片内保留不同模型或不同精度的实际推理结果，A/B 并排渲染比较。私人文档及推理结果不会被本应用持久保存。
+- HF Space 部署的四份文件：README.md、index.html、doctags-renderer.js、model-registry.js，均放在 Space 仓库根目录。
