@@ -2436,6 +2436,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#v172" class="md-nav__link">
+    <span class="md-ellipsis">
+      V1.7.2 推理指标与对比滚动
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2497,6 +2506,12 @@
 <li><strong>模型管理 / 本地缓存 / 备用体验</strong> 默认折叠；加载失败和 GPU 不支持等错误仍直接显示。</li>
 <li><strong>03 原图与结构化结果对照</strong> 保持展开；<strong>04 DocTags 原始输出</strong> 和 <strong>05 多模型结果对比</strong> 默认折叠。</li>
 <li>加载、缓存、切换、真实推理、同图对比及失败降级逻辑保留；上传文档及解析结果只在当前页面会话内存中保存。</li>
+</ul>
+<h2 id="v172">V1.7.2 推理指标与对比滚动<a class="headerlink" href="#v172" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>推理成功后</strong>，“02 WebGPU 推理”状态区下方显示 <strong>模型大小（参数量）</strong> 与 <strong>本次推理时长（秒）</strong>。内置 IBM 公开基线标为 <strong>258M 参数</strong>；未登记参数规模的自定义模型标为“未提供”，不猜测文件大小。推理失败或选择新输入/模型时清除旧指标。</li>
+<li>默认收起的 <strong>05 多模型结果对比</strong> 中新增“按比例同步滚动”开关；启用后 A/B 两栏以<strong>滚动百分比</strong>双向联动，关闭后各自滚动。不同模型输出长度可能不同，因此同步位置不等于段落逐项匹配。</li>
+<li>既有 <strong>03 原图与结构化结果对照</strong> 同步滚动功能不变。</li>
 </ul>
 <p><a href="../index.html">返回成果展厅</a></p>
 

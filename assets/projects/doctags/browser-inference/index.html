@@ -177,6 +177,15 @@ main{max-width:1260px}
  .compact-notice{flex-wrap:wrap}
 }
 
+
+/* V1.7.2 · concise inference metrics and proportional two-model scroll */
+.run-metrics{display:flex;gap:8px 18px;align-items:center;flex-wrap:wrap;margin:7px 0 8px;padding:8px 12px;border:1px solid #dce8f7;border-radius:8px;background:#f5f9ff;color:#2e507e;font-size:12px;line-height:1.5}
+.run-metrics[hidden]{display:none!important}
+.run-metrics>span{font-variant-numeric:tabular-nums}
+.history-tools{display:flex;align-items:center;gap:8px;justify-content:flex-start;margin:10px 0 13px}
+.history-sync-toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;color:#34527c;font-size:12px;font-weight:600;white-space:nowrap}
+.history-sync-toggle input{accent-color:#255fc0;width:15px;height:15px;cursor:pointer}
+.history-tools .tip-pop{left:0}
 </style>
 </head>
 <body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
@@ -235,6 +244,9 @@ main{max-width:1260px}
         <button id="saveDT" type="button" disabled>下载 DocTags</button>
       </div>
       <div class="status inference-status" id="status" role="status" aria-live="polite">等待推理</div>
+      <div id="runMetrics" class="run-metrics" role="status" aria-live="polite" hidden>
+        <span id="runModelSize"></span><span id="runDuration"></span>
+      </div>
     </div>
     <div class="support">
       <details class="compact-details model-manage" id="modelManage">
@@ -315,6 +327,10 @@ main{max-width:1260px}
   <div><label for="compareA">结果 A</label><select id="compareA" disabled><option>等待推理结果</option></select></div>
   <div><label for="compareB">结果 B</label><select id="compareB" disabled><option>等待推理结果</option></select></div>
  </div>
+ <div class="history-tools">
+   <label class="history-sync-toggle"><input id="historySync" type="checkbox"> 按比例同步滚动</label>
+   <details class="info-tip"><summary aria-label="多模型同步滚动说明">ⓘ</summary><div class="tip-pop">两份解析结果按各自滚动范围的相同比例同步，方便比较长文档。不同模型的段落数量和阅读顺序可能不同，因此不表示精确内容匹配。</div></details>
+ </div>
  <div class="run-columns">
   <div class="run-column"><div class="run-head" id="compareNameA">模型 A</div><div class="run-body" id="compareBodyA"><article class="rendered-document"><div class="render-placeholder">请先完成一次真实推理。</div></article></div></div>
   <div class="run-column"><div class="run-head" id="compareNameB">模型 B</div><div class="run-body" id="compareBodyB"><article class="rendered-document"><div class="render-placeholder">请再运行一个模型，或切换另一种精度配置。</div></article></div></div>
@@ -355,6 +371,16 @@ function markSuccessfulLoad(key){try{localStorage.setItem(LAST_KEY,JSON.stringif
 function allModels(){return [registry.BUILTIN,...customModels];}
 function selectedModel(){return allModels().find(m=>m.id===$("modelSelect").value)||registry.BUILTIN;}
 function selectedKey(){return registry.key(selectedModel().id,$("dtype").value);}
+function clearRunMetrics(){
+  $("runMetrics").hidden=true;
+  $("runModelSize").textContent="";
+  $("runDuration").textContent="";
+}
+function showRunMetrics(modelId,seconds){
+  $("runModelSize").textContent="模型大小（参数量）："+registry.modelSizeLabel(modelId);
+  $("runDuration").textContent="推理时长："+Number(seconds).toFixed(1)+" 秒";
+  $("runMetrics").hidden=false;
+}
 function refreshLoadButtons(){
   const already=loaded&&activeKey===selectedKey();
   $("load").disabled=busy||!gpuDetected||already;
@@ -426,6 +452,8 @@ function displayHistoryComparison(){
   const a=compareRecord("A"),b=compareRecord("B");
   if(a&&b)$("compareDiagnostic").textContent="A：结构块 "+a.counts.blocks+"、表格 "+a.counts.tables+"；B：结构块 "+b.counts.blocks+"、表格 "+b.counts.tables+"。结果仅来自同一输入图片的实际模型输出，块数不是准确率。刷新或换图会清除对比记录。";
   else $("compareDiagnostic").textContent="顺序运行第二个兼容模型或同一模型的其他精度配置，即可对比。仅保存当前页面内的结果，不持久保存文档内容。";
+  expectedMirrorTop.clear();
+  if($("historySync").checked)syncHistoryScroll($("compareBodyA"),$("compareBodyB"));
 }
 
 const palette={title:"#2c62d0",text:"#159b72",table:"#c08423",otsl:"#c08423",seal:"#cd4762"};
@@ -615,7 +643,7 @@ function makeSample(){
   inputRevision++;resetHistory();imageReady=true;name="synthetic-document.png";$("fileName").textContent="合成样例 · 900×1100";resetComparison();
   clearResult();show();$("run").disabled=!loaded;
 }
-function clearResult(){result="";$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveImg").disabled=true;$("timing").textContent="";resetComparison();}
+function clearResult(){result="";$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveImg").disabled=true;$("timing").textContent="";clearRunMetrics();resetComparison();}
 function status(text){$("status").textContent=text;}
 $("sample").onclick=makeSample;
 $("file").onchange=async event=>{
@@ -632,8 +660,8 @@ function download(blob,filename){const u=URL.createObjectURL(blob),a=document.cr
 $("saveImg").onclick=()=>{if(result)show(result);preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png")};
 $("saveDT").onclick=()=>{if(result)download(new Blob([result],{type:"text/plain;charset=utf-8"}),"mvai-doctags-result.dt")};
 
-$("modelSelect").addEventListener("change",()=>{refreshLoadButtons();$("downloadStatus").textContent=loaded&&activeKey===selectedKey()?"已在 GPU 中加载；可直接推理。":"请选择加载所选模型；如权重仍在磁盘缓存中，将尽量避免重新下载。";});
-$("dtype").addEventListener("change",refreshLoadButtons);
+$("modelSelect").addEventListener("change",()=>{clearRunMetrics();refreshLoadButtons();$("downloadStatus").textContent=loaded&&activeKey===selectedKey()?"已在 GPU 中加载；可直接推理。":"请选择加载所选模型；如权重仍在磁盘缓存中，将尽量避免重新下载。";});
+$("dtype").addEventListener("change",()=>{clearRunMetrics();refreshLoadButtons();});
 $("addModel").addEventListener("click",()=>{
   const status=$("registryState");
   try{
@@ -680,6 +708,29 @@ $("cachePersist").addEventListener("click",async()=>{
 $("compareA").addEventListener("change",displayHistoryComparison);
 $("compareB").addEventListener("change",displayHistoryComparison);
 
+/* Two-way proportional scrolling with suppression of mirrored scroll events. */
+const historyPaneA=$("compareBodyA"), historyPaneB=$("compareBodyB");
+const expectedMirrorTop=new Map();
+function syncHistoryScroll(source,target){
+  if(!$("historySync").checked)return;
+  const expected=expectedMirrorTop.get(source);
+  if(expected!==undefined){
+    expectedMirrorTop.delete(source);
+    if(Math.abs(source.scrollTop-expected)<2)return;
+  }
+  const next=registry.proportionalPosition(source.scrollTop,source.scrollHeight,source.clientHeight,target.scrollHeight,target.clientHeight);
+  if(Math.abs(target.scrollTop-next)<1)return;
+  expectedMirrorTop.set(target,next);
+  target.scrollTop=next;
+}
+historyPaneA.addEventListener("scroll",()=>syncHistoryScroll(historyPaneA,historyPaneB),{passive:true});
+historyPaneB.addEventListener("scroll",()=>syncHistoryScroll(historyPaneB,historyPaneA),{passive:true});
+$("historySync").addEventListener("change",()=>{
+  expectedMirrorTop.clear();
+  if($("historySync").checked)syncHistoryScroll(historyPaneA,historyPaneB);
+});
+
+
 async function detect(){if(!window.isSecureContext||!navigator.gpu){$("device").textContent="当前设备不支持 WebGPU 或不在安全页面。可使用 Kaggle。";return}
 try{const adapter=await navigator.gpu.requestAdapter({powerPreference:"high-performance"});
 if(adapter){$("device").textContent="WebGPU 已就绪";gpuDetected=true;refreshLoadButtons()}
@@ -689,7 +740,7 @@ $("load").onclick=async()=>{
 if(busy||!gpuDetected)return;
 const entry=selectedModel(),key=selectedKey(),precision=$("dtype").value;
 if(loaded&&activeKey===key){refreshLoadButtons();return;}
-busy=true;refreshLoadButtons();$("downloadStatus").textContent="切换模型中：释放旧 GPU 实例并准备加载 "+entry.name+"…";
+busy=true;clearRunMetrics();refreshLoadButtons();$("downloadStatus").textContent="切换模型中：释放旧 GPU 实例并准备加载 "+entry.name+"…";
 $("progress").value=0;
 const progress={};
 try{
@@ -736,6 +787,7 @@ updateHistory({
  key:activeKey,modelId:selectedModel().id,documentRevision:inputRevision,tags:result,
  seconds:Number(seconds),label:activeModelName+" · "+($("dtype").value==="quality"?"fp32":"q4")
 });
+showRunMetrics(selectedModel().id,seconds);
 status("推理完成 · 请查看下方对照结果");
 }catch(e){console.error(e);status("推理失败："+e.message+"。请改用 Kaggle 或换设备重试。");$("tags").textContent="本次没有可核验的完整模型输出。";}
 finally{busy=false;refreshLoadButtons()}
