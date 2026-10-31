@@ -203,11 +203,12 @@ main{max-width:1260px}
 .sample-tile{flex:0 0 102px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 5px 7px;border:2px solid #dbe5f2;border-radius:10px;background:#fff;color:#365777;scroll-snap-align:start;transition:border-color .12s,background-color .12s,box-shadow .12s}
 .sample-tile:hover{border-color:#7fa8e9;background:#f5f9ff}
 .sample-tile[aria-pressed="true"]{border-color:#326be8;background:#edf4ff;box-shadow:0 0 0 2px #326be81b;color:#184eae}
-.sample-tile canvas{display:block;width:75px;height:92px;border:1px solid #e1e7f0;border-radius:3px;background:#fff;object-fit:contain}
+.sample-tile canvas,.sample-tile img{display:block;width:75px;height:92px;border:1px solid #e1e7f0;border-radius:3px;background:#fff;object-fit:contain}
 .sample-tile span{font-size:11px;font-weight:700;line-height:1.35;white-space:nowrap}
 .sample-scroll{display:inline-grid;place-items:center;width:29px;min-height:42px;padding:0;border:1px solid #d8e4f2;border-radius:8px;background:#f4f8ff;color:#376aa9;font-size:21px}
 .sample-scroll:hover{background:#e8f1ff}
 .sample-scroll:disabled{opacity:.35}
+.sample-fallback{display:inline;min-height:0!important;border:0;padding:0 0 0 6px;background:transparent;color:#225fc1;text-decoration:underline;font-weight:700;font-size:11px}.sample-hint a{color:#225fc1}
 .sample-hint{display:block;margin:2px 0 9px;font-size:11px;color:#6d7f96;line-height:1.5}
 .sample-tile:focus-visible,.sample-scroll:focus-visible{outline:2px solid #3277e8;outline-offset:2px}
 @media(max-width:760px){.sample-gallery{grid-template-columns:25px minmax(0,1fr) 25px;gap:4px}.sample-tile{flex-basis:94px}.sample-scroll{width:25px}}
@@ -240,19 +241,22 @@ main{max-width:1260px}
       <span class="sample-label">选择示例文档</span>
       <label class="file">上传本地图片<input id="file" type="file" accept="image/png,image/jpeg,image/webp" aria-label="上传本地文档图片"></label>
     </div>
-    <div class="sample-gallery" aria-label="合成文档样例选择">
+    <div class="sample-gallery" aria-label="IBM 官方文档样例">
       <button id="samplePrev" class="sample-scroll" type="button" aria-label="向左浏览样例">‹</button>
-      <div id="sampleStrip" class="sample-strip" role="group" aria-label="选择合成文档类型">
-        <button id="sample" class="sample-tile" type="button" data-sample="summary" aria-pressed="true"><canvas aria-hidden="true"></canvas><span>研究摘要</span></button>
-        <button class="sample-tile" type="button" data-sample="table" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>数据表格</span></button>
-        <button class="sample-tile" type="button" data-sample="code" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>代码清单</span></button>
-        <button class="sample-tile" type="button" data-sample="formula" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>公式文档</span></button>
-        <button class="sample-tile" type="button" data-sample="chart" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>图表报告</span></button>
-        <button class="sample-tile" type="button" data-sample="mixed" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>图文混排</span></button>
+      <div id="sampleStrip" class="sample-strip" role="group" aria-label="选择 IBM Granite 官方示例">
+        <button id="sample" class="sample-tile" type="button" data-sample="doc" aria-pressed="true"><img alt="" loading="eager" decoding="async"><span>整页文档</span></button>
+        <button class="sample-tile" type="button" data-sample="table" aria-pressed="false"><img alt="" loading="eager" decoding="async"><span>表格识别</span></button>
+        <button class="sample-tile" type="button" data-sample="code" aria-pressed="false"><img alt="" loading="eager" decoding="async"><span>代码识别</span></button>
+        <button class="sample-tile" type="button" data-sample="image" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>图片理解</span></button>
+        <button class="sample-tile" type="button" data-sample="formula" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>公式识别</span></button>
+        <button class="sample-tile" type="button" data-sample="chart" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>图表提取</span></button>
+        <button class="sample-tile" type="button" data-sample="arabic" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>阿拉伯语</span></button>
+        <button class="sample-tile" type="button" data-sample="japanese" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>日语</span></button>
+        <button class="sample-tile" type="button" data-sample="chinese" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>中文文档</span></button>
       </div>
       <button id="sampleNext" class="sample-scroll" type="button" aria-label="向右浏览样例">›</button>
     </div>
-    <small class="sample-hint">原创合成文档，不含个人信息；点击缩略图即可切换文档预览。</small>
+    <small class="sample-hint">9 个来自 <a href="https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo" target="_blank" rel="noopener noreferrer">IBM 官方 DEMO</a> 的公开样例（联网加载），选择后再启动真实推理。<button id="syntheticFallback" class="sample-fallback" type="button">离线合成样例</button></small>
     <div id="view"><canvas id="preview" aria-label="文档输入与解析标注预览" role="img"></canvas></div>
     <div class="input-footer">
       <small id="fileName">合成样例</small>
@@ -672,6 +676,10 @@ function show(tags=""){
   }
   return count;
 }
+// IBM official Space samples: externally referenced (not re-hosted in MVAI repository).
+const officialBase="https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/resolve/main/data/images/";
+const officialSamples=[{"id":"doc","file":"new_arxiv.png","label":"整页文档"},{"id":"table","file":"image-2.jpg","label":"表格识别"},{"id":"code","file":"code.jpg","label":"代码识别"},{"id":"image","file":"lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg","label":"图片理解"},{"id":"formula","file":"87664.png","label":"公式识别"},{"id":"chart","file":"06236926002285.png","label":"图表提取"},{"id":"arabic","file":"ar_page_0.png","label":"阿拉伯语"},{"id":"japanese","file":"japanse_4_ibm.png","label":"日语"},{"id":"chinese","file":"zh_page_0.png","label":"中文文档"}];
+let sampleSelectionSerial=0;
 const sampleTypes=["summary","table","code","formula","chart","mixed"];
 const sampleNames={summary:"研究摘要",table:"数据表格",code:"代码清单",formula:"公式文档",chart:"图表报告",mixed:"图文混排"};
 // All samples are original, local Canvas drawings; thumbnails and inference use the same drawing function.
@@ -760,20 +768,54 @@ function highlightSample(kind){
 }
 function makeSample(kind="summary"){
   if(busy){status("推理进行中，请完成后再切换文档。");return;}
+  ++sampleSelectionSerial;
   if(!sampleTypes.includes(kind))kind="summary";
   paintSample(src,kind);
   inputRevision++;resetHistory();imageReady=true;
   name="synthetic-"+kind+".png";
   $("file").value="";
   $("fileName").textContent="合成样例 · "+sampleNames[kind]+" · 900×1100";
-  highlightSample(kind);
+  highlightSample(null);
   clearResult();show();leftDraw();$("run").disabled=!loaded||activeKey!==selectedKey();
+}
+async function loadOfficialSample(kind){
+  if(busy){status("推理进行中，请完成后再切换文档。");return;}
+  const sample=officialSamples.find(x=>x.id===kind);if(!sample)return;
+  const ticket=++sampleSelectionSerial,wasReady=imageReady;
+  $("run").disabled=true;
+  status("正在读取官方样例："+sample.label+"…");
+  try{
+    const response=await fetch(officialBase+encodeURIComponent(sample.file),{mode:"cors",cache:"force-cache"});
+    if(!response.ok)throw Error("HTTP "+response.status);
+    const blob=await response.blob();
+    if(blob.size>12*1024*1024)throw Error("图片超过 12 MB");
+    const im=await createImageBitmap(blob);
+    if(ticket!==sampleSelectionSerial){im.close?.();return;}
+    const scale=Math.min(1,1500/Math.max(im.width,im.height));
+    src.width=Math.max(1,Math.round(im.width*scale));
+    src.height=Math.max(1,Math.round(im.height*scale));
+    c.drawImage(im,0,0,src.width,src.height);im.close?.();
+    inputRevision++;resetHistory();imageReady=true;name="ibm-demo-"+sample.file;
+    $("file").value="";highlightSample(kind);
+    clearResult();show();leftDraw();
+    $("fileName").textContent="IBM 官方示例 · "+sample.label+" · "+src.width+"×"+src.height;
+    $("run").disabled=!loaded||activeKey!==selectedKey();
+    status("已加载 IBM 官方示例："+sample.label+"。可执行真实模型推理。");
+  }catch(error){
+    if(ticket!==sampleSelectionSerial)return;
+    imageReady=wasReady;
+    $("run").disabled=!loaded||!imageReady||activeKey!==selectedKey();
+    status("官方图片读取失败："+error.message+"。可能存在网络或跨域限制；可换一个样例、上传本地图片，或使用离线合成样例。");
+  }
 }
 function initSampleGallery(){
   document.querySelectorAll(".sample-tile").forEach(btn=>{
-    paintSample(btn.querySelector("canvas"),btn.dataset.sample,135);
-    btn.addEventListener("click",()=>makeSample(btn.dataset.sample));
+    const item=officialSamples.find(x=>x.id===btn.dataset.sample);
+    if(!item)return;
+    btn.querySelector("img").src=officialBase+encodeURIComponent(item.file);
+    btn.addEventListener("click",()=>loadOfficialSample(item.id));
   });
+  $("syntheticFallback").addEventListener("click",()=>makeSample("summary"));
   const strip=$("sampleStrip");
   function updateArrows(){
     $("samplePrev").disabled=strip.scrollLeft<2;
@@ -790,8 +832,12 @@ function status(text){$("status").textContent=text;}
 initSampleGallery();
 $("file").onchange=async event=>{
   try{const file=event.target.files[0];if(!file)return;
+    if(busy){status("正在推理，请完成后上传。");return;}
+    const ticket=++sampleSelectionSerial;
     if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>12*1024*1024)throw Error("仅允许 12 MB 以内的 PNG、JPG、WebP");
-    const im=await createImageBitmap(file),scale=Math.min(1,1500/Math.max(im.width,im.height));
+    const im=await createImageBitmap(file);
+    if(ticket!==sampleSelectionSerial){im.close?.();return;}
+    const scale=Math.min(1,1500/Math.max(im.width,im.height));
     src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);im.close?.();
     inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();highlightSample(null);
     $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";$("run").disabled=!loaded;
@@ -934,7 +980,7 @@ status("推理完成 · 请查看下方对照结果");
 }catch(e){console.error(e);status("推理失败："+e.message+"。请改用 Kaggle 或换设备重试。");$("tags").textContent="本次没有可核验的完整模型输出。";}
 finally{busy=false;refreshLoadButtons()}
 };
-renderModelOptions(registry.BUILTIN.id);makeSample();detect();
+renderModelOptions(registry.BUILTIN.id);makeSample();loadOfficialSample("doc");detect();
 </script>
 </body>
 </html>
