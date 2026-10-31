@@ -1,0 +1,56 @@
+name: Publish DocTags to Hugging Face Static Space
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "hf-spaces/mvai-doctags-webgpu/**"
+      - ".github/workflows/publish-hf-doctags.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-hf-doctags-dev
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout approved DEV source
+        uses: actions/checkout@v4
+
+      - name: Validate static Space bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in README.md index.html doctags-renderer.js model-registry.js; do
+            test -s "hf-spaces/mvai-doctags-webgpu/$file"
+          done
+          python scripts/kaggle/validate_browser_doctags_pilot.py
+
+      - name: Check Hugging Face publish permission
+        id: hf
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          if [[ -n "$HF_TOKEN" ]]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "Hugging Face publish credential is configured."
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=HF publishing not enabled::Create a Public Static Space multimodal-vision-ai/mvai-doctags-webgpu, add a repository secret named HF_TOKEN, then rerun this workflow. DEV source is already safe; no public HF deployment was attempted."
+          fi
+
+      - name: Publish four-file Static Space bundle
+        if: steps.hf.outputs.enabled == 'true'
+        uses: huggingface/hub-sync@v0.3.0
+        with:
+          github_repo_id: ${{ github.repository }}
+          huggingface_repo_id: multimodal-vision-ai/mvai-doctags-webgpu
+          hf_token: ${{ secrets.HF_TOKEN }}
+          repo_type: space
+          space_sdk: static
+          subdirectory: hf-spaces/mvai-doctags-webgpu
