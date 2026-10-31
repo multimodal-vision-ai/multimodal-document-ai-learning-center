@@ -1,0 +1,42 @@
+/* Frontier Updates v5: single current weekly shortlist and paginated archive. */
+.md-typeset .radar-current-note {
+  margin: .2rem 0 1.1rem;
+  padding: .65rem .85rem;
+  border-left: 3px solid var(--md-primary-fg-color);
+  border-radius: .35rem;
+  background: var(--md-code-bg-color);
+  color: var(--md-default-fg-color--light);
+  font-size: .84rem;
+  line-height: 1.7;
+}
+.md-typeset .radar-archive-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin: 1.15rem 0 1.5rem;
+}
+.md-typeset .radar-archive-pagination[hidden],
+.md-typeset .radar-archive-section[hidden],
+.md-typeset .radar-archive-item[hidden] { display: none !important; }
+.radar-archive-pagination button {
+  font: inherit;
+  font-size: .82rem;
+  padding: .36rem .8rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .42rem;
+  color: var(--md-default-fg-color);
+  background: var(--md-default-bg-color);
+  cursor: pointer;
+}
+.radar-archive-pagination button:hover:not(:disabled) {
+  border-color: var(--md-primary-fg-color);
+  color: var(--md-primary-fg-color);
+}
+.radar-archive-pagination button:disabled { opacity: .4; cursor: default; }
+.radar-archive-pagination span { font-size: .82rem; color: var(--md-default-fg-color--light); }
+@media (max-width: 720px) {
+  .md-typeset .radar-current-note { font-size: .8rem; }
+  .md-typeset .radar-archive-pagination { gap: .5rem; }
+}
