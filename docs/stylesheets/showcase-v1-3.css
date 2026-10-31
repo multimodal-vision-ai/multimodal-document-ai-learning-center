@@ -283,7 +283,8 @@
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 3.7 / 1;
+  /* Crop at the three panel bottom edges, before the redundant footer line. */
+  aspect-ratio: 4 / 1;
   overflow: hidden;
   background: #f0f5fc;
 }
