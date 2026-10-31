@@ -1,0 +1,32 @@
+name: Inspect Hugging Face Space public runtime
+
+on:
+  pull_request:
+    paths: [".github/workflows/hf-space-runtime-inspect.yml", "docs/projects/README.md"]
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect HF Space API and runtime endpoints
+        shell: bash
+        run: |
+          set +e
+          echo "========== HF Space API =========="
+          curl -sSL --max-time 25 -w '\nHTTP_STATUS:%{http_code}\n' \
+            https://huggingface.co/api/spaces/multimodal-vision-ai/mvai-doctags-webgpu \
+            | head -c 8000
+          echo
+          echo "========== hf.space homepage =========="
+          curl -sSL --max-time 25 -w '\nHTTP_STATUS:%{http_code}\n' \
+            -o /tmp/mvai-index.html \
+            https://multimodal-vision-ai-mvai-doctags-webgpu.hf.space/
+          head -c 500 /tmp/mvai-index.html || true
+          echo
+          echo "========== HF Hub Space page =========="
+          curl -sSL --max-time 25 -o /dev/null -w 'HTTP_STATUS:%{http_code}\n' \
+            https://huggingface.co/spaces/multimodal-vision-ai/mvai-doctags-webgpu
+          echo
