@@ -1,4 +1,4 @@
 numpy==1.26.4
 opencv-python-headless==4.10.0.84
-ai-edge-litert==2.0.1
-yt-dlp>=2026.8.0
+ai-edge-litert==2.3.0
+yt-dlp==2026.10.26
