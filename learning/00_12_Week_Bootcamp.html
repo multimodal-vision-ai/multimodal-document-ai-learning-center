@@ -1,0 +1,4936 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Multimodal Vision AI Learning Center — 从文档理解出发，探索图像、视频与多模态智能">
+      
+      
+        <meta name="author" content="谭国平教授团队 · Multimodal Vision AI Lab">
+      
+      
+        <link rel="canonical" href="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-59/learning/00_12_Week_Bootcamp.html">
+      
+      
+        <link rel="prev" href="index.html">
+      
+      
+        <link rel="next" href="01_Git_and_GitHub.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>12 周自主路线 - 多模态视觉AI学习中心</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../stylesheets/shanshui.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar-v2.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar-v4.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar-v5.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground-guide-v2.css">
+    
+      <link rel="stylesheet" href="../stylesheets/vision-demo-v3.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground-quota-v1.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-demo-sidebar-native-v2.css">
+    
+      <link rel="stylesheet" href="../stylesheets/showcase-v1-3.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr"><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#12" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="多模态视觉AI学习中心" class="md-header__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            多模态视觉AI学习中心
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              12 周自主路线
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../index.html" class="md-tabs__link">
+          
+  
+  
+  学习首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+  入门课程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/index.html" class="md-tabs__link">
+          
+  
+  
+  动手教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../experiments/index.html" class="md-tabs__link">
+          
+  
+  
+  项目实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reading/index.html" class="md-tabs__link">
+          
+  
+  
+  论文导读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../resources/index.html" class="md-tabs__link">
+          
+  
+  
+  学习资源
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../projects/index.html" class="md-tabs__link">
+          
+  
+  
+  成果展厅
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="多模态视觉AI学习中心" class="md-nav__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    多模态视觉AI学习中心
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习首页
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            学习首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    欢迎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    模型演示
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            模型演示
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-demos/document.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-demos/video.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视频理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-demos/vision.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉感知
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../radar/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    前沿动态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于学习中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    入门课程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            入门课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    课程首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    12 周自主路线
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="00_12_Week_Bootcamp.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    12 周自主路线
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主学习规则
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      12 周路线
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      三条完成路径
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 1｜可复现研究工程
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 1｜可复现研究工程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向（选择一个，约 4 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 2｜Hugging Face 与模型推理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 2｜Hugging Face 与模型推理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 3｜AI 辅助编程与人工验证
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 3｜AI 辅助编程与人工验证">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 4｜视觉语言模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 4｜视觉语言模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 5｜Document AI 任务地图
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 5｜Document AI 任务地图">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 6｜Docling 文档解析 Pipeline
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 6｜Docling 文档解析 Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 7｜Dataset、Benchmark 与负责任使用
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 7｜Dataset、Benchmark 与负责任使用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 8｜LoRA/PEFT 小规模微调
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 8｜LoRA/PEFT 小规模微调">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_41" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 9｜W&amp;B 实验追踪
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 9｜W&amp;B 实验追踪">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_42" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_43" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_44" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_45" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_46" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 10｜统一评测、消融与错误分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 10｜统一评测、消融与错误分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_47" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_48" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_49" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_50" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_51" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 11｜论文导读与最小复现
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 11｜论文导读与最小复现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_52" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_53" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_54" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_55" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_56" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-12" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 12｜Capstone、展示与自主答辩
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 12｜Capstone、展示与自主答辩">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_57" class="md-nav__link">
+    <span class="md-ellipsis">
+      最终成果
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_58" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_59" class="md-nav__link">
+    <span class="md-ellipsis">
+      最终自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_60" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_61" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_62" class="md-nav__link">
+    <span class="md-ellipsis">
+      完成之后
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            基础工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01_Git_and_GitHub.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git 与 GitHub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02_Python_Environment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Python 与可复现环境
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="03_HuggingFace.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hugging Face Hub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04_Kaggle.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kaggle Notebook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05_Transformers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Transformers 推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05-1_AI_Assisted_Coding.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI 辅助编程与验证
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档智能专题
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档智能专题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="06-1_Qwen3.5-VL-0.8B.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Qwen3.5-0.8B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="06-2_Docling.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docling 文档解析
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="07_Doc_AI.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Document AI 与评测
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    后训练与实验追踪
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            后训练与实验追踪
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="08_Post_Training.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LoRA、评测与 W&B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    自主学习支持
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            自主学习支持
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="10_Assessment_and_Submission.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主评估与证据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="11_Learning_Log_Template.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主学习记录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="09_FAQ.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    常见问题
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    动手教程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            动手教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个教程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档评测：OmniDocBench Markdown
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    后训练路线：Qwen3.5-VL SFT/GRPO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目实战
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            项目实战
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目 01：文档理解评测
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            项目 01：文档理解评测
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目控制台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part01-%E5%AE%9E%E9%AA%8C%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 01：确定目标与准备
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part02-%E5%88%9B%E5%BB%BAGithub%E7%A7%91%E7%A0%94%E9%A1%B9%E7%9B%AE%E4%BB%93%E5%BA%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 02：创建 GitHub 项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part03-%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 03：构建项目目录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part04-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 04：准备实验数据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part05-%E6%A8%A1%E5%9E%8B%E5%87%86%E5%A4%87%E4%B8%8E%E6%8E%A8%E7%90%86.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 05：完成首次推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part06-%E6%8F%90%E7%A4%BA%E8%AF%8D%E7%AE%A1%E7%90%86%E4%B8%8E%E5%AF%B9%E6%AF%94%E5%88%86%E6%9E%90.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 06：完成受控对比
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part07-Bechmark%E8%AF%84%E6%B5%8B%E4%B8%8E%E6%80%BB%E7%BB%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 07：评测与项目总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    论文导读
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            论文导读
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    快速选读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/00_surveys.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    领域地图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    核心原理
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            核心原理
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/01_foundation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    模型基石
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/03_vlm.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉语言
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档研究
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档研究
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/02_document-ai.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档智能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/04_doctags.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    结构表示
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reading/05_benchmark-2026.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    评测选型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习资源
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            学习资源
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    按问题找资源
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/official-sources.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    官方文档与平台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/courses.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    推荐课程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/papers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    论文索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/datasets.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    数据集索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/tools.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工具清单
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    成果展厅
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            成果展厅
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自研模型展示
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    研究项目
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            研究项目
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/document-ai/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/vision-ai/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/brain-inspired/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    类脑智能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/student-work/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    学生作品
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主学习规则
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      12 周路线
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      三条完成路径
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 1｜可复现研究工程
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 1｜可复现研究工程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向（选择一个，约 4 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 2｜Hugging Face 与模型推理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 2｜Hugging Face 与模型推理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 3｜AI 辅助编程与人工验证
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 3｜AI 辅助编程与人工验证">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 4｜视觉语言模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 4｜视觉语言模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 5｜Document AI 任务地图
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 5｜Document AI 任务地图">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 6｜Docling 文档解析 Pipeline
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 6｜Docling 文档解析 Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 7｜Dataset、Benchmark 与负责任使用
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 7｜Dataset、Benchmark 与负责任使用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 8｜LoRA/PEFT 小规模微调
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 8｜LoRA/PEFT 小规模微调">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_41" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 9｜W&amp;B 实验追踪
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 9｜W&amp;B 实验追踪">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_42" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_43" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_44" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_45" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_46" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 10｜统一评测、消融与错误分析
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 10｜统一评测、消融与错误分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_47" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_48" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_49" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_50" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_51" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 11｜论文导读与最小复现
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 11｜论文导读与最小复现">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_52" class="md-nav__link">
+    <span class="md-ellipsis">
+      必须留下的证据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_53" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_54" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_55" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_56" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-12" class="md-nav__link">
+    <span class="md-ellipsis">
+      Week 12｜Capstone、展示与自主答辩
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 12｜Capstone、展示与自主答辩">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1618_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      主线任务（16–18 小时）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_57" class="md-nav__link">
+    <span class="md-ellipsis">
+      最终成果
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_58" class="md-nav__link">
+    <span class="md-ellipsis">
+      自主探索方向
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_59" class="md-nav__link">
+    <span class="md-ellipsis">
+      最终自主检查
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_60" class="md-nav__link">
+    <span class="md-ellipsis">
+      例会前准备
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_61" class="md-nav__link">
+    <span class="md-ellipsis">
+      官方入口
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_62" class="md-nav__link">
+    <span class="md-ellipsis">
+      完成之后
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+                  
+  
+
+
+
+  
+    <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/edit/dev/docs/learning/00_12_Week_Bootcamp.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="12">12 周多模态视觉智能自主学习课程<a class="headerlink" href="#12" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>适合谁</strong>：具备基础 Python 阅读能力、首次系统接触 AI research 的高年级本科生或研究生。<br>
+<strong>建议投入</strong>：每周约 24 小时，共 12 周。<br>
+<strong>最终成果</strong>：一个可复现、可评测、包含 AI 使用记录与实验报告的多模态文档智能项目。</p>
+</blockquote>
+<h2 id="_1">自主学习规则<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>学生自主安排进度、自主检查证据并决定补做或扩展，不设置导师评分和通关审批。</li>
+<li>每周建议投入 24 小时：课程与官方材料 4 小时、主线项目 10 小时、评测与失败分析 4 小时、自主探索 4 小时、记录与例会准备 2 小时。</li>
+<li>每周必须留下代码、配置、原始结果和简短复盘；只有截图不能构成可复现证据。</li>
+<li>每周从给出的方向中选择一个继续探索，不要求同时完成全部扩展任务。</li>
+<li>AI-assisted coding 从 Week 3 起贯穿后续课程，但必须保留人工验证和使用披露。</li>
+<li>数据不可包含隐私或未授权材料；使用模型和数据前必须阅读 license、model card 或 dataset card。</li>
+<li>每周例会只交流进展、证据、困难和下一步，导师不评分、不验收。</li>
+</ul>
+<p><a class="md-button md-button--primary" href="10_Assessment_and_Submission.html">打开自主评估指南</a>
+<a class="md-button" href="11_Learning_Log_Template.html">复制学习记录模板</a></p>
+<h2 id="12_1">12 周路线<a class="headerlink" href="#12_1" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>周次</th>
+<th>主题</th>
+<th>本周核心成果</th>
+<th style="text-align: right;">建议投入</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#week-1">1</a></td>
+<td>可复现研究工程</td>
+<td>项目仓库、环境记录、可运行脚本</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-2">2</a></td>
+<td>Hugging Face 与模型推理</td>
+<td>最小推理、Model Card 对比、失败案例</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-3">3</a></td>
+<td>AI 辅助编程与验证</td>
+<td>Prompt 记录、测试与人工审查</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-4">4</a></td>
+<td>视觉语言模型</td>
+<td>VLM 受控实验与失败分类</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-5">5</a></td>
+<td>Document AI 任务地图</td>
+<td>三类文档分析与研究方向选择</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-6">6</a></td>
+<td>Docling 文档解析</td>
+<td>PDF → Markdown/JSON pipeline</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-7">7</a></td>
+<td>Dataset 与 Benchmark</td>
+<td>固定测试集、baseline 与错误分析</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-8">8</a></td>
+<td>LoRA/PEFT 微调</td>
+<td>adapter、配置、训练前后对比</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-9">9</a></td>
+<td>W&amp;B 实验追踪</td>
+<td>可比较 runs、artifact 与报告</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-10">10</a></td>
+<td>统一评测与消融</td>
+<td>指标、消融、成本与错误 taxonomy</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-11">11</a></td>
+<td>论文导读与最小复现</td>
+<td>Paper Card 与 reproduction report</td>
+<td style="text-align: right;">24h</td>
+</tr>
+<tr>
+<td><a href="#week-12">12</a></td>
+<td>Capstone 与自主答辩</td>
+<td>完整项目、Project Card 与演示</td>
+<td style="text-align: right;">24h</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">三条完成路径<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th style="text-align: right;">建议投入</th>
+<th>每周怎么做</th>
+<th>算力策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>最小路径</strong></td>
+<td style="text-align: right;">8–12 小时</td>
+<td>完成“最小动作”和核心证据，到达可复现的最低闭环</td>
+<td>CPU、免费 Kaggle/Colab、小模型、小数据切片</td>
+</tr>
+<tr>
+<td><strong>标准路径</strong></td>
+<td style="text-align: right;">约 24 小时</td>
+<td>完成现有主线任务、验证、一次自主探索与复盘</td>
+<td>按任务选择本地或免费/可控云资源</td>
+</tr>
+<tr>
+<td><strong>进阶路径</strong></td>
+<td style="text-align: right;">24 小时以上</td>
+<td>标准路径之外增加论文复现、消融、跨模型对比或完整评测</td>
+<td>先设时间、显存和费用上限，再扩大实验</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">本课程学习卡</p>
+<p><strong>学什么</strong>：把模型调用、文档解析、训练和评测组织成可复现研究。<br>
+<strong>官方来源</strong>：每周“官方入口”中的原始文档、论文、代码仓库和 Model/Dataset Card。<br>
+<strong>做什么</strong>：选择一条路径，每周完成 Learn → Run → Measure → Improve → Explain。<br>
+<strong>提交什么</strong>：同一研究仓库中的代码、配置、原始结果、错误分析和学习记录。<br>
+<strong>如何自查</strong>：逐项检查本周证据，并使用<a href="10_Assessment_and_Submission.html">自主评估指南</a>。</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">如何使用本页</p>
+<p>每周先读“核心问题”和“必须留下的证据”，再进入对应专题。完成主线后只选一个自主探索方向；如果证据仍不完整，把探索时间用于补齐，不必追赶更多内容。</p>
+</div>
+<h2 id="week-1">Week 1｜可复现研究工程<a class="headerlink" href="#week-1" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝建立仓库、完成一个可运行小工具并从全新 clone 复现｜标准＝完成本周全部主线｜进阶＝增加自动化 smoke test 或一次规范 PR Review。</p>
+</blockquote>
+<p><strong>核心问题</strong>：另一位同学能否只根据仓库说明运行你的第一个项目？</p>
+<p><strong>本周价值</strong>：先建立贯穿 12 周的研究仓库。后续模型、数据、评测和论文复现都在这里持续积累，不再创建彼此割裂的周作业。</p>
+<p><strong>学习入口</strong>：<a href="01_Git_and_GitHub.html">Git 与 GitHub</a> · <a href="02_Python_Environment.html">Python 与可复现环境</a></p>
+<h3 id="1618">主线任务（16–18 小时）<a class="headerlink" href="#1618" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 创建个人课程仓库，使用 branch → commit → Pull Request 完成第一次合并。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 写出 <code>docs/project_plan.md</code>：当前问题、范围、非目标和初步成功标准。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 编写一个 PDF 页数或图片尺寸统计工具，提供 <code>--help</code> 和清晰错误信息。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 记录 Python、操作系统、依赖版本、运行命令和数据来源。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 为正常输入和错误输入各写至少一个测试。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 从空环境或全新 clone 按 README 重新运行一次。</li>
+</ul>
+<h3 id="_3">必须留下的证据<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>README.md</code>、<code>docs/project_plan.md</code>、依赖文件、源代码、测试和一次 PR 链接；</li>
+<li>一条可复制的开始命令，以及成功运行和错误处理的原始输出。</li>
+</ul>
+<h3 id="4">自主探索方向（选择一个，约 4 小时）<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>工程</strong>：增加日志、配置文件或自动化 smoke test。</li>
+<li><strong>协作</strong>：使用 Issue、PR Review 和小步 commit 管理一次功能改进。</li>
+<li><strong>研究</strong>：写一页说明，比较“能运行”“可复现”和“可审计”的区别。</li>
+</ul>
+<h3 id="_4">自主检查<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> README 不依赖口头说明或本机绝对路径。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 代码、依赖、输入和输出之间的关系清楚。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 失败输入会产生可理解的信息，而不是静默失败。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 当前成果至少达到<a href="10_Assessment_and_Submission.html">自主评估</a>中的“已跑通”。</li>
+</ul>
+<h3 id="_5">例会前准备<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>展示一条运行命令、一个可复现证据、一个未解决问题，以及 Week 2 首先要验证的模型问题。</p>
+<h3 id="_6">官方入口<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://git-scm.com/docs/gittutorial">Git tutorial</a></li>
+<li><a href="https://docs.github.com/en/get-started/start-your-journey/hello-world">GitHub Hello World</a></li>
+<li><a href="https://docs.python.org/3/tutorial/venv.html">Python venv</a></li>
+</ul>
+<h2 id="week-2">Week 2｜Hugging Face 与模型推理<a class="headerlink" href="#week-2" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝阅读一个 Model Card 并完成一次固定样例推理｜标准＝完成模型对比、失败样例与版本记录｜进阶＝在相同输入上做跨模型受控比较。</p>
+</blockquote>
+<p><strong>核心问题</strong>：如何判断一个模型是否适合目标任务，并正确解释它的输入输出？</p>
+<p><strong>本周价值</strong>：模型选择必须来自 model card、资源约束和可验证结果，而不是参数规模或排行榜印象。</p>
+<p><strong>学习入口</strong>：<a href="03_HuggingFace.html">Hugging Face Hub</a> · <a href="05_Transformers.html">Transformers 推理</a> · <a href="04_Kaggle.html">Kaggle Notebook（按需）</a></p>
+<h3 id="1618_1">主线任务（16–18 小时）<a class="headerlink" href="#1618_1" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 阅读一个可运行小模型的 model card，记录 ID、revision、license、输入输出和限制。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 完成一次最小推理，并将配置、运行命令与输出保存到 Week 1 仓库。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 再选择一个视觉或多模态模型，对比两份 model card 的任务适配度和资源要求。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 保存三组正常样例和至少一组失败样例。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 将 Notebook 从头运行，消除隐藏状态；同时判断本地或云端运行的必要性。</li>
+</ul>
+<h3 id="_7">必须留下的证据<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>推理脚本或 Notebook、模型对比说明、机器可读配置、原始输出和失败案例。</li>
+</ul>
+<h3 id="_8">自主探索方向<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>模型</strong>：在相同输入上比较两个可运行的小模型。</li>
+<li><strong>平台</strong>：研究 Hub revision、缓存和模型文件版本如何影响复现。</li>
+<li><strong>研究</strong>：列出 model card 没有回答、但真实使用前必须验证的三个问题。</li>
+</ul>
+<h3 id="_9">自主检查<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 能用一句话说明为什么选择该模型。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 模型版本和关键配置可追溯。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 结论能够回到原始输入与输出。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 明确写出至少一个不适用场景。</li>
+</ul>
+<h3 id="_10">例会前准备<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>展示一次模型选择决策、一组原始输出和一个失败案例，不需要演示所有代码。</p>
+<h3 id="_11">官方入口<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://huggingface.co/docs/hub/">Hugging Face Hub documentation</a></li>
+<li><a href="https://huggingface.co/docs/transformers/quicktour">Transformers quick tour</a></li>
+<li><a href="https://huggingface.co/docs/hub/model-cards">Model Cards guide</a></li>
+</ul>
+<h2 id="week-3">Week 3｜AI 辅助编程与人工验证<a class="headerlink" href="#week-3" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝完成一张 Task Card、一次 AI 协作记录和对应测试｜标准＝完成全部人工审查与边界测试｜进阶＝系统比较不同 Prompt 或测试策略。</p>
+</blockquote>
+<p><strong>核心问题</strong>：怎样让 AI 提高开发效率，同时不把判断与责任交给 AI？</p>
+<p><strong>本周价值</strong>：从本周开始，AI 可以贯穿所有开发任务，但每项建议必须进入“需求—判断—验证—修正”的证据闭环。</p>
+<p><strong>学习入口</strong>：<a href="05-1_AI_Assisted_Coding.html">AI 辅助编程与验证</a></p>
+<h3 id="1618_2">主线任务（16–18 小时）<a class="headerlink" href="#1618_2" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 把 Week 1 工具的一项改进写成 Task Card，包含约束、边界条件和完成标准。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 至少保留三轮“需求 → AI 建议 → 人工判断 → 测试 → 修正”的记录。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 加入参数校验、错误处理和测试，至少覆盖三个正常场景和两个异常场景。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 检查生成代码的正确性、安全性、许可和不必要依赖。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 在 README 说明使用了什么 AI、用于哪里、哪些内容被人工修改。</li>
+</ul>
+<h3 id="_12">必须留下的证据<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>task-card.md</code>、<code>ai-use-log.md</code>、<code>code-review.md</code>、测试代码和完整测试输出。</li>
+</ul>
+<h3 id="_13">自主探索方向<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Prompt</strong>：比较模糊需求和明确需求带来的差异。</li>
+<li><strong>测试</strong>：让 AI 建议测试，再人工寻找它遗漏的边界条件。</li>
+<li><strong>安全</strong>：检查代码中的密钥、路径、网络访问和数据泄露风险。</li>
+</ul>
+<h3 id="_14">自主检查<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 能解释每段最终保留的代码。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> AI 建议经过测试、官方文档或人工审查验证。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 被拒绝或修改的建议有清楚理由。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 没有向 AI 工具上传私人文档、密钥或未授权数据。</li>
+</ul>
+<h3 id="_15">例会前准备<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<p>展示一条被采纳建议、一条被拒绝建议，以及决定背后的验证证据。</p>
+<h3 id="_16">官方入口<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://docs.github.com/en/copilot">GitHub Copilot documentation</a></li>
+<li><a href="https://docs.github.com/en/copilot/responsible-use">Responsible use of GitHub Copilot</a></li>
+<li><a href="https://docs.python.org/3/library/unittest.html">Python unittest</a></li>
+</ul>
+<h2 id="week-4">Week 4｜视觉语言模型<a class="headerlink" href="#week-4" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝用固定图像完成一次 VLM 推理并记录失败｜标准＝完成受控实验与失败分类｜进阶＝比较两种模型或视觉输入策略。</p>
+</blockquote>
+<p><strong>核心问题</strong>：VLM 在“看图并回答”时真正依赖了什么，又会在哪里失败？</p>
+<p><strong>本周价值</strong>：从“会调用模型”进入“会控制变量、保存证据并分析视觉失败”。</p>
+<p><strong>学习入口</strong>：<a href="06-1_Qwen3.5-VL-0.8B.html">Qwen3.5 推理</a> · <a href="05_Transformers.html">Transformers 推理</a></p>
+<h3 id="1618_3">主线任务（16–18 小时）<a class="headerlink" href="#1618_3" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 解释视觉编码、跨模态连接和语言生成在推理中的作用。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 使用公开 VLM 处理 8–12 张不同类型的图像或文档页面。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 固定模型与样例，只改变 Prompt 或一个 generation 参数进行对照。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 保存每次运行的模型 revision、输入、配置和原始输出。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 建立不少于五个失败案例，并按 OCR、空间、计数、推理或幻觉分类。</li>
+</ul>
+<h3 id="_17">必须留下的证据<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li>推理程序、样例清单、run 表、配置、原始输出和失败分析。</li>
+</ul>
+<h3 id="_18">自主探索方向<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>文档</strong>：重点分析密集文字、表格或复杂版面。</li>
+<li><strong>实验</strong>：比较两种 Prompt 约束或图像分辨率。</li>
+<li><strong>视频准备</strong>：用连续多帧图像观察缺失时序信息时的推理问题。</li>
+</ul>
+<h3 id="_19">自主检查<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 每组实验只改变一个变量。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 成功和失败都能定位到原始输入与配置。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 不把语言流畅度当作事实正确性。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 能解释一个成功案例和一个失败案例。</li>
+</ul>
+<h3 id="_20">例会前准备<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<p>展示最有代表性的成功、失败和一个仍无法解释的现象。</p>
+<h3 id="_21">官方入口<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://huggingface.co/Qwen/Qwen3.5-0.8B">Qwen3.5-0.8B Model Card</a></li>
+<li><a href="https://huggingface.co/docs/transformers/chat_templating_multimodal">Transformers multimodal chat templates</a></li>
+</ul>
+<h2 id="week-5">Week 5｜Document AI 任务地图<a class="headerlink" href="#week-5" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝分析三类文档并明确一个研究问题｜标准＝完成任务地图和方向选择｜进阶＝补充代表性论文与可验证假设。</p>
+</blockquote>
+<p><strong>核心问题</strong>：OCR、版面、表格、公式和文档问答分别解决什么问题？</p>
+<p><strong>本周价值</strong>：先确定任务边界和评价方式，再选择工具或模型，避免把所有文档问题都称为“识别”。</p>
+<p><strong>学习入口</strong>：<a href="07_Doc_AI.html">Document AI 任务与评测</a> · <a href="../reading/02_document-ai.html">论文导读</a></p>
+<h3 id="1618_4">主线任务（16–18 小时）<a class="headerlink" href="#1618_4" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 选择数字 PDF、扫描件和含复杂表格文档各一份，记录公开来源或自制说明。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 人工标注标题、段落、表格、公式与预期阅读顺序。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 区分 OCR、layout analysis、table recognition、document parsing 和 Document VQA。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 运行一个公开工具或模型，并逐项对照预期结构。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 制作“任务—输入—方法—输出—指标—常见错误”地图。</li>
+</ul>
+<h3 id="_22">必须留下的证据<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<ul>
+<li>文档来源、人工预期、任务地图、原始工具输出和不少于三类错误。</li>
+</ul>
+<h3 id="_23">自主探索方向<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>OCR</strong>：分析文字识别错误及其对下游任务的影响。</li>
+<li><strong>版面/表格</strong>：研究阅读顺序、区域关系或合并单元格。</li>
+<li><strong>问答</strong>：研究答案正确但证据定位不可靠的情况。</li>
+</ul>
+<h3 id="_24">自主检查<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 能说明当前项目主要评价哪一类任务。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 文档来源和使用权限清楚。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 人工预期与模型原始输出分开保存。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 评价不只依赖“看起来不错”。</li>
+</ul>
+<h3 id="_25">例会前准备<a class="headerlink" href="#_25" title="Permanent link">&para;</a></h3>
+<p>展示任务地图、最困难的一类文档，以及准备在 Week 6 解决的 Pipeline 问题。</p>
+<h3 id="_26">官方入口<a class="headerlink" href="#_26" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://www.paddleocr.ai/main/en/index.html">PaddleOCR documentation</a></li>
+<li><a href="https://huggingface.co/docs/transformers/tasks/document_question_answering">Hugging Face document question answering</a></li>
+</ul>
+<h2 id="week-6">Week 6｜Docling 文档解析 Pipeline<a class="headerlink" href="#week-6" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝把一个公开 PDF 转为 Markdown/JSON 并保存版本与耗时｜标准＝完成可重复 pipeline 和错误分析｜进阶＝比较解析选项或另一种工具。</p>
+</blockquote>
+<p><strong>核心问题</strong>：如何把 PDF 转换成可检查、可重复使用的结构化数据？</p>
+<p><strong>本周价值</strong>：把单次演示改造成有输入校验、日志、输出规范和质量检查的研究 Pipeline。</p>
+<p><strong>学习入口</strong>：<a href="06-2_Docling.html">Docling 文档解析</a> · <a href="../experiments/Experiment_01/index.html">项目实战 01</a></p>
+<h3 id="1618_5">主线任务（16–18 小时）<a class="headerlink" href="#1618_5" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 使用 Docling 解析 Week 5 的三份文档并导出 Markdown/JSON。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 建立可重复运行的命令行入口、输出目录、日志和失败退出码。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 定义至少五条质量检查规则，覆盖标题、段落、表格和阅读顺序。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 保存原始解析结果，不用人工修改制造成功输出。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 分析数字 PDF、扫描件和表格文档之间的差异。</li>
+</ul>
+<h3 id="_27">必须留下的证据<a class="headerlink" href="#_27" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Pipeline、README、原始 Markdown/JSON、运行日志和质量检查结果。</li>
+</ul>
+<h3 id="_28">自主探索方向<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>工程</strong>：批量处理、缓存、失败恢复或增量运行。</li>
+<li><strong>表示</strong>：比较纯文本、Markdown、JSON 与 DocTags 的信息保留。</li>
+<li><strong>应用</strong>：研究结构化结果进入 RAG 或其他下游任务前需要什么。</li>
+</ul>
+<h3 id="_29">自主检查<a class="headerlink" href="#_29" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 新文档可以通过一条命令处理。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 失败时有清晰错误信息并保留日志。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 自动检查和完整 Benchmark 的边界明确。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 能指出结构化输出仍丢失的关键信息。</li>
+</ul>
+<h3 id="_30">例会前准备<a class="headerlink" href="#_30" title="Permanent link">&para;</a></h3>
+<p>展示一条 Pipeline 命令、一个结构保持较好的案例和一个失败案例。</p>
+<h3 id="_31">官方入口<a class="headerlink" href="#_31" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://docling-project.github.io/docling/getting_started/installation/">Docling installation</a></li>
+<li><a href="https://docling-project.github.io/docling/getting_started/quickstart/">Docling quickstart</a></li>
+</ul>
+<h2 id="week-7">Week 7｜Dataset、Benchmark 与负责任使用<a class="headerlink" href="#week-7" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝固定一个小测试集、运行 baseline 并分析一个错误｜标准＝完成数据说明、指标和错误分类｜进阶＝增加切片评测或第二个 baseline。</p>
+</blockquote>
+<p><strong>核心问题</strong>：怎样建立一个不会被调参过程污染的可信测试集？</p>
+<p><strong>本周价值</strong>：冻结数据和评价方式，让 Week 8–10 的任何改进都有公平比较基础。</p>
+<p><strong>学习入口</strong>：<a href="07_Doc_AI.html">Document AI Benchmark</a> · <a href="../tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.html">OmniDocBench 教程</a> · <a href="../reading/05_benchmark-2026.html">评测基准</a></p>
+<h3 id="1618_6">主线任务（16–18 小时）<a class="headerlink" href="#1618_6" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 建立 20–50 个样例的小型固定测试集，不用于训练或 Prompt 调整。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 编写 dataset card，说明来源、划分、license、偏差与限制。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 为 Week 6 Pipeline 设定 baseline、主指标和必要辅助指标。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 输出总体结果与按文档类型切片结果。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 分析最差的五个案例，并检查数据泄漏风险。</li>
+</ul>
+<h3 id="_32">必须留下的证据<a class="headerlink" href="#_32" title="Permanent link">&para;</a></h3>
+<ul>
+<li>dataset card、test manifest、评测脚本、baseline 结果和 benchmark report。</li>
+</ul>
+<h3 id="_33">自主探索方向<a class="headerlink" href="#_33" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>数据</strong>：分析类别、语言、扫描质量或难度分布。</li>
+<li><strong>指标</strong>：比较自动指标与预先定义的人工判断。</li>
+<li><strong>鲁棒性</strong>：研究旋转、压缩、模糊或复杂版面对结果的影响。</li>
+</ul>
+<h3 id="_34">自主检查<a class="headerlink" href="#_34" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> test set 已冻结并与训练/调参数据分离。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 指标能够回答当前研究问题。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 数据许可、隐私和已知偏差被记录。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 结果包含失败和分组差异，而不只有平均分。</li>
+</ul>
+<h3 id="_35">例会前准备<a class="headerlink" href="#_35" title="Permanent link">&para;</a></h3>
+<p>展示测试集设计、baseline 和一个指标无法完全反映的失败案例。</p>
+<h3 id="_36">官方入口<a class="headerlink" href="#_36" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://huggingface.co/docs/datasets/">Hugging Face Datasets</a></li>
+<li><a href="https://huggingface.co/docs/evaluate/">Hugging Face Evaluate</a></li>
+<li><a href="https://huggingface.co/docs/hub/datasets-cards">Dataset Cards</a></li>
+</ul>
+<h2 id="week-8">Week 8｜LoRA/PEFT 小规模微调<a class="headerlink" href="#week-8" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝在小模型和小数据上完成一次短程 LoRA/SFT｜标准＝完成训练前后公平对比｜进阶＝增加一个单变量消融；不因算力充足直接跳到 GRPO。</p>
+</blockquote>
+<p><strong>核心问题</strong>：在有限数据与算力下，怎样得到一个可复现、不过度宣称效果的 adapter？</p>
+<p><strong>本周价值</strong>：学习在固定 baseline 和验证集上研究模型变化，而不是追求更大的训练规模。</p>
+<p><strong>学习入口</strong>：<a href="08_Post_Training.html">模型后训练与 W&amp;B</a> · <a href="../tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.html">Qwen3.5 后训练路线</a></p>
+<h3 id="1618_7">主线任务（16–18 小时）<a class="headerlink" href="#1618_7" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 训练前保存 zero-shot 或 base model baseline。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 使用小模型、小数据完成一次 LoRA/PEFT 训练；资源不足时主动缩小范围。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 固定训练与验证划分，测试集不用于训练或调参。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 保存训练配置、seed、trainable parameters、时间和资源消耗。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 用相同验证集比较训练前后结果，并保留失败运行。</li>
+</ul>
+<h3 id="_37">必须留下的证据<a class="headerlink" href="#_37" title="Permanent link">&para;</a></h3>
+<ul>
+<li>训练代码、配置、adapter metadata、baseline、训练后结果和训练报告。</li>
+</ul>
+<h3 id="_38">自主探索方向<a class="headerlink" href="#_38" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>数据</strong>：研究样例质量或数量变化。</li>
+<li><strong>参数</strong>：只改变 rank、alpha 或 learning rate 中的一项。</li>
+<li><strong>效率</strong>：比较显存、时间、成本与效果。</li>
+</ul>
+<h3 id="_39">自主检查<a class="headerlink" href="#_39" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> baseline 在训练前已保存。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 配置与报告一致，失败实验没有被删除。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> test set 未参与训练或选择超参数。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 能说明当前结果不能支持哪些更大结论。</li>
+</ul>
+<h3 id="_40">例会前准备<a class="headerlink" href="#_40" title="Permanent link">&para;</a></h3>
+<p>展示 baseline、一次训练结果、资源消耗和一个尚不能解释的变化。</p>
+<h3 id="_41">官方入口<a class="headerlink" href="#_41" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://huggingface.co/docs/peft/quicktour">PEFT quicktour</a></li>
+<li><a href="https://huggingface.co/docs/peft/package_reference/lora">PEFT LoRA guide</a></li>
+<li><a href="https://huggingface.co/docs/trl/sft_trainer">TRL SFT Trainer</a></li>
+<li><a href="https://docs.pytorch.org/docs/stable/notes/randomness.html">PyTorch reproducibility</a></li>
+</ul>
+<h2 id="week-9">Week 9｜W&amp;B 实验追踪<a class="headerlink" href="#week-9" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝记录两个可比较 runs 及其配置和结果｜标准＝补齐 artifact、失败案例和 Report｜进阶＝增加数据或模型版本追踪。</p>
+</blockquote>
+<p><strong>核心问题</strong>：如何让多次训练、配置、模型产物和结论形成可审计链条？</p>
+<p><strong>本周价值</strong>：从“记得自己改过什么”升级为可以查询、比较和复查的实验记录。</p>
+<p><strong>学习入口</strong>：<a href="08_Post_Training.html">模型后训练与 W&amp;B</a></p>
+<h3 id="1618_8">主线任务（16–18 小时）<a class="headerlink" href="#1618_8" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 在 Week 8 代码中接入 W&amp;B，不把 API key 提交到仓库。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 只改变一个变量运行至少两个可比较 runs。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 记录 config、metrics、system metrics、运行时间和关键任务指标。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 用 artifact 或 metadata 关联数据、adapter、代码 commit 和结果。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 创建 W&amp;B Report，说明证据支持的结论、负面结果与下一步。</li>
+</ul>
+<h3 id="_42">必须留下的证据<a class="headerlink" href="#_42" title="Permanent link">&para;</a></h3>
+<ul>
+<li>run ID 或链接、配置 diff、图表、artifact 标识和报告；私有项目可保留脱敏导出。</li>
+</ul>
+<h3 id="_43">自主探索方向<a class="headerlink" href="#_43" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>可视化</strong>：设计更能回答研究问题的图和表。</li>
+<li><strong>追踪</strong>：把每个 run 与 Git commit、数据版本和 adapter 对应。</li>
+<li><strong>决策</strong>：制定选择或放弃模型的证据规则。</li>
+</ul>
+<h3 id="_44">自主检查<a class="headerlink" href="#_44" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 两个 runs 使用一致的数据划分和指标。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 能从报告回到具体配置、代码和 artifact。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 不只展示最好的一次运行。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 私有数据和敏感输入没有进入公开报告。</li>
+</ul>
+<h3 id="_45">例会前准备<a class="headerlink" href="#_45" title="Permanent link">&para;</a></h3>
+<p>展示两个 runs 的唯一差异、最重要图表和当前模型选择判断。</p>
+<h3 id="_46">官方入口<a class="headerlink" href="#_46" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://docs.wandb.ai/models/quickstart">W&amp;B Quickstart</a></li>
+<li><a href="https://docs.wandb.ai/models/track">Track experiments</a></li>
+<li><a href="https://docs.wandb.ai/models/artifacts">W&amp;B Artifacts</a></li>
+<li><a href="https://docs.wandb.ai/models/reports">W&amp;B Reports</a></li>
+</ul>
+<h2 id="week-10">Week 10｜统一评测、消融与错误分析<a class="headerlink" href="#week-10" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝冻结协议并完成一个单变量对照｜标准＝完成指标、成本、消融和错误 taxonomy｜进阶＝增加置信区间、切片或稳健性评测。</p>
+</blockquote>
+<p><strong>核心问题</strong>：观察到的改进来自方法本身，还是随机波动、数据泄漏或选择性汇报？</p>
+<p><strong>本周价值</strong>：用统一测试、单变量消融和错误案例检验 Week 8–9 的结论。</p>
+<p><strong>学习入口</strong>：<a href="08_Post_Training.html#stage-4">模型后训练与 W&amp;B</a> · <a href="../reading/05_benchmark-2026.html">评测基准</a></p>
+<h3 id="1618_9">主线任务（16–18 小时）<a class="headerlink" href="#1618_9" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 使用 Week 7 冻结的 test set 统一评测 baseline 与 Week 9 runs。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 完成一次只改变一个因素的消融。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 同时报告总体、分组指标和资源成本。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 建立不少于 20 个错误案例的 taxonomy，并抽样人工复核。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 写出正面结果、负面结果、限制和是否采用改进模型的决定。</li>
+</ul>
+<h3 id="_47">必须留下的证据<a class="headerlink" href="#_47" title="Permanent link">&para;</a></h3>
+<ul>
+<li>评测脚本、原始结果、消融表、错误 taxonomy 和 evaluation report。</li>
+</ul>
+<h3 id="_48">自主探索方向<a class="headerlink" href="#_48" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>鲁棒性</strong>：测试压缩、模糊、旋转或版面变化。</li>
+<li><strong>成本</strong>：比较效果、推理时间、显存和维护成本。</li>
+<li><strong>未来视频</strong>：思考静态文档指标如何扩展到时间定位、事件和长上下文。</li>
+</ul>
+<h3 id="_49">自主检查<a class="headerlink" href="#_49" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 所有模型使用同一测试集、指标和运行条件。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 结论由指标和失败案例共同支持。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 报告包含退化、成本和适用边界。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 事实、解释和推测被清楚区分。</li>
+</ul>
+<h3 id="_50">例会前准备<a class="headerlink" href="#_50" title="Permanent link">&para;</a></h3>
+<p>展示最关键的对比结果、一个推翻原假设的案例和最终模型选择。</p>
+<h3 id="_51">官方入口<a class="headerlink" href="#_51" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html">scikit-learn model evaluation</a></li>
+<li><a href="https://huggingface.co/docs/evaluate/">Hugging Face Evaluate</a></li>
+</ul>
+<h2 id="week-11">Week 11｜论文导读与最小复现<a class="headerlink" href="#week-11" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝完成一张 Paper Card 和一个可验证问题｜标准＝复现一个最小主张｜进阶＝加入 baseline、消融或负面结果分析。</p>
+</blockquote>
+<p><strong>核心问题</strong>：论文的核心主张，在你的资源约束下能否被部分验证？</p>
+<p><strong>本周价值</strong>：把论文从“阅读材料”变成能够影响当前项目设计的研究证据。</p>
+<p><strong>学习入口</strong>：<a href="../reading/index.html">论文导读</a> · <a href="../reading/05_benchmark-2026.html">评测基准</a></p>
+<h3 id="1618_10">主线任务（16–18 小时）<a class="headerlink" href="#1618_10" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 选择一篇与当前项目直接相关、具有官方论文和可核查代码或数据的工作。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 完成一页 Paper Card，区分问题、主张、证据和限制。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 预注册一个最小主张、复现范围、成功标准、资源上限和停止条件。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 运行小规模复现，保留配置与原始结果。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 比较论文设置与本地设置，解释偏差而不是简单判断成功或失败。</li>
+</ul>
+<h3 id="_52">必须留下的证据<a class="headerlink" href="#_52" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Paper Card、复现计划、配置、原始结果和 reproduction report。</li>
+</ul>
+<h3 id="_53">自主探索方向<a class="headerlink" href="#_53" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>方法</strong>：复现一个关键模块或最小算法变化。</li>
+<li><strong>数据/评测</strong>：复现数据处理、指标或一组公开结果。</li>
+<li><strong>项目扩展</strong>：把论文中的一个想法用于当前 Pipeline，并控制变量。</li>
+</ul>
+<h3 id="_54">自主检查<a class="headerlink" href="#_54" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 事实来自论文原文、作者项目或数据主页。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 成功标准在运行实验前已经写出。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 缩小范围和本地差异被清楚记录。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 论文事实、作者解释和个人推测相互分开。</li>
+</ul>
+<h3 id="_55">例会前准备<a class="headerlink" href="#_55" title="Permanent link">&para;</a></h3>
+<p>用五句话说明论文问题、核心主张、关键证据、一个限制和你的复现结果。</p>
+<h3 id="_56">官方入口<a class="headerlink" href="#_56" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://neurips.cc/public/guides/PaperChecklist">NeurIPS Paper Checklist</a></li>
+<li><a href="https://www.acm.org/publications/policies/artifact-review-and-badging-current">ACM Artifact Review and Badging</a></li>
+</ul>
+<h2 id="week-12">Week 12｜Capstone、展示与自主答辩<a class="headerlink" href="#week-12" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>路径选择</strong>：最小＝整理可运行仓库、核心结果和限制说明｜标准＝完成完整 Project Card、演示与答辩材料｜进阶＝补充可复现实验包或对外展示版本。</p>
+</blockquote>
+<p><strong>核心问题</strong>：陌生读者能否理解问题、复现结果并判断结论是否可信？</p>
+<p><strong>本周价值</strong>：把 12 周形成的仓库、数据、模型、评测和研究判断整理为一个完整作品，并确定下一阶段自主探索方向。</p>
+<p><strong>学习入口</strong>：<a href="../projects/index.html#design-capstone">Capstone 设计与展厅发布指南</a> · <a href="10_Assessment_and_Submission.html">自主评估与证据指南</a> · <a href="../experiments/index.html">项目实战</a></p>
+<h3 id="1618_11">主线任务（16–18 小时）<a class="headerlink" href="#1618_11" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 完成一页 Capstone 设计卡，明确问题、baseline、唯一核心变量、判断方式与停止条件。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 整理唯一开始入口、环境说明、配置和一键复现命令。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 移除密钥、私人文档、未授权数据和不必要的大文件。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 汇总 baseline、改进方法、统一评测、错误分析和资源成本。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 编写 Project Card 或 Model Card，说明用途、不适用场景、限制和伦理风险。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 完成 AI 使用披露与最终自主评估。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 准备五分钟项目演示，并请同学按 README 尝试复现一组结果。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 制定未来四周的自主探索计划。</li>
+</ul>
+<h3 id="_57">最终成果<a class="headerlink" href="#_57" title="Permanent link">&para;</a></h3>
+<ul>
+<li>完整项目仓库、源码、配置、结果、实验报告、Project/Model Card、演示材料和最终复盘。</li>
+</ul>
+<h3 id="_58">自主探索方向<a class="headerlink" href="#_58" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Document AI 深化</strong>：更复杂版面、表格、公式或多语言文档。</li>
+<li><strong>模型实验</strong>：更系统的后训练、鲁棒性或高效推理。</li>
+<li><strong>未来方向</strong>：视频理解、多模态 Agent、结构化文档与 RAG。</li>
+</ul>
+<h3 id="_59">最终自主检查<a class="headerlink" href="#_59" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 陌生同学能够按 README 复现至少一组结果。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 每项关键结论都能回到输入、配置和原始结果。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 负面结果、失败案例和适用边界被如实报告。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> AI 参与范围与人工验证清楚。</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> 下一阶段研究问题具体、可执行、可检查。</li>
+</ul>
+<h3 id="_60">例会前准备<a class="headerlink" href="#_60" title="Permanent link">&para;</a></h3>
+<p>展示最终项目、最可信的一项结论、最重要的限制，以及未来准备继续追问的问题。例会用于交流和提问，不进行导师评分。</p>
+<h3 id="_61">官方入口<a class="headerlink" href="#_61" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="https://huggingface.co/docs/hub/model-cards">Hugging Face Model Cards</a></li>
+<li><a href="https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning">GitHub secret scanning</a></li>
+<li><a href="https://docs.wandb.ai/models/reports">W&amp;B Reports</a></li>
+</ul>
+<h2 id="_62">完成之后<a class="headerlink" href="#_62" title="Permanent link">&para;</a></h2>
+<p>你完成的不是“看完 12 章”，而是一套由代码、配置、原始结果、指标、失败案例和研究说明组成的证据链。下一步可以继续进入<a href="../reading/index.html">论文导读</a>、深化<a href="../experiments/index.html">项目实战</a>，或把作品整理到<a href="../projects/index.html">成果展厅</a>。</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+                
+  
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Multimodal Vision AI Lab.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../js/visitor.js"></script>
+      
+        <script src="../js/shanshui.js"></script>
+      
+        <script src="../js/radar.js"></script>
+      
+        <script src="../js/model-playground.js"></script>
+      
+        <script src="../js/vision-demo-v1.js"></script>
+      
+    
+  </body>
+</html>

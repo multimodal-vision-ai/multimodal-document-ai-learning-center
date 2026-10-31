@@ -1,0 +1,4124 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Multimodal Vision AI Learning Center — 从文档理解出发，探索图像、视频与多模态智能">
+      
+      
+        <meta name="author" content="谭国平教授团队 · Multimodal Vision AI Lab">
+      
+      
+        <link rel="canonical" href="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-59/reading/03_vlm.html">
+      
+      
+        <link rel="prev" href="01_foundation.html">
+      
+      
+        <link rel="next" href="02_document-ai.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>视觉语言 - 多模态视觉AI学习中心</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../stylesheets/shanshui.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar-v2.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar-v4.css">
+    
+      <link rel="stylesheet" href="../stylesheets/radar-v5.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground-guide-v2.css">
+    
+      <link rel="stylesheet" href="../stylesheets/vision-demo-v3.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-playground-quota-v1.css">
+    
+      <link rel="stylesheet" href="../stylesheets/model-demo-sidebar-native-v2.css">
+    
+      <link rel="stylesheet" href="../stylesheets/showcase-v1-3.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr"><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="多模态视觉AI学习中心" class="md-header__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            多模态视觉AI学习中心
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              视觉语言
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../index.html" class="md-tabs__link">
+          
+  
+  
+  学习首页
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../learning/index.html" class="md-tabs__link">
+          
+  
+  
+  入门课程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../tutorials/index.html" class="md-tabs__link">
+          
+  
+  
+  动手教程
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../experiments/index.html" class="md-tabs__link">
+          
+  
+  
+  项目实战
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+  论文导读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../resources/index.html" class="md-tabs__link">
+          
+  
+  
+  学习资源
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../projects/index.html" class="md-tabs__link">
+          
+  
+  
+  成果展厅
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="多模态视觉AI学习中心" class="md-nav__button md-logo" aria-label="多模态视觉AI学习中心" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    多模态视觉AI学习中心
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    multimodal-vision-ai/multimodal-document-ai-learning-center
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习首页
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            学习首页
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    欢迎
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    模型演示
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            模型演示
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-demos/document.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-demos/video.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视频理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-demos/vision.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉感知
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../radar/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    前沿动态
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于学习中心
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    入门课程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            入门课程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    课程首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/00_12_Week_Bootcamp.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    12 周自主路线
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    基础工具
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            基础工具
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/01_Git_and_GitHub.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Git 与 GitHub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/02_Python_Environment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Python 与可复现环境
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/03_HuggingFace.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hugging Face Hub
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/04_Kaggle.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kaggle Notebook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/05_Transformers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Transformers 推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/05-1_AI_Assisted_Coding.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AI 辅助编程与验证
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档智能专题
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档智能专题
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/06-1_Qwen3.5-VL-0.8B.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Qwen3.5-0.8B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/06-2_Docling.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docling 文档解析
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/07_Doc_AI.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Document AI 与评测
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    后训练与实验追踪
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            后训练与实验追踪
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/08_Post_Training.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LoRA、评测与 W&B
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    自主学习支持
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            自主学习支持
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/10_Assessment_and_Submission.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主评估与证据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/11_Learning_Log_Template.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自主学习记录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../learning/09_FAQ.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    常见问题
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    动手教程
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            动手教程
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个教程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/Qwen2.5-OmniDocBench-kaggle-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档评测：OmniDocBench Markdown
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/Qwen3.5-VL-SFT-GRPO-tutorial.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    后训练路线：Qwen3.5-VL SFT/GRPO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目实战
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            项目实战
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    选择一个项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目 01：文档理解评测
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            项目 01：文档理解评测
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    项目控制台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part01-%E5%AE%9E%E9%AA%8C%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 01：确定目标与准备
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part02-%E5%88%9B%E5%BB%BAGithub%E7%A7%91%E7%A0%94%E9%A1%B9%E7%9B%AE%E4%BB%93%E5%BA%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 02：创建 GitHub 项目
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part03-%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 03：构建项目目录
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part04-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%87%86%E5%A4%87.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 04：准备实验数据
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part05-%E6%A8%A1%E5%9E%8B%E5%87%86%E5%A4%87%E4%B8%8E%E6%8E%A8%E7%90%86.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 05：完成首次推理
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part06-%E6%8F%90%E7%A4%BA%E8%AF%8D%E7%AE%A1%E7%90%86%E4%B8%8E%E5%AF%B9%E6%AF%94%E5%88%86%E6%9E%90.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 06：完成受控对比
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../experiments/Experiment_01/Part07-Bechmark%E8%AF%84%E6%B5%8B%E4%B8%8E%E6%80%BB%E7%BB%93.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 07：评测与项目总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    论文导读
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            论文导读
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    快速选读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="00_surveys.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    领域地图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    核心原理
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            核心原理
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="01_foundation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    模型基石
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    视觉语言
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="03_vlm.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉语言
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      阅读分层与模块学习卡
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      本页快速定位
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      为什么要学
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      学习目标
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      建议路线
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    文档研究
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            文档研究
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="02_document-ai.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档智能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="04_doctags.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    结构表示
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="05_benchmark-2026.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    评测选型
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    学习资源
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            学习资源
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    按问题找资源
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/official-sources.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    官方文档与平台
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/courses.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    推荐课程
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/papers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    论文索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/datasets.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    数据集索引
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resources/tools.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    工具清单
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    成果展厅
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            成果展厅
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自研模型展示
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    研究项目
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            研究项目
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/document-ai/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    文档理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/vision-ai/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/brain-inspired/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    类脑智能
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../projects/student-work/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    学生作品
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      阅读分层与模块学习卡
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      本页快速定位
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      为什么要学
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      学习目标
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      建议路线
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+  
+                  
+  
+
+
+
+  
+    <a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/edit/dev/docs/reading/03_vlm.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="_1">视觉语言模型：看懂架构、能力与失败<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>本页不要求记住所有模型。重点是理解视觉编码、跨模态连接与语言生成如何组成 VLM，以及模型为什么会在文字密集、复杂版面和细粒度定位任务上失败。</p>
+<div class="admonition success">
+<p class="admonition-title">本页最小任务</p>
+<p>选择一个 VLM，画出“图像输入—视觉表示—语言模型—输出”的流程，并用一个成功案例和一个失败案例说明其能力边界。</p>
+</div>
+<h2 id="_2">阅读分层与模块学习卡<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>标签</th>
+<th style="text-align: right;">预计时长</th>
+<th>阅读范围</th>
+<th>最小完成动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>必读</strong></td>
+<td style="text-align: right;">30–45 分钟</td>
+<td><a href="#part-1-what-is-a-vision-language-model">VLM 基本结构</a>，再从 LLaVA、Florence-2 或 Qwen 系列选择一个模型</td>
+<td>画出一个 VLM 流程，并记录一个能力和一个边界</td>
+</tr>
+<tr>
+<td><strong>选读</strong></td>
+<td style="text-align: right;">1–2 小时</td>
+<td>按任务选择开源模型演进、下一代 VLM 或实验设计章节</td>
+<td>完成模型选择表：任务、规模、输入、输出、限制</td>
+</tr>
+<tr>
+<td><strong>深挖</strong></td>
+<td style="text-align: right;">半天至 1 周</td>
+<td>阅读所选模型的 Model Card、论文、官方代码和评测</td>
+<td>用固定样例完成一次受控实验并保存失败案例</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">本页学习卡</p>
+<p><strong>学什么</strong>：视觉编码、跨模态连接、语言生成与常见失败。<br>
+<strong>官方来源</strong>：模型正式论文、Model Card 与官方代码仓库。<br>
+<strong>做什么</strong>：选择一个与当前任务和算力匹配的模型进行验证。<br>
+<strong>提交什么</strong>：结构图、模型选择理由、成功与失败样例。<br>
+<strong>如何自查</strong>：能区分模型宣称能力、公开评测结果和自己的实验结论。</p>
+</div>
+<h2 id="_3">本页快速定位<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>当前问题</th>
+<th>直接进入</th>
+<th>阅读目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VLM 由哪些组件构成</td>
+<td><a href="#part-1-what-is-a-vision-language-model">VLM 基本结构</a></td>
+<td>说清视觉编码、跨模态连接与语言生成</td>
+</tr>
+<tr>
+<td>经典模型如何建立能力</td>
+<td><a href="#llava">LLaVA</a> · <a href="#florence-2">Florence-2</a></td>
+<td>比较对话式 VLM 与通用视觉基础模型</td>
+</tr>
+<tr>
+<td>主流开源模型如何演进</td>
+<td><a href="#internvl">InternVL</a> · <a href="#qwen25-vl">Qwen2.5-VL</a></td>
+<td>找出动态分辨率、OCR 与 Agent 能力的变化</td>
+</tr>
+<tr>
+<td>查看当前 Qwen 多模态模型</td>
+<td><a href="#qwen35-models">Qwen3.5 官方模型集合</a></td>
+<td>根据规模、任务和算力选择模型</td>
+</tr>
+<tr>
+<td>理解下一代 VLM</td>
+<td><a href="#qwen3-vl">Qwen3-VL</a> · <a href="#kimi-vl">Kimi-VL</a></td>
+<td>关注长上下文、MoE、视频与 Agent</td>
+</tr>
+<tr>
+<td>设计可执行实验</td>
+<td><a href="#recommended-laboratory-experiments">Recommended Laboratory Experiments</a></td>
+<td>确定变量、数据、指标和成功标准</td>
+</tr>
+<tr>
+<td>寻找研究方向</td>
+<td><a href="#current-research-trends">Current Research Trends</a> · <a href="#laboratory-research-roadmap">Research Roadmap</a></td>
+<td>把趋势转成一个最小验证问题</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_4">为什么要学<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<p>Vision-Language Model（VLM）是当前多模态人工智能最重要的发展方向之一。</p>
+<p>VLM 的目标是：</p>
+<blockquote>
+<p><strong>让大型语言模型真正理解图像，并能够基于视觉信息进行推理、分析和交互。</strong></p>
+</blockquote>
+<p>近年来，随着 CLIP、BLIP、LLaVA、Qwen-VL、InternVL、Florence 等模型的发展，VLM 已成为现代 AI Agent 和 Document AI 的核心基础模型。</p>
+<hr />
+<h2 id="_5">学习目标<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>完成本章节后，应能够：</p>
+<ul>
+<li>理解 Vision-Language Model 的基本原理</li>
+<li>理解 VLM 与传统 OCR、CNN 模型的区别</li>
+<li>掌握现代 VLM 的基本架构</li>
+<li>为后续学习 Qwen2.5-VL、Qwen3-VL、SmolDocling 打下理论基础</li>
+</ul>
+<hr />
+<h2 id="_6">建议路线<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>CLIP
+ │
+ ▼
+BLIP
+ │
+ ▼
+BLIP-2
+ │
+ ▼
+LLaVA
+ │
+ ▼
+Florence-2
+ │
+ ▼
+Qwen2-VL
+ │
+ ▼
+Qwen2.5-VL
+ │
+ ▼
+Modern Vision-Language Models
+</code></pre></div>
+<hr />
+<h1 id="part-1-what-is-a-vision-language-model">Part 1. What is a Vision-Language Model?<a class="headerlink" href="#part-1-what-is-a-vision-language-model" title="Permanent link">&para;</a></h1>
+<p>传统计算机视觉模型：</p>
+<div class="highlight"><pre><span></span><code>Image
+  │
+  ▼
+Classification
+Detection
+Segmentation
+</code></pre></div>
+<p>现代 Vision-Language Model：</p>
+<div class="highlight"><pre><span></span><code>Image
+     │
+     ▼
+Vision Encoder
+     │
+     ▼
+Large Language Model
+     │
+     ▼
+Reasoning
+Conversation
+Grounding
+Generation
+</code></pre></div>
+<p>VLM 不仅能够识别图像内容，还能够：</p>
+<ul>
+<li>回答问题（VQA）</li>
+<li>理解复杂文档</li>
+<li>理解图表</li>
+<li>阅读网页</li>
+<li>分析界面</li>
+<li>调用工具（Tool Use）</li>
+</ul>
+<hr />
+<h1 id="why-vision-language-models-matter">Why Vision-Language Models Matter<a class="headerlink" href="#why-vision-language-models-matter" title="Permanent link">&para;</a></h1>
+<p>现代 VLM 已成为：</p>
+<ul>
+<li>Multimodal AI</li>
+<li>Document AI</li>
+<li>AI Agent</li>
+<li>Robotics</li>
+<li>Autonomous Driving</li>
+<li>Medical AI</li>
+</ul>
+<p>等领域的重要基础模型; 尤其在：</p>
+<ul>
+<li>Document Parsing</li>
+<li>OCR-free Parsing</li>
+<li>Chart Understanding</li>
+<li>Scientific Figure Understanding</li>
+</ul>
+<p>方面表现突出。</p>
+<hr />
+<h1 id="paper-1">Paper 1<a class="headerlink" href="#paper-1" title="Permanent link">&para;</a></h1>
+<h1 id="llava">LLaVA<a class="headerlink" href="#llava" title="Permanent link">&para;</a></h1>
+<p><strong>Priority</strong></p>
+<p>⭐⭐⭐⭐⭐</p>
+<p><strong>Conference</strong></p>
+<p>NeurIPS 2023</p>
+<p><strong>Organization</strong></p>
+<p>University of Wisconsin-Madison / Microsoft Research</p>
+<hr />
+<h2 id="official-paper">Official Paper<a class="headerlink" href="#official-paper" title="Permanent link">&para;</a></h2>
+<p><a href="https://arxiv.org/abs/2304.08485">https://arxiv.org/abs/2304.08485</a></p>
+<hr />
+<h2 id="official-github">Official GitHub<a class="headerlink" href="#official-github" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/haotian-liu/LLaVA">https://github.com/haotian-liu/LLaVA</a></p>
+<hr />
+<h2 id="main-contributions">Main Contributions<a class="headerlink" href="#main-contributions" title="Permanent link">&para;</a></h2>
+<p>LLaVA（Large Language and Vision Assistant）首次证明：</p>
+<blockquote>
+<p><strong>利用轻量级视觉投影层，即可连接 Vision Encoder 与 LLM。</strong></p>
+</blockquote>
+<p>典型架构：</p>
+<div class="highlight"><pre><span></span><code>Image
+   │
+   ▼
+CLIP Vision Encoder
+   │
+   ▼
+Projection Layer
+   │
+   ▼
+Vicuna / LLM
+</code></pre></div>
+<p>这种设计大幅降低了训练成本，并推动了开源 VLM 的快速发展。</p>
+<hr />
+<h2 id="why-read-in-2026">Why Read in 2026<a class="headerlink" href="#why-read-in-2026" title="Permanent link">&para;</a></h2>
+<p>LLaVA 是现代开源 VLM 的重要起点。</p>
+<p>大量后续模型都借鉴了其设计思想，包括：</p>
+<ul>
+<li>LLaVA-NeXT</li>
+<li>MiniGPT-4</li>
+<li>InternVL（部分设计）</li>
+<li>Qwen-VL（训练流程具有相似思想）</li>
+</ul>
+<hr />
+<h2 id="students-should-learn">Students Should Learn<a class="headerlink" href="#students-should-learn" title="Permanent link">&para;</a></h2>
+<p>重点掌握：</p>
+<ul>
+<li>Vision Encoder</li>
+<li>Projection Layer</li>
+<li>Instruction Tuning</li>
+<li>Visual Conversation</li>
+</ul>
+<hr />
+<h2 id="laboratory-relevance">Laboratory Relevance<a class="headerlink" href="#laboratory-relevance" title="Permanent link">&para;</a></h2>
+<p>★★★★★</p>
+<p>理解 LLaVA，有助于理解：</p>
+<ul>
+<li>多模态对话</li>
+<li>图像问答</li>
+<li>文档问答</li>
+</ul>
+<hr />
+<h1 id="paper-2">Paper 2<a class="headerlink" href="#paper-2" title="Permanent link">&para;</a></h1>
+<h1 id="florence-2">Florence-2<a class="headerlink" href="#florence-2" title="Permanent link">&para;</a></h1>
+<p><strong>Priority</strong></p>
+<p>⭐⭐⭐⭐⭐</p>
+<p><strong>Organization</strong></p>
+<p>Microsoft Research</p>
+<p><strong>Year</strong></p>
+<p>2024</p>
+<hr />
+<h2 id="official-paper_1">Official Paper<a class="headerlink" href="#official-paper_1" title="Permanent link">&para;</a></h2>
+<p><a href="https://arxiv.org/abs/2311.06242">https://arxiv.org/abs/2311.06242</a></p>
+<hr />
+<h2 id="official-github_1">Official GitHub<a class="headerlink" href="#official-github_1" title="Permanent link">&para;</a></h2>
+<p><a href="https://huggingface.co/collections/microsoft/florence">https://huggingface.co/collections/microsoft/florence</a></p>
+<hr />
+<h2 id="main-contributions_1">Main Contributions<a class="headerlink" href="#main-contributions_1" title="Permanent link">&para;</a></h2>
+<p>Florence-2 提出了：</p>
+<blockquote>
+<p><strong>Unified Prompt-based Vision Model</strong></p>
+</blockquote>
+<p>通过统一 Prompt，将不同视觉任务统一到同一个模型中。</p>
+<p>支持：</p>
+<ul>
+<li>Captioning</li>
+<li>OCR</li>
+<li>Object Detection</li>
+<li>Grounding</li>
+<li>Segmentation</li>
+<li>Dense Region Captioning</li>
+</ul>
+<hr />
+<h2 id="why-read-in-2026_1">Why Read in 2026<a class="headerlink" href="#why-read-in-2026_1" title="Permanent link">&para;</a></h2>
+<p>Florence-2 是目前最重要的轻量级 Vision Foundation Model 之一。</p>
+<p>具有：</p>
+<ul>
+<li>模型小</li>
+<li>推理速度快</li>
+<li>支持任务丰富</li>
+<li>易于部署</li>
+</ul>
+<p>等特点，非常适合作为科研实验和教学平台。</p>
+<hr />
+<h2 id="students-should-learn_1">Students Should Learn<a class="headerlink" href="#students-should-learn_1" title="Permanent link">&para;</a></h2>
+<p>重点掌握：</p>
+<ul>
+<li>Prompt-based Vision Tasks</li>
+<li>Unified Vision Modeling</li>
+<li>Dense Caption</li>
+<li>Visual Grounding</li>
+</ul>
+<hr />
+<h2 id="laboratory-relevance_1">Laboratory Relevance<a class="headerlink" href="#laboratory-relevance_1" title="Permanent link">&para;</a></h2>
+<p>★★★★★</p>
+<p>Florence-2 非常适合作为：</p>
+<ul>
+<li>Document AI Baseline</li>
+<li>OCR Baseline</li>
+<li>VLM 入门实验模型</li>
+</ul>
+<hr />
+<h1 id="knowledge-checklist">Knowledge Checklist<a class="headerlink" href="#knowledge-checklist" title="Permanent link">&para;</a></h1>
+<p>完成本部分后，应能够回答：</p>
+<h3 id="vision-language-models">Vision-Language Models<a class="headerlink" href="#vision-language-models" title="Permanent link">&para;</a></h3>
+<ul>
+<li>为什么 VLM 能够理解图像？</li>
+<li>Vision Encoder 的作用是什么？</li>
+<li>Projection Layer 为什么重要？</li>
+</ul>
+<hr />
+<h3 id="llava_1">LLaVA<a class="headerlink" href="#llava_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>为什么只需要训练 Projection Layer？</li>
+<li>LLaVA 为什么推动了开源 VLM 的发展？</li>
+</ul>
+<hr />
+<h3 id="florence-2_1">Florence-2<a class="headerlink" href="#florence-2_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>什么是 Unified Prompt？</li>
+<li>为什么 Florence-2 可以完成多种视觉任务？</li>
+</ul>
+<hr />
+<h1 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h1>
+<p>现代 Vision-Language Model 的发展路线如下：</p>
+<div class="highlight"><pre><span></span><code>CLIP
+ │
+ ▼
+BLIP
+ │
+ ▼
+BLIP-2
+ │
+ ▼
+LLaVA
+ │
+ ▼
+Florence-2
+ │
+ ▼
+Modern Open-source VLM
+</code></pre></div>
+<p>完成本部分后，应理解现代 VLM 的基本架构，并为下一部分 <strong>InternVL、Qwen2-VL、Qwen2.5-VL</strong> 的学习做好准备。</p>
+<hr />
+<h1 id="part-2-modern-open-source-vision-language-models">Part 2. Modern Open-source Vision-Language Models<a class="headerlink" href="#part-2-modern-open-source-vision-language-models" title="Permanent link">&para;</a></h1>
+<p>自 2024 年以来，开源 VLM 进入快速发展阶段。</p>
+<p>代表性模型包括：</p>
+<ul>
+<li>InternVL</li>
+<li>Qwen2-VL</li>
+<li>Qwen2.5-VL</li>
+</ul>
+<p>这些模型不仅具备图像理解能力，还支持：</p>
+<ul>
+<li>Document Parsing</li>
+<li>OCR-free Understanding</li>
+<li>Chart Reasoning</li>
+<li>GUI Understanding</li>
+<li>Video Understanding</li>
+<li>Agent Tool Use</li>
+</ul>
+<hr />
+<h1 id="paper-3">Paper 3<a class="headerlink" href="#paper-3" title="Permanent link">&para;</a></h1>
+<h1 id="internvl">InternVL<a class="headerlink" href="#internvl" title="Permanent link">&para;</a></h1>
+<p><strong>Priority</strong></p>
+<p>⭐⭐⭐⭐⭐</p>
+<p><strong>Organization</strong></p>
+<p>OpenGVLab</p>
+<p><strong>Conference</strong></p>
+<p>CVPR 2024（InternVL 1.0）</p>
+<hr />
+<h2 id="official-paper_2">Official Paper<a class="headerlink" href="#official-paper_2" title="Permanent link">&para;</a></h2>
+<p><a href="https://arxiv.org/abs/2312.14238">https://arxiv.org/abs/2312.14238</a></p>
+<hr />
+<h2 id="official-website">Official Website<a class="headerlink" href="#official-website" title="Permanent link">&para;</a></h2>
+<p><a href="https://internvl.github.io/">https://internvl.github.io/</a></p>
+<hr />
+<h2 id="official-github_2">Official GitHub<a class="headerlink" href="#official-github_2" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/OpenGVLab/InternVL">https://github.com/OpenGVLab/InternVL</a></p>
+<hr />
+<h2 id="main-contributions_2">Main Contributions<a class="headerlink" href="#main-contributions_2" title="Permanent link">&para;</a></h2>
+<p>InternVL 提出了：</p>
+<blockquote>
+<p><strong>大规模 Vision Foundation Model + LLM Alignment</strong></p>
+</blockquote>
+<p>核心特点：</p>
+<ul>
+<li>大规模 Vision Encoder</li>
+<li>Progressive Scaling</li>
+<li>高质量多模态数据</li>
+<li>多任务统一训练</li>
+</ul>
+<p>形成完整的 InternVL 系列模型。</p>
+<hr />
+<h2 id="why-read-in-2026_2">Why Read in 2026<a class="headerlink" href="#why-read-in-2026_2" title="Permanent link">&para;</a></h2>
+<p>InternVL 已成为最具代表性的开源 VLM 之一。</p>
+<p>InternVL 2.5 在：</p>
+<ul>
+<li>Document Understanding</li>
+<li>OCR</li>
+<li>MMMU</li>
+<li>MathVista</li>
+<li>ChartQA</li>
+</ul>
+<p>等多个基准上达到国际领先水平，并强调 <strong>Vision Encoder、数据质量和 Test-time Scaling</strong> 对性能的重要影响。</p>
+<hr />
+<h2 id="students-should-learn_2">Students Should Learn<a class="headerlink" href="#students-should-learn_2" title="Permanent link">&para;</a></h2>
+<p>重点掌握：</p>
+<ul>
+<li>Progressive Scaling</li>
+<li>Vision Encoder</li>
+<li>Multimodal Alignment</li>
+<li>Instruction Tuning</li>
+<li>Test-time Scaling</li>
+</ul>
+<hr />
+<h2 id="laboratory-relevance_2">Laboratory Relevance<a class="headerlink" href="#laboratory-relevance_2" title="Permanent link">&para;</a></h2>
+<p>★★★★★</p>
+<p>InternVL 是研究：</p>
+<ul>
+<li>多模态理解</li>
+<li>文档理解</li>
+<li>高性能 Vision Encoder</li>
+</ul>
+<p>的重要参考模型。</p>
+<hr />
+<h1 id="paper-4">Paper 4<a class="headerlink" href="#paper-4" title="Permanent link">&para;</a></h1>
+<h1 id="qwen2-vl">Qwen2-VL<a class="headerlink" href="#qwen2-vl" title="Permanent link">&para;</a></h1>
+<p><strong>Priority</strong></p>
+<p>⭐⭐⭐⭐⭐</p>
+<p><strong>Organization</strong></p>
+<p>Alibaba Qwen Team</p>
+<p><strong>Year</strong></p>
+<p>2024</p>
+<hr />
+<h2 id="official-paper_3">Official Paper<a class="headerlink" href="#official-paper_3" title="Permanent link">&para;</a></h2>
+<p><a href="https://arxiv.org/abs/2409.12191">https://arxiv.org/abs/2409.12191</a></p>
+<hr />
+<h2 id="main-contributions_3">Main Contributions<a class="headerlink" href="#main-contributions_3" title="Permanent link">&para;</a></h2>
+<p>Qwen2-VL 提出了两项关键创新：</p>
+<ul>
+<li><strong>Naive Dynamic Resolution</strong></li>
+<li><strong>Multimodal Rotary Position Embedding（M-RoPE）</strong></li>
+</ul>
+<p>实现：</p>
+<ul>
+<li>任意分辨率图像输入</li>
+<li>图片与视频统一建模</li>
+<li>更好的 OCR</li>
+<li>更好的文档理解</li>
+</ul>
+<hr />
+<h2 id="why-read">Why Read<a class="headerlink" href="#why-read" title="Permanent link">&para;</a></h2>
+<p>Qwen2-VL 首次证明：</p>
+<blockquote>
+<p><strong>动态分辨率 Vision Encoder</strong></p>
+</blockquote>
+<p>能够显著提升：</p>
+<ul>
+<li>Document AI</li>
+<li>OCR</li>
+<li>Chart Understanding</li>
+</ul>
+<p>尤其适合复杂 PDF 与高分辨率文档解析。</p>
+<hr />
+<h2 id="students-should-learn_3">Students Should Learn<a class="headerlink" href="#students-should-learn_3" title="Permanent link">&para;</a></h2>
+<p>重点掌握：</p>
+<ul>
+<li>Dynamic Resolution</li>
+<li>M-RoPE</li>
+<li>Image Tokenization</li>
+<li>Vision Encoder Scaling</li>
+</ul>
+<hr />
+<h2 id="laboratory-relevance_3">Laboratory Relevance<a class="headerlink" href="#laboratory-relevance_3" title="Permanent link">&para;</a></h2>
+<p>★★★★★</p>
+<p>Qwen2-VL 是：</p>
+<p>实验室开展</p>
+<ul>
+<li>OmniDocBench</li>
+<li>DocTags</li>
+<li>PDF Parsing</li>
+</ul>
+<p>研究的重要基线模型。</p>
+<hr />
+<h1 id="paper-5">Paper 5<a class="headerlink" href="#paper-5" title="Permanent link">&para;</a></h1>
+<h1 id="qwen25-vl">Qwen2.5-VL<a class="headerlink" href="#qwen25-vl" title="Permanent link">&para;</a></h1>
+<p><strong>Priority</strong></p>
+<p>⭐⭐⭐⭐⭐</p>
+<p><strong>Organization</strong></p>
+<p>Alibaba Qwen Team</p>
+<p><strong>Year</strong></p>
+<p>2025</p>
+<hr />
+<h2 id="official-technical-report">Official Technical Report<a class="headerlink" href="#official-technical-report" title="Permanent link">&para;</a></h2>
+<p><a href="https://arxiv.org/abs/2502.13923">https://arxiv.org/abs/2502.13923</a></p>
+<hr />
+<h2 id="official-blog">Official Blog<a class="headerlink" href="#official-blog" title="Permanent link">&para;</a></h2>
+<p><a href="https://qwenlm.github.io/blog/qwen2.5-vl/">https://qwenlm.github.io/blog/qwen2.5-vl/</a></p>
+<hr />
+<h2 id="qwen35-models">最新官方多模态模型集合<a class="headerlink" href="#qwen35-models" title="Permanent link">&para;</a></h2>
+<p><a href="https://huggingface.co/collections/Qwen/qwen35">Qwen3.5（原生多模态）</a></p>
+<hr />
+<h2 id="main-contributions_4">Main Contributions<a class="headerlink" href="#main-contributions_4" title="Permanent link">&para;</a></h2>
+<p>Qwen2.5-VL 在 Qwen2-VL 基础上进一步增强：</p>
+<ul>
+<li>Dynamic Resolution ViT</li>
+<li>Window Attention</li>
+<li>更强文档解析能力</li>
+<li>更精准目标定位</li>
+<li>更长视频理解</li>
+<li>GUI Agent 能力</li>
+</ul>
+<p>同时支持：</p>
+<ul>
+<li>Bounding Box</li>
+<li>Point Grounding</li>
+<li>Structured Document Parsing</li>
+<li>Tool Use</li>
+</ul>
+<hr />
+<h2 id="why-read-in-2026_3">Why Read in 2026<a class="headerlink" href="#why-read-in-2026_3" title="Permanent link">&para;</a></h2>
+<p>Qwen2.5-VL 是目前最优秀的开源通用 VLM 之一。</p>
+<p>尤其在：</p>
+<ul>
+<li>PDF</li>
+<li>Table</li>
+<li>Formula</li>
+<li>Layout</li>
+<li>Chart</li>
+<li>Scientific Figure</li>
+</ul>
+<p>等任务表现突出，并在官方技术报告中重点展示了文档解析、图表理解和 GUI Agent 能力。</p>
+<hr />
+<h2 id="students-should-learn_4">Students Should Learn<a class="headerlink" href="#students-should-learn_4" title="Permanent link">&para;</a></h2>
+<p>重点掌握：</p>
+<ul>
+<li>Dynamic Resolution ViT</li>
+<li>Window Attention</li>
+<li>Structured Parsing</li>
+<li>Visual Grounding</li>
+<li>Tool Use</li>
+<li>GUI Agent</li>
+</ul>
+<hr />
+<h2 id="laboratory-relevance_4">Laboratory Relevance<a class="headerlink" href="#laboratory-relevance_4" title="Permanent link">&para;</a></h2>
+<p>★★★★★</p>
+<p>实验室建议：</p>
+<blockquote>
+<p><strong>所有新入学研究生应首先熟悉 Qwen2.5-VL。</strong></p>
+</blockquote>
+<p>建议完成：</p>
+<ul>
+<li>图片理解</li>
+<li>PDF 理解</li>
+<li>OmniDocBench Evaluation</li>
+<li>DocTags Generation</li>
+</ul>
+<p>四个基础实验。</p>
+<hr />
+<h1 id="model-comparison">Model Comparison<a class="headerlink" href="#model-comparison" title="Permanent link">&para;</a></h1>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th style="text-align: center;">Vision Encoder</th>
+<th style="text-align: center;">Dynamic Resolution</th>
+<th style="text-align: center;">Document AI</th>
+<th style="text-align: center;">Video</th>
+<th style="text-align: center;">Agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLaVA</td>
+<td style="text-align: center;">CLIP</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">★★★</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">★★</td>
+</tr>
+<tr>
+<td>Florence-2</td>
+<td style="text-align: center;">Florence</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">★★★★</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">★★★</td>
+</tr>
+<tr>
+<td>InternVL</td>
+<td style="text-align: center;">InternViT</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">★★★★</td>
+</tr>
+<tr>
+<td>Qwen2-VL</td>
+<td style="text-align: center;">Dynamic ViT</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">★★★★</td>
+</tr>
+<tr>
+<td>Qwen2.5-VL</td>
+<td style="text-align: center;">Dynamic ViT + Window Attention</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="knowledge-checklist_1">Knowledge Checklist<a class="headerlink" href="#knowledge-checklist_1" title="Permanent link">&para;</a></h1>
+<p>完成本部分后，应能够回答：</p>
+<h3 id="internvl_1">InternVL<a class="headerlink" href="#internvl_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Progressive Scaling 是什么？</li>
+<li>为什么 Vision Encoder 越大效果越好？</li>
+</ul>
+<hr />
+<h3 id="qwen2-vl_1">Qwen2-VL<a class="headerlink" href="#qwen2-vl_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>什么是 Dynamic Resolution？</li>
+<li>M-RoPE 为什么适合图文混合输入？</li>
+</ul>
+<hr />
+<h3 id="qwen25-vl_1">Qwen2.5-VL<a class="headerlink" href="#qwen25-vl_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Window Attention 如何降低计算开销？</li>
+<li>为什么 Qwen2.5-VL 特别适合复杂文档解析？</li>
+<li>GUI Agent 与传统 VLM 有什么区别？</li>
+</ul>
+<hr />
+<h1 id="summary_1">Summary<a class="headerlink" href="#summary_1" title="Permanent link">&para;</a></h1>
+<p>现代开源 Vision-Language Models 的发展路线如下：</p>
+<div class="highlight"><pre><span></span><code>LLaVA
+   │
+   ▼
+Florence-2
+   │
+   ▼
+InternVL
+   │
+   ▼
+Qwen2-VL
+   │
+   ▼
+Qwen2.5-VL
+   │
+   ▼
+Modern Multimodal Agent
+</code></pre></div>
+<p>完成本部分后，应能够理解当前国际主流开源 VLM 的核心架构，并能够为后续 <strong>Qwen3-VL、SmolDocling、Document Agent</strong> 等研究做好准备。</p>
+<hr />
+<h1 id="part-3-next-generation-vision-language-models">Part 3. Next-generation Vision-Language Models<a class="headerlink" href="#part-3-next-generation-vision-language-models" title="Permanent link">&para;</a></h1>
+<p>2025 年以后，Vision-Language Models 已进入新的发展阶段。</p>
+<p>研究重点由：</p>
+<blockquote>
+<p><strong>Image Understanding</strong></p>
+</blockquote>
+<p>逐渐发展为：</p>
+<blockquote>
+<p><strong>Reasoning + Agent + Long Context + Tool Use</strong></p>
+</blockquote>
+<p>这一阶段的代表模型包括：</p>
+<ul>
+<li>Qwen3-VL</li>
+<li>Kimi-VL</li>
+<li>Agent-oriented VLM</li>
+</ul>
+<hr />
+<h1 id="paper-6">Paper 6<a class="headerlink" href="#paper-6" title="Permanent link">&para;</a></h1>
+<h1 id="qwen3-vl">Qwen3-VL<a class="headerlink" href="#qwen3-vl" title="Permanent link">&para;</a></h1>
+<p><strong>Priority</strong></p>
+<p>⭐⭐⭐⭐⭐</p>
+<p><strong>Organization</strong></p>
+<p>Alibaba Qwen Team</p>
+<p><strong>Year</strong></p>
+<p>2025</p>
+<hr />
+<h2 id="official-paper_4">Official Paper<a class="headerlink" href="#official-paper_4" title="Permanent link">&para;</a></h2>
+<p><a href="https://arxiv.org/abs/2511.21631">https://arxiv.org/abs/2511.21631</a></p>
+<hr />
+<h2 id="official-github_3">Official GitHub<a class="headerlink" href="#official-github_3" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/QwenLM/Qwen3-VL">https://github.com/QwenLM/Qwen3-VL</a></p>
+<hr />
+<h2 id="main-contributions_5">Main Contributions<a class="headerlink" href="#main-contributions_5" title="Permanent link">&para;</a></h2>
+<p>Qwen3-VL 是目前 Qwen 系列最新一代 Vision-Language Foundation Model。</p>
+<p>相比 Qwen2.5-VL，进一步引入：</p>
+<ul>
+<li>Interleaved-MRoPE</li>
+<li>DeepStack Vision Fusion</li>
+<li>Text-based Time Alignment</li>
+<li>Native 256K Multimodal Context</li>
+<li>Dense + MoE 双架构</li>
+</ul>
+<p>支持：</p>
+<ul>
+<li>Image</li>
+<li>Document</li>
+<li>Video</li>
+<li>GUI</li>
+<li>Agent</li>
+</ul>
+<p>统一理解。</p>
+<hr />
+<h2 id="core-innovations">Core Innovations<a class="headerlink" href="#core-innovations" title="Permanent link">&para;</a></h2>
+<h3 id="interleaved-mrope">Interleaved-MRoPE<a class="headerlink" href="#interleaved-mrope" title="Permanent link">&para;</a></h3>
+<p>增强空间与时间位置编码。</p>
+<p>提高：</p>
+<ul>
+<li>长文档理解</li>
+<li>视频理解</li>
+<li>多图片推理</li>
+</ul>
+<hr />
+<h3 id="deepstack">DeepStack<a class="headerlink" href="#deepstack" title="Permanent link">&para;</a></h3>
+<p>融合多层 Vision Transformer 特征。</p>
+<p>优势：</p>
+<ul>
+<li>更好的细粒度视觉表示</li>
+<li>更精准 OCR</li>
+<li>更好的 Document Parsing</li>
+</ul>
+<hr />
+<h3 id="long-context">Long Context<a class="headerlink" href="#long-context" title="Permanent link">&para;</a></h3>
+<p>原生支持：</p>
+<p><strong>256K Context</strong></p>
+<p>能够完成：</p>
+<ul>
+<li>长论文阅读</li>
+<li>多页 PDF 理解</li>
+<li>长视频分析</li>
+</ul>
+<p>无需复杂切片。</p>
+<hr />
+<h2 id="why-read-in-2026_4">Why Read in 2026<a class="headerlink" href="#why-read-in-2026_4" title="Permanent link">&para;</a></h2>
+<p>Qwen3-VL 已成为目前最强大的开源 Vision-Language Models 之一。</p>
+<p>重点强化：</p>
+<ul>
+<li>Document AI</li>
+<li>GUI Agent</li>
+<li>Visual Coding</li>
+<li>Tool Use</li>
+<li>Long-context Reasoning</li>
+</ul>
+<p>也是未来多模态 Agent 的重要基础模型。</p>
+<hr />
+<h2 id="students-should-learn_5">Students Should Learn<a class="headerlink" href="#students-should-learn_5" title="Permanent link">&para;</a></h2>
+<p>重点掌握：</p>
+<ul>
+<li>DeepStack</li>
+<li>Interleaved-MRoPE</li>
+<li>Long Context</li>
+<li>MoE Architecture</li>
+<li>Visual Agent</li>
+</ul>
+<hr />
+<h2 id="laboratory-relevance_5">Laboratory Relevance<a class="headerlink" href="#laboratory-relevance_5" title="Permanent link">&para;</a></h2>
+<p>★★★★★</p>
+<p>建议作为实验室：</p>
+<blockquote>
+<p><strong>第一推荐 VLM。</strong></p>
+</blockquote>
+<p>重点研究：</p>
+<ul>
+<li>DocTags Generation</li>
+<li>OmniDocBench</li>
+<li>Scientific Paper Parsing</li>
+<li>AI Research Agent</li>
+</ul>
+<hr />
+<h1 id="paper-7">Paper 7<a class="headerlink" href="#paper-7" title="Permanent link">&para;</a></h1>
+<h1 id="kimi-vl">Kimi-VL<a class="headerlink" href="#kimi-vl" title="Permanent link">&para;</a></h1>
+<p><strong>Priority</strong></p>
+<p>⭐⭐⭐⭐⭐</p>
+<p><strong>Organization</strong></p>
+<p>Moonshot AI</p>
+<p><strong>Year</strong></p>
+<p>2025</p>
+<hr />
+<h2 id="official-paper_5">Official Paper<a class="headerlink" href="#official-paper_5" title="Permanent link">&para;</a></h2>
+<p><a href="https://arxiv.org/abs/2504.07491">https://arxiv.org/abs/2504.07491</a></p>
+<hr />
+<h2 id="official-github_4">Official GitHub<a class="headerlink" href="#official-github_4" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/MoonshotAI/Kimi-VL">https://github.com/MoonshotAI/Kimi-VL</a></p>
+<hr />
+<h2 id="main-contributions_6">Main Contributions<a class="headerlink" href="#main-contributions_6" title="Permanent link">&para;</a></h2>
+<p>Kimi-VL 提出了：</p>
+<blockquote>
+<p><strong>高效 MoE Vision-Language Model</strong></p>
+</blockquote>
+<p>主要特点：</p>
+<ul>
+<li>MoonViT Vision Encoder</li>
+<li>Mixture of Experts (MoE)</li>
+<li>Long Context（128K）</li>
+<li>Long Chain-of-Thought</li>
+<li>Visual Agent</li>
+</ul>
+<p>激活参数仅约 2.8B，即可达到高水平多模态性能。</p>
+<hr />
+<h2 id="why-read_1">Why Read<a class="headerlink" href="#why-read_1" title="Permanent link">&para;</a></h2>
+<p>Kimi-VL 展示了：</p>
+<blockquote>
+<p><strong>小计算量 + 高性能</strong></p>
+</blockquote>
+<p>的发展方向。</p>
+<p>在：</p>
+<ul>
+<li>OCR</li>
+<li>Document QA</li>
+<li>GUI</li>
+<li>Math Reasoning</li>
+<li>Long Video</li>
+</ul>
+<p>等任务均表现优秀。</p>
+<hr />
+<h2 id="students-should-learn_6">Students Should Learn<a class="headerlink" href="#students-should-learn_6" title="Permanent link">&para;</a></h2>
+<p>重点掌握：</p>
+<ul>
+<li>MoE</li>
+<li>Long CoT</li>
+<li>MoonViT</li>
+<li>Efficient VLM</li>
+</ul>
+<hr />
+<h2 id="laboratory-relevance_6">Laboratory Relevance<a class="headerlink" href="#laboratory-relevance_6" title="Permanent link">&para;</a></h2>
+<p>★★★★★</p>
+<p>对于：</p>
+<p>实验室小规模 GPU</p>
+<p>具有重要参考价值。</p>
+<hr />
+<h1 id="modern-vision-language-trends">Modern Vision-Language Trends<a class="headerlink" href="#modern-vision-language-trends" title="Permanent link">&para;</a></h1>
+<p>目前 VLM 正快速向以下方向发展：</p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Long Context</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Vision Agent</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Tool Use</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>GUI Understanding</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>OCR-free Parsing</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Visual Coding</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>MoE</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="from-vlm-to-agent">From VLM to Agent<a class="headerlink" href="#from-vlm-to-agent" title="Permanent link">&para;</a></h1>
+<p>现代 VLM 已不再只是：</p>
+<div class="highlight"><pre><span></span><code>Image
+ │
+ ▼
+Caption
+</code></pre></div>
+<p>而是：</p>
+<div class="highlight"><pre><span></span><code>Image
+ │
+ ▼
+Understanding
+ │
+ ▼
+Reasoning
+ │
+ ▼
+Planning
+ │
+ ▼
+Tool Use
+ │
+ ▼
+AI Agent
+</code></pre></div>
+<p>这也是当前国际多模态大模型的重要发展方向。</p>
+<hr />
+<h1 id="model-comparison_1">Model Comparison<a class="headerlink" href="#model-comparison_1" title="Permanent link">&para;</a></h1>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th style="text-align: center;">Long Context</th>
+<th style="text-align: center;">Document AI</th>
+<th style="text-align: center;">GUI Agent</th>
+<th style="text-align: center;">Tool Use</th>
+<th style="text-align: center;">MoE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLaVA</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">★★★</td>
+<td style="text-align: center;">★</td>
+<td style="text-align: center;">★</td>
+<td style="text-align: center;">✗</td>
+</tr>
+<tr>
+<td>Florence-2</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">★★★★</td>
+<td style="text-align: center;">★★</td>
+<td style="text-align: center;">★★</td>
+<td style="text-align: center;">✗</td>
+</tr>
+<tr>
+<td>InternVL</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★</td>
+<td style="text-align: center;">★★★</td>
+<td style="text-align: center;">✗</td>
+</tr>
+<tr>
+<td>Qwen2.5-VL</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">✗</td>
+</tr>
+<tr>
+<td>Qwen3-VL</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Kimi-VL</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">★★★★★</td>
+<td style="text-align: center;">✓</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="knowledge-checklist_2">Knowledge Checklist<a class="headerlink" href="#knowledge-checklist_2" title="Permanent link">&para;</a></h1>
+<p>完成本部分后，应能够回答：</p>
+<h2 id="qwen3-vl_1">Qwen3-VL<a class="headerlink" href="#qwen3-vl_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>DeepStack 为什么能够提升视觉理解？</li>
+<li>Interleaved-MRoPE 与 M-RoPE 有什么区别？</li>
+<li>为什么 256K Context 对 Document AI 很重要？</li>
+</ul>
+<hr />
+<h2 id="kimi-vl_1">Kimi-VL<a class="headerlink" href="#kimi-vl_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>为什么采用 MoE？</li>
+<li>Long Chain-of-Thought 如何增强视觉推理？</li>
+<li>MoonViT 有哪些优势？</li>
+</ul>
+<hr />
+<h2 id="modern-vlm">Modern VLM<a class="headerlink" href="#modern-vlm" title="Permanent link">&para;</a></h2>
+<ul>
+<li>为什么现代 VLM 正向 Agent 演进？</li>
+<li>Tool Use 与传统 VQA 有什么区别？</li>
+<li>GUI Agent 为什么成为新的研究热点？</li>
+</ul>
+<hr />
+<h1 id="summary_2">Summary<a class="headerlink" href="#summary_2" title="Permanent link">&para;</a></h1>
+<p>新一代 Vision-Language Models 的发展路线如下：</p>
+<div class="highlight"><pre><span></span><code>CLIP
+ │
+ ▼
+BLIP
+ │
+ ▼
+LLaVA
+ │
+ ▼
+InternVL
+ │
+ ▼
+Qwen2.5-VL
+ │
+ ▼
+Qwen3-VL
+ │
+ ▼
+Kimi-VL
+ │
+ ▼
+Vision Agent
+ │
+ ▼
+Multimodal AI Agent
+</code></pre></div>
+<p>完成本部分后，应理解现代 VLM 已从单纯的视觉理解模型，发展为集 <strong>视觉感知、语言理解、推理、工具调用和自主决策</strong> 于一体的多模态智能系统，为构建 <strong>Document AI Agent</strong> 和 <strong>AI Research Agent</strong> 奠定基础。</p>
+<hr />
+<h1 id="part-4-modern-vision-language-ai-ecosystem">Part 4. Modern Vision-Language AI Ecosystem<a class="headerlink" href="#part-4-modern-vision-language-ai-ecosystem" title="Permanent link">&para;</a></h1>
+<p>经过近三年的快速发展，Vision-Language Models（VLM）已经从单一模型演进为完整的开源生态。</p>
+<p>目前国际主流技术路线如下：</p>
+<div class="highlight"><pre><span></span><code>Foundation Models
+        │
+        ▼
+Vision Encoder
+        │
+        ▼
+Vision-Language Models
+        │
+        ▼
+Document AI
+        │
+        ▼
+GUI Agent
+        │
+        ▼
+Research Agent
+        │
+        ▼
+General AI Agent
+</code></pre></div>
+<p>当前代表性的开源生态主要包括：</p>
+<ul>
+<li>Qwen 系列</li>
+<li>InternVL 系列</li>
+<li>Florence 系列</li>
+<li>SmolDocling</li>
+<li>Docling</li>
+<li>OmniDocBench</li>
+</ul>
+<p>这些项目共同推动了现代多模态 AI 的快速发展。</p>
+<hr />
+<h1 id="open-source-vlm-ecosystem">Open-source VLM Ecosystem<a class="headerlink" href="#open-source-vlm-ecosystem" title="Permanent link">&para;</a></h1>
+<h2 id="model-family-comparison">Model Family Comparison<a class="headerlink" href="#model-family-comparison" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Organization</th>
+<th>Main Focus</th>
+<th style="text-align: center;">Open Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLaVA</td>
+<td>Microsoft / UW</td>
+<td>通用多模态对话</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Florence-2</td>
+<td>Microsoft</td>
+<td>通用视觉基础模型</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>InternVL</td>
+<td>OpenGVLab</td>
+<td>高性能 VLM</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Qwen2-VL</td>
+<td>Alibaba</td>
+<td>多模态理解</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Qwen2.5-VL</td>
+<td>Alibaba</td>
+<td>文档理解 + Agent</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr>
+<td>Qwen3-VL</td>
+<td>Alibaba</td>
+<td>长上下文 + Agent + 推理</td>
+<td style="text-align: center;">✓</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="current-research-trends">Current Research Trends<a class="headerlink" href="#current-research-trends" title="Permanent link">&para;</a></h1>
+<p>目前 VLM 的研究热点主要集中在以下几个方向：</p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Importance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Long-context Vision</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>OCR-free Document Parsing</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Visual Grounding</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>GUI Agent</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Tool Use</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Long Video Understanding</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Vision Reasoning</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td>Multimodal Agent</td>
+<td>⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<p>相比早期 VLM，当前模型更加关注：</p>
+<ul>
+<li>推理（Reasoning）</li>
+<li>决策（Planning）</li>
+<li>工具调用（Tool Use）</li>
+<li>自主执行（Agent）</li>
+</ul>
+<p>而不仅仅是图像描述或问答。</p>
+<hr />
+<h1 id="vlm-capability-evolution">VLM Capability Evolution<a class="headerlink" href="#vlm-capability-evolution" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code>Image Caption
+      │
+      ▼
+Visual Question Answering
+      │
+      ▼
+Grounding
+      │
+      ▼
+Document Understanding
+      │
+      ▼
+Reasoning
+      │
+      ▼
+Tool Use
+      │
+      ▼
+Visual Agent
+      │
+      ▼
+Autonomous AI Agent
+</code></pre></div>
+<p>现代 VLM 已逐渐成为 AI Agent 的视觉感知核心。</p>
+<hr />
+<h1 id="vlm-for-document-ai">VLM for Document AI<a class="headerlink" href="#vlm-for-document-ai" title="Permanent link">&para;</a></h1>
+<p>对于 Document AI 而言，VLM 已成为新的统一框架。</p>
+<p>传统流程：</p>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+OCR
+ │
+ ▼
+Layout Analysis
+ │
+ ▼
+Table Recognition
+ │
+ ▼
+Formula Recognition
+ │
+ ▼
+Markdown
+</code></pre></div>
+<p>现代流程：</p>
+<div class="highlight"><pre><span></span><code>PDF
+ │
+ ▼
+Vision-Language Model
+ │
+ ▼
+Markdown
+JSON
+DocTags
+Structured Document
+</code></pre></div>
+<p>Qwen2.5-VL 与 Qwen3-VL 已支持：</p>
+<ul>
+<li>OCR</li>
+<li>Reading Order</li>
+<li>Layout Parsing</li>
+<li>Table Understanding</li>
+<li>Formula Understanding</li>
+<li>Key Information Extraction</li>
+<li>HTML / Structured Output</li>
+</ul>
+<p>并提供官方 Cookbook 覆盖文档解析、OCR、定位、GUI Agent 等典型应用。</p>
+<hr />
+<h1 id="recommended-learning-path">Recommended Learning Path<a class="headerlink" href="#recommended-learning-path" title="Permanent link">&para;</a></h1>
+<p>建议研究生按照下面路线学习。</p>
+<div class="highlight"><pre><span></span><code>Foundation Models
+        │
+        ▼
+Transformer
+        │
+        ▼
+CLIP
+        │
+        ▼
+BLIP-2
+        │
+        ▼
+LLaVA
+        │
+        ▼
+InternVL
+        │
+        ▼
+Qwen2.5-VL
+        │
+        ▼
+Qwen3-VL
+        │
+        ▼
+Document AI
+        │
+        ▼
+DocTags
+        │
+        ▼
+AI Agent
+</code></pre></div>
+<hr />
+<h1 id="recommended-laboratory-experiments">Recommended Laboratory Experiments<a class="headerlink" href="#recommended-laboratory-experiments" title="Permanent link">&para;</a></h1>
+<p>建议完成以下实验。</p>
+<h2 id="experiment-1">Experiment 1<a class="headerlink" href="#experiment-1" title="Permanent link">&para;</a></h2>
+<p>Image Caption</p>
+<p>目标：</p>
+<p>理解 Vision Encoder 的基本工作方式。</p>
+<hr />
+<h2 id="experiment-2">Experiment 2<a class="headerlink" href="#experiment-2" title="Permanent link">&para;</a></h2>
+<p>Visual Question Answering</p>
+<p>模型：</p>
+<ul>
+<li>LLaVA</li>
+<li>Florence-2</li>
+</ul>
+<p>学习 Prompt 设计与视觉问答。</p>
+<hr />
+<h2 id="experiment-3">Experiment 3<a class="headerlink" href="#experiment-3" title="Permanent link">&para;</a></h2>
+<p>Document Understanding</p>
+<p>模型：</p>
+<ul>
+<li>Qwen2.5-VL</li>
+<li>Qwen3-VL</li>
+</ul>
+<p>数据：</p>
+<ul>
+<li>OmniDocBench</li>
+</ul>
+<p>输出：</p>
+<ul>
+<li>Markdown</li>
+<li>HTML</li>
+<li>JSON</li>
+</ul>
+<hr />
+<h2 id="experiment-4">Experiment 4<a class="headerlink" href="#experiment-4" title="Permanent link">&para;</a></h2>
+<p>Structured Document Generation</p>
+<p>模型：</p>
+<ul>
+<li>Qwen3-VL</li>
+</ul>
+<p>输出：</p>
+<ul>
+<li>DocTags</li>
+<li>Markdown</li>
+<li>JSON</li>
+</ul>
+<p>重点关注结构化文档表示。</p>
+<hr />
+<h2 id="experiment-5">Experiment 5<a class="headerlink" href="#experiment-5" title="Permanent link">&para;</a></h2>
+<p>OmniDocBench Evaluation</p>
+<p>完成：</p>
+<ul>
+<li>推理</li>
+<li>官方评测</li>
+<li>指标分析</li>
+</ul>
+<p>建议掌握：</p>
+<ul>
+<li>Edit Distance</li>
+<li>TEDS</li>
+<li>Reading Order</li>
+<li>CDM</li>
+</ul>
+<hr />
+<h2 id="experiment-6">Experiment 6<a class="headerlink" href="#experiment-6" title="Permanent link">&para;</a></h2>
+<p>Mini Document Agent</p>
+<p>基于：</p>
+<ul>
+<li>Qwen3-VL</li>
+<li>Docling</li>
+<li>OmniDocBench</li>
+</ul>
+<p>完成一个能够：</p>
+<ul>
+<li>阅读 PDF</li>
+<li>回答问题</li>
+<li>输出 Markdown</li>
+<li>提取关键信息</li>
+</ul>
+<p>的小型 Document Agent。</p>
+<hr />
+<h1 id="laboratory-research-roadmap">Laboratory Research Roadmap<a class="headerlink" href="#laboratory-research-roadmap" title="Permanent link">&para;</a></h1>
+<p>实验室研究路线如下：</p>
+<div class="highlight"><pre><span></span><code>Vision-Language Models
+          │
+          ▼
+Document AI
+          │
+          ▼
+Docling
+          │
+          ▼
+OmniDocBench
+          │
+          ▼
+DocTags
+          │
+          ▼
+Document Agent
+          │
+          ▼
+Research Agent
+</code></pre></div>
+<p>该路线与当前国际开源生态的发展方向保持一致，同时能够平滑衔接实验室的长期研究规划。</p>
+<hr />
+<h1 id="knowledge-checklist_3">Knowledge Checklist<a class="headerlink" href="#knowledge-checklist_3" title="Permanent link">&para;</a></h1>
+<p>完成本模块后，应能够回答以下问题。</p>
+<h2 id="vision-language-models_1">Vision-Language Models<a class="headerlink" href="#vision-language-models_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>为什么 VLM 能够统一视觉与语言？</li>
+<li>Vision Encoder 与 LLM 如何连接？</li>
+<li>Projection Layer、Q-Former 分别解决什么问题？</li>
+</ul>
+<hr />
+<h2 id="modern-vlm_1">Modern VLM<a class="headerlink" href="#modern-vlm_1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>为什么 Dynamic Resolution 很重要？</li>
+<li>Long Context 对文档理解有什么意义？</li>
+<li>为什么越来越多模型采用 Agent 架构？</li>
+</ul>
+<hr />
+<h2 id="document-ai">Document AI<a class="headerlink" href="#document-ai" title="Permanent link">&para;</a></h2>
+<ul>
+<li>为什么 VLM 能替代传统 OCR Pipeline？</li>
+<li>为什么结构化输出（Markdown、JSON、DocTags）比纯文本更重要？</li>
+</ul>
+<hr />
+<h2 id="research">Research<a class="headerlink" href="#research" title="Permanent link">&para;</a></h2>
+<ul>
+<li>如何利用 Qwen3-VL 构建 Document AI？</li>
+<li>如何基于 OmniDocBench 评测模型？</li>
+<li>如何自动生成高质量 DocTags？</li>
+<li>如何构建面向科研的 AI Research Agent？</li>
+</ul>
+<hr />
+<h1 id="chapter-summary">Chapter Summary<a class="headerlink" href="#chapter-summary" title="Permanent link">&para;</a></h1>
+<p>现代 Vision-Language Models 的发展路线如下：</p>
+<div class="highlight"><pre><span></span><code>CLIP
+ │
+ ▼
+BLIP-2
+ │
+ ▼
+LLaVA
+ │
+ ▼
+InternVL
+ │
+ ▼
+Qwen2-VL
+ │
+ ▼
+Qwen2.5-VL
+ │
+ ▼
+Qwen3-VL
+ │
+ ▼
+Document AI
+ │
+ ▼
+DocTags
+ │
+ ▼
+Document Agent
+ │
+ ▼
+Research Agent
+</code></pre></div>
+<p>Vision-Language Model 已从传统的图像理解模型发展为新一代多模态基础模型，在文档理解、智能体、科研助手和复杂推理等场景中发挥核心作用。对于实验室而言，将以 <strong>Qwen3-VL + Docling + OmniDocBench + DocTags</strong> 作为统一技术栈，逐步构建完整的 <strong>Multimodal Document AI</strong> 与 <strong>AI Research Agent</strong> 研究体系。</p>
+<hr />
+<h1 id="recommended-next-reading">Recommended Next Reading<a class="headerlink" href="#recommended-next-reading" title="Permanent link">&para;</a></h1>
+<p>继续学习：</p>
+<blockquote>
+<p><strong>doctags.md</strong></p>
+</blockquote>
+<p>重点掌握：</p>
+<ul>
+<li>DocTags Schema</li>
+<li>Structured Document Representation</li>
+<li>Semantic Layout</li>
+<li>Markdown → DocTags</li>
+<li>DocTags Generation</li>
+<li>DocTags Benchmark</li>
+<li>AI Agent-ready Documents</li>
+</ul>
+<p>完成该模块后，将具备开展 <strong>Document AI、RAG、AI Agent 和科研智能体</strong> 相关研究的完整理论基础。</p>
+<p><a class="md-button" href="02_document-ai.html">上一章</a>    <a class="md-button" href="04_doctags.html">下一章</a></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+                
+  
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 Multimodal Vision AI Lab.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../js/visitor.js"></script>
+      
+        <script src="../js/shanshui.js"></script>
+      
+        <script src="../js/radar.js"></script>
+      
+        <script src="../js/model-playground.js"></script>
+      
+        <script src="../js/vision-demo-v1.js"></script>
+      
+    
+  </body>
+</html>
