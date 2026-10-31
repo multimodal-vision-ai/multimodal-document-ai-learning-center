@@ -1,0 +1,44 @@
+name: MoViNet V1.0.2 Independent Validation
+on:
+  push:
+    branches:
+      - test/movinet-v102-e2e
+    paths:
+      - experiments/movinet-v102/**
+      - .github/workflows/movinet-v102-validation.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cpu-streaming-validation:
+    name: CPU TFLite / human-labeled clips
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout isolated test branch
+        uses: actions/checkout@v4
+      - name: Prepare Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: experiments/movinet-v102/requirements.txt
+      - name: Install isolated validation dependencies
+        run: |
+          python -m pip install -r experiments/movinet-v102/requirements.txt
+          ffmpeg -version | head -n 1
+      - name: Real model and labeled video inference
+        run: |
+          python experiments/movinet-v102/validate.py 2>&1 | tee movinet_validation.log
+      - name: Upload machine-readable evidence (no source videos or models)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: movinet-v102-real-inference-results
+          if-no-files-found: warn
+          path: |
+            movinet_validation_output/results.json
+            movinet_validation.log
+          retention-days: 30
