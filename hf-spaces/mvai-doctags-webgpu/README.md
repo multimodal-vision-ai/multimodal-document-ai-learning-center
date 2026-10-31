@@ -13,7 +13,7 @@ license: apache-2.0
 
 本 Space 定位为可扩展的文档结构化解析与多模型对比平台。当前使用 IBM Granite Docling 258M 的 ONNX 公开权重、Transformers.js 与浏览器 WebGPU；未来可接入经过适配与验证的实验室自研模型。
 不是实验室自研权重，不依赖 Hugging Face 托管 GPU，不需要用户登录。
-九类原始 PNG/JPEG 演示图片由 IBM Granite Docling 官方 DEMO 镜像至本站 `samples/` 目录；不再反复请求官方服务器。另保留浏览器合成摘要备用。首次加载模型可能下载 1 GB 或更多权重。
+九类原始 PNG/JPEG 演示图片由 IBM Granite Docling 官方 DEMO 镜像至本站 `samples/` 目录；不再反复请求官方服务器。首次加载模型可能下载 1 GB 或更多权重。
 设备兼容性、中文解析和输出准确率尚未完成完整验收；只在开发预览中使用。
 
 ## V1.6 结构化结果对照
