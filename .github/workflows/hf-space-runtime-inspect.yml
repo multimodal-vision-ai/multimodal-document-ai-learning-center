@@ -23,7 +23,7 @@ jobs:
           echo "========== hf.space homepage =========="
           curl -sSL --max-time 25 -w '\nHTTP_STATUS:%{http_code}\n' \
             -o /tmp/mvai-index.html \
-            https://multimodal-vision-ai-mvai-doctags-webgpu.hf.space/
+            https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/
           head -c 500 /tmp/mvai-index.html || true
           echo
           echo "========== HF Hub Space page =========="

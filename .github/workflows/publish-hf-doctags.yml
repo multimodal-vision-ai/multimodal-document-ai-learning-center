@@ -60,7 +60,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://multimodal-vision-ai-mvai-doctags-webgpu.hf.space/"
+          base="https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/"
           found=false
           for attempt in $(seq 1 12); do
             if curl -fsSL --max-time 15 "$base" -o /tmp/mvai-hf-docs.html; then
