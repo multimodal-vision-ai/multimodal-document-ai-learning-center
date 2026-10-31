@@ -106,6 +106,29 @@ def infer(it,frames,labels,source,expected):
     report["clips"].append(r);save();log("RESULT "+json.dumps(r,ensure_ascii=False))
     return r
 
+def audit_visible_frames(path,key):
+    """Emit a compact first-8s frame contact sheet for verifying sampled content."""
+    import base64
+    cap=cv2.VideoCapture(str(path))
+    count=cap.get(cv2.CAP_PROP_FRAME_COUNT)
+    fps=cap.get(cv2.CAP_PROP_FPS)
+    duration=count/fps if fps>0 else 0
+    maximum=min(8.0,duration)
+    tiles=[]
+    for i in range(5):
+        t=maximum*(i+0.25)/5
+        cap.set(cv2.CAP_PROP_POS_MSEC,t*1000)
+        ok,bgr=cap.read()
+        if not ok:continue
+        tile=cv2.resize(bgr,(172,172))
+        cv2.putText(tile,f"{t:.1f}s",(5,162),cv2.FONT_HERSHEY_SIMPLEX,0.42,(255,255,255),1,cv2.LINE_AA)
+        tiles.append(tile)
+    cap.release()
+    if tiles:
+        ok,encoded=cv2.imencode(".jpg",np.concatenate(tiles,axis=1),[cv2.IMWRITE_JPEG_QUALITY,60])
+        if ok:
+            log("AUDIT_JPEG_B64|"+key+"|"+base64.b64encode(encoded).decode("ascii"))
+
 def optional_phone(url,key):
     # Fetch only two individually chosen, licensed Pexels clips through source-provided
     # download links; do not scrape or bulk-collect assets.
@@ -117,6 +140,7 @@ def optional_phone(url,key):
         download(verified_download_urls[key],raw,100_000_000)
         output=BASE/(key+"_5fps.mp4")
         ffmpeg_convert(raw,output)
+        audit_visible_frames(output,key)
         return output
     except Exception as e:
         report["errors"].append({"stage":"optional_phone_download","clip":key,"error":str(e)})
