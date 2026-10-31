@@ -44,7 +44,7 @@ for kind, filename in sample_files.items():
     for asset in paths:
         assert asset.is_file() and asset.stat().st_size > 1000, f"Missing image: {asset}"
         signature = asset.read_bytes()[:8]
-        assert signature.startswith(b"\\x89PNG\\r\\n\\x1a\\n") if filename.endswith(".png") else signature.startswith(b"\\xff\\xd8\\xff"), f"Invalid file type: {asset}"
+        assert (signature.startswith(b"\x89PNG\r\n\x1a\n") if filename.endswith(".png") else signature.startswith(b"\xff\xd8\xff")), f"Invalid file type: {asset}"
     assert paths[0].read_bytes() == paths[1].read_bytes(), f"Mirrored file differs: {kind}"
 assert data.count('class="sample-tile"') == 9, "Nine IBM examples required"
 assert 'sampleBase="./samples/"' in data, "Examples must be served from same origin"
