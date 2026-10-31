@@ -19,4 +19,12 @@ const result={key:"m1::quality",modelId:model.BUILTIN.id,documentRevision:1,tags
 a.equal(model.recordResult([],result).length,1);
 a.equal(model.recordResult([result],{...result,tags:"<text>B</text>"}).length,1);
 a.equal(model.recordResult([result],{...result,documentRevision:2}).length,1);
+a.equal(model.modelSizeLabel(model.BUILTIN.id),"258M 参数");
+a.equal(model.modelSizeLabel("multimodal-vision-ai/mvai-docling-onnx"),"未提供（自定义模型）");
+a.equal(model.proportionalPosition(150,800,200,1500,300),300);
+a.equal(model.proportionalPosition(0,800,200,1500,300),0);
+a.equal(model.proportionalPosition(600,800,200,1500,300),1200);
+a.equal(model.proportionalPosition(650,800,200,1500,300),1200);
+a.equal(model.proportionalPosition(200,200,200,1500,300),0);
+a.equal(model.proportionalPosition(200,800,200,200,200),0);
 console.log("Model registry tests: validation, persistence, compatibility disclosure, same-input replacement PASS");

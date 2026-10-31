@@ -53,6 +53,17 @@ assert "首次加载模型可能下载 1 GB 以上文件" in data, "Important tr
 assert "模型加载失败：" in data and "推理失败：" in data, "Critical errors must remain visible"
 assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Original/result rendering must remain"
 assert "updateHistory({" in data and "refreshHistorySelectors()" in data, "Multi-model result history lost"
+# V1.7.2: model parameter count/time on success and proportional A/B scroll.
+assert 'id="runMetrics"' in data and 'id="runModelSize"' in data and 'id="runDuration"' in data
+assert 'showRunMetrics(selectedModel().id,seconds)' in data
+assert 'clearRunMetrics();resetComparison()' in data, "Metrics must reset between documents"
+assert 'id="historySync"' in data, "A/B proportional scroll toggle missing"
+assert 'historyPaneA.addEventListener("scroll"' in data and 'historyPaneB.addEventListener("scroll"' in data
+assert 'registry.proportionalPosition(' in data, "Percentage mapping missing"
+assert "expectedMirrorTop" in data, "Mirror recursion prevention missing"
+assert 'id="sync"' in data, "V1.6 original/result scroll option must remain"
+assert "模型大小（参数量）" in data, "Do not conflate parameters with disk size"
+
 assert "浏览器 Cache Storage" in data, "Cache explanation lost"
 
 assert 'src="./doctags-renderer.js"' in data, "Parser module not loaded"

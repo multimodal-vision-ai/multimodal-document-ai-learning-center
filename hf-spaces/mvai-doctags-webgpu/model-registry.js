@@ -8,7 +8,8 @@
     name:"Granite Docling 258M · 公开基线",
     origin:"IBM / ONNX Community",
     builtIn:true,
-    checked:true
+    checked:true,
+    parameterCount:"258M 参数"
   });
   const MAX_CUSTOM=8;
   function validRepoId(id) {
@@ -49,11 +50,21 @@
   }
   function getAll(storage){return [BUILTIN,...restore(storage)];}
   function key(id,precision){return id+"::"+precision;}
+  function modelSizeLabel(id) {
+    return id===BUILTIN.id ? BUILTIN.parameterCount : "未提供（自定义模型）";
+  }
+  function proportionalPosition(fromTop,fromHeight,fromViewport,toHeight,toViewport) {
+    const sourceMax=Math.max(0,Number(fromHeight)-Number(fromViewport));
+    const targetMax=Math.max(0,Number(toHeight)-Number(toViewport));
+    if(!Number.isFinite(sourceMax)||!Number.isFinite(targetMax)||!targetMax||!sourceMax)return 0;
+    const ratio=Math.min(1,Math.max(0,Number(fromTop)/sourceMax));
+    return Number.isFinite(ratio) ? ratio*targetMax : 0;
+  }
   function recordResult(history,record){
     if(!record||!validRepoId(record.modelId)||!record.documentRevision||!record.tags)return history;
     const filtered=history.filter(item=>item.documentRevision===record.documentRevision&&item.key!==record.key);
     return [...filtered,record].slice(-12);
   }
-  root.MVAIModelRegistry={BUILTIN,KEY,validRepoId,normalise,restore,save,getAll,key,recordResult};
+  root.MVAIModelRegistry={BUILTIN,KEY,validRepoId,normalise,restore,save,getAll,key,modelSizeLabel,proportionalPosition,recordResult};
   if(typeof module!=="undefined"&&module.exports)module.exports=root.MVAIModelRegistry;
 })(typeof globalThis==="object"?globalThis:this);
