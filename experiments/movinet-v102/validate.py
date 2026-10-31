@@ -107,17 +107,16 @@ def infer(it,frames,labels,source,expected):
     return r
 
 def optional_phone(url,key):
-    # Only attempt to download the two explicitly selected clips, not a bulk crawl.
-    # youtube-dl extractors might not support Pexels; log and skip rather than guess media URLs.
-    target=BASE/(key+".mp4")
+    # Fetch only two individually chosen, licensed Pexels clips through source-provided
+    # download links; do not scrape or bulk-collect assets.
+    verified_download_urls={
+      "phone_call":"https://videos.pexels.com/video-files/6898107/6898107-hd_1080_1920_25fps.mp4",
+      "phone_look":"https://videos.pexels.com/video-files/7933941/7933941-uhd_3840_2160_30fps.mp4"}
     try:
-        subprocess.run(["yt-dlp","--no-playlist","--max-filesize","100M","-f",
-          "b[height<=720]/b","-o",str(target),url],check=True,timeout=100)
-        matches=list(BASE.glob(key+"*"))
-        files=[f for f in matches if f.is_file() and f.stat().st_size>10000]
-        if not files:raise RuntimeError("No downloaded video")
+        raw=BASE/(key+"_source.mp4")
+        download(verified_download_urls[key],raw,100_000_000)
         output=BASE/(key+"_5fps.mp4")
-        ffmpeg_convert(files[0],output)
+        ffmpeg_convert(raw,output)
         return output
     except Exception as e:
         report["errors"].append({"stage":"optional_phone_download","clip":key,"error":str(e)})
