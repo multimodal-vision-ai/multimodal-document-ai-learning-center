@@ -3,9 +3,9 @@ hide:
   - toc
 ---
 
-# 浏览器端实时 DocTags 推理 · 技术预览
+# 实时文档结构化解析-DocTags · 多模型技术预览
 
-这个试点使用 **IBM Granite Docling 258M ONNX 公开基线**，由访问者自己的 WebGPU 执行实际推理，不需要登录或使用实验室服务器。浏览器、GPU 和推理质量尚未经过完整设备验收。
+这是一个可扩展的文档结构化解析与多模型对比实验平台：可针对同一输入文档切换经过适配的兼容模型，查看 DocTags、版面位置及结构化渲染结果，进行 A/B 对比。当前内置 **IBM Granite Docling 258M ONNX 公开基线**；实验室自研模型尚未接入。当前浏览器推理使用访问者的 WebGPU，不需要实验室提供推理服务器；兼容性与解析准确率需按实际运行验证。
 
 [打开浏览器端推理实验](../../assets/projects/doctags/browser-inference/index.html){ .md-button .md-button--primary }
 

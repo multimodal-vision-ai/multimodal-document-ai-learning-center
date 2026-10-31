@@ -65,6 +65,18 @@ assert 'id="sync"' in data, "V1.6 original/result scroll option must remain"
 assert "模型大小（参数量）" in data, "Do not conflate parameters with disk size"
 
 assert "浏览器 Cache Storage" in data, "Cache explanation lost"
+# V1.7.3: only the platform name is visible by default. Model information remains accurate,
+# accessible via click, hover and keyboard, and future models are not claimed as deployed.
+assert '<h1>实时文档结构化解析-DocTags</h1>' in data
+header_match = re.search(r'<header>([\s\S]*?)</header>', data)
+assert header_match, "Missing platform header"
+header_html = header_match.group(1)
+assert '<p>' not in header_html, "Do not show long header explanation by default"
+assert 'class="info-tip hero-help"' in header_html and 'aria-label="查看平台功能及多模型扩展说明"' in header_html
+assert "多模型能力对比" in header_html and "后续可以接入经过适配和验证的自研模型" in header_html
+assert "当前内置 IBM Granite Docling 258M 公开基线" in header_html
+assert ".hero-heading .hero-help .tip-pop" in data and ".info-tip:focus-within>.tip-pop" in data
+assert "DocTags 浏览器端实时推理</h1>" not in header_html, "Old product header remains"
 
 assert 'src="./doctags-renderer.js"' in data, "Parser module not loaded"
 assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Missing comparison panes"

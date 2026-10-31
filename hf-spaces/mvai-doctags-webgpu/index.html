@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MVAI · DocTags 浏览器端推理实验</title>
+<title>MVAI · 实时文档结构化解析-DocTags</title>
 <style>
 :root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#193251;background:#f4f7fc}*{box-sizing:border-box}
 body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
@@ -186,14 +186,31 @@ main{max-width:1260px}
 .history-sync-toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;color:#34527c;font-size:12px;font-weight:600;white-space:nowrap}
 .history-sync-toggle input{accent-color:#255fc0;width:15px;height:15px;cursor:pointer}
 .history-tools .tip-pop{left:0}
+
+/* V1.7.3 · model-extensible platform header: contextual, accessible help */
+.hero-heading{display:flex;align-items:center;gap:11px;flex-wrap:wrap;min-height:48px}
+.hero-heading h1{margin:3px 0 2px;min-width:0}
+.hero-heading .hero-help{z-index:60}
+.hero-heading .hero-help summary{width:21px;height:21px;cursor:pointer;font-size:13px;border-color:#b5d0f9;background:#ffffff1c;color:#eff6ff}
+.hero-heading .hero-help .tip-pop{left:auto;right:0;top:calc(100% + 12px);width:min(410px,calc(100vw - 48px));box-shadow:0 16px 35px #081f4666;color:#294764;background:white;line-height:1.8}
+@media(max-width:700px){.hero-heading{gap:8px}.hero-heading h1{font-size:clamp(21px,5vw,28px)}}
 </style>
 </head>
 <body>
 <main>
 <header>
-<div class="label">MVAI LEARNING CENTER · DOCUMENT AI · BROWSER INFERENCE</div>
-<h1>DocTags 浏览器端实时推理</h1>
-<p>无需账号，使用你自己电脑上的 WebGPU 加载 IBM Granite Docling 258M ONNX。上传单页文档图片并生成新的 DocTags 和位置标注。该功能是公开基线技术预览，不是实验室自研权重。</p>
+<div class="label">MVAI LEARNING CENTER · DOCUMENT AI · MULTI-MODEL LAB</div>
+<div class="hero-heading">
+  <h1>实时文档结构化解析-DocTags</h1>
+  <details class="info-tip hero-help">
+    <summary aria-label="查看平台功能及多模型扩展说明" title="平台说明">ⓘ</summary>
+    <div class="tip-pop" role="note">
+      本平台面向文档结构化解析与多模型能力对比：对同一文档选择兼容模型，查看 DocTags、版面定位及结构化渲染结果，并比较不同模型的解析效果。
+      当前内置 IBM Granite Docling 258M 公开基线；后续可以接入经过适配和验证的自研模型。
+      支持的模型在访问者浏览器中使用 WebGPU 推理，当前仍属实验功能。模型兼容性和解析准确率须按实际结果核验。
+    </div>
+  </details>
+</div>
 </header>
 <div class="notice compact-notice"><strong>技术预览</strong> · 首次加载模型可能下载 1 GB 以上文件。<details class="info-tip"><summary aria-label="查看下载、兼容性与隐私提醒">ⓘ</summary><div class="tip-pop">建议使用支持 WebGPU 的桌面浏览器和稳定网络。模型下载后可复用浏览器缓存，但显存实例仍需初始化。请勿上传含敏感个人信息或未经授权的文档；模型兼容性与解析准确率尚待系统验收。</div></details></div>
 <div class="cols workspace">
