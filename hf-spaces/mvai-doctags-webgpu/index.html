@@ -277,7 +277,7 @@ main{max-width:1260px}
   <div class="compare-top">
     <div>
       <h2>03 · 推理结果对照</h2>
-      <p class="muted" style="margin:5px 0 0">左侧为原始输入，右侧为 DocTags 重建的结构化阅读视图。标题、正文、表格和阅读顺序可直接对照。</p>
+      <details class="info-tip inline-info"><summary aria-label="结果对照说明">ⓘ</summary><div class="tip-pop">左侧为原图和位置框，右侧据真实生成的 DocTags 重建标题、段落、表格和阅读顺序。重建不是像素级复制。</div></details>
     </div>
     <div class="compare-controls">
       <label><input id="bounds" type="checkbox" checked> 显示位置框</label>
@@ -295,23 +295,22 @@ main{max-width:1260px}
     </div>
   </div>
   <div id="compareStatus" role="status">对照区已准备就绪。右侧不会显示事先制作的推理结果。</div>
-  <p class="muted" style="margin-top:7px">说明：重建结果侧重语义结构，不是原稿的像素级复制。悬停右侧元素可在左侧定位其对应区域；存在合并单元格或不完整 DocTags 时会提示降级。无需 GPU 的样例回放仍可在成果展厅使用。</p>
+  
 </section>
-<details id="rawDetails">
-  <summary>04 · 查看 DocTags 原始输出与技术诊断（展开）</summary>
+<details id="rawDetails" class="advanced-collapsed">
+  <summary>04 · DocTags 原始输出与技术诊断</summary>
   <div class="raw-interior">
-    <p class="muted">这里保留完整模型输出，便于研究人员核对解析差异和定位标注。</p>
+    
     <pre id="tags">模型生成的标签将出现在这里。</pre>
     <p><small id="timing"></small></p>
   </div>
 </details>
 
 
-<section class="card session-compare" aria-label="多模型相同输入结果对比">
- <div class="compare-top">
-  <div><h2>05 · 多模型结果对比</h2><p class="muted" style="margin:5px 0">保持同一张输入文档，依次选择并运行不同模型或精度，然后比较两次真实生成的结构化结果。</p></div>
-  <small id="historyCount" role="status">当前输入暂无成功推理记录。</small>
- </div>
+<details class="advanced-collapsed" id="compareDetails">
+ <summary>05 · 多模型结果对比 <small id="historyCount" class="compact-count" role="status">暂无推理记录</small></summary>
+ <div class="collapsed-content">
+ <section class="card session-compare" aria-label="多模型相同输入结果对比">
  <div class="selector-grid">
   <div><label for="compareA">结果 A</label><select id="compareA" disabled><option>等待推理结果</option></select></div>
   <div><label for="compareB">结果 B</label><select id="compareB" disabled><option>等待推理结果</option></select></div>
@@ -322,6 +321,8 @@ main{max-width:1260px}
  </div>
  <p class="compare-diagnostic" id="compareDiagnostic">这里只保存当前页面内同一输入图片的推理结果；更换图片或刷新页面会清空对比历史，不会将私人文档文本写入浏览器持久存储。不同模型的结构块数量不能直接代表准确率。</p>
 </section>
+ </div>
+</details>
 
 <p style="text-align:center"><small>MVAI Learning Center · Browser WebGPU technical preview · 未经实际 GPU 推理验收不得标记为正式可用</small></p>
 </main>
@@ -329,7 +330,7 @@ main{max-width:1260px}
 /* HF Static Space fallback links: keep Kaggle and the existing sample reachable
    before the new demo has been merged into Learning Center main. */
 if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) {
-  const base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-showcase-v1-6-render-20261030";
+  const base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-showcase-v1-7-model-manager-20261031";
   const sample=document.querySelector('a[href="../interactive-demo/index.html"]');
   const kaggle=document.querySelector('a[href="../../../../projects/doctags-kaggle/index.html"]');
   if(sample)sample.href=base+"/assets/projects/doctags/interactive-demo/index.html";
@@ -681,7 +682,7 @@ $("compareB").addEventListener("change",displayHistoryComparison);
 
 async function detect(){if(!window.isSecureContext||!navigator.gpu){$("device").textContent="当前设备不支持 WebGPU 或不在安全页面。可使用 Kaggle。";return}
 try{const adapter=await navigator.gpu.requestAdapter({powerPreference:"high-performance"});
-if(adapter){$("device").textContent="检测到 WebGPU 适配器；不保证模型能加载或显存足够。";gpuDetected=true;refreshLoadButtons()}
+if(adapter){$("device").textContent="WebGPU 已就绪";gpuDetected=true;refreshLoadButtons()}
 else $("device").textContent="未找到可用 GPU 适配器；请使用 Kaggle。"}
 catch(e){$("device").textContent="WebGPU 初始化失败："+e.message}}
 $("load").onclick=async()=>{
@@ -710,7 +711,7 @@ try{
   loaded=true;activeKey=key;activeModelName=entry.name;
   $("progress").value=100;
   markSuccessfulLoad(key);
-  $("downloadStatus").textContent="已载入 "+entry.name+"。模型文件已交由浏览器缓存机制管理，可继续推理。";
+  $("downloadStatus").textContent="模型已加载 · 可开始推理";
 }catch(err){
   console.error("Model load failure",err);
   loaded=false;activeKey=null;model=null;processor=null;
@@ -719,7 +720,7 @@ try{
 };
 $("run").onclick=async()=>{
 if(busy||!loaded||!imageReady||activeKey!==selectedKey())return;
-busy=true;refreshLoadButtons();clearResult();status("WebGPU 正在运行真实推理…");const start=performance.now();
+busy=true;refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
 try{
 const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
 const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
@@ -735,7 +736,7 @@ updateHistory({
  key:activeKey,modelId:selectedModel().id,documentRevision:inputRevision,tags:result,
  seconds:Number(seconds),label:activeModelName+" · "+($("dtype").value==="quality"?"fp32":"q4")
 });
-status("推理完成；请检查输出准确性，特别是中文文字、表格和阅读顺序。");
+status("推理完成 · 请查看下方对照结果");
 }catch(e){console.error(e);status("推理失败："+e.message+"。请改用 Kaggle 或换设备重试。");$("tags").textContent="本次没有可核验的完整模型输出。";}
 finally{busy=false;refreshLoadButtons()}
 };
