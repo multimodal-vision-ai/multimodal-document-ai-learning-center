@@ -1,0 +1,77 @@
+name: PR61 one-time import of IBM Docling demo images
+on:
+  push:
+    branches:
+      - feature/doctags-v1-9-sample-gallery-20261031
+    paths:
+      - .github/workflows/import-doctags-official-samples.yml
+
+permissions:
+  contents: write
+
+jobs:
+  import-samples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          ref: feature/doctags-v1-9-sample-gallery-20261031
+      - name: Download and verify official source images
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          import pathlib
+          import subprocess
+
+          base = "https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/resolve/83fb166/data/images/"
+          files = (
+              "new_arxiv.png", "image-2.jpg", "code.jpg",
+              "lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg",
+              "87664.png", "06236926002285.png",
+              "ar_page_0.png", "japanse_4_ibm.png", "zh_page_0.png",
+          )
+          destinations = (
+              pathlib.Path("docs/assets/projects/doctags/browser-inference/samples"),
+              pathlib.Path("hf-spaces/mvai-doctags-webgpu/samples"),
+          )
+          for d in destinations:
+              d.mkdir(parents=True, exist_ok=True)
+          summary = ["IBM Granite Docling 258M demo — sample files used for research demonstration",
+                     "Source: https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/tree/main/data/images",
+                     "Source revision: 83fb166",
+                     "Repository license declaration: Apache-2.0 (https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/blob/main/README.md)",
+                     "Images may include third-party material: original rights and notices remain applicable.",
+                     "Exact imported bytes and SHA-256 checksums:", ""]
+          for name in files:
+              filepath = destinations[0] / name
+              url = base + name
+              subprocess.run(["curl", "--fail", "--location", "--silent", "--show-error",
+                              "--retry", "3", "--retry-delay", "2", "--connect-timeout", "15",
+                              "--max-time", "90", url, "--output", str(filepath)], check=True)
+              data = filepath.read_bytes()
+              if not 1000 <= len(data) <= 4_000_000:
+                  raise ValueError(f"{name}: invalid size {len(data)}")
+              png = name.lower().endswith(".png")
+              if (png and not data.startswith(b"\x89PNG\r\n\x1a\n")) or (not png and not data.startswith(b"\xff\xd8\xff")):
+                  raise ValueError(f"{name}: invalid PNG/JPEG signature (possibly an LFS pointer)")
+              (destinations[1] / name).write_bytes(data)
+              summary.append(f"{name}: {len(data)} bytes; sha256={hashlib.sha256(data).hexdigest()}")
+          for d in destinations:
+              (d / "SOURCE.txt").write_text("\n".join(summary) + "\n", encoding="utf-8")
+          print("Validated and mirrored 9 PNG/JPEG demo images.", flush=True)
+          PY
+      - name: Remove superseded generated SVG images and commit mirror to PR branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm -f --ignore-unmatch docs/assets/projects/doctags/browser-inference/samples/*.svg
+          git rm -f --ignore-unmatch hf-spaces/mvai-doctags-webgpu/samples/*.svg
+          git add docs/assets/projects/doctags/browser-inference/samples hf-spaces/mvai-doctags-webgpu/samples
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git diff --cached --stat
+          git commit -m "assets(doctags): mirror nine IBM official samples and remove synthetic SVGs"
+          git push origin HEAD:refs/heads/feature/doctags-v1-9-sample-gallery-20261031
