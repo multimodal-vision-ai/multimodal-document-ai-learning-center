@@ -1,0 +1,76 @@
+{
+  "version": "1.0",
+  "evaluation_classes": [
+    {
+      "id": "phone_call",
+      "zh": "打电话",
+      "requires": "visual_ear_phone_or_clearly_audible_conversation",
+      "source_coverage": "description_only_candidates",
+      "exclude_as_metric_without_review": true
+    },
+    {
+      "id": "phone_use",
+      "zh": "使用手机",
+      "requires": "visible_handheld_phone_interaction",
+      "source_coverage": "description_only_candidates",
+      "exclude_as_metric_without_review": true
+    },
+    {
+      "id": "eating",
+      "zh": "吃东西",
+      "source_coverage": "timecoded"
+    },
+    {
+      "id": "sleeping",
+      "zh": "睡觉/呈睡眠姿态",
+      "source_coverage": "timecoded",
+      "caveat": "visual_pose_not_proof_of_sleep"
+    },
+    {
+      "id": "falling",
+      "zh": "摔倒",
+      "source_coverage": "timecoded",
+      "caveat": "simulated_falls"
+    },
+    {
+      "id": "walking",
+      "zh": "行走",
+      "source_coverage": "timecoded"
+    },
+    {
+      "id": "drinking",
+      "zh": "喝水",
+      "source_coverage": "timecoded"
+    },
+    {
+      "id": "non_target",
+      "zh": "干扰动作",
+      "source_coverage": "timecoded_or_visual_review"
+    }
+  ],
+  "evidence_levels": [
+    "source_csv_timecoded",
+    "description_only",
+    "visually_reviewed",
+    "benchmark_approved"
+  ],
+  "excluded_automatic_equivalences": [
+    [
+      "phone_call",
+      "phone_use"
+    ],
+    [
+      "sleeping",
+      "lying"
+    ],
+    [
+      "falling",
+      "sitting"
+    ],
+    [
+      "falling",
+      "lying"
+    ]
+  ],
+  "frame_labels_require_human_review": true
+}
