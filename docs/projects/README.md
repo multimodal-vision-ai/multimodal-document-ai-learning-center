@@ -13,8 +13,10 @@ shanshui_scene: 7
 
   <div class="mv-showcase-v18__stack">
     <article class="mv-showcase-v18__card mv-showcase-v18__card--doc" aria-labelledby="mv-showcase-doc-title">
-      <figure class="mv-showcase-v18__cover">
-        <img src="../assets/projects/doctags/document-structure-demo-v13.webp" width="2048" height="990" loading="eager" decoding="async" alt="文档结构化解析展示：真实文档、版面元素位置标注与 DocTags 标签输出三阶段示例">
+      <figure class="mv-showcase-v18__cover mv-showcase-v18__cover--steps-only">
+        <span class="mv-showcase-v18__steps-viewport">
+          <img src="../assets/projects/doctags/document-structure-demo-v13.webp" width="2048" height="990" loading="eager" decoding="async" alt="文档结构化解析三步展示：01 原始复杂文档；02 版面与元素定位；03 DocTags 结构化表达">
+        </span>
       </figure>
       <div class="mv-showcase-v18__body">
         <span class="mv-showcase-v18__kicker">文档理解 · DocTags</span>
