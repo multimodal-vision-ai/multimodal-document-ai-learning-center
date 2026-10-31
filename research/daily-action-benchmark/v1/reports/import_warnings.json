@@ -1,0 +1,20 @@
+[
+  {
+    "file": "gmd24_s2_adl_06",
+    "line": 7,
+    "issue": "invalid_interval",
+    "raw": "Sitting[9.7 to 3]"
+  },
+  {
+    "file": "gmd24_s2_fall_19",
+    "line": 20,
+    "issue": "unparsed interval",
+    "raw": "Eating[0.9 4.6]"
+  },
+  {
+    "file": "gmd24_s4_fall_09",
+    "line": 10,
+    "issue": "unparsed interval",
+    "raw": "Falling (BW)[2.3 6]"
+  }
+]
