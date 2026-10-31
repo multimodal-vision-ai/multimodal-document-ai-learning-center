@@ -194,6 +194,23 @@ main{max-width:1260px}
 .hero-heading .hero-help summary{width:21px;height:21px;cursor:pointer;font-size:13px;border-color:#b5d0f9;background:#ffffff1c;color:#eff6ff}
 .hero-heading .hero-help .tip-pop{left:auto;right:0;top:calc(100% + 12px);width:min(410px,calc(100vw - 48px));box-shadow:0 16px 35px #081f4666;color:#294764;background:white;line-height:1.8}
 @media(max-width:700px){.hero-heading{gap:8px}.hero-heading h1{font-size:clamp(21px,5vw,28px)}}
+
+/* V1.9 · compact, scrollable synthetic document sample gallery */
+.input-panel .input-actions{justify-content:space-between;gap:8px;margin:0 0 8px}
+.sample-label{font-size:12px;font-weight:750;color:#274d7e}
+.sample-gallery{display:grid;grid-template-columns:29px minmax(0,1fr) 29px;align-items:center;gap:6px;margin:0 0 5px;min-width:0}
+.sample-strip{display:flex;gap:9px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#b4c7e2 transparent;padding:4px 2px 8px;min-width:0}
+.sample-tile{flex:0 0 102px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 5px 7px;border:2px solid #dbe5f2;border-radius:10px;background:#fff;color:#365777;scroll-snap-align:start;transition:border-color .12s,background-color .12s,box-shadow .12s}
+.sample-tile:hover{border-color:#7fa8e9;background:#f5f9ff}
+.sample-tile[aria-pressed="true"]{border-color:#326be8;background:#edf4ff;box-shadow:0 0 0 2px #326be81b;color:#184eae}
+.sample-tile canvas{display:block;width:75px;height:92px;border:1px solid #e1e7f0;border-radius:3px;background:#fff;object-fit:contain}
+.sample-tile span{font-size:11px;font-weight:700;line-height:1.35;white-space:nowrap}
+.sample-scroll{display:inline-grid;place-items:center;width:29px;min-height:42px;padding:0;border:1px solid #d8e4f2;border-radius:8px;background:#f4f8ff;color:#376aa9;font-size:21px}
+.sample-scroll:hover{background:#e8f1ff}
+.sample-scroll:disabled{opacity:.35}
+.sample-hint{display:block;margin:2px 0 9px;font-size:11px;color:#6d7f96;line-height:1.5}
+.sample-tile:focus-visible,.sample-scroll:focus-visible{outline:2px solid #3277e8;outline-offset:2px}
+@media(max-width:760px){.sample-gallery{grid-template-columns:25px minmax(0,1fr) 25px;gap:4px}.sample-tile{flex-basis:94px}.sample-scroll{width:25px}}
 </style>
 </head>
 <body>
@@ -220,9 +237,22 @@ main{max-width:1260px}
       <details class="info-tip"><summary aria-label="文档格式及隐私说明">ⓘ</summary><div class="tip-pop">默认使用无个人信息的合成样例。可上传已授权、已脱敏的 PNG、JPG、WebP 单页图片，最大 12 MB。上传文件在本页面的浏览器内处理，不会自动发送到实验室服务器。</div></details>
     </div>
     <div class="row input-actions">
-      <button id="sample" class="primary" type="button">使用合成样例</button>
-      <label class="file">选择本地图片<input id="file" type="file" accept="image/png,image/jpeg,image/webp" aria-label="选择本地文档图片"></label>
+      <span class="sample-label">选择示例文档</span>
+      <label class="file">上传本地图片<input id="file" type="file" accept="image/png,image/jpeg,image/webp" aria-label="上传本地文档图片"></label>
     </div>
+    <div class="sample-gallery" aria-label="合成文档样例选择">
+      <button id="samplePrev" class="sample-scroll" type="button" aria-label="向左浏览样例">‹</button>
+      <div id="sampleStrip" class="sample-strip" role="group" aria-label="选择合成文档类型">
+        <button id="sample" class="sample-tile" type="button" data-sample="summary" aria-pressed="true"><canvas aria-hidden="true"></canvas><span>研究摘要</span></button>
+        <button class="sample-tile" type="button" data-sample="table" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>数据表格</span></button>
+        <button class="sample-tile" type="button" data-sample="code" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>代码清单</span></button>
+        <button class="sample-tile" type="button" data-sample="formula" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>公式文档</span></button>
+        <button class="sample-tile" type="button" data-sample="chart" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>图表报告</span></button>
+        <button class="sample-tile" type="button" data-sample="mixed" aria-pressed="false"><canvas aria-hidden="true"></canvas><span>图文混排</span></button>
+      </div>
+      <button id="sampleNext" class="sample-scroll" type="button" aria-label="向右浏览样例">›</button>
+    </div>
+    <small class="sample-hint">原创合成文档，不含个人信息；点击缩略图即可切换文档预览。</small>
     <div id="view"><canvas id="preview" aria-label="文档输入与解析标注预览" role="img"></canvas></div>
     <div class="input-footer">
       <small id="fileName">合成样例</small>
@@ -642,33 +672,128 @@ function show(tags=""){
   }
   return count;
 }
-function makeSample(){
-  src.width=900;src.height=1100;c.fillStyle="white";c.fillRect(0,0,src.width,src.height);
-  c.fillStyle="#173154";c.font="bold 36px Arial";c.fillText("RESEARCH SUMMARY",65,95);
-  c.font="23px Arial";c.fillText("Synthetic example, no personal data",65,151);
-  c.fillStyle="#7795bc";c.fillRect(65,177,760,3);
-  c.fillStyle="#173154";c.font="bold 25px Arial";c.fillText("1. Objective",65,247);
-  c.font="20px Arial";c.fillText("Compare document parsing on public examples.",65,302);
-  c.font="bold 25px Arial";c.fillText("2. Experiment summary",65,388);
-  const xs=[65,370,610,825],y=444,hh=65;
-  c.fillStyle="#ecf2fb";c.fillRect(xs[0],y,xs[3]-xs[0],hh);
-  c.strokeStyle="#91a4bc";for(let i=0;i<=4;i++){c.beginPath();c.moveTo(xs[0],y+i*hh);c.lineTo(xs[3],y+i*hh);c.stroke()}
-  for(const x of xs){c.beginPath();c.moveTo(x,y);c.lineTo(x,y+4*hh);c.stroke()}
-  [["Metric","Baseline","Proposed"],["Pages","20","20"],["Runtime","3.5s","2.8s"],["Score","0.71","0.76"]].forEach((row,i)=>row.forEach((text,j)=>{c.fillStyle="#183451";c.font="20px Arial";c.fillText(text,xs[j]+13,y+i*hh+40)}));
-  c.fillStyle="#183451";c.font="bold 25px Arial";c.fillText("3. Conclusion",65,785);
-  c.font="20px Arial";c.fillText("This is a generated, privacy-safe test page.",65,842);
-  inputRevision++;resetHistory();imageReady=true;name="synthetic-document.png";$("fileName").textContent="合成样例 · 900×1100";resetComparison();
-  clearResult();show();$("run").disabled=!loaded;
+const sampleTypes=["summary","table","code","formula","chart","mixed"];
+const sampleNames={summary:"研究摘要",table:"数据表格",code:"代码清单",formula:"公式文档",chart:"图表报告",mixed:"图文混排"};
+// All samples are original, local Canvas drawings; thumbnails and inference use the same drawing function.
+function paintSample(canvas,kind,width=900){
+  const scale=width/900;
+  canvas.width=width;canvas.height=Math.round(1100*scale);
+  const g=canvas.getContext("2d");
+  g.save();g.scale(scale,scale);
+  g.fillStyle="#fff";g.fillRect(0,0,900,1100);
+  const ink="#173154",muted="#547196",line="#d5e0ee",blue="#3577d9";
+  function text(s,x,y,size=22,bold=false,color=ink){
+    g.fillStyle=color;g.font=(bold?"bold ":"")+size+'px Arial,"Microsoft YaHei",sans-serif';g.fillText(s,x,y);
+  }
+  function rule(y,x1=65,x2=835){g.fillStyle=line;g.fillRect(x1,y,x2-x1,2)}
+  function block(x,y,w,h,color="#e9f1fb"){g.fillStyle=color;g.fillRect(x,y,w,h)}
+  function title(head,sub){text(head,65,98,36,true);text(sub,65,150,20,false,muted);rule(178)}
+  function grid(x,y,cols,rows,cw,rh,headers,data){
+    block(x,y,cols*cw,rh,"#edf4ff");
+    g.strokeStyle="#a7bdd8";g.lineWidth=2;
+    for(let r=0;r<=rows;r++){g.beginPath();g.moveTo(x,y+r*rh);g.lineTo(x+cols*cw,y+r*rh);g.stroke()}
+    for(let k=0;k<=cols;k++){g.beginPath();g.moveTo(x+k*cw,y);g.lineTo(x+k*cw,y+rows*rh);g.stroke()}
+    for(let r=0;r<rows;r++)for(let k=0;k<cols;k++)text(String((r===0?headers:data[r-1])?.[k]||""),x+k*cw+10,y+r*rh+35,17,r===0);
+  }
+  if(kind==="summary"){
+    title("RESEARCH SUMMARY","Synthetic example · no personal data");
+    text("1. Objective",65,260,27,true);text("Compare document parsing on public examples.",65,310,20);
+    text("2. Experiment summary",65,391,27,true);
+    grid(65,445,3,4,252,65,["Metric","Baseline","Proposed"],[["Pages","20","20"],["Runtime","3.5s","2.8s"],["Score","0.71","0.76"]]);
+    text("3. Conclusion",65,790,27,true);text("All values are synthetic for layout testing.",65,850,20);
+  }else if(kind==="table"){
+    title("PROJECT BUDGET","Structured table · synthetic figures");
+    text("FY2026 / Cost breakdown",65,254,27,true);
+    grid(65,305,4,8,190,71,["Item","Q1","Q2","Total"],[
+      ["Compute","120","150","270"],["Storage","75","80","155"],["Data","90","110","200"],
+      ["Training","180","210","390"],["Testing","55","65","120"],["Support","40","35","75"],["Total","560","650","1210"]
+    ]);
+    text("Notes",65,935,27,true);text("Amounts are illustrative, not financial records.",65,986,18);
+  }else if(kind==="code"){
+    title("CODE REVIEW NOTES","Python example · synthetic source");
+    text("1. Input validation",65,255,27,true);
+    block(65,295,770,480,"#162b45");
+    const lines=[
+      "from dataclasses import dataclass","",
+      "@dataclass","class Record:","    name: str","    value: float","",
+      "def normalize(records):","    total = sum(r.value for r in records)","    if total == 0:","        return []",
+      "    return [r.value / total for r in records]"
+    ];
+    lines.forEach((s,i)=>text(s,91,337+i*34,19,false,i%4===0?"#a9ddff":"#e9f2ff"));
+    text("2. Expected behavior",65,847,27,true);text("Returns normalized values for valid input.",65,904,20);
+  }else if(kind==="formula"){
+    title("FORMULA WORKSHEET","Mathematical expressions · synthetic");
+    text("1. Normalization",65,256,27,true);
+    block(100,297,690,118,"#f3f7fd");text("z = (x - μ) / σ",240,371,39,true);
+    text("2. Weighted objective",65,493,27,true);
+    block(100,533,690,128,"#f3f7fd");text("L = α L1 + β L2 + γ L3",153,615,34,true);
+    text("3. Evaluation",65,737,27,true);
+    block(100,778,690,110,"#f3f7fd");text("F1 = 2 P R / (P + R)",192,849,34,true);
+    text("Notation shown for layout testing only.",65,965,19,false,muted);
+  }else if(kind==="chart"){
+    title("EXPERIMENT DASHBOARD","Bar chart and summary · synthetic");
+    text("Model comparison",65,250,27,true);
+    const vals=[.65,.74,.83,.71],labels=["A","B","C","D"],colors=["#7cb5ec","#3c87de","#3962b3","#9ccbef"];
+    g.strokeStyle="#aabbd0";g.lineWidth=2;g.beginPath();g.moveTo(108,690);g.lineTo(800,690);g.stroke();
+    vals.forEach((v,i)=>{const h=v*365,x=170+i*170;block(x,690-h,90,h,colors[i]);text(labels[i],x+35,735,22,true);text(String(Math.round(v*100))+"%",x+22,690-h-19,20,true)});
+    text("Summary",65,831,27,true);rule(856);text("Best result: 83% on illustrative data.",65,911,20);
+  }else if(kind==="mixed"){
+    title("FIELD STUDY REPORT","Text + figure + table · synthetic");
+    text("1. Observation",65,247,27,true);
+    text("The illustration and measurements are generated.",65,302,19);
+    // A self-drawn landscape diagram; no remote or copyrighted photograph.
+    block(65,335,770,300,"#d8edff");
+    block(65,540,770,95,"#a8d0ba");
+    g.fillStyle="#b0cbe8";g.beginPath();g.moveTo(65,560);g.lineTo(250,380);g.lineTo(420,560);g.fill();
+    g.fillStyle="#8aafd2";g.beginPath();g.moveTo(290,580);g.lineTo(550,400);g.lineTo(835,580);g.fill();
+    g.fillStyle="#6caa81";g.fillRect(65,575,770,60);
+    text("Fig. 1 · Synthetic terrain sketch",65,673,18,false,muted);
+    text("2. Measurements",65,755,27,true);
+    grid(65,790,3,3,252,63,["Station","Temp","Count"],[["North","18 C","12"],["South","21 C","15"]]);
+  }
+  g.restore();
+}
+function highlightSample(kind){
+  document.querySelectorAll(".sample-tile").forEach(btn=>{
+    btn.setAttribute("aria-pressed",String(btn.dataset.sample===kind));
+  });
+}
+function makeSample(kind="summary"){
+  if(busy){status("推理进行中，请完成后再切换文档。");return;}
+  if(!sampleTypes.includes(kind))kind="summary";
+  paintSample(src,kind);
+  inputRevision++;resetHistory();imageReady=true;
+  name="synthetic-"+kind+".png";
+  $("file").value="";
+  $("fileName").textContent="合成样例 · "+sampleNames[kind]+" · 900×1100";
+  highlightSample(kind);
+  clearResult();show();leftDraw();$("run").disabled=!loaded||activeKey!==selectedKey();
+}
+function initSampleGallery(){
+  document.querySelectorAll(".sample-tile").forEach(btn=>{
+    paintSample(btn.querySelector("canvas"),btn.dataset.sample,135);
+    btn.addEventListener("click",()=>makeSample(btn.dataset.sample));
+  });
+  const strip=$("sampleStrip");
+  function updateArrows(){
+    $("samplePrev").disabled=strip.scrollLeft<2;
+    $("sampleNext").disabled=strip.scrollLeft+strip.clientWidth>=strip.scrollWidth-2;
+  }
+  $("samplePrev").addEventListener("click",()=>strip.scrollBy({left:-240,behavior:"smooth"}));
+  $("sampleNext").addEventListener("click",()=>strip.scrollBy({left:240,behavior:"smooth"}));
+  strip.addEventListener("scroll",updateArrows,{passive:true});
+  window.addEventListener("resize",updateArrows);
+  requestAnimationFrame(updateArrows);
 }
 function clearResult(){result="";$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveImg").disabled=true;$("timing").textContent="";clearRunMetrics();resetComparison();}
 function status(text){$("status").textContent=text;}
-$("sample").onclick=makeSample;
+initSampleGallery();
 $("file").onchange=async event=>{
   try{const file=event.target.files[0];if(!file)return;
     if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>12*1024*1024)throw Error("仅允许 12 MB 以内的 PNG、JPG、WebP");
     const im=await createImageBitmap(file),scale=Math.min(1,1500/Math.max(im.width,im.height));
     src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);im.close?.();
-    inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();
+    inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();highlightSample(null);
     $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";$("run").disabled=!loaded;
   }catch(e){status("读取失败："+e.message)}
 };
