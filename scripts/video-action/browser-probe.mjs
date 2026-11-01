@@ -74,6 +74,25 @@ try{
     }
     await page.screenshot({path:'artifacts/video-action/real-inference.png',fullPage:true});
   }
-  report.success=report.model_load_success&&report.real_samples_playable&&report.real_samples.every(x=>x.inference_success)&&report.reset_deterministic&&errors.length===0;
+  // Independent fresh-page verification: one click on Run must load WASM itself.
+  const autoPage=await browser.newPage({viewport:{width:1360,height:900}});
+  const autoErrors=[];
+  autoPage.on('pageerror',e=>autoErrors.push(String(e)));
+  try{
+    await autoPage.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded',timeout:30000});
+    await autoPage.waitForFunction(()=>document.querySelectorAll('#sample-list button').length>=6,null,{timeout:35000});
+    await autoPage.locator('#sample-list button').filter({hasText:'开合跳 · 真人实拍'}).click();
+    report.auto_load_button_enabled=await autoPage.locator('#run').isEnabled();
+    if(!report.auto_load_button_enabled)throw Error('Run button disabled before model initialization');
+    await autoPage.locator('#run').click();
+    await autoPage.waitForFunction(()=>!document.querySelector('#run').disabled,null,{timeout:180000});
+    const autoStatus=await autoPage.locator('#status').innerText();
+    const autoInfo=JSON.parse(await autoPage.locator('#diagnostics').textContent()||'{}');
+    report.auto_load_status=autoStatus;
+    report.auto_load_success=autoStatus.includes('真实推理已返回')&&!!autoInfo.inference&&autoErrors.length===0;
+    await autoPage.screenshot({path:'artifacts/video-action/one-click-auto-load.png',fullPage:true});
+  }catch(e){report.auto_load_error=String(e);report.auto_load_success=false}
+  finally{report.auto_load_page_errors=autoErrors;await autoPage.close()}
+  report.success=report.model_load_success&&report.no_duplicate_litert_init&&report.auto_load_success&&report.real_samples_playable&&report.real_samples.every(x=>x.inference_success)&&report.reset_deterministic&&errors.length===0;
   if(!report.success)process.exitCode=1;
 }catch(e){report.error=String(e);process.exitCode=1}finally{fs.writeFileSync('artifacts/video-action/report.json',JSON.stringify(report,null,2));await browser.close()}
