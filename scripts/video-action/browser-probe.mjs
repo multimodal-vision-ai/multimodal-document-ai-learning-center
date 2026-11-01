@@ -76,6 +76,7 @@ try{
         entry.timeline_length=inference?.frameTop1?.length??0;
         entry.timeline_valid=Array.isArray(inference?.frameTop1)&&entry.timeline_length===inference.frames&&inference.frameTop1.every((p,i)=>Number.isFinite(p.t)&&p.t>=0&&p.t<=8&&Number.isFinite(p.score)&&p.score>0&&p.score<=1&&(i===0||p.t>=inference.frameTop1[i-1].t));
         entry.annotated_visible=await page.locator('#annotated-section').isVisible();
+        await page.waitForFunction(()=>{const v=document.querySelector('#annotated-video');return !!v?.error||(v.readyState>=2&&v.videoWidth>0)},null,{timeout:30000});
         entry.annotated_media=await page.locator('#annotated-video').evaluate(v=>({readyState:v.readyState,videoWidth:v.videoWidth,videoHeight:v.videoHeight,errorCode:v.error?.code??null,srcMatchesOriginal:v.currentSrc===document.querySelector('#video').currentSrc}));
         entry.annotated_media_decoded=entry.annotated_media.readyState>=2&&entry.annotated_media.videoWidth>0&&!entry.annotated_media.errorCode&&entry.annotated_media.srcMatchesOriginal;
         if(['挥手','看手机','吃东西','摔倒'].includes(label)){
