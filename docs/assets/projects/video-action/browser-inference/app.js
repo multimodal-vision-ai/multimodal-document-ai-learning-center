@@ -41,18 +41,29 @@ function updateTop1Overlay(){
   }
   overlay.append(title,name,score);
 }
-function showAnnotated(timeline,limit){
+async function showAnnotated(timeline,limit){
   if(!timeline.length)throw Error('逐帧 Top-1 记录为空');
   const src=$('video').currentSrc||$('video').src;
   if(!src)throw Error('原视频资源为空');
   const dest=$('annotated-video');
   if(src.startsWith('blob:'))dest.removeAttribute('crossorigin');else dest.crossOrigin='anonymous';
   state.top1Timeline=timeline;state.annotatedLimit=limit;
-  dest.src=src;dest.currentTime=0;dest.muted=true;
+  dest.muted=true;dest.src=src;dest.load();
   $('annotation-summary').textContent='已记录 '+timeline.length+' 个流式预测点（5 FPS，分析 '+limit.toFixed(1)+' 秒）。这不是物体检测框；播放中的标签依据原始模型在对应时刻的累积预测更新。';
   $('annotated-section').hidden=false;
+  // Showing the overlay without a decoded video frame would be misleading.
+  await new Promise((resolve,reject)=>{
+    if(dest.readyState>=2&&dest.videoWidth>0){resolve();return}
+    let timer;
+    const clean=()=>{clearTimeout(timer);dest.removeEventListener('loadeddata',ready);dest.removeEventListener('error',failed)};
+    const ready=()=>{if(dest.videoWidth>0){clean();resolve()}};
+    const failed=()=>{clean();reject(Error('结果视频无法解码或媒体请求失败'))};
+    timer=setTimeout(()=>{clean();reject(Error('结果视频画面加载超时'))},25000);
+    dest.addEventListener('loadeddata',ready);dest.addEventListener('error',failed);
+  });
+  dest.currentTime=0;
   updateTop1Overlay();
-  dest.play().catch(()=>{}); // optional muted autoplay, never required for review
+  dest.play().catch(()=>{}); // optional muted autoplay; manual playback always available
 }
 const replayVideo=$('annotated-video');
 replayVideo.addEventListener('timeupdate',updateTop1Overlay);
@@ -234,7 +245,7 @@ $('metrics').replaceChildren();
 for(const entry of ['处理 '+frames.length+' 帧','模型运行 '+timings.inferenceMs+' ms','总耗时 '+timings.totalMs+' ms','CPU/WASM']){
  const el=document.createElement('span');el.textContent=entry;$('metrics').append(el);
 }
-showAnnotated(frameTop1,Math.min(8,$('video').duration));record('inference',{top5:top,frameTop1,frames:frames.length,analyzedSeconds:Math.min(8,$('video').duration),timings,backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:MODEL_SHA});
+await showAnnotated(frameTop1,Math.min(8,$('video').duration));record('inference',{top5:top,frameTop1,frames:frames.length,analyzedSeconds:Math.min(8,$('video').duration),timings,backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:MODEL_SHA});
 say('真实推理已返回 '+frames.length+' 帧结果。Top-5 是未校准 softmax 分数。');
 }catch(e){say('真实推理未完成：'+e.message);$('results').textContent='没有可展示的有效推理结果';record('inference_error',{message:e.message,stack:e.stack})}finally{setBusy(false)}}
 $('run').onclick=run;
