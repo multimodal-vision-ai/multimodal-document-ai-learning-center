@@ -35,7 +35,7 @@ try{
  await page.locator('#compare-run').click();
  await page.waitForFunction(()=>{
    const el=document.querySelector('#compare-run'),status=document.querySelector('#status')?.textContent||'';
-   return !!el&&!el.disabled&&status.includes('三模型比较流程已完成');
+   return !!el&&!el.disabled&&status.includes('已完成 3 个所选模型');
  },null,{timeout:240000});
  const table=await page.locator('#comparison-results').innerText();
  report.allThreeComparison=table;
