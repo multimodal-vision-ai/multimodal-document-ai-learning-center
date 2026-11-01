@@ -17,7 +17,7 @@ try{
  await page.locator('#run').click();
  await page.waitForFunction(()=>!document.querySelector('#run').disabled,null,{timeout:240000});
  const st=await page.locator('#status').innerText();
- const inference=JSON.parse(await page.locator('#diagnostics').innerText()||'{}').inference;
+ const inference=JSON.parse(await page.locator('#diagnostics').textContent()||'{}').inference;
  report.checks.hfVideoMAERealInference=st.includes('VideoMAE 已完成 16 帧')&&inference?.variant==='videomae'&&
    inference?.classificationMode==='clip'&&inference?.labelSet==='K400'&&inference?.frames===1&&
    inference?.frameTop1?.length===1&&inference?.top5?.length===5&&inference?.modelSha256==='f484347d2d11bc132f40781615731730c5c8519a1ba9684e55114e889714a343';
