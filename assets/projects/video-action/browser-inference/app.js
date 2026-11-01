@@ -1,4 +1,5 @@
 import {interpretAction,labelDisplay,relationTag} from './semantic.js';
+import {createPersonDetector,choosePrimaryPerson,mapBoxToContainedVideo,top1At} from './person-overlay.js';
 // MVAI V1.0.3 experimental browser adapter. No fake outputs or sample fallback.
 const $ = id => document.getElementById(id);
 const MODEL_URL='https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT/resolve/main/movinet_a0_stream.tflite';
@@ -13,7 +14,92 @@ const say=s=>{$('status').textContent=s;$('status').classList.toggle('error',/�
 const record=(event,data)=>{state.last={...(state.last||{}),[event]:data, timestamp:new Date().toISOString()};$('diagnostics').textContent=JSON.stringify(state.last,null,2)};
 $('info').onclick=()=>{$('intro').hidden=!$('intro').hidden};
 function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('sample-list')?.querySelectorAll('button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':state.model?'模型已就绪':'尚未加载';}
+// Person detector runs entirely in browser, independently from the MoViNet action model.
+const personState={model:null,loadPromise:null,lastSampleMs:0,lastTime:-1,box:null,count:0,generation:0,error:null};
+const personStatus=msg=>{$('person-detector-status').textContent=msg};
+function clearPersonOverlay(){
+ const canvas=$('person-box-layer');
+ if(!canvas)return;
+ const ctx=canvas.getContext('2d');if(ctx)ctx.clearRect(0,0,canvas.width,canvas.height);
+ $('top1-overlay').hidden=false;
+}
+function drawPersonOverlay(){
+ const video=$('annotated-video'),canvas=$('person-box-layer'),enabled=$('person-box-toggle').checked;
+ if(!canvas||!enabled||!personState.box||!state.top1Timeline.length||video.currentTime>state.annotatedLimit+.005){
+   clearPersonOverlay();return;
+ }
+ const width=video.clientWidth,height=video.clientHeight;
+ if(width<=0||height<=0)return;
+ const pixelRatio=Math.min(window.devicePixelRatio||1,2);
+ const W=Math.round(width*pixelRatio),H=Math.round(height*pixelRatio);
+ if(canvas.width!==W||canvas.height!==H){canvas.width=W;canvas.height=H;}
+ const ctx=canvas.getContext('2d');
+ ctx.setTransform(pixelRatio,0,0,pixelRatio,0,0);ctx.clearRect(0,0,width,height);
+ const coords=mapBoxToContainedVideo(personState.box,video.videoWidth,video.videoHeight,width,height);
+ if(!coords){clearPersonOverlay();return}
+ const action=top1At(state.top1Timeline,video.currentTime,state.annotatedLimit);
+ if(!action){clearPersonOverlay();return}
+ // The box locates a COCO "person"; MoViNet predicts a video-level action,
+ // so the displayed tag is only associated visually, never attributed to that actor.
+ ctx.lineWidth=3;ctx.strokeStyle='#39e5ad';ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;
+ ctx.strokeRect(coords.x+1.5,coords.y+1.5,Math.max(0,coords.w-3),Math.max(0,coords.h-3));ctx.shadowBlur=0;
+ const title=labelDisplay(action.label)+' · '+(action.score*100).toFixed(1)+'%';
+ const disclaimer='画面 Top-1（非人物独立分类）';
+ ctx.font='bold 14px system-ui,sans-serif';
+ const tw=ctx.measureText(title).width;
+ ctx.font='11px system-ui,sans-serif';
+ const dw=ctx.measureText(disclaimer).width;
+ const boxWidth=Math.min(width-8,Math.max(tw,dw)+18);
+ const tagX=Math.max(4,Math.min(coords.x,width-boxWidth-4));
+ const tagY=coords.y>55?coords.y-48:Math.min(height-47,coords.y+4);
+ ctx.fillStyle='rgba(8,31,49,.91)';ctx.fillRect(tagX,tagY,boxWidth,42);
+ ctx.fillStyle='#fff';ctx.font='bold 14px system-ui,sans-serif';ctx.fillText(title,tagX+9,tagY+17,boxWidth-16);
+ ctx.fillStyle='#c1e7df';ctx.font='11px system-ui,sans-serif';ctx.fillText(disclaimer,tagX+9,tagY+33,boxWidth-16);
+ $('top1-overlay').hidden=true;
+}
+function detectPersonFrame(force=false){
+ const video=$('annotated-video');
+ if(!personState.model||!$('person-box-toggle').checked||$('annotated-section').hidden||video.readyState<2||!video.videoWidth)return;
+ if(video.currentTime>state.annotatedLimit+.005){personState.box=null;drawPersonOverlay();return}
+ const ms=performance.now();
+ if(!force&&(ms-personState.lastSampleMs<400||Math.abs(video.currentTime-personState.lastTime)<.1))return;
+ personState.lastSampleMs=ms;personState.lastTime=video.currentTime;
+ try{
+   const result=personState.model.detect(video);
+   const selected=choosePrimaryPerson(result.detections,video.videoWidth,video.videoHeight);
+   personState.box=selected.person?.boundingBox||null;
+   personState.count=selected.candidateCount;
+   personStatus(selected.person?(selected.candidateCount>1?'检测到 '+selected.candidateCount+' 人，仅显示画面最大主人物；动作是视频级分类':'已定位主人物；动作是视频级分类'):'当前画面未检测到可信人物，保留视频级 Top-1');
+   drawPersonOverlay();
+ }catch(e){personState.box=null;personState.error=String(e);personStatus('人物检测失败：'+e.message+'；已退回无框 Top-1');drawPersonOverlay()}
+}
+async function ensurePersonDetector(){
+ if(!$('person-box-toggle').checked||$('annotated-section').hidden)return;
+ if(personState.model){detectPersonFrame(true);return}
+ if(personState.loadPromise)return personState.loadPromise;
+ const generation=personState.generation;
+ personStatus('正在下载 MediaPipe EfficientDet-Lite0 人物检测器（仅首次）…');
+ personState.loadPromise=createPersonDetector().then(detector=>{
+   personState.model=detector;
+   if(generation===personState.generation&&!$('annotated-section').hidden){personStatus('人物检测器就绪，正在定位主人物…');detectPersonFrame(true)}
+   return detector;
+ }).catch(e=>{
+   personState.error=String(e);
+   personStatus('人物检测模型加载失败：'+e.message+'；保留原 Top-1 显示');
+   clearPersonOverlay();
+   return null;
+ }).finally(()=>{personState.loadPromise=null});
+ return personState.loadPromise;
+}
+$('person-box-toggle').addEventListener('change',()=>{
+ if(!$('person-box-toggle').checked){
+   personState.box=null;clearPersonOverlay();personStatus('人物框已关闭；保留视频级 Top-1');
+ }else{
+   ensurePersonDetector();
+ }
+});
 function hideAnnotated(){
+  personState.generation++;personState.box=null;personState.count=0;personState.lastTime=-1;clearPersonOverlay();
   const video=$('annotated-video');
   video.pause();video.removeAttribute('src');video.load();
   $('annotated-section').hidden=true;
@@ -40,6 +126,7 @@ function updateTop1Overlay(){
     score.textContent=(point.score*100).toFixed(1)+'% · t='+point.t.toFixed(1)+'s（未校准分数）';
   }
   overlay.append(title,name,score);
+  drawPersonOverlay();
 }
 async function showAnnotated(timeline,limit){
   if(!timeline.length)throw Error('逐帧 Top-1 记录为空');
@@ -63,16 +150,17 @@ async function showAnnotated(timeline,limit){
   });
   dest.currentTime=0;
   updateTop1Overlay();
+  if($('person-box-toggle').checked)void ensurePersonDetector();
   dest.play().catch(()=>{}); // optional muted autoplay; manual playback always available
 }
 const replayVideo=$('annotated-video');
 replayVideo.addEventListener('timeupdate',updateTop1Overlay);
-replayVideo.addEventListener('seeked',updateTop1Overlay);
-replayVideo.addEventListener('loadedmetadata',updateTop1Overlay);
+replayVideo.addEventListener('seeked',()=>{updateTop1Overlay();detectPersonFrame(true)});
+replayVideo.addEventListener('loadedmetadata',()=>{updateTop1Overlay();detectPersonFrame(true)});
 let overlayRaf=0;
-const renderPlayback=()=>{updateTop1Overlay();if(!replayVideo.paused&&!replayVideo.ended)overlayRaf=requestAnimationFrame(renderPlayback)};
+const renderPlayback=()=>{updateTop1Overlay();detectPersonFrame();if(!replayVideo.paused&&!replayVideo.ended)overlayRaf=requestAnimationFrame(renderPlayback)};
 replayVideo.addEventListener('play',()=>{cancelAnimationFrame(overlayRaf);overlayRaf=requestAnimationFrame(renderPlayback)});
-replayVideo.addEventListener('pause',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay()});
+replayVideo.addEventListener('pause',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay();detectPersonFrame(true)});
 replayVideo.addEventListener('ended',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay()});
 function pick(url,clip=null){hideAnnotated();if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}state.clip=clip;if(url.startsWith('blob:'))$('video').removeAttribute('crossorigin');else{$('video').crossOrigin='anonymous';$('upload').value=''}$('video').src=url;$('results').textContent='等待真实推理。';$('evaluation').textContent='点击「开始识别」后，将按参考标签及语义关联解释结果。';$('metrics').replaceChildren();$('reference').textContent=clip?'参考动作：'+clip.label_zh+' / '+clip.label_en:'参考动作：本地文件，无标注';$('provenance').replaceChildren();if(clip){const desc=document.createElement('span');desc.textContent='类型：'+(clip.synthetic?'合成测试':'真实来源视频')+' · 参考标签：'+(clip.reference_evidence||clip.evidence||'来源描述')+' · 作者：'+(clip.attribution||'见来源页')+' · 许可：'+clip.license+' · ';const link=document.createElement('a');link.href=clip.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看原始视频及授权';$('provenance').append(desc,link)}else $('provenance').textContent='本地上传 · 仅在此浏览器读取';$('run').disabled=state.busy||!$('video').getAttribute('src');if(!state.busy)say('已选择'+(clip?.label_zh?'「'+clip.label_zh+'」':'本地视频')+'；点击「开始识别」后将在浏览器执行真实推理。')}
 $('upload').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!['video/mp4','video/webm'].includes(f.type)){say('仅支持 MP4/WebM');return}if(f.size>120*1024*1024){say('文件超过 120 MB 的预览安全上限');return}const url=URL.createObjectURL(f);pick(url);state.objectUrl=url;};
