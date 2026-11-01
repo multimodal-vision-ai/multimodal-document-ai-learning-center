@@ -16,6 +16,11 @@ SOURCES=[
 FONT=ImageFont.load_default()
 def fetch(name,path):
     url="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+urllib.parse.quote(name,safe="")
+    # Direct URLs below are already published by the respective original source pages.
+    if name=="Eating with Bryan - Col Kosalka (962712).webm":
+        url="https://d34w7g4gy10iej.cloudfront.net/video/2505/DOD_110999070/DOD_110999070.mp4"
+    elif name=="Falling man.webm":
+        url="https://upload.wikimedia.org/wikipedia/commons/a/a5/Falling_man.webm"
     req=urllib.request.Request(url,headers={"User-Agent":"MVAI-VideoResearchPilot/1.0 (noncommercial review; sources Wikimedia Commons)"})
     with urllib.request.urlopen(req,timeout=100) as stream,path.open("wb") as out:
         total=0
