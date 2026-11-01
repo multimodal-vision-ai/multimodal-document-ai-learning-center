@@ -62,6 +62,17 @@ with tempfile.TemporaryDirectory() as td:
       sheet=Image.new("RGB",(1056,450),"#eeeeee")
       for i,im in enumerate(imgs):sheet.paste(im,((i%3)*352,(i//3)*225))
       sheet.save(ROOT/(sample_id+".jpg"),quality=85)
+      if sample_id=="eating_military":
+        detailed=Image.new("RGB",(352*4,225*3),"white")
+        for q in range(12):
+          sec=48+q
+          fn=Path(td)/(sample_id+f"_detail{q}.png")
+          frame(source,float(sec),fn)
+          im=Image.open(fn).convert("RGB").resize((352,198))
+          cell=Image.new("RGB",(352,225),"white")
+          cell.paste(im,(0,0));ImageDraw.Draw(cell).text((9,201),f"t={sec:.0f}s",fill="black",font=FONT)
+          detailed.paste(cell,((q%4)*352,(q//4)*225))
+        detailed.save(ROOT/"eating_military_detail_48_60.jpg",quality=89)
       print("REVIEW_READY",sample_id,row["source_bytes"],row["duration_s"],flush=True)
     except Exception as error:
       row["error"]=type(error).__name__+": "+str(error)[:200]
