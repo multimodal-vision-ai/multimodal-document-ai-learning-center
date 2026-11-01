@@ -45,15 +45,21 @@ try{
             const size=shape.reduce((x,y)=>x*y,1);
             if(size>4000000)throw Error('Tensor size exceeds safety limit at '+i.i);
             // Official float model expects float32; use identical shapes/dtypes as returned by LiteRT.
-            tensors.push(new api.Tensor(new Float32Array(size),shape));
+            tensors.push(new api.Tensor(i.type==='int32'?new Int32Array(size):new Float32Array(size).fill(i.name==='image'?.22:0),shape));
           }
           const tm=performance.now();
           const ys=await model.run(tensors);
           item.singleFrameMs=Math.round(performance.now()-tm);
           const values=await Promise.all(ys.map(x=>x.data()));
           item.outputShapes=values.map(v=>v.length);
+          const logitsIndex=item.outputs.findIndex(x=>x.name==='logits');
+          if(logitsIndex<0)throw Error('Model has no named 600-class logits');
+          const logits=values[logitsIndex];
+          item.logitsFinite=logits.length===600&&Array.from(logits).every(Number.isFinite);
+          item.logitsNonzero=logits.some(x=>Number.isFinite(x)&&x!==0);
+          item.logitTop1=Array.from(logits).indexOf(Math.max(...logits));
           item.nonZeroLogits=values.some(v=>v.length===600&&v.some(x=>Number.isFinite(x)&&x!==0));
-          item.ran=true;
+          item.ran=item.logitsFinite&&item.logitsNonzero;
           if(typeof ys.delete==='function')ys.delete();else ys.forEach(x=>x.delete?.());
         }finally{for(const x of tensors)x.delete?.()}
       }catch(e){item.error=String(e);item.stack=String(e.stack||'').slice(0,1700);item.ran=false}
