@@ -130,8 +130,8 @@ jobs:
           required = {
               "index.html": ["从当前主线走向未来", "进入前沿动态"],
               "radar/index.html": [
-                  "前沿动态", "重点推荐", "本周精选",
-                  "历史档案检索", "补充发现：待评估线索",
+                  "前沿动态", "重点推荐", "本月研究机会",
+                  "历史科研档案", "待复核研究线索",
               ],
           }
           for relative, markers in required.items():
