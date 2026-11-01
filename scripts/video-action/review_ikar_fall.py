@@ -37,7 +37,7 @@ try:
         reviewed=[]
         for i,m in enumerate(candidates[:3]):
             if m.size<10000 or m.size>35000000:continue
-            raw=Path("/tmp")/f"mvai_ikar_review_{i}"+Path(m.name).suffix
+            raw=Path("/tmp")/(f"mvai_ikar_review_{i}"+Path(m.name).suffix)
             with tar.extractfile(m) as f,raw.open("wb") as o:
                 while True:
                     data=f.read(512*1024)
