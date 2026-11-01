@@ -27,12 +27,12 @@ try{
       await page.locator('#compare-run').click();
       await page.waitForFunction(()=>{
         const b=document.querySelector('#compare-run'),txt=document.querySelector('#status')?.textContent||'';
-        return !!b&&!b.disabled&&(/三模型比较流程已完成|多模型比较未完成/.test(txt));
+        return !!b&&!b.disabled&&(/已完成 3 个所选模型|所选模型对比未完成/.test(txt));
       },null,{timeout:240000});
       const status=await page.locator('#status').innerText();
       result.status=status;
       result.rows=await page.locator('#comparison-results table tr').evaluateAll(rows=>rows.slice(1).map(r=>Array.from(r.querySelectorAll('td'),c=>c.textContent)));
-      result.passed=status.includes('三模型比较流程已完成')&&result.rows.length===3&&
+      result.passed=status.includes('已完成 3 个所选模型')&&result.rows.length===3&&
         result.rows.every(r=>r.length===6&&!r.includes('尚未运行')&&/[0-9]+ ms/.test(r[4]));
       console.log('SIX_CLASS_COMPARE',id,JSON.stringify(result.rows));
       await page.screenshot({path:root+'/'+id+'.png',fullPage:true});
