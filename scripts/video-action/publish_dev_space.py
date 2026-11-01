@@ -16,7 +16,7 @@ ROOT=Path("docs/assets/projects/video-action/browser-inference")
 HOST="https://multimodal-vision-ai-mvai-video-action-v103-dev.static.hf.space/"
 TOKEN=os.environ.get("HF_TOKEN")
 if not TOKEN: sys.exit("HF_TOKEN is absent; preview not deployed")
-for file in ("index.html","app.js","semantic.js","config.json"):
+for file in ("index.html","app.js","semantic.js","person-overlay.js","config.json"):
     if not (ROOT/file).is_file():sys.exit("Missing frontend file: "+file)
 config=json.loads((ROOT/"config.json").read_text(encoding="utf8"))
 if config["dataset_id"]!="multimodal-vision-ai/mvai-daily-action-demo":
@@ -31,7 +31,7 @@ except Exception as error:
 info=api.repo_info(repo_id=REPO,repo_type="space")
 if info.private:sys.exit("Isolated DEV Space unexpectedly private")
 card=f"""---
-title: MVAI Video Action V1.0.3 DEV
+title: MVAI Video Action V1.0.4 DEV
 emoji: 🎬
 colorFrom: blue
 colorTo: indigo
@@ -39,7 +39,7 @@ sdk: static
 app_file: index.html
 pinned: false
 ---
-# MVAI Video Action V1.0.3 — ISOLATED DEV PREVIEW
+# MVAI Video Action V1.0.4 — ISOLATED DEV PREVIEW
 
 **NOT OFFICIAL. DO NOT REFERENCE AS RELEASED.**
 
@@ -55,7 +55,7 @@ GitHub revision: `{os.getenv("GITHUB_SHA","unknown")}`
 HF Dataset revision: `{config["dataset_revision"]}`
 """
 operations=[CommitOperationAdd(path_in_repo="README.md",path_or_fileobj=__import__("io").BytesIO(card.encode("utf8")))]
-for name in ("index.html","app.js","semantic.js","config.json"):
+for name in ("index.html","app.js","semantic.js","person-overlay.js","config.json"):
     operations.append(CommitOperationAdd(path_in_repo=name,path_or_fileobj=str(ROOT/name)))
 commit=api.create_commit(repo_id=REPO,repo_type="space",operations=operations,
     commit_message="dev: update isolated browser-only action demo from PR #63")
