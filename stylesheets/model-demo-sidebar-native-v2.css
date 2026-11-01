@@ -1,0 +1,29 @@
+/* model-demo-sidebar-native-v2 — intentionally follows MkDocs Material's own navigation styles.
+   This versioned filename avoids cached copies of the previous decorated menu stylesheet. */
+@media screen and (min-width: 76.25em) {
+  /* Keep parent as an ordinary native MkDocs navigation row. Indent only its two children. */
+  .md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href$="document.html"]):has(a[href$="video.html"]) > ul.md-nav__list {
+    margin-left: .45rem;
+    padding-left: .45rem;
+    border-left: 1px solid var(--md-default-fg-color--lightest);
+  }
+  .md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href$="document.html"]):has(a[href$="video.html"]) > ul.md-nav__list > li.md-nav__item > a.md-nav__link {
+    color: var(--md-default-fg-color);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: inherit;
+    font-weight: 400;
+    opacity: 1;
+  }
+  .md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href$="document.html"]):has(a[href$="video.html"]) > ul.md-nav__list > li.md-nav__item > a.md-nav__link:hover,
+  .md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href$="document.html"]):has(a[href$="video.html"]) > ul.md-nav__list > li.md-nav__item > a.md-nav__link--active {
+    color: var(--md-accent-fg-color);
+  }
+  .md-sidebar--primary .md-nav[data-md-level="2"]:has(a[href$="document.html"]):has(a[href$="video.html"]) > ul.md-nav__list > li.md-nav__item > a.md-nav__link--active {
+    font-weight: 600;
+  }
+}
+/* Model demo navigation styling is restricted to the primary desktop menu.
+   Mobile uses the theme's native drawer presentation. */

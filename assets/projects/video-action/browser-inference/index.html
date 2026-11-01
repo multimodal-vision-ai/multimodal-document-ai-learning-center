@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MVAI · 视频行为识别与分析 V1.0.3 DEV</title>
+<style>
+:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#203650;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}main{max-width:1180px;margin:auto;padding:20px}header{background:linear-gradient(120deg,#163459,#335c96);color:white;border-radius:16px;padding:23px}header h1{font-size:26px;margin:8px 0}header p{font-size:13px;color:#e4edfb}.eyebrow{letter-spacing:.12em;font-size:11px;color:#bcd7ff}.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}.card{background:white;border:1px solid #dce4ef;border-radius:13px;padding:18px;min-width:0}.card h2{font-size:17px;margin:0 0 12px}.card p,.note{font-size:12px;line-height:1.7;color:#60718a}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}button,select,input{font:inherit}button,.upload{font-size:12px;border:1px solid #c5d6ed;background:white;padding:10px 14px;border-radius:8px;color:#204773;cursor:pointer}button.primary{background:#275fba;border-color:#275fba;color:white}button:disabled{opacity:.45;cursor:not-allowed}input[type=file]{max-width:100%;font-size:12px}video{width:100%;background:#132037;max-height:390px;border-radius:9px}.status{background:#eff4fb;border-radius:9px;padding:12px;white-space:pre-wrap;font-size:12px;line-height:1.7;overflow-wrap:anywhere}#results .result{display:grid;grid-template-columns:minmax(100px,1fr) 3fr 62px;align-items:center;gap:10px;font-size:12px;margin:9px 0}.track{background:#eaf0f8;border-radius:6px;height:11px;overflow:hidden}.fill{background:#3478cf;height:100%}details{margin:14px 0}summary{cursor:pointer;font-size:13px;font-weight:650}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.6 ui-monospace,monospace}.notice{font-size:12px;color:#526d91}.warning{color:#98582e;font-size:12px}a{color:#1c60ae}#sample-list button{margin:4px}.pill{display:inline-block;background:#e8eef9;padding:4px 7px;border-radius:8px;font-size:11px}.hidden{display:none}@media(max-width:760px){main{padding:10px}.cols{grid-template-columns:1fr}header{padding:17px}}
+</style></head>
+<body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div><main>
+<header><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.3</span><h1>视频行为识别与分析 <button id="info" aria-label="说明" title="查看技术说明">ⓘ</button></h1>
+<p id="intro" hidden>公开基线 MoViNet-A0 Streaming（Kinetics-600）。仅在浏览器 CPU/WASM 推理；Top-5 为未经校准的 softmax 分数，不代表行为真实概率。当前为独立开发预览，未经人工验收。</p>
+<span class="pill">开发预览 · 不代表正式上线</span></header>
+<div class="cols">
+<section class="card"><h2>01 · 视频输入</h2><div class="note">可选择已审批的 HF Dataset 样例，或上传本地 MP4/WebM；本地视频不会上传服务器。</div>
+<div id="sample-list" class="row"></div><label>本地视频：<input id="upload" type="file" accept="video/mp4,video/webm"></label>
+<p id="provenance">HF 示例目录读取中……</p><video id="video" controls playsinline preload="metadata"></video></section>
+<section class="card"><h2>02 · 模型推理</h2><label>模型 <select id="model"><option value="movinet-a0">MoViNet-A0 Streaming · 公开基线</option></select></label>
+<p class="note">WASM CPU · 原始 600 类 · NCHW 172×172 · 47 输入 / 28 输出。首次加载约 15.1 MB 权重。</p>
+<div class="row"><button id="probe">验证 WASM 加载</button><button id="run" class="primary" disabled>执行真实推理</button><button id="cancel">取消</button><button id="reset">清除</button></div>
+<div id="status" class="status" role="status">尚未验证浏览器端模型接口。不会显示预设分类结果。</div></section>
+</div>
+<section class="card"><h2>03 · 视频与分类结果</h2><p id="reference">参考动作：未选择样例</p><div id="results" class="note">运行前不显示分类结果。</div></section>
+<section class="card"><details><summary>04 · 推理详情与实验记录</summary><p>模型出处、文件 SHA、浏览器能力、真实计时和报错信息。不能以 Python CPU 结果替代浏览器结果。</p><pre id="diagnostics"></pre><button id="export">导出当前诊断 JSON</button></details></section>
+<section class="card"><details><summary>05 · 多模型结果对比（预留）</summary><p>尚未接入第二模型；不会展示虚构的 A/B 分数。统一结果接口将在新增真实模型后启用。</p></details></section>
+<footer class="note">模型归属：<a target="_blank" rel="noopener" href="https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT">litert-community / MoViNet-A0</a> · 研究性质演示，不是实验室自研权重。<br>样例管理：<a href="https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo" target="_blank" rel="noopener">HF Organization Dataset（待验证创建状态）</a></footer>
+</main><script type="module" src="./app.js"></script></body></html>
