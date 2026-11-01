@@ -12,6 +12,7 @@ try{
     const names=['a1','a2'];
     const evidence=[];
     const api=await import('https://cdn.jsdelivr.net/npm/@litertjs/core@2.5.3/+esm');
+    const {validateStreamingContract,runStreamingBatch}=await import('./official-movinet.js');
     await api.loadLiteRt('https://cdn.jsdelivr.net/npm/@litertjs/core@2.5.3/wasm/');
     const shapeOf=d=>{let r=d?.shape??d?.dims??d?.dimensions??d?.shapeSignature;return r?Array.from(r,Number):null};
     for(const variant of names){
@@ -34,6 +35,8 @@ try{
         item.inputs=ins.map((d,i)=>({i,name:d.name,type:d.dataType??d.dtype??d.type,shape:shapeOf(d)}));
         item.outputs=outs.map((d,i)=>({i,name:d.name,type:d.dataType??d.dtype??d.type,shape:shapeOf(d)}));
         item.compileMs=Math.round(performance.now()-start-item.downloadMs);
+        const contract=validateStreamingContract(ins,outs,variant);
+        item.contractPassed=true;item.imageInputName=contract.image.name;item.logitOutputName=contract.logits.name;
         item.firstInput=item.inputs[0];item.firstOutput=item.outputs[0];
         const frameFirst=item.inputs[0]?.shape;
         if(!frameFirst)throw Error('Missing input metadata');
@@ -59,7 +62,17 @@ try{
           item.logitsNonzero=logits.some(x=>Number.isFinite(x)&&x!==0);
           item.logitTop1=Array.from(logits).indexOf(Math.max(...logits));
           item.nonZeroLogits=values.some(v=>v.length===600&&v.some(x=>Number.isFinite(x)&&x!==0));
-          item.ran=item.logitsFinite&&item.logitsNonzero;
+
+          // Verify state propagation with the actual model instead of inferring compatibility from one frame.
+          const rgbCount=contract.image.shape.reduce((a,b)=>a*b,1);
+          const tm2=performance.now();
+          const two=await runStreamingBatch({api,model,contract,
+             frames:[new Float32Array(rgbCount).fill(.28),new Float32Array(rgbCount).fill(.35)]});
+          item.twoFrameMs=Math.round(performance.now()-tm2);
+          item.twoFramesRan=two.frameLogits.length===2&&two.frameLogits.every(x=>x.length===600&&x.every(Number.isFinite));
+          item.twoFrameTop1=two.frameLogits.map(x=>Array.from(x).indexOf(Math.max(...x)));
+
+          item.ran=item.logitsFinite&&item.logitsNonzero&&item.twoFramesRan;
           if(typeof ys.delete==='function')ys.delete();else ys.forEach(x=>x.delete?.());
         }finally{for(const x of tensors)x.delete?.()}
       }catch(e){item.error=String(e);item.stack=String(e.stack||'').slice(0,1700);item.ran=false}
