@@ -1,24 +1,106 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MVAI · 视频行为识别与分析 V1.0.3 DEV</title>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>视频行为识别与分析 · MVAI DEV</title>
 <style>
-:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#203650;background:#f3f6fb}*{box-sizing:border-box}body{margin:0}main{max-width:1180px;margin:auto;padding:20px}header{background:linear-gradient(120deg,#163459,#335c96);color:white;border-radius:16px;padding:23px}header h1{font-size:26px;margin:8px 0}header p{font-size:13px;color:#e4edfb}.eyebrow{letter-spacing:.12em;font-size:11px;color:#bcd7ff}.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}.card{background:white;border:1px solid #dce4ef;border-radius:13px;padding:18px;min-width:0}.card h2{font-size:17px;margin:0 0 12px}.card p,.note{font-size:12px;line-height:1.7;color:#60718a}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}button,select,input{font:inherit}button,.upload{font-size:12px;border:1px solid #c5d6ed;background:white;padding:10px 14px;border-radius:8px;color:#204773;cursor:pointer}button.primary{background:#275fba;border-color:#275fba;color:white}button:disabled{opacity:.45;cursor:not-allowed}input[type=file]{max-width:100%;font-size:12px}#target-classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:7px;margin:12px 0}.target{border:1px solid #e0e7f2;background:#f7f9fc;border-radius:9px;padding:10px;text-align:left}.target strong{display:block;font-size:12px}.target small{display:block;font-size:11px;line-height:1.5;color:#67819e;margin-top:4px}.target.ready{border-color:#8cbb9a;background:#eef9f2}.target.pending{opacity:.83}video{width:100%;background:#132037;max-height:390px;border-radius:9px}.status{background:#eff4fb;border-radius:9px;padding:12px;white-space:pre-wrap;font-size:12px;line-height:1.7;overflow-wrap:anywhere}#results .result{display:grid;grid-template-columns:minmax(100px,1fr) 3fr 62px;align-items:center;gap:10px;font-size:12px;margin:9px 0}.track{background:#eaf0f8;border-radius:6px;height:11px;overflow:hidden}.fill{background:#3478cf;height:100%}details{margin:14px 0}summary{cursor:pointer;font-size:13px;font-weight:650}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.6 ui-monospace,monospace}.notice{font-size:12px;color:#526d91}.warning{color:#98582e;font-size:12px}a{color:#1c60ae}#sample-list button{margin:4px}.pill{display:inline-block;background:#e8eef9;padding:4px 7px;border-radius:8px;font-size:11px}.hidden{display:none}@media(max-width:760px){main{padding:10px}.cols{grid-template-columns:1fr}header{padding:17px}}
-</style></head>
+:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#193554;background:#f5f7fb;font-size:14px}*{box-sizing:border-box}
+body{margin:0}main{max-width:1260px;margin:0 auto;padding:20px 20px 35px}
+header{background:linear-gradient(105deg,#163554,#285987);color:#fff;border-radius:15px;padding:18px 24px;display:flex;justify-content:space-between;gap:18px;align-items:center}
+header h1{font-size:23px;line-height:1.35;margin:4px 0}header .eyebrow{font-size:11px;letter-spacing:.1em;color:#b6d2ed}
+header p{font-size:12px;color:#deebff;max-width:680px}header .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:flex-end}
+.tag{border-radius:7px;padding:5px 9px;font-size:11px;white-space:nowrap;color:#355476;background:#eaf1fa}.tag.inverse{background:#ffffff19;color:white;border:1px solid #ffffff45}
+button,select,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}
+button.ghost,button.primary,#sample-list button{border:1px solid #bfd0e5;border-radius:9px;background:#fff;color:#245385;padding:9px 12px}
+button.primary{background:#2364bc;border-color:#2364bc;color:white;font-weight:650}
+button.ghost:hover:not(:disabled),#sample-list button:hover{border-color:#3980ca;background:#f2f7ff}
+button#info{background:transparent;color:#fff;border:1px solid #ffffff66;border-radius:50%;width:26px;height:26px}
+.workspace{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:16px;margin-top:16px;align-items:start}
+.panel{border:1px solid #dde5f0;border-radius:14px;background:white;padding:19px;min-width:0;box-shadow:0 1px 2px #153b6011}
+.panel h2{font-size:17px;color:#163b60;margin:0 0 8px}.panel h3{font-size:15px;color:#163b60;margin:0 0 8px}
+.note{font-size:12px;color:#697f97;line-height:1.55;margin:5px 0 10px}
+.mini-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:14px 0 8px}
+.mini-heading strong{font-size:12px;color:#365b7d}.mini-heading span{font-size:11px;color:#7590ab}
+#target-classes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 12px}
+.target{border:1px solid #e1e7f0;border-radius:8px;padding:8px 5px;text-align:center;background:#f8fafc}
+.target.ready{background:#f0f8f3;border-color:#b6d9c4}.target.pending{background:#f7f8fb}
+.target strong{display:block;font-size:12px}.target small{display:block;font-size:10px;color:#647f97;margin-top:4px}
+#sample-list{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+#sample-list button{text-align:left;padding:9px 10px;line-height:1.35;font-size:12px;min-height:42px;overflow-wrap:anywhere}
+#sample-list button.active{border-color:#2870bd;background:#eaf3ff;box-shadow:inset 3px 0 #2870bd}
+.upload-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 12px;font-size:12px}
+.upload-row input{font-size:11px;max-width:100%}
+video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#111d2b;border-radius:10px}
+#provenance{margin-top:10px;padding-top:8px;border-top:1px solid #e9eef5;font-size:11px;color:#72859e;line-height:1.6;overflow-wrap:anywhere}
+#provenance a{color:#245fa7}.model-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#model-state{font-size:11px;color:#647b94;background:#f0f4fa;border-radius:6px;padding:4px 9px}
+.model-form{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 6px;font-size:12px}
+.model-form select{max-width:100%;border:1px solid #cbd7e5;border-radius:8px;background:#fff;padding:8px;font-size:12px}
+.actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0 9px}
+.actions button{font-size:12px}.status{background:#f0f5fb;border-radius:8px;padding:10px;color:#315676;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.status.error{background:#fff5f1;color:#9a4429}
+.sep{border:0;border-top:1px solid #e6edf5;margin:18px 0 16px}
+#reference{font-size:12px;color:#667f97;margin:5px 0 11px}
+#evaluation{background:#f2f7fc;border:1px solid #e1eaf3;border-radius:9px;padding:11px;font-size:12px;line-height:1.65;color:#385b7e;margin:7px 0 12px}
+#evaluation strong{color:#17436f}
+#results{min-height:90px;font-size:12px}
+.result{display:grid;grid-template-columns:minmax(140px,1.35fr) minmax(40px,1fr) 56px;align-items:center;gap:9px;margin:10px 0}
+.result .name{font-weight:500;overflow-wrap:anywhere}.result .sub{font-size:10px;color:#6986a5;display:block;margin-top:2px}
+.result .score{text-align:right;font-variant-numeric:tabular-nums;color:#2b547f}
+.track{background:#ebf0f8;border-radius:5px;height:9px;overflow:hidden}.fill{height:100%;background:#3478cf}
+#metrics{display:flex;flex-wrap:wrap;gap:8px;font-size:11px;color:#66809a;margin-top:12px}
+#metrics span{background:#f3f6fb;border-radius:6px;padding:5px 7px}
+.lower{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.lower .panel{padding:14px 18px}
+details>summary{cursor:pointer;font-size:13px;font-weight:650;color:#234c76}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;line-height:1.6;max-height:320px;overflow:auto}
+a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:1.8}
+@media(max-width:980px){main{padding:12px}.workspace{grid-template-columns:1fr}.lower{grid-template-columns:1fr}header{flex-wrap:wrap}header .meta{justify-content:flex-start}}
+@media(max-width:500px){header h1{font-size:20px}.panel{padding:13px}#target-classes{grid-template-columns:repeat(3,minmax(0,1fr))}.result{grid-template-columns:1.4fr 1fr 52px;gap:6px}.actions button{flex:1}}
+</style>
+</head>
 <body><main>
-<header><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.3</span><h1>视频行为识别与分析 <button id="info" aria-label="说明" title="查看技术说明">ⓘ</button></h1>
-<p id="intro" hidden>公开基线 MoViNet-A0 Streaming（Kinetics-600）。仅在浏览器 CPU/WASM 推理；Top-5 为未经校准的 softmax 分数，不代表行为真实概率。当前为独立开发预览，未经人工验收。</p>
-<span class="pill">开发预览 · 不代表正式上线</span></header>
-<div class="cols">
-<section class="card"><h2>01 · 视频输入</h2><div class="note">可选择已审批的 HF Dataset 样例，或上传本地 MP4/WebM；本地视频不会上传服务器。</div>
-<div class="note">重点测试类别（仅显示真实入库状态，不生成伪样例）</div><div id="target-classes" aria-label="重点行为样例覆盖情况"></div><div id="sample-list" class="row"></div><label>本地视频：<input id="upload" type="file" accept="video/mp4,video/webm"></label>
-<p id="provenance">HF 示例目录读取中……</p><video id="video" controls playsinline preload="metadata"></video></section>
-<section class="card"><h2>02 · 模型推理</h2><label>模型 <select id="model"><option value="movinet-a0">MoViNet-A0 Streaming · 公开基线</option></select></label>
-<p class="note">WASM CPU · 原始 600 类 · NCHW 172×172 · 47 输入 / 28 输出。首次加载约 15.1 MB 权重。</p>
-<div class="row"><button id="probe">验证 WASM 加载</button><button id="run" class="primary" disabled>执行真实推理</button><button id="cancel">取消</button><button id="reset">清除</button></div>
-<div id="status" class="status" role="status">尚未验证浏览器端模型接口。不会显示预设分类结果。</div></section>
+<header>
+  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.3</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
+  <p id="intro" hidden>基于公开 MoViNet-A0 Streaming（Kinetics-600）。模型由 LiteRT.js 在浏览器 CPU/WASM 推理；Top-5 是未校准 softmax 分数，原始英文模型标签与中文动作归类不一定一一对应。</p></div>
+  <div class="meta"><span class="tag inverse">独立 DEV · 非正式发布</span><span class="tag inverse">浏览器本地推理</span></div>
+</header>
+<div class="workspace">
+  <section class="panel">
+    <h2>01 · 选择与播放视频</h2>
+    <p class="note">选择已核验来源的真人视频，或上传本地 MP4/WebM。上传的视频仅在当前浏览器读取。</p>
+    <div class="mini-heading"><strong>重点行为覆盖</strong><span>5 个目标类别</span></div>
+    <div id="target-classes" aria-label="重点行为样例覆盖情况"></div>
+    <div class="mini-heading"><strong>公开视频样例</strong><span>点击后直接播放</span></div>
+    <div id="sample-list" aria-label="可选真人视频"></div>
+    <label class="upload-row">本地视频：<input id="upload" type="file" accept="video/mp4,video/webm"></label>
+    <video id="video" controls playsinline preload="metadata" aria-label="动作示例预览"></video>
+    <div id="provenance">正在读取 Hugging Face Dataset 样例目录……</div>
+  </section>
+  <section class="panel">
+    <div class="model-header"><h2>02 · 模型推理</h2><span id="model-state">尚未加载</span></div>
+    <label class="model-form">模型 <select id="model"><option value="movinet-a0">MoViNet-A0 Streaming · 公开基线</option></select></label>
+    <p class="note">LiteRT.js WASM CPU · Kinetics-600 · 权重约 15.1 MB（首次下载并校验 SHA256）</p>
+    <div class="actions">
+      <button id="run" class="primary" disabled>开始识别</button>
+      <button id="probe" class="ghost">加载 / 检查模型</button>
+      <button id="cancel" class="ghost">取消</button>
+      <button id="reset" class="ghost">清除</button>
+    </div>
+    <div id="status" class="status" role="status" aria-live="polite">选择视频后点击「开始识别」，模型将自动加载；也可提前手动检查。</div>
+    <hr class="sep">
+    <h3>03 · 分类结果</h3>
+    <p id="reference">参考动作：未选择样例</p>
+    <div id="evaluation">请选择真人样例并运行识别，结果会显示在这里。</div>
+    <div id="results">运行前不显示 Top-5 分类结果。</div>
+    <div id="metrics"></div>
+  </section>
 </div>
-<section class="card"><h2>03 · 视频与分类结果</h2><p id="reference">参考动作：未选择样例</p><div id="results" class="note">运行前不显示分类结果。</div></section>
-<section class="card"><details><summary>04 · 推理详情与实验记录</summary><p>模型出处、文件 SHA、浏览器能力、真实计时和报错信息。不能以 Python CPU 结果替代浏览器结果。</p><pre id="diagnostics"></pre><button id="export">导出当前诊断 JSON</button></details></section>
-<section class="card"><details><summary>05 · 多模型结果对比（预留）</summary><p>尚未接入第二模型；不会展示虚构的 A/B 分数。统一结果接口将在新增真实模型后启用。</p></details></section>
-<footer class="note">模型归属：<a target="_blank" rel="noopener" href="https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT">litert-community / MoViNet-A0</a> · 研究性质演示，不是实验室自研权重。<br>样例管理：<a href="https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo" target="_blank" rel="noopener">HF Organization Dataset · 已版本固定</a></footer>
+<div class="lower">
+  <section class="panel"><details><summary>04 · 推理详情与实验记录</summary>
+  <p class="note">查看数据来源、模型 SHA、实际推理时间与异常。仅保留当前页面本地诊断记录。</p>
+  <pre id="diagnostics"></pre><button id="export" class="ghost">导出诊断 JSON</button></details></section>
+  <section class="panel"><details><summary>05 · 多模型对比（后续扩展）</summary>
+  <p class="note">当前只接入 MoViNet-A0 真实模型；第二模型未接入，不显示虚构对比分数。</p></details></section>
+</div>
+<footer>模型来源：<a target="_blank" rel="noopener" href="https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT">litert-community / MoViNet-A0</a>（非实验室自研权重） · 视频样例：<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo">MVAI HF Dataset</a>。标签仅用于探索性对照，不能直接计算正式识别准确率。</footer>
 </main><script type="module" src="./app.js"></script></body></html>
