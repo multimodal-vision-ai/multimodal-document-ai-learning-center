@@ -32,3 +32,25 @@ with tempfile.TemporaryDirectory() as td:
     (OUT/"source.json").write_text(json.dumps({"source":URL,"source_page":"https://commons.wikimedia.org/wiki/File:Sleepfor1950.ogv",
        "author":"Encyclopaedia Britannica (1950), public-domain marked archival education film",
        "sampled_every_seconds":20,"frames":len(shots),"status":"frame_review_not_yet_approved"},indent=2))
+
+    # Explicitly inspect the adult bed posture sequence at t=236..244 seconds.
+    clip=Path(td)/"sleep_posture_candidate.mp4"
+    subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y","-ss","236","-i",str(path),
+      "-t","8","-vf","fps=5,scale=480:-2","-an","-c:v","libx264",
+      "-pix_fmt","yuv420p","-movflags","+faststart",str(clip)],check=True,timeout=90)
+    tiles=Image.new("RGB",(4*320,4*225),"white")
+    for j in range(16):
+      still=Path(td)/f"clipshot{j}.png"
+      subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y","-ss",str(j/2),
+        "-i",str(clip),"-frames:v","1","-vf",
+        "scale=320:200:force_original_aspect_ratio=decrease,pad=320:200:(ow-iw)/2:(oh-ih)/2",
+        str(still)],check=True,timeout=50)
+      im=Image.open(still).convert("RGB")
+      x=(j%4)*320;y=(j//4)*225
+      tiles.paste(im,(x,y))
+      ImageDraw.Draw(tiles).text((x+7,y+203),f"t={236+j/2:.1f}s",fill="black")
+    tiles.save(OUT/"sleep_1950_details_236_244.jpg",quality=90)
+    import hashlib
+    (OUT/"clip_review_sha.json").write_text(json.dumps({"source_start_s":236,"source_end_s":244,
+       "sha256":hashlib.sha256(clip.read_bytes()).hexdigest(),"bytes":clip.stat().st_size,
+       "status":"pending_manual_frame_confirmation"},indent=2))
