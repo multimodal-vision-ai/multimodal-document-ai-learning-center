@@ -100,6 +100,28 @@ jobs:
           mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
           python scripts/radar/verify_publication.py --site-dir "$RUNNER_TEMP/dev-site"
 
+      - name: Validate HF Dataset visibility and real browser WASM (PR #63 only)
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 63
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check docs/assets/projects/video-action/browser-inference/app.js
+          node --check scripts/video-action/browser-probe.mjs
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference > /tmp/mvai-video-server.log 2>&1 &
+          node scripts/video-action/browser-probe.mjs
+
+      - name: Upload independent browser probe report
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.number == 63
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-action-v103-browser-evidence
+          path: artifacts/video-action/
+          retention-days: 7
+          if-no-files-found: warn
+
       - name: Add visible DEV environment marking
         run: |
           python - <<'PY'
