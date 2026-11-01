@@ -31,6 +31,7 @@ jobs:
           node --check scripts/video-action/browser-probe.mjs
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
+          npx playwright install chrome
       - name: Launch static server and probe actual Chrome WASM runtime
         run: |
           python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-http.log 2>&1 &
