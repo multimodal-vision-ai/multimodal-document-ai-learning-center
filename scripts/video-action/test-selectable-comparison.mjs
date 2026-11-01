@@ -30,7 +30,9 @@ try{
  await page.locator('#compare-choices input[value="a1"]').check();
  await page.locator('#compare-choices input[value="a2"]').check();
  report.checks.threeSelected=(await get()).length===3;
+ report.checks.fourthModelBlocked=await page.locator('#compare-choices input[value="videomae"]').isDisabled();
  await page.locator('#compare-choices input[value="a1"]').uncheck();
+ report.checks.fourthBecomesAvailable=await page.locator('#compare-choices input[value="videomae"]').isEnabled();
  report.checks.twoSelected=JSON.stringify(await get())===JSON.stringify(['a0','a2']);
  await page.locator('#sample-list button[data-action="falling"]').click();
  await page.waitForFunction(()=>{const v=document.querySelector('#video');return v.readyState>=2&&v.videoWidth>0},null,{timeout:30000});
