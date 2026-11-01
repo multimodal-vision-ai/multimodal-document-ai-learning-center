@@ -378,7 +378,7 @@ async function readFrames(video){if(!Number.isFinite(video.duration)||video.dura
 function softmax(logits){const m=Math.max(...logits),v=Array.from(logits,x=>Math.exp(x-m));const s=v.reduce((a,b)=>a+b,0);return v.map(x=>x/s)}
 const MODEL_ORDER=['a0','a1','a2'];
 const compareInputs=()=>Array.from(document.querySelectorAll('#compare-choices input[type="checkbox"]'));
-const selectedForCompare=()=>compareInputs().filter(el=>el.checked&&!el.disabled).map(el=>el.value);
+const selectedForCompare=()=>compareInputs().filter(el=>el.checked).map(el=>el.value);
 function updateComparisonSelection(){
   const selected=selectedForCompare(),status=$('compare-selection-status');
   status.textContent='已选择 '+selected.length+' / 3 个模型'+(selected.length===0?' · 请至少选择一个':selected.length===3?' · 已达上限':'');
