@@ -1,0 +1,54 @@
+name: V1.0.6 Qualcomm VideoMAE third-party REAL Chrome feasibility
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/probe-qualcomm-videomae-browser.mjs
+      - .github/workflows/video-action-v106-qualcomm-probe.yml
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  verify-qualcomm-videomae:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install real Chrome and HF client
+        run: |
+          python -m pip install 'huggingface_hub>=0.36,<2'
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          npx playwright install chrome
+      - name: Fetch pinned historical Qualcomm VideoMAE TFLite only for test
+        run: |
+          python - <<'PY'
+          from huggingface_hub import hf_hub_download
+          from pathlib import Path
+          import hashlib,shutil
+          dest=Path('docs/assets/projects/video-action/browser-inference/third-party-probe')
+          dest.mkdir(parents=True,exist_ok=True)
+          path=hf_hub_download(repo_id='qualcomm/Video-MAE',filename='Video-MAE.tflite',revision='d786d813bcfbffd6d28043207fa995bd9158c487')
+          result=dest/'Video-MAE.tflite'
+          shutil.copyfile(path,result)
+          data=result.read_bytes()
+          if not 100000000<len(data)<460000000 or data[4:8]!=b'TFL3':raise ValueError('Not verified TFLite FlatBuffer')
+          print('NONMOVINET_FILE',len(data),hashlib.sha256(data).hexdigest(),flush=True)
+          PY
+      - name: Compile and infer in Chrome CPU/WASM, no simulated results
+        run: |
+          node --check scripts/video-action/probe-qualcomm-videomae-browser.mjs
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/videomae-http.log 2>&1 &
+          node scripts/video-action/probe-qualcomm-videomae-browser.mjs
+      - name: Preserve compatibility evidence, not third-party binary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v106-videomae-browser-feasibility
+          path: artifacts/video-action/nonmovinet-probe/
+          if-no-files-found: warn
+          retention-days: 14
