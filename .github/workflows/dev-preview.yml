@@ -120,6 +120,8 @@ jobs:
         run: |
           set -euo pipefail
           node --check docs/assets/projects/video-action/browser-inference/app.js
+          node --check docs/assets/projects/video-action/browser-inference/semantic.js
+          node scripts/video-action/test-semantics.mjs
           node --check scripts/video-action/browser-probe.mjs
           python -m pip install 'pillow>=10,<13'
           python scripts/video-action/generate_demo.py
