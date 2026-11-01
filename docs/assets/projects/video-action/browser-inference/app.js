@@ -56,7 +56,10 @@ async function catalog(){
   const box=$('sample-list');
   box.replaceChildren();
   for(const clip of c.items){
-    if(clip.status!=='approved_demo'||clip.redistribution_approved!==true||!clip.license||!clip.source_url||!/^demo\\/videos\\/[\\w.-]+\\.(mp4|webm)$/.test(clip.relative_file))continue;
+    const relative=String(clip.relative_file||'');
+    const filename=relative.startsWith('demo/videos/')?relative.slice(12):'';
+    const safeName=filename.length>0&&[...filename].every(ch=>'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-'.includes(ch));
+    if(clip.status!=='approved_demo'||clip.redistribution_approved!==true||!clip.license||!clip.source_url||!safeName||!(filename.endsWith('.mp4')||filename.endsWith('.webm')))continue;
     const btn=document.createElement('button');
     btn.textContent='▶ '+clip.label_zh+(clip.synthetic?' · 合成示例':' · HF 样例');
     btn.onclick=()=>pick('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file,clip);
