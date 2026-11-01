@@ -1,7 +1,7 @@
 import {chromium} from 'playwright';
 import fs from 'node:fs';
 fs.mkdirSync('artifacts/video-action',{recursive:true});
-const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox']});
 const page=await browser.newPage({viewport:{width:1440,height:960},acceptDownloads:true});
 const report={checked_at:new Date().toISOString(),type:'actual_chromium_wasm_probe',success:false};
 try{
