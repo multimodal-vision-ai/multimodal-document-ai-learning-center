@@ -1,16 +1,17 @@
 {
   "schema_version": "1.0",
   "dataset_id": "multimodal-vision-ai/mvai-daily-action-demo",
-  "dataset_revision": "c712ce63fd1b4cfee7d89f7bd0262b3f0f875ab6",
+  "dataset_revision": "6206e5f52b84713347ef4b26b15a392ca2738d7c",
   "model_repository": "litert-community/MoViNet-A0-Stream-LiteRT",
   "model_sha256": "0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c8",
   "litert_version": "2.5.3",
-  "dataset_status": "five_real_pilot_clips_three_required_categories; two missing sleep and fall",
+  "dataset_status": "six_real_pilots_four_required_categories; falling_pending",
   "real_pilot_ids": [
     "real_waving_hand_001",
     "real_jumping_jacks_002",
     "real_phone_use_003",
     "real_eating_004",
-    "real_landline_call_005"
+    "real_landline_call_005",
+    "real_sleep_posture_006"
   ]
 }
