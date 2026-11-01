@@ -18,12 +18,10 @@ try{
     await page.waitForFunction(()=>document.querySelectorAll('#sample-list button').length===6,null,{timeout:35000});
     report.sample_buttons=await page.locator('#sample-list button').allTextContents();
     report.compact_six_labels=report.sample_buttons.join('、')==='挥手、看手机、打电话、摔倒、吃东西、睡觉';
-    report.fall_explicit_missing=await page.locator('#sample-list button[data-action="falling"]').evaluate(btn=>btn.classList.contains('unavailable')&&!btn.dataset.clipId);
+    report.fall_real_video_linked=await page.locator('#sample-list button[data-action="falling"]').evaluate(btn=>!btn.classList.contains('unavailable')&&!!btn.dataset.clipId);
     if(!report.compact_six_labels)throw Error('Six compact labels mismatch: '+report.sample_buttons.join('、'));
-    await page.locator('#sample-list button[data-action="falling"]').click();
-    report.fall_message=await page.locator('#sample-status').innerText();
-    report.fall_missing_honest=report.fall_message.includes('暂无已审核');
-    for(const label of ['挥手','看手机','打电话','吃东西','睡觉']){
+    report.fall_sample_real=report.fall_real_video_linked;
+    for(const label of ['挥手','看手机','打电话','摔倒','吃东西','睡觉']){
       try {
         await page.locator('#sample-list button').filter({hasText:label}).click();
         await page.waitForFunction(()=>{const v=document.querySelector('#video');return !!v.error||(v.readyState>=2&&v.videoWidth>0&&Number.isFinite(v.duration))},null,{timeout:20000});
@@ -61,9 +59,9 @@ try{
       report.reset_deterministic=a.length===b.length&&a.every((x,i)=>x.id===b[i].id&&Math.abs(x.score-b[i].score)<1e-5);
     }
   }
-  report.real_samples_playable=report.real_samples.length===5&&report.real_samples.every(x=>x.playable);
+  report.real_samples_playable=report.real_samples.length===6&&report.real_samples.every(x=>x.playable);
   if(report.model_load_success&&report.real_samples_playable){
-    for(const label of ['挥手','看手机','打电话','吃东西','睡觉']){
+    for(const label of ['挥手','看手机','打电话','摔倒','吃东西','睡觉']){
       try{
         await page.locator('#sample-list button').filter({hasText:label}).click();
         await page.locator('#run').click();
@@ -106,6 +104,6 @@ try{
     await autoPage.screenshot({path:'artifacts/video-action/one-click-auto-load.png',fullPage:true});
   }catch(e){report.auto_load_error=String(e);report.auto_load_success=false}
   finally{report.auto_load_page_errors=autoErrors;await autoPage.close()}
-  report.success=report.compact_six_labels&&report.fall_explicit_missing&&report.fall_missing_honest&&report.model_load_success&&report.no_duplicate_litert_init&&report.auto_load_success&&report.real_samples_playable&&report.real_samples.every(x=>x.inference_success&&x.timeline_valid&&x.annotated_visible&&x.annotated_media_decoded&&x.seek_overlay_matches)&&report.reset_deterministic&&errors.length===0;
+  report.success=report.compact_six_labels&&report.fall_real_video_linked&&report.fall_sample_real&&report.model_load_success&&report.no_duplicate_litert_init&&report.auto_load_success&&report.real_samples_playable&&report.real_samples.every(x=>x.inference_success&&x.timeline_valid&&x.annotated_visible&&x.annotated_media_decoded&&x.seek_overlay_matches)&&report.reset_deterministic&&errors.length===0;
   if(!report.success)process.exitCode=1;
 }catch(e){report.error=String(e);process.exitCode=1}finally{fs.writeFileSync('artifacts/video-action/report.json',JSON.stringify(report,null,2));await browser.close()}
