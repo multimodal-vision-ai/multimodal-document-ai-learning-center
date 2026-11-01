@@ -21,6 +21,27 @@ jobs:
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
           npx playwright install chrome
+      - name: Download official floating-point TFLite checkpoints for same-origin browser probe
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib,pathlib,urllib.request
+          root=pathlib.Path("docs/assets/projects/video-action/browser-inference/model-candidates")
+          root.mkdir(parents=True,exist_ok=True)
+          for variant in ("a1","a2"):
+              url=f"https://storage.googleapis.com/tf_model_garden/vision/movinet/movinet_{variant}_stream.tflite"
+              p=root/f"movinet_{variant}_stream.tflite"
+              req=urllib.request.Request(url,headers={"User-Agent":"MVAI-Research-Model-Compatibility/1.0"})
+              with urllib.request.urlopen(req,timeout=100) as source,p.open("wb") as output:
+                  while True:
+                      data=source.read(1024*1024)
+                      if not data:break
+                      output.write(data)
+                      if output.tell()>85000000:raise RuntimeError("Unsafe oversized model")
+              data=p.read_bytes()
+              if len(data)<3000000 or data[4:8]!=b"TFL3":raise RuntimeError("Unexpected LiteRT FlatBuffer from "+url)
+              print("OFFICIAL_MODEL_VERIFIED",variant,len(data),hashlib.sha256(data).hexdigest(),flush=True)
+          PY
       - name: Compile official A1 and A2 in Chrome WASM and run real tensors
         run: |
           node --check scripts/video-action/probe-candidate-models.mjs
