@@ -1,0 +1,27 @@
+name: V1.0.3 independent HF Static DEV preview
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'docs/assets/projects/video-action/browser-inference/**'
+      - 'scripts/video-action/publish_dev_space.py'
+      - '.github/workflows/video-action-v103-static-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publish-isolated-hf-static-dev:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install trusted HF Hub client
+        run: python -m pip install 'huggingface_hub>=0.36,<2'
+      - name: Publish isolated DEV Space using server-side credentials only
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/video-action/publish_dev_space.py
