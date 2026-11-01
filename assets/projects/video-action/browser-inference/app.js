@@ -1,19 +1,22 @@
 import {interpretAction,labelDisplay} from './semantic.js';
 import {createPersonDetector,choosePrimaryPerson,mapBoxToContainedVideo,top1At} from './person-overlay.js';
+import {OFFICIAL_MODELS,MODEL_REPO,validateStreamingContract,makeRGBFrameFromRGBA,runStreamingBatch} from './official-movinet.js';
 // MVAI V1.0.3 experimental browser adapter. No fake outputs or sample fallback.
 const $ = id => document.getElementById(id);
+const OFFICIAL_MODEL_REVISION='d1ed47ef93682fbceda5c388277e34ed717dd4ab';
 const MODEL_URL='https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT/resolve/main/movinet_a0_stream.tflite';
 const MODEL_SHA='0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c8';
 const LABELS_URL='https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt';
 const DATASET='multimodal-vision-ai/mvai-daily-action-demo';
 const DIMS=[2,2,2,4,2,2,4,2,2,2,4];
-const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0};
+const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},compareAllRunning:false};
 let config=null;
 async function loadConfig(){const response=await fetch('./config.json',{cache:'no-store'});if(!response.ok)throw Error('本地配置 HTTP '+response.status);config=await response.json();if(config.dataset_id!==DATASET)throw Error('数据源配置错误');return config;}
 const say=s=>{$('status').textContent=s;$('status').classList.toggle('error',/失败|未完成|错误|无效/.test(s));};
 const record=(event,data)=>{state.last={...(state.last||{}),[event]:data, timestamp:new Date().toISOString()};$('diagnostics').textContent=JSON.stringify(state.last,null,2)};
 $('info').onclick=()=>{$('intro').hidden=!$('intro').hidden};
-function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('sample-list')?.querySelectorAll('button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':state.model?'模型已就绪':'尚未加载';}
+function activeModelReady(){return state.selectedModel==='a0'?!!state.model:!!state.officialModels[state.selectedModel]}
+function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('model').disabled=b;$('compare-run').disabled=b||!$('video').getAttribute('src');$('sample-list')?.querySelectorAll('button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':activeModelReady()?'模型已就绪':'尚未加载';}
 // Person detector runs entirely in browser, independently from the MoViNet action model.
 const personState={model:null,loadPromise:null,lastSampleMs:0,lastTime:-1,box:null,count:0,generation:0,error:null};
 const personStatus=msg=>{$('person-detector-status').textContent=msg};
@@ -98,6 +101,73 @@ $('person-box-toggle').addEventListener('change',()=>{
    ensurePersonDetector();
  }
 });
+$('model').addEventListener('change',()=>{
+  if(state.busy)return;
+  state.selectedModel=$('model').value;
+  hideAnnotated();
+  $('results').textContent='请选择模型并运行真实推理。';
+  $('evaluation').textContent='Top-5 只展示原始英文类别，具体动作语义解释将在推理后出现。';
+  $('metrics').replaceChildren();
+  $('model-state').textContent=activeModelReady()?'模型已就绪':'尚未加载';
+  if(state.selectedModel==='a0')$('model-description').textContent='LiteRT.js WASM CPU · Kinetics-600 · 15.1 MB · 172×172';
+  else $('model-description').textContent='官方 Google MoViNet-'+state.selectedModel.toUpperCase()+' · Kinetics-600 · '+(OFFICIAL_MODELS[state.selectedModel].bytes/1e6).toFixed(1)+' MB · '+OFFICIAL_MODELS[state.selectedModel].size+'×'+OFFICIAL_MODELS[state.selectedModel].size;
+  say('已切换到 '+$('model').selectedOptions[0].textContent+'；模型将按需加载，原视频保持不变。');
+});
+async function ensureOfficialModel(variant){
+  const spec=OFFICIAL_MODELS[variant];
+  if(!spec)throw Error('Unknown selected model variant');
+  if(state.officialModels[variant])return state.officialModels[variant];
+  if(state.officialPromises[variant])return state.officialPromises[variant];
+  const loading=(async()=>{
+    say('正在下载 '+spec.label+'（'+(spec.bytes/1e6).toFixed(1)+' MB），首次使用需校验 SHA256…');
+    const filename='movinet_'+variant+'_stream.tflite';
+    const remote='https://huggingface.co/'+MODEL_REPO+'/resolve/'+OFFICIAL_MODEL_REVISION+'/'+filename;
+    const response=await fetch(remote);
+    if(!response.ok)throw Error('HF 模型权重 HTTP '+response.status);
+    const bytes=await response.arrayBuffer();
+    if(bytes.byteLength!==spec.bytes)throw Error('模型大小与验证记录不符');
+    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if(hash!==spec.sha256)throw Error('模型 SHA256 校验失败');
+    const api=state.api||await import('https://cdn.jsdelivr.net/npm/@litertjs/core@2.5.3/+esm');
+    state.api=api;
+    if(!state.runtimePromise)state.runtimePromise=api.loadLiteRt('https://cdn.jsdelivr.net/npm/@litertjs/core@2.5.3/wasm/').catch(e=>{state.runtimePromise=null;throw e});
+    await state.runtimePromise;
+    say('正在编译 '+spec.label+'（WASM CPU）…');
+    const model=await api.loadAndCompile(new Uint8Array(bytes),{accelerator:'wasm'});
+    const contract=validateStreamingContract(model.getInputDetails(),model.getOutputDetails(),variant);
+    if(!state.labelsPromise)state.labelsPromise=fetch(LABELS_URL).then(async r=>{if(!r.ok)throw Error('类别表下载失败');return (await r.text()).trim().split(/\r?\n/)}).catch(e=>{state.labelsPromise=null;throw e});
+    const labels=await state.labelsPromise;
+    if(labels.length!==600)throw Error('动作标签不是 600 类');
+    state.labels=labels;
+    const result={model,contract,bytes:spec.bytes,sha256:hash};
+    state.officialModels[variant]=result;
+    record('model_compiled',{variant,sha256:hash,bytes:bytes.byteLength,inputs:contract.inputs.length,outputs:contract.outputs.length,inputName:contract.image.name,outputName:contract.logits.name});
+    return result;
+  })();
+  state.officialPromises[variant]=loading;
+  try{return await loading}finally{delete state.officialPromises[variant]}
+}
+async function readOfficialFrames(video,size){
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=size;
+ const ctx=canvas.getContext('2d',{willReadFrequently:true});
+ if(!Number.isFinite(video.duration)||video.duration<=0)throw Error('视频没有有效时长');
+ const frames=[],times=[];
+ const start=performance.now(),duration=Math.min(8,video.duration);
+ for(let t=0;t<duration&&frames.length<40;t+=.2){
+   if(state.cancelled)throw Error('用户取消');
+   const target=Math.min(t,Math.max(0,video.duration-.001));
+   if(Math.abs(video.currentTime-target)>=.005||video.readyState<2)
+     await new Promise((resolve,reject)=>{
+       const tm=setTimeout(()=>reject(Error('视频解码超时')),10000);
+       video.addEventListener('seeked',()=>{clearTimeout(tm);resolve()},{once:true});
+       video.currentTime=target;
+     });
+   ctx.drawImage(video,0,0,size,size);
+   frames.push(makeRGBFrameFromRGBA(ctx.getImageData(0,0,size,size).data,size));
+   times.push(target);
+ }
+ return {frames,times,decodeMs:performance.now()-start};
+}
 function hideAnnotated(){
   personState.generation++;personState.box=null;personState.count=0;personState.lastTime=-1;clearPersonOverlay();
   const video=$('annotated-video');
