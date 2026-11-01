@@ -1,6 +1,7 @@
 import {interpretAction,labelDisplay} from './semantic.js';
 import {createPersonDetector,choosePrimaryPerson,mapBoxToContainedVideo,top1At} from './person-overlay.js';
 import {OFFICIAL_MODELS,MODEL_REPO,validateStreamingContract,makeRGBFrameFromRGBA,runStreamingBatch} from './official-movinet.js';
+import {VIDEOMAE,compileVideoMAE,sampleVideoMAEFrames,inferVideoMAE} from './video-mae.js';
 // MVAI V1.0.3 experimental browser adapter. No fake outputs or sample fallback.
 const $ = id => document.getElementById(id);
 const OFFICIAL_MODEL_REVISION='d1ed47ef93682fbceda5c388277e34ed717dd4ab';
@@ -9,13 +10,13 @@ const MODEL_SHA='0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c
 const LABELS_URL='https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt';
 const DATASET='multimodal-vision-ai/mvai-daily-action-demo';
 const DIMS=[2,2,2,4,2,2,4,2,2,2,4];
-const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},compareAllRunning:false};
+const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},compareAllRunning:false,videomaeModel:null,videomaePromise:null,k600Labels:null,outputMode:'stream'};
 let config=null;
 async function loadConfig(){const response=await fetch('./config.json',{cache:'no-store'});if(!response.ok)throw Error('本地配置 HTTP '+response.status);config=await response.json();if(config.dataset_id!==DATASET)throw Error('数据源配置错误');return config;}
 const say=s=>{$('status').textContent=s;$('status').classList.toggle('error',/失败|未完成|错误|无效/.test(s));};
 const record=(event,data)=>{state.last={...(state.last||{}),[event]:data, timestamp:new Date().toISOString()};$('diagnostics').textContent=JSON.stringify(state.last,null,2)};
 $('info').onclick=()=>{$('intro').hidden=!$('intro').hidden};
-function activeModelReady(){return state.selectedModel==='a0'?!!state.model:!!state.officialModels[state.selectedModel]}
+function activeModelReady(){return state.selectedModel==='videomae'?!!state.videomaeModel:state.selectedModel==='a0'?!!state.model:!!state.officialModels[state.selectedModel]}
 function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('model').disabled=b;$('sample-list')?.querySelectorAll('button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':activeModelReady()?'模型已就绪':'尚未加载';updateComparisonSelection();}
 // Person detector runs entirely in browser, independently from the MoViNet action model.
 const personState={model:null,loadPromise:null,lastSampleMs:0,lastTime:-1,box:null,count:0,generation:0,error:null};
@@ -110,13 +111,37 @@ $('model').addEventListener('change',()=>{
   $('metrics').replaceChildren();
   $('model-state').textContent=activeModelReady()?'模型已就绪':'尚未加载';
   if(state.selectedModel==='a0')$('model-description').textContent='LiteRT.js WASM CPU · Kinetics-600 · 15.1 MB · 172×172';
+  else if(state.selectedModel==='videomae')$('model-description').textContent='Qualcomm VideoMAE · 351 MB · Kinetics-400 · 非流式 16 帧整段分类；研究实验模型，六类任务不保证更好';
   else $('model-description').textContent='官方 Google MoViNet-'+state.selectedModel.toUpperCase()+' · Kinetics-600 · '+(OFFICIAL_MODELS[state.selectedModel].bytes/1e6).toFixed(1)+' MB · '+OFFICIAL_MODELS[state.selectedModel].size+'×'+OFFICIAL_MODELS[state.selectedModel].size;
   say('已切换到 '+$('model').selectedOptions[0].textContent+'；模型将按需加载，原视频保持不变。');
 });
+async function ensureVideoMAEModel(){
+ if(state.videomaeModel){state.labels=state.videomaeModel.labels;return state.videomaeModel}
+ if(state.videomaePromise)return state.videomaePromise;
+ const promise=(async()=>{
+   const api=state.api||await import('https://cdn.jsdelivr.net/npm/@litertjs/core@2.5.3/+esm');
+   state.api=api;
+   const result=await compileVideoMAE({
+     api,
+     loadRuntime:()=>{
+       if(!state.runtimePromise)state.runtimePromise=api.loadLiteRt('https://cdn.jsdelivr.net/npm/@litertjs/core@2.5.3/wasm/')
+         .catch(e=>{state.runtimePromise=null;throw e});
+       return state.runtimePromise;
+     },
+     onProgress:say
+   });
+   state.videomaeModel=result;state.labels=result.labels;
+   record('model_compiled',{variant:'videomae',bytes:result.bytes,sha256:result.sha256,
+      inputs:1,outputs:1,classes:400,source:VIDEOMAE.url});
+   return result;
+ })();
+ state.videomaePromise=promise;
+ try{return await promise}finally{state.videomaePromise=null}
+}
 async function ensureOfficialModel(variant){
   const spec=OFFICIAL_MODELS[variant];
   if(!spec)throw Error('Unknown selected model variant');
-  if(state.officialModels[variant])return state.officialModels[variant];
+  if(state.officialModels[variant]){state.labels=state.k600Labels||await state.labelsPromise;return state.officialModels[variant]}
   if(state.officialPromises[variant])return state.officialPromises[variant];
   const loading=(async()=>{
     say('正在下载 '+spec.label+'（'+(spec.bytes/1e6).toFixed(1)+' MB），首次使用需校验 SHA256…');
@@ -138,7 +163,7 @@ async function ensureOfficialModel(variant){
     if(!state.labelsPromise)state.labelsPromise=fetch(LABELS_URL).then(async r=>{if(!r.ok)throw Error('类别表下载失败');return (await r.text()).trim().split(/\r?\n/)}).catch(e=>{state.labelsPromise=null;throw e});
     const labels=await state.labelsPromise;
     if(labels.length!==600)throw Error('动作标签不是 600 类');
-    state.labels=labels;
+    state.k600Labels=labels;state.labels=labels;
     const result={model,contract,bytes:spec.bytes,sha256:hash};
     state.officialModels[variant]=result;
     record('model_compiled',{variant,sha256:hash,bytes:bytes.byteLength,inputs:contract.inputs.length,outputs:contract.outputs.length,inputName:contract.image.name,outputName:contract.logits.name});
@@ -319,8 +344,9 @@ function hex(bytes){return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).j
 async function fetchChecked(){const t=performance.now();const r=await fetch(MODEL_URL);if(!r.ok)throw Error('模型下载 HTTP '+r.status);const buffer=await r.arrayBuffer();if(buffer.byteLength!==15131688)throw Error('模型文件大小不符：'+buffer.byteLength);if(!crypto.subtle)throw Error('浏览器不支持 SHA256 校验');const h=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)));if(h!==MODEL_SHA)throw Error('模型 SHA256 不符，拒绝运行');record('model_download',{bytes:buffer.byteLength,sha256:h,ms:Math.round(performance.now()-t)});return buffer}
 function inputMetadata(model){const data= typeof model.getInputDetails==='function'?model.getInputDetails():model.inputDetails??model.inputs;return Array.isArray(data)?data:null}
 async function ensureModelReady(){
+  if(state.selectedModel==='videomae')return ensureVideoMAEModel();
   if(state.selectedModel!=='a0')return ensureOfficialModel(state.selectedModel);
-  if(state.model&&state.meta?.length===47&&state.labels?.length===600)return state.model;
+  if(state.model&&state.meta?.length===47&&state.k600Labels?.length===600){state.labels=state.k600Labels;return state.model}
   if(state.modelPromise)return state.modelPromise;
   const loading=(async()=>{
     say('正在检查模型文件与 SHA256…');
@@ -345,7 +371,7 @@ async function ensureModelReady(){
     const inputs=inputMetadata(model),outputs=model.getOutputDetails?.();
     if(!Array.isArray(inputs)||inputs.length!==47||!Array.isArray(outputs)||outputs.length!==28)
       throw Error('模型 I/O 检查失败：'+(inputs?.length??'?')+' 输入 / '+(outputs?.length??'?')+' 输出');
-    state.model=model;state.meta=inputs;state.labels=labels;
+    state.model=model;state.meta=inputs;state.k600Labels=labels;state.labels=labels;
     record('browser_probe',{runtime:'@litertjs/core@2.5.3',accelerator:'wasm',modelSha256:MODEL_SHA,metadataInputs:47,metadataOutputs:28,compiled:true,userAgent:navigator.userAgent});
     record('model_io',{inputs:47,outputs:28,firstInput:inputs[0],firstOutput:outputs[0]});
     return model;
@@ -358,14 +384,14 @@ async function probe(){
   const variant=state.selectedModel;
   if(activeModelReady()){
     $('model-state').textContent='模型已就绪';
-    const io=variant==='a0'?'47 输入 / 28 输出':'已验证 '+OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出';
+    const io=variant==='videomae'?'1 输入 / 1 输出（16 帧 K400）':variant==='a0'?'47 输入 / 28 输出':'已验证 '+OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出';
     say(variant.toUpperCase()+' WASM 模型已就绪；'+io+'。无需重复初始化。');
     return;
   }
   setBusy(true);
   try{
     await ensureModelReady();
-    const io=variant==='a0'?'47 输入 / 28 输出元数据通过':OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出状态元数据通过';
+    const io=variant==='videomae'?'16 帧 Kinetics400 单输入、400 类输出验证通过':variant==='a0'?'47 输入 / 28 输出元数据通过':OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出状态元数据通过';
     say(variant.toUpperCase()+' WASM 模型已加载，'+io+'；可以开始识别。');
   }catch(e){say('WASM 加载失败：'+e.message);record('probe_error',{variant,message:e.message,stack:e.stack})}
   finally{setBusy(false)}
