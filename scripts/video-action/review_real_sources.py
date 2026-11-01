@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT=Path("artifacts/video-action/source-review")
 ROOT.mkdir(parents=True,exist_ok=True)
 SOURCES=[
+ ("phone_call_sports","Takkarist McKinley Draft Room Phone Call.webm","phone_call","CC BY 3.0","Atlanta Falcons"),
  ("phone_use_phubbing","Phubbing...webm","phone_use","CC BY-SA 4.0","Jaqueline Romero"),
  ("phone_use_education","1 Me and my phone.webm","phone_use","CC BY 4.0","Derek J Moore"),
  ("eating_military","Eating with Bryan - Col Kosalka (962712).webm","eating","US government work","US Army"),
@@ -62,6 +63,18 @@ with tempfile.TemporaryDirectory() as td:
       sheet=Image.new("RGB",(1056,450),"#eeeeee")
       for i,im in enumerate(imgs):sheet.paste(im,((i%3)*352,(i//3)*225))
       sheet.save(ROOT/(sample_id+".jpg"),quality=85)
+      if sample_id=="phone_call_sports":
+        extra=Image.new("RGB",(352*4,225*3),"white")
+        for j in range(12):
+          t=max(0.5,(j+.5)*duration/12)
+          shot=Path(td)/(sample_id+f"_s{j}.png")
+          frame(source,t,shot)
+          im=Image.open(shot).convert("RGB")
+          canvas=Image.new("RGB",(352,225),"white")
+          canvas.paste(im,(0,0))
+          ImageDraw.Draw(canvas).text((9,201),f"t={t:.1f}s",fill="black",font=FONT)
+          extra.paste(canvas,((j%4)*352,(j//4)*225))
+        extra.save(ROOT/"phone_call_sports_12frames.jpg",quality=87)
       if sample_id=="eating_military":
         detailed=Image.new("RGB",(352*4,225*3),"white")
         for q in range(12):
