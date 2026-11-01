@@ -74,11 +74,19 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
 .annotated-area[hidden]{display:none!important}
 .anno-caption{margin:10px 0 0;font-size:12px;color:#657b92;line-height:1.6}
 @media(max-width:500px){#sample-list{gap:5px}#sample-list button{padding:7px 9px}.anno-top1 strong{font-size:13px}}
+
+/* V1.0.4: lightweight person bounding box rendered over the decoded replay frame. */
+.person-visual-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0;font-size:12px;color:#315575}
+.person-visual-controls label{display:flex;align-items:center;gap:6px;cursor:pointer}
+#person-detector-status{font-size:11px;color:#6b819a;line-height:1.5}
+.person-box-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.anno-top1{z-index:3}
+.anno-top1[hidden]{display:none}
 </style>
 </head>
 <body><main>
 <header>
-  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.3</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
+  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.4</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
   <p id="intro" hidden>基于公开 MoViNet-A0 Streaming（Kinetics-600）。模型由 LiteRT.js 在浏览器 CPU/WASM 推理；Top-5 是未校准 softmax 分数，原始英文模型标签与中文动作归类不一定一一对应。</p></div>
   <div class="meta"><span class="tag inverse">独立 DEV · 非正式发布</span><span class="tag inverse">浏览器本地推理</span></div>
 </header>
@@ -111,10 +119,11 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
   </section>
 </div>
 <section id="annotated-section" class="panel annotated-area" hidden>
-  <h2>04 · 推理结果视频（逐帧 Top-1）</h2>
-  <p class="note">推理完成后播放，显示该时刻之前流式模型的 Top-1 类别；每 0.2 秒更新一次。仅覆盖已分析的前 8 秒，分数为未校准 softmax，不代表目标检测或真实行为概率。</p>
+  <h2>04 · 推理结果视频（人物框 + 逐帧 Top-1）</h2>
+  <p class="note">人物框由 MediaPipe EfficientDet-Lite0 检测；框上的动作类别由 MoViNet 对整段画面的流式分类得到，<strong>不是该人物的独立动作检测</strong>。逐帧 Top-1 每 0.2 秒更新，仅覆盖已分析的前 8 秒。</p><div class="person-visual-controls"><label><input id="person-box-toggle" type="checkbox" checked> 显示主人物框（实验功能）</label><span id="person-detector-status" role="status" aria-live="polite">等待推理完成后加载轻量检测模型</span></div>
   <div class="anno-video-wrap">
     <video id="annotated-video" controls playsinline muted preload="metadata" aria-label="逐帧 Top-1 叠加推理结果视频"></video>
+    <canvas id="person-box-layer" class="person-box-canvas" aria-hidden="true"></canvas>
     <div class="anno-top1" id="top1-overlay" aria-live="off"><small>流式 Top-1</small><strong>等待播放</strong></div>
   </div>
   <p id="annotation-summary" class="anno-caption"></p>
@@ -126,5 +135,5 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
   <section class="panel"><details><summary>06 · 多模型对比（后续扩展）</summary>
   <p class="note">当前只接入 MoViNet-A0 真实模型；第二模型未接入，不显示虚构对比分数。</p></details></section>
 </div>
-<footer>模型来源：<a target="_blank" rel="noopener" href="https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT">litert-community / MoViNet-A0</a>（非实验室自研权重） · 视频样例：<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo">MVAI HF Dataset</a>。标签仅用于探索性对照，不能直接计算正式识别准确率。</footer>
+<footer>人物框：<a target="_blank" rel="noopener" href="https://developers.google.com/edge/mediapipe/solutions/vision/object_detector">MediaPipe EfficientDet-Lite0</a>（仅人物定位） · 动作分类：<a target="_blank" rel="noopener" href="https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT">litert-community / MoViNet-A0</a>（非实验室自研权重） · 视频样例：<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo">MVAI HF Dataset</a>。标签仅用于探索性对照，不能直接计算正式识别准确率。</footer>
 </main><script type="module" src="./app.js"></script></body></html>
