@@ -17,8 +17,56 @@ $('upload').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!['video/mp
 $('reset').onclick=()=>{state.cancelled=true;$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;say('已清除当前视频')};
 $('cancel').onclick=()=>{state.cancelled=true;say('已请求取消；当前 WASM 调用完成后停止继续处理。')};
 $('export').onclick=()=>{const b=new Blob([JSON.stringify(state.last||{},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mvai-v103-diagnostics.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
-async function catalog(){const cfg=await loadConfig();const revision=cfg.dataset_revision;if(!/^[a-f0-9]{40}$/.test(revision||'')){const probe=await fetch('https://huggingface.co/api/datasets/'+DATASET);if(!probe.ok)throw Error('HF Dataset 尚不可公开读取（HTTP '+probe.status+'）');throw Error('HF Dataset 已可访问；需先上传确权视频，再将具体 commit SHA 固定到 DEV config.json');}const url='https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/catalog/v1.json';const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error('HF Dataset catalog HTTP '+r.status);const c=await r.json();if(c.schema_version!=='1.0'||c.dataset_id!==DATASET||!Array.isArray(c.items))throw Error('HF catalog schema 无效');state.catalog=c;const box=$('sample-list');box.replaceChildren();for(const clip of c.items){if(clip.status!=='approved_demo'||clip.redistribution_approved!==true||!clip.license||!clip.source_url||!/^demo\/videos\/[\w.-]+\.(mp4|webm)$/.test(clip.relative_file))continue;const b=document.createElement('button');b.textContent=clip.label_zh+' · '+clip.id;b.onclick=()=>pick('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file,clip);box.append(b)}if(!box.childElementCount)throw Error('目录无 approved_demo 样例');$('provenance').textContent='HF Dataset · 固定 revision '+revision.slice(0,12);record('catalog',{revision,count:box.childElementCount})}
-catalog().catch(e=>{$('sample-list').textContent='HF 示例暂不可用；仍可使用本地视频验证';$('provenance').textContent='未确认 HF Dataset 已建成：'+e.message;record('catalog_error',e.message)});
+const DEV_FIXTURE={id:'synthetic_wave_001',label_zh:'挥手',label_en:'waving hand',source_url:'https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/blob/feat/video-action-v103/scripts/video-action/generate_demo.py',license:'CC0-1.0',synthetic:true};
+async function addDevFixture(reason){
+  const fallback='./samples/synthetic_wave_001.mp4';
+  try{
+    const check=await fetch(fallback,{method:'HEAD',cache:'no-store'});
+    if(!check.ok)throw Error('HTTP '+check.status);
+    const btn=document.createElement('button');
+    btn.textContent='▶ 合成挥手 · DEV 测试片段';
+    btn.title='原创合成动作，仅测试视频播放和模型推理，不代表真实数据集或真实人物动作';
+    btn.onclick=()=>pick(fallback,DEV_FIXTURE);
+    $('sample-list').append(btn);
+    $('provenance').textContent='HF Dataset 尚无已接入的视频目录：'+reason+'。可先选择下方原创合成 DEV 测试片段；它不属于 HF Dataset。';
+    record('dev_fixture',{available:true,reason});
+  }catch(e){
+    $('sample-list').textContent='没有可用示例，可本地上传 MP4/WebM';
+    $('provenance').textContent='HF Dataset 未接入：'+reason+'；DEV 合成测试片段也未部署（'+e.message+'）';
+    record('catalog_error',{reason,fixture:e.message});
+  }
+}
+async function catalog(){
+  const cfg=await loadConfig();
+  let revision=cfg.dataset_revision;
+  let provisional=false;
+  if(!/^[a-f0-9]{40}$/.test(revision||'')){
+    const response=await fetch('https://huggingface.co/api/datasets/'+DATASET,{cache:'no-store'});
+    if(!response.ok)throw Error('HF Dataset API HTTP '+response.status);
+    const info=await response.json();
+    revision=info.sha;
+    if(!/^[a-f0-9]{40}$/.test(revision||''))throw Error('HF API 未返回有效的 commit SHA');
+    provisional=true;
+  }
+  const r=await fetch('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/catalog/v1.json',{cache:'no-store'});
+  if(!r.ok)throw Error('HF catalog HTTP '+r.status+'（数据仓库可能尚未上传 catalog/v1.json）');
+  const c=await r.json();
+  if(c.schema_version!=='1.0'||c.dataset_id!==DATASET||!Array.isArray(c.items))throw Error('HF catalog schema 无效');
+  state.catalog=c;
+  const box=$('sample-list');
+  box.replaceChildren();
+  for(const clip of c.items){
+    if(clip.status!=='approved_demo'||clip.redistribution_approved!==true||!clip.license||!clip.source_url||!/^demo\\/videos\\/[\\w.-]+\\.(mp4|webm)$/.test(clip.relative_file))continue;
+    const btn=document.createElement('button');
+    btn.textContent='▶ '+clip.label_zh+(clip.synthetic?' · 合成示例':' · HF 样例');
+    btn.onclick=()=>pick('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file,clip);
+    box.append(btn);
+  }
+  if(!box.childElementCount)throw Error('HF catalog 尚无已批准的演示样例');
+  $('provenance').textContent='HF Dataset · '+(provisional?'临时读取版本 ':'固定版本 ')+revision.slice(0,12)+(provisional?'（待写入 DEV config.json 固定）':'');
+  record('catalog',{revision,count:box.childElementCount,provisional});
+}
+catalog().catch(e=>{addDevFixture(e.message)});
 function hex(bytes){return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('')}
 async function fetchChecked(){const t=performance.now();const r=await fetch(MODEL_URL);if(!r.ok)throw Error('模型下载 HTTP '+r.status);const buffer=await r.arrayBuffer();if(buffer.byteLength!==15131688)throw Error('模型文件大小不符：'+buffer.byteLength);if(!crypto.subtle)throw Error('浏览器不支持 SHA256 校验');const h=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)));if(h!==MODEL_SHA)throw Error('模型 SHA256 不符，拒绝运行');record('model_download',{bytes:buffer.byteLength,sha256:h,ms:Math.round(performance.now()-t)});return buffer}
 function inputMetadata(model){const data= typeof model.getInputDetails==='function'?model.getInputDetails():model.inputDetails??model.inputs;return Array.isArray(data)?data:null}
