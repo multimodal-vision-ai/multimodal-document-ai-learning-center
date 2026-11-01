@@ -15,9 +15,9 @@ try{
   await page.screenshot({path:'artifacts/video-action/initial.png',fullPage:true});
   report.real_samples=[];
   try {
-    await page.waitForFunction(()=>document.querySelectorAll('#sample-list button').length>=4,null,{timeout:35000});
+    await page.waitForFunction(()=>document.querySelectorAll('#sample-list button').length>=5,null,{timeout:35000});
     report.sample_buttons=await page.locator('#sample-list button').allTextContents();
-    for(const label of ['挥手 · 真人实拍','开合跳 · 真人实拍','看/使用手机 · 真人实拍','吃东西 · 真人实拍']){
+    for(const label of ['挥手 · 真人实拍','开合跳 · 真人实拍','看/使用手机 · 真人实拍','吃东西 · 真人实拍','打电话（有线电话） · 真人实拍']){
       try {
         await page.locator('#sample-list button').filter({hasText:label}).click();
         await page.waitForFunction(()=>{const v=document.querySelector('#video');return !!v.error||(v.readyState>=2&&v.videoWidth>0&&Number.isFinite(v.duration))},null,{timeout:20000});
@@ -52,9 +52,9 @@ try{
       report.reset_deterministic=a.length===b.length&&a.every((x,i)=>x.id===b[i].id&&Math.abs(x.score-b[i].score)<1e-5);
     }
   }
-  report.real_samples_playable=report.real_samples.length===4&&report.real_samples.every(x=>x.playable);
+  report.real_samples_playable=report.real_samples.length===5&&report.real_samples.every(x=>x.playable);
   if(report.model_load_success&&report.real_samples_playable){
-    for(const label of ['挥手 · 真人实拍','开合跳 · 真人实拍','看/使用手机 · 真人实拍','吃东西 · 真人实拍']){
+    for(const label of ['挥手 · 真人实拍','开合跳 · 真人实拍','看/使用手机 · 真人实拍','吃东西 · 真人实拍','打电话（有线电话） · 真人实拍']){
       try{
         await page.locator('#sample-list button').filter({hasText:label}).click();
         await page.locator('#run').click();
