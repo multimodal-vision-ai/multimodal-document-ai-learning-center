@@ -82,12 +82,14 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
 .person-box-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
 .anno-top1{z-index:3}
 .anno-top1[hidden]{display:none}
+
+#comparison-results{font-size:12px;overflow-x:auto;color:#345879}#comparison-results table{width:100%;border-collapse:collapse;font-size:11px}#comparison-results th,#comparison-results td{padding:8px 7px;border-bottom:1px solid #e2eaf3;text-align:left;vertical-align:top}#comparison-results th{background:#f4f8fc;color:#44617f}#comparison-results caption{text-align:left;color:#647f98;margin:7px 0}#compare-run{border-color:#2d72bd;color:#2760a1}
 </style>
 </head>
 <body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div><main>
 <header>
-  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.4</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
-  <p id="intro" hidden>基于公开 MoViNet-A0 Streaming（Kinetics-600）。模型由 LiteRT.js 在浏览器 CPU/WASM 推理；Top-5 是未校准 softmax 分数，原始英文模型标签与中文动作归类不一定一一对应。</p></div>
+  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.5</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
+  <p id="intro" hidden>基于官方 MoViNet-A0/A1/A2 Streaming（Kinetics-600）。模型由 LiteRT.js 在浏览器 CPU/WASM 推理；Top-5 是未校准 softmax 分数，原始英文模型标签与中文动作归类不一定一一对应。</p></div>
   <div class="meta"><span class="tag inverse">独立 DEV · 非正式发布</span><span class="tag inverse">浏览器本地推理</span></div>
 </header>
 <div class="workspace">
@@ -101,10 +103,10 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
   </section>
   <section class="panel">
     <div class="model-header"><h2>02 · 模型推理</h2><span id="model-state">尚未加载</span></div>
-    <label class="model-form">模型 <select id="model"><option value="movinet-a0">MoViNet-A0 Streaming · 公开基线</option></select></label>
-    <p class="note">LiteRT.js WASM CPU · Kinetics-600 · 权重约 15.1 MB（首次下载并校验 SHA256）</p>
+    <label class="model-form">模型 <select id="model"><option value="a0">MoViNet-A0 Streaming · 基线（15 MB）</option><option value="a1">MoViNet-A1 Streaming · 增强（44 MB）</option><option value="a2">MoViNet-A2 Streaming · 更高精度（52 MB）</option></select></label>
+    <p id="model-description" class="note">LiteRT.js WASM CPU · Kinetics-600 · 15.1 MB · 172×172（首次下载校验 SHA256）</p>
     <div class="actions">
-      <button id="run" class="primary" disabled>开始识别</button>
+      <button id="run" class="primary" disabled>开始识别</button><button id="compare-run" class="ghost" disabled>运行三模型对比</button>
       <button id="probe" class="ghost">加载 / 检查模型</button>
       <button id="cancel" class="ghost">取消</button>
       <button id="reset" class="ghost">清除</button>
@@ -132,8 +134,9 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
   <section class="panel"><details><summary>05 · 推理详情与实验记录</summary>
   <p class="note">查看数据来源、模型 SHA、实际推理时间与异常。仅保留当前页面本地诊断记录。</p>
   <pre id="diagnostics"></pre><button id="export" class="ghost">导出诊断 JSON</button></details></section>
-  <section class="panel"><details><summary>06 · 多模型对比（后续扩展）</summary>
-  <p class="note">当前只接入 MoViNet-A0 真实模型；第二模型未接入，不显示虚构对比分数。</p></details></section>
+  <section class="panel"><details open><summary>06 · 三模型结果对比（真实运行）</summary>
+  <p class="note">A0 / A1 / A2 使用同一个视频、同样前 8 秒和 5 FPS。每个模型使用自己规定的输入分辨率；首次运行需分别下载权重。展示当前视频的实测结果，不预填分数。</p>
+  <div id="comparison-results">请选择视频后点击「运行三模型对比」，按 A0 → A1 → A2 依次运行。</div></details></section>
 </div>
-<footer>人物框：<a target="_blank" rel="noopener" href="https://developers.google.com/edge/mediapipe/solutions/vision/object_detector">MediaPipe EfficientDet-Lite0</a>（仅人物定位） · 动作分类：<a target="_blank" rel="noopener" href="https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT">litert-community / MoViNet-A0</a>（非实验室自研权重） · 视频样例：<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo">MVAI HF Dataset</a>。标签仅用于探索性对照，不能直接计算正式识别准确率。</footer>
+<footer>人物框：<a target="_blank" rel="noopener" href="https://developers.google.com/edge/mediapipe/solutions/vision/object_detector">MediaPipe EfficientDet-Lite0</a>（仅人物定位） · 动作分类：<a target="_blank" rel="noopener" href="https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT">A0</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/multimodal-vision-ai/mvai-video-action-compare-models">Google 官方 A1/A2</a>（研究演示使用的公开预训练模型） · 视频样例：<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo">MVAI HF Dataset</a>。标签仅用于探索性对照，不能直接计算正式识别准确率。</footer>
 </main><script type="module" src="./app.js"></script></body></html>

@@ -232,9 +232,9 @@ const renderPlayback=()=>{updateTop1Overlay();detectPersonFrame();if(!replayVide
 replayVideo.addEventListener('play',()=>{cancelAnimationFrame(overlayRaf);overlayRaf=requestAnimationFrame(renderPlayback)});
 replayVideo.addEventListener('pause',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay();detectPersonFrame(true)});
 replayVideo.addEventListener('ended',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay()});
-function pick(url,clip=null){hideAnnotated();if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}state.clip=clip;if(url.startsWith('blob:'))$('video').removeAttribute('crossorigin');else{$('video').crossOrigin='anonymous';$('upload').value=''}$('video').src=url;$('results').textContent='等待真实推理。';$('evaluation').textContent='点击「开始识别」后，将按参考标签及语义关联解释结果。';$('metrics').replaceChildren();$('reference').textContent=clip?'参考动作：'+clip.label_zh+' / '+clip.label_en:'参考动作：本地文件，无标注';$('provenance').replaceChildren();if(clip){const desc=document.createElement('span');desc.textContent='类型：'+(clip.synthetic?'合成测试':'真实来源视频')+' · 参考标签：'+(clip.reference_evidence||clip.evidence||'来源描述')+' · 作者：'+(clip.attribution||'见来源页')+' · 许可：'+clip.license+' · ';const link=document.createElement('a');link.href=clip.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看原始视频及授权';$('provenance').append(desc,link)}else $('provenance').textContent='本地上传 · 仅在此浏览器读取';$('run').disabled=state.busy||!$('video').getAttribute('src');if(!state.busy)say('已选择'+(clip?.label_zh?'「'+clip.label_zh+'」':'本地视频')+'；点击「开始识别」后将在浏览器执行真实推理。')}
+function pick(url,clip=null){state.comparisonRows={};updateComparisonView();hideAnnotated();if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}state.clip=clip;if(url.startsWith('blob:'))$('video').removeAttribute('crossorigin');else{$('video').crossOrigin='anonymous';$('upload').value=''}$('video').src=url;$('results').textContent='等待真实推理。';$('evaluation').textContent='点击「开始识别」后，将按参考标签及语义关联解释结果。';$('metrics').replaceChildren();$('reference').textContent=clip?'参考动作：'+clip.label_zh+' / '+clip.label_en:'参考动作：本地文件，无标注';$('provenance').replaceChildren();if(clip){const desc=document.createElement('span');desc.textContent='类型：'+(clip.synthetic?'合成测试':'真实来源视频')+' · 参考标签：'+(clip.reference_evidence||clip.evidence||'来源描述')+' · 作者：'+(clip.attribution||'见来源页')+' · 许可：'+clip.license+' · ';const link=document.createElement('a');link.href=clip.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看原始视频及授权';$('provenance').append(desc,link)}else $('provenance').textContent='本地上传 · 仅在此浏览器读取';$('run').disabled=state.busy||!$('video').getAttribute('src');$('compare-run').disabled=state.busy||!$('video').getAttribute('src');if(!state.busy)say('已选择'+(clip?.label_zh?'「'+clip.label_zh+'」':'本地视频')+'；点击「开始识别」后将在浏览器执行真实推理。')}
 $('upload').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!['video/mp4','video/webm'].includes(f.type)){say('仅支持 MP4/WebM');return}if(f.size>120*1024*1024){say('文件超过 120 MB 的预览安全上限');return}const url=URL.createObjectURL(f);pick(url);state.objectUrl=url;};
-$('reset').onclick=()=>{state.cancelled=true;hideAnnotated();$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('evaluation').textContent='请选择视频并运行识别';$('metrics').replaceChildren();state.clip=null;if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null;}$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;say('已清除当前视频')};
+$('reset').onclick=()=>{state.cancelled=true;state.comparisonRows={};updateComparisonView();hideAnnotated();$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('evaluation').textContent='请选择视频并运行识别';$('metrics').replaceChildren();state.clip=null;if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null;}$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;say('已清除当前视频')};
 $('cancel').onclick=()=>{state.cancelled=true;say('已请求取消；当前 WASM 调用完成后停止继续处理。')};
 $('export').onclick=()=>{const b=new Blob([JSON.stringify(state.last||{},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mvai-v103-diagnostics.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 // Six concise real-video choices; no fake footage or unapproved substitute for falling.
@@ -319,6 +319,7 @@ function hex(bytes){return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).j
 async function fetchChecked(){const t=performance.now();const r=await fetch(MODEL_URL);if(!r.ok)throw Error('模型下载 HTTP '+r.status);const buffer=await r.arrayBuffer();if(buffer.byteLength!==15131688)throw Error('模型文件大小不符：'+buffer.byteLength);if(!crypto.subtle)throw Error('浏览器不支持 SHA256 校验');const h=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)));if(h!==MODEL_SHA)throw Error('模型 SHA256 不符，拒绝运行');record('model_download',{bytes:buffer.byteLength,sha256:h,ms:Math.round(performance.now()-t)});return buffer}
 function inputMetadata(model){const data= typeof model.getInputDetails==='function'?model.getInputDetails():model.inputDetails??model.inputs;return Array.isArray(data)?data:null}
 async function ensureModelReady(){
+  if(state.selectedModel!=='a0')return ensureOfficialModel(state.selectedModel);
   if(state.model&&state.meta?.length===47&&state.labels?.length===600)return state.model;
   if(state.modelPromise)return state.modelPromise;
   const loading=(async()=>{
@@ -354,18 +355,20 @@ async function ensureModelReady(){
 }
 async function probe(){
   if(state.busy)return;
-  if(state.model){
+  const variant=state.selectedModel;
+  if(activeModelReady()){
     $('model-state').textContent='模型已就绪';
-    say('WASM 模型已就绪；47 输入 / 28 输出元数据通过。无需重复初始化。');
+    const io=variant==='a0'?'47 输入 / 28 输出':'已验证 '+OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出';
+    say(variant.toUpperCase()+' WASM 模型已就绪；'+io+'。无需重复初始化。');
     return;
   }
   setBusy(true);
   try{
     await ensureModelReady();
-    say('WASM 模型已加载，47 输入 / 28 输出元数据通过；可以开始识别。');
-  }catch(e){
-    say('WASM 加载失败：'+e.message);record('probe_error',{message:e.message,stack:e.stack});
-  }finally{setBusy(false)}
+    const io=variant==='a0'?'47 输入 / 28 输出元数据通过':OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出状态元数据通过';
+    say(variant.toUpperCase()+' WASM 模型已加载，'+io+'；可以开始识别。');
+  }catch(e){say('WASM 加载失败：'+e.message);record('probe_error',{variant,message:e.message,stack:e.stack})}
+  finally{setBusy(false)}
 }
 $('probe').onclick=probe;
 function shapeOf(d){const raw=d?.shape??d?.dims??d?.dimensions??d?.shapeSignature;if(Array.isArray(raw))return raw.map(Number);if(raw&&typeof raw.length==='number')return Array.from(raw,Number);if(raw&&typeof raw[Symbol.iterator]==='function')return Array.from(raw,Number);return null}
@@ -373,7 +376,85 @@ function tensorFor(data,shape){return new state.api.Tensor(data,shape)}
 const sizeOf=shape=>shape.reduce((a,b)=>a*b,1);
 async function readFrames(video){if(!Number.isFinite(video.duration)||video.duration<=0){await new Promise((resolve,reject)=>{const fail=()=>{clearTimeout(timer);reject(Error('视频格式不支持或无法读取时长'))};const done=()=>{clearTimeout(timer);resolve()};const timer=setTimeout(fail,12000);video.addEventListener('loadedmetadata',done,{once:true});video.addEventListener('error',fail,{once:true});video.load()})}if(!Number.isFinite(video.duration)||video.duration<=0)throw Error('无法确定视频时长或解码格式');const canvas=document.createElement('canvas');canvas.width=canvas.height=172;const ctx=canvas.getContext('2d',{willReadFrequently:true});const result=[],times=[];const start=performance.now();const duration=Math.min(8,video.duration);for(let t=0;t<duration&&result.length<40;t+=.2){if(state.cancelled)throw Error('用户取消');await new Promise((resolve,reject)=>{const target=Math.min(t,Math.max(0,video.duration-.001));if(Math.abs(video.currentTime-target)<.005&&video.readyState>=2){resolve();return}const tm=setTimeout(()=>reject(Error('视频解码超时')),10000);video.addEventListener('seeked',()=>{clearTimeout(tm);resolve()},{once:true});video.currentTime=target});ctx.drawImage(video,0,0,172,172);const rgba=ctx.getImageData(0,0,172,172).data;const arr=new Float32Array(3*172*172);for(let i=0;i<172*172;i++){arr[i]=rgba[i*4]/255;arr[i+172*172]=rgba[i*4+1]/255;arr[i+2*172*172]=rgba[i*4+2]/255}result.push(arr);times.push(Math.min(t,Math.max(0,video.duration-.001)))}return {frames:result,times,decodeMs:performance.now()-start}}
 function softmax(logits){const m=Math.max(...logits),v=Array.from(logits,x=>Math.exp(x-m));const s=v.reduce((a,b)=>a+b,0);return v.map(x=>x/s)}
-async function run(){if(state.busy)return;hideAnnotated();setBusy(true);state.cancelled=false;const began=performance.now();try{await ensureModelReady();if(state.cancelled)throw Error('用户取消');const meta=state.meta;if(!meta||meta.length!==47)throw Error('47 输入形状元数据尚未验证');const shapes=meta.map(shapeOf);if(shapes.some(s=>!Array.isArray(s)||s.some(n=>!Number.isInteger(n)||n<1))){record('input_shape_issue',{first:meta.slice(0,3),normalized:shapes.slice(0,3),bad_indices:shapes.map((x,i)=>!Array.isArray(x)||x.some(n=>!Number.isInteger(n)||n<1)?i:null).filter(x=>x!==null)});throw Error('无法获取全部 47 输入的固定张量形状；诊断见推理详情')}if(JSON.stringify(shapes[0])!=='[1,3,172,172]')throw Error('NCHW 输入形状不符');say('正在解码视频并执行逐帧 WASM 推理……');const {frames,times,decodeMs}=await readFrames($('video'));if(!frames.length)throw Error('未解码出有效视频帧');const history=[];let offset=1;for(const depth of DIMS){history.push(Array.from({length:depth},(_,i)=>new Float32Array(sizeOf(shapes[offset+i]))));offset+=depth}let pool=Array.from({length:16},(_,i)=>new Float32Array(sizeOf(shapes[29+i])));let logits;const frameTop1=[];const inferenceStarted=performance.now();for(let count=1;count<=frames.length;count++){if(state.cancelled)throw Error('用户取消');const inputs=[tensorFor(frames[count-1],shapes[0])];for(const group of history)for(const h of group)inputs.push(tensorFor(h,shapes[inputs.length]));for(let j=0;j<16;j++)inputs.push(tensorFor(pool[j],shapes[29+j]));inputs.push(tensorFor(new Float32Array([1/count]),shapes[45]),tensorFor(new Float32Array([1]),shapes[46]));const outputs=await state.model.run(inputs);if(outputs.length!==28)throw Error('预期 28 输出，实际 '+outputs.length);const outTensors=Array.from({length:outputs.length},(_,i)=>outputs[i]);const values=await Promise.all(outTensors.map(x=>x.data()));logits=Float32Array.from(values[0]);if(logits.length!==600||!logits.every(Number.isFinite))throw Error('流式第 '+count+' 帧 logits 无效');const frameScores=softmax(logits);let winner=0;for(let k=1;k<frameScores.length;k++)if(frameScores[k]>frameScores[winner])winner=k;frameTop1.push({frame:count,t:Number(times[count-1].toFixed(3)),id:winner,label:state.labels[winner],score:Number(frameScores[winner].toFixed(6))});for(let c=0;c<DIMS.length;c++)history[c]=[...history[c].slice(1),Float32Array.from(values[1+c])];for(let j=0;j<16;j++){const delta=values[12+j];for(let k=0;k<pool[j].length;k++)pool[j][k]+=delta[k]}for(const t of inputs)t.delete?.();if(typeof outputs.delete==='function')outputs.delete();else for(const t of outTensors)t.delete?.()}if(!logits||logits.length!==600||!logits.every(Number.isFinite))throw Error('输出 logits 无效');const probabilities=softmax(logits);
+const MODEL_ORDER=['a0','a1','a2'];
+function updateComparisonView(){
+ const box=$('comparison-results');if(!box)return;
+ box.replaceChildren();
+ const entries=MODEL_ORDER.filter(id=>state.comparisonRows[id]);
+ if(!entries.length){
+   box.textContent='当前视频尚无对比结果。点击「运行三模型对比」进行真实顺序推理。';
+   return;
+ }
+ const table=document.createElement('table');
+ const head=document.createElement('tr');
+ for(const text of ['模型','Top-1 (英文)','分数¹','参考动作排名','WASM 推理','权重']){
+   const el=document.createElement('th');el.textContent=text;head.append(el);
+ }
+ table.append(head);
+ for(const id of MODEL_ORDER){
+   const row=document.createElement('tr'),value=state.comparisonRows[id];
+   const cells=value?[value.model,value.top1,(value.score*100).toFixed(1)+'%',
+      value.targetRank?('#'+value.targetRank):'N/A',value.inferenceMs+' ms',
+      value.mb.toFixed(1)+' MB']:
+      ['MoViNet-'+id.toUpperCase(),'尚未运行','—','—','—','—'];
+   for(const v of cells){const cell=document.createElement('td');cell.textContent=v;row.append(cell)}
+   table.append(row);
+ }
+ const notice=document.createElement('p');notice.className='note';
+ notice.textContent='¹ 原始 softmax 未经校准；不同模型的分数不能直接当作可比的真实概率。A0/A1/A2 使用相同视频区间、5 FPS，但使用各自要求的分辨率。N/A 表示类别体系无严格同名标签，并非分类错误。';
+ box.append(table,notice);
+}
+function saveModelComparison(variant,top,comparison,timings,frames){
+ const mb=variant==='a0'?15.131688:OFFICIAL_MODELS[variant].bytes/1e6;
+ state.comparisonRows[variant]={model:'MoViNet-'+variant.toUpperCase(),top1:top[0].label,score:top[0].score,
+   targetRank:comparison?.target_rank??null,inferenceMs:timings.inferenceMs,mb,frames,clipId:state.clip?.id??null};
+ updateComparisonView();
+}
+$('compare-run').addEventListener('click',async()=>{
+ if(state.busy||state.compareAllRunning||!$('video').getAttribute('src'))return;
+ state.compareAllRunning=true;
+ const original=state.selectedModel;
+ const clipId=state.clip?.id??null;
+ try{
+   for(const variant of MODEL_ORDER){
+     if(state.cancelled||clipId!==(state.clip?.id??null))break;
+     state.selectedModel=variant;
+     $('model').value=variant;
+     $('model').dispatchEvent(new Event('change'));
+     say('正在运行三模型对比：'+variant.toUpperCase());
+     await run();
+     if(!state.comparisonRows[variant]||state.comparisonRows[variant].clipId!==clipId)
+       throw Error('模型 '+variant.toUpperCase()+' 未完成有效推理；停止对比');
+   }
+   say('三模型比较流程已完成。请查看第 06 节的实际 Top-1、运行耗时和参考类别排名。');
+ }catch(e){say('多模型比较未完成：'+e.message);record('compare_error',{message:e.message})}
+ finally{state.compareAllRunning=false}
+});
+async function run(){if(state.busy)return;hideAnnotated();setBusy(true);state.cancelled=false;const began=performance.now();try{await ensureModelReady();if(state.cancelled)throw Error('用户取消');const variant=state.selectedModel;let frames,times,decodeMs,logits,frameTop1,inferenceStarted;
+if(variant==='a0'){
+const meta=state.meta;if(!meta||meta.length!==47)throw Error('47 输入形状元数据尚未验证');const shapes=meta.map(shapeOf);if(shapes.some(s=>!Array.isArray(s)||s.some(n=>!Number.isInteger(n)||n<1))){record('input_shape_issue',{first:meta.slice(0,3),normalized:shapes.slice(0,3),bad_indices:shapes.map((x,i)=>!Array.isArray(x)||x.some(n=>!Number.isInteger(n)||n<1)?i:null).filter(x=>x!==null)});throw Error('无法获取全部 47 输入的固定张量形状；诊断见推理详情')}if(JSON.stringify(shapes[0])!=='[1,3,172,172]')throw Error('NCHW 输入形状不符');say('正在解码视频并执行逐帧 WASM 推理……');({frames,times,decodeMs}=await readFrames($('video')));if(!frames.length)throw Error('未解码出有效视频帧');const history=[];let offset=1;for(const depth of DIMS){history.push(Array.from({length:depth},(_,i)=>new Float32Array(sizeOf(shapes[offset+i]))));offset+=depth}let pool=Array.from({length:16},(_,i)=>new Float32Array(sizeOf(shapes[29+i])));frameTop1=[];inferenceStarted=performance.now();for(let count=1;count<=frames.length;count++){if(state.cancelled)throw Error('用户取消');const inputs=[tensorFor(frames[count-1],shapes[0])];for(const group of history)for(const h of group)inputs.push(tensorFor(h,shapes[inputs.length]));for(let j=0;j<16;j++)inputs.push(tensorFor(pool[j],shapes[29+j]));inputs.push(tensorFor(new Float32Array([1/count]),shapes[45]),tensorFor(new Float32Array([1]),shapes[46]));const outputs=await state.model.run(inputs);if(outputs.length!==28)throw Error('预期 28 输出，实际 '+outputs.length);const outTensors=Array.from({length:outputs.length},(_,i)=>outputs[i]);const values=await Promise.all(outTensors.map(x=>x.data()));logits=Float32Array.from(values[0]);if(logits.length!==600||!logits.every(Number.isFinite))throw Error('流式第 '+count+' 帧 logits 无效');const frameScores=softmax(logits);let winner=0;for(let k=1;k<frameScores.length;k++)if(frameScores[k]>frameScores[winner])winner=k;frameTop1.push({frame:count,t:Number(times[count-1].toFixed(3)),id:winner,label:state.labels[winner],score:Number(frameScores[winner].toFixed(6))});for(let c=0;c<DIMS.length;c++)history[c]=[...history[c].slice(1),Float32Array.from(values[1+c])];for(let j=0;j<16;j++){const delta=values[12+j];for(let k=0;k<pool[j].length;k++)pool[j][k]+=delta[k]}for(const t of inputs)t.delete?.();if(typeof outputs.delete==='function')outputs.delete();else for(const t of outTensors)t.delete?.()}
+}else{
+  const entry=state.officialModels[variant];
+  if(!entry)throw Error('官方 '+variant.toUpperCase()+' 模型尚未编译成功');
+  say('正在解码 '+OFFICIAL_MODELS[variant].size+'×'+OFFICIAL_MODELS[variant].size+' 原始视频帧…');
+  ({frames,times,decodeMs}=await readOfficialFrames($('video'),OFFICIAL_MODELS[variant].size));
+  if(!frames.length)throw Error('没有有效的视频帧');
+  inferenceStarted=performance.now();
+  say('正在使用 '+variant.toUpperCase()+' 执行真实逐帧状态推理……');
+  const output=await runStreamingBatch({
+    api:state.api,model:entry.model,contract:entry.contract,frames,
+    isCancelled:()=>state.cancelled,
+    onFrame:progress=>{if(progress.step===1||progress.step===frames.length||progress.step%5===0)
+      say('MoViNet-'+variant.toUpperCase()+' 真实 WASM 推理：'+progress.step+'/'+progress.steps+' 帧')}
+  });
+  logits=output.logits;
+  frameTop1=output.frameLogits.map((values,i)=>{
+    const scores=softmax(values);
+    let topId=0;for(let j=1;j<scores.length;j++)if(scores[j]>scores[topId])topId=j;
+    return {frame:i+1,t:Number(times[i].toFixed(3)),id:topId,label:state.labels[topId],score:Number(scores[topId].toFixed(6))}
+  });
+}
+if(!logits||logits.length!==600||!logits.every(Number.isFinite))throw Error('输出 logits 无效');const probabilities=softmax(logits);
 const ranked=probabilities.map((score,id)=>({id,label:state.labels[id],score})).sort((a,b)=>b.score-a.score);
 const top=ranked.slice(0,5);
 const comparison=interpretAction(ranked,state.clip,state.labels);
@@ -401,7 +482,8 @@ $('metrics').replaceChildren();
 for(const entry of ['处理 '+frames.length+' 帧','模型运行 '+timings.inferenceMs+' ms','总耗时 '+timings.totalMs+' ms','CPU/WASM']){
  const el=document.createElement('span');el.textContent=entry;$('metrics').append(el);
 }
-await showAnnotated(frameTop1,Math.min(8,$('video').duration));record('inference',{top5:top,frameTop1,frames:frames.length,analyzedSeconds:Math.min(8,$('video').duration),timings,backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:MODEL_SHA});
+await showAnnotated(frameTop1,Math.min(8,$('video').duration));saveModelComparison(variant,top,comparison,timings,frames.length);
+record('inference',{variant,top5:top,frameTop1,frames:frames.length,analyzedSeconds:Math.min(8,$('video').duration),timings,backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:variant==='a0'?MODEL_SHA:OFFICIAL_MODELS[variant].sha256});
 say('真实推理已返回 '+frames.length+' 帧结果。Top-5 是未校准 softmax 分数。');
 }catch(e){say('真实推理未完成：'+e.message);$('results').textContent='没有可展示的有效推理结果';record('inference_error',{message:e.message,stack:e.stack})}finally{setBusy(false)}}
 $('run').onclick=run;
