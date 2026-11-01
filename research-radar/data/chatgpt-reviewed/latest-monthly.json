@@ -5,7 +5,7 @@
   "report_title": "2026年10月｜文档理解、视频理解与多模态小模型月度选题及成果转化报告",
   "first_stage_threshold": 8,
   "status": "completed",
-  "generated_at": "2026-11-01T00:59:40.637Z",
+  "generated_at": "2026-11-01T01:01:05.089Z",
   "window_start": "2026-10-01",
   "window_end": "2026-10-31",
   "summary": "2026年10月科研雷达月度综合分析（2026-10-01—2026-10-31）：已保存的四维科研价值评价仅能确认2026-W43周报的3项，分别为CountVideoBench（加权8.61）、LongHisDoc（8.34）、TrajTok（7.99），且三项均仍在2026-10-26 01:45 UTC的26条、主题匹配≥8.0的当前队列中，因此本月保留3项二次推荐；均尚未本地实测。2026-W42周报另有RPD + SARA、semCER、Intern-Decision、MaLoW、VideoJev共5条历史schema v1线索，不能算作四维已评价，也不写入items。自动采集2026-W43/W44快照仅代表关键词初筛，不能晋升为推荐。归档不完整：未找到覆盖10月1—11日及10月27—31日的已保存四维评价周报，不能推断这些日期无成果。月度方向为可验证长文档证据检索、视频计数偏置诊断、轨迹token预算优化；OCR语义质量仅作历史启发的条件性预研。以单卡局部实验、可复核指标和数据许可审查为先，暂不承诺完整大模型训练或商业可转化性。",
@@ -267,5 +267,25 @@
     "reviewed_weekly_generated_at": "2026-10-26T01:05:33.980Z",
     "legacy_weekly_generated_at": "2026-10-19T09:22:26Z",
     "assessment_basis": "复用已保存四维评价与官方来源链接；本月未重新采集、未重新初筛、未进行本地GPU实验。"
-  }
+  },
+  "value_score_weights": {
+    "innovation": 0.3,
+    "open_source": 0.25,
+    "reproducibility": 0.25,
+    "research_potential": 0.2
+  },
+  "value_scores": [
+    {
+      "candidate_id": "arxiv-2610-28356",
+      "weighted_score": 8.61
+    },
+    {
+      "candidate_id": "arxiv-2610-14531",
+      "weighted_score": 8.33
+    },
+    {
+      "candidate_id": "arxiv-2602-22779",
+      "weighted_score": 7.99
+    }
+  ]
 }
