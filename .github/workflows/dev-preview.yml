@@ -108,6 +108,8 @@ jobs:
           set -euo pipefail
           node --check docs/assets/projects/video-action/browser-inference/app.js
           node --check scripts/video-action/browser-probe.mjs
+          python -m pip install 'pillow>=10,<13'
+          python scripts/video-action/generate_demo.py
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
           python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference > /tmp/mvai-video-server.log 2>&1 &
