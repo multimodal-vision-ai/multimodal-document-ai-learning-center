@@ -17,6 +17,28 @@ $('upload').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!['video/mp
 $('reset').onclick=()=>{state.cancelled=true;$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;say('已清除当前视频')};
 $('cancel').onclick=()=>{state.cancelled=true;say('已请求取消；当前 WASM 调用完成后停止继续处理。')};
 $('export').onclick=()=>{const b=new Blob([JSON.stringify(state.last||{},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mvai-v103-diagnostics.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+// Five user-required human-action categories. This is coverage UI only, not a synthetic dataset.
+const REQUIRED_ACTIONS=[
+  {id:'phone_call',label:'打电话',examples:['talking on cell phone'],boundary:'手机贴耳且有通话动作；拿着手机不算'},
+  {id:'phone_use',label:'看手机',examples:['looking at phone','texting'],boundary:'必须能看到视线或明确操作；不能仅凭手持手机判断'},
+  {id:'eating',label:'吃东西',examples:['eating'],boundary:'需要有进食动作，只有食物在桌上不算'},
+  {id:'sleep_posture',label:'睡眠姿态',examples:['sleeping'],boundary:'只能识别可见睡眠姿态，不能从躺下推断确实睡着'},
+  {id:'falling',label:'摔倒',examples:['falling down'],boundary:'需可见失去平衡及跌落；坐下或躺下不是摔倒'}
+];
+function renderRequiredCoverage(items=[]){
+  const panel=$('target-classes');if(!panel)return;
+  panel.replaceChildren();
+  for(const action of REQUIRED_ACTIONS){
+    const covered=items.filter(x=>x.standard_action_id===action.id&&x.synthetic!==true&&x.status==='approved_demo'&&x.redistribution_approved===true);
+    const card=document.createElement('div');
+    card.className='target '+(covered.length?'ready':'pending');
+    const title=document.createElement('strong');title.textContent=action.label;
+    const status=document.createElement('small');status.textContent=covered.length?('真实视频 '+covered.length+' 条 · 可测试'):'待合规视频入库';
+    card.title=action.boundary;
+    card.append(title,status);panel.append(card);
+  }
+}
+renderRequiredCoverage();
 const DEV_FIXTURE={id:'synthetic_wave_001',label_zh:'挥手',label_en:'waving hand',source_url:'https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/blob/feat/video-action-v103/scripts/video-action/generate_demo.py',license:'CC0-1.0',synthetic:true,reference_evidence:'synthetic_controlled',evaluation_tier:'development_only'};
 async function addDevFixture(reason){
   const fallback='./samples/synthetic_wave_001.mp4';
@@ -53,6 +75,7 @@ async function catalog(){
   const c=await r.json();
   if(c.schema_version!=='1.0'||c.dataset_id!==DATASET||!Array.isArray(c.items))throw Error('HF catalog schema 无效');
   state.catalog=c;
+  renderRequiredCoverage(c.items);
   const box=$('sample-list');
   box.replaceChildren();
   for(const clip of c.items){
