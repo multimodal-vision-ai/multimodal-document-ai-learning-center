@@ -78,6 +78,25 @@ try{
         entry.annotated_visible=await page.locator('#annotated-section').isVisible();
         entry.annotated_media=await page.locator('#annotated-video').evaluate(v=>({readyState:v.readyState,videoWidth:v.videoWidth,videoHeight:v.videoHeight,errorCode:v.error?.code??null,srcMatchesOriginal:v.currentSrc===document.querySelector('#video').currentSrc}));
         entry.annotated_media_decoded=entry.annotated_media.readyState>=2&&entry.annotated_media.videoWidth>0&&!entry.annotated_media.errorCode&&entry.annotated_media.srcMatchesOriginal;
+        if(['挥手','看手机','吃东西','摔倒'].includes(label)){
+          try{
+            await page.waitForFunction(()=>{
+              const status=document.querySelector('#person-detector-status')?.textContent||'';
+              return /已定位主人物|检测到 [0-9]+ 人|当前画面未检测到可信人物|人物检测模型加载失败|人物检测失败/.test(status);
+            },null,{timeout:95000});
+            entry.person_status=await page.locator('#person-detector-status').innerText();
+            entry.person_detector_error=/失败/.test(entry.person_status);
+            entry.person_box_found=/已定位主人物|检测到 [0-9]+ 人/.test(entry.person_status);
+            entry.person_visual=await page.locator('#person-box-layer').evaluate(c=>{
+              const ctx=c.getContext('2d',{willReadFrequently:true});
+              const rgba=ctx.getImageData(0,0,c.width,c.height).data;
+              let green=0;
+              for(let i=0;i<rgba.length;i+=16)if(rgba[i+1]>rgba[i]+35&&rgba[i+1]>rgba[i+2]+10&&rgba[i+3]>0)green++;
+              return {width:c.width,height:c.height,hasRealBoxPixels:green>8,greenPixels:green,rawFallbackVisible:!document.querySelector('#top1-overlay').hidden};
+            });
+            if(label==='吃东西')await page.screenshot({path:'artifacts/video-action/person-box-eating.png',fullPage:true});
+          }catch(e){entry.person_detector_error=String(e);entry.person_box_found=false}
+        }
         if(entry.timeline_valid&&entry.annotated_visible){await page.locator('#annotated-video').evaluate(v=>{v.pause();v.currentTime=.6});await page.locator('#annotated-video').evaluate(v=>new Promise(resolve=>{if(Math.abs(v.currentTime-.6)<.04)return resolve();v.addEventListener('seeked',resolve,{once:true})}));const overlay=await page.locator('#top1-overlay').innerText();entry.seek_overlay_matches=inference.frameTop1.some(p=>overlay.includes(p.label));}
 
         if(label==='吃东西')await page.screenshot({path:'artifacts/video-action/eating-interpretation.png',fullPage:true});
@@ -104,6 +123,8 @@ try{
     await autoPage.screenshot({path:'artifacts/video-action/one-click-auto-load.png',fullPage:true});
   }catch(e){report.auto_load_error=String(e);report.auto_load_success=false}
   finally{report.auto_load_page_errors=autoErrors;await autoPage.close()}
-  report.success=report.compact_six_labels&&report.fall_real_video_linked&&report.fall_sample_real&&report.model_load_success&&report.no_duplicate_litert_init&&report.auto_load_success&&report.real_samples_playable&&report.real_samples.every(x=>x.inference_success&&x.timeline_valid&&x.annotated_visible&&x.annotated_media_decoded&&x.seek_overlay_matches)&&report.reset_deterministic&&errors.length===0;
+  report.person_detection_loaded=report.real_samples.filter(x=>['挥手','看手机','吃东西','摔倒'].includes(x.label)).every(x=>x.person_status&&!x.person_detector_error);
+  report.person_box_real=report.real_samples.some(x=>x.person_box_found&&x.person_visual?.hasRealBoxPixels);
+  report.success=report.person_detection_loaded&&report.person_box_real&&report.compact_six_labels&&report.fall_real_video_linked&&report.fall_sample_real&&report.model_load_success&&report.no_duplicate_litert_init&&report.auto_load_success&&report.real_samples_playable&&report.real_samples.every(x=>x.inference_success&&x.timeline_valid&&x.annotated_visible&&x.annotated_media_decoded&&x.seek_overlay_matches)&&report.reset_deterministic&&errors.length===0;
   if(!report.success)process.exitCode=1;
 }catch(e){report.error=String(e);process.exitCode=1}finally{fs.writeFileSync('artifacts/video-action/report.json',JSON.stringify(report,null,2));await browser.close()}
