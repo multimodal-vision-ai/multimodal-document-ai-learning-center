@@ -1,4 +1,4 @@
-import {interpretAction,labelDisplay,relationTag} from './semantic.js';
+import {interpretAction,labelDisplay} from './semantic.js';
 import {createPersonDetector,choosePrimaryPerson,mapBoxToContainedVideo,top1At} from './person-overlay.js';
 // MVAI V1.0.3 experimental browser adapter. No fake outputs or sample fallback.
 const $ = id => document.getElementById(id);
@@ -311,8 +311,6 @@ $('results').replaceChildren();
 for(const item of top){
   const r=document.createElement('div');r.className='result';
   const label=document.createElement('div');label.className='name';label.textContent=labelDisplay(item.label);
-  const relation=relationTag(item.label,comparison);
-  if(relation){const hint=document.createElement('small');hint.className='sub';hint.textContent=relation;label.append(hint)}
   const track=document.createElement('div');track.className='track';
   const bar=document.createElement('div');bar.className='fill';bar.style.width=(item.score*100).toFixed(2)+'%';
   track.append(bar);
