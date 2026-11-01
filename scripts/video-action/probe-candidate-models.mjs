@@ -16,8 +16,7 @@ try{
     const shapeOf=d=>{let r=d?.shape??d?.dims??d?.dimensions??d?.shapeSignature;return r?Array.from(r,Number):null};
     for(const variant of names){
       const modelUrl='./model-candidates/movinet_'+variant+'_stream.tflite';
-      item.publicSourceUrl='https://storage.googleapis.com/tf_model_garden/vision/movinet/movinet_'+variant+'_stream.tflite';
-      const item={variant,modelUrl};
+      const item={variant,modelUrl,publicSourceUrl:'https://storage.googleapis.com/tf_model_garden/vision/movinet/movinet_'+variant+'_stream.tflite'};
       const start=performance.now();
       let model=null;
       try{
