@@ -6,58 +6,93 @@ const MODEL_SHA='0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c
 const LABELS_URL='https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt';
 const DATASET='multimodal-vision-ai/mvai-daily-action-demo';
 const DIMS=[2,2,2,4,2,2,4,2,2,2,4];
-const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null};
+const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0};
 let config=null;
 async function loadConfig(){const response=await fetch('./config.json',{cache:'no-store'});if(!response.ok)throw Error('本地配置 HTTP '+response.status);config=await response.json();if(config.dataset_id!==DATASET)throw Error('数据源配置错误');return config;}
 const say=s=>{$('status').textContent=s;$('status').classList.toggle('error',/失败|未完成|错误|无效/.test(s));};
 const record=(event,data)=>{state.last={...(state.last||{}),[event]:data, timestamp:new Date().toISOString()};$('diagnostics').textContent=JSON.stringify(state.last,null,2)};
 $('info').onclick=()=>{$('intro').hidden=!$('intro').hidden};
 function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('model-state').textContent=b?'正在处理…':state.model?'模型已就绪':'尚未加载';}
-function pick(url,clip=null){if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}state.clip=clip;if(url.startsWith('blob:'))$('video').removeAttribute('crossorigin');else{$('video').crossOrigin='anonymous';$('upload').value=''}$('video').src=url;$('results').textContent='等待真实推理。';$('evaluation').textContent='点击「开始识别」后，将按参考标签及语义关联解释结果。';$('metrics').replaceChildren();$('reference').textContent=clip?'参考动作：'+clip.label_zh+' / '+clip.label_en:'参考动作：本地文件，无标注';$('provenance').replaceChildren();if(clip){const desc=document.createElement('span');desc.textContent='类型：'+(clip.synthetic?'合成测试':'真实来源视频')+' · 参考标签：'+(clip.reference_evidence||clip.evidence||'来源描述')+' · 作者：'+(clip.attribution||'见来源页')+' · 许可：'+clip.license+' · ';const link=document.createElement('a');link.href=clip.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看原始视频及授权';$('provenance').append(desc,link)}else $('provenance').textContent='本地上传 · 仅在此浏览器读取';$('run').disabled=state.busy||!$('video').getAttribute('src');if(!state.busy)say('已选择'+(clip?.label_zh?'「'+clip.label_zh+'」':'本地视频')+'；点击「开始识别」后将在浏览器执行真实推理。')}
+function hideAnnotated(){
+  const video=$('annotated-video');
+  video.pause();video.removeAttribute('src');video.load();
+  $('annotated-section').hidden=true;
+  $('top1-overlay').textContent='等待推理';
+  $('annotation-summary').textContent='';
+  state.top1Timeline=[];state.annotatedLimit=0;
+}
+function updateTop1Overlay(){
+  const video=$('annotated-video'),overlay=$('top1-overlay');
+  const timeline=state.top1Timeline;
+  if(!timeline.length||!Number.isFinite(video.currentTime))return;
+  overlay.replaceChildren();
+  const title=document.createElement('small');title.textContent='MoViNet 流式 Top-1 · 每 0.2 秒';
+  const name=document.createElement('strong');const score=document.createElement('small');
+  if(video.currentTime>state.annotatedLimit+0.005){
+    name.textContent='超出已分析范围';
+    score.textContent='仅分析视频前 '+state.annotatedLimit.toFixed(1)+' 秒';
+  }else{
+    // Streaming scores are cumulative as of the sampled time; no interpolation or fabricated predictions.
+    const time=video.currentTime;
+    let idx=0;for(let i=1;i<timeline.length;i++){if(timeline[i].t<=time+0.001)idx=i;else break}
+    const point=timeline[idx];
+    name.textContent=labelDisplay(point.label);
+    score.textContent=(point.score*100).toFixed(1)+'% · t='+point.t.toFixed(1)+'s（未校准分数）';
+  }
+  overlay.append(title,name,score);
+}
+function showAnnotated(timeline,limit){
+  if(!timeline.length)throw Error('逐帧 Top-1 记录为空');
+  const src=$('video').currentSrc||$('video').src;
+  if(!src)throw Error('原视频资源为空');
+  const dest=$('annotated-video');
+  if(src.startsWith('blob:'))dest.removeAttribute('crossorigin');else dest.crossOrigin='anonymous';
+  state.top1Timeline=timeline;state.annotatedLimit=limit;
+  dest.src=src;dest.currentTime=0;dest.muted=true;
+  $('annotation-summary').textContent='已记录 '+timeline.length+' 个流式预测点（5 FPS，分析 '+limit.toFixed(1)+' 秒）。这不是物体检测框；播放中的标签依据原始模型在对应时刻的累积预测更新。';
+  $('annotated-section').hidden=false;
+  updateTop1Overlay();
+  dest.play().catch(()=>{}); // optional muted autoplay, never required for review
+}
+const replayVideo=$('annotated-video');
+replayVideo.addEventListener('timeupdate',updateTop1Overlay);
+replayVideo.addEventListener('seeked',updateTop1Overlay);
+replayVideo.addEventListener('loadedmetadata',updateTop1Overlay);
+let overlayRaf=0;
+const renderPlayback=()=>{updateTop1Overlay();if(!replayVideo.paused&&!replayVideo.ended)overlayRaf=requestAnimationFrame(renderPlayback)};
+replayVideo.addEventListener('play',()=>{cancelAnimationFrame(overlayRaf);overlayRaf=requestAnimationFrame(renderPlayback)});
+replayVideo.addEventListener('pause',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay()});
+replayVideo.addEventListener('ended',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay()});
+function pick(url,clip=null){hideAnnotated();if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}state.clip=clip;if(url.startsWith('blob:'))$('video').removeAttribute('crossorigin');else{$('video').crossOrigin='anonymous';$('upload').value=''}$('video').src=url;$('results').textContent='等待真实推理。';$('evaluation').textContent='点击「开始识别」后，将按参考标签及语义关联解释结果。';$('metrics').replaceChildren();$('reference').textContent=clip?'参考动作：'+clip.label_zh+' / '+clip.label_en:'参考动作：本地文件，无标注';$('provenance').replaceChildren();if(clip){const desc=document.createElement('span');desc.textContent='类型：'+(clip.synthetic?'合成测试':'真实来源视频')+' · 参考标签：'+(clip.reference_evidence||clip.evidence||'来源描述')+' · 作者：'+(clip.attribution||'见来源页')+' · 许可：'+clip.license+' · ';const link=document.createElement('a');link.href=clip.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看原始视频及授权';$('provenance').append(desc,link)}else $('provenance').textContent='本地上传 · 仅在此浏览器读取';$('run').disabled=state.busy||!$('video').getAttribute('src');if(!state.busy)say('已选择'+(clip?.label_zh?'「'+clip.label_zh+'」':'本地视频')+'；点击「开始识别」后将在浏览器执行真实推理。')}
 $('upload').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!['video/mp4','video/webm'].includes(f.type)){say('仅支持 MP4/WebM');return}if(f.size>120*1024*1024){say('文件超过 120 MB 的预览安全上限');return}const url=URL.createObjectURL(f);pick(url);state.objectUrl=url;};
-$('reset').onclick=()=>{state.cancelled=true;$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('evaluation').textContent='请选择视频并运行识别';$('metrics').replaceChildren();state.clip=null;if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null;}$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;say('已清除当前视频')};
+$('reset').onclick=()=>{state.cancelled=true;hideAnnotated();$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('evaluation').textContent='请选择视频并运行识别';$('metrics').replaceChildren();state.clip=null;if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null;}$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;say('已清除当前视频')};
 $('cancel').onclick=()=>{state.cancelled=true;say('已请求取消；当前 WASM 调用完成后停止继续处理。')};
 $('export').onclick=()=>{const b=new Blob([JSON.stringify(state.last||{},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mvai-v103-diagnostics.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
-// Five user-required human-action categories. This is coverage UI only, not a synthetic dataset.
-const REQUIRED_ACTIONS=[
-  {id:'phone_call',label:'打电话',examples:['talking on cell phone'],boundary:'手机贴耳且有通话动作；拿着手机不算'},
-  {id:'phone_use',label:'看手机',examples:['looking at phone','texting'],boundary:'必须能看到视线或明确操作；不能仅凭手持手机判断'},
-  {id:'eating',label:'吃东西',examples:['eating'],boundary:'需要有进食动作，只有食物在桌上不算'},
-  {id:'sleep_posture',label:'睡眠姿态',examples:['sleeping'],boundary:'只能识别可见睡眠姿态，不能从躺下推断确实睡着'},
-  {id:'falling',label:'摔倒',examples:['falling down'],boundary:'需可见失去平衡及跌落；坐下或躺下不是摔倒'}
+// Six concise real-video choices; no fake footage or unapproved substitute for falling.
+const SAMPLE_SLOTS=[
+  {id:'wave',name:'挥手',match:c=>c.label_en==='waving hand'||c.id==='real_waving_hand_001'},
+  {id:'phone_use',name:'看手机',match:c=>c.standard_action_id==='phone_use'},
+  {id:'phone_call',name:'打电话',match:c=>c.standard_action_id==='phone_call'},
+  {id:'falling',name:'摔倒',match:c=>c.standard_action_id==='falling'},
+  {id:'eating',name:'吃东西',match:c=>c.standard_action_id==='eating'},
+  {id:'sleep_posture',name:'睡觉',match:c=>c.standard_action_id==='sleep_posture'}
 ];
-function renderRequiredCoverage(items=[]){
-  const panel=$('target-classes');if(!panel)return;
-  panel.replaceChildren();
-  for(const action of REQUIRED_ACTIONS){
-    const covered=items.filter(x=>x.standard_action_id===action.id&&x.synthetic!==true&&x.status==='approved_demo'&&x.redistribution_approved===true);
-    const card=document.createElement('div');
-    card.className='target '+(covered.length?'ready':'pending');
-    const title=document.createElement('strong');title.textContent=action.label;
-    const status=document.createElement('small');status.textContent=covered.length?('真实视频 '+covered.length+' 条 · 可测试'):'待合规视频入库';
-    card.title=action.boundary;
-    card.append(title,status);panel.append(card);
-  }
-}
-renderRequiredCoverage();
+const goodSample=c=>{
+ const relative=String(c?.relative_file||'');
+ const file=relative.startsWith('demo/videos/')?relative.slice(12):'';
+ return !!(c&&c.synthetic!==true&&c.status==='approved_demo'&&c.redistribution_approved===true&&c.license&&c.source_url&&file&&[...file].every(ch=>'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-'.includes(ch))&&(file.endsWith('.mp4')||file.endsWith('.webm')));
+};
 const DEV_FIXTURE={id:'synthetic_wave_001',label_zh:'挥手',label_en:'waving hand',source_url:'https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/blob/feat/video-action-v103/scripts/video-action/generate_demo.py',license:'CC0-1.0',synthetic:true,reference_evidence:'synthetic_controlled',evaluation_tier:'development_only'};
 async function addDevFixture(reason){
-  const fallback='./samples/synthetic_wave_001.mp4';
-  try{
-    const check=await fetch(fallback,{method:'HEAD',cache:'no-store'});
-    if(!check.ok)throw Error('HTTP '+check.status);
-    const btn=document.createElement('button');
-    btn.textContent='▶ 合成挥手 · DEV 测试片段';
-    btn.title='原创合成动作，仅测试视频播放和模型推理，不代表真实数据集或真实人物动作';
-    btn.onclick=()=>pick(fallback,DEV_FIXTURE);
+  $('sample-list').replaceChildren();
+  for(const slot of SAMPLE_SLOTS){
+    const btn=document.createElement('button');btn.textContent=slot.name;btn.className='unavailable';
+    btn.dataset.action=slot.id;
+    btn.onclick=()=>say('HF 真人视频目录暂不可用：'+reason+'。可上传本地视频。');
     $('sample-list').append(btn);
-    $('provenance').textContent='HF Dataset 尚无已接入的视频目录：'+reason+'。可先选择下方原创合成 DEV 测试片段；它不属于 HF Dataset。';
-    record('dev_fixture',{available:true,reason});
-  }catch(e){
-    $('sample-list').textContent='没有可用示例，可本地上传 MP4/WebM';
-    $('provenance').textContent='HF Dataset 未接入：'+reason+'；DEV 合成测试片段也未部署（'+e.message+'）';
-    record('catalog_error',{reason,fixture:e.message});
   }
+  $('sample-status').textContent='样例目录加载失败：'+reason+'。可上传本地视频。';
+  record('catalog_error',{reason});
 }
 async function catalog(){
   const cfg=await loadConfig();
@@ -76,25 +111,39 @@ async function catalog(){
   const c=await r.json();
   if(c.schema_version!=='1.0'||c.dataset_id!==DATASET||!Array.isArray(c.items))throw Error('HF catalog schema 无效');
   state.catalog=c;
-  renderRequiredCoverage(c.items);
   const box=$('sample-list');
   box.replaceChildren();
-  for(const clip of c.items){
-    if(clip.synthetic===true)continue; // real-person pilot first; synthetic remains an engineering fallback
-    const relative=String(clip.relative_file||'');
-    const filename=relative.startsWith('demo/videos/')?relative.slice(12):'';
-    const safeName=filename.length>0&&[...filename].every(ch=>'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-'.includes(ch));
-    if(clip.status!=='approved_demo'||clip.redistribution_approved!==true||!clip.license||!clip.source_url||!safeName||!(filename.endsWith('.mp4')||filename.endsWith('.webm')))continue;
+  const available=c.items.filter(goodSample);
+  let enabledCount=0;
+  for(const slot of SAMPLE_SLOTS){
+    const clip=available.find(slot.match);
     const btn=document.createElement('button');
-    btn.textContent='▶ '+clip.label_zh+(clip.synthetic?' · 合成示例':' · 真人实拍');
-    btn.dataset.clipId=clip.id;
-    btn.onclick=()=>{pick('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file,clip);box.querySelectorAll('button').forEach(item=>item.classList.toggle('active',item===btn))};
+    btn.textContent=slot.name;
+    btn.dataset.action=slot.id;
+    if(clip){
+      enabledCount++;
+      btn.dataset.clipId=clip.id;
+      btn.setAttribute('aria-label','播放真人'+slot.name+'样例');
+      btn.onclick=()=>{
+        pick('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file,clip);
+        box.querySelectorAll('button').forEach(item=>item.classList.toggle('active',item===btn));
+        $('sample-status').textContent=slot.id==='phone_call'?'当前为有线电话，不能等同手机通话。':slot.id==='sleep_posture'?'当前为可见卧床姿态，不能证明真实睡眠。':'';
+      };
+    }else{
+      btn.className='unavailable';
+      btn.title='尚无已核验授权的真人'+slot.name+'视频';
+      btn.setAttribute('aria-label',slot.name+'样例待入库');
+      btn.onclick=()=>{
+        box.querySelectorAll('button').forEach(item=>item.classList.toggle('active',item===btn));
+        $('sample-status').textContent='「'+slot.name+'」暂无已审核的真人视频，请勿用其他类别代替。可使用下方本地视频测试。';
+        say('「'+slot.name+'」暂无公开样例；可选择其他已入库视频或上传已授权本地视频。');
+      };
+    }
     box.append(btn);
   }
-  if(!box.childElementCount)throw Error('HF catalog 尚无已批准的演示样例');
-  $('provenance').textContent='HF Dataset · '+(provisional?'临时读取版本 ':'固定版本 ')+revision.slice(0,12)+(provisional?'（待写入 DEV config.json 固定）':'')+' · 具体视频许可与作者见来源链接';
-  record('catalog',{revision,count:box.childElementCount,provisional});
-  if(!state.clip&&box.firstElementChild)box.firstElementChild.click();
+  if(!enabledCount)throw Error('HF catalog 尚无可用真人演示样例');
+  record('catalog',{revision,count:enabledCount,availableSlots:SAMPLE_SLOTS.map(x=>({id:x.id,hasVideo:available.some(x.match)})),provisional});
+  if(!state.clip)box.querySelector('button[data-clip-id]')?.click();
 }
 catalog().catch(e=>{addDevFixture(e.message)});
 function hex(bytes){return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('')}
