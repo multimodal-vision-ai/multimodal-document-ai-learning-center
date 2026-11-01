@@ -56,6 +56,7 @@ async function catalog(){
   const box=$('sample-list');
   box.replaceChildren();
   for(const clip of c.items){
+    if(clip.synthetic===true)continue; // real-person pilot first; synthetic remains an engineering fallback
     const relative=String(clip.relative_file||'');
     const filename=relative.startsWith('demo/videos/')?relative.slice(12):'';
     const safeName=filename.length>0&&[...filename].every(ch=>'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-'.includes(ch));
