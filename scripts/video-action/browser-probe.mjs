@@ -10,6 +10,21 @@ try{
   page.on('pageerror',e=>errors.push(String(e)));
   await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded',timeout:30000});
   await page.screenshot({path:'artifacts/video-action/initial.png',fullPage:true});
+  report.real_samples=[];
+  try {
+    await page.waitForFunction(()=>document.querySelectorAll('#sample-list button').length>=3,null,{timeout:35000});
+    report.sample_buttons=await page.locator('#sample-list button').allTextContents();
+    for(const label of ['挥手 · 真人实拍','开合跳 · 真人实拍']){
+      try {
+        await page.locator('#sample-list button').filter({hasText:label}).click();
+        await page.waitForFunction(()=>{const v=document.querySelector('#video');return v.readyState>=2&&v.videoWidth>0&&Number.isFinite(v.duration)},null,{timeout:35000});
+        const data=await page.locator('#video').evaluate(v=>({duration:v.duration,width:v.videoWidth,height:v.videoHeight,src:v.currentSrc,readyState:v.readyState}));
+        report.real_samples.push({label,...data,playable:true});
+      }catch(e){report.real_samples.push({label,playable:false,error:String(e)})}
+    }
+    await page.screenshot({path:'artifacts/video-action/real-samples.png',fullPage:true});
+  }catch(e){report.real_catalog_error=String(e);report.catalog_diagnostic=await page.locator('#provenance').innerText()}
+
   await page.locator('#probe').click();
   await page.waitForFunction(()=>!document.querySelector('#probe').disabled,{timeout:180000});
   report.status=await page.locator('#status').innerText();
@@ -34,6 +49,24 @@ try{
       report.reset_deterministic=a.length===b.length&&a.every((x,i)=>x.id===b[i].id&&Math.abs(x.score-b[i].score)<1e-5);
     }
   }
-  report.success=report.model_load_success&&report.real_inference_success&&report.reset_deterministic&&errors.length===0;
+  report.real_samples_playable=report.real_samples.length===2&&report.real_samples.every(x=>x.playable);
+  if(report.model_load_success&&report.real_samples_playable){
+    for(const label of ['挥手 · 真人实拍','开合跳 · 真人实拍']){
+      try{
+        await page.locator('#sample-list button').filter({hasText:label}).click();
+        await page.locator('#run').click();
+        await page.waitForFunction(()=>!document.querySelector('#run').disabled,null,{timeout:180000});
+        const status=await page.locator('#status').innerText();
+        const inference=JSON.parse(await page.locator('#diagnostics').innerText()||'{}').inference??null;
+        const entry=report.real_samples.find(x=>x.label===label);
+        entry.inference_success=!!inference&&status.includes('真实推理已返回');
+        entry.status=status;
+        entry.top5=inference?.top5;
+        entry.comparison=inference?.comparison;
+      }catch(e){const entry=report.real_samples.find(x=>x.label===label);entry.inference_error=String(e)}
+    }
+    await page.screenshot({path:'artifacts/video-action/real-inference.png',fullPage:true});
+  }
+  report.success=report.model_load_success&&report.real_samples_playable&&report.real_samples.every(x=>x.inference_success)&&report.reset_deterministic&&errors.length===0;
   if(!report.success)process.exitCode=1;
 }catch(e){report.error=String(e);process.exitCode=1}finally{fs.writeFileSync('artifacts/video-action/report.json',JSON.stringify(report,null,2));await browser.close()}
