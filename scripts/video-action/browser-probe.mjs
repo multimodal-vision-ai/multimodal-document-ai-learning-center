@@ -31,10 +31,13 @@ try{
   await page.locator('#probe').click();
   await page.waitForFunction(()=>!document.querySelector('#probe').disabled,{timeout:180000});
   report.status=await page.locator('#status').innerText();
+  await page.locator('#probe').click();
+  report.repeat_probe_status=await page.locator('#status').innerText();
+  report.no_duplicate_litert_init=report.repeat_probe_status.includes('无需重复初始化');
   report.diagnostics=await page.locator('#diagnostics').textContent();
   report.errors=errors;
   await page.screenshot({path:'artifacts/video-action/after-probe.png',fullPage:true});
-  report.model_load_success=report.status.includes('47 输入 / 28 输出元数据通过')&&errors.length===0;
+  report.model_load_success=report.status.includes('47 输入 / 28 输出元数据通过')&&report.no_duplicate_litert_init&&errors.length===0;
   if(report.model_load_success) {
     await page.locator('#upload').setInputFiles('hf-dataset-staging/demo/videos/synthetic_wave_001.mp4');
     await page.locator('#run').click();
@@ -66,6 +69,7 @@ try{
         entry.status=status;
         entry.top5=inference?.top5;
         entry.comparison=inference?.comparison;
+        if(label==='吃东西 · 真人实拍')await page.screenshot({path:'artifacts/video-action/eating-interpretation.png',fullPage:true});
       }catch(e){const entry=report.real_samples.find(x=>x.label===label);entry.inference_error=String(e)}
     }
     await page.screenshot({path:'artifacts/video-action/real-inference.png',fullPage:true});
