@@ -30,6 +30,8 @@ jobs:
           node --check docs/assets/projects/video-action/browser-inference/app.js
           node --check docs/assets/projects/video-action/browser-inference/semantic.js
           node scripts/video-action/test-semantics.mjs
+          node --check docs/assets/projects/video-action/browser-inference/person-overlay.js
+          node scripts/video-action/test-person-overlay.mjs
           node --check scripts/video-action/browser-probe.mjs
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
