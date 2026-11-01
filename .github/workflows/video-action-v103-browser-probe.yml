@@ -1,0 +1,32 @@
+name: Video Action V1.0.3 Browser Probe (DEV only)
+on:
+  push:
+    branches:
+      - feat/video-action-v103
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser harness
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Launch static server and probe actual Chrome WASM runtime
+        run: |
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-http.log 2>&1 &
+          node scripts/video-action/browser-probe.mjs
+      - name: Save browser report and screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-action-v103-browser-probe
+          path: artifacts/video-action/
+          if-no-files-found: warn
