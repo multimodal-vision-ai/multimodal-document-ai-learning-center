@@ -9,8 +9,8 @@ from torchvision.models.video import mvit_v2_s,MViT_V2_S_Weights,swin3d_t,Swin3D
 out=Path("artifacts/video-action/nonmovinet-onnx-feasibility");out.mkdir(parents=True,exist_ok=True)
 results=[]
 for key,ctor,weights,shape in [
- ("meta-mvit-v2-s",mvit_v2_s,MViT_V2_S_Weights.KINETICS400_V1,(1,16,3,224,224)),
- ("microsoft-swin3d-t",swin3d_t,Swin3D_T_Weights.KINETICS400_V1,(1,16,3,112,112))
+ ("meta-mvit-v2-s",mvit_v2_s,MViT_V2_S_Weights.KINETICS400_V1,(1,3,16,224,224)),
+ ("microsoft-swin3d-t",swin3d_t,Swin3D_T_Weights.KINETICS400_V1,(1,3,16,112,112))
 ]:
  record={"name":key,"input":shape,"exportSuccess":False}
  try:
