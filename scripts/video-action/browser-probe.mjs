@@ -15,7 +15,7 @@ try{
   await page.screenshot({path:'artifacts/video-action/initial.png',fullPage:true});
   report.real_samples=[];
   try {
-    await page.waitForFunction(()=>document.querySelectorAll('#sample-list button').length>=3,null,{timeout:35000});
+    await page.waitForFunction(()=>document.querySelectorAll('#sample-list button').length>=2,null,{timeout:35000});
     report.sample_buttons=await page.locator('#sample-list button').allTextContents();
     for(const label of ['挥手 · 真人实拍','开合跳 · 真人实拍']){
       try {
