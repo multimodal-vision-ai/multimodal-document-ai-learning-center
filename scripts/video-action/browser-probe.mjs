@@ -31,7 +31,7 @@ try{
   await page.locator('#probe').click();
   await page.waitForFunction(()=>!document.querySelector('#probe').disabled,{timeout:180000});
   report.status=await page.locator('#status').innerText();
-  report.diagnostics=await page.locator('#diagnostics').innerText();
+  report.diagnostics=await page.locator('#diagnostics').textContent();
   report.errors=errors;
   await page.screenshot({path:'artifacts/video-action/after-probe.png',fullPage:true});
   report.model_load_success=report.status.includes('47 输入 / 28 输出元数据通过')&&errors.length===0;
@@ -40,14 +40,14 @@ try{
     await page.locator('#run').click();
     await page.waitForFunction(()=>!document.querySelector('#run').disabled,{timeout:180000});
     report.first_inference_status=await page.locator('#status').innerText();
-    report.first_inference=JSON.parse(await page.locator('#diagnostics').innerText()||'{}').inference??null;
+    report.first_inference=JSON.parse(await page.locator('#diagnostics').textContent()||'{}').inference??null;
     report.real_inference_success=!!report.first_inference&&report.first_inference_status.includes('真实推理已返回');
     await page.screenshot({path:'artifacts/video-action/after-inference.png',fullPage:true});
     if(report.real_inference_success){
       await page.locator('#run').click();
       await page.waitForFunction(()=>!document.querySelector('#run').disabled,{timeout:180000});
       report.repeat_inference_status=await page.locator('#status').innerText();
-      report.repeat_inference=JSON.parse(await page.locator('#diagnostics').innerText()||'{}').inference??null;
+      report.repeat_inference=JSON.parse(await page.locator('#diagnostics').textContent()||'{}').inference??null;
       const a=report.first_inference.top5,b=report.repeat_inference?.top5||[];
       report.reset_deterministic=a.length===b.length&&a.every((x,i)=>x.id===b[i].id&&Math.abs(x.score-b[i].score)<1e-5);
     }
@@ -60,7 +60,7 @@ try{
         await page.locator('#run').click();
         await page.waitForFunction(()=>!document.querySelector('#run').disabled,null,{timeout:180000});
         const status=await page.locator('#status').innerText();
-        const inference=JSON.parse(await page.locator('#diagnostics').innerText()||'{}').inference??null;
+        const inference=JSON.parse(await page.locator('#diagnostics').textContent()||'{}').inference??null;
         const entry=report.real_samples.find(x=>x.label===label);
         entry.inference_success=!!inference&&status.includes('真实推理已返回');
         entry.status=status;
