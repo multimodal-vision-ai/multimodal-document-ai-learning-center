@@ -15,7 +15,8 @@ try{
     await api.loadLiteRt('https://cdn.jsdelivr.net/npm/@litertjs/core@2.5.3/wasm/');
     const shapeOf=d=>{let r=d?.shape??d?.dims??d?.dimensions??d?.shapeSignature;return r?Array.from(r,Number):null};
     for(const variant of names){
-      const modelUrl='https://storage.googleapis.com/tf_model_garden/vision/movinet/movinet_'+variant+'_stream.tflite';
+      const modelUrl='./model-candidates/movinet_'+variant+'_stream.tflite';
+      item.publicSourceUrl='https://storage.googleapis.com/tf_model_garden/vision/movinet/movinet_'+variant+'_stream.tflite';
       const item={variant,modelUrl};
       const start=performance.now();
       let model=null;
