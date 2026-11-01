@@ -6,7 +6,10 @@ export const LABEL_ZH={
   'eating cake':'吃蛋糕','eating chips':'吃薯片','eating doughnuts':'吃甜甜圈',
   'eating ice cream':'吃冰淇淋','eating spaghetti':'吃意面',
   'sleeping':'睡觉','waving hand':'挥手','jumping jacks':'开合跳',
-  'texting':'发短信','looking at phone':'看手机','talking on cell phone':'打手机电话'
+  'texting':'发短信','looking at phone':'看手机','talking on cell phone':'打手机电话',
+  'singing':'唱歌','cosplaying':'角色扮演','dancing':'跳舞',
+  'clapping':'鼓掌','playing guitar':'弹吉他','sitting':'坐着',
+  'reading book':'读书','walking the dog':'遛狗','drinking':'喝饮料'
 };
 export function interpretAction(ranked, clip, labelNames){
   if(!clip?.label_en)return null;
