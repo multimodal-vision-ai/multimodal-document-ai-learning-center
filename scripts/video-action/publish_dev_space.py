@@ -16,7 +16,7 @@ ROOT=Path("docs/assets/projects/video-action/browser-inference")
 HOST="https://multimodal-vision-ai-mvai-video-action-v103-dev.static.hf.space/"
 TOKEN=os.environ.get("HF_TOKEN")
 if not TOKEN: sys.exit("HF_TOKEN is absent; preview not deployed")
-for file in ("index.html","app.js","semantic.js","person-overlay.js","official-movinet.js","config.json"):
+for file in ("index.html","app.js","semantic.js","person-overlay.js","official-movinet.js","video-mae.js","config.json"):
     if not (ROOT/file).is_file():sys.exit("Missing frontend file: "+file)
 config=json.loads((ROOT/"config.json").read_text(encoding="utf8"))
 if config["dataset_id"]!="multimodal-vision-ai/mvai-daily-action-demo":
@@ -55,7 +55,7 @@ GitHub revision: `{os.getenv("GITHUB_SHA","unknown")}`
 HF Dataset revision: `{config["dataset_revision"]}`
 """
 operations=[CommitOperationAdd(path_in_repo="README.md",path_or_fileobj=__import__("io").BytesIO(card.encode("utf8")))]
-for name in ("index.html","app.js","semantic.js","person-overlay.js","official-movinet.js","config.json"):
+for name in ("index.html","app.js","semantic.js","person-overlay.js","official-movinet.js","video-mae.js","config.json"):
     operations.append(CommitOperationAdd(path_in_repo=name,path_or_fileobj=str(ROOT/name)))
 commit=api.create_commit(repo_id=REPO,repo_type="space",operations=operations,
     commit_message="dev: update isolated browser-only action demo from PR #63")
