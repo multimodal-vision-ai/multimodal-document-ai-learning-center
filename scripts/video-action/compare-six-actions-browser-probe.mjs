@@ -23,6 +23,7 @@ try{
       await page.locator('#sample-list button[data-action="'+id+'"]').click();
       await page.waitForFunction(()=>{const v=document.querySelector('#video');return v.readyState>=2&&v.videoWidth>0},null,{timeout:35000});
       result.media=await page.locator('#video').evaluate(v=>({duration:v.duration,src:v.currentSrc,width:v.videoWidth}));
+      await page.locator('#compare-choices input[value="a1"]').check();
       await page.locator('#compare-run').click();
       await page.waitForFunction(()=>{
         const b=document.querySelector('#compare-run'),txt=document.querySelector('#status')?.textContent||'';
