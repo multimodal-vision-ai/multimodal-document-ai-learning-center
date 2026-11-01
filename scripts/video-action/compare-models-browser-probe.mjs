@@ -31,6 +31,7 @@ try{
  const before=await page.locator('#comparison-results').innerText();
  report.comparisonRowsBefore=before;
  if(!before.includes('MoViNet-A1')||!before.includes('MoViNet-A2'))throw Error('Comparison not populated after two actual runs');
+ await page.locator('#compare-choices input[value="a1"]').check();
  await page.locator('#compare-run').click();
  await page.waitForFunction(()=>{
    const el=document.querySelector('#compare-run'),status=document.querySelector('#status')?.textContent||'';
