@@ -493,6 +493,19 @@ $('compare-run').addEventListener('click',async()=>{
 async function run(){if(state.busy)return;hideAnnotated();setBusy(true);state.cancelled=false;const began=performance.now();try{await ensureModelReady();if(state.cancelled)throw Error('用户取消');const variant=state.selectedModel;let frames,times,decodeMs,logits,frameTop1,inferenceStarted;
 if(variant==='a0'){
 const meta=state.meta;if(!meta||meta.length!==47)throw Error('47 输入形状元数据尚未验证');const shapes=meta.map(shapeOf);if(shapes.some(s=>!Array.isArray(s)||s.some(n=>!Number.isInteger(n)||n<1))){record('input_shape_issue',{first:meta.slice(0,3),normalized:shapes.slice(0,3),bad_indices:shapes.map((x,i)=>!Array.isArray(x)||x.some(n=>!Number.isInteger(n)||n<1)?i:null).filter(x=>x!==null)});throw Error('无法获取全部 47 输入的固定张量形状；诊断见推理详情')}if(JSON.stringify(shapes[0])!=='[1,3,172,172]')throw Error('NCHW 输入形状不符');say('正在解码视频并执行逐帧 WASM 推理……');({frames,times,decodeMs}=await readFrames($('video')));if(!frames.length)throw Error('未解码出有效视频帧');const history=[];let offset=1;for(const depth of DIMS){history.push(Array.from({length:depth},(_,i)=>new Float32Array(sizeOf(shapes[offset+i]))));offset+=depth}let pool=Array.from({length:16},(_,i)=>new Float32Array(sizeOf(shapes[29+i])));frameTop1=[];inferenceStarted=performance.now();for(let count=1;count<=frames.length;count++){if(state.cancelled)throw Error('用户取消');const inputs=[tensorFor(frames[count-1],shapes[0])];for(const group of history)for(const h of group)inputs.push(tensorFor(h,shapes[inputs.length]));for(let j=0;j<16;j++)inputs.push(tensorFor(pool[j],shapes[29+j]));inputs.push(tensorFor(new Float32Array([1/count]),shapes[45]),tensorFor(new Float32Array([1]),shapes[46]));const outputs=await state.model.run(inputs);if(outputs.length!==28)throw Error('预期 28 输出，实际 '+outputs.length);const outTensors=Array.from({length:outputs.length},(_,i)=>outputs[i]);const values=await Promise.all(outTensors.map(x=>x.data()));logits=Float32Array.from(values[0]);if(logits.length!==600||!logits.every(Number.isFinite))throw Error('流式第 '+count+' 帧 logits 无效');const frameScores=softmax(logits);let winner=0;for(let k=1;k<frameScores.length;k++)if(frameScores[k]>frameScores[winner])winner=k;frameTop1.push({frame:count,t:Number(times[count-1].toFixed(3)),id:winner,label:state.labels[winner],score:Number(frameScores[winner].toFixed(6))});for(let c=0;c<DIMS.length;c++)history[c]=[...history[c].slice(1),Float32Array.from(values[1+c])];for(let j=0;j<16;j++){const delta=values[12+j];for(let k=0;k<pool[j].length;k++)pool[j][k]+=delta[k]}for(const t of inputs)t.delete?.();if(typeof outputs.delete==='function')outputs.delete();else for(const t of outTensors)t.delete?.()}
+}else if(variant==='videomae'){
+  const entry=state.videomaeModel;
+  if(!entry)throw Error('Qualcomm VideoMAE 尚未加载成功');
+  say('VideoMAE 正在从真人视频选取 16 帧（224×224）…');
+  ({frames,times,decodeMs}=await sampleVideoMAEFrames($('video'),()=>state.cancelled));
+  if(state.cancelled)throw Error('用户取消');
+  inferenceStarted=performance.now();
+  say('VideoMAE 正在 CPU/WASM 执行整段 16 帧动作分类…');
+  logits=await inferVideoMAE({api:state.api,model:entry.model,frames});
+  const scores=softmax(logits);
+  let best=0;for(let j=1;j<scores.length;j++)if(scores[j]>scores[best])best=j;
+  // A single clip-level prediction. Never manufacture temporal frame-by-frame labels.
+  frameTop1=[{frame:16,t:0,id:best,label:state.labels[best],score:Number(scores[best].toFixed(6))}];
 }else{
   const entry=state.officialModels[variant];
   if(!entry)throw Error('官方 '+variant.toUpperCase()+' 模型尚未编译成功');
@@ -514,7 +527,7 @@ const meta=state.meta;if(!meta||meta.length!==47)throw Error('47 输入形状元
     return {frame:i+1,t:Number(times[i].toFixed(3)),id:topId,label:state.labels[topId],score:Number(scores[topId].toFixed(6))}
   });
 }
-if(!logits||logits.length!==600||!logits.every(Number.isFinite))throw Error('输出 logits 无效');const probabilities=softmax(logits);
+if(!logits||logits.length!==(variant==='videomae'?400:600)||!logits.every(Number.isFinite))throw Error('输出 logits 无效');const probabilities=softmax(logits);
 const ranked=probabilities.map((score,id)=>({id,label:state.labels[id],score})).sort((a,b)=>b.score-a.score);
 const top=ranked.slice(0,5);
 const comparison=interpretAction(ranked,state.clip,state.labels);
@@ -542,8 +555,8 @@ $('metrics').replaceChildren();
 for(const entry of ['处理 '+frames.length+' 帧','模型运行 '+timings.inferenceMs+' ms','总耗时 '+timings.totalMs+' ms','CPU/WASM']){
  const el=document.createElement('span');el.textContent=entry;$('metrics').append(el);
 }
-await showAnnotated(frameTop1,Math.min(8,$('video').duration));saveModelComparison(variant,top,comparison,timings,frames.length);
-record('inference',{variant,top5:top,frameTop1,frames:frames.length,analyzedSeconds:Math.min(8,$('video').duration),timings,backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:variant==='a0'?MODEL_SHA:OFFICIAL_MODELS[variant].sha256});
-say('真实推理已返回 '+frames.length+' 帧结果。Top-5 是未校准 softmax 分数。');
+await showAnnotated(frameTop1,Math.min(8,$('video').duration),variant==='videomae');saveModelComparison(variant,top,comparison,timings,frames.length);
+record('inference',{variant,top5:top,frameTop1,frames:frames.length,analyzedSeconds:Math.min(8,$('video').duration),timings,backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:variant==='a0'?MODEL_SHA:variant==='videomae'?VIDEOMAE.sha256:OFFICIAL_MODELS[variant].sha256,classificationMode:variant==='videomae'?'clip':'stream',labelSet:variant==='videomae'?'K400':'K600'});
+say(variant==='videomae'?'VideoMAE 已完成 16 帧整段视频分类（K400），Top-5 是未校准 softmax 分数。':'真实推理已返回 '+frames.length+' 帧结果。Top-5 是未校准 softmax 分数。');
 }catch(e){say('真实推理未完成：'+e.message);$('results').textContent='没有可展示的有效推理结果';record('inference_error',{message:e.message,stack:e.stack})}finally{setBusy(false)}}
 $('run').onclick=run;
