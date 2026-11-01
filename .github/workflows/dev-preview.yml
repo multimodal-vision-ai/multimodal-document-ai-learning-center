@@ -100,6 +100,17 @@ jobs:
           mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
           python scripts/radar/verify_publication.py --site-dir "$RUNNER_TEMP/dev-site"
 
+      - name: Include original synthetic DEV test video in isolated preview only
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 63
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install 'pillow>=10,<13'
+          python scripts/video-action/generate_demo.py
+          mkdir -p "$RUNNER_TEMP/dev-site/assets/projects/video-action/browser-inference/samples"
+          cp hf-dataset-staging/demo/videos/synthetic_wave_001.mp4 "$RUNNER_TEMP/dev-site/assets/projects/video-action/browser-inference/samples/synthetic_wave_001.mp4"
+          ffprobe -v error -show_entries format=duration,format_name -of json "$RUNNER_TEMP/dev-site/assets/projects/video-action/browser-inference/samples/synthetic_wave_001.mp4"
+
       - name: Validate HF Dataset visibility and real browser WASM (PR #63 only)
         if: github.event_name == 'pull_request' && github.event.pull_request.number == 63
         continue-on-error: true
@@ -447,7 +458,7 @@ jobs:
 
   hf_demo_bootstrap:
     name: Bootstrap original HF Dataset sample (feature branch only)
-    if: github.event_name == 'push' && github.ref == 'refs/heads/feat/video-action-v103'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feat/video-action-v103') || (github.event_name == 'pull_request' && github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     permissions:
       contents: read
