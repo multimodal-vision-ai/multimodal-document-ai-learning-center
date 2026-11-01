@@ -8,6 +8,9 @@ try{
   const errors=[];
   try { const hf=await page.request.get('https://huggingface.co/api/datasets/multimodal-vision-ai/mvai-daily-action-demo',{timeout:25000}); report.hf_dataset_http=hf.status(); if(hf.ok()){const info=await hf.json();report.hf_dataset_sha=info.sha;report.hf_dataset_private=info.private;report.hf_dataset_files=info.siblings?.map(x=>x.rfilename);} } catch(e){report.hf_dataset_error=String(e)}
   page.on('pageerror',e=>errors.push(String(e)));
+  report.media_responses=[];report.media_failures=[];
+  page.on('response',response=>{if(/real_(waving|jumping)|synthetic_wave/.test(response.url()))report.media_responses.push({status:response.status(),url:response.url().split('?')[0].slice(0,260),contentType:response.headers()['content-type']??null})});
+  page.on('requestfailed',request=>{if(/real_(waving|jumping)|synthetic_wave/.test(request.url()))report.media_failures.push({url:request.url().split('?')[0].slice(0,260),failure:request.failure()})});
   await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded',timeout:30000});
   await page.screenshot({path:'artifacts/video-action/initial.png',fullPage:true});
   report.real_samples=[];
@@ -17,9 +20,9 @@ try{
     for(const label of ['挥手 · 真人实拍','开合跳 · 真人实拍']){
       try {
         await page.locator('#sample-list button').filter({hasText:label}).click();
-        await page.waitForFunction(()=>{const v=document.querySelector('#video');return v.readyState>=2&&v.videoWidth>0&&Number.isFinite(v.duration)},null,{timeout:35000});
-        const data=await page.locator('#video').evaluate(v=>({duration:v.duration,width:v.videoWidth,height:v.videoHeight,src:v.currentSrc,readyState:v.readyState}));
-        report.real_samples.push({label,...data,playable:true});
+        await page.waitForFunction(()=>{const v=document.querySelector('#video');return !!v.error||(v.readyState>=2&&v.videoWidth>0&&Number.isFinite(v.duration))},null,{timeout:20000});
+        const data=await page.locator('#video').evaluate(v=>({duration:v.duration,width:v.videoWidth,height:v.videoHeight,src:v.currentSrc,readyState:v.readyState,errorCode:v.error?.code??null,errorMessage:v.error?.message??null,mp4Support:v.canPlayType('video/mp4; codecs="avc1.42E01E"'),webmSupport:v.canPlayType('video/webm; codecs="vp8"')}));
+        report.real_samples.push({label,...data,playable:!data.errorCode&&data.width>0});
       }catch(e){report.real_samples.push({label,playable:false,error:String(e)})}
     }
     await page.screenshot({path:'artifacts/video-action/real-samples.png',fullPage:true});
