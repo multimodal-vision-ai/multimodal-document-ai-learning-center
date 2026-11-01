@@ -1,0 +1,36 @@
+name: V1.0.5 official MoViNet A1/A2 browser compatibility (isolated DEV)
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/probe-candidate-models.mjs
+      - .github/workflows/video-action-v105-model-probe.yml
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  verify-real-a1-a2:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install official Chrome and Playwright
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          npx playwright install chrome
+      - name: Compile official A1 and A2 in Chrome WASM and run real tensors
+        run: |
+          node --check scripts/video-action/probe-candidate-models.mjs
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-probe-http.log 2>&1 &
+          node scripts/video-action/probe-candidate-models.mjs
+      - name: Preserve full model hashes, shape contracts and first-frame execution
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v105-a1-a2-official-chrome-model-probe
+          path: artifacts/video-action/models/
+          if-no-files-found: warn
+          retention-days: 14
