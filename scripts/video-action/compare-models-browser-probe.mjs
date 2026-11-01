@@ -13,7 +13,7 @@ try{
  const sample=await page.locator('#video').evaluate(v=>({duration:v.duration,width:v.videoWidth,src:v.currentSrc}));
  report.sample=sample;
  report.modelOptions=await page.locator('#model option').allTextContents();
- if(report.modelOptions.length!==3)throw Error('Model selector has no A1/A2 options');
+ if(report.modelOptions.length!==4)throw Error('Model selector must expose A0 A1 A2 and optional VideoMAE');
  for(const variant of ['a1','a2']){
    await page.locator('#model').selectOption(variant);
    await page.locator('#run').click();
