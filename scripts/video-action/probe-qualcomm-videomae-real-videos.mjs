@@ -57,8 +57,11 @@ try{
      const values=Array.from(await raw[0].data());
      input.delete?.();if(typeof raw.delete==='function')raw.delete();else raw.forEach(x=>x.delete?.());
      if(values.length!==400||values.some(v=>!Number.isFinite(v)))throw Error('Invalid 400 score output');
-     const ranked=values.map((score,i)=>({i,label:id2label[String(i)],score})).sort((a,b)=>b.score-a.score);
-     const sum=values.reduce((a,b)=>a+b,0);
+     // The exported TFLite output is named class_probs but contains unnormalized logits.
+     const max=Math.max(...values);const exps=values.map(v=>Math.exp(v-max));const denominator=exps.reduce((a,b)=>a+b,0);
+     const scores=exps.map(v=>v/denominator);
+     const ranked=scores.map((score,i)=>({i,label:id2label[String(i)],score})).sort((a,b)=>b.score-a.score);
+     const sum=scores.reduce((a,b)=>a+b,0);
      runs.push({action,decodeMs,inferenceMs,top5:ranked.slice(0,5),scoreSum:sum,
        valid:Math.abs(sum-1)<.005&&ranked[0].score>0});
    }
