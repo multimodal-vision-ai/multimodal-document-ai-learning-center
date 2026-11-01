@@ -125,6 +125,7 @@ jobs:
           python scripts/video-action/generate_demo.py
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
+          npx playwright install chrome
           python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference > /tmp/mvai-video-server.log 2>&1 &
           node scripts/video-action/browser-probe.mjs
 
