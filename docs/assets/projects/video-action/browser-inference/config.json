@@ -1,9 +1,13 @@
 {
   "schema_version": "1.0",
   "dataset_id": "multimodal-vision-ai/mvai-daily-action-demo",
-  "dataset_revision": "4720b948c0b2d2669aac2d427a0cf97f5cc68b4e",
+  "dataset_revision": "cb8004946706702a8ad3d7c08fbd8283c8c0e4a4",
   "model_repository": "litert-community/MoViNet-A0-Stream-LiteRT",
   "model_sha256": "0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c8",
   "litert_version": "2.5.3",
-  "dataset_status": "pilot_sample_present_pending_browser_playback_verification"
+  "dataset_status": "real_pilot_uploaded_requires_browser_e2e_verification",
+  "real_pilot_ids": [
+    "real_waving_hand_001",
+    "real_jumping_jacks_002"
+  ]
 }
