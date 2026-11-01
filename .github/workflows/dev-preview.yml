@@ -105,6 +105,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           python -m pip install 'pillow>=10,<13'
           python scripts/video-action/generate_demo.py
           mkdir -p "$RUNNER_TEMP/dev-site/assets/projects/video-action/browser-inference/samples"
@@ -469,6 +471,8 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies for own synthetic clip
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           python -m pip install 'huggingface_hub>=0.36,<2' 'pillow>=10,<13'
           ffmpeg -version | head -1
       - name: Generate original, non-person demo and validate file
