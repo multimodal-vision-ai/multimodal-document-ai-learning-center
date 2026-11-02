@@ -17,12 +17,13 @@ HOST="https://multimodal-vision-ai-mvai-video-action-v103-dev.static.hf.space/"
 TOKEN=os.environ.get("HF_TOKEN")
 if not TOKEN: sys.exit("HF_TOKEN is absent; preview not deployed")
 FRONTEND_FILES=("index.html","app.js","semantic.js","person-overlay.js",
-                "official-movinet.js","video-mae.js","mobileclip.js","config.json")
+                "official-movinet.js","video-mae.js","mobileclip.js",
+                "continuous-movinet.js","config.json")
 for file in FRONTEND_FILES:
     if not (ROOT/file).is_file():sys.exit("Missing frontend file: "+file)
 # Guard against silently omitting any future local ES module import.
 import re
-for source in ("app.js","mobileclip.js","official-movinet.js","video-mae.js","semantic.js","person-overlay.js"):
+for source in ("app.js","mobileclip.js","official-movinet.js","video-mae.js","continuous-movinet.js","semantic.js","person-overlay.js"):
     content=(ROOT/source).read_text(encoding="utf8")
     local_imports=re.findall(r"""(?:from\s*|import\s*\(|import\s*)['"]\./([^'"]+)['"]""",content)
     for imported in local_imports:
@@ -91,7 +92,7 @@ for i in range(12):
                         if module_response.status!=200 or len(data_bytes)<10:
                             raise RuntimeError("DEV module missing: "+module)
                 print("DEV_SPACE_HTTP_VERIFIED=200")
-                print("DEV_MODULES_HTTP_VERIFIED=7")
+                print("DEV_MODULES_HTTP_VERIFIED=8")
                 break
     except Exception as e:
         if i==11:raise RuntimeError("DEV preview not accessible after static Space update: "+type(e).__name__) from e
