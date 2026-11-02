@@ -58,7 +58,7 @@ try{
   await page.screenshot({path:dir+'/mobileclip-real-inference.png',fullPage:true});
 
   // The model must remain available to the optional 1-3 model comparison selector.
-  for(const id of ['a0','a2'])await page.locator('#compare-choices input[value="'+id+'"]').uncheck();
+  report.checks.noPreselectedModels=await page.locator('#compare-choices input:checked').count()===0;
   await page.locator('#compare-choices input[value="mobileclip_s0"]').check();
   report.checks.singleModelCompareSelected=await page.locator('#compare-choices input:checked').evaluateAll(
     xs=>xs.length===1&&xs[0].value==='mobileclip_s0'
