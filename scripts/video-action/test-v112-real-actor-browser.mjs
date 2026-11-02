@@ -43,6 +43,26 @@ try{
  await page.locator('#annotated-video').evaluate(v=>{v.pause();v.currentTime=1});
  await page.waitForTimeout(500);
  report.checks.boxPlayback=await page.locator('#person-detector-status').innerText().then(x=>!x.includes('加载失败'));
+ // Assert real pixel-level overlay, not just a detector-ready status or a CSS element.
+ const canvasHasActorStroke=()=>page.locator('#person-box-layer').evaluate(canvas=>{
+   if(!canvas.width||!canvas.height)return false;
+   const pixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+   let stroke=0;
+   for(let k=0;k<pixels.length;k+=4){
+     if(pixels[k]>=35&&pixels[k]<110&&pixels[k+1]>175&&
+        pixels[k+2]>110&&pixels[k+2]<220&&pixels[k+3]>160)stroke++;
+     if(stroke>=20)return true;
+   }
+   return false;
+ });
+ report.checks.actualBoxPixels=await canvasHasActorStroke();
+ report.checks.boxLabelReplacesCorner=await page.locator('#top1-overlay').evaluate(el=>el.hidden);
+ // A user may hide boxes. Classification must remain visible, never disappear.
+ await page.locator('#person-box-toggle').uncheck();
+ report.checks.boxOffKeepsResult=await page.locator('#top1-overlay').isVisible();
+ report.checks.boxOffClearsCanvas=!(await canvasHasActorStroke());
+ await page.locator('#person-box-toggle').check();
+ report.checks.boxOnRestoresPixels=await canvasHasActorStroke();
 
  if(process.env.MVAI_LONG_VIDEO){
    await page.locator('#upload').setInputFiles(process.env.MVAI_LONG_VIDEO);
