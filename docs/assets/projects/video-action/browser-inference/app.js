@@ -5,6 +5,7 @@ import {VIDEOMAE,compileVideoMAE,sampleVideoMAEFrames,inferVideoMAE} from './vid
 import {MOBILECLIP,MOBILECLIP_LABELS,loadMobileCLIP,sampleMobileCLIPFrames,inferMobileCLIP,mobileCLIPReferenceRank,mobileCLIPModelName} from './mobileclip.js';
 import {MOVINET_FPS,seekVideo,analyzeCompleteMoViNet,buildActionSegments} from './continuous-movinet.js';
 import {scanPrimaryActor,actorBoxAt} from './person-target.js';
+import {analyzeWindowedActor} from './continuous-segments.js';
 // MVAI V1.0.3 experimental browser adapter. No fake outputs or sample fallback.
 const $ = id => document.getElementById(id);
 const OFFICIAL_MODEL_REVISION='d1ed47ef93682fbceda5c388277e34ed717dd4ab';
@@ -33,7 +34,7 @@ function clearPersonOverlay(){
  const canvas=$('person-box-layer');
  if(!canvas)return;
  const ctx=canvas.getContext('2d');if(ctx)ctx.clearRect(0,0,canvas.width,canvas.height);
- $('top1-overlay').hidden=false;
+ $('top1-overlay').hidden=!!state.actorGrounded&&!!state.actorTrack?.length;
 }
 function drawPersonOverlay(){
  const video=$('annotated-video'),canvas=$('person-box-layer'),enabled=$('person-box-toggle').checked;
@@ -566,7 +567,24 @@ function saveModelComparison(variant,top,comparison,timings,frames,videoKey){
  };
  updateComparisonSelection();
 }
-async function run(){if(state.busy)return {ok:false,error:'已有推理正在进行'};const runVideoKey=state.videoKey;hideAnnotated();state.activeController=new AbortController();setBusy(true);const began=performance.now();let isContinuous=false;try{await ensureModelReady(state.activeController.signal);if(state.cancelled)throw Error('用户取消');const variant=state.selectedModel;let frames,times,decodeMs,logits,frameTop1,inferenceStarted,mobileclipScores=null,framesProcessed=0,measuredInferenceMs=null,analyzedDuration=Math.min(8,$('video').duration);
+async function run(){if(state.busy)return {ok:false,error:'已有推理正在进行'};const runVideoKey=state.videoKey;hideAnnotated();state.activeController=new AbortController();setBusy(true);const began=performance.now();let isContinuous=false,isWindowed=false;
+try{
+  const detector=await getActorDetector();
+  if(state.cancelled)throw Error('用户取消');
+  say('正在检测与跟踪完整视频中的主要人物…');
+  const scan=await scanPrimaryActor($('video'),{
+    detector,seek:seekVideo,isCancelled:()=>state.cancelled,interval:.5,
+    onProgress:({scanned,total,tracked})=>
+      say('正在检测主要人物 '+scanned+'/'+total+' 帧 · '+tracked+' 次成功定位')
+  });
+  state.actorTrack=scan.track;
+  personStatus('主要人物定位：'+scan.detected+'/'+scan.total+' 个检查点，后续仅分析其裁剪区域');
+  if(state.cancelled)throw Error('用户取消');
+  await ensureModelReady(state.activeController.signal);
+  if(state.cancelled)throw Error('用户取消');
+  const variant=state.selectedModel;
+  let frames,times,decodeMs,logits,frameTop1,inferenceStarted,mobileclipScores=null,
+    framesProcessed=0,measuredInferenceMs=null,analyzedDuration=$('video').duration;
 if(['a0','a1','a2'].includes(variant)){
  isContinuous=true;
  const video=$('video'),progress=$('analysis-progress');
@@ -574,7 +592,7 @@ if(['a0','a1','a2'].includes(variant)){
  const entry=variant==='a0'?{model:state.model,meta:state.meta}:state.officialModels[variant];
  const output=await analyzeCompleteMoViNet({
   video,variant,api:state.api,model:entry.model,meta:entry.meta,contract:entry.contract,
-  labels:state.labels,
+  labels:state.labels,actorTrack:state.actorTrack,
   toFrame:(rgba,size,kind)=>kind==='a0'?a0RGBFrameFromRGBA(rgba,size):makeRGBFrameFromRGBA(rgba,size),
   isCancelled:()=>state.cancelled,
   onProgress:({processed,total,seconds,duration})=>{
@@ -586,31 +604,27 @@ if(['a0','a1','a2'].includes(variant)){
  logits=output.logits;frameTop1=output.frameTop1;decodeMs=output.decodeMs;
  framesProcessed=output.framesProcessed;measuredInferenceMs=output.inferenceMs;
  analyzedDuration=output.duration;frames=[];
-}else if(variant==='mobileclip_s0'){
-  const entry=state.mobileclipModel;
-  if(!entry)throw Error('MobileCLIP 未成功加载');
-  say('正在从前 8 秒视频抽取 6 张真实关键帧…');
-  ({frames,times,decodeMs}=await sampleMobileCLIPFrames($('video'),()=>state.cancelled));
-  if(state.cancelled)throw Error('用户取消');
-  inferenceStarted=performance.now();
-  const output=await inferMobileCLIP({classifier:entry.classifier,frames,isCancelled:()=>state.cancelled,onProgress:say});
-  mobileclipScores=output.scores;
-  logits=Float32Array.from(mobileclipScores,x=>Math.log(Math.max(x,1e-30)));
-  const topIndex=mobileclipScores.indexOf(Math.max(...mobileclipScores));
-  frameTop1=[{frame:frames.length,t:0,id:topIndex,label:MOBILECLIP_LABELS[topIndex],score:Number(mobileclipScores[topIndex].toFixed(6))}];
-}else if(variant==='videomae'){
-  const entry=state.videomaeModel;
-  if(!entry)throw Error('Qualcomm VideoMAE 尚未加载成功');
-  say('VideoMAE 正在从真人视频选取 16 帧（224×224）…');
-  ({frames,times,decodeMs}=await sampleVideoMAEFrames($('video'),()=>state.cancelled));
-  if(state.cancelled)throw Error('用户取消');
-  inferenceStarted=performance.now();
-  say('VideoMAE 正在 CPU/WASM 执行整段 16 帧动作分类…');
-  logits=await inferVideoMAE({api:state.api,model:entry.model,frames});
-  const scores=softmax(logits);
-  let best=0;for(let j=1;j<scores.length;j++)if(scores[j]>scores[best])best=j;
-  // A single clip-level prediction. Never manufacture temporal frame-by-frame labels.
-  frameTop1=[{frame:16,t:0,id:best,label:state.labels[best],score:Number(scores[best].toFixed(6))}];
+}else if(variant==='videomae'||variant==='mobileclip_s0'){
+  isContinuous=true;isWindowed=true;
+  const entry=variant==='videomae'?state.videomaeModel:state.mobileclipModel;
+  if(!entry)throw Error('片段模型尚未成功加载');
+  $('analysis-progress').hidden=false;$('analysis-progress').value=0;
+  const output=await analyzeWindowedActor({
+    video:$('video'),variant,api:state.api,
+    model:entry.model,classifier:entry.classifier,
+    labels:state.labels,actorTrack:state.actorTrack,
+    isCancelled:()=>state.cancelled,windowSeconds:4,
+    onProgress:({processed,total,seconds,duration,completed})=>{
+      $('analysis-progress').value=100*processed/total;
+      say((variant==='videomae'?'VideoMAE':'MobileCLIP')+' 框内人物分段分析：'+
+        processed+'/'+total+' 段 · 视频 '+seconds.toFixed(1)+'/'+duration.toFixed(1)+
+        ' 秒 · 有效 '+completed+' 段');
+    }
+  });
+  logits=output.logits;frameTop1=output.frameTop1;
+  framesProcessed=output.framesProcessed;decodeMs=output.decodeMs;
+  measuredInferenceMs=output.inferenceMs;analyzedDuration=output.duration;frames=[];
+  if(variant==='mobileclip_s0')mobileclipScores=output.probabilities;
 }
 if(!logits||logits.length!==(variant==='mobileclip_s0'?6:variant==='videomae'?400:600)||!logits.every(Number.isFinite))throw Error('输出 logits 无效');const probabilities=mobileclipScores??softmax(logits);
 const ranked=probabilities.map((score,id)=>({id,label:state.labels[id],score})).sort((a,b)=>b.score-a.score);
@@ -639,7 +653,7 @@ if(comparison){
  if(isContinuous){
   const scope=document.createElement('div');
   scope.style.marginTop='7px';
-  scope.textContent='说明：03 的 Top-5 及参考动作排名对应视频最后一个采样时刻；完整过程请看第 04 节动作预测时间轴。';
+  scope.textContent=isWindowed?'说明：03 的 Top-5 来自最后一个成功的 4 秒人物片段；04 时间轴为片段级结果，不是逐帧动作识别。':'说明：03 的 Top-5 对应最后一次有效人物采样；完整过程请看 04 的逐时刻时间轴。';
   $('evaluation').append(scope);
  }
 }else{
@@ -651,9 +665,9 @@ for(const entry of ['处理 '+(isContinuous?framesProcessed:frames.length)+' 帧
  const el=document.createElement('span');el.textContent=entry;$('metrics').append(el);
 }
 saveModelComparison(variant,top,comparison,timings,isContinuous?framesProcessed:frames.length,runVideoKey);
-try{await showAnnotated(frameTop1,analyzedDuration,variant==='videomae',variant==='mobileclip_s0');if(isContinuous)renderActionTimeline(frameTop1,analyzedDuration)}
+try{await showAnnotated(frameTop1,analyzedDuration,variant==='videomae',variant==='mobileclip_s0');if(isContinuous)renderActionTimeline(frameTop1,analyzedDuration,isWindowed)}
 catch(error){record('preview_error',{variant,message:error.message});hideAnnotated();}
-record('inference',{variant,top5:top,frameTop1,frames:isContinuous?framesProcessed:frames.length,analyzedSeconds:analyzedDuration,actionSegments:isContinuous?buildActionSegments(frameTop1,analyzedDuration):null,timings,backend:variant==='mobileclip_s0'?state.mobileclipModel.backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:variant==='mobileclip_s0'?null:variant==='a0'?MODEL_SHA:variant==='videomae'?VIDEOMAE.sha256:OFFICIAL_MODELS[variant].sha256,classificationMode:variant==='mobileclip_s0'?'keyframe-semantic':variant==='videomae'?'clip':'stream',labelSet:variant==='mobileclip_s0'?'six-prompts':variant==='videomae'?'K400':'K600'});
-say(variant==='mobileclip_s0'?'真实推理已返回：MobileCLIP 对 6 张关键帧完成六类文本匹配；结果是相对分数，不是动作识别准确率。':variant==='videomae'?'VideoMAE 已完成 16 帧整段视频分类（K400），Top-5 是未校准 softmax 分数。':'真实推理已返回 '+framesProcessed+' 帧完整视频连续结果（'+analyzedDuration.toFixed(1)+' 秒）。Top-5 为末帧未校准 softmax 分数。');
-return {ok:true,variant};}catch(e){say('真实推理未完成：'+e.message);$('results').textContent='没有可展示的有效推理结果';record('inference_error',{variant:state.selectedModel,message:e.message,stack:e.stack});return {ok:false,error:e.message}}finally{state.activeController=null;$('analysis-progress').hidden=true;setBusy(false)}}
+record('inference',{variant,top5:top,frameTop1,frames:isContinuous?framesProcessed:frames.length,analyzedSeconds:analyzedDuration,actionSegments:isContinuous?buildActionSegments(frameTop1,analyzedDuration):null,timings,backend:variant==='mobileclip_s0'?state.mobileclipModel.backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:variant==='mobileclip_s0'?null:variant==='a0'?MODEL_SHA:variant==='videomae'?VIDEOMAE.sha256:OFFICIAL_MODELS[variant].sha256,classificationMode:variant==='mobileclip_s0'?'windowed-keyframe-semantic':variant==='videomae'?'windowed-clip':'actor-stream',labelSet:variant==='mobileclip_s0'?'six-prompts':variant==='videomae'?'K400':'K600',actorMode:'tracked-person-crop',trackPoints:state.actorTrack.length});
+say(variant==='mobileclip_s0'?'真实推理已返回：MobileCLIP 对框内人物完成完整视频连续片段图文匹配；不具备逐帧动态分类能力。':variant==='videomae'?'真实推理已返回：VideoMAE 完成框内人物连续片段分类（K400），每个结果对应 4 秒片段。':'真实推理已返回 '+framesProcessed+' 个框内人物流式预测（视频 '+analyzedDuration.toFixed(1)+' 秒）。');
+return {ok:true,variant};}catch(e){state.actorTrack=null;state.actorGrounded=false;say('真实推理未完成：'+e.message);$('results').textContent='没有可展示的有效推理结果';record('inference_error',{variant:state.selectedModel,message:e.message,stack:e.stack});return {ok:false,error:e.message}}finally{state.activeController=null;$('analysis-progress').hidden=true;setBusy(false)}}
 $('run').onclick=()=>{state.cancelled=false;return run()};
