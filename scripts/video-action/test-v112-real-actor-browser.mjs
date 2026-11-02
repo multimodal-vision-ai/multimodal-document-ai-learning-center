@@ -43,6 +43,32 @@ try{
  await page.locator('#annotated-video').evaluate(v=>{v.pause();v.currentTime=1});
  await page.waitForTimeout(500);
  report.checks.boxPlayback=await page.locator('#person-detector-status').innerText().then(x=>!x.includes('加载失败'));
+
+ if(process.env.MVAI_LONG_VIDEO){
+   await page.locator('#upload').setInputFiles(process.env.MVAI_LONG_VIDEO);
+   await page.waitForFunction(()=>document.querySelector('#video')?.readyState>=2&&document.querySelector('#video')?.videoWidth>0,null,{timeout:35000});
+   const duration=await page.locator('#video').evaluate(v=>v.duration);
+   if(!(duration>=12))throw Error('Extended actor video must have >=12s, got '+duration);
+   await page.locator('#run').click();
+   await page.waitForFunction(()=>{
+    const run=document.querySelector('#run'),status=document.querySelector('#status')?.textContent||'';
+    return !run?.disabled&&(/真实推理已返回|真实推理未完成/.test(status));
+   },null,{timeout:720000});
+   const diag2=JSON.parse(await page.locator('#diagnostics').textContent()||'{}');
+   const inf=diag2.inference;
+   report.long={
+    duration:inf?.analyzedSeconds,frames:inf?.frames,
+    actorMode:inf?.actorMode,windows:inf?.frameTop1?.length,
+    lastTime:inf?.frameTop1?.at(-1)?.t,
+    lastValidTime:inf?.frameTop1?.filter(x=>!x.missing)?.at(-1)?.t,
+    personBoxes:inf?.frameTop1?.filter(x=>!!x.personBox)?.length
+   };
+   report.checks.longModelGenuine=inf?.actorMode==='tracked-person-crop'&&inf?.variant===model&&inf?.frames>0;
+   report.checks.longFullyTraversed=inf?.analyzedSeconds>=12&&inf?.frameTop1?.at(-1)?.t>8;
+   report.checks.longPersonInferenceBeyond8=inf?.frameTop1?.some(x=>!x.missing&&x.t>8);
+   report.checks.longTimeline=await page.locator('#action-timeline').isVisible();
+   await page.screenshot({path:out+'/'+model+'-long-actor.png',fullPage:true});
+ }
  report.success=Object.values(report.checks).every(Boolean)&&report.errors.length===0;
  if(!report.success)process.exitCode=1;
  await page.screenshot({path:out+'/'+model+'-tracked-person.png',fullPage:true});
