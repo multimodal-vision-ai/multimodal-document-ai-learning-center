@@ -118,21 +118,62 @@ async function initializeMobileCLIPBackend(lib,backend,dtype,onProgress){
   };
   return {classifier,backend,dtype,weightsMB:dtype==='fp16'?108:54.6,webgpuError:null};
 }
+// This HF repository exports separate text_model and vision_model ONNX graphs.
+// The generic zero-shot pipeline requests a nonexistent model.onnx, so load the
+// two CLIP projection encoders explicitly, as the official model card documents.
+async function loadSplitEncoders(lib,{device,dtype,onProgress}){
+ const modelId=MOBILECLIP.modelId;
+ const {AutoTokenizer,CLIPTextModelWithProjection,AutoProcessor,CLIPVisionModelWithProjection,RawImage,dot}=lib;
+ onProgress?.('加载 MobileCLIP 文本编码器（'+device+'/'+dtype+'）…');
+ const tokenizer=await AutoTokenizer.from_pretrained(modelId);
+ const textModel=await CLIPTextModelWithProjection.from_pretrained(modelId,{device,dtype});
+ onProgress?.('加载 MobileCLIP 图像编码器（'+device+'/'+dtype+'）…');
+ const processor=await AutoProcessor.from_pretrained(modelId);
+ const visionModel=await CLIPVisionModelWithProjection.from_pretrained(modelId,{device,dtype});
+ // Encode the six immutable prompts ONCE, not separately for every video frame.
+ const textInputs=tokenizer(MOBILECLIP_PROMPTS,{padding:'max_length',truncation:true});
+ const textOutput=await textModel(textInputs);
+ const textEmbeddings=textOutput.text_embeds.normalize().tolist();
+ if(textEmbeddings.length!==MOBILECLIP_PROMPTS.length)throw Error('MobileCLIP text embeddings count mismatch');
+ const classifier=async(canvas,prompts)=>{
+   if(!Array.isArray(prompts)||prompts.length!==MOBILECLIP_PROMPTS.length||
+       prompts.some((s,i)=>s!==MOBILECLIP_PROMPTS[i]))
+     throw Error('MobileCLIP prompt set unexpectedly changed');
+   if(!(canvas instanceof HTMLCanvasElement))throw Error('MobileCLIP expects a decoded Canvas frame');
+   // RawImage.read supports data URLs. Avoid unsupported direct Canvas pipeline inputs.
+   const image=await RawImage.read(canvas.toDataURL('image/png'));
+   const imageInputs=await processor(image);
+   const imageOutput=await visionModel(imageInputs);
+   const embeddings=imageOutput.image_embeds.normalize().tolist();
+   if(embeddings.length!==1)throw Error('MobileCLIP vision embedding shape mismatch');
+   const similarities=textEmbeddings.map(x=>100*dot(embeddings[0],x));
+   if(!similarities.every(Number.isFinite))throw Error('MobileCLIP returned invalid similarities');
+   const max=Math.max(...similarities),exp=similarities.map(x=>Math.exp(x-max));
+   const sum=exp.reduce((x,y)=>x+y,0);
+   if(!(sum>0))throw Error('MobileCLIP returned an empty distribution');
+   return MOBILECLIP_PROMPTS.map((label,i)=>({label,score:exp[i]/sum}));
+ };
+ return {classifier,textModel,visionModel,tokenizer,processor,backend:device,dtype,
+   weightsMB:dtype==='fp16'?108.0:54.6,webgpuFallbackReason:null};
+}
 export async function loadMobileCLIP({onProgress}={}){
-  onProgress?.('初始化 Transformers.js；首次需要从 HF 下载 MobileCLIP-S0 图像与文本模型…');
-  const lib=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/+esm');
-  let webgpuError=null;
-  if(navigator.gpu){
-    try{
-      return await initializeMobileCLIPBackend(lib,'webgpu','fp16',onProgress);
-    }catch(e){webgpuError=safeError(e)}
-  }else webgpuError='浏览器未提供 WebGPU';
-  onProgress?.('WebGPU 不可用，正在按模型卡加载 MobileCLIP-S0 · WASM/q8…');
-  try{
-    const model=await initializeMobileCLIPBackend(lib,'wasm','q8',onProgress);
-    model.webgpuError=webgpuError;
-    return model;
-  }catch(e){throw Error('MobileCLIP WebGPU 不可用：'+webgpuError+'；WASM 亦失败：'+safeError(e))}
+ onProgress?.('初始化 Transformers.js 与 MobileCLIP 双编码器…');
+ const lib=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/+esm');
+ let webgpuError=null;
+ if(navigator.gpu){
+   try{
+     onProgress?.('尝试 MobileCLIP-S0 · WebGPU/fp16（双编码器）…');
+     return await loadSplitEncoders(lib,{device:'webgpu',dtype:'fp16',onProgress});
+   }catch(error){webgpuError=safeError(error)}
+ }else webgpuError='浏览器未提供 navigator.gpu';
+ onProgress?.('WebGPU 不可用，改用 MobileCLIP 双编码器 CPU/WASM/q8…');
+ try{
+   const entry=await loadSplitEncoders(lib,{device:'wasm',dtype:'q8',onProgress});
+   entry.webgpuFallbackReason=webgpuError;
+   return entry;
+ }catch(error){
+   throw Error('MobileCLIP WebGPU 不可用：'+webgpuError+'；WASM 亦失败：'+safeError(error));
+ }
 }
 export async function inferMobileCLIP({classifier,frames,isCancelled,onProgress}){
   if(!Array.isArray(frames)||frames.length!==MOBILECLIP.frameCount)throw Error('关键帧数量不是 6');
