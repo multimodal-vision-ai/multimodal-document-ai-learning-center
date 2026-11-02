@@ -34,7 +34,9 @@ function clearPersonOverlay(){
  const canvas=$('person-box-layer');
  if(!canvas)return;
  const ctx=canvas.getContext('2d');if(ctx)ctx.clearRect(0,0,canvas.width,canvas.height);
- $('top1-overlay').hidden=!!state.actorGrounded&&!!state.actorTrack?.length;
+ // When the tracked actor is missing (or the box is disabled), retain the
+ // truthful Top-1 / 'no person' text instead of leaving the replay blank.
+ $('top1-overlay').hidden=false;
 }
 function drawPersonOverlay(){
  const video=$('annotated-video'),canvas=$('person-box-layer'),enabled=$('person-box-toggle').checked;
@@ -53,8 +55,8 @@ function drawPersonOverlay(){
  if(!coords){clearPersonOverlay();return}
  const action=top1At(state.top1Timeline,video.currentTime,state.annotatedLimit);
  if(!action||action.missing){clearPersonOverlay();return}
- // The box locates a COCO "person"; MoViNet predicts a video-level action,
- // so the displayed tag is only associated visually, never attributed to that actor.
+ // The label belongs to the same tracked-person crop fed to the selected model.
+ // Streaming logits and 4-second clip/semantic scores remain distinct modalities.
  ctx.lineWidth=3;ctx.strokeStyle='#39e5ad';ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;
  ctx.strokeRect(coords.x+1.5,coords.y+1.5,Math.max(0,coords.w-3),Math.max(0,coords.h-3));ctx.shadowBlur=0;
  const title=action.label+' · '+(action.score*100).toFixed(1)+'%';
@@ -84,9 +86,9 @@ function detectPersonFrame(force=false){
    const selected=choosePrimaryPerson(result.detections,video.videoWidth,video.videoHeight);
    personState.box=selected.person?.boundingBox||null;
    personState.count=selected.candidateCount;
-   personStatus(selected.person?(selected.candidateCount>1?'检测到 '+selected.candidateCount+' 人，仅显示画面最大主人物；动作是视频级分类':'已定位主人物；动作是视频级分类'):'当前画面未检测到可信人物，保留视频级 Top-1');
+   personStatus(selected.person?(selected.candidateCount>1?'检测到 '+selected.candidateCount+' 人，仅显示画面最大主人物':'已定位主人物'):'当前画面未检测到可信人物；不生成该时刻人物动作结论');
    drawPersonOverlay();
- }catch(e){personState.box=null;personState.error=String(e);personStatus('人物检测失败：'+e.message+'；已退回无框 Top-1');drawPersonOverlay()}
+ }catch(e){personState.box=null;personState.error=String(e);personStatus('人物检测失败：'+e.message+'；已保留文本结果，不伪造人物框');drawPersonOverlay()}
 }
 async function ensurePersonDetector(){
  if(!$('person-box-toggle').checked||$('annotated-section').hidden)return;
@@ -101,7 +103,7 @@ async function ensurePersonDetector(){
    return detector;
  }).catch(e=>{
    personState.error=String(e);
-   personStatus('人物检测模型加载失败：'+e.message+'；保留原 Top-1 显示');
+   personStatus('人物检测模型加载失败：'+e.message+'；保留文本结果，不伪造人物框');
    clearPersonOverlay();
    return null;
  }).finally(()=>{personState.loadPromise=null});
@@ -109,7 +111,7 @@ async function ensurePersonDetector(){
 }
 $('person-box-toggle').addEventListener('change',()=>{
  if(!$('person-box-toggle').checked){
-   personState.box=null;clearPersonOverlay();personStatus('人物框已关闭；保留视频级 Top-1');
+   personState.box=null;clearPersonOverlay();personStatus('人物框已关闭；分类结果仍在画面角落显示');
  }else{
    ensurePersonDetector();
  }
@@ -133,8 +135,8 @@ async function getActorDetector(){
 }
 function syncModelDescription(){
   if(state.selectedModel==='a0')$('model-description').textContent='MoViNet-A0 · WASM CPU · K600 · 15.1 MB · 5 FPS · 完整视频连续推理';
-  else if(state.selectedModel==='videomae')$('model-description').textContent='Qualcomm VideoMAE · 351 MB · Kinetics-400 · 非流式 16 帧整段分类；研究实验模型，六类任务不保证更好';
-   else if(state.selectedModel==='mobileclip_s0')$('model-description').textContent='Apple MobileCLIP-S0 · WebGPU/fp16，失败尝试 WASM/q8 · 从前 8 秒选取 6 张关键帧 · 六类文本匹配，非视频时序动作分类';
+  else if(state.selectedModel==='videomae')$('model-description').textContent='Qualcomm VideoMAE · 351 MB · Kinetics-400 · 对完整视频逐 4 秒片段采样 16 帧分类；非流式，研究实验模型';
+   else if(state.selectedModel==='mobileclip_s0')$('model-description').textContent='Apple MobileCLIP-S0 · WebGPU/fp16，失败尝试 WASM/q8 · 对完整视频每 4 秒采样 6 张人物关键帧 · 六类文本语义匹配，非时序动作分类';
   else $('model-description').textContent='Google MoViNet-'+state.selectedModel.toUpperCase()+' · K600 · '+(OFFICIAL_MODELS[state.selectedModel].bytes/1e6).toFixed(1)+' MB · '+OFFICIAL_MODELS[state.selectedModel].size+'×'+OFFICIAL_MODELS[state.selectedModel].size+' · 5 FPS · 完整视频连续推理';
 }
 $('model').addEventListener('change',()=>{
@@ -282,7 +284,7 @@ function updateTop1Overlay(){
   const name=document.createElement('strong');const score=document.createElement('small');
   if(video.currentTime>state.annotatedLimit+0.005){
     name.textContent='超出已分析范围';
-    score.textContent='仅分析视频前 '+state.annotatedLimit.toFixed(1)+' 秒';
+    score.textContent='已分析时长 '+state.annotatedLimit.toFixed(1)+' 秒';
   }else{
     // Streaming scores are cumulative as of the sampled time; no interpolation or fabricated predictions.
     const time=video.currentTime;
