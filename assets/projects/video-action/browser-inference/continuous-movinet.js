@@ -149,9 +149,11 @@ export async function analyzeCompleteMoViNet({
      const box=actorBoxAt(actorTrack,timestamp,{maxAge:1.0});
      if(!box){
        untracked++;
+       frameTop1.push({frame:index+1,t:Number(timestamp.toFixed(3)),id:null,
+         label:'未检测到人物',score:0,missing:true,personBox:null});
        if((index+1)%5===0)onProgress?.({processed:index+1,total,
          seconds:Math.min(duration,(index+1)/MOVINET_FPS),duration,untracked});
-       continue; // No scene fallback, no actor classification without a box.
+       continue; // Missing sample has NO classification; never feed the scene.
      }
      drawActorCrop(ctx,video,box,size);
      const pixels=ctx.getImageData(0,0,size,size).data;
@@ -171,7 +173,7 @@ export async function analyzeCompleteMoViNet({
      if((index+1)%5===0)await new Promise(resolve=>setTimeout(resolve,0));
    }
    if(!logits)throw Error('视频未生成有效 MoViNet 结果');
-   return {logits,frameTop1,framesProcessed:frameTop1.length,framesAttempted:total,untracked,duration,decodeMs,inferenceMs};
+   return {logits,frameTop1,framesProcessed:total-untracked,framesAttempted:total,untracked,duration,decodeMs,inferenceMs};
  }finally{
    try{
      const t=Math.min(originalTime,Math.max(0,duration-.001));
