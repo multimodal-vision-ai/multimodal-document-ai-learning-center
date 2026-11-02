@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-10-26T01:08:15.006Z",
-  "overall_status": "watching",
+  "checked_at": "2026-11-02T01:00:25.532Z",
+  "overall_status": "needs_attention",
   "watchdog": {
-    "last_run_at": "2026-10-26T01:08:15.006Z",
-    "status": "completed",
-    "message": "2026-W44 single scan trigger verified; 2026-10-26T01:00:23Z fresh queue: 20 >=8 candidates, 136 new source records, 0 source failures. Weekly report for 2026-W43 (previous 7-day window) validated and written; one canonical W43 archive retained."
+    "last_run_at": "2026-11-02T01:00:25.532Z",
+    "status": "failed",
+    "message": "2026-W45 weekly trigger committed once on dev at 2026-11-02T00:56:34.817Z (30aa8209d0ef8050ba0bf7b509984f392f470a25). Source collection executed: 129 observed leads (arxiv 60, github 40, Hugging Face 28, OpenReview 1) and 16 candidates >=8.0 in the runner. The subsequent render failed because prior v2 reports were checked against the new rolling seven-day queue. Snapshot upload and radar-data persistence were skipped; the latest shared queue remains from 2026-10-26. No second collection was triggered and no new weekly report was written. A dev-only queue-rollover validation repair is being tested."
   },
   "publication": {
-    "status": "unknown",
-    "checked_at": "2026-10-26T01:08:15.006Z",
+    "status": "failed",
+    "checked_at": "2026-11-02T01:00:25.532Z",
     "refresh_workflow_run_url": null,
-    "dev_preview_workflow_run_url": null,
+    "dev_preview_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/41369846143",
     "home_content_verified": false,
     "detail_content_verified": false,
-    "message": "GitHub dev-preview branch contains current 2026-W43 report with three exact scores 8.61/8.33/7.99 and a single W43 archive; preview head 9f17253e99f4210fdfacfae23178330149487b86. Public raw.githack alias was observed serving a stale prior report, and immutable public URL plus Actions run completion were not independently verifiable. Public synchronization success is not claimed."
+    "message": "Weekly 2026-W45 collection was not persisted; new 16-item queue unavailable on radar-data and new ChatGPT-reviewed weekly report not published. Failed original DEV workflow 41369846143. Existing previous-week website content is not proof of this week's synchronization."
   }
 }
