@@ -4,6 +4,7 @@
  * The six scores form a closed-set, prompt-dependent relative distribution.
  * Every result must come from real decoded video frames, never clip filenames.
  */
+import {actorBoxAt,drawActorCrop} from './person-target.js';
 export const MOBILECLIP=Object.freeze({
   id:'mobileclip_s0',
   modelId:'Xenova/mobileclip_s0',
@@ -52,14 +53,15 @@ export function mobileCLIPReferenceRank(scores,clip){
   const ranked=scores.map((score,i)=>({score,i})).sort((a,b)=>b.score-a.score);
   return ranked.findIndex(x=>x.i===id)+1;
 }
-export async function sampleMobileCLIPFrames(video,isCancelled){
+export async function sampleMobileCLIPFrames(video,isCancelled,{start=0,end=Math.min(8,video.duration),actorTrack=null}={}){
   if(!Number.isFinite(video.duration)||video.duration<=0||!video.videoWidth||!video.videoHeight)
     throw Error('视频时长或分辨率无效，无法提取 MobileCLIP 关键帧');
   const frames=[],times=[],start=performance.now();
-  const duration=Math.min(8,video.duration);
+  const duration=end-start;
+  if(!(duration>0)||start<0||end>video.duration+.01)throw Error('MobileCLIP 无效分段区间');
   for(let i=0;i<MOBILECLIP.frameCount;i++){
     if(isCancelled?.())throw Error('用户取消');
-    const second=Math.min(duration*(i+0.5)/MOBILECLIP.frameCount,Math.max(0,video.duration-.02));
+    const second=Math.min(start+duration*(i+0.5)/MOBILECLIP.frameCount,Math.max(0,video.duration-.02));
     if(Math.abs(video.currentTime-second)>.009||video.readyState<2){
       await new Promise((resolve,reject)=>{
         let timer;
@@ -75,8 +77,14 @@ export async function sampleMobileCLIPFrames(video,isCancelled){
     const ctx=canvas.getContext('2d',{willReadFrequently:true});
     if(!ctx)throw Error('浏览器 Canvas 不可用');
     // Center crop preserves source aspect ratio; no stretching of people/objects.
-    const w=video.videoWidth,h=video.videoHeight,side=Math.min(w,h);
-    ctx.drawImage(video,(w-side)/2,(h-side)/2,side,side,0,0,canvas.width,canvas.height);
+    if(actorTrack){
+      const box=actorBoxAt(actorTrack,second);
+      if(!box)throw Error('MobileCLIP 分段 '+start.toFixed(1)+'–'+end.toFixed(1)+' 秒人物跟踪缺失');
+      drawActorCrop(ctx,video,box,canvas.width);
+    }else{
+      const w=video.videoWidth,h=video.videoHeight,side=Math.min(w,h);
+      ctx.drawImage(video,(w-side)/2,(h-side)/2,side,side,0,0,canvas.width,canvas.height);
+    }
     frames.push(canvas);times.push(second);
   }
   return {frames,times,decodeMs:performance.now()-start};
