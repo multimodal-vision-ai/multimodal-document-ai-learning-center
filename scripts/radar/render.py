@@ -9,7 +9,7 @@ from core import DATA, ROOT, load, save, valid_url, parse_dt
 from reports import build
 from ranking import rank_candidates, CATEGORY_LABELS, SOURCE_LABELS, DISPLAY_MATCH_THRESHOLD
 from screening import collect_screened, build_queue
-from publication_gate import assess_report, validate_snapshot, snapshot_digest, LEGACY_NOTE
+from publication_gate import assess_report, validate_snapshot, snapshot_digest, queue_for_report, LEGACY_NOTE
 from top3 import update_top3_state, load_top3_state, top3_digest
 
 DOCS = ROOT / "docs"
@@ -153,8 +153,9 @@ def archive_latest_reports(reports, queue=None):
             # Keep the source association reproducible after the rolling queue changes.
             report = dict(report)
             ids = {item["candidate_id"] for item in report["items"]}
+            source_queue = queue_for_report(report, queue)
             report["_screening_queue"] = {
-                "candidates": [item for item in queue.get("candidates", []) if item.get("id") in ids]
+                "candidates": [item for item in source_queue.get("candidates", []) if item.get("id") in ids]
             }
         if not report.get("generated_at"):
             continue
