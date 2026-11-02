@@ -13,6 +13,7 @@ from pathlib import Path
 
 from core import DATA, load, parse_dt
 from screening import report_items
+from publication_gate import queue_for_report
 
 ROLLOUT_UTC = datetime(2026, 10, 22, 3, 54, tzinfo=timezone.utc)
 # First expected reports AFTER v2 rollout, including conservative delivery grace.
@@ -82,7 +83,7 @@ def inspect(data_path=DATA, now=None):
                 status = "invalid"
                 errors.append("v2 report missing a valid generated_at")
             else:
-                selected, errors = report_items(report, queue)
+                selected, errors = report_items(report, queue_for_report(report, queue))
                 recommended = len(selected)
                 if errors:
                     status = "invalid"
