@@ -96,8 +96,8 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
 </head>
 <body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div><main>
 <header>
-  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.6</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
-  <p id="intro" hidden>基于官方 MoViNet-A0/A1/A2 Streaming（Kinetics-600）。模型由 LiteRT.js 在浏览器 CPU/WASM 推理；Top-5 是未校准 softmax 分数，原始英文模型标签与中文动作归类不一定一一对应。</p></div>
+  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.7</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
+  <p id="intro" hidden>在浏览器直接运行 MoViNet-A0/A1/A2（K600）、Qualcomm VideoMAE（K400）及 Apple MobileCLIP-S0。前四者为 LiteRT.js CPU/WASM 动作分类，MobileCLIP 利用 WebGPU（不支持时尝试 WASM）对前 8 秒的 6 张真实关键帧做英文文本匹配。不同模型的分数不能直接比较或作为正确率。</p></div>
   <div class="meta"><span class="tag inverse">独立 DEV · 非正式发布</span><span class="tag inverse">浏览器本地推理</span></div>
 </header>
 <div class="workspace">
@@ -111,7 +111,7 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
   </section>
   <section class="panel">
     <div class="model-header"><h2>02 · 模型推理</h2><span id="model-state">尚未加载</span></div>
-    <label class="model-form">模型 <select id="model"><option value="a0">MoViNet-A0 Streaming · 基线（15 MB）</option><option value="a1">MoViNet-A1 Streaming · 增强（44 MB）</option><option value="a2">MoViNet-A2 Streaming · 更高精度（52 MB）</option><option value="videomae">Qualcomm VideoMAE · Transformer / K400（351 MB）</option></select></label>
+    <label class="model-form">模型 <select id="model"><option value="a0">MoViNet-A0 Streaming · 基线（15 MB）</option><option value="a1">MoViNet-A1 Streaming · 增强（44 MB）</option><option value="a2">MoViNet-A2 Streaming · 更高精度（52 MB）</option><option value="videomae">Qualcomm VideoMAE · Transformer / K400（351 MB）</option><option value="mobileclip_s0">Apple MobileCLIP-S0 · 关键帧语义匹配 / WebGPU</option></select></label>
     <p id="model-description" class="note">LiteRT.js WASM CPU · Kinetics-600 · 15.1 MB · 172×172（首次下载校验 SHA256）</p>
     <div class="actions">
       <button id="run" class="primary" disabled>开始识别</button><button id="compare-run" class="ghost" disabled>运行所选模型对比</button>
@@ -130,7 +130,7 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
 </div>
 <section id="annotated-section" class="panel annotated-area" hidden>
   <h2>04 · 推理结果视频（人物框 + 逐帧 Top-1）</h2>
-  <p class="note">人物框由 MediaPipe EfficientDet-Lite0 检测；框上的动作类别由 MoViNet 对整段画面的流式分类得到，<strong>不是该人物的独立动作检测</strong>。逐帧 Top-1 每 0.2 秒更新，仅覆盖已分析的前 8 秒。</p><div class="person-visual-controls"><label><input id="person-box-toggle" type="checkbox" checked> 显示主人物框（实验功能）</label><span id="person-detector-status" role="status" aria-live="polite">等待推理完成后加载轻量检测模型</span></div>
+  <p class="note">人物框由 MediaPipe EfficientDet-Lite0 检测，标签是视频级结果，<strong>不是框内人物的独立动作检测</strong>。MoViNet 为逐帧预测；VideoMAE 为整段预测；MobileCLIP 为关键帧匹配的汇总，绝不模拟逐帧预测。</p><div class="person-visual-controls"><label><input id="person-box-toggle" type="checkbox" checked> 显示主人物框（实验功能）</label><span id="person-detector-status" role="status" aria-live="polite">等待推理完成后加载轻量检测模型</span></div>
   <div class="anno-video-wrap">
     <video id="annotated-video" controls playsinline muted preload="metadata" aria-label="逐帧 Top-1 叠加推理结果视频"></video>
     <canvas id="person-box-layer" class="person-box-canvas" aria-hidden="true"></canvas>
@@ -143,15 +143,16 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
   <p class="note">查看数据来源、模型 SHA、实际推理时间与异常。仅保留当前页面本地诊断记录。</p>
   <pre id="diagnostics"></pre><button id="export" class="ghost">导出诊断 JSON</button></details></section>
   <section class="panel"><details open><summary>06 · 模型结果对比（最多选择 3 个）</summary>
-  <p class="note">勾选希望对比的模型（可选 1–3 个），点击「运行所选模型对比」。同一视频、前 8 秒；MoViNet 为 5 FPS 流式 K600，VideoMAE 为 16 帧整段 K400（351 MB、CPU 较慢，六类任务的表现不保证改善，非逐帧输出）。权重仅按需下载，最多选择三个。</p>
+  <p class="note">选择 1–3 个模型，在同一视频上运行。MoViNet：5 FPS 视频动作分类；VideoMAE：16 帧整段 K400 分类；MobileCLIP：6 张关键帧与六类英文动作描述的相对匹配（WebGPU 优先，WASM 回退）。模型按需下载；不同分数不可直接比较，不能当作正确率。</p>
   <div id="compare-choices" role="group" aria-label="选择要对比的模型（最多三个）">
     <label><input type="checkbox" value="a0" checked> MoViNet-A0 · 15 MB</label>
     <label><input type="checkbox" value="a1"> MoViNet-A1 · 44 MB</label>
     <label><input type="checkbox" value="a2" checked> MoViNet-A2 · 52 MB</label>
     <label><input type="checkbox" value="videomae"> Qualcomm VideoMAE · 351 MB</label>
+    <label><input type="checkbox" value="mobileclip_s0"> Apple MobileCLIP-S0 · WebGPU</label>
   </div>
   <p id="compare-selection-status" class="note" role="status">已选择 2 / 3 个模型</p>
   <div id="comparison-results">请选择视频后点击「运行所选模型对比」，只展示所选模型的实测结果。</div></details></section>
 </div>
-<footer>人物框：<a target="_blank" rel="noopener" href="https://developers.google.com/edge/mediapipe/solutions/vision/object_detector">MediaPipe EfficientDet-Lite0</a>（仅人物定位） · 动作分类：<a target="_blank" rel="noopener" href="https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT">A0</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/multimodal-vision-ai/mvai-video-action-compare-models">Google 官方 A1/A2</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/qualcomm/Video-MAE">Qualcomm VideoMAE</a>（约 351 MB，K400，实验性跨架构对照；来源许可与个人肖像权分别核实） · 视频样例：<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo">MVAI HF Dataset</a>。标签仅用于探索性对照，不能直接计算正式识别准确率。</footer>
+<footer>人物框：<a target="_blank" rel="noopener" href="https://developers.google.com/edge/mediapipe/solutions/vision/object_detector">MediaPipe EfficientDet-Lite0</a>（仅人物定位） · 动作分类：<a target="_blank" rel="noopener" href="https://huggingface.co/litert-community/MoViNet-A0-Stream-LiteRT">A0</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/multimodal-vision-ai/mvai-video-action-compare-models">Google 官方 A1/A2</a>、<a target="_blank" rel="noopener" href="https://huggingface.co/qualcomm/Video-MAE">Qualcomm VideoMAE</a>（约 351 MB，K400，实验性跨架构对照；来源许可与个人肖像权分别核实） · <a target="_blank" rel="noopener" href="https://huggingface.co/Xenova/mobileclip_s0">Apple MobileCLIP-S0（图文语义匹配，非视频时序分类）</a> · 视频样例：<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo">MVAI HF Dataset</a>。标签仅用于探索性对照，不能直接计算正式识别准确率。</footer>
 </main><script type="module" src="./app.js"></script></body></html>
