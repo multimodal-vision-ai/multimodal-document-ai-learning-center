@@ -13,6 +13,7 @@ try{
  if(!controls.includes('mobileclip_s0')||controls.length!==5)throw Error('MobileCLIP or original models missing from dropdown');
  const checkboxes=page.locator('#compare-choices input[type="checkbox"]');
  if(await checkboxes.count()!==5)throw Error('Five comparison candidates required');
+ await page.locator('#compare-choices input[value="a2"]').uncheck(); // default A0+A2 already checked
  await page.locator('#compare-choices input[value="mobileclip_s0"]').check();
  await page.locator('#compare-choices input[value="a1"]').check();
  const locked=await page.locator('#compare-choices input[value="videomae"]').isDisabled();
