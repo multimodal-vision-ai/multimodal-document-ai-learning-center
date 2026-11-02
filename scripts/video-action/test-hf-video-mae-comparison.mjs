@@ -24,20 +24,19 @@ try{
  report.qualcomm={status:st,inference};
  report.checks.clipModeVisible=(await page.locator('#annotation-summary').innerText()).includes('16 帧做一次整段动作分类');
  await page.screenshot({path:dir+'/videomae-clip-eating.png',fullPage:true});
- // Mixed K600/K400 on the SAME clip, no attempt to align nonexistent class IDs.
- await page.locator('#compare-choices input[value="a0"]').uncheck();
- await page.locator('#compare-choices input[value="a2"]').uncheck();
- await page.locator('#compare-choices input[value="videomae"]').check();
- await page.locator('#compare-choices input[value="a0"]').check();
- await page.locator('#compare-run').click();
- await page.waitForFunction(()=>{
-   const s=document.querySelector('#status')?.textContent||'';
-   return s.includes('已完成 2 个所选模型')||s.includes('所选模型对比未完成');
- },null,{timeout:260000});
+ // Verify genuine VideoMAE result is stored; infer A0 separately in 02.
+ report.checks.videoMAESelectable=await page.locator('#compare-choices input[value="videomae"]').isEnabled();
+ await page.locator('#model').selectOption('a0');
+ await page.locator('#run').click();
+ await page.waitForFunction(()=>!document.querySelector('#run').disabled,null,{timeout:260000});
  report.compareStatus=await page.locator('#status').innerText();
+ if(!report.compareStatus.includes('真实推理已返回'))throw Error('A0 did not complete: '+report.compareStatus);
+ await page.locator('#compare-choices input[value="a0"]').check();
+ await page.locator('#compare-choices input[value="videomae"]').check();
  report.table=await page.locator('#comparison-results table tr').evaluateAll(es=>es.slice(1).map(r=>Array.from(r.querySelectorAll('td'),x=>x.textContent)));
- report.checks.mixedCompareDone=report.compareStatus.includes('已完成 2 个所选模型')&&
-    report.table.length===2&&report.table[0][0]==='MoViNet-A0'&&report.table[1][0]==='Qualcomm VideoMAE';
+ report.checks.mixedCompareDone=report.table.length===2&&
+   report.table[0][0]==='MoViNet-A0'&&report.table[1][0]==='Qualcomm VideoMAE'&&
+   await page.locator('#compare-run').count()===0;
  report.checks.noUnexpectedBrowserErrors=report.errors.length===0;
  await page.screenshot({path:dir+'/mixed-k400-k600-real-compare.png',fullPage:true});
  report.passed=Object.values(report.checks).every(Boolean);
