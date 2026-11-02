@@ -55,8 +55,6 @@ try{
     (await page.locator('#annotation-summary').textContent()).includes('不是逐帧视频动作分类');
   report.checks.resultVideoDecoded=await page.locator('#annotated-video').evaluate(v=>
     v.readyState>=2&&v.videoWidth>0&&v.currentSrc===document.querySelector('#video').currentSrc);
-  report.checks.comparisonRow=await page.locator('#comparison-results').evaluate(e=>
-    e.textContent.includes('Apple MobileCLIP-S0'));
   await page.screenshot({path:dir+'/mobileclip-real-inference.png',fullPage:true});
 
   // The model must remain available to the optional 1-3 model comparison selector.
@@ -65,6 +63,8 @@ try{
   report.checks.singleModelCompareSelected=await page.locator('#compare-choices input:checked').evaluateAll(
     xs=>xs.length===1&&xs[0].value==='mobileclip_s0'
   );
+  report.checks.comparisonRow=await page.locator('#comparison-results').evaluate(e=>
+    e.textContent.includes('Apple MobileCLIP-S0'));
   report.checks.noAccidentalModelSubstitution=await page.locator('#comparison-results table tr').evaluateAll(
     rows=>rows.length===2&&rows[1].textContent.includes('Apple MobileCLIP-S0')&&
       !rows[1].textContent.includes('MoViNet')
