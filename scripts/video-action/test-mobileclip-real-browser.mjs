@@ -29,7 +29,7 @@ try{
   },null,{timeout:35000});
   report.checks.realVideoDecoded=true;
   // Optional person detector is intentionally disabled: this probe isolates action-model correctness.
-  await page.locator('#person-box-toggle').uncheck();
+  await page.locator('#person-box-toggle').evaluate(el=>{el.checked=false;el.dispatchEvent(new Event('change',{bubbles:true}))});
   await page.locator('#model').selectOption('mobileclip_s0');
   report.checks.modelSelectable=await page.locator('#model').inputValue()==='mobileclip_s0';
   await page.locator('#run').click();
