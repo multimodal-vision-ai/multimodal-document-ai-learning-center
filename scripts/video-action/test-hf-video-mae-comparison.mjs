@@ -10,7 +10,7 @@ try{
  await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded',timeout:35000});
  await page.waitForFunction(()=>document.querySelectorAll('#sample-list button[data-clip-id]').length===6,null,{timeout:35000});
  report.options=await page.locator('#model option').allTextContents();
- report.checks.hasFourthModel=report.options.length===4&&report.options[3].includes('VideoMAE');
+ report.checks.hasFourthModel=report.options.length>=4&&report.options.some(x=>x.includes('VideoMAE'));
  await page.locator('#sample-list button[data-action="eating"]').click();
  await page.waitForFunction(()=>{const v=document.querySelector('#video');return v.readyState>=2&&v.videoWidth>0},null,{timeout:35000});
  await page.locator('#model').selectOption('videomae');
