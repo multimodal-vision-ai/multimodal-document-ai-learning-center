@@ -13,7 +13,7 @@ try{
  if(!controls.includes('mobileclip_s0')||controls.length!==5)throw Error('MobileCLIP or original models missing from dropdown');
  const checkboxes=page.locator('#compare-choices input[type="checkbox"]');
  if(await checkboxes.count()!==5)throw Error('Five comparison candidates required');
- await page.locator('#compare-choices input[value="a2"]').uncheck(); // default A0+A2 already checked
+ if(await page.locator('#compare-choices input:checked').count()!==0)throw Error('Results-only comparison must start empty');
  // A separate Chrome suite verifies the 1–3 selector; this suite must
  // prioritize actual MobileCLIP loading and six real-video inferences.
  await page.locator('#model').selectOption('mobileclip_s0');
