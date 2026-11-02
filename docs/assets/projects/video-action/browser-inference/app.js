@@ -466,10 +466,15 @@ function updateComparisonView(){
  table.append(head);
  for(const id of selection){
    const row=document.createElement('tr'),value=state.comparisonRows[id];
-   const cells=value?[value.model,value.top1,(value.score*100).toFixed(1)+'%',
+   const label=id==='mobileclip_s0'?'Apple MobileCLIP-S0':id==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+id.toUpperCase();
+   const cells=value?.status==='success'||(value&&!value.status&&Number.isFinite(value.score))?
+     [value.model,value.top1,(value.score*100).toFixed(1)+'%',
       value.targetRank?('#'+value.targetRank):'N/A',value.inferenceMs+' ms',
       value.mb.toFixed(1)+' MB · '+value.backend]:
-      [id==='mobileclip_s0'?'Apple MobileCLIP-S0':id==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+id.toUpperCase(),'尚未运行','—','—','—','—'];
+     [label,value?.status==='failed'?'失败：'+(value.error||'请查看诊断'):
+       value?.status==='cancelled'?'已取消':
+       value?.status==='running'?'执行中…':value?.status==='pending'?'排队中':'尚未运行',
+       '—','—','—','—'];
    for(const v of cells){const cell=document.createElement('td');cell.textContent=v;row.append(cell)}
    table.append(row);
  }
@@ -480,7 +485,7 @@ function updateComparisonView(){
 function saveModelComparison(variant,top,comparison,timings,frames){
  const semantic=variant==='mobileclip_s0';
  const mb=semantic?state.mobileclipModel.weightsMB:variant==='videomae'?VIDEOMAE.bytes/1e6:variant==='a0'?15.131688:OFFICIAL_MODELS[variant].bytes/1e6;
- state.comparisonRows[variant]={model:semantic?mobileCLIPModelName:variant==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+variant.toUpperCase(),top1:top[0].label,score:top[0].score,
+ state.comparisonRows[variant]={status:'success',model:semantic?mobileCLIPModelName:variant==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+variant.toUpperCase(),top1:top[0].label,score:top[0].score,
    targetRank:comparison?.target_rank??null,inferenceMs:timings.inferenceMs,mb,frames,backend:semantic?state.mobileclipModel.backend:'wasm',clipId:state.clip?.id??null};
  updateComparisonView();
 }
@@ -488,31 +493,48 @@ $('compare-run').addEventListener('click',async()=>{
  if(state.busy||state.compareAllRunning||!$('video').getAttribute('src'))return;
  const selection=selectedForCompare();
  if(!selection.length||selection.length>3){say('请选择 1–3 个模型进行对比');return}
- state.compareAllRunning=true;
- state.cancelled=false;
- const original=state.selectedModel;
- const clipId=state.clip?.id??null;
+ state.compareAllRunning=true;state.cancelled=false;
+ const original=state.selectedModel,clipId=state.clip?.id??null;
+ const completed=[],failed=[];
+ for(const id of selection)state.comparisonRows[id]={status:'pending'};
  updateComparisonSelection();
  try{
-   for(const variant of selection){
-     if(state.cancelled||clipId!==(state.clip?.id??null))throw Error('已取消或切换了视频');
-     // Clear prior results first so a failed model cannot appear to have succeeded.
-     delete state.comparisonRows[variant];
-     updateComparisonView();
+   for(const [index,variant] of selection.entries()){
+     if(state.cancelled||clipId!==(state.clip?.id??null))break;
      state.selectedModel=variant;
      $('model').value=variant;
-     say('正在运行所选模型：'+variant.toUpperCase()+'（'+(selection.indexOf(variant)+1)+'/'+selection.length+'）');
-     await run();
-     if(!state.comparisonRows[variant]||state.comparisonRows[variant].clipId!==clipId)
-       throw Error('模型 '+variant.toUpperCase()+' 未完成有效推理；停止对比');
+     syncModelDescription();
+     state.comparisonRows[variant]={status:'running'};
+     updateComparisonView();
+     say('对比 '+(index+1)+'/'+selection.length+'：'+$('model').selectedOptions[0].textContent+' · 正在准备');
+     const result=await run();
+     if(state.cancelled)break;
+     if(result?.ok&&state.comparisonRows[variant]?.status==='success'&&state.comparisonRows[variant].clipId===clipId){
+       completed.push(variant);
+     }else{
+       const message=result?.error||'未完成有效推理';
+       state.comparisonRows[variant]={status:'failed',error:message};
+       failed.push({variant,message});
+       updateComparisonView();
+     }
    }
-   say('已完成 '+selection.length+' 个所选模型的真实视频比较，请查看第 06 节。');
+   if(state.cancelled){
+     for(const id of selection)if(['pending','running'].includes(state.comparisonRows[id]?.status))
+       state.comparisonRows[id]={status:'cancelled'};
+     say('已取消对比，保留 '+completed.length+' 个已完成结果。');
+   }else if(failed.length){
+     say('对比已结束：'+completed.length+' 个成功，'+failed.length+' 个失败。失败模型已标注，其余结果保留。');
+   }else{
+     say('已完成 '+completed.length+' 个所选模型的真实视频比较，请查看第 06 节。');
+   }
+   record('compare_report',{selected:selection,completed,failed,cancelled:state.cancelled});
  }catch(e){
    say('所选模型对比未完成：'+e.message);
    record('compare_error',{selected:selection,message:e.message});
  }finally{
    state.selectedModel=original;
    $('model').value=original;
+   syncModelDescription();
    state.compareAllRunning=false;
    $('model-state').textContent=activeModelReady()?'模型已就绪':'尚未加载';
    updateComparisonSelection();
