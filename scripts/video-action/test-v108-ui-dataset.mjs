@@ -19,27 +19,21 @@ try{
  if(await load.jsonValue()!=='ready')throw Error('HF Dataset sample catalog failed: '+await page.locator('#sample-status').innerText());
  report.checks.allSixDatasetSamples=await page.locator('#sample-list button[data-clip-id]').count()===6;
  report.checks.sampleNames=(await page.locator('#sample-list button').allTextContents()).join('、')==='挥手、看手机、打电话、摔倒、吃东西、睡觉';
- report.checks.controlsInsidePanel02=await page.locator('#compare-choices').evaluate(el=>
-   el.closest('section.panel')?.querySelector('h2')?.textContent.includes('02 · 模型推理'));
- report.checks.resultsOnlyPanel06=await page.locator('#comparison-results').evaluate(el=>{
-   const p=el.closest('section.panel');
-   return !!p?.textContent.includes('06 · 模型结果对比')&&
-     !p.querySelector('#compare-choices')&&!p.querySelector('input[type="checkbox"]');
- });
+ report.checks.singleModel02=await page.locator('#model').evaluate(el=>
+   !el.closest('section.panel').querySelector('#compare-choices')&&
+   !el.closest('section.panel').querySelector('#compare-run'));
+ report.checks.choicesIn06=await page.locator('#compare-choices').evaluate(el=>
+   el.closest('section.panel')?.textContent.includes('06 · 模型结果对比'));
  report.checks.helpHiddenInitially=await page.locator('#compare-help').isHidden();
  await page.locator('#compare-info').click();
  report.checks.helpOpens=await page.locator('#compare-help').isVisible()&&
    await page.locator('#compare-info').getAttribute('aria-expanded')==='true';
  await page.locator('#compare-info').click();
  report.checks.helpCloses=await page.locator('#compare-help').isHidden();
- const choices=page.locator('#compare-choices input[type="checkbox"]');
- report.checks.fiveModels=await choices.count()===5;
- report.checks.defaultModels=JSON.stringify(await page.locator('#compare-choices input:checked')
-   .evaluateAll(nodes=>nodes.map(n=>n.value)))===JSON.stringify(['a0','a2']);
- await page.locator('#compare-choices input[value="mobileclip_s0"]').check();
- report.checks.thirdDisablesOthers=await page.locator('#compare-choices input[value="a1"]').isDisabled();
- await page.locator('#compare-choices input[value="mobileclip_s0"]').uncheck();
- report.checks.choicesRestore=await page.locator('#compare-choices input[value="a1"]').isEnabled();
+ report.checks.fiveModels=await page.locator('#compare-choices input[type="checkbox"]').count()===5;
+ report.checks.initialNoneSelected=await page.locator('#compare-choices input:checked').count()===0;
+ report.checks.initiallyUnavailable=await page.locator('#compare-choices input:not(:disabled)').count()===0;
+ report.checks.noUnrunResults=await page.locator('#comparison-results table').count()===0;
  await page.locator('#sample-list button[data-action="phone_use"]').click();
  await page.waitForFunction(()=>{
    const v=document.querySelector('#video');
