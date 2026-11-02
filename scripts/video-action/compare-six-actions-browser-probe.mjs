@@ -23,16 +23,25 @@ try{
       await page.locator('#sample-list button[data-action="'+id+'"]').click();
       await page.waitForFunction(()=>{const v=document.querySelector('#video');return v.readyState>=2&&v.videoWidth>0},null,{timeout:35000});
       result.media=await page.locator('#video').evaluate(v=>({duration:v.duration,src:v.currentSrc,width:v.videoWidth}));
-      await page.locator('#compare-choices input[value="a1"]').check();
-      await page.locator('#compare-run').click();
-      await page.waitForFunction(()=>{
-        const b=document.querySelector('#compare-run'),txt=document.querySelector('#status')?.textContent||'';
-        return !!b&&!b.disabled&&(/已完成 3 个所选模型|所选模型对比未完成/.test(txt));
-      },null,{timeout:240000});
-      const status=await page.locator('#status').innerText();
-      result.status=status;
+      // Run each model independently via 02; 06 only selects existing results.
+      const outcomes=[];
+      for(const variant of ['a0','a1','a2']){
+        await page.locator('#model').selectOption(variant);
+        await page.locator('#run').click();
+        await page.waitForFunction(()=>{
+          const status=document.querySelector('#status')?.textContent||'';
+          return !document.querySelector('#run').disabled&&
+            (status.includes('真实推理已返回')||status.includes('真实推理未完成'));
+        },null,{timeout:190000});
+        const status=await page.locator('#status').innerText();
+        outcomes.push({variant,status,successful:status.includes('真实推理已返回')});
+      }
+      for(const variant of ['a0','a1','a2'])
+        if(await page.locator('#compare-choices input[value="'+variant+'"]').isEnabled())
+          await page.locator('#compare-choices input[value="'+variant+'"]').check();
+      result.status=outcomes.map(x=>x.variant+': '+x.status).join('; ');
       result.rows=await page.locator('#comparison-results table tr').evaluateAll(rows=>rows.slice(1).map(r=>Array.from(r.querySelectorAll('td'),c=>c.textContent)));
-      result.passed=status.includes('已完成 3 个所选模型')&&result.rows.length===3&&
+      result.passed=outcomes.every(x=>x.successful)&&result.rows.length===3&&
         result.rows.every(r=>r.length===6&&!r.includes('尚未运行')&&/[0-9]+ ms/.test(r[4]));
       console.log('SIX_CLASS_COMPARE',id,JSON.stringify(result.rows));
       await page.screenshot({path:root+'/'+id+'.png',fullPage:true});
