@@ -16,8 +16,18 @@ ROOT=Path("docs/assets/projects/video-action/browser-inference")
 HOST="https://multimodal-vision-ai-mvai-video-action-v103-dev.static.hf.space/"
 TOKEN=os.environ.get("HF_TOKEN")
 if not TOKEN: sys.exit("HF_TOKEN is absent; preview not deployed")
-for file in ("index.html","app.js","semantic.js","person-overlay.js","official-movinet.js","video-mae.js","config.json"):
+FRONTEND_FILES=("index.html","app.js","semantic.js","person-overlay.js",
+                "official-movinet.js","video-mae.js","mobileclip.js","config.json")
+for file in FRONTEND_FILES:
     if not (ROOT/file).is_file():sys.exit("Missing frontend file: "+file)
+# Guard against silently omitting any future local ES module import.
+import re
+for source in ("app.js","mobileclip.js","official-movinet.js","video-mae.js","semantic.js","person-overlay.js"):
+    content=(ROOT/source).read_text(encoding="utf8")
+    local_imports=re.findall(r"""(?:from\s*|import\s*\(|import\s*)['"]\./([^'"]+)['"]""",content)
+    for imported in local_imports:
+        if imported not in FRONTEND_FILES:
+            sys.exit("Local module referenced but not included in Space: "+source+" -> "+imported)
 config=json.loads((ROOT/"config.json").read_text(encoding="utf8"))
 if config["dataset_id"]!="multimodal-vision-ai/mvai-daily-action-demo":
     sys.exit("Unrecognized dataset ID")
@@ -55,7 +65,7 @@ GitHub revision: `{os.getenv("GITHUB_SHA","unknown")}`
 HF Dataset revision: `{config["dataset_revision"]}`
 """
 operations=[CommitOperationAdd(path_in_repo="README.md",path_or_fileobj=__import__("io").BytesIO(card.encode("utf8")))]
-for name in ("index.html","app.js","semantic.js","person-overlay.js","official-movinet.js","video-mae.js","config.json"):
+for name in FRONTEND_FILES:
     operations.append(CommitOperationAdd(path_in_repo=name,path_or_fileobj=str(ROOT/name)))
 commit=api.create_commit(repo_id=REPO,repo_type="space",operations=operations,
     commit_message="dev: update isolated browser-only action demo from PR #63")
@@ -70,7 +80,18 @@ for i in range(12):
         with urllib.request.urlopen(urllib.request.Request(HOST,headers={"User-Agent":"MVAI-DEV-Preview-Verification/1.0"}),timeout=15) as response:
             data=response.read(100000).decode("utf-8","replace")
             if response.status==200 and "视频行为识别与分析" in data:
+                # The HTML can return 200 even when an imported module was omitted.
+                # Verify the exact local modules the page will actually load.
+                for module in ("app.js","mobileclip.js","semantic.js","person-overlay.js",
+                               "official-movinet.js","video-mae.js","config.json"):
+                    with urllib.request.urlopen(
+                        urllib.request.Request(HOST+module,headers={"User-Agent":"MVAI-DEV-Preview-Verification/1.0"}),
+                        timeout=18) as module_response:
+                        data_bytes=module_response.read(4000)
+                        if module_response.status!=200 or len(data_bytes)<10:
+                            raise RuntimeError("DEV module missing: "+module)
                 print("DEV_SPACE_HTTP_VERIFIED=200")
+                print("DEV_MODULES_HTTP_VERIFIED=7")
                 break
     except Exception as e:
         if i==11:raise RuntimeError("DEV preview not accessible after static Space update: "+type(e).__name__) from e
