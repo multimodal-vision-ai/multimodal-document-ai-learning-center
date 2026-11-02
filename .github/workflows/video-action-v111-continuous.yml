@@ -28,6 +28,10 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install chrome
+      - name: Install ffmpeg for 24-second integration-only video
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
       - name: Prepare >=20-second real-video repeat solely for browser integration
         run: |
           curl -fLsS --retry 3 --connect-timeout 25             "https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo/resolve/45d5025de58f8b063a8fcf0c72d3ce7a18f049a6/demo/videos/real_sleep_posture_006.mp4"             -o /tmp/mvai-test-original.mp4
