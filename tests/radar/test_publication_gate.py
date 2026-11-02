@@ -11,6 +11,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts/radar"))
 import render
+import publication_gate
 from core import save
 from publication_gate import assess_report, LEGACY_NOTE
 from screening import build_queue, collect_screened, validate_storage
@@ -148,6 +149,23 @@ class PublicationTests(unittest.TestCase):
         save(self.data / "chatgpt-reviewed/archive/weekly/bad.json", bad)
         with self.assertRaises(ValueError):
             render.archive_cards("weekly", self.queue)
+
+    def test_rolling_queue_preserves_previous_review_without_accepting_new_unqueued_items(self):
+        old = copy.deepcopy(self.good)
+        frozen = copy.deepcopy(old)
+        frozen["_screening_queue"] = {"candidates": self.queue["candidates"]}
+        save(self.data / "chatgpt-reviewed/archive/weekly/2026-W43.json", frozen)
+        rolled = {"schema_version": 2, "generated_at": "2026-11-02T00:56:00+00:00",
+                  "first_stage_threshold": 8.0, "candidates": []}
+        with patch.object(publication_gate, "DATA", self.data):
+            state, selected = assess_report(old, "weekly", rolled)
+            self.assertEqual(state, "validated")
+            self.assertEqual(len(selected), 1)
+            self.assertEqual(render.archive_latest_reports({"weekly": old}, rolled), 1)
+            new = copy.deepcopy(old)
+            new["generated_at"] = "2026-11-02T00:57:00+00:00"
+            with self.assertRaises(ValueError):
+                assess_report(new, "weekly", rolled)
 
     def test_not_recommended_items_never_become_cards(self):
         rejected = copy.deepcopy(self.good["items"][0])
