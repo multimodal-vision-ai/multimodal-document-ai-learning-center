@@ -34,7 +34,7 @@ jobs:
           sudo apt-get install -y -qq ffmpeg
       - name: Prepare >=20-second real-video repeat solely for browser integration
         run: |
-          curl -fLsS --retry 3 --connect-timeout 25             "https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo/resolve/45d5025de58f8b063a8fcf0c72d3ce7a18f049a6/demo/videos/real_sleep_posture_006.mp4"             -o /tmp/mvai-test-original.mp4
+          curl -fLsS --retry 3 --connect-timeout 25             "https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo/resolve/45d5025de58f8b063a8fcf0c72d3ce7a18f049a6/demo/videos/real_waving_hand_001.mp4"             -o /tmp/mvai-test-original.mp4
           ffmpeg -hide_banner -loglevel error -y -stream_loop 2 -i /tmp/mvai-test-original.mp4             -t 24 -an -c:v libx264 -preset ultrafast -crf 29             -pix_fmt yuv420p -movflags +faststart /tmp/mvai-test-24s.mp4
           ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 /tmp/mvai-test-24s.mp4
       - name: Real Chrome 10-second HF sample and 24-second full-video upload
