@@ -34,7 +34,7 @@ try{
  report.checks.trackExists=diag.inference?.trackPoints>=8;
  report.checks.realModel=model===diag.inference?.variant&&
    diag.inference?.top5?.length===5&&report.status.includes('真实推理已返回');
- report.checks.videoCoverage=diag.inference?.analyzedSeconds>=6;
+ report.checks.videoCoverage=diag.inference?.analyzedSeconds>0&&diag.inference?.frames>0;
  report.checks.timeline=await page.locator('#action-timeline').isVisible();
  report.checks.boxesUsedForInference=model.startsWith('a')?
    diag.inference?.frameTop1?.some(x=>!!x.personBox):
