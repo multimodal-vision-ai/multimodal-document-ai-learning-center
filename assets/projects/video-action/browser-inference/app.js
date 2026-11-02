@@ -57,7 +57,7 @@ function drawPersonOverlay(){
  // so the displayed tag is only associated visually, never attributed to that actor.
  ctx.lineWidth=3;ctx.strokeStyle='#39e5ad';ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;
  ctx.strokeRect(coords.x+1.5,coords.y+1.5,Math.max(0,coords.w-3),Math.max(0,coords.h-3));ctx.shadowBlur=0;
- const title=labelDisplay(action.label)+' · '+(action.score*100).toFixed(1)+'%';
+ const title=action.label+' · '+(action.score*100).toFixed(1)+'%';
  const disclaimer=state.actorGrounded?(state.outputMode==='stream'?'框内人物 · 流式分类':state.outputMode==='clip'?'框内人物 · 片段分类':'框内人物 · 图文匹配'):'画面 Top-1（非人物独立分类）';
  ctx.font='bold 14px system-ui,sans-serif';
  const tw=ctx.measureText(title).width;
@@ -278,7 +278,7 @@ function updateTop1Overlay(){
   const timeline=state.top1Timeline;
   if(!timeline.length||!Number.isFinite(video.currentTime))return;
   overlay.replaceChildren();
-  const title=document.createElement('small');title.textContent=state.outputMode==='semantic'?'MobileCLIP · 6 帧语义匹配':state.outputMode==='clip'?'VideoMAE · 整段视频 Top-1':'MoViNet 流式 Top-1 · 每 0.2 秒';
+  const title=document.createElement('small');title.textContent=state.outputMode==='semantic'?'MobileCLIP · 4 秒片段匹配':state.outputMode==='clip'?'VideoMAE · 4 秒片段 Top-1':'MoViNet 人物流式 Top-1 · 每 0.2 秒';
   const name=document.createElement('strong');const score=document.createElement('small');
   if(video.currentTime>state.annotatedLimit+0.005){
     name.textContent='超出已分析范围';
@@ -289,7 +289,7 @@ function updateTop1Overlay(){
     let idx=0;for(let i=1;i<timeline.length;i++){if(timeline[i].t<=time+0.001)idx=i;else break}
     const point=timeline[idx];
     name.textContent=point.missing?'未检测到可信人物':labelDisplay(point.label);
-    score.textContent=point.missing?'该区间没有执行人物动作推理':(point.score*100).toFixed(1)+'% · '+(state.outputMode==='semantic'?'6 帧平均匹配':state.outputMode==='clip'?'16 帧整段分类':'t='+point.t.toFixed(1)+'s')+'（未校准分数）';
+    score.textContent=point.missing?'该区间没有执行人物动作推理':(point.score*100).toFixed(1)+'% · '+(state.outputMode==='semantic'?'片段 6 帧语义匹配':state.outputMode==='clip'?'片段 16 帧分类':'t='+point.t.toFixed(1)+'s')+'（未校准分数）';
   }
   overlay.append(title,name,score);
   updateTimelineCursor();drawPersonOverlay();
@@ -551,7 +551,7 @@ function updateComparisonView(){
    table.append(row);
  }
  const notice=document.createElement('p');notice.className='note';
- notice.textContent='¹ MoViNet/VideoMAE 来自不同 Kinetics 类别集合内的未校准 softmax；MobileCLIP 为六个描述在 6 张关键帧上的相对匹配分数。分数不代表正确率，也不能跨模型直接比较。这里只读取 02 的已完成结果，不会重复运行模型。';
+ notice.textContent='¹ 所有模型使用当前视频的同一主要人物裁剪区域。MoViNet 为末次人物采样，VideoMAE 为末次有效 4 秒片段 K400 分类，MobileCLIP 为末次有效片段 6 帧图文匹配。分数不可直接跨模型比较，也不是识别准确率；此处不重复运行推理。';
  box.append(table,notice);
 }
 function saveModelComparison(variant,top,comparison,timings,frames,videoKey){
@@ -578,6 +578,7 @@ try{
       say('正在检测主要人物 '+scanned+'/'+total+' 帧 · '+tracked+' 次成功定位')
   });
   state.actorTrack=scan.track;
+  record('person_tracking',{checkpoints:scan.total,valid:scan.detected,interval:scan.interval});
   personStatus('主要人物定位：'+scan.detected+'/'+scan.total+' 个检查点，后续仅分析其裁剪区域');
   if(state.cancelled)throw Error('用户取消');
   await ensureModelReady(state.activeController.signal);

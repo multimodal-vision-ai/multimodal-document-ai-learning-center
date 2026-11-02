@@ -191,9 +191,12 @@ export function buildActionSegments(points,duration,{windowSize=5}={}){
  if(!points.length||!Number.isFinite(duration)||duration<=0)return [];
  const half=Math.floor(windowSize/2);
  const smoothed=points.map((point,i)=>{
+   if(point.missing)return point.label; // Never smooth a missing-person frame into a claimed prediction.
    const scores=new Map();
    for(let j=Math.max(0,i-half);j<=Math.min(points.length-1,i+half);j++){
-     const x=points[j];const old=scores.get(x.label)||{count:0,total:0};
+     const x=points[j];
+     if(x.missing)continue;
+     const old=scores.get(x.label)||{count:0,total:0};
      old.count++;old.total+=x.score;scores.set(x.label,old);
    }
    let label=point.label,maxCount=-1,maxScore=-1;
