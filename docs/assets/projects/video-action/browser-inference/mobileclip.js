@@ -131,9 +131,11 @@ async function loadSplitEncoders(lib,{device,dtype,onProgress}){
  const processor=await AutoProcessor.from_pretrained(modelId);
  const visionModel=await CLIPVisionModelWithProjection.from_pretrained(modelId,{device,dtype});
  // Encode the six immutable prompts ONCE, not separately for every video frame.
- const textInputs=tokenizer(MOBILECLIP_PROMPTS,{padding:'max_length',truncation:true});
+ const descriptions=MOBILECLIP_PROMPTS.map(p=>'This is a photo of '+p+'.');
+ const textInputs=tokenizer(descriptions,{padding:'max_length',truncation:true});
  const textOutput=await textModel(textInputs);
  const textEmbeddings=textOutput.text_embeds.normalize().tolist();
+ await textModel.dispose?.();
  if(textEmbeddings.length!==MOBILECLIP_PROMPTS.length)throw Error('MobileCLIP text embeddings count mismatch');
  const classifier=async(canvas,prompts)=>{
    if(!Array.isArray(prompts)||prompts.length!==MOBILECLIP_PROMPTS.length||
@@ -141,7 +143,7 @@ async function loadSplitEncoders(lib,{device,dtype,onProgress}){
      throw Error('MobileCLIP prompt set unexpectedly changed');
    if(!(canvas instanceof HTMLCanvasElement))throw Error('MobileCLIP expects a decoded Canvas frame');
    // RawImage.read supports data URLs. Avoid unsupported direct Canvas pipeline inputs.
-   const image=await RawImage.read(canvas.toDataURL('image/png'));
+   const image=typeof RawImage.fromCanvas==='function'?RawImage.fromCanvas(canvas):await RawImage.read(canvas.toDataURL('image/png'));
    const imageInputs=await processor(image);
    const imageOutput=await visionModel(imageInputs);
    const embeddings=imageOutput.image_embeds.normalize().tolist();
@@ -153,8 +155,8 @@ async function loadSplitEncoders(lib,{device,dtype,onProgress}){
    if(!(sum>0))throw Error('MobileCLIP returned an empty distribution');
    return MOBILECLIP_PROMPTS.map((label,i)=>({label,score:exp[i]/sum}));
  };
- return {classifier,textModel,visionModel,tokenizer,processor,backend:device,dtype,
-   weightsMB:dtype==='fp16'?108.0:54.6,webgpuFallbackReason:null};
+ return {classifier,visionModel,backend:device,dtype,
+   weightsMB:dtype==='fp16'?108.0:54.6,webgpuError:null};
 }
 export async function loadMobileCLIP({onProgress}={}){
  onProgress?.('初始化 Transformers.js 与 MobileCLIP 双编码器…');
@@ -169,7 +171,7 @@ export async function loadMobileCLIP({onProgress}={}){
  onProgress?.('WebGPU 不可用，改用 MobileCLIP 双编码器 CPU/WASM/q8…');
  try{
    const entry=await loadSplitEncoders(lib,{device:'wasm',dtype:'q8',onProgress});
-   entry.webgpuFallbackReason=webgpuError;
+   entry.webgpuError=webgpuError;
    return entry;
  }catch(error){
    throw Error('MobileCLIP WebGPU 不可用：'+webgpuError+'；WASM 亦失败：'+safeError(error));
