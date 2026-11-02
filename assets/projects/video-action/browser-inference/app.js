@@ -614,6 +614,12 @@ if(comparison){
   const detail=document.createElement('div');detail.textContent=comparison.detail;
   detail.style.marginTop='5px';
   $('evaluation').append(headline,detail);
+ if(isContinuous){
+  const scope=document.createElement('div');
+  scope.style.marginTop='7px';
+  scope.textContent='说明：03 的 Top-5 及参考动作排名对应视频最后一个采样时刻；完整过程请看第 04 节动作预测时间轴。';
+  $('evaluation').append(scope);
+ }
 }else{
   $('evaluation').textContent='本地上传的视频尚无已核验参考标签；仅展示原生 Top-5，不判定正确率。';
 }
