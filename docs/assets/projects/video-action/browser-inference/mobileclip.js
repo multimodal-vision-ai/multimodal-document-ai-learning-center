@@ -56,7 +56,7 @@ export function mobileCLIPReferenceRank(scores,clip){
 export async function sampleMobileCLIPFrames(video,isCancelled,{start=0,end=Math.min(8,video.duration),actorTrack=null}={}){
   if(!Number.isFinite(video.duration)||video.duration<=0||!video.videoWidth||!video.videoHeight)
     throw Error('视频时长或分辨率无效，无法提取 MobileCLIP 关键帧');
-  const frames=[],times=[],start=performance.now();
+  const frames=[],times=[],started=performance.now();
   const duration=end-start;
   if(!(duration>0)||start<0||end>video.duration+.01)throw Error('MobileCLIP 无效分段区间');
   for(let i=0;i<MOBILECLIP.frameCount;i++){
@@ -87,7 +87,7 @@ export async function sampleMobileCLIPFrames(video,isCancelled,{start=0,end=Math
     }
     frames.push(canvas);times.push(second);
   }
-  return {frames,times,decodeMs:performance.now()-start};
+  return {frames,times,decodeMs:performance.now()-started};
 }
 /**
  * The Xenova export has TWO ONNX graphs (text_model + vision_model), not model.onnx.
