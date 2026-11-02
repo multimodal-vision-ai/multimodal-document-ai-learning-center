@@ -8,7 +8,7 @@ const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-
 const page=await browser.newPage({viewport:{width:1400,height:950}});
 page.on('pageerror',e=>pageErrors.push(String(e)));
 try{
-  await page.route(url=>url.includes('/qualcomm/Video-MAE/resolve/')&&url.includes('/Video-MAE.tflite'),route=>{
+  await page.route(url=>String(url).includes('/qualcomm/Video-MAE/resolve/')&&String(url).includes('/Video-MAE.tflite'),route=>{
     report.failures.push('VideoMAE model download intercepted as HTTP 503');
     return route.fulfill({status:503,contentType:'text/plain',body:'Simulated model-source outage'});
   });
