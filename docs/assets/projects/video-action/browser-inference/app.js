@@ -11,7 +11,7 @@ const MODEL_SHA='0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c
 const LABELS_URL='https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt';
 const DATASET='multimodal-vision-ai/mvai-daily-action-demo';
 const DIMS=[2,2,2,4,2,2,4,2,2,2,4];
-const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},compareAllRunning:false,activeController:null,videomaeModel:null,videomaePromise:null,mobileclipModel:null,mobileclipPromise:null,k600Labels:null,outputMode:'stream'};
+const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},videoKey:0,activeController:null,videomaeModel:null,videomaePromise:null,mobileclipModel:null,mobileclipPromise:null,k600Labels:null,outputMode:'stream'};
 let config=null;
 async function loadConfig(){const response=await fetch('./config.json',{cache:'no-store'});if(!response.ok)throw Error('本地配置 HTTP '+response.status);config=await response.json();if(config.dataset_id!==DATASET)throw Error('数据源配置错误');return config;}
 const say=s=>{$('status').textContent=s;$('status').classList.toggle('error',/失败|未完成|错误|无效/.test(s));};
@@ -269,9 +269,9 @@ const renderPlayback=()=>{updateTop1Overlay();detectPersonFrame();if(!replayVide
 replayVideo.addEventListener('play',()=>{cancelAnimationFrame(overlayRaf);overlayRaf=requestAnimationFrame(renderPlayback)});
 replayVideo.addEventListener('pause',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay();detectPersonFrame(true)});
 replayVideo.addEventListener('ended',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay()});
-function pick(url,clip=null){state.comparisonRows={};updateComparisonView();hideAnnotated();if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}state.clip=clip;if(url.startsWith('blob:'))$('video').removeAttribute('crossorigin');else{$('video').crossOrigin='anonymous';$('upload').value=''}$('video').src=url;$('results').textContent='等待真实推理。';$('evaluation').textContent='点击「开始识别」后，将按参考标签及语义关联解释结果。';$('metrics').replaceChildren();$('reference').textContent=clip?'参考动作：'+clip.label_zh+' / '+clip.label_en:'参考动作：本地文件，无标注';$('provenance').replaceChildren();if(clip){const desc=document.createElement('span');desc.textContent='类型：'+(clip.synthetic?'合成测试':'真实来源视频')+' · 参考标签：'+(clip.reference_evidence||clip.evidence||'来源描述')+' · 作者：'+(clip.attribution||'见来源页')+' · 许可：'+clip.license+' · ';const link=document.createElement('a');link.href=clip.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看原始视频及授权';$('provenance').append(desc,link)}else $('provenance').textContent='本地上传 · 仅在此浏览器读取';$('run').disabled=state.busy||!$('video').getAttribute('src');updateComparisonSelection();if(!state.busy)say('已选择'+(clip?.label_zh?'「'+clip.label_zh+'」':'本地视频')+'；点击「开始识别」后将在浏览器执行真实推理。')}
+function pick(url,clip=null){if(state.busy)return;state.videoKey++;state.comparisonRows={};for(const el of compareInputs())el.checked=false;updateComparisonSelection();hideAnnotated();if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}state.clip=clip;if(url.startsWith('blob:'))$('video').removeAttribute('crossorigin');else{$('video').crossOrigin='anonymous';$('upload').value=''}$('video').src=url;$('results').textContent='等待真实推理。';$('evaluation').textContent='点击「开始识别」后，将按参考标签及语义关联解释结果。';$('metrics').replaceChildren();$('reference').textContent=clip?'参考动作：'+clip.label_zh+' / '+clip.label_en:'参考动作：本地文件，无标注';$('provenance').replaceChildren();if(clip){const desc=document.createElement('span');desc.textContent='类型：'+(clip.synthetic?'合成测试':'真实来源视频')+' · 参考标签：'+(clip.reference_evidence||clip.evidence||'来源描述')+' · 作者：'+(clip.attribution||'见来源页')+' · 许可：'+clip.license+' · ';const link=document.createElement('a');link.href=clip.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看原始视频及授权';$('provenance').append(desc,link)}else $('provenance').textContent='本地上传 · 仅在此浏览器读取';$('run').disabled=state.busy||!$('video').getAttribute('src');updateComparisonSelection();if(!state.busy)say('已选择'+(clip?.label_zh?'「'+clip.label_zh+'」':'本地视频')+'；点击「开始识别」后将在浏览器执行真实推理。')}
 $('upload').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!['video/mp4','video/webm'].includes(f.type)){say('仅支持 MP4/WebM');return}if(f.size>120*1024*1024){say('文件超过 120 MB 的预览安全上限');return}const url=URL.createObjectURL(f);pick(url);state.objectUrl=url;};
-$('reset').onclick=()=>{state.cancelled=true;state.comparisonRows={};updateComparisonView();hideAnnotated();$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('evaluation').textContent='请选择视频并运行识别';$('metrics').replaceChildren();state.clip=null;if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null;}$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;updateComparisonSelection();say('已清除当前视频')};
+$('reset').onclick=()=>{if(state.busy){say('请先取消正在运行的推理，再清除视频。');return}state.cancelled=true;state.videoKey++;state.comparisonRows={};for(const el of compareInputs())el.checked=false;updateComparisonSelection();hideAnnotated();$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('evaluation').textContent='请选择视频并运行识别';$('metrics').replaceChildren();state.clip=null;if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null;}$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;updateComparisonSelection();say('已清除当前视频')};
 $('cancel').onclick=()=>{state.cancelled=true;state.activeController?.abort();say('已请求取消；下载立即中断，WASM 调用结束后停止。')};
 $('export').onclick=()=>{const b=new Blob([JSON.stringify(state.last||{},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mvai-v103-diagnostics.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 // Six concise real-video choices; no fake footage or unapproved substitute for falling.
@@ -432,115 +432,76 @@ async function readFrames(video){if(!Number.isFinite(video.duration)||video.dura
 function softmax(logits){const m=Math.max(...logits),v=Array.from(logits,x=>Math.exp(x-m));const s=v.reduce((a,b)=>a+b,0);return v.map(x=>x/s)}
 const MODEL_ORDER=['a0','a1','a2','videomae','mobileclip_s0'];
 const compareInputs=()=>Array.from(document.querySelectorAll('#compare-choices input[type="checkbox"]'));
-const selectedForCompare=()=>compareInputs().filter(el=>el.checked).map(el=>el.value);
+const availableForCompare=id=>{
+ const result=state.comparisonRows[id];
+ return result?.status==='success'&&result.videoKey===state.videoKey&&Number.isFinite(result.score);
+};
+const selectedForCompare=()=>compareInputs().filter(el=>el.checked&&availableForCompare(el.value)).map(el=>el.value);
 function updateComparisonSelection(){
-  const selected=selectedForCompare(),status=$('compare-selection-status');
-  status.textContent='已选择 '+selected.length+' / 3 个模型'+(selected.length===0?' · 请至少选择一个':selected.length===3?' · 已达上限':'');
-  const lock=state.busy||state.compareAllRunning;
-  for(const el of compareInputs()){
-    el.disabled=lock||(!el.checked&&selected.length>=3);
-    el.parentElement.title=!el.checked&&selected.length>=3?'最多同时选择三个模型':'';
-  }
-  $('compare-run').disabled=lock||!selected.length||!$('video').getAttribute('src');
-  updateComparisonView();
+ const available=MODEL_ORDER.filter(availableForCompare).length;
+ for(const el of compareInputs()){
+   if(!availableForCompare(el.value))el.checked=false;
+ }
+ const selected=selectedForCompare();
+ const status=$('compare-selection-status');
+ status.textContent=available?
+   '本视频已完成 '+available+' 个模型 · 已选择 '+selected.length+' / 3 个'+
+     (selected.length>=3?' · 已达上限':selected.length===0?' · 可勾选结果':''):
+   '本视频尚无已完成的模型结果';
+ for(const el of compareInputs()){
+   const valid=availableForCompare(el.value),limit=selected.length>=3&&!el.checked;
+   el.disabled=!valid||limit;
+   el.parentElement.title=!valid?'请先在 02 对该视频运行此模型':limit?'最多选择 3 个已完成结果':'';
+   el.parentElement.setAttribute('aria-label',el.parentElement.textContent.trim()+
+     (!valid?'（尚未完成推理）':'（已完成推理）'));
+ }
+ updateComparisonView();
 }
-for(const checkbox of compareInputs())checkbox.addEventListener('change',()=>{
-  if(state.busy||state.compareAllRunning){checkbox.checked=!checkbox.checked;return}
-  updateComparisonSelection();
-});
+for(const checkbox of compareInputs())checkbox.addEventListener('change',updateComparisonSelection);
 
 function updateComparisonView(){
- const box=$('comparison-results');if(!box)return;
+ const box=$('comparison-results');
+ if(!box)return;
  box.replaceChildren();
- const selection=selectedForCompare();
- const entries=MODEL_ORDER.filter(id=>selection.includes(id)&&state.comparisonRows[id]);
- if(!entries.length){
-   box.textContent=selection.length?'所选模型尚无实测结果。点击「运行所选模型对比」开始。':'请至少选择一个模型进行对比。';
+ const selected=selectedForCompare();
+ if(!selected.length){
+   box.textContent=MODEL_ORDER.some(availableForCompare)?
+      '请选择上方已完成的模型结果进行对比（最多 3 个）。':
+      '本视频尚无可比较的结果。请先在 02 选择一个模型并点击「开始识别」。';
    return;
  }
  const table=document.createElement('table');
  const head=document.createElement('tr');
- for(const text of ['模型','Top-1 (英文)','分数¹','参考动作排名','推理耗时','权重约']){
-   const el=document.createElement('th');el.textContent=text;head.append(el);
+ for(const label of ['模型','Top-1（英文）','分数¹','参考动作排名','推理耗时','权重约']){
+   const el=document.createElement('th');el.textContent=label;head.append(el);
  }
  table.append(head);
- for(const id of selection){
-   const row=document.createElement('tr'),value=state.comparisonRows[id];
-   const label=id==='mobileclip_s0'?'Apple MobileCLIP-S0':id==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+id.toUpperCase();
-   const cells=value?.status==='success'||(value&&!value.status&&Number.isFinite(value.score))?
-     [value.model,value.top1,(value.score*100).toFixed(1)+'%',
+ for(const id of selected){
+   const value=state.comparisonRows[id],row=document.createElement('tr');
+   const cells=[value.model,value.top1,(value.score*100).toFixed(1)+'%',
       value.targetRank?('#'+value.targetRank):'N/A',value.inferenceMs+' ms',
-      value.mb.toFixed(1)+' MB · '+value.backend]:
-     [label,value?.status==='failed'?'失败：'+(value.error||'请查看诊断'):
-       value?.status==='cancelled'?'已取消':
-       value?.status==='running'?'执行中…':value?.status==='pending'?'排队中':'尚未运行',
-       '—','—','—','—'];
-   for(const v of cells){const cell=document.createElement('td');cell.textContent=v;row.append(cell)}
+      value.mb.toFixed(1)+' MB · '+value.backend];
+   for(const cellValue of cells){const td=document.createElement('td');td.textContent=cellValue;row.append(td)}
    table.append(row);
  }
  const notice=document.createElement('p');notice.className='note';
- notice.textContent='¹ MoViNet/VideoMAE 为不同 Kinetics 类别空间内的未校准 softmax；MobileCLIP 为六个描述在 6 张真实关键帧上分别匹配后平均的相对分数。模型间不可直接比较分数或当作正确率；可比较标签与参考动作是否一致。无参考类别时标 N/A。';
+ notice.textContent='¹ MoViNet/VideoMAE 来自不同 Kinetics 类别集合内的未校准 softmax；MobileCLIP 为六个描述在 6 张关键帧上的相对匹配分数。分数不代表正确率，也不能跨模型直接比较。这里只读取 02 的已完成结果，不会重复运行模型。';
  box.append(table,notice);
 }
-function saveModelComparison(variant,top,comparison,timings,frames){
+function saveModelComparison(variant,top,comparison,timings,frames,videoKey){
+ if(videoKey!==state.videoKey||state.cancelled)throw Error('视频已切换或推理已取消，不保存结果');
  const semantic=variant==='mobileclip_s0';
  const mb=semantic?state.mobileclipModel.weightsMB:variant==='videomae'?VIDEOMAE.bytes/1e6:variant==='a0'?15.131688:OFFICIAL_MODELS[variant].bytes/1e6;
- state.comparisonRows[variant]={status:'success',model:semantic?mobileCLIPModelName:variant==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+variant.toUpperCase(),top1:top[0].label,score:top[0].score,
-   targetRank:comparison?.target_rank??null,inferenceMs:timings.inferenceMs,mb,frames,backend:semantic?state.mobileclipModel.backend:'wasm',clipId:state.clip?.id??null};
- updateComparisonView();
-}
-$('compare-run').addEventListener('click',async()=>{
- if(state.busy||state.compareAllRunning||!$('video').getAttribute('src'))return;
- const selection=selectedForCompare();
- if(!selection.length||selection.length>3){say('请选择 1–3 个模型进行对比');return}
- state.compareAllRunning=true;state.cancelled=false;
- const original=state.selectedModel,clipId=state.clip?.id??null;
- const completed=[],failed=[];
- for(const id of selection)state.comparisonRows[id]={status:'pending'};
+ state.comparisonRows[variant]={
+   status:'success',videoKey,
+   model:semantic?mobileCLIPModelName:variant==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+variant.toUpperCase(),
+   top1:top[0].label,score:top[0].score,targetRank:comparison?.target_rank??null,
+   inferenceMs:timings.inferenceMs,mb,frames,
+   backend:semantic?state.mobileclipModel.backend:'wasm'
+ };
  updateComparisonSelection();
- try{
-   for(const [index,variant] of selection.entries()){
-     if(state.cancelled||clipId!==(state.clip?.id??null))break;
-     state.selectedModel=variant;
-     $('model').value=variant;
-     syncModelDescription();
-     state.comparisonRows[variant]={status:'running'};
-     updateComparisonView();
-     say('对比 '+(index+1)+'/'+selection.length+'：'+$('model').selectedOptions[0].textContent+' · 正在准备');
-     const result=await run();
-     if(state.cancelled)break;
-     if(result?.ok&&state.comparisonRows[variant]?.status==='success'&&state.comparisonRows[variant].clipId===clipId){
-       completed.push(variant);
-     }else{
-       const message=result?.error||'未完成有效推理';
-       state.comparisonRows[variant]={status:'failed',error:message};
-       failed.push({variant,message});
-       updateComparisonView();
-     }
-   }
-   if(state.cancelled){
-     for(const id of selection)if(['pending','running'].includes(state.comparisonRows[id]?.status))
-       state.comparisonRows[id]={status:'cancelled'};
-     say('已取消对比，保留 '+completed.length+' 个已完成结果。');
-   }else if(failed.length){
-     say('对比已结束：'+completed.length+' 个成功，'+failed.length+' 个失败。失败模型已标注，其余结果保留。');
-   }else{
-     say('已完成 '+completed.length+' 个所选模型的真实视频比较，请查看第 06 节。');
-   }
-   record('compare_report',{selected:selection,completed,failed,cancelled:state.cancelled});
- }catch(e){
-   say('所选模型对比未完成：'+e.message);
-   record('compare_error',{selected:selection,message:e.message});
- }finally{
-   state.selectedModel=original;
-   $('model').value=original;
-   syncModelDescription();
-   state.compareAllRunning=false;
-   $('model-state').textContent=activeModelReady()?'模型已就绪':'尚未加载';
-   updateComparisonSelection();
- }
-});
-async function run(){if(state.busy)return {ok:false,error:'已有推理正在进行'};hideAnnotated();state.activeController=new AbortController();setBusy(true);const began=performance.now();try{await ensureModelReady(state.activeController.signal);if(state.cancelled)throw Error('用户取消');const variant=state.selectedModel;let frames,times,decodeMs,logits,frameTop1,inferenceStarted,mobileclipScores=null;
+}
+async function run(){if(state.busy)return {ok:false,error:'已有推理正在进行'};const runVideoKey=state.videoKey;hideAnnotated();state.activeController=new AbortController();setBusy(true);const began=performance.now();try{await ensureModelReady(state.activeController.signal);if(state.cancelled)throw Error('用户取消');const variant=state.selectedModel;let frames,times,decodeMs,logits,frameTop1,inferenceStarted,mobileclipScores=null;
 if(variant==='a0'){
 const meta=state.meta;if(!meta||meta.length!==47)throw Error('47 输入形状元数据尚未验证');const shapes=meta.map(shapeOf);if(shapes.some(s=>!Array.isArray(s)||s.some(n=>!Number.isInteger(n)||n<1))){record('input_shape_issue',{first:meta.slice(0,3),normalized:shapes.slice(0,3),bad_indices:shapes.map((x,i)=>!Array.isArray(x)||x.some(n=>!Number.isInteger(n)||n<1)?i:null).filter(x=>x!==null)});throw Error('无法获取全部 47 输入的固定张量形状；诊断见推理详情')}if(JSON.stringify(shapes[0])!=='[1,3,172,172]')throw Error('NCHW 输入形状不符');say('正在解码视频并执行逐帧 WASM 推理……');({frames,times,decodeMs}=await readFrames($('video')));if(!frames.length)throw Error('未解码出有效视频帧');const history=[];let offset=1;for(const depth of DIMS){history.push(Array.from({length:depth},(_,i)=>new Float32Array(sizeOf(shapes[offset+i]))));offset+=depth}let pool=Array.from({length:16},(_,i)=>new Float32Array(sizeOf(shapes[29+i])));frameTop1=[];inferenceStarted=performance.now();for(let count=1;count<=frames.length;count++){if(state.cancelled)throw Error('用户取消');const inputs=[tensorFor(frames[count-1],shapes[0])];for(const group of history)for(const h of group)inputs.push(tensorFor(h,shapes[inputs.length]));for(let j=0;j<16;j++)inputs.push(tensorFor(pool[j],shapes[29+j]));inputs.push(tensorFor(new Float32Array([1/count]),shapes[45]),tensorFor(new Float32Array([1]),shapes[46]));const outputs=await state.model.run(inputs);if(outputs.length!==28)throw Error('预期 28 输出，实际 '+outputs.length);const outTensors=Array.from({length:outputs.length},(_,i)=>outputs[i]);const values=await Promise.all(outTensors.map(x=>x.data()));logits=Float32Array.from(values[0]);if(logits.length!==600||!logits.every(Number.isFinite))throw Error('流式第 '+count+' 帧 logits 无效');const frameScores=softmax(logits);let winner=0;for(let k=1;k<frameScores.length;k++)if(frameScores[k]>frameScores[winner])winner=k;frameTop1.push({frame:count,t:Number(times[count-1].toFixed(3)),id:winner,label:state.labels[winner],score:Number(frameScores[winner].toFixed(6))});for(let c=0;c<DIMS.length;c++)history[c]=[...history[c].slice(1),Float32Array.from(values[1+c])];for(let j=0;j<16;j++){const delta=values[12+j];for(let k=0;k<pool[j].length;k++)pool[j][k]+=delta[k]}for(const t of inputs)t.delete?.();if(typeof outputs.delete==='function')outputs.delete();else for(const t of outTensors)t.delete?.()}
 }else if(variant==='mobileclip_s0'){
@@ -621,7 +582,9 @@ $('metrics').replaceChildren();
 for(const entry of ['处理 '+frames.length+' 帧','模型运行 '+timings.inferenceMs+' ms','总耗时 '+timings.totalMs+' ms',variant==='mobileclip_s0'?(state.mobileclipModel.backend.toUpperCase()+'/'+state.mobileclipModel.dtype):'CPU/WASM']){
  const el=document.createElement('span');el.textContent=entry;$('metrics').append(el);
 }
-await showAnnotated(frameTop1,Math.min(8,$('video').duration),variant==='videomae',variant==='mobileclip_s0');saveModelComparison(variant,top,comparison,timings,frames.length);
+saveModelComparison(variant,top,comparison,timings,frames.length,runVideoKey);
+try{await showAnnotated(frameTop1,Math.min(8,$('video').duration),variant==='videomae',variant==='mobileclip_s0')}
+catch(error){record('preview_error',{variant,message:error.message});hideAnnotated();}
 record('inference',{variant,top5:top,frameTop1,frames:frames.length,analyzedSeconds:Math.min(8,$('video').duration),timings,backend:variant==='mobileclip_s0'?state.mobileclipModel.backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:variant==='mobileclip_s0'?null:variant==='a0'?MODEL_SHA:variant==='videomae'?VIDEOMAE.sha256:OFFICIAL_MODELS[variant].sha256,classificationMode:variant==='mobileclip_s0'?'keyframe-semantic':variant==='videomae'?'clip':'stream',labelSet:variant==='mobileclip_s0'?'six-prompts':variant==='videomae'?'K400':'K600'});
 say(variant==='mobileclip_s0'?'真实推理已返回：MobileCLIP 对 6 张关键帧完成六类文本匹配；结果是相对分数，不是动作识别准确率。':variant==='videomae'?'VideoMAE 已完成 16 帧整段视频分类（K400），Top-5 是未校准 softmax 分数。':'真实推理已返回 '+frames.length+' 帧结果。Top-5 是未校准 softmax 分数。');
 return {ok:true,variant};}catch(e){say('真实推理未完成：'+e.message);$('results').textContent='没有可展示的有效推理结果';record('inference_error',{variant:state.selectedModel,message:e.message,stack:e.stack});return {ok:false,error:e.message}}finally{state.activeController=null;setBusy(false)}}
