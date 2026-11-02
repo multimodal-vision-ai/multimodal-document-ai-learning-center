@@ -161,7 +161,7 @@ class PublicationTests(unittest.TestCase):
             state, selected = assess_report(old, "weekly", rolled)
             self.assertEqual(state, "validated")
             self.assertEqual(len(selected), 1)
-            self.assertEqual(render.archive_latest_reports({"weekly": old}, rolled), 1)
+            self.assertEqual(render.archive_latest_reports({"weekly": old}, rolled), 0)
             new = copy.deepcopy(old)
             new["generated_at"] = "2026-11-02T00:57:00+00:00"
             with self.assertRaises(ValueError):
