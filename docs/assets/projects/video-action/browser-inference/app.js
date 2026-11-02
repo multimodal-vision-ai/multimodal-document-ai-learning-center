@@ -2,6 +2,7 @@ import {interpretAction,labelDisplay} from './semantic.js';
 import {createPersonDetector,choosePrimaryPerson,mapBoxToContainedVideo,top1At} from './person-overlay.js';
 import {OFFICIAL_MODELS,MODEL_REPO,validateStreamingContract,makeRGBFrameFromRGBA,runStreamingBatch} from './official-movinet.js';
 import {VIDEOMAE,compileVideoMAE,sampleVideoMAEFrames,inferVideoMAE} from './video-mae.js';
+import {MOBILECLIP,MOBILECLIP_LABELS,loadMobileCLIP,sampleMobileCLIPFrames,inferMobileCLIP,mobileCLIPReferenceRank,mobileCLIPModelName} from './mobileclip.js';
 // MVAI V1.0.3 experimental browser adapter. No fake outputs or sample fallback.
 const $ = id => document.getElementById(id);
 const OFFICIAL_MODEL_REVISION='d1ed47ef93682fbceda5c388277e34ed717dd4ab';
@@ -10,13 +11,13 @@ const MODEL_SHA='0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c
 const LABELS_URL='https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt';
 const DATASET='multimodal-vision-ai/mvai-daily-action-demo';
 const DIMS=[2,2,2,4,2,2,4,2,2,2,4];
-const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},compareAllRunning:false,videomaeModel:null,videomaePromise:null,k600Labels:null,outputMode:'stream'};
+const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},compareAllRunning:false,videomaeModel:null,videomaePromise:null,mobileclipModel:null,mobileclipPromise:null,k600Labels:null,outputMode:'stream'};
 let config=null;
 async function loadConfig(){const response=await fetch('./config.json',{cache:'no-store'});if(!response.ok)throw Error('本地配置 HTTP '+response.status);config=await response.json();if(config.dataset_id!==DATASET)throw Error('数据源配置错误');return config;}
 const say=s=>{$('status').textContent=s;$('status').classList.toggle('error',/失败|未完成|错误|无效/.test(s));};
 const record=(event,data)=>{state.last={...(state.last||{}),[event]:data, timestamp:new Date().toISOString()};$('diagnostics').textContent=JSON.stringify(state.last,null,2)};
 $('info').onclick=()=>{$('intro').hidden=!$('intro').hidden};
-function activeModelReady(){return state.selectedModel==='videomae'?!!state.videomaeModel:state.selectedModel==='a0'?!!state.model:!!state.officialModels[state.selectedModel]}
+function activeModelReady(){return state.selectedModel==='mobileclip_s0'?!!state.mobileclipModel:state.selectedModel==='videomae'?!!state.videomaeModel:state.selectedModel==='a0'?!!state.model:!!state.officialModels[state.selectedModel]}
 function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('model').disabled=b;$('sample-list')?.querySelectorAll('button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':activeModelReady()?'模型已就绪':'尚未加载';updateComparisonSelection();}
 // Person detector runs entirely in browser, independently from the MoViNet action model.
 const personState={model:null,loadPromise:null,lastSampleMs:0,lastTime:-1,box:null,count:0,generation:0,error:null};
@@ -112,6 +113,7 @@ $('model').addEventListener('change',()=>{
   $('model-state').textContent=activeModelReady()?'模型已就绪':'尚未加载';
   if(state.selectedModel==='a0')$('model-description').textContent='LiteRT.js WASM CPU · Kinetics-600 · 15.1 MB · 172×172';
   else if(state.selectedModel==='videomae')$('model-description').textContent='Qualcomm VideoMAE · 351 MB · Kinetics-400 · 非流式 16 帧整段分类；研究实验模型，六类任务不保证更好';
+   else if(state.selectedModel==='mobileclip_s0')$('model-description').textContent='Apple MobileCLIP-S0 · WebGPU/fp16，失败尝试 WASM/q8 · 从前 8 秒选取 6 张关键帧 · 六类文本匹配，非视频时序动作分类';
   else $('model-description').textContent='官方 Google MoViNet-'+state.selectedModel.toUpperCase()+' · Kinetics-600 · '+(OFFICIAL_MODELS[state.selectedModel].bytes/1e6).toFixed(1)+' MB · '+OFFICIAL_MODELS[state.selectedModel].size+'×'+OFFICIAL_MODELS[state.selectedModel].size;
   say('已切换到 '+$('model').selectedOptions[0].textContent+'；模型将按需加载，原视频保持不变。');
 });
@@ -207,7 +209,7 @@ function updateTop1Overlay(){
   const timeline=state.top1Timeline;
   if(!timeline.length||!Number.isFinite(video.currentTime))return;
   overlay.replaceChildren();
-  const title=document.createElement('small');title.textContent=state.outputMode==='clip'?'VideoMAE · 整段视频 Top-1':'MoViNet 流式 Top-1 · 每 0.2 秒';
+  const title=document.createElement('small');title.textContent=state.outputMode==='semantic'?'MobileCLIP · 6 帧语义匹配':state.outputMode==='clip'?'VideoMAE · 整段视频 Top-1':'MoViNet 流式 Top-1 · 每 0.2 秒';
   const name=document.createElement('strong');const score=document.createElement('small');
   if(video.currentTime>state.annotatedLimit+0.005){
     name.textContent='超出已分析范围';
@@ -218,22 +220,22 @@ function updateTop1Overlay(){
     let idx=0;for(let i=1;i<timeline.length;i++){if(timeline[i].t<=time+0.001)idx=i;else break}
     const point=timeline[idx];
     name.textContent=labelDisplay(point.label);
-    score.textContent=(point.score*100).toFixed(1)+'% · '+(state.outputMode==='clip'?'16 帧整段分类':'t='+point.t.toFixed(1)+'s')+'（未校准分数）';
+    score.textContent=(point.score*100).toFixed(1)+'% · '+(state.outputMode==='semantic'?'6 帧平均匹配':state.outputMode==='clip'?'16 帧整段分类':'t='+point.t.toFixed(1)+'s')+'（未校准分数）';
   }
   overlay.append(title,name,score);
   drawPersonOverlay();
 }
-async function showAnnotated(timeline,limit,isClipLevel=false){
+async function showAnnotated(timeline,limit,isClipLevel=false,isSemantic=false){
   if(!timeline.length)throw Error('逐帧 Top-1 记录为空');
   const src=$('video').currentSrc||$('video').src;
   if(!src)throw Error('原视频资源为空');
   const dest=$('annotated-video');
   if(src.startsWith('blob:'))dest.removeAttribute('crossorigin');else dest.crossOrigin='anonymous';
-  state.top1Timeline=timeline;state.annotatedLimit=limit;state.outputMode=isClipLevel?'clip':'stream';
+  state.top1Timeline=timeline;state.annotatedLimit=limit;state.outputMode=isSemantic?'semantic':isClipLevel?'clip':'stream';
   dest.muted=true;dest.src=src;dest.load();
-  $('annotation-summary').textContent=isClipLevel?'Qualcomm VideoMAE 对采样的 16 帧做一次整段动作分类（Kinetics-400）；叠加的是整段预测，不能解读为逐时刻或框内人物的独立动作识别。':'已记录 '+timeline.length+' 个流式预测点（5 FPS，分析 '+limit.toFixed(1)+' 秒）；显示实际逐帧分类结果，不是框内人物的独立动作识别。';
+  $('annotation-summary').textContent=isSemantic?'MobileCLIP 只对 6 张真实关键帧进行图文匹配并平均；不是逐帧视频动作分类，也不是框内人物识别。':isClipLevel?'Qualcomm VideoMAE 对采样的 16 帧做一次整段动作分类（Kinetics-400）；叠加的是整段预测，不能解读为逐时刻或框内人物的独立动作识别。':'已记录 '+timeline.length+' 个流式预测点（5 FPS，分析 '+limit.toFixed(1)+' 秒）；显示实际逐帧分类结果，不是框内人物的独立动作识别。';
   $('annotated-section').hidden=false;
-  $('annotated-section').querySelector('h2').textContent=isClipLevel?'04 · 推理结果视频（整段 VideoMAE Top-1 + 人物框）':'04 · 推理结果视频（人物框 + 逐帧 Top-1）';
+  $('annotated-section').querySelector('h2').textContent=isSemantic?'04 · 推理结果视频（MobileCLIP 语义匹配 + 人物框）':isClipLevel?'04 · 推理结果视频（整段 VideoMAE Top-1 + 人物框）':'04 · 推理结果视频（人物框 + 逐帧 Top-1）';
   // Showing the overlay without a decoded video frame would be misleading.
   await new Promise((resolve,reject)=>{
     if(dest.readyState>=2&&dest.videoWidth>0){resolve();return}
@@ -344,7 +346,20 @@ catalog().catch(e=>{addDevFixture(e.message)});
 function hex(bytes){return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('')}
 async function fetchChecked(){const t=performance.now();const r=await fetch(MODEL_URL);if(!r.ok)throw Error('模型下载 HTTP '+r.status);const buffer=await r.arrayBuffer();if(buffer.byteLength!==15131688)throw Error('模型文件大小不符：'+buffer.byteLength);if(!crypto.subtle)throw Error('浏览器不支持 SHA256 校验');const h=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)));if(h!==MODEL_SHA)throw Error('模型 SHA256 不符，拒绝运行');record('model_download',{bytes:buffer.byteLength,sha256:h,ms:Math.round(performance.now()-t)});return buffer}
 function inputMetadata(model){const data= typeof model.getInputDetails==='function'?model.getInputDetails():model.inputDetails??model.inputs;return Array.isArray(data)?data:null}
+async function ensureMobileCLIPModel(){
+ if(state.mobileclipModel){state.labels=MOBILECLIP_LABELS;return state.mobileclipModel}
+ if(state.mobileclipPromise)return state.mobileclipPromise;
+ const task=(async()=>{
+   const entry=await loadMobileCLIP({onProgress:say});
+   state.mobileclipModel=entry;state.labels=MOBILECLIP_LABELS;
+   record('model_compiled',{variant:MOBILECLIP.id,source:MOBILECLIP.modelId,backend:entry.backend,dtype:entry.dtype,weightSizeApproxMB:entry.weightsMB,webgpuFallbackReason:entry.webgpuError||null});
+   return entry;
+ })();
+ state.mobileclipPromise=task;
+ try{return await task}finally{state.mobileclipPromise=null}
+}
 async function ensureModelReady(){
+  if(state.selectedModel==='mobileclip_s0')return ensureMobileCLIPModel();
   if(state.selectedModel==='videomae')return ensureVideoMAEModel();
   if(state.selectedModel!=='a0')return ensureOfficialModel(state.selectedModel);
   if(state.model&&state.meta?.length===47&&state.k600Labels?.length===600){state.labels=state.k600Labels;return state.model}
@@ -385,15 +400,15 @@ async function probe(){
   const variant=state.selectedModel;
   if(activeModelReady()){
     $('model-state').textContent='模型已就绪';
-    const io=variant==='videomae'?'1 输入 / 1 输出（16 帧 K400）':variant==='a0'?'47 输入 / 28 输出':'已验证 '+OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出';
-    say(variant.toUpperCase()+' WASM 模型已就绪；'+io+'。无需重复初始化。');
+    const io=variant==='mobileclip_s0'?'6 帧文本匹配（'+state.mobileclipModel.backend+'）':variant==='videomae'?'1 输入 / 1 输出（16 帧 K400）':variant==='a0'?'47 输入 / 28 输出':'已验证 '+OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出';
+    say(variant.toUpperCase()+' 浏览器模型已就绪；'+io+'。无需重复初始化。');
     return;
   }
   setBusy(true);
   try{
     await ensureModelReady();
-    const io=variant==='videomae'?'16 帧 Kinetics400 单输入、400 类输出验证通过':variant==='a0'?'47 输入 / 28 输出元数据通过':OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出状态元数据通过';
-    say(variant.toUpperCase()+' WASM 模型已加载，'+io+'；可以开始识别。');
+    const io=variant==='mobileclip_s0'?'六类关键帧匹配加载完成（'+state.mobileclipModel.backend+'）':variant==='videomae'?'16 帧 Kinetics400 单输入、400 类输出验证通过':variant==='a0'?'47 输入 / 28 输出元数据通过':OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出状态元数据通过';
+    say(variant.toUpperCase()+' 模型已加载，'+io+'；可以开始识别。');
   }catch(e){say('WASM 加载失败：'+e.message);record('probe_error',{variant,message:e.message,stack:e.stack})}
   finally{setBusy(false)}
 }
@@ -403,7 +418,7 @@ function tensorFor(data,shape){return new state.api.Tensor(data,shape)}
 const sizeOf=shape=>shape.reduce((a,b)=>a*b,1);
 async function readFrames(video){if(!Number.isFinite(video.duration)||video.duration<=0){await new Promise((resolve,reject)=>{const fail=()=>{clearTimeout(timer);reject(Error('视频格式不支持或无法读取时长'))};const done=()=>{clearTimeout(timer);resolve()};const timer=setTimeout(fail,12000);video.addEventListener('loadedmetadata',done,{once:true});video.addEventListener('error',fail,{once:true});video.load()})}if(!Number.isFinite(video.duration)||video.duration<=0)throw Error('无法确定视频时长或解码格式');const canvas=document.createElement('canvas');canvas.width=canvas.height=172;const ctx=canvas.getContext('2d',{willReadFrequently:true});const result=[],times=[];const start=performance.now();const duration=Math.min(8,video.duration);for(let t=0;t<duration&&result.length<40;t+=.2){if(state.cancelled)throw Error('用户取消');await new Promise((resolve,reject)=>{const target=Math.min(t,Math.max(0,video.duration-.001));if(Math.abs(video.currentTime-target)<.005&&video.readyState>=2){resolve();return}const tm=setTimeout(()=>reject(Error('视频解码超时')),10000);video.addEventListener('seeked',()=>{clearTimeout(tm);resolve()},{once:true});video.currentTime=target});ctx.drawImage(video,0,0,172,172);const rgba=ctx.getImageData(0,0,172,172).data;const arr=new Float32Array(3*172*172);for(let i=0;i<172*172;i++){arr[i]=rgba[i*4]/255;arr[i+172*172]=rgba[i*4+1]/255;arr[i+2*172*172]=rgba[i*4+2]/255}result.push(arr);times.push(Math.min(t,Math.max(0,video.duration-.001)))}return {frames:result,times,decodeMs:performance.now()-start}}
 function softmax(logits){const m=Math.max(...logits),v=Array.from(logits,x=>Math.exp(x-m));const s=v.reduce((a,b)=>a+b,0);return v.map(x=>x/s)}
-const MODEL_ORDER=['a0','a1','a2','videomae'];
+const MODEL_ORDER=['a0','a1','a2','videomae','mobileclip_s0'];
 const compareInputs=()=>Array.from(document.querySelectorAll('#compare-choices input[type="checkbox"]'));
 const selectedForCompare=()=>compareInputs().filter(el=>el.checked).map(el=>el.value);
 function updateComparisonSelection(){
@@ -433,7 +448,7 @@ function updateComparisonView(){
  }
  const table=document.createElement('table');
  const head=document.createElement('tr');
- for(const text of ['模型','Top-1 (英文)','分数¹','参考动作排名','WASM 推理','权重']){
+ for(const text of ['模型','Top-1 (英文)','分数¹','参考动作排名','推理耗时','权重约']){
    const el=document.createElement('th');el.textContent=text;head.append(el);
  }
  table.append(head);
@@ -441,19 +456,20 @@ function updateComparisonView(){
    const row=document.createElement('tr'),value=state.comparisonRows[id];
    const cells=value?[value.model,value.top1,(value.score*100).toFixed(1)+'%',
       value.targetRank?('#'+value.targetRank):'N/A',value.inferenceMs+' ms',
-      value.mb.toFixed(1)+' MB']:
-      [id==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+id.toUpperCase(),'尚未运行','—','—','—','—'];
+      value.mb.toFixed(1)+' MB · '+value.backend]:
+      [id==='mobileclip_s0'?'Apple MobileCLIP-S0':id==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+id.toUpperCase(),'尚未运行','—','—','—','—'];
    for(const v of cells){const cell=document.createElement('td');cell.textContent=v;row.append(cell)}
    table.append(row);
  }
  const notice=document.createElement('p');notice.className='note';
- notice.textContent='¹ 分数均来自模型 softmax，未经校准，不能直接当作可比较的正确率。MoViNet (K600) 是 5 FPS 流式分类；VideoMAE (K400) 是 16 帧整段分类。参考类别缺失时标 N/A，不等于模型失败。不同训练集的官方 Top-1 不可直接比较。';
+ notice.textContent='¹ MoViNet/VideoMAE 为不同 Kinetics 类别空间内的未校准 softmax；MobileCLIP 为六个描述在 6 张真实关键帧上分别匹配后平均的相对分数。模型间不可直接比较分数或当作正确率；可比较标签与参考动作是否一致。无参考类别时标 N/A。';
  box.append(table,notice);
 }
 function saveModelComparison(variant,top,comparison,timings,frames){
- const mb=variant==='videomae'?VIDEOMAE.bytes/1e6:variant==='a0'?15.131688:OFFICIAL_MODELS[variant].bytes/1e6;
- state.comparisonRows[variant]={model:variant==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+variant.toUpperCase(),top1:top[0].label,score:top[0].score,
-   targetRank:comparison?.target_rank??null,inferenceMs:timings.inferenceMs,mb,frames,clipId:state.clip?.id??null};
+ const semantic=variant==='mobileclip_s0';
+ const mb=semantic?state.mobileclipModel.weightsMB:variant==='videomae'?VIDEOMAE.bytes/1e6:variant==='a0'?15.131688:OFFICIAL_MODELS[variant].bytes/1e6;
+ state.comparisonRows[variant]={model:semantic?mobileCLIPModelName:variant==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+variant.toUpperCase(),top1:top[0].label,score:top[0].score,
+   targetRank:comparison?.target_rank??null,inferenceMs:timings.inferenceMs,mb,frames,backend:semantic?state.mobileclipModel.backend:'wasm',clipId:state.clip?.id??null};
  updateComparisonView();
 }
 $('compare-run').addEventListener('click',async()=>{
@@ -490,9 +506,21 @@ $('compare-run').addEventListener('click',async()=>{
    updateComparisonSelection();
  }
 });
-async function run(){if(state.busy)return;hideAnnotated();setBusy(true);state.cancelled=false;const began=performance.now();try{await ensureModelReady();if(state.cancelled)throw Error('用户取消');const variant=state.selectedModel;let frames,times,decodeMs,logits,frameTop1,inferenceStarted;
+async function run(){if(state.busy)return;hideAnnotated();setBusy(true);state.cancelled=false;const began=performance.now();try{await ensureModelReady();if(state.cancelled)throw Error('用户取消');const variant=state.selectedModel;let frames,times,decodeMs,logits,frameTop1,inferenceStarted,mobileclipScores=null;
 if(variant==='a0'){
 const meta=state.meta;if(!meta||meta.length!==47)throw Error('47 输入形状元数据尚未验证');const shapes=meta.map(shapeOf);if(shapes.some(s=>!Array.isArray(s)||s.some(n=>!Number.isInteger(n)||n<1))){record('input_shape_issue',{first:meta.slice(0,3),normalized:shapes.slice(0,3),bad_indices:shapes.map((x,i)=>!Array.isArray(x)||x.some(n=>!Number.isInteger(n)||n<1)?i:null).filter(x=>x!==null)});throw Error('无法获取全部 47 输入的固定张量形状；诊断见推理详情')}if(JSON.stringify(shapes[0])!=='[1,3,172,172]')throw Error('NCHW 输入形状不符');say('正在解码视频并执行逐帧 WASM 推理……');({frames,times,decodeMs}=await readFrames($('video')));if(!frames.length)throw Error('未解码出有效视频帧');const history=[];let offset=1;for(const depth of DIMS){history.push(Array.from({length:depth},(_,i)=>new Float32Array(sizeOf(shapes[offset+i]))));offset+=depth}let pool=Array.from({length:16},(_,i)=>new Float32Array(sizeOf(shapes[29+i])));frameTop1=[];inferenceStarted=performance.now();for(let count=1;count<=frames.length;count++){if(state.cancelled)throw Error('用户取消');const inputs=[tensorFor(frames[count-1],shapes[0])];for(const group of history)for(const h of group)inputs.push(tensorFor(h,shapes[inputs.length]));for(let j=0;j<16;j++)inputs.push(tensorFor(pool[j],shapes[29+j]));inputs.push(tensorFor(new Float32Array([1/count]),shapes[45]),tensorFor(new Float32Array([1]),shapes[46]));const outputs=await state.model.run(inputs);if(outputs.length!==28)throw Error('预期 28 输出，实际 '+outputs.length);const outTensors=Array.from({length:outputs.length},(_,i)=>outputs[i]);const values=await Promise.all(outTensors.map(x=>x.data()));logits=Float32Array.from(values[0]);if(logits.length!==600||!logits.every(Number.isFinite))throw Error('流式第 '+count+' 帧 logits 无效');const frameScores=softmax(logits);let winner=0;for(let k=1;k<frameScores.length;k++)if(frameScores[k]>frameScores[winner])winner=k;frameTop1.push({frame:count,t:Number(times[count-1].toFixed(3)),id:winner,label:state.labels[winner],score:Number(frameScores[winner].toFixed(6))});for(let c=0;c<DIMS.length;c++)history[c]=[...history[c].slice(1),Float32Array.from(values[1+c])];for(let j=0;j<16;j++){const delta=values[12+j];for(let k=0;k<pool[j].length;k++)pool[j][k]+=delta[k]}for(const t of inputs)t.delete?.();if(typeof outputs.delete==='function')outputs.delete();else for(const t of outTensors)t.delete?.()}
+}else if(variant==='mobileclip_s0'){
+  const entry=state.mobileclipModel;
+  if(!entry)throw Error('MobileCLIP 未成功加载');
+  say('正在从前 8 秒视频抽取 6 张真实关键帧…');
+  ({frames,times,decodeMs}=await sampleMobileCLIPFrames($('video'),()=>state.cancelled));
+  if(state.cancelled)throw Error('用户取消');
+  inferenceStarted=performance.now();
+  const output=await inferMobileCLIP({classifier:entry.classifier,frames,isCancelled:()=>state.cancelled,onProgress:say});
+  mobileclipScores=output.scores;
+  logits=Float32Array.from(mobileclipScores,x=>Math.log(Math.max(x,1e-30)));
+  const topIndex=mobileclipScores.indexOf(Math.max(...mobileclipScores));
+  frameTop1=[{frame:frames.length,t:0,id:topIndex,label:MOBILECLIP_LABELS[topIndex],score:Number(mobileclipScores[topIndex].toFixed(6))}];
 }else if(variant==='videomae'){
   const entry=state.videomaeModel;
   if(!entry)throw Error('Qualcomm VideoMAE 尚未加载成功');
@@ -527,10 +555,14 @@ const meta=state.meta;if(!meta||meta.length!==47)throw Error('47 输入形状元
     return {frame:i+1,t:Number(times[i].toFixed(3)),id:topId,label:state.labels[topId],score:Number(scores[topId].toFixed(6))}
   });
 }
-if(!logits||logits.length!==(variant==='videomae'?400:600)||!logits.every(Number.isFinite))throw Error('输出 logits 无效');const probabilities=softmax(logits);
+if(!logits||logits.length!==(variant==='mobileclip_s0'?6:variant==='videomae'?400:600)||!logits.every(Number.isFinite))throw Error('输出 logits 无效');const probabilities=mobileclipScores??softmax(logits);
 const ranked=probabilities.map((score,id)=>({id,label:state.labels[id],score})).sort((a,b)=>b.score-a.score);
 const top=ranked.slice(0,5);
-const comparison=interpretAction(ranked,state.clip,state.labels);
+const comparison=variant==='mobileclip_s0'?(state.clip?(()=>{
+ const target_rank=mobileCLIPReferenceRank(probabilities,state.clip);
+ return {target_rank,summary:target_rank?'参考动作在六类候选中排名 #'+target_rank:'该视频暂无可匹配的六类参考动作',
+ detail:'MobileCLIP 只根据 6 张关键帧与固定英文描述计算相对匹配分数；不含动作过程信息，不能作为视频识别准确率或概率。'};
+})():null):interpretAction(ranked,state.clip,state.labels);
 $('results').replaceChildren();
 for(const item of top){
   const r=document.createElement('div');r.className='result';
@@ -552,11 +584,11 @@ if(comparison){
 }
 const timings={decodeMs:Math.round(decodeMs),inferenceMs:Math.round(performance.now()-inferenceStarted),totalMs:Math.round(performance.now()-began)};
 $('metrics').replaceChildren();
-for(const entry of ['处理 '+frames.length+' 帧','模型运行 '+timings.inferenceMs+' ms','总耗时 '+timings.totalMs+' ms','CPU/WASM']){
+for(const entry of ['处理 '+frames.length+' 帧','模型运行 '+timings.inferenceMs+' ms','总耗时 '+timings.totalMs+' ms',variant==='mobileclip_s0'?(state.mobileclipModel.backend.toUpperCase()+'/'+state.mobileclipModel.dtype):'CPU/WASM']){
  const el=document.createElement('span');el.textContent=entry;$('metrics').append(el);
 }
-await showAnnotated(frameTop1,Math.min(8,$('video').duration),variant==='videomae');saveModelComparison(variant,top,comparison,timings,frames.length);
-record('inference',{variant,top5:top,frameTop1,frames:frames.length,analyzedSeconds:Math.min(8,$('video').duration),timings,backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:variant==='a0'?MODEL_SHA:variant==='videomae'?VIDEOMAE.sha256:OFFICIAL_MODELS[variant].sha256,classificationMode:variant==='videomae'?'clip':'stream',labelSet:variant==='videomae'?'K400':'K600'});
-say(variant==='videomae'?'VideoMAE 已完成 16 帧整段视频分类（K400），Top-5 是未校准 softmax 分数。':'真实推理已返回 '+frames.length+' 帧结果。Top-5 是未校准 softmax 分数。');
+await showAnnotated(frameTop1,Math.min(8,$('video').duration),variant==='videomae',variant==='mobileclip_s0');saveModelComparison(variant,top,comparison,timings,frames.length);
+record('inference',{variant,top5:top,frameTop1,frames:frames.length,analyzedSeconds:Math.min(8,$('video').duration),timings,backend:variant==='mobileclip_s0'?state.mobileclipModel.backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:variant==='mobileclip_s0'?null:variant==='a0'?MODEL_SHA:variant==='videomae'?VIDEOMAE.sha256:OFFICIAL_MODELS[variant].sha256,classificationMode:variant==='mobileclip_s0'?'keyframe-semantic':variant==='videomae'?'clip':'stream',labelSet:variant==='mobileclip_s0'?'six-prompts':variant==='videomae'?'K400':'K600'});
+say(variant==='mobileclip_s0'?'真实推理已返回：MobileCLIP 对 6 张关键帧完成六类文本匹配；结果是相对分数，不是动作识别准确率。':variant==='videomae'?'VideoMAE 已完成 16 帧整段视频分类（K400），Top-5 是未校准 softmax 分数。':'真实推理已返回 '+frames.length+' 帧结果。Top-5 是未校准 softmax 分数。');
 }catch(e){say('真实推理未完成：'+e.message);$('results').textContent='没有可展示的有效推理结果';record('inference_error',{message:e.message,stack:e.stack})}finally{setBusy(false)}}
 $('run').onclick=run;
