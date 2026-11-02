@@ -3,6 +3,7 @@
  * Keeps only ONE decoded frame and current model state in memory.
  * All temporal points come from actual model logits (no synthetic labels).
  */
+import {actorBoxAt,drawActorCrop} from './person-target.js';
 export const MOVINET_FPS=5;
 const A0_DEPTHS=[2,2,2,4,2,2,4,2,2,2,4];
 const count=shape=>shape.reduce((v,n)=>v*n,1);
@@ -125,7 +126,7 @@ export function createOfficialSession({api,model,contract}){
  };
 }
 export async function analyzeCompleteMoViNet({
- video,variant,api,model,meta,contract,labels,toFrame,isCancelled,onProgress
+ video,variant,api,model,meta,contract,labels,toFrame,isCancelled,onProgress,actorTrack
 }){
  if(!['a0','a1','a2'].includes(variant))throw Error('仅 MoViNet Streaming 支持完整连续分析');
  const duration=video.duration,total=sampleCount(duration);
@@ -135,7 +136,7 @@ export async function analyzeCompleteMoViNet({
  if(!ctx)throw Error('浏览器无法建立 Canvas 视频帧缓冲');
  const session=variant==='a0'?createA0Session({api,model,meta}):createOfficialSession({api,model,contract});
  const frameTop1=[];
- let logits=null,decodeMs=0,inferenceMs=0;
+ let logits=null,decodeMs=0,inferenceMs=0,untracked=0;
  const wasPlaying=!video.paused;
  const originalTime=video.currentTime;
  video.pause();
@@ -145,7 +146,14 @@ export async function analyzeCompleteMoViNet({
      const timestamp=sampleTime(index,duration);
      const decodeStart=performance.now();
      await seekVideo(video,timestamp,isCancelled);
-     ctx.drawImage(video,0,0,size,size);
+     const box=actorBoxAt(actorTrack,timestamp,{maxAge:1.0});
+     if(!box){
+       untracked++;
+       if((index+1)%5===0)onProgress?.({processed:index+1,total,
+         seconds:Math.min(duration,(index+1)/MOVINET_FPS),duration,untracked});
+       continue; // No scene fallback, no actor classification without a box.
+     }
+     drawActorCrop(ctx,video,box,size);
      const pixels=ctx.getImageData(0,0,size,size).data;
      const frame=toFrame(pixels,size,variant);
      decodeMs+=performance.now()-decodeStart;
@@ -156,14 +164,14 @@ export async function analyzeCompleteMoViNet({
      let winner=0;
      for(let j=1;j<probabilities.length;j++)if(probabilities[j]>probabilities[winner])winner=j;
      frameTop1.push({frame:index+1,t:Number(timestamp.toFixed(3)),id:winner,
-       label:labels[winner],score:Number(probabilities[winner].toFixed(6))});
+       label:labels[winner],score:Number(probabilities[winner].toFixed(6)),personBox:box});
      if(index===0||index===total-1||((index+1)%5===0))
        onProgress?.({processed:index+1,total,seconds:Math.min(duration,(index+1)/MOVINET_FPS),duration});
      // Yield to the browser UI and cancellation handlers even during long videos.
      if((index+1)%5===0)await new Promise(resolve=>setTimeout(resolve,0));
    }
    if(!logits)throw Error('视频未生成有效 MoViNet 结果');
-   return {logits,frameTop1,framesProcessed:total,duration,decodeMs,inferenceMs};
+   return {logits,frameTop1,framesProcessed:frameTop1.length,framesAttempted:total,untracked,duration,decodeMs,inferenceMs};
  }finally{
    try{
      const t=Math.min(originalTime,Math.max(0,duration-.001));
