@@ -120,8 +120,8 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
 </head>
 <body><main>
 <header>
-  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.11</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
-  <p id="intro" hidden>在浏览器直接运行 MoViNet-A0/A1/A2（K600）、Qualcomm VideoMAE（K400）及 Apple MobileCLIP-S0。前四者为 LiteRT.js CPU/WASM 动作分类，MobileCLIP 利用 WebGPU（不支持时尝试 WASM）对前 8 秒的 6 张真实关键帧做英文文本匹配。不同模型的分数不能直接比较或作为正确率。</p></div>
+  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.12</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
+  <p id="intro" hidden>在浏览器直接运行 MoViNet-A0/A1/A2（K600）、Qualcomm VideoMAE（K400）及 Apple MobileCLIP-S0。所有模型先检测和跟踪主要人物，再只裁剪该人物区域进行推理。MoViNet（K600）逐帧流式分类，VideoMAE（K400）按 4 秒片段分类，MobileCLIP 对每段 6 张人物关键帧进行相对匹配。不同模型的分数不能直接比较或作为正确率。</p></div>
   <div class="meta"><span class="tag inverse">独立 DEV · 非正式发布</span><span class="tag inverse">浏览器本地推理</span></div>
 </header>
 <div class="workspace">
@@ -135,7 +135,7 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
   </section>
   <section class="panel">
     <div class="model-header"><h2>02 · 模型推理</h2><span id="model-state">尚未加载</span></div>
-    <label class="model-form">模型 <select id="model"><option value="a0">MoViNet-A0 Streaming · 基线（15 MB）</option><option value="a1">MoViNet-A1 Streaming · 增强（44 MB）</option><option value="a2">MoViNet-A2 Streaming · 更高精度（52 MB）</option><option value="videomae">Qualcomm VideoMAE · Transformer / K400（351 MB）</option><option value="mobileclip_s0">Apple MobileCLIP-S0 · 关键帧语义匹配 / WebGPU</option></select></label>
+    <label class="model-form">模型 <select id="model"><option value="a0">MoViNet-A0 Streaming · 基线（15 MB）</option><option value="a1">MoViNet-A1 Streaming · 增强（44 MB）</option><option value="a2">MoViNet-A2 Streaming · 更高精度（52 MB）</option><option value="videomae">Qualcomm VideoMAE · 4 秒分段分类 / K400（351 MB）</option><option value="mobileclip_s0">Apple MobileCLIP-S0 · 4 秒分段人物语义匹配 / WebGPU</option></select></label>
     <p id="model-description" class="note">LiteRT.js WASM CPU · Kinetics-600 · 15.1 MB · 172×172（首次下载校验 SHA256）</p>
     <div class="actions">
       <button id="run" class="primary" disabled>开始识别</button>
@@ -154,8 +154,8 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
   </section>
 </div>
 <section id="annotated-section" class="panel annotated-area" hidden>
-  <h2>04 · 推理结果视频（人物框 + 逐帧 Top-1）</h2>
-  <p class="note">人物框由 MediaPipe EfficientDet-Lite0 检测，标签是视频级结果，<strong>不是框内人物的独立动作检测</strong>。MoViNet 对完整视频进行连续逐帧预测；VideoMAE 目前仅分析前 8 秒的视频片段；MobileCLIP 为前 8 秒关键帧匹配的汇总，绝不模拟逐帧预测。</p><div class="person-visual-controls"><label><input id="person-box-toggle" type="checkbox" checked> 显示主人物框（实验功能）</label><span id="person-detector-status" role="status" aria-live="polite">等待推理完成后加载轻量检测模型</span></div>
+  <h2>04 · 主要人物连续行为分析（人物框 + 动作标签）</h2>
+  <p class="note">首先用 MediaPipe EfficientDet-Lite0 定位并跟踪主要人物，<strong>所有模型的实际输入均来自跟踪人物的裁剪区域</strong>。MoViNet 提供连续逐时刻分类；VideoMAE 和 MobileCLIP 提供 4 秒片段级预测。人物丢失时不进行整幅画面替代推理。</p><div class="person-visual-controls"><label><input id="person-box-toggle" type="checkbox" checked> 显示主要人物框</label><span id="person-detector-status" role="status" aria-live="polite">人物检测将在推理前执行</span></div>
   <div class="anno-video-wrap">
     <video id="annotated-video" controls playsinline muted preload="metadata" aria-label="逐帧 Top-1 叠加推理结果视频"></video>
     <canvas id="person-box-layer" class="person-box-canvas" aria-hidden="true"></canvas>
@@ -166,7 +166,7 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
     <div class="timeline-header"><strong>动作预测时间轴</strong><span id="timeline-duration"></span></div>
     <div class="timeline-track-wrap"><div id="timeline-track" class="timeline-track"></div><span id="timeline-cursor" class="timeline-cursor" aria-hidden="true"></span></div>
     <div class="timeline-scale"><span>0:00</span><span id="timeline-scale-end"></span></div>
-    <p class="note">基于 5 FPS 真实逐帧 Top-1 进行 5 帧多数平滑，仅用于观察动作变化，<strong>不代表已验证的动作起止边界</strong>。点击区间可跳转回放。</p>
+    <p class="note">MoViNet 按实际 5 FPS 预测绘制时间轴；VideoMAE / MobileCLIP 按真实 4 秒片段结果绘制。仅用于观察预测变化，<strong>不是精确动作边界、身份识别或准确率证明</strong>。点击区间可跳转回放。</p>
     <div id="timeline-segments" class="timeline-segments" aria-label="动作区间的时间和英文预测标签"></div>
   </section>
 </section>
@@ -180,7 +180,7 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
       <strong>对比模型（可选 1–3 个）</strong>
       <button id="compare-info" class="info-small" type="button" title="查看模型对比说明" aria-label="查看模型对比说明" aria-expanded="false" aria-controls="compare-help">ⓘ</button>
     </div>
-    <p id="compare-help" class="note" hidden>这里只展示当前视频已在 02 完成的模型结果；勾选不会触发下载或重新推理。MoViNet 为 K600 流式分类，VideoMAE 为 K400 整段分类，MobileCLIP 为 6 张关键帧的语义匹配。不同分数不能直接比较，也不代表正确率。</p>
+    <p id="compare-help" class="note" hidden>这里只展示当前视频已在 02 完成的模型结果；勾选不会触发下载或重新推理。MoViNet 为 K600 人物流式分类，VideoMAE 为 K400 连续分段分类，MobileCLIP 为每段人物关键帧语义匹配。不同分数不能直接比较，也不代表正确率。</p>
   <div id="compare-choices" role="group" aria-label="选择要对比的模型（最多三个）">
     <label><input type="checkbox" value="a0"> MoViNet-A0 · 15 MB</label>
     <label><input type="checkbox" value="a1"> MoViNet-A1 · 44 MB</label>
