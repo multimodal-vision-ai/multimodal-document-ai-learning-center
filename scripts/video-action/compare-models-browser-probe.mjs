@@ -28,18 +28,18 @@ try{
    await page.screenshot({path:'artifacts/video-action/v105-compare/'+variant+'-real-video.png',fullPage:true});
    if(!valid)throw Error('A1/A2 real video inference did not return valid logits: '+variant+' '+status);
  }
- const before=await page.locator('#comparison-results').innerText();
- report.comparisonRowsBefore=before;
- if(!before.includes('MoViNet-A2'))throw Error('Selected A2 inference is missing from comparison view'); // A1 is hidden until selected.
- await page.locator('#compare-choices input[value="a1"]').check();
- await page.locator('#compare-run').click();
- await page.waitForFunction(()=>{
-   const el=document.querySelector('#compare-run'),status=document.querySelector('#status')?.textContent||'';
-   return !!el&&!el.disabled&&status.includes('已完成 3 个所选模型');
- },null,{timeout:240000});
+ const noAuto=await page.locator('#compare-choices input:checked').count()===0;
+ if(!noAuto)throw Error('06 must not auto-select completed models');
+ for(const variant of ['a1','a2']){
+   if(!await page.locator('#compare-choices input[value="'+variant+'"]').isEnabled())
+     throw Error('Completed model '+variant+' is not selectable');
+   await page.locator('#compare-choices input[value="'+variant+'"]').check();
+ }
  const table=await page.locator('#comparison-results').innerText();
  report.allThreeComparison=table;
- report.comparisonActual=table.includes('MoViNet-A0')&&table.includes('MoViNet-A1')&&table.includes('MoViNet-A2')&&!table.includes('尚未运行');
+ report.comparisonActual=table.includes('MoViNet-A1')&&table.includes('MoViNet-A2')&&
+   !table.includes('MoViNet-A0')&&!table.includes('尚未运行')&&
+   await page.locator('#compare-run').count()===0;
  report.weightsVerified=report.models.every(x=>/^[a-f0-9]{64}$/.test(x.modelSha256));
  report.success=report.models.every(x=>x.passed)&&report.comparisonActual&&report.weightsVerified&&report.errors.length===0;
  await page.screenshot({path:'artifacts/video-action/v105-compare/three-models-comparison.png',fullPage:true});
