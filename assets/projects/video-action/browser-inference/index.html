@@ -100,11 +100,27 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
 #compare-choices{margin:8px 0 0;gap:6px}
 #compare-choices label{padding:6px 8px;font-size:11px;white-space:normal}
 #compare-selection-status{margin:6px 0 0;font-size:11px}
+
+.analysis-progress{display:block;width:100%;height:8px;accent-color:#2678ca;margin:8px 0 0}
+.analysis-progress[hidden]{display:none}
+.action-timeline{margin:15px 0 2px;padding:12px;background:#f6f9fd;border:1px solid #e2ebf6;border-radius:11px}
+.action-timeline[hidden]{display:none}
+.timeline-header,.timeline-scale{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#315a80;font-size:12px}
+.timeline-header{margin-bottom:9px}
+.timeline-scale{font-size:10px;margin-top:4px;color:#7590aa}
+.timeline-track-wrap{position:relative}
+.timeline-track{display:flex;overflow:hidden;border-radius:7px;background:#e8eef6;min-height:43px;width:100%}
+.timeline-track button{border:0;border-right:1px solid #fff;flex-shrink:0;min-width:0;min-height:43px;padding:4px 5px;font:inherit;font-size:10px;color:#133854;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.timeline-track button:hover,.timeline-track button:focus-visible{outline:2px solid #164f90;outline-offset:-2px}
+.timeline-cursor{position:absolute;left:0%;top:-4px;bottom:-4px;width:2px;background:#c73d32;pointer-events:none;box-shadow:0 0 0 1px #fff;transition:left .08s linear}
+.timeline-segments{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.timeline-segments button{border:1px solid #d2e1ef;border-radius:6px;background:#fff;font:inherit;font-size:11px;color:#355a78;padding:5px 8px;cursor:pointer;text-align:left}
+.timeline-segments button:hover{background:#edf5ff;border-color:#90bbdf}
 </style>
 </head>
 <body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div><main>
 <header>
-  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.10</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
+  <div><span class="eyebrow">MVAI LEARNING CENTER · DEV V1.0.11</span><h1>视频行为识别与分析 <button id="info" aria-label="技术说明" title="查看技术说明">ⓘ</button></h1>
   <p id="intro" hidden>在浏览器直接运行 MoViNet-A0/A1/A2（K600）、Qualcomm VideoMAE（K400）及 Apple MobileCLIP-S0。前四者为 LiteRT.js CPU/WASM 动作分类，MobileCLIP 利用 WebGPU（不支持时尝试 WASM）对前 8 秒的 6 张真实关键帧做英文文本匹配。不同模型的分数不能直接比较或作为正确率。</p></div>
   <div class="meta"><span class="tag inverse">独立 DEV · 非正式发布</span><span class="tag inverse">浏览器本地推理</span></div>
 </header>
@@ -128,6 +144,7 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
       <button id="reset" class="ghost">清除</button>
     </div>
     <div id="status" class="status" role="status" aria-live="polite">选择视频后点击「开始识别」，模型将自动加载；也可提前手动检查。</div>
+    <progress id="analysis-progress" class="analysis-progress" max="100" value="0" hidden aria-label="连续视频分析进度"></progress>
     <hr class="sep">
     <h3>03 · 分类结果</h3>
     <p id="reference">参考动作：未选择样例</p>
@@ -138,13 +155,20 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
 </div>
 <section id="annotated-section" class="panel annotated-area" hidden>
   <h2>04 · 推理结果视频（人物框 + 逐帧 Top-1）</h2>
-  <p class="note">人物框由 MediaPipe EfficientDet-Lite0 检测，标签是视频级结果，<strong>不是框内人物的独立动作检测</strong>。MoViNet 为逐帧预测；VideoMAE 为整段预测；MobileCLIP 为关键帧匹配的汇总，绝不模拟逐帧预测。</p><div class="person-visual-controls"><label><input id="person-box-toggle" type="checkbox" checked> 显示主人物框（实验功能）</label><span id="person-detector-status" role="status" aria-live="polite">等待推理完成后加载轻量检测模型</span></div>
+  <p class="note">人物框由 MediaPipe EfficientDet-Lite0 检测，标签是视频级结果，<strong>不是框内人物的独立动作检测</strong>。MoViNet 对完整视频进行连续逐帧预测；VideoMAE 目前仅分析前 8 秒的视频片段；MobileCLIP 为前 8 秒关键帧匹配的汇总，绝不模拟逐帧预测。</p><div class="person-visual-controls"><label><input id="person-box-toggle" type="checkbox" checked> 显示主人物框（实验功能）</label><span id="person-detector-status" role="status" aria-live="polite">等待推理完成后加载轻量检测模型</span></div>
   <div class="anno-video-wrap">
     <video id="annotated-video" controls playsinline muted preload="metadata" aria-label="逐帧 Top-1 叠加推理结果视频"></video>
     <canvas id="person-box-layer" class="person-box-canvas" aria-hidden="true"></canvas>
     <div class="anno-top1" id="top1-overlay" aria-live="off"><small>流式 Top-1</small><strong>等待播放</strong></div>
   </div>
   <p id="annotation-summary" class="anno-caption"></p>
+  <section id="action-timeline" class="action-timeline" hidden aria-label="MoViNet 完整视频动作预测时间轴">
+    <div class="timeline-header"><strong>动作预测时间轴</strong><span id="timeline-duration"></span></div>
+    <div class="timeline-track-wrap"><div id="timeline-track" class="timeline-track"></div><span id="timeline-cursor" class="timeline-cursor" aria-hidden="true"></span></div>
+    <div class="timeline-scale"><span>0:00</span><span id="timeline-scale-end"></span></div>
+    <p class="note">基于 5 FPS 真实逐帧 Top-1 进行 5 帧多数平滑，仅用于观察动作变化，<strong>不代表已验证的动作起止边界</strong>。点击区间可跳转回放。</p>
+    <div id="timeline-segments" class="timeline-segments" aria-label="动作区间的时间和英文预测标签"></div>
+  </section>
 </section>
 <div class="lower">
   <section class="panel"><details><summary>05 · 推理详情与实验记录</summary>
