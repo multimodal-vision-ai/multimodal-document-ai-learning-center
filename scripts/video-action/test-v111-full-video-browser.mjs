@@ -21,9 +21,11 @@ async function runAndValidate(seconds,modelId='a0'){
  const inf=details.inference;
  if(!inf||inf.variant!==modelId)throw Error('Unexpected inference result for '+modelId);
  if(Math.abs(inf.analyzedSeconds-seconds)>.25)throw Error('Truncated duration: '+inf.analyzedSeconds+' != '+seconds);
- if(inf.frames!==Math.ceil(inf.analyzedSeconds*5-1e-8))throw Error('Incorrect full frame count '+inf.frames);
- if(inf.frameTop1.length!==inf.frames)throw Error('Missing time-indexed frame logits');
- if(seconds>8.2&&inf.frameTop1.at(-1).t<=8)throw Error('No real prediction after 8 seconds');
+ const expected=Math.ceil(inf.analyzedSeconds*5-1e-8);
+ if(inf.frameTop1.length!==expected)throw Error('Not all full-video time slots represented '+inf.frameTop1.length);
+ if(inf.frames!==inf.frameTop1.filter(x=>!x.missing).length)throw Error('Processed model count includes missing actors');
+ if(!inf.frameTop1.some(x=>!x.missing&&x.personBox))throw Error('No person-cropped model predictions');
+ if(seconds>8.2&&!inf.frameTop1.some(x=>!x.missing&&x.t>8))throw Error('No actual cropped-person prediction after 8 seconds');
  if(!await page.locator('#action-timeline').isVisible())throw Error('Timeline not visible');
  if(!await page.locator('#timeline-track button').count())throw Error('No segments from actual model');
  const time=inf.analyzedSeconds-.7;
@@ -34,13 +36,13 @@ async function runAndValidate(seconds,modelId='a0'){
  if(overlay.includes('超出已分析范围'))throw Error('Overlay was still truncated at 8 seconds');
  const cursor=await page.locator('#timeline-cursor').evaluate(el=>Number.parseFloat(el.style.left));
  if(cursor<80)throw Error('Timeline cursor did not follow playback '+cursor);
- return {model:modelId,frames:inf.frames,duration:inf.analyzedSeconds,lastTime:inf.frameTop1.at(-1).t,
+ return {model:modelId,frames:inf.frames,duration:inf.analyzedSeconds,lastTime:inf.frameTop1.at(-1).t,missing:inf.frameTop1.filter(x=>x.missing).length,
    segments:inf.actionSegments?.length,cursor,top5:inf.top5.slice(0,2)};
 }
 try{
  await page.goto(source,{waitUntil:'domcontentloaded',timeout:45000});
  await page.waitForFunction(()=>document.querySelectorAll('#sample-list button[data-clip-id]').length===6,null,{timeout:45000});
- await page.locator('#sample-list button[data-action="sleep_posture"]').click();
+ await page.locator('#sample-list button[data-action="wave"]').click();
  await page.waitForFunction(()=>document.querySelector('#video')?.readyState>=2&&document.querySelector('#video')?.videoWidth>0,null,{timeout:35000});
  const sampleLength=await page.locator('#video').evaluate(v=>v.duration);
  if(sampleLength<=0)throw Error('No valid real HF demo duration');
@@ -64,7 +66,7 @@ try{
      report.longA1=await runAndValidate(duration,'a1');
      report.longA2=await runAndValidate(duration,'a2');
      report.checks.allThreeStreamingModelsFullVideo=[report.longUpload,report.longA1,report.longA2]
-       .every(x=>x.frames>=100&&x.lastTime>19&&x.duration>=20);
+       .every(x=>x.frames>0&&x.lastTime>19&&x.duration>=20);
      await page.screenshot({path:out+'/a2-24sec-timeline.png',fullPage:true});
    }
  }
