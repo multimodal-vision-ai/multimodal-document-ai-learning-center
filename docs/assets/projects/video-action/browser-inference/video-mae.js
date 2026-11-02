@@ -5,6 +5,7 @@
  * Original model.py performs normalization IN the graph and returns logits despite
  * the exported TFLite name "class_probs". Always softmax after raw inference.
  */
+import {actorBoxAt,drawActorCrop} from './person-target.js';
 export const VIDEOMAE={
  id:'videomae',
  label:'Qualcomm VideoMAE',
@@ -98,15 +99,16 @@ export async function compileVideoMAE({api,loadRuntime,onProgress,signal}){
  if(labels.some(x=>typeof x!=='string'||!x))throw Error('Kinetics400 label mapping incomplete');
  return {model,labels,bytes:VIDEOMAE.bytes,sha256:sha,inputShape:[1,16,224,224,3]};
 }
-export async function sampleVideoMAEFrames(video, isCancelled){
+export async function sampleVideoMAEFrames(video, isCancelled,{start=0,end=Math.min(8,video.duration),actorTrack=null}={}){
  if(!Number.isFinite(video.duration)||video.duration<=0)throw Error('视频时长无效');
  const size=224,canvas=document.createElement('canvas');canvas.width=canvas.height=size;
  const ctx=canvas.getContext('2d',{willReadFrequently:true});
  const frames=new Float32Array(16*size*size*3);
- const duration=Math.min(8,video.duration),start=performance.now();
+ const duration=end-start,started=performance.now();
+ if(!(duration>0)||start<0||end>video.duration+.01)throw Error('VideoMAE 无效分段区间');
  for(let frame=0;frame<16;frame++){
    if(isCancelled?.())throw Error('用户取消');
-   const sec=Math.min(duration*(frame+.5)/16,Math.max(0,video.duration-.02));
+   const sec=Math.min(start+duration*(frame+.5)/16,Math.max(0,video.duration-.02));
    if(Math.abs(video.currentTime-sec)>.009||video.readyState<2){
      await new Promise((resolve,reject)=>{
        const timer=setTimeout(()=>reject(Error('视频采样解码超时')),14000);
@@ -114,8 +116,14 @@ export async function sampleVideoMAEFrames(video, isCancelled){
        video.addEventListener('seeked',done,{once:true});video.currentTime=sec;
      });
    }
-   const w=video.videoWidth,h=video.videoHeight,side=Math.min(w,h);
-   ctx.drawImage(video,(w-side)/2,(h-side)/2,side,side,0,0,size,size);
+   if(actorTrack){
+     const personBox=actorBoxAt(actorTrack,sec);
+     if(!personBox)throw Error('VideoMAE 分段 '+start.toFixed(1)+'–'+end.toFixed(1)+' 秒人物跟踪缺失');
+     drawActorCrop(ctx,video,personBox,size);
+   }else{
+     const w=video.videoWidth,h=video.videoHeight,side=Math.min(w,h);
+     ctx.drawImage(video,(w-side)/2,(h-side)/2,side,side,0,0,size,size);
+   }
    const rgba=ctx.getImageData(0,0,size,size).data;
    const base=frame*size*size*3;
    for(let p=0;p<size*size;p++){
@@ -124,7 +132,7 @@ export async function sampleVideoMAEFrames(video, isCancelled){
      frames[base+p*3+2]=rgba[p*4+2]/255;
    }
  }
- return {frames:[frames],times:[0],decodeMs:Math.round(performance.now()-start),duration};
+ return {frames:[frames],times:[0],decodeMs:Math.round(performance.now()-started),duration};
 }
 export async function inferVideoMAE({api,model,frames}){
  if(frames.length!==1||frames[0].length!==16*224*224*3)throw Error('VideoMAE expects exactly 16 RGB frames');
