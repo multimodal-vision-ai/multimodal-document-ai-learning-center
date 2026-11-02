@@ -31,9 +31,16 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install chrome
-      - name: Browser must detect main person, crop actual ROI, and run real model
+      - name: Create 16-second loop from approved real waving sample (test-only)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          curl -fLsS --retry 3 --connect-timeout 30             "https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo/resolve/45d5025de58f8b063a8fcf0c72d3ce7a18f049a6/demo/videos/real_waving_hand_001.mp4"             -o /tmp/mvai-waving.mp4
+          ffmpeg -hide_banner -loglevel error -y -stream_loop 4 -i /tmp/mvai-waving.mp4             -t 16 -an -c:v libx264 -preset ultrafast -crf 29             -pix_fmt yuv420p -movflags +faststart /tmp/mvai-waving-16s.mp4
+      - name: Browser must track the same person and run model over both real and long video
         env:
           MVAI_MODEL: ${{ matrix.model }}
+          MVAI_LONG_VIDEO: /tmp/mvai-waving-16s.mp4
         run: |
           python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-v112-http.log 2>&1 &
           node scripts/video-action/test-v112-real-actor-browser.mjs
