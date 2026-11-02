@@ -15,10 +15,11 @@ try{
  if(await checkboxes.count()!==5)throw Error('Five comparison candidates required');
  await page.locator('#compare-choices input[value="a2"]').uncheck(); // default A0+A2 already checked
  await page.locator('#compare-choices input[value="mobileclip_s0"]').check();
- await page.locator('#compare-choices input[value="a1"]').check();
  const locked=await page.locator('#compare-choices input[value="videomae"]').isDisabled();
  if(!locked)throw Error('Maximum 3 model comparison limit broken');
- await page.locator('#compare-choices input[value="a1"]').uncheck();
+ await page.locator('#compare-choices input[value="a0"]').uncheck();
+ if(await page.locator('#compare-choices input[value="a1"]').isDisabled())
+   throw Error('Fourth model must become selectable when a slot is freed');
  await page.locator('#model').selectOption('mobileclip_s0');
  await page.locator('#probe').click();
  await page.waitForFunction(()=>!document.querySelector('#probe').disabled,null,{timeout:240000});
