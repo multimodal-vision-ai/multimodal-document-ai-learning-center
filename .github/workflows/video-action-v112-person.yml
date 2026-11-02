@@ -1,0 +1,47 @@
+name: V1.0.12 tracked-person actual model inference and time axis
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'docs/assets/projects/video-action/browser-inference/**'
+      - 'scripts/video-action/test-v112-*.mjs'
+      - '.github/workflows/video-action-v112-person.yml'
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  actor-model:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [a0, a1, a2, videomae, mobileclip_s0]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Validate source and actor geometry
+        run: |
+          for f in app.js person-target.js continuous-segments.js continuous-movinet.js video-mae.js mobileclip.js; do
+            node --check docs/assets/projects/video-action/browser-inference/$f
+          done
+          node scripts/video-action/test-v112-person-target.mjs
+      - name: Install Chrome
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install chrome
+      - name: Browser must detect main person, crop actual ROI, and run real model
+        env:
+          MVAI_MODEL: ${{ matrix.model }}
+        run: |
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-v112-http.log 2>&1 &
+          node scripts/video-action/test-v112-real-actor-browser.mjs
+      - name: Save per-model actor screenshots and execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v112-actor-${{ matrix.model }}
+          path: artifacts/video-action/v112-actor/
+          if-no-files-found: warn
+          retention-days: 14
