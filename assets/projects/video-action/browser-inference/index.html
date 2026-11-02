@@ -156,7 +156,7 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
       <strong>对比模型（可选 1–3 个）</strong>
       <button id="compare-info" class="info-small" type="button" title="查看模型对比说明" aria-label="查看模型对比说明" aria-expanded="false" aria-controls="compare-help">ⓘ</button>
     </div>
-    <p id="compare-help" class="note" hidden>在同一视频上对比所选模型。MoViNet 为逐帧 K600 分类，VideoMAE 为 16 帧 K400 整段分类；MobileCLIP 为 6 张关键帧图文匹配。模型按需加载，分数并非准确率，也不能跨模型直接比较。</p>
+    <p id="compare-help" class="note" hidden>这里只展示当前视频已在 02 完成的模型结果；勾选不会触发下载或重新推理。MoViNet 为 K600 流式分类，VideoMAE 为 K400 整段分类，MobileCLIP 为 6 张关键帧的语义匹配。不同分数不能直接比较，也不代表正确率。</p>
   <div id="compare-choices" role="group" aria-label="选择要对比的模型（最多三个）">
     <label><input type="checkbox" value="a0"> MoViNet-A0 · 15 MB</label>
     <label><input type="checkbox" value="a1"> MoViNet-A1 · 44 MB</label>
