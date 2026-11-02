@@ -18,12 +18,12 @@ TOKEN=os.environ.get("HF_TOKEN")
 if not TOKEN: sys.exit("HF_TOKEN is absent; preview not deployed")
 FRONTEND_FILES=("index.html","app.js","semantic.js","person-overlay.js",
                 "official-movinet.js","video-mae.js","mobileclip.js",
-                "continuous-movinet.js","config.json")
+                "continuous-movinet.js","person-target.js","continuous-segments.js","config.json")
 for file in FRONTEND_FILES:
     if not (ROOT/file).is_file():sys.exit("Missing frontend file: "+file)
 # Guard against silently omitting any future local ES module import.
 import re
-for source in ("app.js","mobileclip.js","official-movinet.js","video-mae.js","continuous-movinet.js","semantic.js","person-overlay.js"):
+for source in ("app.js","mobileclip.js","official-movinet.js","video-mae.js","continuous-movinet.js","continuous-segments.js","person-target.js","semantic.js","person-overlay.js"):
     content=(ROOT/source).read_text(encoding="utf8")
     local_imports=re.findall(r"""(?:from\s*|import\s*\(|import\s*)['"]\./([^'"]+)['"]""",content)
     for imported in local_imports:
@@ -42,7 +42,7 @@ except Exception as error:
 info=api.repo_info(repo_id=REPO,repo_type="space")
 if info.private:sys.exit("Isolated DEV Space unexpectedly private")
 card=f"""---
-title: MVAI Video Action V1.0.5 DEV
+title: MVAI Video Action V1.0.12 DEV
 emoji: 🎬
 colorFrom: blue
 colorTo: indigo
@@ -50,7 +50,7 @@ sdk: static
 app_file: index.html
 pinned: false
 ---
-# MVAI Video Action V1.0.5 — ISOLATED DEV PREVIEW
+# MVAI Video Action V1.0.12 — ISOLATED DEV PREVIEW
 
 **NOT OFFICIAL. DO NOT REFERENCE AS RELEASED.**
 
@@ -83,8 +83,7 @@ for i in range(12):
             if response.status==200 and "视频行为识别与分析" in data:
                 # The HTML can return 200 even when an imported module was omitted.
                 # Verify the exact local modules the page will actually load.
-                for module in ("app.js","mobileclip.js","semantic.js","person-overlay.js",
-                               "official-movinet.js","video-mae.js","config.json"):
+                for module in FRONTEND_FILES:
                     with urllib.request.urlopen(
                         urllib.request.Request(HOST+module,headers={"User-Agent":"MVAI-DEV-Preview-Verification/1.0"}),
                         timeout=18) as module_response:
@@ -92,7 +91,7 @@ for i in range(12):
                         if module_response.status!=200 or len(data_bytes)<10:
                             raise RuntimeError("DEV module missing: "+module)
                 print("DEV_SPACE_HTTP_VERIFIED=200")
-                print("DEV_MODULES_HTTP_VERIFIED=8")
+                print("DEV_MODULES_HTTP_VERIFIED="+str(len(FRONTEND_FILES)))
                 break
     except Exception as e:
         if i==11:raise RuntimeError("DEV preview not accessible after static Space update: "+type(e).__name__) from e
