@@ -40,6 +40,7 @@ jobs:
       - name: Real Chrome 10-second HF sample and 24-second full-video upload
         env:
           MVAI_LONG_VIDEO: /tmp/mvai-test-24s.mp4
+          MVAI_VERIFY_ALL_MOVINET: '1'
         run: |
           python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-v111-http.log 2>&1 &
           node scripts/video-action/test-v111-full-video-browser.mjs
