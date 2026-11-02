@@ -6,7 +6,7 @@ New v2 reports fail closed if any recommended item fails the four-dimension rubr
 from datetime import datetime, timezone
 import hashlib
 import json
-from core import parse_dt
+from core import DATA, load, parse_dt
 from screening import SCHEMA_VERSION, DISPLAY_MATCH_THRESHOLD, report_items
 
 ROLLOUT_UTC = datetime(2026, 10, 22, 3, 54, tzinfo=timezone.utc)
@@ -18,6 +18,77 @@ def snapshot_digest(reports, queue):
     payload = json.dumps({"reports": reports, "queue": queue}, sort_keys=True,
                          ensure_ascii=False, separators=(",", ":"))
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+
+def queue_for_report(report, queue):
+    """Resolve older, already-reviewed IDs against immutable archived source snapshots.
+
+    A rolling seven-day queue must not retroactively invalidate an earlier report.
+    Fresh reports are still checked strictly against the current queue. Missing
+    historical candidates are recovered only from archived, evidence-linked
+    stage-one snapshots, never synthesized from a paper title.
+    """
+    if not isinstance(report, dict) or not isinstance(queue, dict):
+        return queue
+    try:
+        report_time = parse_dt(report["generated_at"])
+        queue_time = parse_dt(queue["generated_at"])
+    except (ValueError, TypeError, KeyError, OverflowError):
+        return queue
+    if report_time >= queue_time:
+        return queue
+
+    items = report.get("items")
+    if not isinstance(items, list):
+        return queue
+    known = {
+        item.get("id") for item in queue.get("candidates", [])
+        if isinstance(item, dict)
+    }
+    missing = {
+        item.get("candidate_id") for item in items
+        if isinstance(item, dict) and item.get("candidate_id") not in known
+    }
+    missing.discard(None)
+    if not missing:
+        return queue
+
+    recovered = {}
+    frozen_sources = [report.get("_screening_queue")]
+    archive_root = DATA / "chatgpt-reviewed" / "archive"
+    for kind in ("weekly", "monthly"):
+        folder = archive_root / kind
+        if folder.is_dir():
+            for path in folder.glob("*.json"):
+                archived = load(path, None)
+                if isinstance(archived, dict):
+                    frozen_sources.append(archived.get("_screening_queue"))
+    for source in frozen_sources:
+        if not isinstance(source, dict):
+            continue
+        for candidate in source.get("candidates", []):
+            if not isinstance(candidate, dict):
+                continue
+            cid = candidate.get("id")
+            if cid not in missing or cid in recovered:
+                continue
+            if not isinstance(candidate.get("match_score"), (int, float)) or candidate["match_score"] < DISPLAY_MATCH_THRESHOLD:
+                continue
+            if not any(
+                isinstance(item, dict) and item.get("candidate_id") == cid
+                and item.get("title") == candidate.get("title")
+                and candidate.get("source_url") in item.get("evidence_urls", [])
+                for item in items
+            ):
+                continue
+            recovered[cid] = candidate
+    if not recovered:
+        return queue
+    return {
+        **queue,
+        "candidates": [*queue.get("candidates", []), *recovered.values()],
+    }
 
 
 def assess_report(report, kind, queue):
@@ -59,7 +130,7 @@ def assess_report(report, kind, queue):
         errors.append("first_stage_threshold must match the current first-stage threshold")
     if errors:
         raise ValueError(f"{kind}: " + "; ".join(errors))
-    selected, item_errors = report_items(report, queue)
+    selected, item_errors = report_items(report, queue_for_report(report, queue))
     errors.extend(item_errors)
     if report.get("status") == "completed" and not selected:
         errors.append("completed report requires at least one validated recommended item")
