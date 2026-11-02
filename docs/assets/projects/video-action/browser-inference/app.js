@@ -3,7 +3,8 @@ import {createPersonDetector,choosePrimaryPerson,mapBoxToContainedVideo,top1At} 
 import {OFFICIAL_MODELS,MODEL_REPO,validateStreamingContract,makeRGBFrameFromRGBA,runStreamingBatch} from './official-movinet.js';
 import {VIDEOMAE,compileVideoMAE,sampleVideoMAEFrames,inferVideoMAE} from './video-mae.js';
 import {MOBILECLIP,MOBILECLIP_LABELS,loadMobileCLIP,sampleMobileCLIPFrames,inferMobileCLIP,mobileCLIPReferenceRank,mobileCLIPModelName} from './mobileclip.js';
-import {MOVINET_FPS,analyzeCompleteMoViNet,buildActionSegments} from './continuous-movinet.js';
+import {MOVINET_FPS,seekVideo,analyzeCompleteMoViNet,buildActionSegments} from './continuous-movinet.js';
+import {scanPrimaryActor,actorBoxAt} from './person-target.js';
 // MVAI V1.0.3 experimental browser adapter. No fake outputs or sample fallback.
 const $ = id => document.getElementById(id);
 const OFFICIAL_MODEL_REVISION='d1ed47ef93682fbceda5c388277e34ed717dd4ab';
@@ -12,7 +13,7 @@ const MODEL_SHA='0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c
 const LABELS_URL='https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt';
 const DATASET='multimodal-vision-ai/mvai-daily-action-demo';
 const DIMS=[2,2,2,4,2,2,4,2,2,2,4];
-const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},videoKey:0,activeController:null,videomaeModel:null,videomaePromise:null,mobileclipModel:null,mobileclipPromise:null,k600Labels:null,outputMode:'stream'};
+const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},videoKey:0,activeController:null,videomaeModel:null,videomaePromise:null,mobileclipModel:null,mobileclipPromise:null,k600Labels:null,outputMode:'stream',actorTrack:null,actorGrounded:false};
 let config=null;
 async function loadConfig(){const response=await fetch('./config.json',{cache:'no-store'});if(!response.ok)throw Error('本地配置 HTTP '+response.status);config=await response.json();if(config.dataset_id!==DATASET)throw Error('数据源配置错误');return config;}
 const say=s=>{$('status').textContent=s;$('status').classList.toggle('error',/失败|未完成|错误|无效/.test(s));};
@@ -36,7 +37,8 @@ function clearPersonOverlay(){
 }
 function drawPersonOverlay(){
  const video=$('annotated-video'),canvas=$('person-box-layer'),enabled=$('person-box-toggle').checked;
- if(!canvas||!enabled||!personState.box||!state.top1Timeline.length||video.currentTime>state.annotatedLimit+.005){
+ const currentBox=state.actorGrounded?actorBoxAt(state.actorTrack,video.currentTime):personState.box;
+ if(!canvas||!enabled||!currentBox||!state.top1Timeline.length||video.currentTime>state.annotatedLimit+.005){
    clearPersonOverlay();return;
  }
  const width=video.clientWidth,height=video.clientHeight;
@@ -46,16 +48,16 @@ function drawPersonOverlay(){
  if(canvas.width!==W||canvas.height!==H){canvas.width=W;canvas.height=H;}
  const ctx=canvas.getContext('2d');
  ctx.setTransform(pixelRatio,0,0,pixelRatio,0,0);ctx.clearRect(0,0,width,height);
- const coords=mapBoxToContainedVideo(personState.box,video.videoWidth,video.videoHeight,width,height);
+ const coords=mapBoxToContainedVideo(currentBox,video.videoWidth,video.videoHeight,width,height);
  if(!coords){clearPersonOverlay();return}
  const action=top1At(state.top1Timeline,video.currentTime,state.annotatedLimit);
- if(!action){clearPersonOverlay();return}
+ if(!action||action.missing){clearPersonOverlay();return}
  // The box locates a COCO "person"; MoViNet predicts a video-level action,
  // so the displayed tag is only associated visually, never attributed to that actor.
  ctx.lineWidth=3;ctx.strokeStyle='#39e5ad';ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;
  ctx.strokeRect(coords.x+1.5,coords.y+1.5,Math.max(0,coords.w-3),Math.max(0,coords.h-3));ctx.shadowBlur=0;
  const title=labelDisplay(action.label)+' · '+(action.score*100).toFixed(1)+'%';
- const disclaimer='画面 Top-1（非人物独立分类）';
+ const disclaimer=state.actorGrounded?(state.outputMode==='stream'?'框内人物 · 流式分类':state.outputMode==='clip'?'框内人物 · 片段分类':'框内人物 · 图文匹配'):'画面 Top-1（非人物独立分类）';
  ctx.font='bold 14px system-ui,sans-serif';
  const tw=ctx.measureText(title).width;
  ctx.font='11px system-ui,sans-serif';
@@ -72,6 +74,7 @@ function detectPersonFrame(force=false){
  const video=$('annotated-video');
  if(!personState.model||!$('person-box-toggle').checked||$('annotated-section').hidden||video.readyState<2||!video.videoWidth)return;
  if(video.currentTime>state.annotatedLimit+.005){personState.box=null;drawPersonOverlay();return}
+ if(state.actorGrounded){drawPersonOverlay();return}
  const ms=performance.now();
  if(!force&&(ms-personState.lastSampleMs<400||Math.abs(video.currentTime-personState.lastTime)<.1))return;
  personState.lastSampleMs=ms;personState.lastTime=video.currentTime;
@@ -86,6 +89,7 @@ function detectPersonFrame(force=false){
 }
 async function ensurePersonDetector(){
  if(!$('person-box-toggle').checked||$('annotated-section').hidden)return;
+ if(state.actorGrounded){drawPersonOverlay();return}
  if(personState.model){detectPersonFrame(true);return}
  if(personState.loadPromise)return personState.loadPromise;
  const generation=personState.generation;
@@ -109,6 +113,23 @@ $('person-box-toggle').addEventListener('change',()=>{
    ensurePersonDetector();
  }
 });
+async function getActorDetector(){
+ if(personState.model)return personState.model;
+ if(personState.loadPromise){
+   const model=await personState.loadPromise;
+   if(!model)throw Error('主要人物检测器未能加载');
+   return model;
+ }
+ personStatus('正在加载主要人物检测模型…');
+ const promise=createPersonDetector();
+ personState.loadPromise=promise;
+ try{
+   const detector=await promise;
+   personState.model=detector;
+   personStatus('人物检测模型已就绪');
+   return detector;
+ }finally{personState.loadPromise=null}
+}
 function syncModelDescription(){
   if(state.selectedModel==='a0')$('model-description').textContent='MoViNet-A0 · WASM CPU · K600 · 15.1 MB · 5 FPS · 完整视频连续推理';
   else if(state.selectedModel==='videomae')$('model-description').textContent='Qualcomm VideoMAE · 351 MB · Kinetics-400 · 非流式 16 帧整段分类；研究实验模型，六类任务不保证更好';
@@ -206,7 +227,7 @@ async function readOfficialFrames(video,size){
  return {frames,times,decodeMs:performance.now()-start};
 }
 function hideAnnotated(){
-  personState.generation++;personState.box=null;personState.count=0;personState.lastTime=-1;clearPersonOverlay();
+  personState.generation++;personState.box=null;personState.count=0;personState.lastTime=-1;state.actorTrack=null;state.actorGrounded=false;clearPersonOverlay();
   const video=$('annotated-video');
   video.pause();video.removeAttribute('src');video.load();
   $('annotated-section').hidden=true;
@@ -225,12 +246,12 @@ function updateTimelineCursor(){
  $('timeline-cursor').style.left=Math.max(0,Math.min(100,
   100*$('annotated-video').currentTime/state.annotatedLimit))+'%';
 }
-function renderActionTimeline(points,duration){
+function renderActionTimeline(points,duration,windowed=false){
  const panel=$('action-timeline'),track=$('timeline-track'),details=$('timeline-segments');
  track.replaceChildren();details.replaceChildren();
- const segments=buildActionSegments(points,duration);
+ const segments=buildActionSegments(points,duration,{windowSize:windowed?1:5});
  if(!segments.length){panel.hidden=true;return}
- $('timeline-duration').textContent=points.length+' 个真实采样点 · '+timeLabel(duration);
+ $('timeline-duration').textContent=points.length+(windowed?' 个实际片段结果':' 个逐帧采样点')+' · '+timeLabel(duration);
  $('timeline-scale-end').textContent=timeLabel(duration);
  const palette=['#bdddf5','#bfe5d4','#f9dfb3','#ddcef8','#f6cdd7','#c5e6ec','#f4ddb5'];
  const seek=t=>{
@@ -266,8 +287,8 @@ function updateTop1Overlay(){
     const time=video.currentTime;
     let idx=0;for(let i=1;i<timeline.length;i++){if(timeline[i].t<=time+0.001)idx=i;else break}
     const point=timeline[idx];
-    name.textContent=labelDisplay(point.label);
-    score.textContent=(point.score*100).toFixed(1)+'% · '+(state.outputMode==='semantic'?'6 帧平均匹配':state.outputMode==='clip'?'16 帧整段分类':'t='+point.t.toFixed(1)+'s')+'（未校准分数）';
+    name.textContent=point.missing?'未检测到可信人物':labelDisplay(point.label);
+    score.textContent=point.missing?'该区间没有执行人物动作推理':(point.score*100).toFixed(1)+'% · '+(state.outputMode==='semantic'?'6 帧平均匹配':state.outputMode==='clip'?'16 帧整段分类':'t='+point.t.toFixed(1)+'s')+'（未校准分数）';
   }
   overlay.append(title,name,score);
   updateTimelineCursor();drawPersonOverlay();
@@ -279,8 +300,9 @@ async function showAnnotated(timeline,limit,isClipLevel=false,isSemantic=false){
   const dest=$('annotated-video');
   if(src.startsWith('blob:'))dest.removeAttribute('crossorigin');else dest.crossOrigin='anonymous';
   state.top1Timeline=timeline;state.annotatedLimit=limit;state.outputMode=isSemantic?'semantic':isClipLevel?'clip':'stream';
+  state.actorGrounded=!!state.actorTrack?.length;
   dest.muted=true;dest.src=src;dest.load();
-  $('annotation-summary').textContent=isSemantic?'MobileCLIP 只对 6 张真实关键帧进行图文匹配并平均；不是逐帧视频动作分类，也不是框内人物识别。':isClipLevel?'Qualcomm VideoMAE 对采样的 16 帧做一次整段动作分类（Kinetics-400）；叠加的是整段预测，不能解读为逐时刻或框内人物的独立动作识别。':'已记录 '+timeline.length+' 个流式预测点（5 FPS，分析 '+limit.toFixed(1)+' 秒）；显示实际逐帧分类结果，不是框内人物的独立动作识别。';
+  $('annotation-summary').textContent=isSemantic?'MobileCLIP 对主要人物裁剪后的关键帧分段图文匹配；不是视频动作时序分类。':isClipLevel?'VideoMAE 以主要人物裁剪区域为输入，逐段采样 16 帧分类；每段预测不等于逐帧识别。':'已记录 '+timeline.length+' 个流式预测点（5 FPS，分析 '+limit.toFixed(1)+' 秒）；实际输入为主要人物跟踪裁剪区域，显示逐采样时刻的模型预测。';
   $('annotated-section').hidden=false;
   $('annotated-section').querySelector('h2').textContent=isSemantic?'04 · 推理结果视频（MobileCLIP 语义匹配 + 人物框）':isClipLevel?'04 · 推理结果视频（整段 VideoMAE Top-1 + 人物框）':'04 · 推理结果视频（人物框 + 逐帧 Top-1）';
   // Showing the overlay without a decoded video frame would be misleading.
