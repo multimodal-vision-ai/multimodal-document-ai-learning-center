@@ -15,17 +15,77 @@ export const VIDEOMAE={
  license:'Qualcomm deployment model: consult source terms; original MCG-NJU checkpoint CC BY-NC 4.0'
 };
 const hex=a=>Array.from(new Uint8Array(a)).map(x=>x.toString(16).padStart(2,'0')).join('');
-export async function compileVideoMAE({api,loadRuntime,onProgress}){
- onProgress?.('下载 Qualcomm VideoMAE · 351 MB，首次加载较慢');
- const response=await fetch(VIDEOMAE.url);
- if(!response.ok)throw Error('VideoMAE 权重 HTTP '+response.status);
- const bytes=await response.arrayBuffer();
- if(bytes.byteLength!==VIDEOMAE.bytes)throw Error('VideoMAE model size mismatch');
+/**
+ * Bounded, cancellable streaming download. A large HF model must not leave the
+ * whole comparison locked forever when the connection stalls.
+ * The thresholds are download guardrails, not promises of model execution time.
+ */
+export async function downloadVideoMAEWeights({
+ url=VIDEOMAE.url,expectedBytes=VIDEOMAE.bytes,signal,onProgress,
+ fetchImpl=fetch,maxMs=180000,idleMs=30000
+}={}){
+ const controller=new AbortController();
+ let reason='';
+ const abort=(message)=>{if(!controller.signal.aborted){reason=message;controller.abort()}};
+ const onAbort=()=>abort('用户取消');
+ if(signal?.aborted)throw Error('用户取消');
+ signal?.addEventListener('abort',onAbort,{once:true});
+ let idleTimer,overallTimer,reader,received=0,lastProgress=0;
+ const armIdle=()=>{
+   clearTimeout(idleTimer);
+   idleTimer=setTimeout(()=>abort('下载连续 '+Math.round(idleMs/1000)+' 秒无数据'),idleMs);
+ };
+ try{
+   overallTimer=setTimeout(()=>abort('下载超过 '+Math.round(maxMs/1000)+' 秒上限'),maxMs);
+   armIdle();
+   const response=await fetchImpl(url,{signal:controller.signal});
+   if(!response.ok)throw Error('VideoMAE 权重 HTTP '+response.status);
+   const bytes=new Uint8Array(expectedBytes);
+   if(!response.body?.getReader){
+     const all=new Uint8Array(await response.arrayBuffer());
+     if(all.byteLength!==expectedBytes)throw Error('VideoMAE 模型大小不符：'+all.byteLength);
+     bytes.set(all);received=all.byteLength;
+   }else{
+     reader=response.body.getReader();
+     while(true){
+       if(controller.signal.aborted)throw Error(reason||'用户取消');
+       const {done,value}=await reader.read();
+       if(done)break;
+       if(!value?.length)continue;
+       if(received+value.length>expectedBytes)throw Error('VideoMAE 文件超出预期大小');
+       bytes.set(value,received);
+       received+=value.length;
+       armIdle();
+       const now=Date.now();
+       if(now-lastProgress>1200||received===expectedBytes){
+         lastProgress=now;
+         onProgress?.('下载 VideoMAE：'+(received/1e6).toFixed(0)+' / '+(expectedBytes/1e6).toFixed(0)+' MB ('+(100*received/expectedBytes).toFixed(0)+'%) · 可取消');
+       }
+     }
+   }
+   if(received!==expectedBytes)throw Error('VideoMAE 下载不完整：'+received+' / '+expectedBytes+' 字节');
+   if(controller.signal.aborted)throw Error(reason||'用户取消');
+   return bytes.buffer;
+ }catch(error){
+   if(controller.signal.aborted)throw Error(reason||'用户取消');
+   throw error;
+ }finally{
+   clearTimeout(idleTimer);clearTimeout(overallTimer);
+   signal?.removeEventListener('abort',onAbort);
+   if(reader)try{reader.releaseLock()}catch{}
+ }
+}
+export async function compileVideoMAE({api,loadRuntime,onProgress,signal}){
+ onProgress?.('准备下载 Qualcomm VideoMAE · 351 MB（限时、支持取消）');
+ const bytes=await downloadVideoMAEWeights({signal,onProgress});
  const sha=hex(await crypto.subtle.digest('SHA-256',bytes));
  if(sha!==VIDEOMAE.sha256)throw Error('VideoMAE SHA256 mismatch');
+ if(signal?.aborted)throw Error('用户取消');
  await loadRuntime();
+ if(signal?.aborted)throw Error('用户取消');
  onProgress?.('编译 Qualcomm VideoMAE TFLite · K400');
  const model=await api.loadAndCompile(new Uint8Array(bytes),{accelerator:'wasm'});
+ if(signal?.aborted)throw Error('用户取消');
  const shapeOf=d=>Array.from(d?.shape??d?.dims??d?.dimensions??[],Number);
  const inputs=model.getInputDetails(),outputs=model.getOutputDetails();
  if(inputs.length!==1||outputs.length!==1||JSON.stringify(shapeOf(inputs[0]))!=='[1,16,224,224,3]'||
