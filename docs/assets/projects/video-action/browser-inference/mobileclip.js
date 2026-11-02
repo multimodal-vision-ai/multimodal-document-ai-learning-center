@@ -81,23 +81,57 @@ export async function sampleMobileCLIPFrames(video,isCancelled){
   }
   return {frames,times,decodeMs:performance.now()-start};
 }
+/**
+ * The Xenova export has TWO ONNX graphs (text_model + vision_model), not model.onnx.
+ * The generic pipeline() currently assumes the latter. Follow the published
+ * model-card CLIPTextModelWithProjection/CLIPVisionModelWithProjection recipe.
+ * Text embeddings are computed once; only the vision graph runs per keyframe.
+ */
+async function initializeMobileCLIPBackend(lib,backend,dtype,onProgress){
+  const {AutoTokenizer,AutoProcessor,CLIPTextModelWithProjection,
+    CLIPVisionModelWithProjection,RawImage,dot,softmax}=lib;
+  const tokenizer=await AutoTokenizer.from_pretrained(MOBILECLIP.modelId);
+  const processor=await AutoProcessor.from_pretrained(MOBILECLIP.modelId);
+  onProgress?.('MobileCLIP: 加载文本编码器（'+backend+'/'+dtype+'）…');
+  const textModel=await CLIPTextModelWithProjection.from_pretrained(
+    MOBILECLIP.modelId,{device:backend,dtype});
+  const descriptions=MOBILECLIP_PROMPTS.map(p=>'This is a photo of '+p+'.');
+  const textInputs=tokenizer(descriptions,{padding:'max_length',truncation:true});
+  const {text_embeds}=await textModel(textInputs);
+  const textFeatures=text_embeds.normalize().tolist();
+  await textModel.dispose?.();
+  if(textFeatures.length!==6||textFeatures.some(x=>!Array.isArray(x)))
+    throw Error('MobileCLIP 文本编码器输出不是六个有效向量');
+  onProgress?.('MobileCLIP: 加载视觉编码器（'+backend+'/'+dtype+'）…');
+  const visionModel=await CLIPVisionModelWithProjection.from_pretrained(
+    MOBILECLIP.modelId,{device:backend,dtype});
+  const classifier=async(canvas,prompts)=>{
+    if(prompts.length!==6||prompts.some((p,i)=>p!==MOBILECLIP_PROMPTS[i]))
+      throw Error('MobileCLIP 关键词集合已变化');
+    const image=RawImage.fromCanvas(canvas);
+    const imageInputs=await processor(image);
+    const {image_embeds}=await visionModel(imageInputs);
+    const features=image_embeds.normalize().tolist();
+    if(features.length!==1)throw Error('MobileCLIP 视觉模型返回错误的张量批次');
+    const probabilities=softmax(textFeatures.map(text=>100*dot(features[0],text)));
+    return MOBILECLIP_PROMPTS.map((label,i)=>({label,score:Number(probabilities[i])}));
+  };
+  return {classifier,backend,dtype,weightsMB:dtype==='fp16'?108:54.6,webgpuError:null};
+}
 export async function loadMobileCLIP({onProgress}={}){
-  onProgress?.('初始化 Transformers.js；MobileCLIP 权重首次下载后由浏览器缓存…');
-  const {pipeline}=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/+esm');
+  onProgress?.('初始化 Transformers.js；首次需要从 HF 下载 MobileCLIP-S0 图像与文本模型…');
+  const lib=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/+esm');
   let webgpuError=null;
   if(navigator.gpu){
     try{
-      onProgress?.('正在加载 MobileCLIP-S0 · WebGPU/fp16（模型与文字编码器）…');
-      const classifier=await pipeline('zero-shot-image-classification',MOBILECLIP.modelId,
-        {device:'webgpu',dtype:'fp16'});
-      return {classifier,backend:'webgpu',dtype:'fp16',weightsMB:108.0,webgpuError:null};
+      return await initializeMobileCLIPBackend(lib,'webgpu','fp16',onProgress);
     }catch(e){webgpuError=safeError(e)}
-  }else webgpuError='浏览器未提供 navigator.gpu';
-  onProgress?.('WebGPU 不可用，正在尝试 MobileCLIP-S0 · CPU/WASM/q8…');
+  }else webgpuError='浏览器未提供 WebGPU';
+  onProgress?.('WebGPU 不可用，正在按模型卡加载 MobileCLIP-S0 · WASM/q8…');
   try{
-    const classifier=await pipeline('zero-shot-image-classification',MOBILECLIP.modelId,
-      {device:'wasm',dtype:'q8'});
-    return {classifier,backend:'wasm',dtype:'q8',weightsMB:54.6,webgpuError};
+    const model=await initializeMobileCLIPBackend(lib,'wasm','q8',onProgress);
+    model.webgpuError=webgpuError;
+    return model;
   }catch(e){throw Error('MobileCLIP WebGPU 不可用：'+webgpuError+'；WASM 亦失败：'+safeError(e))}
 }
 export async function inferMobileCLIP({classifier,frames,isCancelled,onProgress}){
@@ -106,7 +140,7 @@ export async function inferMobileCLIP({classifier,frames,isCancelled,onProgress}
   for(let i=0;i<frames.length;i++){
     if(isCancelled?.())throw Error('用户取消');
     onProgress?.('MobileCLIP 正在匹配第 '+(i+1)+'/'+frames.length+' 张真实关键帧…');
-    const output=await classifier(frames[i],MOBILECLIP_PROMPTS,{hypothesis_template:'This is a photo of {}.'});
+    const output=await classifier(frames[i],MOBILECLIP_PROMPTS);
     perFrame.push(normalizeMobileCLIPResult(output));
   }
   const scores=aggregateMobileCLIPScores(perFrame);
