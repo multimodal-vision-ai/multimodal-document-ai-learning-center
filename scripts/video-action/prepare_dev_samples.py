@@ -25,12 +25,6 @@ OUT.mkdir(parents=True,exist_ok=True)
 RAW.mkdir(parents=True,exist_ok=True)
 
 SOURCES={
- "jogging":{
-  "url":"https://upload.wikimedia.org/wikipedia/commons/1/1b/Jogging_-_near_arakawa_river_-_tokyo_japan_-_2022_may_3.webm",
-  "start":0,"duration":10,
-  "source":"https://commons.wikimedia.org/wiki/File:Jogging_-_near_arakawa_river_-_tokyo_japan_-_2022_may_3.webm",
-  "license":"CC BY 4.0","author":"Nesnad"
- },
  "hula_hooping":{
   "url":"https://upload.wikimedia.org/wikipedia/commons/e/ee/Berlin_girl_turning_a_hula_hoop%2C_Berlin_2013_%282013-08-23_by_Thomas_Quine%29.webm",
   "start":0,"duration":10,
