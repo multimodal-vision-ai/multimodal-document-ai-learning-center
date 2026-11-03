@@ -19,10 +19,10 @@ let timeout=0;
 try{
   await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded',timeout:30000});
   await page.waitForFunction(()=>{
-    const buttons=document.querySelectorAll('#sample-list button[data-clip-id]');
+    const buttons=document.querySelectorAll('#sample-list-a button[data-clip-id]');
     return buttons.length===6;
   },null,{timeout:45000});
-  await page.locator('#sample-list button[data-action="phone_use"]').click();
+  await page.locator('#sample-list-a button[data-action="phone_use"]').click();
   await page.waitForFunction(()=>{
     const v=document.querySelector('#video');
     return v?.readyState>=2&&v.videoWidth>0&&Number.isFinite(v.duration)&&v.duration>0;
@@ -48,11 +48,11 @@ try{
     ['webgpu','wasm'].includes(report.model?.backend);
   report.checks.trueInferenceCompleted=!!report.inference&&
     status.includes('真实推理已返回')&&report.inference?.variant==='mobileclip_s0';
-  report.checks.sixFrames=report.inference?.frames===6&&report.inference?.classificationMode==='keyframe-semantic';
+  report.checks.sixFrames=report.inference?.frames>=6&&report.inference?.frames%6===0&&report.inference?.classificationMode==='windowed-keyframe-semantic';
   report.checks.sixClassDistribution=report.inference?.top5?.length===5&&
     report.inference.top5.every(x=>Number.isFinite(x.score)&&x.score>0&&x.score<=1&&typeof x.label==='string');
-  report.checks.semanticNotStreaming=report.inference?.frameTop1?.length===1&&
-    (await page.locator('#annotation-summary').textContent()).includes('不是逐帧视频动作分类');
+  report.checks.semanticNotStreaming=report.inference?.frameTop1?.length>=1&&
+    (await page.locator('#annotation-summary').textContent()).includes('不是视频动作时序分类');
   report.checks.resultVideoDecoded=await page.locator('#annotated-video').evaluate(v=>
     v.readyState>=2&&v.videoWidth>0&&v.currentSrc===document.querySelector('#video').currentSrc);
   await page.screenshot({path:dir+'/mobileclip-real-inference.png',fullPage:true});
