@@ -5,6 +5,7 @@ on:
     paths:
       - 'docs/assets/projects/video-action/browser-inference/**'
       - 'scripts/video-action/publish_dev_space.py'
+      - 'scripts/video-action/prepare_dev_samples.py'
       - '.github/workflows/video-action-v103-static-preview.yml'
   workflow_dispatch:
 permissions:
@@ -19,9 +20,15 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
+      - name: Install FFmpeg for licensed sample preparation
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      - name: Prepare six B-set sample assets (8–12s, 720p+)
+        run: python scripts/video-action/prepare_dev_samples.py
       - name: Install trusted HF Hub client
         run: python -m pip install 'huggingface_hub>=0.36,<2'
-      - name: Publish isolated DEV Space using server-side credentials only
+      - name: Publish isolated DEV Space and pinned DEV sample branch using server-side credentials only
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python scripts/video-action/publish_dev_space.py
@@ -31,7 +38,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install chrome
-      - name: Verify six samples and control placement on published HF Space
+      - name: Verify both bilingual sample sets and playback on published HF Space
         env:
           MVAI_BASE_URL: https://multimodal-vision-ai-mvai-video-action-v103-dev.static.hf.space/
         run: node scripts/video-action/test-v108-ui-dataset.mjs
