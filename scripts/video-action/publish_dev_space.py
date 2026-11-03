@@ -153,12 +153,15 @@ existing={item.get("id") for item in catalog["items"]}
 operations=[]
 for key,meta in B_META.items():
     sample_id="real_b_"+key+"_001"
+    relative=f"demo/videos/v103_b_{key}.mp4"
+    if sample_id in existing:
+        # The pinned DEV branch already contains this CC clip and its manifest.
+        # Do not require a local build artifact on subsequent publish runs.
+        continue
     local=PREPARED/(key+".mp4")
     if not local.is_file():sys.exit("Prepared sample missing: "+str(local))
     manifest=json.loads((PREPARED/"manifest.json").read_text(encoding="utf8"))[key]
-    relative=f"demo/videos/v103_b_{key}.mp4"
-    if sample_id not in existing:
-        operations.append(CommitOperationAdd(path_in_repo=relative,path_or_fileobj=str(local)))
+    operations.append(CommitOperationAdd(path_in_repo=relative,path_or_fileobj=str(local)))
     upsert_item({
       "id":sample_id,"sample_group":"B","label_zh":meta["zh"],"label_en":meta["en"],
       "standard_action_id":key,"relative_file":relative,"source_url":meta["source"],
@@ -169,6 +172,7 @@ for key,meta in B_META.items():
       "clip_start_seconds":manifest["start"],"clip_duration_seconds":manifest["duration"],
       "modification":manifest["modification"],"sha256":manifest["sha256"],"visual_note":meta["note"]
     })
+    existing.add(sample_id)
 
 # Ensure all twelve selectors have one approved and licensed sample.
 active_ids={x.get("id") for x in catalog["items"] if x.get("status")=="approved_demo"}
