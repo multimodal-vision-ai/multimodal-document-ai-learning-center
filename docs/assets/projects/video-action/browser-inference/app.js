@@ -26,7 +26,7 @@ $('compare-info').onclick=()=>{
  control.setAttribute('aria-expanded',String(!panel.hidden));
 };
 function activeModelReady(){return state.selectedModel==='mobileclip_s0'?!!state.mobileclipModel:state.selectedModel==='videomae'?!!state.videomaeModel:state.selectedModel==='a0'?!!state.model:!!state.officialModels[state.selectedModel]}
-function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('model').disabled=b;$('sample-list')?.querySelectorAll('button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':activeModelReady()?'模型已就绪':'尚未加载';updateComparisonSelection();}
+function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('model').disabled=b;document.querySelectorAll('.sample-list button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':activeModelReady()?'模型已就绪':'尚未加载';updateComparisonSelection();}
 // Person detector runs entirely in browser, independently from the MoViNet action model.
 const personState={model:null,loadPromise:null,lastSampleMs:0,lastTime:-1,box:null,count:0,generation:0,error:null};
 const personStatus=msg=>{$('person-detector-status').textContent=msg};
