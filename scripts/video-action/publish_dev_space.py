@@ -63,66 +63,101 @@ print("SOURCE_SAMPLE_ITEMS="+json.dumps([
     for item in catalog["items"]
 ],ensure_ascii=False))
 
-# Keep the earlier landline clip in the Dataset history, but prevent it from being
-# selected as a mobile-phone call sample.
+# Archive the first-pass A samples and the earlier B Pexels candidates.
+# They remain in Dataset history, but are no longer eligible for the V1.0.13 selector.
 catalog_changed=False
+legacy_ids={
+ "real_waving_hand_001","real_phone_use_003","real_landline_call_005",
+ "real_eating_004","real_sleep_posture_006","real_falling_007","real_phone_call_008",
+ "real_b_yoga_001","real_b_push_up_001","real_b_sit_up_001","real_b_ballet_001"
+}
 for item in catalog["items"]:
-    if item.get("id")=="real_landline_call_005" and item.get("status")!="archived":
+    if item.get("id") in legacy_ids and item.get("status")!="archived":
         item["status"]="archived"
         item["redistribution_approved"]=False
-        item["archived_reason"]="Landline telephone is not equivalent to talking on a cell phone."
+        item["archived_reason"]="Superseded by the V1.0.13 curated bilingual A/B sample set."
         catalog_changed=True
 
-# New A-set phone-call sample: external Pexels playback, not copied into the Dataset.
+# Pexels clips are externally embedded under the Pexels Free License. They are
+# not copied into the Dataset; only their source and licensing metadata are stored.
+PEXELS_LICENSE="Pexels Free License"
+PEXELS_LICENSE_URL="https://www.pexels.com/license/"
+def pexels_item(sample_id,group,zh,en,action,video_id,file_name,source,author,duration,width,height,fps,note,extra=None):
+    item={
+      "id":sample_id,"sample_group":group,"label_zh":zh,"label_en":en,
+      "standard_action_id":action,"video_url":f"https://videos.pexels.com/video-files/{video_id}/{file_name}",
+      "source_url":source,"license":PEXELS_LICENSE,"license_url":PEXELS_LICENSE_URL,
+      "attribution":author+" / Pexels","status":"approved_demo",
+      "redistribution_approved":False,"external_use_approved":True,"delivery_mode":"external_embed",
+      "reference_evidence":"source_title_description_and_preview","evaluation_tier":"development_only",
+      "duration_seconds":duration,"width":width,"height":height,"fps":fps,
+      "visual_note":note
+    }
+    if extra:item.update(extra)
+    return item
+
 new_items=[
- {
-  "id":"real_phone_call_008","sample_group":"A","label_zh":"打电话",
-  "label_en":"talking on cell phone","standard_action_id":"phone_call","phone_type":"cell",
-  "video_url":"https://videos.pexels.com/video-files/4432562/4432562-uhd_3840_2160_25fps.mp4",
-  "source_url":"https://www.pexels.com/video/man-talking-on-his-smartphone-4432560/",
-  "license":"Pexels Free License","license_url":"https://www.pexels.com/license/",
-  "attribution":"Edmond Dantès / Pexels","status":"approved_demo",
-  "redistribution_approved":False,"external_use_approved":True,"delivery_mode":"external_embed",
-  "reference_evidence":"source_title_description_and_preview","evaluation_tier":"development_only",
-  "duration_seconds":11,"width":3840,"height":2160,"fps":50,
-  "visual_note":"Single person holding a smartphone to the ear during a call."
- },
- {
-  "id":"real_b_ballet_001","sample_group":"B","label_zh":"芭蕾舞",
-  "label_en":"dancing ballet","standard_action_id":"ballet",
-  "video_url":"https://videos.pexels.com/video-files/5051319/5051319-hd_1920_1080_25fps.mp4",
-  "source_url":"https://www.pexels.com/video/video-of-ballerina-crossing-the-street-while-dancing-5051320/",
-  "license":"Pexels Free License","license_url":"https://www.pexels.com/license/",
-  "attribution":"Taryn Elliott / Pexels","status":"approved_demo",
-  "redistribution_approved":False,"external_use_approved":True,"delivery_mode":"external_embed",
-  "reference_evidence":"source_title_description_and_preview","evaluation_tier":"development_only",
-  "duration_seconds":11,"width":1920,"height":1080,"fps":25,
-  "visual_note":"Ballerina crossing a city street while dancing; full-body view to be confirmed in browser QA."
- }
+ pexels_item("real_a_wave_001","A","挥手","waving hand","wave","8135571","8135571-hd_1920_1080_25fps.mp4",
+  "https://www.pexels.com/video/a-woman-talking-and-waving-while-looking-at-a-camera-8135571/",
+  "ANTONI SHKRABA production",12,1920,1080,50,"One woman greets the camera and waves."),
+ pexels_item("real_a_phone_use_001","A","看手机","looking at phone","phone_use","7189799","7189799-uhd_2560_1080_25fps.mp4",
+  "https://www.pexels.com/video/woman-using-smartphone-7189799/",
+  "Pavel Danilyuk",8,2560,1080,25,"One woman concentrates on and uses a smartphone."),
+ pexels_item("real_a_phone_call_001","A","打电话","talking on cell phone","phone_call","4432560","4432560-uhd_3840_2160_25fps.mp4",
+  "https://www.pexels.com/video/man-talking-on-his-smartphone-4432560/",
+  "Edmond Dantès",11,3840,2160,50,"One man holds a smartphone to his ear during a call.",{"phone_type":"cell"}),
+ pexels_item("real_a_falling_001","A","摔倒","falling down","falling","2791953","2791953-uhd_3840_2160_25fps.mp4",
+  "https://www.pexels.com/video/person-falling-down-from-skateboard-2791953/",
+  "cottonbro studio",10,3840,2160,25,"A skateboarder performs a trick and falls; this is a sports-context fall."),
+ pexels_item("real_a_eating_001","A","吃东西","eating","eating","4731500","4731500-uhd_3840_2160_30fps.mp4",
+  "https://www.pexels.com/video/man-wearing-sunglasses-eating-burger-4731500/",
+  "Artem Podrez",10,3840,2160,30,"One man visibly eats a burger."),
+ pexels_item("real_a_sleeping_001","A","睡觉","sleeping","sleep_posture","8865507","8865507-hd_1920_1080_30fps.mp4",
+  "https://www.pexels.com/video/woman-sleeping-on-the-bed-8865507/",
+  "RDNE Stock project",8,1920,1080,29.97,"A senior woman rests on a bed; the footage shows a sleeping posture, not proof of physiological sleep."),
+ pexels_item("real_b_yoga_002","B","瑜伽","yoga","yoga","4536533","4536533-hd_1920_1080_30fps.mp4",
+  "https://www.pexels.com/video/woman-doing-yoga-4536533/",
+  "Vlada Karpovich",10,1920,1080,30,"One woman practices yoga indoors."),
+ pexels_item("real_b_push_up_002","B","俯卧撑","push up","push_up","4921832","4921832-hd_1920_1080_24fps.mp4",
+  "https://www.pexels.com/video/man-doing-push-ups-4921832/",
+  "Ketut Subiyanto",10,1920,1080,23.98,"One man performs push-ups beside a waterfront."),
+ pexels_item("real_b_sit_up_002","B","仰卧起坐","situp","sit_up","4742756","4742756-uhd_3840_2160_25fps.mp4",
+  "https://www.pexels.com/video/man-working-out-at-the-gym-4742756/",
+  "Ketut Subiyanto",8,3840,2160,25,"One man performs sit-ups in a gym."),
+ pexels_item("real_b_ballet_002","B","芭蕾舞","dancing ballet","ballet","5051320","5051320-hd_1920_1080_25fps.mp4",
+  "https://www.pexels.com/video/video-of-ballerina-crossing-the-street-while-dancing-5051320/",
+  "Taryn Elliott",11,1920,1080,25,"A ballerina crosses a city street while dancing.")
 ]
+
+def upsert_item(new_item):
+    global catalog_changed
+    for index,old_item in enumerate(catalog["items"]):
+        if old_item.get("id")==new_item["id"]:
+            if old_item!=new_item:
+                catalog["items"][index]=new_item
+                catalog_changed=True
+            return
+    catalog["items"].append(new_item)
+    catalog_changed=True
+
+for item in new_items:
+    upsert_item(item)
+
 B_META={
  "jogging":{"zh":"慢跑","en":"jogging","source":"https://commons.wikimedia.org/wiki/File:Jogging_-_near_arakawa_river_-_tokyo_japan_-_2022_may_3.webm","license":"CC BY 4.0","license_url":"https://creativecommons.org/licenses/by/4.0/","author":"Nesnad","note":"Two runners are visible and both perform jogging; the primary-person tracker may select either."},
- "yoga":{"zh":"瑜伽","en":"yoga","source":"https://commons.wikimedia.org/wiki/File:Yoga_Series.webm","license":"CC BY-SA 3.0","license_url":"https://creativecommons.org/licenses/by-sa/3.0/","author":"Susanagu","note":"One foreground woman performs yoga poses; background bystanders are present."},
- "push_up":{"zh":"俯卧撑","en":"push up","source":"https://commons.wikimedia.org/wiki/File:Army_Combat_Fitness_Test-_Hand-Release_Push-Up_(HRP)_(Event_3).webm","license":"Public Domain (U.S. federal government work)","license_url":"https://www.usa.gov/government-works","author":"U.S. Army Combat Fitness Test","note":"Single soldier demonstrates hand-release push-ups."},
- "sit_up":{"zh":"仰卧起坐","en":"situp","source":"https://commons.wikimedia.org/wiki/File:Demonstration_of_A_Sit-up.webm","license":"CC BY-SA 3.0","license_url":"https://creativecommons.org/licenses/by-sa/3.0/","author":"Wxhsyhzz","note":"Single-person sit-up demonstration."},
  "hula_hooping":{"zh":"呼啦圈","en":"hula hooping","source":"https://commons.wikimedia.org/wiki/File:Berlin_girl_turning_a_hula_hoop,_Berlin_2013_(2013-08-23_by_Thomas_Quine).webm","license":"CC BY 2.0","license_url":"https://creativecommons.org/licenses/by/2.0/","author":"Thomas Quine","note":"One person continuously turns a hula hoop."}
 }
 existing={item.get("id") for item in catalog["items"]}
 operations=[]
-for item in new_items:
-    if item["id"] not in existing:
-        catalog["items"].append(item)
-        catalog_changed=True
-
 for key,meta in B_META.items():
     sample_id="real_b_"+key+"_001"
-    if sample_id in existing:continue
     local=PREPARED/(key+".mp4")
     if not local.is_file():sys.exit("Prepared sample missing: "+str(local))
     manifest=json.loads((PREPARED/"manifest.json").read_text(encoding="utf8"))[key]
     relative=f"demo/videos/v103_b_{key}.mp4"
-    operations.append(CommitOperationAdd(path_in_repo=relative,path_or_fileobj=str(local)))
-    catalog["items"].append({
+    if sample_id not in existing:
+        operations.append(CommitOperationAdd(path_in_repo=relative,path_or_fileobj=str(local)))
+    upsert_item({
       "id":sample_id,"sample_group":"B","label_zh":meta["zh"],"label_en":meta["en"],
       "standard_action_id":key,"relative_file":relative,"source_url":meta["source"],
       "source_media_url":manifest["url"],"license":meta["license"],"license_url":meta["license_url"],
@@ -132,12 +167,13 @@ for key,meta in B_META.items():
       "clip_start_seconds":manifest["start"],"clip_duration_seconds":manifest["duration"],
       "modification":manifest["modification"],"sha256":manifest["sha256"],"visual_note":meta["note"]
     })
-    catalog_changed=True
 
-# Ensure all twelve curated selectors have one approved sample before publishing.
+# Ensure all twelve selectors have one approved and licensed sample.
 active_ids={x.get("id") for x in catalog["items"] if x.get("status")=="approved_demo"}
-required={"real_phone_call_008","real_b_jogging_001","real_b_yoga_001","real_b_push_up_001",
-          "real_b_sit_up_001","real_b_hula_hooping_001","real_b_ballet_001"}
+required={
+ "real_a_wave_001","real_a_phone_use_001","real_a_phone_call_001","real_a_falling_001","real_a_eating_001","real_a_sleeping_001",
+ "real_b_jogging_001","real_b_yoga_002","real_b_push_up_002","real_b_sit_up_002","real_b_ballet_002","real_b_hula_hooping_001"
+}
 missing=required-active_ids
 if missing:sys.exit("DEV sample catalog incomplete: "+", ".join(sorted(missing)))
 
