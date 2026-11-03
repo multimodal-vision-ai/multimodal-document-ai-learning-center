@@ -8,6 +8,8 @@ import hashlib
 import json
 import shutil
 import subprocess
+import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -67,10 +69,25 @@ manifest={}
 for key,spec in SOURCES.items():
  source=RAW/(key+".webm")
  if not source.exists() or source.stat().st_size<100_000:
-  req=urllib.request.Request(spec["url"],headers={"User-Agent":"MVAI-Learning-Center/1.0 (educational demo; attribution in catalog)"})
-  with urllib.request.urlopen(req,timeout=90) as response,source.open("wb") as target:
-   shutil.copyfileobj(response,target)
+  last_error=None
+  for attempt in range(6):
+   try:
+    req=urllib.request.Request(spec["url"],headers={
+     "User-Agent":"Mozilla/5.0 (compatible; MVAI-Learning-Center/1.0; educational video sample with attribution)",
+     "Referer":"https://commons.wikimedia.org/","Accept":"*/*"})
+    with urllib.request.urlopen(req,timeout=120) as response,source.open("wb") as target:
+     shutil.copyfileobj(response,target)
+    last_error=None
+    break
+   except urllib.error.HTTPError as error:
+    last_error=error
+    if error.code not in (429,500,502,503,504):raise
+    delay=min(60,8*(2**attempt))
+    print("SOURCE_RETRY",key,"HTTP",error.code,"sleep",delay)
+    time.sleep(delay)
+  if last_error:raise last_error
  if source.stat().st_size<100_000:raise RuntimeError("Source download unexpectedly small: "+key)
+ time.sleep(4)
  output=OUT/(key+".mp4")
  run(["ffmpeg","-y","-ss",str(spec["start"]),"-i",str(source),"-t",str(spec["duration"]),
       "-an","-c:v","libx264","-preset","veryfast","-crf","24","-pix_fmt","yuv420p",
