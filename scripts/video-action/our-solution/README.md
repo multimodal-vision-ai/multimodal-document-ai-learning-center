@@ -48,17 +48,19 @@ The official code recommends timm 0.4.12. If the installed PyTorch/torchvision v
 
 ~~~bash
 python scripts/video-action/our-solution/videomae_v2_yolo_poc.py \
-  --video /path/to/looking_at_phone.mp4 \
+  --sample-id real_a_phone_use_001 \
   --videomae-repo vendor/VideoMAEv2 \
   --expected-label "looking at phone" \
   --save-crops
 ~~~
 
+The script resolves the sample ID against the pinned HF Dataset revision already used by the DEV sample catalog. If the file is stored in an archive or cannot be resolved uniquely, download/extract it and use --video instead.
+
 For a phone-call sample:
 
 ~~~bash
 python scripts/video-action/our-solution/videomae_v2_yolo_poc.py \
-  --video /path/to/talking_on_phone.mp4 \
+  --sample-id real_a_phone_call_001 \
   --videomae-repo vendor/VideoMAEv2 \
   --expected-label "talking on cell phone" \
   --save-crops
