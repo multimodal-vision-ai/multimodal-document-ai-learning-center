@@ -20,6 +20,12 @@ export const MOBILECLIP=Object.freeze({
     {id:'sleeping',prompt:'a person sleeping in bed',action:'sleeping'}
   ])
 });
+export const MOBILECLIP_S2=Object.freeze({
+  id:'mobileclip_s2',
+  modelId:'Xenova/mobileclip_s2',
+  modelName:'Apple MobileCLIP-S2',
+  weightsMB:Object.freeze({fp16:198.7,q8:100.8})
+});
 export const MOBILECLIP_PROMPTS=MOBILECLIP.labels.map(x=>x.prompt);
 export const MOBILECLIP_LABELS=MOBILECLIP.labels.map(x=>x.id);
 export const mobileCLIPModelName='Apple MobileCLIP-S0';
@@ -129,8 +135,7 @@ async function initializeMobileCLIPBackend(lib,backend,dtype,onProgress){
 // This HF repository exports separate text_model and vision_model ONNX graphs.
 // The generic zero-shot pipeline requests a nonexistent model.onnx, so load the
 // two CLIP projection encoders explicitly, as the official model card documents.
-async function loadSplitEncoders(lib,{device,dtype,onProgress}){
- const modelId=MOBILECLIP.modelId;
+async function loadSplitEncoders(lib,{device,dtype,onProgress,modelId=MOBILECLIP.modelId,weightsMB=null}){
  const {AutoTokenizer,CLIPTextModelWithProjection,AutoProcessor,CLIPVisionModelWithProjection,RawImage,dot}=lib;
  onProgress?.('加载 MobileCLIP 文本编码器（'+device+'/'+dtype+'）…');
  const tokenizer=await AutoTokenizer.from_pretrained(modelId);
@@ -164,26 +169,39 @@ async function loadSplitEncoders(lib,{device,dtype,onProgress}){
    return MOBILECLIP_PROMPTS.map((label,i)=>({label,score:exp[i]/sum}));
  };
  return {classifier,visionModel,backend:device,dtype,
-   weightsMB:dtype==='fp16'?108.0:54.6,webgpuError:null};
+   weightsMB:weightsMB?.[dtype]??(dtype==='fp16'?108.0:54.6),webgpuError:null};
 }
-export async function loadMobileCLIP({onProgress}={}){
- onProgress?.('初始化 Transformers.js 与 MobileCLIP 双编码器…');
+async function loadMobileCLIPVariant({modelId,modelName,weightsMB,onProgress}){
+ onProgress?.('初始化 Transformers.js 与 '+modelName+' 双编码器…');
  const lib=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/+esm');
  let webgpuError=null;
  if(navigator.gpu){
    try{
-     onProgress?.('尝试 MobileCLIP-S0 · WebGPU/fp16（双编码器）…');
-     return await loadSplitEncoders(lib,{device:'webgpu',dtype:'fp16',onProgress});
+     onProgress?.('尝试 '+modelName+' · WebGPU/fp16（双编码器）…');
+     const entry=await loadSplitEncoders(lib,{device:'webgpu',dtype:'fp16',onProgress,modelId,weightsMB});
+     return {...entry,modelId,modelName};
    }catch(error){webgpuError=safeError(error)}
  }else webgpuError='浏览器未提供 navigator.gpu';
- onProgress?.('WebGPU 不可用，改用 MobileCLIP 双编码器 CPU/WASM/q8…');
+ onProgress?.('WebGPU 不可用，改用 '+modelName+' CPU/WASM/q8…');
  try{
-   const entry=await loadSplitEncoders(lib,{device:'wasm',dtype:'q8',onProgress});
+   const entry=await loadSplitEncoders(lib,{device:'wasm',dtype:'q8',onProgress,modelId,weightsMB});
    entry.webgpuError=webgpuError;
-   return entry;
+   return {...entry,modelId,modelName};
  }catch(error){
-   throw Error('MobileCLIP WebGPU 不可用：'+webgpuError+'；WASM 亦失败：'+safeError(error));
+   throw Error(modelName+' WebGPU 不可用：'+webgpuError+'；WASM 亦失败：'+safeError(error));
  }
+}
+export async function loadMobileCLIP({onProgress}={}){
+ return loadMobileCLIPVariant({
+   modelId:MOBILECLIP.modelId,modelName:'Apple MobileCLIP-S0',
+   weightsMB:{fp16:108.0,q8:54.6},onProgress
+ });
+}
+export async function loadMobileCLIPS2({onProgress}={}){
+ return loadMobileCLIPVariant({
+   modelId:MOBILECLIP_S2.modelId,modelName:MOBILECLIP_S2.modelName,
+   weightsMB:MOBILECLIP_S2.weightsMB,onProgress
+ });
 }
 export async function inferMobileCLIP({classifier,frames,isCancelled,onProgress}){
   if(!Array.isArray(frames)||frames.length!==MOBILECLIP.frameCount)throw Error('关键帧数量不是 6');
