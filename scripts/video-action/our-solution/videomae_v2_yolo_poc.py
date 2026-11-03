@@ -171,7 +171,10 @@ def detect_and_sample(
     max_seconds: float,
     device: torch.device,
     temp_dir: Path,
-) -> tuple[list[dict[str, Any]], dict[int, dict[str, float]], float, tuple[int, int]]:
+) -> tuple[list[dict[str, Any]], dict[int, dict[str, float]], float, tuple[int, int], float, float | None]:
+    detector_started = time.perf_counter()
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
     detector = YOLO(yolo_model_name)
     capture = cv2.VideoCapture(str(video_path))
     if not capture.isOpened():
@@ -246,13 +249,19 @@ def detect_and_sample(
             frame_index += 1
     finally:
         capture.release()
-        del detector
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+
+    yolo_peak_memory_mb = (
+        round(torch.cuda.max_memory_allocated() / (1024**2), 1)
+        if torch.cuda.is_available() else None
+    )
+    detector_elapsed_seconds = time.perf_counter() - detector_started
+    del detector
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
     if not sampled:
         raise RuntimeError("No frames were sampled from the input video.")
-    return sampled, dict(stats), fps, (width, height)
+    return sampled, dict(stats), fps, (width, height), detector_elapsed_seconds, yolo_peak_memory_mb
 
 
 def choose_primary_track(
@@ -592,7 +601,8 @@ def main() -> int:
     started = time.perf_counter()
     with tempfile.TemporaryDirectory(prefix="mvai_videomae_yolo_") as temp_name:
         temp_dir = Path(temp_name)
-        sampled, track_stats, source_fps, source_size = detect_and_sample(
+        (sampled, track_stats, source_fps, source_size,
+         yolo_elapsed_seconds, yolo_peak_memory_mb) = detect_and_sample(
             video_path=video_path,
             yolo_model_name=args.yolo_model,
             tracker_name=args.tracker,
@@ -614,8 +624,12 @@ def main() -> int:
             smoothing_alpha=args.smoothing_alpha,
         )
 
+        model_load_started = time.perf_counter()
         model = load_videomae(args.videomae_repo, checkpoint_path, device)
+        model_load_ms = (time.perf_counter() - model_load_started) * 1000
         use_fp16 = device.type == "cuda" and not args.fp32
+        if device.type == "cuda":
+            torch.cuda.reset_peak_memory_stats()
         window_starts = make_windows(len(sampled), sampled_fps, args.stride_sec)
         windows: list[dict[str, Any]] = []
 
@@ -678,6 +692,10 @@ def main() -> int:
                 f"person_crop={(record['person_crop_top5'] or [{}])[0].get('label', 'track_lost')}"
             )
 
+        videomae_peak_memory_mb = (
+            round(torch.cuda.max_memory_allocated() / (1024**2), 1)
+            if torch.cuda.is_available() else None
+        )
         del model
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
@@ -707,7 +725,17 @@ def main() -> int:
         "sample_fps": sampled_fps,
         "window_stride_sec": args.stride_sec,
         "person_detector": args.yolo_model,
+        "ultralytics_version": __import__("ultralytics").__version__,
         "tracker": args.tracker,
+        "yolo_detection_elapsed_seconds": round(yolo_elapsed_seconds, 2),
+        "yolo_peak_gpu_memory_mb": yolo_peak_memory_mb,
+        "videomae_model_load_ms": round(model_load_ms, 1),
+        "videomae_peak_gpu_memory_mb": videomae_peak_memory_mb,
+        "peak_gpu_memory_mb": max(
+            [v for v in (yolo_peak_memory_mb, videomae_peak_memory_mb) if v is not None],
+            default=None,
+        ),
+        "torch_version": torch.__version__,
         "person_track_id": person_track_id,
         "person_track_selection_scores": {str(k): round(v, 8) for k, v in track_scores.items()},
         "person_padding": args.person_padding,
