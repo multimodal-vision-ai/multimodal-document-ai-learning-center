@@ -593,7 +593,7 @@ def main() -> int:
         raise SystemExit("CUDA was requested but is not available.")
 
     output_dir = args.output_dir.expanduser().resolve() if args.output_dir else (
-        video_path.parent / f"{video_path.stem}_videomae_yolo_poc"
+        Path.cwd() / "our_solution_results" / f"{video_path.stem}_videomae_yolo_poc"
     )
     output_dir.mkdir(parents=True, exist_ok=True)
     save_crop_dir = output_dir / "person_crops" if args.save_crops else None
