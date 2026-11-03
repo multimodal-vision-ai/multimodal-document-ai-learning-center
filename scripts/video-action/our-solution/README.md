@@ -124,7 +124,7 @@ The 16-frame sampling follows the official VideoMAE V2 clip length. The 0.5-seco
 
 The default output folder is created beside the input video and contains:
 
-- results.json: complete per-window Top-5 predictions, timings, checkpoint and video hashes, track information, and settings.
+- results.json: complete per-window Top-5 predictions, model-load and per-window timings, YOLO/VideoMAE peak GPU memory, checkpoint and video hashes, track information, and settings.
 - results.csv: concise full-frame versus person-crop comparison.
 - preview.mp4: sampled preview with the selected person box and the two Top-1 predictions.
 - person_crops/: saved person crops when --save-crops is enabled.
