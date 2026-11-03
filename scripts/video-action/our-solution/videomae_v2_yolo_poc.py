@@ -397,7 +397,8 @@ def predict_clip(
     labels: list[str],
     device: torch.device,
     use_fp16: bool,
-) -> list[dict[str, Any]]:
+    expected_label: str | None,
+) -> tuple[list[dict[str, Any]], int | None]:
     clip = clip.to(device, non_blocking=True)
     if device.type == "cuda":
         torch.cuda.synchronize()
@@ -410,6 +411,11 @@ def predict_clip(
     if isinstance(logits, (tuple, list)):
         logits = logits[0]
     probabilities = torch.softmax(logits[0].float(), dim=-1)
+    target_rank = None
+    if expected_label is not None:
+        target_index = labels.index(expected_label)
+        target_score = probabilities[target_index]
+        target_rank = int((probabilities > target_score).sum().item()) + 1
     values, indices = torch.topk(probabilities, k=5)
     output = []
     for score, index in zip(values.detach().cpu().tolist(), indices.detach().cpu().tolist()):
@@ -418,7 +424,7 @@ def predict_clip(
             "label": labels[int(index)],
             "softmax_score": float(score),
         })
-    return output
+    return output, target_rank
 
 
 def make_windows(sample_count: int, sample_fps: float, stride_sec: float) -> list[int]:
@@ -564,6 +570,11 @@ def main() -> int:
         script_root / "research" / "video-action-our-solution" / "assets" / "label_map_k710.txt"
     )
     labels = load_labels(label_path)
+    if args.expected_label is not None and args.expected_label not in labels:
+        raise SystemExit(
+            f"Expected label {args.expected_label!r} is not an exact K710 class. "
+            "Do not substitute a semantically related class."
+        )
     checkpoint_path = resolve_checkpoint(args.checkpoint)
     if args.device == "auto":
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -628,13 +639,15 @@ def main() -> int:
                 args.person_padding, None
             )
             full_start = time.perf_counter()
-            full_top5 = predict_clip(model, full_clip, labels, device, use_fp16)
+            full_top5, full_target_rank = predict_clip(
+                model, full_clip, labels, device, use_fp16, args.expected_label
+            )
             if device.type == "cuda":
                 torch.cuda.synchronize()
             full_ms = (time.perf_counter() - full_start) * 1000
             record["full_frame_top5"] = full_top5
             record["full_frame_inference_ms"] = round(full_ms, 1)
-            record["full_frame_target_rank"] = rank_of_label(full_top5, args.expected_label)
+            record["full_frame_target_rank"] = full_target_rank
 
             if record["track_coverage"] >= args.min_track_coverage:
                 crop_clip, _ = build_clip(
@@ -642,13 +655,15 @@ def main() -> int:
                     args.person_padding, save_crop_dir
                 )
                 crop_start = time.perf_counter()
-                crop_top5 = predict_clip(model, crop_clip, labels, device, use_fp16)
+                crop_top5, crop_target_rank = predict_clip(
+                    model, crop_clip, labels, device, use_fp16, args.expected_label
+                )
                 if device.type == "cuda":
                     torch.cuda.synchronize()
                 crop_ms = (time.perf_counter() - crop_start) * 1000
                 record["person_crop_top5"] = crop_top5
                 record["person_crop_inference_ms"] = round(crop_ms, 1)
-                record["person_crop_target_rank"] = rank_of_label(crop_top5, args.expected_label)
+                record["person_crop_target_rank"] = crop_target_rank
             else:
                 record["person_crop_top5"] = []
                 record["person_crop_inference_ms"] = None
