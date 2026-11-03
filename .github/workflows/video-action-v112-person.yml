@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        model: [a0, a1, a2, videomae, mobileclip_s0]
+        model: [a0, a1, a2, videomae, mobileclip_s0, mobileclip_s2]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
