@@ -6,7 +6,7 @@ fs.mkdirSync(dir,{recursive:true});
 const report={baseUrl:root,checkedAt:new Date().toISOString(),checks:{},samples:{},pageErrors:[],success:false};
 const expected={
  A:[['wave','挥手','Waving Hand'],['phone_use','看手机','Using Mobile Phone'],['phone_call','打电话','Talking on Cell Phone'],['falling','摔倒','Falling Down'],['eating','吃东西','Eating Food'],['sleep_posture','睡觉','Sleeping']],
- B:[['jogging','慢跑','Jogging'],['yoga','瑜伽','Yoga'],['push_up','俯卧撑','Push-up'],['sit_up','仰卧起坐','Sit-up'],['ballet','芭蕾舞','Ballet'],['hula_hooping','呼啦圈','Hula Hooping']]
+ B:[['jogging','慢跑','Jogging'],['yoga','瑜伽','Yoga'],['push_up','俯卧撑','Push Up'],['sit_up','仰卧起坐','Situp'],['ballet','芭蕾舞','Dancing Ballet'],['hula_hooping','呼啦圈','Hula Hooping']]
 };
 const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 const page=await browser.newPage({viewport:{width:1390,height:950}});
