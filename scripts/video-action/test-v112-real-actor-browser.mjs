@@ -34,6 +34,10 @@ try{
  report.checks.trackExists=diag.inference?.trackPoints>=8;
  report.checks.realModel=model===diag.inference?.variant&&
    diag.inference?.top5?.length===5&&report.status.includes('真实推理已返回');
+ report.checks.modelSource=model==='mobileclip_s2'?
+   diag.model_compiled?.source==='Xenova/mobileclip_s2':true;
+ report.checks.modelIdentity=model==='mobileclip_s2'?
+   diag.model_compiled?.modelName==='Apple MobileCLIP-S2':true;
  report.checks.videoCoverage=diag.inference?.analyzedSeconds>0&&diag.inference?.frames>0;
  report.checks.timeline=await page.locator('#action-timeline').isVisible();
  report.checks.boxesUsedForInference=model.startsWith('a')?
