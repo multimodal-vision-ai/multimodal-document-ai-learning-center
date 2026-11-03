@@ -365,7 +365,8 @@ const goodSample=c=>{
   const u=new URL(c?.video_url||'');
   safeExternal=u.protocol==='https:'&&['videos.pexels.com','upload.wikimedia.org'].includes(u.hostname);
  }catch{}
- return !!(c&&c.synthetic!==true&&c.status==='approved_demo'&&c.redistribution_approved===true&&c.license&&c.source_url&&(safeFile||safeExternal));
+ const approvedDelivery=safeFile?c?.redistribution_approved===true:safeExternal&&c?.external_use_approved===true;
+ return !!(c&&c.synthetic!==true&&c.status==='approved_demo'&&approvedDelivery&&c.license&&c.source_url&&(safeFile||safeExternal));
 };
 async function addDevFixture(reason){
  for(const group of SAMPLE_GROUPS){
