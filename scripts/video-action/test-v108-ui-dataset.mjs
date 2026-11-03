@@ -45,7 +45,7 @@ try{
    await page.locator('#compare-info').getAttribute('aria-expanded')==='true';
  await page.locator('#compare-info').click();
  report.checks.helpCloses=await page.locator('#compare-help').isHidden();
- report.checks.fiveModels=await page.locator('#compare-choices input[type="checkbox"]').count()===5;
+ report.checks.sixModels=await page.locator('#compare-choices input[type="checkbox"]').count()===6;
  report.checks.initialNoneSelected=await page.locator('#compare-choices input:checked').count()===0;
  report.checks.initiallyUnavailable=await page.locator('#compare-choices input:not(:disabled)').count()===0;
  report.checks.noUnrunResults=await page.locator('#comparison-results table').count()===0;
