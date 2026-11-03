@@ -90,14 +90,14 @@ new_items=[
  {
   "id":"real_b_ballet_001","sample_group":"B","label_zh":"芭蕾舞",
   "label_en":"dancing ballet","standard_action_id":"ballet",
-  "video_url":"https://videos.pexels.com/video-files/5051348/5051348-hd_1920_1080_25fps.mp4",
-  "source_url":"https://www.pexels.com/video/close-up-video-of-ballerina-dancing-on-sidewalk-5051347/",
+  "video_url":"https://videos.pexels.com/video-files/5051319/5051319-hd_1920_1080_25fps.mp4",
+  "source_url":"https://www.pexels.com/video/video-of-ballerina-crossing-the-street-while-dancing-5051320/",
   "license":"Pexels Free License","license_url":"https://www.pexels.com/license/",
   "attribution":"Taryn Elliott / Pexels","status":"approved_demo",
   "redistribution_approved":False,"external_use_approved":True,"delivery_mode":"external_embed",
   "reference_evidence":"source_title_description_and_preview","evaluation_tier":"development_only",
-  "duration_seconds":10,"width":1920,"height":1080,"fps":25,
-  "visual_note":"Ballet dancer performing on a city street; verify full-body visibility in browser QA."
+  "duration_seconds":11,"width":1920,"height":1080,"fps":25,
+  "visual_note":"Ballerina crossing a city street while dancing; full-body view to be confirmed in browser QA."
  }
 ]
 B_META={
