@@ -1,56 +1,122 @@
-# Our Solution — pretrained inference probes
+# Our Solution — VideoMAE V2 K710 + YOLO quick validation
 
-This directory contains inference-only validation scripts. They load existing public checkpoints and never train, fine-tune, update, or save model weights.
+This is an offline proof of concept. It does not modify the DEV page or any of the existing six model paths.
 
-## Candidates in this first probe
+## What it tests
 
-- Qwen3-VL-2B-Instruct: full-video semantic inspection.
-- X-CLIP base patch16 zero-shot: video/text similarity across a fixed prompt set.
+- Existing YOLO11s COCO weights detect and track people (class 0); ByteTrack keeps a stable person ID.
+- The same existing VideoMAE V2 ViT-Base K710 checkpoint classifies 16-frame clips.
+- Full-frame and person-crop inputs are compared using the same checkpoint, label map, temporal windows, and preprocessing.
+- The entire input video is processed using overlapping windows (default stride 0.5 seconds); the script is not limited to an 8-second clip.
+- JSON, CSV, and a sampled annotated preview video are written to the output directory.
 
-These are model-only probes. Person detection, track locking, person-crop generation, and the final evidence-fusion layer are separate steps and are not yet implemented here.
+No training, fine-tuning, distillation, optimizer, or checkpoint updates are performed.
 
-## Environment
+## Why ViT-Base K710
 
-Use the existing lab CUDA environment where possible. Install a CUDA-enabled PyTorch build that matches the installed driver, then install the remaining dependencies:
+Official checkpoint: OpenGVLab/VideoMAE2, distill/vit_b_k710_dl_from_giant.pth (174 MB). The checkpoint SHA256 is verified by the script before loading. The official K710 label map is copied into this repository without reordering.
 
-~~~bash
-python -m pip install -r scripts/video-action/our-solution/requirements-inference.txt
-~~~
+The official model zoo reports K710 Top-1 81.5% for ViT-Base under a 16-frame × 5-temporal-segment × 3-spatial-crop evaluation protocol. This is a benchmark result on K710, not an expected accuracy on our own clips. The quick POC uses one spatial crop per sliding window to keep runtime practical.
 
-Do not install a CPU-only PyTorch wheel on a machine intended for GPU inference.
+## 1. Prepare the environment
 
-## Run Qwen3-VL-2B
-
-~~~bash
-python scripts/video-action/our-solution/probe_qwen3vl.py \
-  --video /path/to/phone_sample.mp4 \
-  --fps 1 \
-  --max-pixels 151200 \
-  --dtype fp16
-~~~
-
-The default Qwen3-VL revision is pinned to 89644892e4d85e24eaac8bacfd4f463576704203. The initial probe uses a low frame rate and pixel budget to reduce memory use; this is a starting configuration, not a validated optimum.
-
-## Run X-CLIP
+Use a machine with an NVIDIA GPU if available. Create an isolated environment:
 
 ~~~bash
-python scripts/video-action/our-solution/probe_xclip.py \
-  --video /path/to/phone_sample.mp4 \
-  --frames 32 \
-  --dtype fp16
+conda create -n mvai-videomae python=3.10 -y
+conda activate mvai-videomae
 ~~~
 
-X-CLIP's relative_prompt_softmax is normalized only across the fixed prompts in the script. It must not be described as a calibrated probability or model accuracy.
+Install a CUDA-enabled PyTorch and matching torchvision build using the official PyTorch selector for the machine's CUDA driver. Do not install a CPU-only PyTorch build for a GPU test.
 
-## Output
+Then install the remaining dependencies:
 
-Each script writes a JSON record beside the input video (unless an output path is supplied), including:
-- video SHA256;
-- model ID and resolved checkpoint revision;
-- exact prompt or sampling settings;
-- raw output / ranked similarity;
-- model load time, inference time, GPU name, and peak allocated GPU memory.
+~~~bash
+python -m pip install -r scripts/video-action/our-solution/requirements-videomae-yolo.txt
+~~~
 
-## No-training rule
+Clone the official VideoMAE V2 source code:
 
-No optimizer, trainer, training dataset, LoRA, adapter, fine-tuning, or checkpoint-writing code is included. Only inference and measurement are performed.
+~~~bash
+mkdir -p vendor
+git clone --depth 1 https://github.com/OpenGVLab/VideoMAEv2.git vendor/VideoMAEv2
+~~~
+
+The official code recommends timm 0.4.12. If the installed PyTorch/torchvision version is incompatible with that legacy code, stop and report the exact import or model-loading error rather than changing model weights or architecture.
+
+## 2. Run one phone-looking sample
+
+~~~bash
+python scripts/video-action/our-solution/videomae_v2_yolo_poc.py \
+  --video /path/to/looking_at_phone.mp4 \
+  --videomae-repo vendor/VideoMAEv2 \
+  --expected-label "looking at phone" \
+  --save-crops
+~~~
+
+For a phone-call sample:
+
+~~~bash
+python scripts/video-action/our-solution/videomae_v2_yolo_poc.py \
+  --video /path/to/talking_on_phone.mp4 \
+  --videomae-repo vendor/VideoMAEv2 \
+  --expected-label "talking on cell phone" \
+  --save-crops
+~~~
+
+The expected label is used only after inference to report its rank. It is never passed to YOLO or VideoMAE and never influences a prediction.
+
+For an initial smoke test, process only the first 12 seconds:
+
+~~~bash
+python scripts/video-action/our-solution/videomae_v2_yolo_poc.py \
+  --video /path/to/sample.mp4 \
+  --videomae-repo vendor/VideoMAEv2 \
+  --max-seconds 12
+~~~
+
+Remove --max-seconds to process the complete video.
+
+## 3. Initial settings
+
+- YOLO: yolo11s.pt, person class only.
+- Tracker: ByteTrack.
+- VideoMAE V2: ViT-Base, K710, 710 logits, 16 frames, 224 × 224, tubelet size 2.
+- Sample rate: 7.5 frames/second.
+- Sliding-window stride: 0.5 seconds.
+- Person crop: square crop around the tracked person with 25% padding on each side.
+- Crop smoothing: fixed EMA over detected boxes; short track gaps are interpolated, long gaps cause the person-crop window to be skipped.
+- Precision: CUDA FP16 autocast by default; use --fp32 if the device has an issue.
+
+The 16-frame sampling follows the official VideoMAE V2 clip length. The 0.5-second window stride is an engineering choice for continuous analysis, not an official benchmark protocol.
+
+## 4. Outputs
+
+The default output folder is created beside the input video and contains:
+
+- results.json: complete per-window Top-5 predictions, timings, checkpoint and video hashes, track information, and settings.
+- results.csv: concise full-frame versus person-crop comparison.
+- preview.mp4: sampled preview with the selected person box and the two Top-1 predictions.
+- person_crops/: saved person crops when --save-crops is enabled.
+
+Softmax scores are the classifier's 710-way output scores. They are not calibrated probabilities and must not be reported as target-domain accuracy.
+
+## 5. Interpretation limits
+
+K710 has exact native labels including looking at phone, talking on cell phone, waving hand, and sleeping. Generic falling down and generic eating food are not exact K710 classes. Some specific food-eating and falling-related labels exist, but they must not be relabeled as generic eating or falling.
+
+The first test is intended to answer:
+1. Does the person crop improve the rank of the exact native target class compared with full-frame input?
+2. Does the prediction remain stable across overlapping windows?
+3. Does the tracker preserve the same person ID throughout the video?
+4. Does full-video processing produce usable action intervals?
+
+It is not a formal benchmark. The current hand-selected demo clips are development samples, not a blind test set.
+
+## 6. License note
+
+The VideoMAE2 Hugging Face repository identifies the checkpoint repository as Apache-2.0. Ultralytics YOLO11 code and pretrained weights are distributed under AGPL-3.0 by default. This POC is for internal academic evaluation only; review the applicable license before using Ultralytics components in any public, closed-source, or service deployment. If that license is unsuitable, replace the detector adapter before integration.
+
+## No-training guarantee
+
+This script only loads the published YOLO and VideoMAE V2 checkpoints. It contains no training loop, optimizer, loss, backpropagation, fine-tuning, LoRA, distillation, calibration fitting, or weight-writing operation.
