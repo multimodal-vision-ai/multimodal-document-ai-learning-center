@@ -18,6 +18,25 @@ Official checkpoint: OpenGVLab/VideoMAE2, distill/vit_b_k710_dl_from_giant.pth (
 
 The official model zoo reports K710 Top-1 81.5% for ViT-Base under a 16-frame × 5-temporal-segment × 3-spatial-crop evaluation protocol. This is a benchmark result on K710, not an expected accuracy on our own clips. The quick POC uses one spatial crop per sliding window to keep runtime practical.
 
+## Exact native K710 labels in the current 12 DEV pilot clips
+
+The 10 A/B actions below have exact native labels in the official K710 map:
+
+| DEV sample ID | Expected K710 label |
+|---|---|
+| real_a_wave_001 | waving hand |
+| real_a_phone_use_001 | looking at phone |
+| real_a_phone_call_001 | talking on cell phone |
+| real_a_sleeping_001 | sleeping |
+| real_b_jogging_002 | jogging |
+| real_b_yoga_002 | yoga |
+| real_b_push_up_002 | push up |
+| real_b_sit_up_002 | situp |
+| real_b_ballet_002 | dancing ballet |
+| real_b_hula_hooping_001 | hula hooping |
+
+Generic eating food and generic falling down are not exact K710 classes. The corresponding sample clips can still be inspected, but their nearest specific K710 labels must not be treated as exact hits.
+
 ## 1. Prepare the environment
 
 Use a machine with an NVIDIA GPU if available. Create an isolated environment:
