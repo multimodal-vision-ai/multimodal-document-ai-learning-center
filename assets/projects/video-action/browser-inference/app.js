@@ -337,84 +337,113 @@ $('upload').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!['video/mp
 $('reset').onclick=()=>{if(state.busy){say('请先取消正在运行的推理，再清除视频。');return}state.cancelled=true;state.videoKey++;state.comparisonRows={};for(const el of compareInputs())el.checked=false;updateComparisonSelection();hideAnnotated();$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('evaluation').textContent='请选择视频并运行识别';$('metrics').replaceChildren();state.clip=null;if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null;}$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;updateComparisonSelection();say('已清除当前视频')};
 $('cancel').onclick=()=>{state.cancelled=true;state.activeController?.abort();say('已请求取消；下载立即中断，WASM 调用结束后停止。')};
 $('export').onclick=()=>{const b=new Blob([JSON.stringify(state.last||{},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mvai-v103-diagnostics.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
-// Six concise real-video choices; no fake footage or unapproved substitute for falling.
-const SAMPLE_SLOTS=[
-  {id:'wave',name:'挥手',match:c=>c.label_en==='waving hand'||c.id==='real_waving_hand_001'},
-  {id:'phone_use',name:'看手机',match:c=>c.standard_action_id==='phone_use'},
-  {id:'phone_call',name:'打电话',match:c=>c.standard_action_id==='phone_call'},
-  {id:'falling',name:'摔倒',match:c=>c.standard_action_id==='falling'},
-  {id:'eating',name:'吃东西',match:c=>c.standard_action_id==='eating'},
-  {id:'sleep_posture',name:'睡觉',match:c=>c.standard_action_id==='sleep_posture'}
+// V1.0.13: two independent bilingual sample sets. Only section 01 is changed.
+const SAMPLE_GROUPS=[
+ {id:'daily',listId:'sample-list-a',slots:[
+  {id:'wave',zh:'挥手',en:'Waving Hand',match:c=>c.label_en==='waving hand'||c.id==='real_waving_hand_001'||c.standard_action_id==='wave'},
+  {id:'phone_use',zh:'看手机',en:'Using Mobile Phone',match:c=>c.standard_action_id==='phone_use'},
+  {id:'phone_call',zh:'打电话',en:'Talking on Cell Phone',match:c=>c.standard_action_id==='phone_call'&&c.id!=='real_landline_call_005'&&c.phone_type!=='landline'},
+  {id:'falling',zh:'摔倒',en:'Falling Down',match:c=>c.standard_action_id==='falling'},
+  {id:'eating',zh:'吃东西',en:'Eating Food',match:c=>c.standard_action_id==='eating'},
+  {id:'sleep_posture',zh:'睡觉',en:'Sleeping',match:c=>c.standard_action_id==='sleep_posture'}
+ ]},
+ {id:'common',listId:'sample-list-b',slots:[
+  {id:'jogging',zh:'慢跑',en:'Jogging',match:c=>c.standard_action_id==='jogging'},
+  {id:'yoga',zh:'瑜伽',en:'Yoga',match:c=>c.standard_action_id==='yoga'},
+  {id:'push_up',zh:'俯卧撑',en:'Push-up',match:c=>c.standard_action_id==='push_up'},
+  {id:'sit_up',zh:'仰卧起坐',en:'Sit-up',match:c=>c.standard_action_id==='sit_up'},
+  {id:'ballet',zh:'芭蕾舞',en:'Ballet',match:c=>c.standard_action_id==='ballet'},
+  {id:'hula_hooping',zh:'呼啦圈',en:'Hula Hooping',match:c=>c.standard_action_id==='hula_hooping'}
+ ]}
 ];
 const goodSample=c=>{
  const relative=String(c?.relative_file||'');
  const file=relative.startsWith('demo/videos/')?relative.slice(12):'';
- return !!(c&&c.synthetic!==true&&c.status==='approved_demo'&&c.redistribution_approved===true&&c.license&&c.source_url&&file&&[...file].every(ch=>'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-'.includes(ch))&&(file.endsWith('.mp4')||file.endsWith('.webm')));
+ const safeFile=!!(file&&[...file].every(ch=>'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-'.includes(ch))&&(file.endsWith('.mp4')||file.endsWith('.webm')));
+ let safeExternal=false;
+ try{
+  const u=new URL(c?.video_url||'');
+  safeExternal=u.protocol==='https:'&&['videos.pexels.com','upload.wikimedia.org'].includes(u.hostname);
+ }catch{}
+ return !!(c&&c.synthetic!==true&&c.status==='approved_demo'&&c.redistribution_approved===true&&c.license&&c.source_url&&(safeFile||safeExternal));
 };
-const DEV_FIXTURE={id:'synthetic_wave_001',label_zh:'挥手',label_en:'waving hand',source_url:'https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/blob/feat/video-action-v103/scripts/video-action/generate_demo.py',license:'CC0-1.0',synthetic:true,reference_evidence:'synthetic_controlled',evaluation_tier:'development_only'};
 async function addDevFixture(reason){
-  $('sample-list').replaceChildren();
-  for(const slot of SAMPLE_SLOTS){
-    const btn=document.createElement('button');btn.textContent=slot.name;btn.className='unavailable';
-    btn.dataset.action=slot.id;
-    btn.onclick=()=>say('HF 真人视频目录暂不可用：'+reason+'。可上传本地视频。');
-    $('sample-list').append(btn);
+ for(const group of SAMPLE_GROUPS){
+  const box=$(group.listId);box.replaceChildren();
+  for(const slot of group.slots){
+   const btn=document.createElement('button');btn.type='button';btn.className='unavailable';btn.dataset.action=slot.id;btn.dataset.group=group.id;
+   const zh=document.createElement('span');zh.className='sample-zh';zh.textContent=slot.zh;
+   const en=document.createElement('span');en.className='sample-en';en.textContent=slot.en;
+   btn.append(zh,en);btn.title='样例目录暂不可用';
+   btn.onclick=()=>say('HF 真人视频目录暂不可用：'+reason+'。可上传本地视频。');
+   box.append(btn);
   }
-  $('sample-status').textContent='样例目录加载失败：'+reason+'。可上传本地视频。';
-  record('catalog_error',{reason});
+ }
+ $('sample-status').textContent='样例目录加载失败：'+reason+'。可上传本地视频。';
+ record('catalog_error',{reason});
 }
 async function catalog(){
-  const cfg=await loadConfig();
-  let revision=cfg.dataset_revision;
-  let provisional=false;
-  if(!/^[a-f0-9]{40}$/.test(revision||'')){
-    const response=await fetch('https://huggingface.co/api/datasets/'+DATASET,{cache:'no-store'});
-    if(!response.ok)throw Error('HF Dataset API HTTP '+response.status);
-    const info=await response.json();
-    revision=info.sha;
-    if(!/^[a-f0-9]{40}$/.test(revision||''))throw Error('HF API 未返回有效的 commit SHA');
-    provisional=true;
+ const cfg=await loadConfig();
+ let revision=cfg.dataset_revision;
+ let provisional=false;
+ if(!/^[a-f0-9]{40}$/.test(revision||'')){
+  const response=await fetch('https://huggingface.co/api/datasets/'+DATASET,{cache:'no-store'});
+  if(!response.ok)throw Error('HF Dataset API HTTP '+response.status);
+  const info=await response.json();
+  revision=info.sha;
+  if(!/^[a-f0-9]{40}$/.test(revision||''))throw Error('HF API 未返回有效的 commit SHA');
+  provisional=true;
+ }
+ const r=await fetch('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/catalog/v1.json',{cache:'no-store'});
+ if(!r.ok)throw Error('HF catalog HTTP '+r.status+'（数据仓库可能尚未上传 catalog/v1.json）');
+ const c=await r.json();
+ if(c.schema_version!=='1.0'||c.dataset_id!==DATASET||!Array.isArray(c.items))throw Error('HF catalog schema 无效');
+ state.catalog=c;
+ const available=c.items.filter(goodSample);
+ let enabledCount=0;
+ const slotStatus=[];
+ for(const group of SAMPLE_GROUPS){
+  const box=$(group.listId);box.replaceChildren();
+  let groupCount=0;
+  for(const slot of group.slots){
+   const clip=available.find(slot.match);
+   const btn=document.createElement('button');btn.type='button';btn.dataset.action=slot.id;btn.dataset.group=group.id;
+   const zh=document.createElement('span');zh.className='sample-zh';zh.textContent=slot.zh;
+   const en=document.createElement('span');en.className='sample-en';en.textContent=slot.en;
+   btn.append(zh,en);
+   if(clip){
+    enabledCount++;groupCount++;btn.dataset.clipId=clip.id;
+    btn.setAttribute('aria-label','播放'+slot.zh+'（'+slot.en+'）实拍视频');
+    btn.onclick=()=>{
+     const videoUrl=clip.video_url||('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file);
+     pick(videoUrl,clip);
+     document.querySelectorAll('.sample-list button').forEach(item=>item.classList.toggle('active',item===btn));
+     $('sample-status').textContent=slot.id==='phone_call'?'手机通话样例：手机需清晰可见，并与有线电话区分。':
+      slot.id==='sleep_posture'?'睡觉样例展示可观察的卧床姿态，不证明人物生理上已经入睡。':
+      slot.id==='falling'?'摔倒样例展示完整的失衡与倒地过程。':'';
+    };
+   }else{
+    btn.className='unavailable';btn.title='尚无符合标准且已核验授权的实拍视频';
+    btn.setAttribute('aria-label',slot.zh+'（'+slot.en+'）样例待入库');
+    btn.onclick=()=>{
+     document.querySelectorAll('.sample-list button').forEach(item=>item.classList.remove('active'));
+     $('sample-status').textContent='「'+slot.zh+' / '+slot.en+'」暂无通过审核的视频样例，请勿用其他动作替代。';
+     say('「'+slot.zh+' / '+slot.en+'」暂无已审核样例；可上传已授权本地视频。');
+    };
+   }
+   box.append(btn);
   }
-  const r=await fetch('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/catalog/v1.json',{cache:'no-store'});
-  if(!r.ok)throw Error('HF catalog HTTP '+r.status+'（数据仓库可能尚未上传 catalog/v1.json）');
-  const c=await r.json();
-  if(c.schema_version!=='1.0'||c.dataset_id!==DATASET||!Array.isArray(c.items))throw Error('HF catalog schema 无效');
-  state.catalog=c;
-  const box=$('sample-list');
-  box.replaceChildren();
-  const available=c.items.filter(goodSample);
-  let enabledCount=0;
-  for(const slot of SAMPLE_SLOTS){
-    const clip=available.find(slot.match);
-    const btn=document.createElement('button');
-    btn.textContent=slot.name;
-    btn.dataset.action=slot.id;
-    if(clip){
-      enabledCount++;
-      btn.dataset.clipId=clip.id;
-      btn.setAttribute('aria-label','播放真人'+slot.name+'样例');
-      btn.onclick=()=>{
-        pick('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file,clip);
-        box.querySelectorAll('button').forEach(item=>item.classList.toggle('active',item===btn));
-        $('sample-status').textContent=slot.id==='phone_call'?'当前为有线电话，不能等同手机通话。':slot.id==='sleep_posture'?'当前为可见卧床姿态，不能证明真实睡眠。':'';
-      };
-    }else{
-      btn.className='unavailable';
-      btn.title='尚无已核验授权的真人'+slot.name+'视频';
-      btn.setAttribute('aria-label',slot.name+'样例待入库');
-      btn.onclick=()=>{
-        box.querySelectorAll('button').forEach(item=>item.classList.toggle('active',item===btn));
-        $('sample-status').textContent='「'+slot.name+'」暂无已审核的真人视频，请勿用其他类别代替。可使用下方本地视频测试。';
-        say('「'+slot.name+'」暂无公开样例；可选择其他已入库视频或上传已授权本地视频。');
-      };
-    }
-    box.append(btn);
-  }
-  if(!enabledCount)throw Error('HF catalog 尚无可用真人演示样例');
-  record('catalog',{revision,count:enabledCount,availableSlots:SAMPLE_SLOTS.map(x=>({id:x.id,hasVideo:available.some(x.match)})),provisional});
-  if(!state.clip)box.querySelector('button[data-clip-id]')?.click();
+  slotStatus.push({group:group.id,available:groupCount,total:group.slots.length});
+ }
+ record('catalog',{revision,count:enabledCount,groups:slotStatus,provisional});
+ if(!enabledCount)throw Error('HF catalog 尚无可用实拍演示样例');
+ if(!state.clip){
+  const first=document.querySelector('#sample-list-a button[data-action="wave"][data-clip-id]')||
+   document.querySelector('.sample-list button[data-clip-id]');
+  first?.click();
+ }
 }
-catalog().catch(e=>{addDevFixture(e.message)});
+
 function hex(bytes){return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('')}
 async function fetchChecked(){const t=performance.now();const r=await fetch(MODEL_URL);if(!r.ok)throw Error('模型下载 HTTP '+r.status);const buffer=await r.arrayBuffer();if(buffer.byteLength!==15131688)throw Error('模型文件大小不符：'+buffer.byteLength);if(!crypto.subtle)throw Error('浏览器不支持 SHA256 校验');const h=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)));if(h!==MODEL_SHA)throw Error('模型 SHA256 不符，拒绝运行');record('model_download',{bytes:buffer.byteLength,sha256:h,ms:Math.round(performance.now()-t)});return buffer}
 function inputMetadata(model){const data= typeof model.getInputDetails==='function'?model.getInputDetails():model.inputDetails??model.inputs;return Array.isArray(data)?data:null}
