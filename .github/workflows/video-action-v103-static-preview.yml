@@ -1,4 +1,7 @@
 name: V1.0.3 independent HF Static DEV preview
+concurrency:
+  group: mvai-video-action-v103-dev-preview
+  cancel-in-progress: true
 on:
   pull_request:
     branches: [dev]
@@ -20,6 +23,10 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
+      - uses: actions/cache@v4
+        with:
+          path: artifacts/video-action/dev-samples
+          key: mvai-video-action-dev-samples-v1
       - name: Install FFmpeg for licensed sample preparation
         run: |
           sudo apt-get update
