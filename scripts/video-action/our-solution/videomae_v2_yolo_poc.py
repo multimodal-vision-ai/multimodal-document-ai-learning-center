@@ -154,7 +154,25 @@ def load_videomae(repo_path: Path, checkpoint_path: Path, device: torch.device) 
 
     if not isinstance(checkpoint, dict):
         raise RuntimeError("Checkpoint does not contain a state dictionary.")
-    incompatible = model.load_state_dict(checkpoint, strict=True)
+
+    # Mirror the key normalization used by the official VideoMAEv2
+    # run_class_finetuning.py loader before applying a strict state-dict check.
+    normalized_state = {}
+    for old_key, value in checkpoint.items():
+        key = old_key
+        if key.startswith("_orig_mod."):
+            key = key[len("_orig_mod."):]
+        if key.startswith("module."):
+            key = key[len("module."):]
+        if key.startswith("backbone."):
+            key = key[len("backbone."):]
+        elif key.startswith("encoder."):
+            key = key[len("encoder."):]
+        if key in normalized_state:
+            raise RuntimeError(f"Duplicate checkpoint key after normalization: {key}")
+        normalized_state[key] = value
+
+    incompatible = model.load_state_dict(normalized_state, strict=True)
     if incompatible.missing_keys or incompatible.unexpected_keys:
         raise RuntimeError(f"Checkpoint mismatch: {incompatible}")
     model.to(device)
