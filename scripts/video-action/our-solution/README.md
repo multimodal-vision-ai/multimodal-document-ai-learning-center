@@ -87,6 +87,15 @@ python scripts/video-action/our-solution/videomae_v2_yolo_poc.py \
 
 The expected label is used only after inference to report its rank. It is never passed to YOLO or VideoMAE and never influences a prediction.
 
+For one B-group control sample:
+
+~~~bash
+python scripts/video-action/our-solution/videomae_v2_yolo_poc.py \
+  --sample-id real_b_jogging_002 \
+  --videomae-repo vendor/VideoMAEv2 \
+  --expected-label "jogging"
+~~~
+
 For an initial smoke test, process only the first 12 seconds:
 
 ~~~bash
