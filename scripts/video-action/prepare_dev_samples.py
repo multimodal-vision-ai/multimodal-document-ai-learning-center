@@ -13,6 +13,12 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+ROOT=Path("docs/assets/projects/video-action/browser-inference")
+config=json.loads((ROOT/"config.json").read_text(encoding="utf8"))
+if config.get("dataset_branch")=="v103-dev-samples":
+ print("SAMPLE_ASSETS_ALREADY_PUBLISHED",config.get("dataset_revision"))
+ raise SystemExit(0)
+
 OUT=Path("artifacts/video-action/dev-samples")
 RAW=OUT/"source"
 OUT.mkdir(parents=True,exist_ok=True)
