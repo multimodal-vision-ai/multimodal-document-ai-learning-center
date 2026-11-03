@@ -23,7 +23,7 @@ from typing import Any
 import cv2
 import numpy as np
 import torch
-from huggingface_hub import hf_hub_download
+from huggingface_hub import HfApi, hf_hub_download
 from ultralytics import YOLO
 
 MODEL_ID = "OpenGVLab/VideoMAE2"
@@ -50,6 +50,54 @@ def load_labels(path: Path) -> list[str]:
     if len(labels) != NUM_CLASSES:
         raise RuntimeError(f"K710 label map must contain exactly {NUM_CLASSES} labels; got {len(labels)}.")
     return labels
+
+
+def resolve_input_video(
+    video_path: Path | None,
+    sample_id: str | None,
+    dataset_id: str,
+    dataset_revision: str,
+) -> Path:
+    if video_path is not None and sample_id:
+        raise ValueError("Use either --video or --sample-id, not both.")
+    if video_path is not None:
+        resolved = video_path.expanduser().resolve()
+        if not resolved.is_file():
+            raise FileNotFoundError(f"Video file not found: {resolved}")
+        return resolved
+    if not sample_id:
+        raise ValueError("Provide either --video or --sample-id.")
+
+    api = HfApi()
+    files = api.list_repo_files(
+        repo_id=dataset_id,
+        repo_type="dataset",
+        revision=dataset_revision,
+    )
+    extensions = {".mp4", ".webm", ".mov", ".avi", ".mkv"}
+    matches = [
+        name for name in files
+        if Path(name).suffix.lower() in extensions
+        and Path(name).stem == sample_id
+    ]
+    if len(matches) != 1:
+        related = [
+            name for name in files
+            if sample_id in Path(name).name and Path(name).suffix.lower() in extensions
+        ]
+        raise RuntimeError(
+            f"Could not uniquely resolve sample ID {sample_id!r} in "
+            f"{dataset_id}@{dataset_revision}. Exact matches: {matches}; "
+            f"related video files: {related[:10]}. "
+            "If the sample is stored inside an archive, download/extract it and pass --video."
+        )
+    downloaded = hf_hub_download(
+        repo_id=dataset_id,
+        repo_type="dataset",
+        filename=matches[0],
+        revision=dataset_revision,
+    )
+    return Path(downloaded).resolve()
 
 
 def resolve_checkpoint(checkpoint_path: Path | None) -> Path:
@@ -473,7 +521,11 @@ def write_preview(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--video", required=True, type=Path)
+    parser.add_argument("--video", type=Path, default=None)
+    parser.add_argument("--sample-id", default=None,
+                        help="Download one video from the configured Hugging Face demo dataset.")
+    parser.add_argument("--dataset-id", default="multimodal-vision-ai/mvai-daily-action-demo")
+    parser.add_argument("--dataset-revision", default="bb8570bf0bd2c19f1ac5f161f33e8a07728797a5")
     parser.add_argument("--videomae-repo", required=True, type=Path,
                         help="Local clone of the official OpenGVLab/VideoMAEv2 repository.")
     parser.add_argument("--checkpoint", type=Path, default=None,
@@ -501,9 +553,9 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, default=None)
     args = parser.parse_args()
 
-    video_path = args.video.expanduser().resolve()
-    if not video_path.is_file():
-        raise SystemExit(f"Video file not found: {video_path}")
+    video_path = resolve_input_video(
+        args.video, args.sample_id, args.dataset_id, args.dataset_revision
+    )
     if args.sample_fps <= 0 or args.stride_sec <= 0:
         raise SystemExit("--sample-fps and --stride-sec must be positive.")
 
