@@ -2,7 +2,7 @@ import {interpretAction,labelDisplay} from './semantic.js';
 import {createPersonDetector,choosePrimaryPerson,mapBoxToContainedVideo,top1At} from './person-overlay.js';
 import {OFFICIAL_MODELS,MODEL_REPO,validateStreamingContract,makeRGBFrameFromRGBA,runStreamingBatch} from './official-movinet.js';
 import {VIDEOMAE,compileVideoMAE,sampleVideoMAEFrames,inferVideoMAE} from './video-mae.js';
-import {MOBILECLIP,MOBILECLIP_S2,MOBILECLIP_LABELS,loadMobileCLIP,loadMobileCLIPS2,sampleMobileCLIPFrames,inferMobileCLIP,mobileCLIPReferenceRank,mobileCLIPModelName} from './mobileclip.js';
+import {MOBILECLIP_LABELS,loadMobileCLIP,loadMobileCLIPS2,sampleMobileCLIPFrames,inferMobileCLIP,mobileCLIPReferenceRank} from './mobileclip.js';
 import {MOVINET_FPS,seekVideo,analyzeCompleteMoViNet,buildActionSegments} from './continuous-movinet.js';
 import {scanPrimaryActor,actorBoxAt} from './person-target.js';
 import {analyzeWindowedActor} from './continuous-segments.js';
@@ -511,7 +511,7 @@ async function probe(){
   const variant=state.selectedModel;
   if(activeModelReady()){
     $('model-state').textContent='模型已就绪';
-    const io=variant==='mobileclip_s0'?'6 帧文本匹配（'+state.mobileclipModel.backend+'）':variant==='videomae'?'1 输入 / 1 输出（16 帧 K400）':variant==='a0'?'47 输入 / 28 输出':'已验证 '+OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出';
+    const io=isMobileCLIPVariant(variant)?'6 帧文本匹配（'+mobileCLIPEntry(variant).backend+'）':variant==='videomae'?'1 输入 / 1 输出（16 帧 K400）':variant==='a0'?'47 输入 / 28 输出':'已验证 '+OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出';
     say(variant.toUpperCase()+' 浏览器模型已就绪；'+io+'。无需重复初始化。');
     return;
   }
@@ -521,7 +521,7 @@ async function probe(){
   try{
     await ensureModelReady(state.activeController.signal);
     if(state.cancelled)throw Error('用户取消');
-    const io=variant==='mobileclip_s0'?'六类关键帧匹配加载完成（'+state.mobileclipModel.backend+'）':variant==='videomae'?'16 帧 Kinetics400 单输入、400 类输出验证通过':variant==='a0'?'47 输入 / 28 输出元数据通过':OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出状态元数据通过';
+    const io=isMobileCLIPVariant(variant)?'六类关键帧匹配加载完成（'+mobileCLIPEntry(variant).backend+'）':variant==='videomae'?'16 帧 Kinetics400 单输入、400 类输出验证通过':variant==='a0'?'47 输入 / 28 输出元数据通过':OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出状态元数据通过';
     say(variant.toUpperCase()+' 模型已加载，'+io+'；可以开始识别。');
   }catch(e){say('WASM 加载失败：'+e.message);record('probe_error',{variant,message:e.message,stack:e.stack})}
   finally{state.activeController=null;setBusy(false)}
