@@ -57,6 +57,11 @@ catalog_file=Path(hf_hub_download(repo_id=DATASET,repo_type="dataset",
 catalog=json.loads(catalog_file.read_text(encoding="utf8"))
 if catalog.get("schema_version")!="1.0" or catalog.get("dataset_id")!=DATASET or not isinstance(catalog.get("items"),list):
     sys.exit("Existing HF Dataset catalog schema is invalid")
+print("SOURCE_SAMPLE_ITEMS="+json.dumps([
+    {k:item.get(k) for k in ("id","label_zh","label_en","standard_action_id","status","license",
+      "relative_file","video_url","source_url","duration_seconds","width","height","redistribution_approved")}
+    for item in catalog["items"]
+],ensure_ascii=False))
 
 # Keep the earlier landline clip in the Dataset history, but prevent it from being
 # selected as a mobile-phone call sample.
