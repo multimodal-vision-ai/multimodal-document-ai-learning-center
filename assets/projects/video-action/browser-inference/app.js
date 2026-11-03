@@ -26,7 +26,7 @@ $('compare-info').onclick=()=>{
  control.setAttribute('aria-expanded',String(!panel.hidden));
 };
 function activeModelReady(){return state.selectedModel==='mobileclip_s0'?!!state.mobileclipModel:state.selectedModel==='videomae'?!!state.videomaeModel:state.selectedModel==='a0'?!!state.model:!!state.officialModels[state.selectedModel]}
-function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('model').disabled=b;$('sample-list')?.querySelectorAll('button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':activeModelReady()?'模型已就绪':'尚未加载';updateComparisonSelection();}
+function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('model').disabled=b;document.querySelectorAll('.sample-list button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':activeModelReady()?'模型已就绪':'尚未加载';updateComparisonSelection();}
 // Person detector runs entirely in browser, independently from the MoViNet action model.
 const personState={model:null,loadPromise:null,lastSampleMs:0,lastTime:-1,box:null,count:0,generation:0,error:null};
 const personStatus=msg=>{$('person-detector-status').textContent=msg};
@@ -365,7 +365,8 @@ const goodSample=c=>{
   const u=new URL(c?.video_url||'');
   safeExternal=u.protocol==='https:'&&['videos.pexels.com','upload.wikimedia.org'].includes(u.hostname);
  }catch{}
- return !!(c&&c.synthetic!==true&&c.status==='approved_demo'&&c.redistribution_approved===true&&c.license&&c.source_url&&(safeFile||safeExternal));
+ const approvedDelivery=safeFile?c?.redistribution_approved===true:safeExternal&&c?.external_use_approved===true;
+ return !!(c&&c.synthetic!==true&&c.status==='approved_demo'&&approvedDelivery&&c.license&&c.source_url&&(safeFile||safeExternal));
 };
 async function addDevFixture(reason){
  for(const group of SAMPLE_GROUPS){
@@ -418,7 +419,8 @@ async function catalog(){
      const videoUrl=clip.video_url||('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file);
      pick(videoUrl,clip);
      document.querySelectorAll('.sample-list button').forEach(item=>item.classList.toggle('active',item===btn));
-     $('sample-status').textContent=slot.id==='phone_call'?'手机通话样例：手机需清晰可见，并与有线电话区分。':
+     $('sample-status').textContent=group.id==='common'?'B类用于 MoViNet Kinetics-600 与 VideoMAE Kinetics-400 的共同原生类别对照；MobileCLIP 当前仅配置 A 类日常行为文本提示，不计入 B 类评价。':
+      slot.id==='phone_call'?'手机通话样例：手机需清晰可见，并与有线电话区分。':
       slot.id==='sleep_posture'?'睡觉样例展示可观察的卧床姿态，不证明人物生理上已经入睡。':
       slot.id==='falling'?'摔倒样例展示完整的失衡与倒地过程。':'';
     };
@@ -443,6 +445,8 @@ async function catalog(){
   first?.click();
  }
 }
+
+catalog().catch(e=>{addDevFixture(e.message)});
 
 function hex(bytes){return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('')}
 async function fetchChecked(){const t=performance.now();const r=await fetch(MODEL_URL);if(!r.ok)throw Error('模型下载 HTTP '+r.status);const buffer=await r.arrayBuffer();if(buffer.byteLength!==15131688)throw Error('模型文件大小不符：'+buffer.byteLength);if(!crypto.subtle)throw Error('浏览器不支持 SHA256 校验');const h=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)));if(h!==MODEL_SHA)throw Error('模型 SHA256 不符，拒绝运行');record('model_download',{bytes:buffer.byteLength,sha256:h,ms:Math.round(performance.now()-t)});return buffer}
