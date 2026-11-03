@@ -419,7 +419,8 @@ async function catalog(){
      const videoUrl=clip.video_url||('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file);
      pick(videoUrl,clip);
      document.querySelectorAll('.sample-list button').forEach(item=>item.classList.toggle('active',item===btn));
-     $('sample-status').textContent=slot.id==='phone_call'?'手机通话样例：手机需清晰可见，并与有线电话区分。':
+     $('sample-status').textContent=group.id==='common'?'B类用于 MoViNet Kinetics-600 与 VideoMAE Kinetics-400 的共同原生类别对照；MobileCLIP 当前仅配置 A 类日常行为文本提示，不计入 B 类评价。':
+      slot.id==='phone_call'?'手机通话样例：手机需清晰可见，并与有线电话区分。':
       slot.id==='sleep_posture'?'睡觉样例展示可观察的卧床姿态，不证明人物生理上已经入睡。':
       slot.id==='falling'?'摔倒样例展示完整的失衡与倒地过程。':'';
     };
