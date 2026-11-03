@@ -69,7 +69,7 @@ catalog_changed=False
 legacy_ids={
  "real_waving_hand_001","real_phone_use_003","real_landline_call_005",
  "real_eating_004","real_sleep_posture_006","real_falling_007","real_phone_call_008",
- "real_b_yoga_001","real_b_push_up_001","real_b_sit_up_001","real_b_ballet_001"
+ "real_b_yoga_001","real_b_push_up_001","real_b_sit_up_001","real_b_ballet_001","real_b_jogging_001"
 }
 for item in catalog["items"]:
     if item.get("id") in legacy_ids and item.get("status")!="archived":
@@ -115,6 +115,9 @@ new_items=[
  pexels_item("real_a_sleeping_001","A","睡觉","sleeping","sleep_posture","8865507","8865507-hd_1920_1080_30fps.mp4",
   "https://www.pexels.com/video/woman-sleeping-on-the-bed-8865507/",
   "RDNE Stock project",8,1920,1080,29.97,"A senior woman rests on a bed; the footage shows a sleeping posture, not proof of physiological sleep."),
+ pexels_item("real_b_jogging_002","B","慢跑","jogging","jogging","6573735","6573735-hd_1920_1080_24fps.mp4",
+  "https://www.pexels.com/video/a-woman-jogging-6573735/",
+  "ArtHouse Studio",12,1920,1080,23.98,"One woman jogs up a grassy hill outdoors."),
  pexels_item("real_b_yoga_002","B","瑜伽","yoga","yoga","4536533","4536533-hd_1920_1080_30fps.mp4",
   "https://www.pexels.com/video/woman-doing-yoga-4536533/",
   "Vlada Karpovich",10,1920,1080,30,"One woman practices yoga indoors."),
@@ -144,7 +147,6 @@ for item in new_items:
     upsert_item(item)
 
 B_META={
- "jogging":{"zh":"慢跑","en":"jogging","source":"https://commons.wikimedia.org/wiki/File:Jogging_-_near_arakawa_river_-_tokyo_japan_-_2022_may_3.webm","license":"CC BY 4.0","license_url":"https://creativecommons.org/licenses/by/4.0/","author":"Nesnad","note":"Two runners are visible and both perform jogging; the primary-person tracker may select either."},
  "hula_hooping":{"zh":"呼啦圈","en":"hula hooping","source":"https://commons.wikimedia.org/wiki/File:Berlin_girl_turning_a_hula_hoop,_Berlin_2013_(2013-08-23_by_Thomas_Quine).webm","license":"CC BY 2.0","license_url":"https://creativecommons.org/licenses/by/2.0/","author":"Thomas Quine","note":"One person continuously turns a hula hoop."}
 }
 existing={item.get("id") for item in catalog["items"]}
@@ -172,7 +174,7 @@ for key,meta in B_META.items():
 active_ids={x.get("id") for x in catalog["items"] if x.get("status")=="approved_demo"}
 required={
  "real_a_wave_001","real_a_phone_use_001","real_a_phone_call_001","real_a_falling_001","real_a_eating_001","real_a_sleeping_001",
- "real_b_jogging_001","real_b_yoga_002","real_b_push_up_002","real_b_sit_up_002","real_b_ballet_002","real_b_hula_hooping_001"
+ "real_b_jogging_002","real_b_yoga_002","real_b_push_up_002","real_b_sit_up_002","real_b_ballet_002","real_b_hula_hooping_001"
 }
 missing=required-active_ids
 if missing:sys.exit("DEV sample catalog incomplete: "+", ".join(sorted(missing)))
