@@ -2,7 +2,7 @@ import {interpretAction,labelDisplay} from './semantic.js';
 import {createPersonDetector,choosePrimaryPerson,mapBoxToContainedVideo,top1At} from './person-overlay.js';
 import {OFFICIAL_MODELS,MODEL_REPO,validateStreamingContract,makeRGBFrameFromRGBA,runStreamingBatch} from './official-movinet.js';
 import {VIDEOMAE,compileVideoMAE,sampleVideoMAEFrames,inferVideoMAE} from './video-mae.js';
-import {MOBILECLIP,MOBILECLIP_LABELS,loadMobileCLIP,sampleMobileCLIPFrames,inferMobileCLIP,mobileCLIPReferenceRank,mobileCLIPModelName} from './mobileclip.js';
+import {MOBILECLIP_LABELS,loadMobileCLIP,loadMobileCLIPS2,sampleMobileCLIPFrames,inferMobileCLIP,mobileCLIPReferenceRank} from './mobileclip.js';
 import {MOVINET_FPS,seekVideo,analyzeCompleteMoViNet,buildActionSegments} from './continuous-movinet.js';
 import {scanPrimaryActor,actorBoxAt} from './person-target.js';
 import {analyzeWindowedActor} from './continuous-segments.js';
@@ -14,7 +14,7 @@ const MODEL_SHA='0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c
 const LABELS_URL='https://raw.githubusercontent.com/tensorflow/models/f8af2291cced43fc9f1d9b41ddbf772ae7b0d7d2/official/projects/movinet/files/kinetics_600_labels.txt';
 const DATASET='multimodal-vision-ai/mvai-daily-action-demo';
 const DIMS=[2,2,2,4,2,2,4,2,2,2,4];
-const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},videoKey:0,activeController:null,videomaeModel:null,videomaePromise:null,mobileclipModel:null,mobileclipPromise:null,k600Labels:null,outputMode:'stream',actorTrack:null,actorGrounded:false};
+const state={objectUrl:null,clip:null,catalog:null,model:null,api:null,labels:null,meta:null,busy:false,cancelled:false,last:null,runtimePromise:null,modelPromise:null,weightsPromise:null,labelsPromise:null,top1Timeline:[],annotatedLimit:0,selectedModel:'a0',officialModels:{},officialPromises:{},comparisonRows:{},videoKey:0,activeController:null,videomaeModel:null,videomaePromise:null,mobileclipModel:null,mobileclipPromise:null,mobileclipS2Model:null,mobileclipS2Promise:null,k600Labels:null,outputMode:'stream',actorTrack:null,actorGrounded:false};
 let config=null;
 async function loadConfig(){const response=await fetch('./config.json',{cache:'no-store'});if(!response.ok)throw Error('本地配置 HTTP '+response.status);config=await response.json();if(config.dataset_id!==DATASET)throw Error('数据源配置错误');return config;}
 const say=s=>{$('status').textContent=s;$('status').classList.toggle('error',/失败|未完成|错误|无效/.test(s));};
@@ -25,7 +25,9 @@ $('compare-info').onclick=()=>{
  panel.hidden=!panel.hidden;
  control.setAttribute('aria-expanded',String(!panel.hidden));
 };
-function activeModelReady(){return state.selectedModel==='mobileclip_s0'?!!state.mobileclipModel:state.selectedModel==='videomae'?!!state.videomaeModel:state.selectedModel==='a0'?!!state.model:!!state.officialModels[state.selectedModel]}
+const isMobileCLIPVariant=id=>id==='mobileclip_s0'||id==='mobileclip_s2';
+function mobileCLIPEntry(id){return id==='mobileclip_s2'?state.mobileclipS2Model:state.mobileclipModel}
+function activeModelReady(){return isMobileCLIPVariant(state.selectedModel)?!!mobileCLIPEntry(state.selectedModel):state.selectedModel==='videomae'?!!state.videomaeModel:state.selectedModel==='a0'?!!state.model:!!state.officialModels[state.selectedModel]}
 function setBusy(b){state.busy=b;$('probe').disabled=b;$('run').disabled=b||!$('video').getAttribute('src');$('upload').disabled=b;$('model').disabled=b;document.querySelectorAll('.sample-list button').forEach(btn=>btn.disabled=b);$('model-state').textContent=b?'正在处理…':activeModelReady()?'模型已就绪':'尚未加载';updateComparisonSelection();}
 // Person detector runs entirely in browser, independently from the MoViNet action model.
 const personState={model:null,loadPromise:null,lastSampleMs:0,lastTime:-1,box:null,count:0,generation:0,error:null};
@@ -137,6 +139,7 @@ function syncModelDescription(){
   if(state.selectedModel==='a0')$('model-description').textContent='MoViNet-A0 · WASM CPU · K600 · 15.1 MB · 5 FPS · 完整视频连续推理';
   else if(state.selectedModel==='videomae')$('model-description').textContent='Qualcomm VideoMAE · 351 MB · Kinetics-400 · 对完整视频逐 4 秒片段采样 16 帧分类；非流式，研究实验模型';
    else if(state.selectedModel==='mobileclip_s0')$('model-description').textContent='Apple MobileCLIP-S0 · WebGPU/fp16，失败尝试 WASM/q8 · 对完整视频每 4 秒采样 6 张人物关键帧 · 六类文本语义匹配，非时序动作分类';
+  else if(state.selectedModel==='mobileclip_s2')$('model-description').textContent='Apple MobileCLIP-S2 · WebGPU/fp16，失败尝试 WASM/q8 · 双编码器约 199 MB / 101 MB · 每 4 秒采样 6 张人物关键帧 · 六类图文语义匹配，非时序动作分类';
   else $('model-description').textContent='Google MoViNet-'+state.selectedModel.toUpperCase()+' · K600 · '+(OFFICIAL_MODELS[state.selectedModel].bytes/1e6).toFixed(1)+' MB · '+OFFICIAL_MODELS[state.selectedModel].size+'×'+OFFICIAL_MODELS[state.selectedModel].size+' · 5 FPS · 完整视频连续推理';
 }
 $('model').addEventListener('change',()=>{
@@ -451,20 +454,23 @@ catalog().catch(e=>{addDevFixture(e.message)});
 function hex(bytes){return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('')}
 async function fetchChecked(){const t=performance.now();const r=await fetch(MODEL_URL);if(!r.ok)throw Error('模型下载 HTTP '+r.status);const buffer=await r.arrayBuffer();if(buffer.byteLength!==15131688)throw Error('模型文件大小不符：'+buffer.byteLength);if(!crypto.subtle)throw Error('浏览器不支持 SHA256 校验');const h=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)));if(h!==MODEL_SHA)throw Error('模型 SHA256 不符，拒绝运行');record('model_download',{bytes:buffer.byteLength,sha256:h,ms:Math.round(performance.now()-t)});return buffer}
 function inputMetadata(model){const data= typeof model.getInputDetails==='function'?model.getInputDetails():model.inputDetails??model.inputs;return Array.isArray(data)?data:null}
-async function ensureMobileCLIPModel(){
- if(state.mobileclipModel){state.labels=MOBILECLIP_LABELS;return state.mobileclipModel}
- if(state.mobileclipPromise)return state.mobileclipPromise;
+async function ensureMobileCLIPModel(variant='mobileclip_s0'){
+ const isS2=variant==='mobileclip_s2';
+ const modelKey=isS2?'mobileclipS2Model':'mobileclipModel';
+ const promiseKey=isS2?'mobileclipS2Promise':'mobileclipPromise';
+ if(state[modelKey]){state.labels=MOBILECLIP_LABELS;return state[modelKey]}
+ if(state[promiseKey])return state[promiseKey];
  const task=(async()=>{
-   const entry=await loadMobileCLIP({onProgress:say});
-   state.mobileclipModel=entry;state.labels=MOBILECLIP_LABELS;
-   record('model_compiled',{variant:MOBILECLIP.id,source:MOBILECLIP.modelId,backend:entry.backend,dtype:entry.dtype,weightSizeApproxMB:entry.weightsMB,webgpuFallbackReason:entry.webgpuError||null});
+   const entry=isS2?await loadMobileCLIPS2({onProgress:say}):await loadMobileCLIP({onProgress:say});
+   state[modelKey]=entry;state.labels=MOBILECLIP_LABELS;
+   record('model_compiled',{variant,source:entry.modelId,modelName:entry.modelName,backend:entry.backend,dtype:entry.dtype,weightSizeApproxMB:entry.weightsMB,webgpuFallbackReason:entry.webgpuError||null});
    return entry;
  })();
- state.mobileclipPromise=task;
- try{return await task}finally{state.mobileclipPromise=null}
+ state[promiseKey]=task;
+ try{return await task}finally{state[promiseKey]=null}
 }
 async function ensureModelReady(signal){
-  if(state.selectedModel==='mobileclip_s0')return ensureMobileCLIPModel();
+  if(isMobileCLIPVariant(state.selectedModel))return ensureMobileCLIPModel(state.selectedModel);
   if(state.selectedModel==='videomae')return ensureVideoMAEModel(signal);
   if(state.selectedModel!=='a0')return ensureOfficialModel(state.selectedModel);
   if(state.model&&state.meta?.length===47&&state.k600Labels?.length===600){state.labels=state.k600Labels;return state.model}
@@ -505,7 +511,7 @@ async function probe(){
   const variant=state.selectedModel;
   if(activeModelReady()){
     $('model-state').textContent='模型已就绪';
-    const io=variant==='mobileclip_s0'?'6 帧文本匹配（'+state.mobileclipModel.backend+'）':variant==='videomae'?'1 输入 / 1 输出（16 帧 K400）':variant==='a0'?'47 输入 / 28 输出':'已验证 '+OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出';
+    const io=isMobileCLIPVariant(variant)?'6 帧文本匹配（'+mobileCLIPEntry(variant).backend+'）':variant==='videomae'?'1 输入 / 1 输出（16 帧 K400）':variant==='a0'?'47 输入 / 28 输出':'已验证 '+OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出';
     say(variant.toUpperCase()+' 浏览器模型已就绪；'+io+'。无需重复初始化。');
     return;
   }
@@ -515,7 +521,7 @@ async function probe(){
   try{
     await ensureModelReady(state.activeController.signal);
     if(state.cancelled)throw Error('用户取消');
-    const io=variant==='mobileclip_s0'?'六类关键帧匹配加载完成（'+state.mobileclipModel.backend+'）':variant==='videomae'?'16 帧 Kinetics400 单输入、400 类输出验证通过':variant==='a0'?'47 输入 / 28 输出元数据通过':OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出状态元数据通过';
+    const io=isMobileCLIPVariant(variant)?'六类关键帧匹配加载完成（'+mobileCLIPEntry(variant).backend+'）':variant==='videomae'?'16 帧 Kinetics400 单输入、400 类输出验证通过':variant==='a0'?'47 输入 / 28 输出元数据通过':OFFICIAL_MODELS[variant].expectedInputs+' 输入 / '+OFFICIAL_MODELS[variant].expectedOutputs+' 输出状态元数据通过';
     say(variant.toUpperCase()+' 模型已加载，'+io+'；可以开始识别。');
   }catch(e){say('WASM 加载失败：'+e.message);record('probe_error',{variant,message:e.message,stack:e.stack})}
   finally{state.activeController=null;setBusy(false)}
@@ -531,7 +537,7 @@ function a0RGBFrameFromRGBA(rgba,size){
  return out;
 }
 function softmax(logits){const m=Math.max(...logits),v=Array.from(logits,x=>Math.exp(x-m));const s=v.reduce((a,b)=>a+b,0);return v.map(x=>x/s)}
-const MODEL_ORDER=['a0','a1','a2','videomae','mobileclip_s0'];
+const MODEL_ORDER=['a0','a1','a2','videomae','mobileclip_s0','mobileclip_s2'];
 const compareInputs=()=>Array.from(document.querySelectorAll('#compare-choices input[type="checkbox"]'));
 const availableForCompare=id=>{
  const result=state.comparisonRows[id];
@@ -591,14 +597,14 @@ function updateComparisonView(){
 }
 function saveModelComparison(variant,top,comparison,timings,frames,videoKey){
  if(videoKey!==state.videoKey||state.cancelled)throw Error('视频已切换或推理已取消，不保存结果');
- const semantic=variant==='mobileclip_s0';
- const mb=semantic?state.mobileclipModel.weightsMB:variant==='videomae'?VIDEOMAE.bytes/1e6:variant==='a0'?15.131688:OFFICIAL_MODELS[variant].bytes/1e6;
+ const semantic=isMobileCLIPVariant(variant),semanticEntry=semantic?mobileCLIPEntry(variant):null;
+ const mb=semantic?semanticEntry.weightsMB:variant==='videomae'?VIDEOMAE.bytes/1e6:variant==='a0'?15.131688:OFFICIAL_MODELS[variant].bytes/1e6;
  state.comparisonRows[variant]={
    status:'success',videoKey,
-   model:semantic?mobileCLIPModelName:variant==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+variant.toUpperCase(),
+   model:semantic?semanticEntry.modelName:variant==='videomae'?'Qualcomm VideoMAE':'MoViNet-'+variant.toUpperCase(),
    top1:top[0].label,score:top[0].score,targetRank:comparison?.target_rank??null,
    inferenceMs:timings.inferenceMs,mb,frames,
-   backend:semantic?state.mobileclipModel.backend:'wasm'
+   backend:semantic?semanticEntry.backend:'wasm'
  };
  updateComparisonSelection();
 }
@@ -640,9 +646,9 @@ if(['a0','a1','a2'].includes(variant)){
  logits=output.logits;frameTop1=output.frameTop1;decodeMs=output.decodeMs;
  framesProcessed=output.framesProcessed;measuredInferenceMs=output.inferenceMs;
  analyzedDuration=output.duration;frames=[];
-}else if(variant==='videomae'||variant==='mobileclip_s0'){
+}else if(variant==='videomae'||isMobileCLIPVariant(variant)){
   isContinuous=true;isWindowed=true;
-  const entry=variant==='videomae'?state.videomaeModel:state.mobileclipModel;
+  const entry=variant==='videomae'?state.videomaeModel:mobileCLIPEntry(variant);
   if(!entry)throw Error('片段模型尚未成功加载');
   $('analysis-progress').hidden=false;$('analysis-progress').value=0;
   const output=await analyzeWindowedActor({
@@ -652,7 +658,7 @@ if(['a0','a1','a2'].includes(variant)){
     isCancelled:()=>state.cancelled,windowSeconds:4,
     onProgress:({processed,total,seconds,duration,completed})=>{
       $('analysis-progress').value=100*processed/total;
-      say((variant==='videomae'?'VideoMAE':'MobileCLIP')+' 框内人物分段分析：'+
+      say((variant==='videomae'?'VideoMAE':entry.modelName)+' 框内人物分段分析：'+
         processed+'/'+total+' 段 · 视频 '+seconds.toFixed(1)+'/'+duration.toFixed(1)+
         ' 秒 · 有效 '+completed+' 段');
     }
@@ -660,12 +666,12 @@ if(['a0','a1','a2'].includes(variant)){
   logits=output.logits;frameTop1=output.frameTop1;
   framesProcessed=output.framesProcessed;decodeMs=output.decodeMs;
   measuredInferenceMs=output.inferenceMs;analyzedDuration=output.duration;frames=[];
-  if(variant==='mobileclip_s0')mobileclipScores=output.probabilities;
+  if(isMobileCLIPVariant(variant))mobileclipScores=output.probabilities;
 }
-if(!logits||logits.length!==(variant==='mobileclip_s0'?6:variant==='videomae'?400:600)||!logits.every(Number.isFinite))throw Error('输出 logits 无效');const probabilities=mobileclipScores??softmax(logits);
+if(!logits||logits.length!==(isMobileCLIPVariant(variant)?6:variant==='videomae'?400:600)||!logits.every(Number.isFinite))throw Error('输出 logits 无效');const probabilities=mobileclipScores??softmax(logits);
 const ranked=probabilities.map((score,id)=>({id,label:state.labels[id],score})).sort((a,b)=>b.score-a.score);
 const top=ranked.slice(0,5);
-const comparison=variant==='mobileclip_s0'?(state.clip?(()=>{
+const comparison=isMobileCLIPVariant(variant)?(state.clip?(()=>{
  const target_rank=mobileCLIPReferenceRank(probabilities,state.clip);
  return {target_rank,summary:target_rank?'参考动作在六类候选中排名 #'+target_rank:'该视频暂无可匹配的六类参考动作',
  detail:'MobileCLIP 只根据 6 张关键帧与固定英文描述计算相对匹配分数；不含动作过程信息，不能作为视频识别准确率或概率。'};
@@ -697,13 +703,13 @@ if(comparison){
 }
 const timings={decodeMs:Math.round(decodeMs),inferenceMs:Math.round(measuredInferenceMs??(performance.now()-inferenceStarted)),totalMs:Math.round(performance.now()-began)};
 $('metrics').replaceChildren();
-for(const entry of ['处理 '+(isContinuous?framesProcessed:frames.length)+' 帧','模型运行 '+timings.inferenceMs+' ms','总耗时 '+timings.totalMs+' ms',variant==='mobileclip_s0'?(state.mobileclipModel.backend.toUpperCase()+'/'+state.mobileclipModel.dtype):'CPU/WASM']){
+for(const entry of ['处理 '+(isContinuous?framesProcessed:frames.length)+' 帧','模型运行 '+timings.inferenceMs+' ms','总耗时 '+timings.totalMs+' ms',isMobileCLIPVariant(variant)?(mobileCLIPEntry(variant).backend.toUpperCase()+'/'+mobileCLIPEntry(variant).dtype):'CPU/WASM']){
  const el=document.createElement('span');el.textContent=entry;$('metrics').append(el);
 }
 saveModelComparison(variant,top,comparison,timings,isContinuous?framesProcessed:frames.length,runVideoKey);
-try{await showAnnotated(frameTop1,analyzedDuration,variant==='videomae',variant==='mobileclip_s0');if(isContinuous)renderActionTimeline(frameTop1,analyzedDuration,isWindowed)}
+try{await showAnnotated(frameTop1,analyzedDuration,variant==='videomae',isMobileCLIPVariant(variant));if(isContinuous)renderActionTimeline(frameTop1,analyzedDuration,isWindowed)}
 catch(error){record('preview_error',{variant,message:error.message});hideAnnotated();}
-record('inference',{variant,top5:top,frameTop1,frames:isContinuous?framesProcessed:frames.length,analyzedSeconds:analyzedDuration,actionSegments:isContinuous?buildActionSegments(frameTop1,analyzedDuration):null,timings,backend:variant==='mobileclip_s0'?state.mobileclipModel.backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:variant==='mobileclip_s0'?null:variant==='a0'?MODEL_SHA:variant==='videomae'?VIDEOMAE.sha256:OFFICIAL_MODELS[variant].sha256,classificationMode:variant==='mobileclip_s0'?'windowed-keyframe-semantic':variant==='videomae'?'windowed-clip':'actor-stream',labelSet:variant==='mobileclip_s0'?'six-prompts':variant==='videomae'?'K400':'K600',actorMode:'tracked-person-crop',trackPoints:state.actorTrack.length});
-say(variant==='mobileclip_s0'?'真实推理已返回：MobileCLIP 对框内人物完成完整视频连续片段图文匹配；不具备逐帧动态分类能力。':variant==='videomae'?'真实推理已返回：VideoMAE 完成框内人物连续片段分类（K400），每个结果对应 4 秒片段。':'真实推理已返回 '+framesProcessed+' 个框内人物流式预测（视频 '+analyzedDuration.toFixed(1)+' 秒）。');
+record('inference',{variant,top5:top,frameTop1,frames:isContinuous?framesProcessed:frames.length,analyzedSeconds:analyzedDuration,actionSegments:isContinuous?buildActionSegments(frameTop1,analyzedDuration):null,timings,backend:isMobileCLIPVariant(variant)?mobileCLIPEntry(variant).backend:'wasm',clipId:state.clip?.id??null,comparison,modelSha256:isMobileCLIPVariant(variant)?null:variant==='a0'?MODEL_SHA:variant==='videomae'?VIDEOMAE.sha256:OFFICIAL_MODELS[variant].sha256,classificationMode:isMobileCLIPVariant(variant)?'windowed-keyframe-semantic':variant==='videomae'?'windowed-clip':'actor-stream',labelSet:isMobileCLIPVariant(variant)?'six-prompts':variant==='videomae'?'K400':'K600',actorMode:'tracked-person-crop',trackPoints:state.actorTrack.length});
+say(isMobileCLIPVariant(variant)?'真实推理已返回：'+mobileCLIPEntry(variant).modelName+' 对框内人物完成完整视频连续片段图文匹配；不具备逐帧动态分类能力。':variant==='videomae'?'真实推理已返回：VideoMAE 完成框内人物连续片段分类（K400），每个结果对应 4 秒片段。':'真实推理已返回 '+framesProcessed+' 个框内人物流式预测（视频 '+analyzedDuration.toFixed(1)+' 秒）。');
 return {ok:true,variant};}catch(e){state.actorTrack=null;state.actorGrounded=false;say('真实推理未完成：'+e.message);$('results').textContent='没有可展示的有效推理结果';record('inference_error',{variant:state.selectedModel,message:e.message,stack:e.stack});return {ok:false,error:e.message}}finally{state.activeController=null;$('analysis-progress').hidden=true;setBusy(false)}}
 $('run').onclick=()=>{state.cancelled=false;return run()};

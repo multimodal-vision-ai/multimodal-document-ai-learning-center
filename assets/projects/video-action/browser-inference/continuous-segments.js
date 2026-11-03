@@ -13,7 +13,8 @@ const softmax=values=>{
 export async function analyzeWindowedActor({
  video,variant,api,model,classifier,labels,actorTrack,isCancelled,onProgress,windowSeconds=4
 }){
- if(!['videomae','mobileclip_s0'].includes(variant))throw Error('Unsupported window model');
+ const isMobileCLIP=variant.startsWith('mobileclip_');
+ if(variant!=='videomae'&&!isMobileCLIP)throw Error('Unsupported window model');
  if(!(video.duration>0))throw Error('视频没有有效长度');
  const total=Math.ceil(video.duration/windowSeconds),points=[];
  let logits=null,probabilities=null,decodeMs=0,inferenceMs=0,completed=0;
