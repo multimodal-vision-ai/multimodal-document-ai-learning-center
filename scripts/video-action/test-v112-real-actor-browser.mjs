@@ -9,8 +9,8 @@ const page=await browser.newPage({viewport:{width:1420,height:960}});
 page.on('pageerror',e=>report.errors.push(String(e)));
 try{
  await page.goto(process.env.MVAI_BASE_URL||'http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded',timeout:50000});
- await page.waitForFunction(()=>document.querySelectorAll('#sample-list button[data-clip-id]').length===6,null,{timeout:50000});
- await page.locator('#sample-list button[data-action="wave"]').click();
+ await page.waitForFunction(()=>document.querySelectorAll('#sample-list-a button[data-clip-id]').length===6&&document.querySelectorAll('#sample-list-b button[data-clip-id]').length===6,null,{timeout:90000});
+ await page.locator('#sample-list-a button[data-action="wave"]').click();
  await page.waitForFunction(()=>document.querySelector('#video')?.readyState>=2&&document.querySelector('#video')?.videoWidth>0,null,{timeout:40000});
  await page.locator('#model').selectOption(model);
  await page.locator('#run').click();
