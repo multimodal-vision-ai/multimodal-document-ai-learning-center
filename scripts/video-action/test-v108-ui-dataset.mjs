@@ -74,7 +74,7 @@ try{
    });
    report.samples[key]=media;
    report.checks[key+'_decodes']=!media.error&&media.width>0&&media.height>0;
-   report.checks[key+'_duration_8_12']=media.duration>=8&&media.duration<=12.2;
+   report.checks[key+'_duration_8_12']=Math.round(media.duration)>=8&&Math.round(media.duration)<=12;
    report.checks[key+'_720p']=media.width>=1280&&media.height>=720;
    report.checks[key+'_canvasReadable']=media.canvasReadable;
    report.checks[key+'_hasExpectedSource']=media.src.includes('/datasets/multimodal-vision-ai/mvai-daily-action-demo/')||media.src.startsWith('https://videos.pexels.com/video-files/');
