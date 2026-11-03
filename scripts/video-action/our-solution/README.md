@@ -122,7 +122,7 @@ The 16-frame sampling follows the official VideoMAE V2 clip length. The 0.5-seco
 
 ## 4. Outputs
 
-The default output folder is created beside the input video and contains:
+The default output folder is created under the current working directory at our_solution_results/<video_stem>_videomae_yolo_poc and contains:
 
 - results.json: complete per-window Top-5 predictions, model-load and per-window timings, YOLO/VideoMAE peak GPU memory, checkpoint and video hashes, track information, and settings.
 - results.csv: concise full-frame versus person-crop comparison.
