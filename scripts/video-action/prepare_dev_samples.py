@@ -31,24 +31,6 @@ SOURCES={
   "source":"https://commons.wikimedia.org/wiki/File:Jogging_-_near_arakawa_river_-_tokyo_japan_-_2022_may_3.webm",
   "license":"CC BY 4.0","author":"Nesnad"
  },
- "yoga":{
-  "url":"https://upload.wikimedia.org/wikipedia/commons/8/88/Yoga_Series.webm",
-  "start":0,"duration":10,
-  "source":"https://commons.wikimedia.org/wiki/File:Yoga_Series.webm",
-  "license":"CC BY-SA 3.0","author":"Susanagu"
- },
- "push_up":{
-  "url":"https://upload.wikimedia.org/wikipedia/commons/0/0c/Army_Combat_Fitness_Test-_Hand-Release_Push-Up_%28HRP%29_%28Event_3%29.webm",
-  "start":0,"duration":10,
-  "source":"https://commons.wikimedia.org/wiki/File:Army_Combat_Fitness_Test-_Hand-Release_Push-Up_(HRP)_(Event_3).webm",
-  "license":"Public Domain (U.S. federal government work)","author":"U.S. Army Combat Fitness Test"
- },
- "sit_up":{
-  "url":"https://upload.wikimedia.org/wikipedia/commons/c/c7/Demonstration_of_A_Sit-up.webm",
-  "start":0,"duration":10,
-  "source":"https://commons.wikimedia.org/wiki/File:Demonstration_of_A_Sit-up.webm",
-  "license":"CC BY-SA 3.0","author":"Wxhsyhzz"
- },
  "hula_hooping":{
   "url":"https://upload.wikimedia.org/wikipedia/commons/e/ee/Berlin_girl_turning_a_hula_hoop%2C_Berlin_2013_%282013-08-23_by_Thomas_Quine%29.webm",
   "start":0,"duration":10,
