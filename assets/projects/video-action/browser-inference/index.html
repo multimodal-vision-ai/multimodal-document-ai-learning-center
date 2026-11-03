@@ -59,7 +59,7 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
 .sample-group{margin:10px 0 12px}
 .sample-line{display:flex;flex-wrap:wrap;align-items:center;column-gap:9px;row-gap:8px;margin:0 0 12px}
 .sample-line strong{font-size:13px;color:#264969;white-space:nowrap}
-.sample-list{display:flex;flex-wrap:wrap;gap:6px;margin:0;width:100%}
+.sample-list{display:flex;flex:1 1 600px;flex-wrap:wrap;gap:6px;margin:0;min-width:0}
 .sample-list button{min-width:88px;min-height:43px;padding:6px 10px;border-radius:8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.25}
 .sample-list button .sample-zh{font-size:12px;font-weight:600;color:#245385}
 .sample-list button .sample-en{font-size:10px;font-weight:400;color:#70869e}
@@ -77,7 +77,7 @@ a{color:#225b9f}footer{margin:18px 3px;font-size:11px;color:#6b829b;line-height:
 .annotated-area{margin-top:16px}
 .annotated-area[hidden]{display:none!important}
 .anno-caption{margin:10px 0 0;font-size:12px;color:#657b92;line-height:1.6}
-@media(max-width:500px){.sample-list{gap:5px}.sample-list button{min-width:82px;padding:6px 8px}.sample-list button .sample-en{font-size:9px}.anno-top1 strong{font-size:13px}}
+@media(max-width:500px){.sample-list{flex-basis:100%;gap:5px}.sample-list button{min-width:82px;padding:6px 8px}.sample-list button .sample-en{font-size:9px}.anno-top1 strong{font-size:13px}}
 
 /* V1.0.4: lightweight person bounding box rendered over the decoded replay frame. */
 .person-visual-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0;font-size:12px;color:#315575}

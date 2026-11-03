@@ -350,9 +350,9 @@ const SAMPLE_GROUPS=[
  {id:'common',listId:'sample-list-b',slots:[
   {id:'jogging',zh:'慢跑',en:'Jogging',match:c=>c.standard_action_id==='jogging'},
   {id:'yoga',zh:'瑜伽',en:'Yoga',match:c=>c.standard_action_id==='yoga'},
-  {id:'push_up',zh:'俯卧撑',en:'Push-up',match:c=>c.standard_action_id==='push_up'},
-  {id:'sit_up',zh:'仰卧起坐',en:'Sit-up',match:c=>c.standard_action_id==='sit_up'},
-  {id:'ballet',zh:'芭蕾舞',en:'Ballet',match:c=>c.standard_action_id==='ballet'},
+  {id:'push_up',zh:'俯卧撑',en:'Push Up',match:c=>c.standard_action_id==='push_up'},
+  {id:'sit_up',zh:'仰卧起坐',en:'Situp',match:c=>c.standard_action_id==='sit_up'},
+  {id:'ballet',zh:'芭蕾舞',en:'Dancing Ballet',match:c=>c.standard_action_id==='ballet'},
   {id:'hula_hooping',zh:'呼啦圈',en:'Hula Hooping',match:c=>c.standard_action_id==='hula_hooping'}
  ]}
 ];
