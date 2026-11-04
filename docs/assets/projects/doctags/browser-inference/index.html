@@ -705,6 +705,31 @@ const localSamples=[
   {id:"chinese",file:"zh_page_0.png",label:"中文文档"}
 ];
 let sampleSelectionSerial=0;
+async function fetchSampleBlob(filename){
+  const primary=new URL(sampleBase+filename,document.baseURI);
+  const candidates=[primary];
+  // raw.githack may redirect to a CDN hostname. A same-origin-only fetch blocks
+  // that redirect; try CORS, then fall back to GitHub's CORS-enabled raw host.
+  if(["raw.githack.com","rawcdn.githack.com"].includes(location.hostname)){
+    const parts=primary.pathname.split("/").filter(Boolean);
+    if(parts[0]==="multimodal-vision-ai"&&parts[1]==="multimodal-document-ai-learning-center"&&parts.length>=5){
+      const fallback=new URL(primary.href);
+      fallback.hostname="raw.githubusercontent.com";
+      candidates.push(fallback);
+    }
+  }
+  let lastError=null;
+  for(const url of candidates){
+    try{
+      const response=await fetch(url.href,{mode:"cors",credentials:"omit",cache:"force-cache"});
+      if(!response.ok)throw new Error("HTTP "+response.status);
+      const blob=await response.blob();
+      if(!blob.type.startsWith("image/"))throw new Error("响应不是图片文件（"+(blob.type||"未知类型）")+");
+      return blob;
+    }catch(error){lastError=error;}
+  }
+  throw new Error("图片请求失败："+(lastError?.message||String(lastError)));
+}
 function highlightSample(kind){
   document.querySelectorAll(".sample-tile").forEach(btn=>{
     btn.setAttribute("aria-pressed",String(btn.dataset.sample===kind));
@@ -717,11 +742,9 @@ async function loadLocalSample(kind){
   $("run").disabled=true;
   status("正在打开内置示例："+sample.label+"…");
   try{
-    // Fetch the same-origin sample as a Blob to avoid cross-origin Canvas taint.
-    // Keep the original bytes for R3; Canvas is only for preview and annotations.
-    const response=await fetch(sampleBase+sample.file,{mode:"same-origin",credentials:"same-origin",cache:"force-cache"});
-    if(!response.ok)throw Error("内置样例请求失败：HTTP "+response.status);
-    const blob=await response.blob();
+    // Read the sample as a Blob. CORS + raw.githubusercontent.com fallback handles
+    // preview-CDN redirects while preserving the original bytes for R3 inference.
+    const blob=await fetchSampleBlob(sample.file);
     const bitmap=await createImageBitmap(blob);
     if(ticket!==sampleSelectionSerial){bitmap.close?.();return;}
     try{

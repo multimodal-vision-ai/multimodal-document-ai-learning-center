@@ -13,7 +13,7 @@ license: apache-2.0
 
 本 Space 定位为可扩展的文档结构化解析与多模型对比平台。当前内置 IBM Granite Docling 258M ONNX 公开基线，以及DocTags OvisOCR3 0.8B v1.0 ONNX 自研模型。R3 使用独立适配器、Transformers.js 4.4.0-next.0 与 ONNX Runtime Web 1.31.1；浏览器通过 WebGPU 本地推理。
 推理在访问者本机浏览器执行，不依赖 Hugging Face 托管 GPU，不需要用户登录。
-九类原始 PNG/JPEG 演示图片由 IBM Granite Docling 官方 DEMO 镜像至本站 `samples/` 目录；内置样例通过同源请求读取为 Blob，本地上传则直接保留原始 File，R3 从原始 Blob 解码，避免将跨域污染的 Canvas 导出为 PNG。Canvas 仅用于页面预览与标注显示。首次加载模型可能下载 1 GB 或更多权重。
+九类原始 PNG/JPEG 演示图片由 IBM Granite Docling 官方 DEMO 镜像至本站 `samples/` 目录；内置样例优先通过 CORS 请求读取为 Blob；raw.githack CDN 重定向失败时回退到 raw.githubusercontent.com，本地上传则直接保留原始 File，R3 从原始 Blob 解码，避免将跨域污染的 Canvas 导出为 PNG。Canvas 仅用于页面预览与标注显示。首次加载模型可能下载 1 GB 或更多权重。
 R3 首次下载约 2.52 GB，需要支持 `shader-f16` 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端验证；其他设备尚需实测。完整三榜尚未在 ONNX 浏览器版本上重跑，不能将原模型分数视为 ONNX 版本的独立评测成绩。
 
 ## V1.6 结构化结果对照
