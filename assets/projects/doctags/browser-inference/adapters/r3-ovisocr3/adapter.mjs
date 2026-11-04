@@ -21,15 +21,20 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
   ort.env.wasm.wasmPaths = runtime.wasmPaths ?? `${CDN}onnxruntime-web@${VERSIONS.ort}/dist/`;
   ort.env.wasm.numThreads = 1;
   const lib = await import(transformersUrl);
+  // Cache model and runtime assets across page reloads; retain the default cache key.
+  lib.env.useBrowserCache = typeof globalThis.caches !== 'undefined';
+  lib.env.useWasmCache = typeof globalThis.caches !== 'undefined';
+  try { await navigator.storage?.persist?.(); } catch { /* Cache still works without persistent-storage permission. */ }
   if (runtime.modelHost) {
     lib.env.allowRemoteModels = true;
     lib.env.allowLocalModels = false;
     lib.env.remoteHost = runtime.modelHost;
     lib.env.remotePathTemplate = '{model}/';
-    lib.env.useBrowserCache = false;
+    // A configured mirror must use the same browser cache.
   }
-  const options = {revision, progress_callback: onProgress};
-  const processor = await lib.AutoProcessor.from_pretrained(modelId, options);
+  const processor = await lib.AutoProcessor.from_pretrained(modelId, {
+    revision, progress_callback: info => onProgress({...info, stage: 'processor'}),
+  });
   const templateUrl = runtime.modelHost
     ? `${runtime.modelHost}${modelId}/chat_template.jinja`
     : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
@@ -38,7 +43,8 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
   processor.tokenizer.chat_template = await template.text();
   const prompt = directPrompt(processor.tokenizer);
   const model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
-    ...options, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
+    revision, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
+    progress_callback: info => onProgress({...info, stage: 'model'}),
   });
   const stopping = new lib.InterruptableStoppingCriteria();
   let busy = false;
