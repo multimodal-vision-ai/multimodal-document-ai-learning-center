@@ -87,13 +87,13 @@ for detail_id in ("modelManage", "cacheManager", "rawDetails", "compareDetails")
     assert not re.search(r'<details[^>]*\bid="'+detail_id+r'"[^>]*\bopen\b', data), f"{detail_id} must be closed by default"
 ids = re.findall(r'\bid="([^"]+)"', data)
 assert len(ids) == len(set(ids)), f"Duplicated HTML IDs: {[x for x in set(ids) if ids.count(x)>1]}"
-assert "首次加载模型可能下载 1 GB 以上文件" in data, "Important traffic warning not visible"
+assert "首次加载 R3 模型约下载 2.52 GB" in data, "R3 download warning not visible"
 assert "模型加载失败：" in data and "推理失败：" in data, "Critical errors must remain visible"
 assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Original/result rendering must remain"
 assert "updateHistory({" in data and "refreshHistorySelectors()" in data, "Multi-model result history lost"
 # V1.7.2: model parameter count/time on success and proportional A/B scroll.
 assert 'id="runMetrics"' in data and 'id="runModelSize"' in data and 'id="runDuration"' in data
-assert 'showRunMetrics(selectedModel().id,seconds)' in data
+assert 'showRunMetrics(entry.id,seconds)' in data
 assert 'clearRunMetrics();resetComparison()' in data, "Metrics must reset between documents"
 assert 'id="historySync"' in data, "A/B proportional scroll toggle missing"
 assert 'historyPaneA.addEventListener("scroll"' in data and 'historyPaneB.addEventListener("scroll"' in data

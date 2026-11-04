@@ -280,7 +280,7 @@ main{max-width:1260px}
       <select id="modelSelect" aria-label="选择推理模型"></select>
       <div class="field-heading">
         <label for="dtype">模型配置</label>
-        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">fp32：优先保证推理一致性，但显存要求较高；q4：尝试减少部分解码权重的显存占用，可能影响输出质量。两种配置是同一模型的不同精度。</div></details>
+        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">Granite 的 fp32/q4 用于切换同一模型的精度；R3 使用固定混合精度（视觉 FP32、文字 FP16），不提供 q4 切换。</div></details>
       </div>
       <div class="row config-row">
         <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option><option value="r3-fixed">R3 固定混合精度 · 视觉 FP32 / 文字 FP16</option></select>
@@ -465,7 +465,7 @@ function renderModelOptions(prefer){
     option.textContent=m.name+(loadedBefore.some(k=>k.startsWith(m.id+"::"))?" · 曾成功加载":"")+(m.checked?"":" · 待验证");
     select.appendChild(option);
   }
-  const opt=document.createElement("option");opt.disabled=true;opt.textContent="未来自研模型 · 待接入 ONNX 权重";select.appendChild(opt);
+  const opt=document.createElement("option");opt.disabled=true;opt.textContent="其他自研模型 · 待接入兼容适配";select.appendChild(opt);
   select.value=allModels().some(m=>m.id===prefer)?prefer:registry.BUILTIN.id;
   syncModelConfiguration();
   refreshLoadButtons();
