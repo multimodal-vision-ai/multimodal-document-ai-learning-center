@@ -1,5 +1,11 @@
 name: V1.0.15 production release browser regression
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/assets/projects/video-action/browser-inference/**'
+      - 'scripts/video-action/test-v108-ui-dataset.mjs'
+      - '.github/workflows/video-action-v108-ui-dataset.yml'
   pull_request:
     branches: [main]
     paths:
