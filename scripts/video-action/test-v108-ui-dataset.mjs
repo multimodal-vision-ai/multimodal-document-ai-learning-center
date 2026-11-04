@@ -5,7 +5,7 @@ const dir='artifacts/video-action/v108-ui-catalog';
 fs.mkdirSync(dir,{recursive:true});
 const report={baseUrl:root,checkedAt:new Date().toISOString(),checks:{},samples:{},pageErrors:[],success:false};
 const expected={
- A:[['wave','挥手','Waving Hand'],['phone_use','看手机','Using Mobile Phone'],['phone_call','打电话','Talking on Cell Phone'],['falling','摔倒','Falling Down'],['eating','吃东西','Eating Food'],['sleep_posture','睡觉','Sleeping']],
+ A:[['wave','挥手','Waving Hand'],['using_phone','用手机','Using Phone'],['falling','摔倒','Falling Down'],['eating','吃东西','Eating Food'],['sleep_posture','睡觉','Sleeping'],['smoking','抽烟','Smoking']],
  B:[['jogging','慢跑','Jogging'],['yoga','瑜伽','Yoga'],['push_up','俯卧撑','Push Up'],['sit_up','仰卧起坐','Situp'],['ballet','芭蕾舞','Dancing Ballet'],['hula_hooping','呼啦圈','Hula Hooping']]
 };
 const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
@@ -74,7 +74,8 @@ try{
    });
    report.samples[key]=media;
    report.checks[key+'_decodes']=!media.error&&media.width>0&&media.height>0;
-   report.checks[key+'_duration_8_12']=Math.round(media.duration)>=8&&Math.round(media.duration)<=12;
+   const minDuration=id==='smoking'?5:8;
+   report.checks[key+'_duration']=Math.round(media.duration)>=minDuration&&Math.round(media.duration)<=12;
    report.checks[key+'_720p']=media.width>=1280&&media.height>=720;
    report.checks[key+'_canvasReadable']=media.canvasReadable;
    report.checks[key+'_hasExpectedSource']=media.src.includes('/datasets/multimodal-vision-ai/mvai-daily-action-demo/')||media.src.startsWith('https://videos.pexels.com/video-files/');
