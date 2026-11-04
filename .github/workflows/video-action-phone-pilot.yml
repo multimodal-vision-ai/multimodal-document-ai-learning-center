@@ -1,0 +1,26 @@
+name: V1.0.3 rights-checked phone-use pilot upload
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/publish_phone_pilot.py
+      - .github/workflows/video-action-phone-pilot.yml
+permissions: {contents: read}
+jobs:
+  publish-reviewed-phone-pilot:
+    if: github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and HF Hub client
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'huggingface_hub>=0.36,<2'
+      - name: Check reviewed clip SHA and commit one real phone-use sample to HF
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/video-action/publish_phone_pilot.py

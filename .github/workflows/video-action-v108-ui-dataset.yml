@@ -1,0 +1,37 @@
+name: V1.0.8 six HF demo videos and compact panel 02 Chrome regression
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'docs/assets/projects/video-action/browser-inference/**'
+      - 'scripts/video-action/test-v108-ui-dataset.mjs'
+      - '.github/workflows/video-action-v108-ui-dataset.yml'
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  ui-dataset-smoke:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install real Chrome
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install chrome
+      - name: Check all six HF samples and changed 02/06 layout in real browser
+        run: |
+          node --check docs/assets/projects/video-action/browser-inference/app.js
+          node --check scripts/video-action/test-v108-ui-dataset.mjs
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-v108-http.log 2>&1 &
+          node scripts/video-action/test-v108-ui-dataset.mjs
+      - name: Store screenshot and detailed report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v108-six-videos-model-selection-layout
+          path: artifacts/video-action/v108-ui-catalog/
+          if-no-files-found: warn
+          retention-days: 14

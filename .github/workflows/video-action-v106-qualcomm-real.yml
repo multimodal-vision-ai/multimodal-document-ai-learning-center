@@ -1,0 +1,55 @@
+name: V1.0.6 Qualcomm VideoMAE five REAL video Chrome pilot
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/probe-qualcomm-videomae-real-videos.mjs
+      - .github/workflows/video-action-v106-qualcomm-real.yml
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  validate-real-video:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install real Chrome and public Hub client
+        run: |
+          python -m pip install 'huggingface_hub>=0.36,<2'
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          npx playwright install chrome
+      - name: Download original Qualcomm model and original NJU label map
+        run: |
+          python - <<'PY'
+          from huggingface_hub import hf_hub_download
+          from pathlib import Path
+          import shutil,hashlib
+          root=Path('docs/assets/projects/video-action/browser-inference/third-party-probe');root.mkdir(parents=True,exist_ok=True)
+          specs=[
+             ('qualcomm/Video-MAE','d786d813bcfbffd6d28043207fa995bd9158c487','Video-MAE.tflite','Video-MAE.tflite'),
+             ('MCG-NJU/videomae-base-finetuned-kinetics','ae026a85a9f314a54a95ea2aebccf877da731b21','config.json','mcg-config.json')
+          ]
+          for repo,rev,file,dest in specs:
+             file_path=hf_hub_download(repo_id=repo,revision=rev,filename=file)
+             shutil.copyfile(file_path,root/dest)
+             print('VERIFIED_CANDIDATE_ASSET',dest,(root/dest).stat().st_size,hashlib.sha256((root/dest).read_bytes()).hexdigest(),flush=True)
+          PY
+      - name: 5 real videos with 400-class non-MoViNet model and actual probabilities
+        run: |
+          node --check scripts/video-action/probe-qualcomm-videomae-real-videos.mjs
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/qualcomm-real-http.log 2>&1 &
+          node scripts/video-action/probe-qualcomm-videomae-real-videos.mjs
+      - name: Upload JSON evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v106-qualcomm-five-real-video-qa
+          path: artifacts/video-action/nonmovinet-real/report.json
+          if-no-files-found: warn
+          retention-days: 14

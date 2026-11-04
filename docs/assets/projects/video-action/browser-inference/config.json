@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "multimodal-vision-ai/mvai-daily-action-demo",
+  "dataset_revision": "bb8570bf0bd2c19f1ac5f161f33e8a07728797a5",
+  "model_repository": "litert-community/MoViNet-A0-Stream-LiteRT",
+  "model_sha256": "0565d6e2173caf3e144e6a0a6461edfef9dc5cccacf9a093f311f8a8f05434c8",
+  "litert_version": "2.5.3",
+  "dataset_status": "V1.0.13 DEV catalog: A daily actions (6) + B common actions (6); Pexels external embeds; Hula Hooping CC BY 2.0 mirrored; development_only",
+  "real_pilot_ids": [
+    "real_a_wave_001",
+    "real_a_phone_use_001",
+    "real_a_phone_call_001",
+    "real_a_falling_001",
+    "real_a_eating_001",
+    "real_a_sleeping_001",
+    "real_b_jogging_002",
+    "real_b_yoga_002",
+    "real_b_push_up_002",
+    "real_b_sit_up_002",
+    "real_b_ballet_002",
+    "real_b_hula_hooping_001"
+  ],
+  "dataset_branch": "v103-dev-samples",
+  "sample_catalog_version": "1.0.13"
+}

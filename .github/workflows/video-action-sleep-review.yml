@@ -1,0 +1,32 @@
+name: V1.0.3 public-domain real sleep posture frame review
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/review_sleep_film.py
+      - .github/workflows/video-action-sleep-review.yml
+permissions: {contents: read}
+jobs:
+  research-sleep-film:
+    if: github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install frame inspection tools
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'pillow>=10,<13'
+      - name: Extract bounded timeline contact sheets from CC public domain film
+        run: python scripts/video-action/review_sleep_film.py
+      - name: Preserve contact sheets only; no original video redistribution
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v103-sleep-film-contact-sheets
+          path: artifacts/video-action/sleep-review/
+          retention-days: 7
+          if-no-files-found: warn

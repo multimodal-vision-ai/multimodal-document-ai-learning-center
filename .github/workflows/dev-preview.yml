@@ -14,7 +14,7 @@ on:
       - "scripts/radar/**"
       - "research-radar/**"
   push:
-    branches: [dev]
+    branches: [dev, feat/video-action-v103]
   workflow_dispatch:
 
 concurrency:
@@ -99,6 +99,48 @@ jobs:
         run: |
           mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
           python scripts/radar/verify_publication.py --site-dir "$RUNNER_TEMP/dev-site"
+
+      - name: Include original synthetic DEV test video in isolated preview only
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 63
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'pillow>=10,<13'
+          python scripts/video-action/generate_demo.py
+          mkdir -p "$RUNNER_TEMP/dev-site/assets/projects/video-action/browser-inference/samples"
+          cp hf-dataset-staging/demo/videos/synthetic_wave_001.mp4 "$RUNNER_TEMP/dev-site/assets/projects/video-action/browser-inference/samples/synthetic_wave_001.mp4"
+          ffprobe -v error -show_entries format=duration,format_name -of json "$RUNNER_TEMP/dev-site/assets/projects/video-action/browser-inference/samples/synthetic_wave_001.mp4"
+
+      - name: Validate HF Dataset visibility and real browser WASM (PR #63 only)
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 63
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check docs/assets/projects/video-action/browser-inference/app.js
+          node --check docs/assets/projects/video-action/browser-inference/semantic.js
+          node scripts/video-action/test-semantics.mjs
+          node --check docs/assets/projects/video-action/browser-inference/person-overlay.js
+          node scripts/video-action/test-person-overlay.mjs
+          node --check scripts/video-action/browser-probe.mjs
+          python -m pip install 'pillow>=10,<13'
+          python scripts/video-action/generate_demo.py
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          npx playwright install chrome
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference > /tmp/mvai-video-server.log 2>&1 &
+          node scripts/video-action/browser-probe.mjs
+
+      - name: Upload independent browser probe report
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.number == 63
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-action-v103-browser-evidence
+          path: artifacts/video-action/
+          retention-days: 7
+          if-no-files-found: warn
 
       - name: Add visible DEV environment marking
         run: |
@@ -420,3 +462,30 @@ jobs:
             grep -q "$model" "$RUNNER_TEMP/vision-demo-v1.js"
           done
           echo "Vision AI DEV page and all three model configurations verified."
+
+  hf_demo_bootstrap:
+    name: Bootstrap original HF Dataset sample (feature branch only)
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feat/video-action-v103') || (github.event_name == 'pull_request' && github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install dependencies for own synthetic clip
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'huggingface_hub>=0.36,<2' 'pillow>=10,<13'
+          ffmpeg -version | head -1
+      - name: Generate original, non-person demo and validate file
+        run: |
+          python scripts/video-action/generate_demo.py
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 hf-dataset-staging/demo/videos/synthetic_wave_001.mp4
+      - name: Publish only to existing public HF Organization Dataset
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python scripts/video-action/upload_hf_demo.py
