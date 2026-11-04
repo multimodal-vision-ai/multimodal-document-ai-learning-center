@@ -123,7 +123,7 @@ assert "renderComparison(result)" in data, "Real model output must drive renderi
 assert "rendered.addEventListener" in data, "Source-to-result hover mapping missing"
 assert 'id="load"' in data and 'id="run"' in data
 assert "onnx-community/granite-docling-258M-ONNX" in data
-assert "R3 OvisOCR3 DocTags 0.8B" in data
+assert "DocTags OvisOCR3 0.8B v1.0" in data
 assert 'import("./adapters/r3-ovisocr3/adapter.mjs")' in data
 assert "await r3Adapter.recognize(imageUrl" in data
 assert 'value="r3-fixed"' in data
@@ -139,7 +139,7 @@ assert "shanshui_scene: 7" in HOME.read_text(encoding="utf-8")
 assert "视频行为识别模型" in HOME.read_text(encoding="utf-8")
 assert "Chrome 157" in GUIDE.read_text(encoding="utf-8")
 assert "NVIDIA A800 80GB" in GUIDE.read_text(encoding="utf-8")
-assert "R3 OvisOCR3 DocTags 0.8B" in GUIDE.read_text(encoding="utf-8")
+assert "DocTags OvisOCR3 0.8B v1.0" in GUIDE.read_text(encoding="utf-8")
 matches = re.findall(r'<script type="module">([\s\S]*?)</script>', data)
 assert len(matches) == 1, "Exactly one JS module script expected"
 js = matches[0]

@@ -11,7 +11,7 @@ license: apache-2.0
 
 # DocTags 浏览器推理技术预览
 
-本 Space 定位为可扩展的文档结构化解析与多模型对比平台。当前内置 IBM Granite Docling 258M ONNX 公开基线，以及河海 R3 OvisOCR3 DocTags 0.8B ONNX 自研模型。R3 使用独立适配器、Transformers.js 4.4.0-next.0 与 ONNX Runtime Web 1.31.1；浏览器通过 WebGPU 本地推理。
+本 Space 定位为可扩展的文档结构化解析与多模型对比平台。当前内置 IBM Granite Docling 258M ONNX 公开基线，以及DocTags OvisOCR3 0.8B v1.0 ONNX 自研模型。R3 使用独立适配器、Transformers.js 4.4.0-next.0 与 ONNX Runtime Web 1.31.1；浏览器通过 WebGPU 本地推理。
 推理在访问者本机浏览器执行，不依赖 Hugging Face 托管 GPU，不需要用户登录。
 九类原始 PNG/JPEG 演示图片由 IBM Granite Docling 官方 DEMO 镜像至本站 `samples/` 目录；不再反复请求官方服务器。首次加载模型可能下载 1 GB 或更多权重。
 R3 首次下载约 2.52 GB，需要支持 `shader-f16` 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端验证；其他设备尚需实测。完整三榜尚未在 ONNX 浏览器版本上重跑，不能将原模型分数视为 ONNX 版本的独立评测成绩。
@@ -24,7 +24,7 @@ R3 首次下载约 2.52 GB，需要支持 `shader-f16` 的 WebGPU。已在 Chrom
 
 ## V1.7 多模型与本地缓存
 
-- 内置 Granite Docling 258M 公开基线与河海 R3 OvisOCR3 DocTags 0.8B 自研模型；允许登记其他公开、兼容的 DocTags ONNX 权重，并非任意 Hugging Face 模型均可加载。
+- 内置 Granite Docling 258M 公开基线与DocTags OvisOCR3 0.8B v1.0 · 自研模型；允许登记其他公开、兼容的 DocTags ONNX 权重，并非任意 Hugging Face 模型均可加载。
 - R3 使用 `adapters/r3-ovisocr3/` 中独立的 Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1 适配器；其视觉计算为 FP32、文字生成与词嵌入为 FP16，要求 WebGPU `shader-f16`。
 - 浏览器 Cache API 缓存模型文件（浏览器可自动清理），单模型占用 GPU 显存，切换时尝试释放旧模型；刷新后需重新初始化。
 - 同一图片内保留不同模型或不同精度的实际推理结果，A/B 并排渲染比较。私人文档及推理结果不会被本应用持久保存。

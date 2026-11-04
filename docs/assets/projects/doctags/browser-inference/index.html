@@ -224,7 +224,7 @@ main{max-width:1260px}
     <summary aria-label="查看平台功能及多模型扩展说明" title="平台说明">ⓘ</summary>
     <div class="tip-pop" role="note">
       本平台面向文档结构化解析与多模型能力对比：对同一文档选择兼容模型，查看 DocTags、版面定位及结构化渲染结果，并比较不同模型的解析效果。
-      当前内置 IBM Granite Docling 258M 公开基线，以及河海 R3 OvisOCR3 DocTags 0.8B 自研模型。两者采用独立推理适配器；R3 需要支持 shader-f16 的 WebGPU 设备。
+      当前内置 IBM Granite Docling 258M 公开基线，以及DocTags OvisOCR3 0.8B v1.0 · 自研模型。两者采用独立推理适配器；R3 需要支持 shader-f16 的 WebGPU 设备。
       支持的模型在访问者浏览器中使用 WebGPU 推理，当前仍属实验功能。模型兼容性和解析准确率须按实际结果核验。
     </div>
   </details>
@@ -275,7 +275,7 @@ main{max-width:1260px}
     <div class="control-fields">
       <div class="field-heading">
         <label for="modelSelect">选择推理模型</label>
-        <details class="info-tip"><summary aria-label="模型选择说明">ⓘ</summary><div class="tip-pop" id="modelHelp">内置 IBM Granite Docling 258M 公开基线和河海 R3 OvisOCR3 DocTags 0.8B 自研模型。R3 使用独立 ONNX/WebGPU 适配器，需支持 shader-f16；其他公开 ONNX 模型仍须单独验证兼容性。</div></details>
+        <details class="info-tip"><summary aria-label="模型选择说明">ⓘ</summary><div class="tip-pop" id="modelHelp">内置 IBM Granite Docling 258M 公开基线和DocTags OvisOCR3 0.8B v1.0 · 自研模型。R3 使用独立 ONNX/WebGPU 适配器，需支持 shader-f16；其他公开 ONNX 模型仍须单独验证兼容性。</div></details>
       </div>
       <select id="modelSelect" aria-label="选择推理模型"></select>
       <div class="field-heading">
@@ -454,7 +454,7 @@ function refreshLoadButtons(){
   $("modelHelp").textContent=already
     ?"所选模型已在当前 GPU 会话中就绪；直接点击开始真正推理。"
     :entry.adapter==="r3-ovisocr3"
-      ?"河海 R3 OvisOCR3 DocTags 0.8B 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 2.52 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试，其他设备仍需实测。"
+      ?"DocTags OvisOCR3 0.8B v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 2.52 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试，其他设备仍需实测。"
       :"模型："+entry.name+"。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
 }
 function renderModelOptions(prefer){
