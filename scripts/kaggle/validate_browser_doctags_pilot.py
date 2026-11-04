@@ -69,7 +69,11 @@ for kind, filename in sample_files.items():
 assert data.count('class="sample-tile"') == 9, "Nine IBM examples required"
 assert 'sampleBase="./samples/"' in data, "Examples must be served from same origin"
 assert "granite-docling-258m-demo/resolve/main/data/images/" not in data, "No external image fetch from UI"
-assert 'await image.decode()' in data and 'c.drawImage(image,0,0,src.width,src.height)' in data, "Image must enter original model input Canvas"
+assert 'fetch(sampleBase+sample.file,{mode:"same-origin"' in data and 'createImageBitmap(blob)' in data, "Built-in samples must be fetched as same-origin Blobs"
+assert 'sourceBlob=blob' in data and 'sourceBlob=file' in data, "Original image Blob must be retained for R3 inference"
+assert 'r3Adapter.recognize(sourceBlob' in data, "R3 must consume original Blob without Canvas export"
+assert 'src.toBlob' not in data, "R3 inference must not export a potentially tainted Canvas"
+assert 'RawImage.read(image)' in R3_ADAPTER_TEXT, "R3 adapter must decode Blob/File input directly"
 assert 'syntheticFallback' not in data and 'makeSample(' not in data, "Synthetic summary should be removed"
 assert data.count('class="sample-source"') == 1, "Show source attribution exactly once"
 assert ' · 本项目本地托管</small>' not in data, "Source caption must remain concise"
@@ -135,7 +139,7 @@ assert 'id="load"' in data and 'id="run"' in data
 assert "onnx-community/granite-docling-258M-ONNX" in data
 assert "DocTags OvisOCR3 0.8B v1.0" in data
 assert 'import("./adapters/r3-ovisocr3/adapter.mjs")' in data
-assert "await r3Adapter.recognize(imageUrl" in data
+assert "await r3Adapter.recognize(sourceBlob" in data
 assert 'value="r3-fixed"' in data
 assert "shader-f16" in data
 assert "registry.BUILTINS" in data

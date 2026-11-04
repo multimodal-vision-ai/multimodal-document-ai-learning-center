@@ -66,6 +66,7 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
       try {
         processor.image_processor.min_pixels = config.minPixels;
         processor.image_processor.max_pixels = config.maxPixels;
+        // RawImage.read accepts Blob/File directly; avoid exporting a potentially tainted Canvas.
         const raw = image instanceof lib.RawImage ? image : await lib.RawImage.read(image);
         const inputs = await processor(prompt, raw);
         const promptLength = inputs.input_ids.dims.at(-1);
