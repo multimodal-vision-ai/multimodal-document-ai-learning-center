@@ -500,7 +500,7 @@ function updateHistory(record){
   }
   const normalized={...record,documentRevision:revision};
   const accepted=registry.recordResult(runHistory,normalized);
-  const acceptedCurrent=accepted.some(item=>item===normalized);
+  const acceptedCurrent=accepted.some(item=>item.key===normalized.key&&Number(item.documentRevision)===revision&&item.modelId===normalized.modelId&&item.tags===normalized.tags&&Number(item.seconds)===Number(normalized.seconds));
   runHistory=acceptedCurrent
     ?accepted
     :[...runHistory.filter(item=>item.documentRevision===revision&&item.key!==normalized.key),normalized].slice(-12);
