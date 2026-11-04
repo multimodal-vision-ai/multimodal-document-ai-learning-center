@@ -283,7 +283,7 @@ main{max-width:1260px}
         <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">Granite 的 fp32/q4 用于切换同一模型的精度；R3 使用固定混合精度（视觉 FP32、文字 FP16），不提供 q4 切换。</div></details>
       </div>
       <div class="row config-row">
-        <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option><option value="r3-fixed">R3 固定混合精度 · 视觉 FP32 / 文字 FP16</option></select>
+        <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option><option value="r3-fixed" hidden disabled>固定混合精度 · 视觉 FP32 / 文字 FP16</option></select>
         <button class="primary" id="load" type="button" disabled>加载模型</button>
       </div>
       <div class="load-metrics">
@@ -420,6 +420,7 @@ let gpuDetected=false,activeKey=null,activeModelName="",inputRevision=0,runHisto
 let customModels=registry.restore(localStorage);
 const LAST_KEY="mvai-doctags-successful-loads-v1"; // only model keys, no documents
 function readLoadKeys(){try{return JSON.parse(localStorage.getItem(LAST_KEY)||"[]").filter(s=>typeof s==="string").slice(-30)}catch{return []}}
+let hasLoadedSuccessfully=readLoadKeys().length>0,pendingAutoLoad=false;
 function markSuccessfulLoad(key){try{localStorage.setItem(LAST_KEY,JSON.stringify([...new Set([...readLoadKeys(),key])].slice(-30)))}catch{}}
 function allModels(){return [...registry.BUILTINS,...customModels];}
 function selectedModel(){return allModels().find(m=>m.id===$("modelSelect").value)||registry.BUILTIN;}
@@ -429,6 +430,9 @@ function selectedKey(){
 }
 function syncModelConfiguration(){
   const fixed=selectedModel().adapter==="r3-ovisocr3";
+  const fixedOption=$("dtype").querySelector('option[value="r3-fixed"]');
+  fixedOption.hidden=!fixed;
+  fixedOption.disabled=!fixed;
   if(fixed)$("dtype").value="r3-fixed";
   else if($("dtype").value==="r3-fixed")$("dtype").value="quality";
   $("dtype").disabled=busy||fixed;
@@ -457,7 +461,19 @@ function refreshLoadButtons(){
     ?"所选模型已在当前 GPU 会话中就绪；直接点击开始真正推理。"
     :entry.adapter==="r3-ovisocr3"
       ?"DocTags OvisOCR3 0.8B v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 2.52 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试，其他设备仍需实测。"
-      :"模型："+entry.name+"。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
+      :"模型："+entry.name+"。首次加载需要手动启动；成功后切换模型或精度将自动加载。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
+}
+function maybeAutoLoadSelectedModel(){
+  if(!hasLoadedSuccessfully||busy)return;
+  if(loaded&&activeKey===selectedKey()){pendingAutoLoad=false;return;}
+  pendingAutoLoad=true;
+  if(!gpuDetected)return;
+  refreshLoadButtons();
+  if(!$("load").disabled){
+    pendingAutoLoad=false;
+    $("downloadStatus").textContent="已成功加载过模型，正在自动切换并加载："+selectedModel().name+"…";
+    $("load").click();
+  }
 }
 function renderModelOptions(prefer){
   const select=$("modelSelect");select.replaceChildren();
@@ -477,7 +493,17 @@ function resetHistory(){
   refreshHistorySelectors();
 }
 function updateHistory(record){
-  runHistory=registry.recordResult(runHistory,record);
+  const revision=Number(record?.documentRevision);
+  if(!record?.key||!record?.modelId||!record?.tags||!Number.isInteger(revision)||revision!==inputRevision){
+    $("compareDiagnostic").textContent="本次结果未能加入对比记录：输入版本或模型输出信息不完整。";
+    return;
+  }
+  const normalized={...record,documentRevision:revision};
+  const accepted=registry.recordResult(runHistory,normalized);
+  const acceptedCurrent=accepted.some(item=>item===normalized);
+  runHistory=acceptedCurrent
+    ?accepted
+    :[...runHistory.filter(item=>item.documentRevision===revision&&item.key!==normalized.key),normalized].slice(-12);
   refreshHistorySelectors();
 }
 function refreshHistorySelectors(){
@@ -809,9 +835,13 @@ $("saveDT").onclick=()=>{if(result)download(new Blob([result],{type:"text/plain;
 
 $("modelSelect").addEventListener("change",()=>{
   syncModelConfiguration();clearRunMetrics();refreshLoadButtons();
-  $("downloadStatus").textContent=loaded&&activeKey===selectedKey()?"已在 GPU 中加载；可直接推理。":"请选择加载所选模型；如权重仍在磁盘缓存中，将尽量避免重新下载。";
+  if(hasLoadedSuccessfully){maybeAutoLoadSelectedModel();return;}
+  $("downloadStatus").textContent=loaded&&activeKey===selectedKey()?"已在 GPU 中加载；可直接推理。":"首次加载请点击“加载模型”；成功后切换模型将自动加载。";
 });
-$("dtype").addEventListener("change",()=>{clearRunMetrics();refreshLoadButtons();});
+$("dtype").addEventListener("change",()=>{
+  clearRunMetrics();refreshLoadButtons();
+  if(hasLoadedSuccessfully)maybeAutoLoadSelectedModel();
+});
 $("addModel").addEventListener("click",()=>{
   const status=$("registryState");
   try{
@@ -883,7 +913,7 @@ $("historySync").addEventListener("change",()=>{
 
 async function detect(){if(!window.isSecureContext||!navigator.gpu){$("device").textContent="当前设备不支持 WebGPU 或不在安全页面。可使用 Kaggle。";return}
 try{const adapter=await navigator.gpu.requestAdapter({powerPreference:"high-performance"});
-if(adapter){$("device").textContent="WebGPU 已就绪";gpuDetected=true;refreshLoadButtons()}
+if(adapter){$("device").textContent="WebGPU 已就绪";gpuDetected=true;refreshLoadButtons();if(pendingAutoLoad)maybeAutoLoadSelectedModel()}
 else $("device").textContent="未找到可用 GPU 适配器；请使用 Kaggle。"}
 catch(e){$("device").textContent="WebGPU 初始化失败："+e.message}}
 $("load").onclick=async()=>{
@@ -927,8 +957,8 @@ $("load").onclick=async()=>{
    }
    loaded=true;activeKey=key;activeModelName=entry.name;
    $("progress").value=100;
-   markSuccessfulLoad(key);
-   $("downloadStatus").textContent=entry.adapter==="r3-ovisocr3"?"R3 模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）":"模型已加载 · 可开始推理";
+   hasLoadedSuccessfully=true;markSuccessfulLoad(key);
+   $("downloadStatus").textContent=entry.adapter==="r3-ovisocr3"?"模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）":"模型已加载 · 可开始推理";
  }catch(err){
    console.error("Model load failure",err);
    if(r3Adapter){try{await r3Adapter.dispose();}catch{} r3Adapter=null;}
