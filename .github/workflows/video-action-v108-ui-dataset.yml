@@ -27,7 +27,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install chrome
-      - name: Check the production release: all twelve curated videos and the 02/06 layout in real Chrome
+      - name: "Check the production release: all twelve curated videos and the 02/06 layout in real Chrome"
         run: |
           node --check docs/assets/projects/video-action/browser-inference/app.js
           node --check scripts/video-action/test-v108-ui-dataset.mjs
