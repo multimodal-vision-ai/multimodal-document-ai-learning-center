@@ -414,6 +414,7 @@ env.useBrowserCache = true; // Cache Storage; browser may evict under quota pres
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
 let model,processor,r3Adapter=null,loaded=false,busy=false,imageReady=false,result="",name="";
+let sourceBlob=null; // Original File/Blob for direct R3 decoding; no Canvas export.
 const registry=globalThis.MVAIModelRegistry;
 let gpuDetected=false,activeKey=null,activeModelName="",inputRevision=0,runHistory=[];
 let customModels=registry.restore(localStorage);
@@ -716,17 +717,21 @@ async function loadLocalSample(kind){
   $("run").disabled=true;
   status("正在打开内置示例："+sample.label+"…");
   try{
-    // Official PNG/JPEG images are hosted locally and rasterized into the existing Canvas.
-    const image=new Image();
-    image.decoding="async";
-    image.src=sampleBase+sample.file;
-    await image.decode();
-    if(ticket!==sampleSelectionSerial)return;
-    if(!image.naturalWidth||!image.naturalHeight)throw Error("图片尺寸无效");
-    const scale=Math.min(1,1500/Math.max(image.naturalWidth,image.naturalHeight));
-    src.width=Math.round(image.naturalWidth*scale);
-    src.height=Math.round(image.naturalHeight*scale);
-    c.drawImage(image,0,0,src.width,src.height);
+    // Fetch the same-origin sample as a Blob to avoid cross-origin Canvas taint.
+    // Keep the original bytes for R3; Canvas is only for preview and annotations.
+    const response=await fetch(sampleBase+sample.file,{mode:"same-origin",credentials:"same-origin",cache:"force-cache"});
+    if(!response.ok)throw Error("内置样例请求失败：HTTP "+response.status);
+    const blob=await response.blob();
+    const bitmap=await createImageBitmap(blob);
+    if(ticket!==sampleSelectionSerial){bitmap.close?.();return;}
+    try{
+      if(!bitmap.width||!bitmap.height)throw Error("图片尺寸无效");
+      const scale=Math.min(1,1500/Math.max(bitmap.width,bitmap.height));
+      src.width=Math.round(bitmap.width*scale);
+      src.height=Math.round(bitmap.height*scale);
+      c.drawImage(bitmap,0,0,src.width,src.height);
+    }finally{bitmap.close?.();}
+    sourceBlob=blob;
     inputRevision++;resetHistory();imageReady=true;name="ibm-demo-"+sample.file;
     $("file").value="";highlightSample(kind);
     clearResult();show();leftDraw();
@@ -769,6 +774,7 @@ $("file").onchange=async event=>{
     if(ticket!==sampleSelectionSerial){im.close?.();return;}
     const scale=Math.min(1,1500/Math.max(im.width,im.height));
     src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);im.close?.();
+    sourceBlob=file;
     inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();highlightSample(null);
     $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";$("run").disabled=!loaded;
   }catch(e){status("读取失败："+e.message)}
@@ -916,16 +922,11 @@ $("run").onclick=async()=>{
    let seconds=0,ended=true,generatedTokens=0,tokensPerSecond=0;
    if(entry.adapter==="r3-ovisocr3"){
      if(!r3Adapter)throw Error("R3 适配器尚未就绪，请重新加载模型。");
-     const blob=await new Promise(resolve=>src.toBlob(resolve,"image/png"));
-     if(!blob)throw Error("无法将当前文档转换为浏览器图片输入。");
-     const imageUrl=URL.createObjectURL(blob);
-     let output;
-     try{
-       output=await r3Adapter.recognize(imageUrl,{
-         onText(chunk){$("tags").textContent=($("tags").textContent==="等待新的推理输出。"?"":$("tags").textContent)+chunk;},
-         onTokens(n){$("downloadStatus").textContent="R3 正在生成："+n+" 个词元";}
-       });
-     }finally{URL.revokeObjectURL(imageUrl);}
+     if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
+     const output=await r3Adapter.recognize(sourceBlob,{
+       onText(chunk){$("tags").textContent=($("tags").textContent==="等待新的推理输出。"?"":$("tags").textContent)+chunk;},
+       onTokens(n){$("downloadStatus").textContent="R3 正在生成："+n+" 个词元";}
+     });
      result=output.text;
      seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);
      ended=Boolean(output.ended);
@@ -956,7 +957,16 @@ $("run").onclick=async()=>{
    }
    showRunMetrics(entry.id,seconds);
    status(ended?"推理完成 · 请查看下方对照结果":"生成未正常结束 · 当前输出可能不完整，请核对原始 DocTags");
- }catch(e){console.error(e);status("推理失败："+e.message+"。请改用 Kaggle 或换设备重试。");$("tags").textContent="本次没有可核验的完整模型输出。";}
+ }catch(e){
+  console.error("Inference failure",e);
+  const message=e?.message||String(e);
+  const inputFailure=e?.name==="SecurityError"||/tainted|toBlob|cross-origin/i.test(message);
+  const hint=inputFailure
+    ?"请重新选择内置样例或上传本地图片后重试。"
+    :"请检查输入图片和 WebGPU 设备状态；如持续失败，请提供浏览器控制台错误。";
+  status("推理失败："+message+"。"+hint);
+  $("tags").textContent="本次没有可核验的完整模型输出。";
+}
  finally{busy=false;refreshLoadButtons()}
 };
 renderModelOptions(registry.BUILTIN.id);loadLocalSample("doc");detect();
