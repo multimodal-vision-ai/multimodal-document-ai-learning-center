@@ -724,7 +724,7 @@ async function fetchSampleBlob(filename){
       const response=await fetch(url.href,{mode:"cors",credentials:"omit",cache:"force-cache"});
       if(!response.ok)throw new Error("HTTP "+response.status);
       const blob=await response.blob();
-      if(!blob.type.startsWith("image/"))throw new Error("响应不是图片文件（"+(blob.type||"未知类型）")+");
+      if(!blob.type.startsWith("image/"))throw new Error("响应不是图片文件（"+(blob.type||"未知类型")+"）");
       return blob;
     }catch(error){lastError=error;}
   }
