@@ -1,0 +1,53 @@
+# 学生二：R3 OvisOCR3 DocTags 模型接入
+
+## 协作范围
+
+- 个人分支：`feat/ocr-du-qwen3vl`。
+- 起点：`dev` 的 `4eb4669feb191158a355b8a2c889b0aa353598ef`。
+- 模型架构：`Qwen3_5ForConditionalGeneration`，底层为 Qwen3.5-0.8B。
+- 模型来源：[ATH-MaaS/OvisOCR3](https://huggingface.co/ATH-MaaS/OvisOCR3)。
+- 负责本模型的转换、加载适配及测试记录；公共页面和其他模型的集成由教师统一审核。
+- 完成后提交个人分支到 `dev` 的 PR（合并申请），未经批准不合并。
+
+## HF 发布范围
+
+公开模型仓库：
+
+<https://huggingface.co/multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX>
+
+公开内容为 ONNX 模型、外部权重、词表、配置、对话模板、模型说明和许可证。原始 PyTorch 权重保留在本地，训练图片、训练标注及内部测试图片不上传。
+
+完整ONNX已转换、上传并通过实际WebGPU识别验证。适配代码位于 [r3-ovisocr3](../hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/README.md)，测试图片、原始输出、截图和组件校验记录见 [测试记录](../hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/TESTS.md)。独立测试页面放在 `project-notes/ocr-du-qwen35-local-test/`，位于HF空间部署目录之外，仅作本地验证。展厅公共页面未修改，统一集成由教师审核。
+
+## 模型核对记录
+
+核对对象为旧约 17 万条数据训练的第 8100 步完整合并模型。
+
+| 检查 | 结果 |
+| --- | --- |
+| 模型配置词表大小 | 252,480 |
+| 实际词表大小 | 252,480 |
+| 嵌入矩阵大小 | 252,480 × 1,024 |
+| 新增词元数 | 4,403 |
+| 新增词元的单词元、无损往返检查 | 4,403 / 4,403 通过 |
+| 《通用规范汉字表》单词元、无损往返检查 | 8,105 / 8,105 通过 |
+| 配置、词表和图像处理器本地加载 | 通过 |
+| HF 仓库公开状态 | 已核对 |
+| HF 中的原始 PyTorch 权重 | 未上传 |
+
+原始合并权重的 SHA-256 校验值：
+
+`89f23b4a9092976976af24f822bd77a235c70af81efdfed9d6af715ab2b6ee8e`
+
+转换前的三榜成绩及像素设置见HF模型说明。转换后的浏览器短页实测已完成，使用视觉单精度、文字半精度；ONNX尚未重跑完整三榜。
+
+## 转换与接入要求
+
+- 转换输入必须为上述微调模型，保留全部扩充词元编号、嵌入矩阵和输出词表。
+- 对话模板直接进入 assistant 回答，不额外添加思考前缀。
+- 提示词为 `Convert this page to docling.`（将此页面转换为 Docling 格式）。
+- 原样保留 DocTags 输出；区域框、表格和文字渲染不修改原始预测。
+- 分别验证词嵌入、图像编码器、文字生成器，再进行端到端浏览器推理测试。
+- 测试使用允许公开的图片，记录浏览器、显卡、精度、分辨率、输出上限、耗时及实际输出。
+
+参考转换流程：[Microsoft Olive Qwen3.5-0.8B 多模态流程](https://github.com/microsoft/olive-recipes/tree/74c2ab2f0bdd5acabcb05b24e9edf145e1020e12/Qwen-Qwen3.5-0.8B/builtin)。复用时需传入本模型路径并保持词表完整，不能沿用示例固定的基模和词表改写步骤。
