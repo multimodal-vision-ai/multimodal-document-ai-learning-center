@@ -3,7 +3,6 @@
 import argparse
 import asyncio
 import base64
-import functools
 import http.server
 import json
 import os
@@ -77,7 +76,8 @@ class CDP:
 
 
 async def run(args):
-    roots = {'app': Path(__file__).resolve().parent, 'model': args.model_dir.resolve(),
+    roots = {'app': args.page_dir.resolve(), 'model': args.model_dir.resolve(),
+             'hf-spaces': Path(__file__).resolve().parents[3],
              'runtime': args.runtime_dir.resolve()}
     server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), Server)
     server.roots = roots
@@ -207,6 +207,7 @@ if __name__ == '__main__':
     p.add_argument('--browser', type=Path, required=True)
     p.add_argument('--model-dir', type=Path, required=True)
     p.add_argument('--runtime-dir', type=Path, required=True)
+    p.add_argument('--page-dir', type=Path, default=Path(__file__).resolve().parents[4]/'project-notes'/'ocr-du-qwen35-local-test')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--backend', choices=['vulkan','swiftshader'], default='vulkan')
     p.add_argument('--timeout', type=int, default=900)

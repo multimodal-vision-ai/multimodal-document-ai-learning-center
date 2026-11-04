@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Compare exported components and tokenizer with the exact local checkpoint."""
 import argparse
-import hashlib
 import json
 from pathlib import Path
 

@@ -17,7 +17,7 @@
 
 公开内容为 ONNX 模型、外部权重、词表、配置、对话模板、模型说明和许可证。原始 PyTorch 权重保留在本地，训练图片、训练标注及内部测试图片不上传。
 
-完整ONNX已转换并通过实际WebGPU识别验证。适配代码和独立测试页面位于 [r3-ovisocr3](../hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/README.md)，测试图片、原始输出、截图和组件校验记录见 [测试记录](../hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/TESTS.md)。展厅公共页面未修改，统一集成由教师审核。
+完整ONNX已转换、上传并通过实际WebGPU识别验证。适配代码位于 [r3-ovisocr3](../hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/README.md)，测试图片、原始输出、截图和组件校验记录见 [测试记录](../hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/TESTS.md)。独立测试页面放在 `project-notes/ocr-du-qwen35-local-test/`，位于HF空间部署目录之外，仅作本地验证。展厅公共页面未修改，统一集成由教师审核。
 
 ## 模型核对记录
 

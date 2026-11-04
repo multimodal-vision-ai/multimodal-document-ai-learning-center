@@ -1,4 +1,4 @@
-import {createAdapter} from './adapter.mjs';
+import {createAdapter} from '../../hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/adapter.mjs';
 
 const $ = id => document.getElementById(id);
 let adapter, blobUrl, busy = false, text = '';

@@ -22,7 +22,8 @@ ONNX分为图像编码器、词嵌入、文字生成器，各有配套 `_data`�
 
 ## 变更范围
 
-- `hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/`：独立适配、测试页面、参数化转换及验证工具、测试记录。
+- `hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/`：独立适配、参数化转换及验证工具、测试记录。
+- `project-notes/ocr-du-qwen35-local-test/`：本地测试页面，放在HF空间部署目录之外，不发布为新站点。
 - `project-notes/ocr-du-qwen35-preparation.md`：本模型接入记录。
 - 本PR说明文件。
 

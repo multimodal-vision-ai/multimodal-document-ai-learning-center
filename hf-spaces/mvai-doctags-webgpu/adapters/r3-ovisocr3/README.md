@@ -2,7 +2,7 @@
 
 [公开ONNX模型](https://huggingface.co/multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX) · [实际测试记录](TESTS.md)
 
-模型来自旧约17万条数据训练的第8100步检查点，底层架构为 **Qwen3.5-0.8B**。本目录包含独立加载适配、测试页面、可复用转换工具和实际输出。公共首页、模型列表和其他模型未修改，正式集成由教师审核。
+模型来自旧约17万条数据训练的第8100步检查点，底层架构为 **Qwen3.5-0.8B**。本目录包含独立加载适配、可复用转换工具和实际输出。本地测试页面放在仓库的 `project-notes/ocr-du-qwen35-local-test/`，位于HF空间部署目录之外。公共首页、模型列表和其他模型未修改，正式集成由教师审核。
 
 ## 网页运行
 
@@ -12,7 +12,7 @@
 python -m http.server 8000 --bind 127.0.0.1
 ```
 
-打开 `http://localhost:8000/hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/`，点击“加载模型”，再选择图片识别。公网部署须使用HTTPS，以便浏览器访问WebGPU。浏览器会下载约2.52GB文件；图片在访问者的浏览器中处理。
+打开 `http://localhost:8000/project-notes/ocr-du-qwen35-local-test/`，点击“加载模型”，再选择图片识别。该页面只用于本地验证，不部署到HF空间。浏览器会下载约2.52GB文件；图片在访问者的浏览器中处理。
 
 页面展示预测框、原始DocTags、词元生成速度，并支持停止生成和下载 `.doctags`。输出不做循环清理、坐标修补或表格修复。
 
