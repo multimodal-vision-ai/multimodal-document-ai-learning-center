@@ -431,7 +431,7 @@ async function catalog(){
     btn.setAttribute('aria-label','播放'+slot.zh+'（'+slot.en+'）实拍视频');
     btn.onclick=()=>{
      const videoUrl=clip.video_url||('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file);
-     const selectedClip=slot.id==='using_phone'?{...clip,display_label_zh:'用手机',display_label_en:'Using Phone'}:clip;
+     const selectedClip=slot.id==='using_phone'?{...clip,display_label_zh:'用手机',display_label_en:'Using Phone'}:slot.id==='smoking'?{...clip,display_label_zh:'抽烟',display_label_en:'Smoking'}:clip;
      pick(videoUrl,selectedClip);
      document.querySelectorAll('.sample-list button').forEach(item=>item.classList.toggle('active',item===btn));
      $('sample-status').textContent=group.id==='common'?'B类用于 MoViNet Kinetics-600 与 VideoMAE Kinetics-400 的共同原生类别对照；MobileCLIP 当前仅配置 A 类日常行为文本提示，不计入 B 类评价。':
