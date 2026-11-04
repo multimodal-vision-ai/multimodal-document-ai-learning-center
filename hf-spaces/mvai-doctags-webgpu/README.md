@@ -26,7 +26,7 @@ R3 首次下载约 2.52 GB，需要支持 `shader-f16` 的 WebGPU。已在 Chrom
 
 - 内置 Granite Docling 258M 公开基线与DocTags OvisOCR3 0.8B v1.0 · 自研模型；允许登记其他公开、兼容的 DocTags ONNX 权重，并非任意 Hugging Face 模型均可加载。
 - R3 使用 `adapters/r3-ovisocr3/` 中独立的 Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1 适配器；其视觉计算为 FP32、文字生成与词嵌入为 FP16，要求 WebGPU `shader-f16`。
-- 浏览器 Cache API 缓存模型文件（浏览器可自动清理），单模型占用 GPU 显存，切换时尝试释放旧模型；刷新后需重新初始化。
+- 浏览器 Cache API 显式缓存模型权重和 ONNX Runtime WASM 文件（浏览器仍可能自动清理），保留默认缓存键以复用已有下载；单模型占用 GPU 显存，切换时尝试释放旧模型；刷新后需重新初始化。下载状态使用 Transformers.js v4 的 `progress_total` 显示综合进度、MB/s 和预计剩余时间。首次下载速度仍取决于访问者到 Hugging Face CDN 的实际网络路径；如需明显提高首次下载速度，应另行部署并验收区域 CDN 镜像。
 - 同一图片内保留不同模型或不同精度的实际推理结果，A/B 并排渲染比较。私人文档及推理结果不会被本应用持久保存。
 - HF Space 根目录包含 README.md、index.html、doctags-renderer.js、model-registry.js；R3 专用适配器位于 `adapters/r3-ovisocr3/`，部署时必须保留该目录及其中的 `adapter.mjs`、`contract.mjs`。
 

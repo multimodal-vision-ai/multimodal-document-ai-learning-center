@@ -409,6 +409,7 @@ if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) 
 <script src="./model-registry.js"></script>
 <script type="module">
 import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
+import {createDownloadMeter,formatBytes,formatRate,formatEta} from "./adapters/r3-ovisocr3/download-metrics.mjs";
 env.useBrowserCache = true; // Cache Storage; browser may evict under quota pressure
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
@@ -862,13 +863,20 @@ $("load").onclick=async()=>{
  if(loaded&&activeKey===key){refreshLoadButtons();return;}
  busy=true;clearRunMetrics();refreshLoadButtons();$("downloadStatus").textContent="切换模型中：释放旧 GPU 实例并准备加载 "+entry.name+"…";
  $("progress").value=0;
- const progress={};
+ const meter=createDownloadMeter();
  const onProgress=d=>{
-   if(d.status==="progress"&&d.file&&d.total){
-     progress[d.file]={loaded:d.loaded,total:d.total};
-     const files=Object.values(progress);
-     const total=files.reduce((s,x)=>s+x.total,0),done=files.reduce((s,x)=>s+x.loaded,0);
-     if(total){$("progress").value=Math.min(100,Math.round(100*done/total));$("downloadStatus").textContent=entry.name+"：下载约 "+$("progress").value+"%（如已有缓存则可能直接读取）";}
+   if(d.status==="progress_total"){
+     const m=meter.update(d);
+     if(!m)return;
+     const stageLabel=m.stage==="processor"?"处理器文件":"模型权重";
+     const overall=m.stage==="processor"?m.progress*0.05:5+m.progress*0.95;
+     $("progress").value=Math.min(99,Math.max($("progress").value,overall));
+     const eta=m.etaSeconds===null?"剩余时间计算中":"预计剩余 "+formatEta(m.etaSeconds);
+     $("downloadStatus").textContent=entry.name+" · "+stageLabel+" "+m.progress.toFixed(1)+"% · "+formatBytes(m.loaded)+" / "+formatBytes(m.total)+" · "+formatRate(m.bytesPerSecond)+" · "+eta;
+   }else if(d.status==="progress"&&d.file){
+     const stageLabel=d.stage==="processor"?"处理器":"模型权重";
+     const percent=Number.isFinite(Number(d.progress))?" "+Number(d.progress).toFixed(1)+"%":"";
+     $("downloadStatus").textContent=entry.name+" · "+stageLabel+" · "+d.file+percent;
    }else if(d.file){
      $("downloadStatus").textContent=entry.name+"："+d.file+"…";
    }

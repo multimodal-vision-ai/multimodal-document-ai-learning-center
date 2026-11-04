@@ -26,8 +26,16 @@ R3_DOC_ADAPTER = ROOT / "docs/assets/projects/doctags/browser-inference/adapters
 R3_HF_ADAPTER = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/adapter.mjs"
 R3_DOC_CONTRACT = ROOT / "docs/assets/projects/doctags/browser-inference/adapters/r3-ovisocr3/contract.mjs"
 R3_HF_CONTRACT = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/contract.mjs"
+R3_DOC_DOWNLOAD = ROOT / "docs/assets/projects/doctags/browser-inference/adapters/r3-ovisocr3/download-metrics.mjs"
+R3_HF_DOWNLOAD = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/download-metrics.mjs"
 assert R3_DOC_ADAPTER.read_bytes() == R3_HF_ADAPTER.read_bytes(), "R3 adapters diverged"
 assert R3_DOC_CONTRACT.read_bytes() == R3_HF_CONTRACT.read_bytes(), "R3 contracts diverged"
+assert R3_DOC_DOWNLOAD.read_bytes() == R3_HF_DOWNLOAD.read_bytes(), "R3 download helpers diverged"
+R3_ADAPTER_TEXT = R3_DOC_ADAPTER.read_text(encoding="utf-8")
+assert "useBrowserCache = typeof globalThis.caches" in R3_ADAPTER_TEXT, "R3 browser cache must be explicitly enabled"
+assert "useWasmCache = typeof globalThis.caches" in R3_ADAPTER_TEXT, "ONNX runtime WASM cache must be enabled"
+assert "lib.env.useBrowserCache = false" not in R3_ADAPTER_TEXT, "Mirror mode must not disable browser caching"
+assert "stage: 'processor'" in R3_ADAPTER_TEXT and "stage: 'model'" in R3_ADAPTER_TEXT, "Download stages must be distinguished"
 REGISTRY_TEXT = REGISTRY.read_text(encoding="utf-8")
 assert "multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX" in REGISTRY_TEXT
 assert 'adapter:"r3-ovisocr3"' in REGISTRY_TEXT
@@ -35,7 +43,9 @@ assert "0.8B 参数" in REGISTRY_TEXT
 assert 'src="./model-registry.js"' in data, "Model registry must be loaded"
 for control in ('modelSelect','newModelRepo','addModel','cacheCheck','cachePersist','compareA','compareB','compareBodyA','compareBodyB'):
     assert 'id="'+control+'"' in data, f"Missing V1.7 control {control}"
-assert "env.useBrowserCache = true" in data, "Browser cache not enabled"
+assert "env.useBrowserCache = true" in data, "Granite browser cache not enabled"
+assert "createDownloadMeter" in data and "progress_total" in data, "Aggregate model progress missing"
+assert "formatRate(m.bytesPerSecond)" in data and "formatEta(m.etaSeconds)" in data, "Download speed and ETA display missing"
 assert "await model.dispose?.()" in data, "Old WebGPU model not released on switch"
 assert "activeKey!==selectedKey()" in data, "Running unselected GPU model must be prevented"
 assert "recordResult(runHistory,record)" in data, "Same-input history must be recorded"
@@ -151,6 +161,8 @@ subprocess.run(["node", "--check", str(PARSER)], check=True)
 subprocess.run(["node", "--check", str(REGISTRY)], check=True)
 subprocess.run(["node", "--check", str(R3_DOC_ADAPTER)], check=True)
 subprocess.run(["node", "--check", str(R3_DOC_CONTRACT)], check=True)
+subprocess.run(["node", "--check", str(R3_DOC_DOWNLOAD)], check=True)
+subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_download_metrics.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/test_contract.mjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_model_registry.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_render_parser.cjs")], check=True)
