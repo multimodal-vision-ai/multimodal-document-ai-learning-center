@@ -123,7 +123,7 @@ assert "renderComparison(result)" in data, "Real model output must drive renderi
 assert "rendered.addEventListener" in data, "Source-to-result hover mapping missing"
 assert 'id="load"' in data and 'id="run"' in data
 assert "onnx-community/granite-docling-258M-ONNX" in data
-assert "multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX" in data
+assert "R3 OvisOCR3 DocTags 0.8B" in data
 assert 'import("./adapters/r3-ovisocr3/adapter.mjs")' in data
 assert "await r3Adapter.recognize(imageUrl" in data
 assert 'value="r3-fixed"' in data
