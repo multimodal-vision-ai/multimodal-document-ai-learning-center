@@ -1,0 +1,41 @@
+name: V1.0.6 direct HF Qualcomm VideoMAE in live DEV browser
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - docs/assets/projects/video-action/browser-inference/**
+      - scripts/video-action/test-hf-video-mae-comparison.mjs
+      - .github/workflows/video-action-v106-hf-videomae.yml
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  validate-public-hf-model-and-mixed-selection:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install Chrome and Playwright
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          npx playwright install chrome
+      - name: Validate source
+        run: |
+          node --check docs/assets/projects/video-action/browser-inference/app.js
+          node --check docs/assets/projects/video-action/browser-inference/video-mae.js
+          node --check scripts/video-action/test-hf-video-mae-comparison.mjs
+      - name: Actual Chrome HF 351MB direct fetch and mixed 400/600 class inference
+        run: |
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-v106-hf-video-mae.log 2>&1 &
+          node scripts/video-action/test-hf-video-mae-comparison.mjs
+      - name: Preserve real test evidence and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v106-hf-qualcomm-video-mae-and-selected-models
+          path: artifacts/video-action/v106-video-mae-hf/
+          if-no-files-found: warn
+          retention-days: 14

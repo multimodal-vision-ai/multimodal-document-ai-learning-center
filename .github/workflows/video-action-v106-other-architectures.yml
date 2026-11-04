@@ -1,0 +1,31 @@
+name: V1.0.6 Meta MViT and Microsoft Swin3D isolated ONNX feasibility
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/probe-meta-microsoft-onnx.py
+      - .github/workflows/video-action-v106-other-architectures.yml
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  convert-other-architectures:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.11'}
+      - name: Install CPU Torchvision official weights exporter
+        run: |
+          python -m pip install --no-cache-dir 'torch==2.5.1' 'torchvision==0.20.1' 'onnx>=1.16,<2'
+      - name: Try fixed-shape ONNX export of strong non-MoViNet official K400 models
+        run: python scripts/video-action/probe-meta-microsoft-onnx.py
+      - name: Preserve export compatibility findings only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v106-meta-microsoft-onnx-feasibility
+          path: artifacts/video-action/nonmovinet-onnx-feasibility/report.json
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,54 @@
+name: V1.0.11 MoViNet entire video and actual action timeline
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'docs/assets/projects/video-action/browser-inference/**'
+      - 'scripts/video-action/test-v111-*.mjs'
+      - '.github/workflows/video-action-v111-continuous.yml'
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  full-video-real-chrome:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify pure timeline unit tests and source syntax
+        run: |
+          node --check docs/assets/projects/video-action/browser-inference/app.js
+          node --check docs/assets/projects/video-action/browser-inference/continuous-movinet.js
+          node --check scripts/video-action/test-v111-continuous-timeline.mjs
+          node --check scripts/video-action/test-v111-full-video-browser.mjs
+          node scripts/video-action/test-v111-continuous-timeline.mjs
+      - name: Install Chrome
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install chrome
+      - name: Install ffmpeg for 24-second integration-only video
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Prepare >=20-second real-video repeat solely for browser integration
+        run: |
+          curl -fLsS --retry 3 --connect-timeout 25             "https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo/resolve/45d5025de58f8b063a8fcf0c72d3ce7a18f049a6/demo/videos/real_waving_hand_001.mp4"             -o /tmp/mvai-test-original.mp4
+          ffmpeg -hide_banner -loglevel error -y -stream_loop 5 -i /tmp/mvai-test-original.mp4             -t 24 -an -c:v libx264 -preset ultrafast -crf 29             -pix_fmt yuv420p -movflags +faststart /tmp/mvai-test-24s.mp4
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 /tmp/mvai-test-24s.mp4
+      - name: Real Chrome 10-second HF sample and 24-second full-video upload
+        env:
+          MVAI_LONG_VIDEO: /tmp/mvai-test-24s.mp4
+          MVAI_VERIFY_ALL_MOVINET: '1'
+        run: |
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-v111-http.log 2>&1 &
+          node scripts/video-action/test-v111-full-video-browser.mjs
+      - name: Store real predictions and 0-24s timeline screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v111-movinet-complete-video-real-chrome
+          path: artifacts/video-action/v111-full-duration/
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,37 @@
+name: V1.0.5 six actual actions x three models research pilot (DEV only)
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/compare-six-actions-browser-probe.mjs
+      - .github/workflows/video-action-v105-six-by-three.yml
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  six-by-three:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install official Chrome and video codecs
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          npx playwright install chrome
+      - name: Batch all six licensed real videos and all three runnable models
+        run: |
+          node --check scripts/video-action/compare-six-actions-browser-probe.mjs
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-matrix-http.log 2>&1 &
+          node scripts/video-action/compare-six-actions-browser-probe.mjs
+      - name: Preserve per-action real Top1 and latency matrix
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v105-six-by-three-browser-research-pilot
+          path: artifacts/video-action/v105-six-samples/
+          if-no-files-found: warn
+          retention-days: 14

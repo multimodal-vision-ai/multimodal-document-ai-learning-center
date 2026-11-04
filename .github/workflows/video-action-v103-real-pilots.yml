@@ -1,0 +1,49 @@
+name: V1.0.3 Real Action Pilot Dataset (isolated DEV only)
+on:
+  push:
+    branches: [feat/video-action-v103]
+    paths:
+      - "scripts/video-action/publish_real_pilots.py"
+      - ".github/workflows/video-action-v103-real-pilots.yml"
+  pull_request:
+    branches: [dev]
+    paths:
+      - "scripts/video-action/publish_real_pilots.py"
+      - ".github/workflows/video-action-v103-real-pilots.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-licensed-pilots:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install ffmpeg and HF client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'huggingface_hub>=0.36,<2'
+      - name: Generate and verify two source-attributed real action videos
+        env:
+          MVAI_DRY_RUN: '1'
+        run: python scripts/video-action/publish_real_pilots.py
+      - name: Publish guarded, metadata-atomic commit to existing HF Dataset
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/video-action/publish_real_pilots.py
+      - name: Archive codec and provenance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v103-real-pilot-provenance
+          path: |
+            hf-real-pilot-staging/catalog/v1.json
+            hf-real-pilot-staging/demo/metadata.jsonl
+            hf-real-pilot-staging/README.md
+          if-no-files-found: warn
+          retention-days: 7

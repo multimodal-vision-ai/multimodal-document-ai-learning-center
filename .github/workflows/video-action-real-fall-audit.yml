@@ -1,0 +1,32 @@
+name: V1.0.3 audit real fall sample before publication
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/review_fall_source_v104.py
+      - .github/workflows/video-action-real-fall-audit.yml
+permissions: {contents: read}
+jobs:
+  inspect-source-only:
+    if: github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and Pillow
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'pillow>=10,<13'
+      - name: Inspect original real human fall sequence, do not upload to HF
+        run: python scripts/video-action/review_fall_source_v104.py
+      - name: Preserve preview and provenance without redistributing source video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v103-fall-candidate-contact-sheet
+          path: artifacts/video-action/fall-source-audit/
+          if-no-files-found: warn
+          retention-days: 7

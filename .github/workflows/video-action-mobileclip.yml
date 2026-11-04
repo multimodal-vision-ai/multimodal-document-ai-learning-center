@@ -1,0 +1,48 @@
+name: MVAI V1.0.7 MobileCLIP real Chrome verification
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - "docs/assets/projects/video-action/browser-inference/**"
+      - "scripts/video-action/test-mobileclip.mjs"
+      - "scripts/video-action/browser-mobileclip-probe.mjs"
+      - ".github/workflows/video-action-mobileclip.yml"
+permissions:
+  contents: read
+jobs:
+  mobileclip-webgpu:
+    if: github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Static checks and deterministic unit tests
+        run: |
+          node --check docs/assets/projects/video-action/browser-inference/mobileclip.js
+          node --check docs/assets/projects/video-action/browser-inference/app.js
+          node --check scripts/video-action/browser-mobileclip-probe.mjs
+          node scripts/video-action/test-mobileclip.mjs
+          node scripts/video-action/test-semantics.mjs
+          node scripts/video-action/test-person-overlay.mjs
+      - name: Install Chrome and Playwright
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          npx playwright install chrome
+      - name: Real Chrome MobileCLIP six-sample proof (WebGPU first, WASM fallback)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference > /tmp/mvai-mobileclip-server.log 2>&1 &
+          node scripts/video-action/browser-mobileclip-probe.mjs
+      - name: Upload actual inference evidence (not synthetic results)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v107-mobileclip-real-chrome
+          path: artifacts/video-action/mobileclip/
+          retention-days: 14
+          if-no-files-found: warn
