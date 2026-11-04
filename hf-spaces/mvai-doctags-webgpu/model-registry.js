@@ -16,7 +16,7 @@
   function key(id,precision){return id+"::"+precision;}
   function modelSizeLabel(id){const builtin=BUILTINS.find(model=>model.id===id);return builtin?.parameterCount||"未提供（自定义模型）";}
   function proportionalPosition(fromTop,fromHeight,fromViewport,toHeight,toViewport){const sourceMax=Math.max(0,Number(fromHeight)-Number(fromViewport));const targetMax=Math.max(0,Number(toHeight)-Number(toViewport));if(!Number.isFinite(sourceMax)||!Number.isFinite(targetMax)||!targetMax||!sourceMax)return 0;const ratio=Math.min(1,Math.max(0,Number(fromTop)/sourceMax));return Number.isFinite(ratio)?ratio*targetMax:0;}
-  function recordResult(history,record){if(!record||!validRepoId(record.modelId)||!record.documentRevision||!record.tags)return history;const filtered=history.filter(item=>item.documentRevision===record.documentRevision&&item.key!==record.key);return [...filtered,record].slice(-12);}
+  function recordResult(history,record){if(!record||!validRepoId(record.modelId)||!record.key||record.documentRevision==null||!record.tags)return history;const revision=Number(record.documentRevision);if(!Number.isInteger(revision)||revision<0)return history;const filtered=(Array.isArray(history)?history:[]).filter(item=>Number(item.documentRevision)===revision&&item.key!==record.key);return [...filtered,{...record,documentRevision:revision}].slice(-12);}
   root.MVAIModelRegistry={BUILTIN,R3,BUILTINS,KEY,validRepoId,normalise,restore,save,getAll,key,modelSizeLabel,proportionalPosition,recordResult};
   if(typeof module!=="undefined"&&module.exports)module.exports=root.MVAIModelRegistry;
 })(typeof globalThis==="object"?globalThis:this);

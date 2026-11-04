@@ -48,7 +48,12 @@ assert "createDownloadMeter" in data and "progress_total" in data, "Aggregate mo
 assert "formatRate(m.bytesPerSecond)" in data and "formatEta(m.etaSeconds)" in data, "Download speed and ETA display missing"
 assert "await model.dispose?.()" in data, "Old WebGPU model not released on switch"
 assert "activeKey!==selectedKey()" in data, "Running unselected GPU model must be prevented"
-assert "recordResult(runHistory,record)" in data, "Same-input history must be recorded"
+assert "registry.recordResult(runHistory,normalized)" in data, "Same-input history must be recorded"
+assert "function maybeAutoLoadSelectedModel()" in data and "if(hasLoadedSuccessfully)maybeAutoLoadSelectedModel()" in data, "Model switching must auto-load after the first successful load"
+assert "fixedOption.hidden=!fixed" in data and "fixedOption.disabled=!fixed" in data, "R3 precision option must be hidden for other models"
+assert '<option value="r3-fixed" hidden disabled>固定混合精度' in data, "R3 precision label must omit the R3 prefix"
+assert "R3 固定混合精度" not in data, "R3 prefix must not appear in the precision label"
+assert "acceptedCurrent" in data and "runHistory.filter(item=>item.documentRevision===revision" in data, "Every completed model result must be retained for the same input"
 assert "inputRevision++;resetHistory()" in data, "Image change must invalidate old run history"
 # V1.9: Nine original official IBM demo images hosted locally and mirrored in Space.
 sample_files = {

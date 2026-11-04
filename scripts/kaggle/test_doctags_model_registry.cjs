@@ -26,6 +26,11 @@ const result={key:"m1::quality",modelId:model.BUILTIN.id,documentRevision:1,tags
 a.equal(model.recordResult([],result).length,1);
 a.equal(model.recordResult([result],{...result,tags:"<text>B</text>"}).length,1);
 a.equal(model.recordResult([result],{...result,documentRevision:2}).length,1);
+const secondResult={key:model.key(model.R3.id,"r3-fixed"),modelId:model.R3.id,documentRevision:1,tags:"<text>R3</text>"};
+const bothResults=model.recordResult([result],secondResult);
+a.equal(bothResults.length,2,"Different models on the same input must both remain selectable");
+a.deepEqual(bothResults.map(item=>item.modelId),[model.BUILTIN.id,model.R3.id]);
+a.equal(model.recordResult([], {...result,documentRevision:0}).length,1,"First document revision 0 is valid");
 a.equal(model.modelSizeLabel(model.BUILTIN.id),"258M 参数");
 a.equal(model.modelSizeLabel(model.R3.id),"0.8B 参数");
 a.equal(model.modelSizeLabel("multimodal-vision-ai/mvai-docling-onnx"),"未提供（自定义模型）");
