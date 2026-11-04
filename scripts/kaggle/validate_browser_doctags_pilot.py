@@ -22,6 +22,16 @@ assert PARSER.read_bytes() == HF_PARSER.read_bytes(), "DocTags parsers diverged"
 REGISTRY = ROOT / "docs/assets/projects/doctags/browser-inference/model-registry.js"
 HF_REGISTRY = ROOT / "hf-spaces/mvai-doctags-webgpu/model-registry.js"
 assert REGISTRY.read_bytes() == HF_REGISTRY.read_bytes(), "Model registries diverged"
+R3_DOC_ADAPTER = ROOT / "docs/assets/projects/doctags/browser-inference/adapters/r3-ovisocr3/adapter.mjs"
+R3_HF_ADAPTER = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/adapter.mjs"
+R3_DOC_CONTRACT = ROOT / "docs/assets/projects/doctags/browser-inference/adapters/r3-ovisocr3/contract.mjs"
+R3_HF_CONTRACT = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/contract.mjs"
+assert R3_DOC_ADAPTER.read_bytes() == R3_HF_ADAPTER.read_bytes(), "R3 adapters diverged"
+assert R3_DOC_CONTRACT.read_bytes() == R3_HF_CONTRACT.read_bytes(), "R3 contracts diverged"
+REGISTRY_TEXT = REGISTRY.read_text(encoding="utf-8")
+assert "multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX" in REGISTRY_TEXT
+assert 'adapter:"r3-ovisocr3"' in REGISTRY_TEXT
+assert "0.8B 参数" in REGISTRY_TEXT
 assert 'src="./model-registry.js"' in data, "Model registry must be loaded"
 for control in ('modelSelect','newModelRepo','addModel','cacheCheck','cachePersist','compareA','compareB','compareBodyA','compareBodyB'):
     assert 'id="'+control+'"' in data, f"Missing V1.7 control {control}"
@@ -101,7 +111,7 @@ assert header_match, "Missing platform header"
 header_html = header_match.group(1)
 assert '<p>' not in header_html, "Do not show long header explanation by default"
 assert 'class="info-tip hero-help"' in header_html and 'aria-label="查看平台功能及多模型扩展说明"' in header_html
-assert "多模型能力对比" in header_html and "后续可以接入经过适配和验证的自研模型" in header_html
+assert "多模型能力对比" in header_html and "河海 R3 OvisOCR3 DocTags 0.8B 自研模型" in header_html
 assert "当前内置 IBM Granite Docling 258M 公开基线" in header_html
 assert ".hero-heading .hero-help .tip-pop" in data and ".info-tip:focus-within>.tip-pop" in data
 assert "DocTags 浏览器端实时推理</h1>" not in header_html, "Old product header remains"
@@ -113,6 +123,12 @@ assert "renderComparison(result)" in data, "Real model output must drive renderi
 assert "rendered.addEventListener" in data, "Source-to-result hover mapping missing"
 assert 'id="load"' in data and 'id="run"' in data
 assert "onnx-community/granite-docling-258M-ONNX" in data
+assert "multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX" in data
+assert 'import("./adapters/r3-ovisocr3/adapter.mjs")' in data
+assert "await r3Adapter.recognize(imageUrl" in data
+assert 'value="r3-fixed"' in data
+assert "shader-f16" in data
+assert "registry.BUILTINS" in data
 assert "AutoModelForVision2Seq.from_pretrained" in data
 assert "await model.generate" in data
 assert "RawImage.fromCanvas" in data
@@ -121,7 +137,9 @@ assert "Kaggle" in data and "公开基线" in data
 assert "doctags-browser/README.md" in HOME.read_text(encoding="utf-8")
 assert "shanshui_scene: 7" in HOME.read_text(encoding="utf-8")
 assert "视频行为识别模型" in HOME.read_text(encoding="utf-8")
-assert "尚未在真实 WebGPU 设备" in GUIDE.read_text(encoding="utf-8")
+assert "Chrome 157" in GUIDE.read_text(encoding="utf-8")
+assert "NVIDIA A800 80GB" in GUIDE.read_text(encoding="utf-8")
+assert "R3 OvisOCR3 DocTags 0.8B" in GUIDE.read_text(encoding="utf-8")
 matches = re.findall(r'<script type="module">([\s\S]*?)</script>', data)
 assert len(matches) == 1, "Exactly one JS module script expected"
 js = matches[0]
@@ -131,6 +149,9 @@ with tempfile.TemporaryDirectory() as tmp:
     subprocess.run(["node", "--check", str(file)], check=True)
 subprocess.run(["node", "--check", str(PARSER)], check=True)
 subprocess.run(["node", "--check", str(REGISTRY)], check=True)
+subprocess.run(["node", "--check", str(R3_DOC_ADAPTER)], check=True)
+subprocess.run(["node", "--check", str(R3_DOC_CONTRACT)], check=True)
+subprocess.run(["node", str(ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/test_contract.mjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_model_registry.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_render_parser.cjs")], check=True)
 print("Browser inference Static Space: content contract + parser fixture + Node JS syntax PASS")
