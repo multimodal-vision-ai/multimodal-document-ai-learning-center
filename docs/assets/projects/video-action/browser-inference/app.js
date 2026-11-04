@@ -335,20 +335,20 @@ const renderPlayback=()=>{updateTop1Overlay();detectPersonFrame();if(!replayVide
 replayVideo.addEventListener('play',()=>{cancelAnimationFrame(overlayRaf);overlayRaf=requestAnimationFrame(renderPlayback)});
 replayVideo.addEventListener('pause',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay();detectPersonFrame(true)});
 replayVideo.addEventListener('ended',()=>{cancelAnimationFrame(overlayRaf);updateTop1Overlay()});
-function pick(url,clip=null){if(state.busy)return;state.videoKey++;state.comparisonRows={};for(const el of compareInputs())el.checked=false;updateComparisonSelection();hideAnnotated();if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}state.clip=clip;if(url.startsWith('blob:'))$('video').removeAttribute('crossorigin');else{$('video').crossOrigin='anonymous';$('upload').value=''}$('video').src=url;$('results').textContent='等待真实推理。';$('evaluation').textContent='点击「开始识别」后，将按参考标签及语义关联解释结果。';$('metrics').replaceChildren();$('reference').textContent=clip?'参考动作：'+clip.label_zh+' / '+clip.label_en:'参考动作：本地文件，无标注';$('provenance').replaceChildren();if(clip){const desc=document.createElement('span');desc.textContent='类型：'+(clip.synthetic?'合成测试':'真实来源视频')+' · 参考标签：'+(clip.reference_evidence||clip.evidence||'来源描述')+' · 作者：'+(clip.attribution||'见来源页')+' · 许可：'+clip.license+' · ';const link=document.createElement('a');link.href=clip.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看原始视频及授权';$('provenance').append(desc,link)}else $('provenance').textContent='本地上传 · 仅在此浏览器读取';$('run').disabled=state.busy||!$('video').getAttribute('src');updateComparisonSelection();if(!state.busy)say('已选择'+(clip?.label_zh?'「'+clip.label_zh+'」':'本地视频')+'；点击「开始识别」后将在浏览器执行真实推理。')}
+function pick(url,clip=null){if(state.busy)return;state.videoKey++;state.comparisonRows={};for(const el of compareInputs())el.checked=false;updateComparisonSelection();hideAnnotated();if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null}state.clip=clip;if(url.startsWith('blob:'))$('video').removeAttribute('crossorigin');else{$('video').crossOrigin='anonymous';$('upload').value=''}$('video').src=url;$('results').textContent='等待真实推理。';$('evaluation').textContent='点击「开始识别」后，将按参考标签及语义关联解释结果。';$('metrics').replaceChildren();$('reference').textContent=clip?'参考动作：'+(clip.display_label_zh||clip.label_zh)+' / '+(clip.display_label_en||clip.label_en):'参考动作：本地文件，无标注';$('provenance').replaceChildren();if(clip){const desc=document.createElement('span');desc.textContent='类型：'+(clip.synthetic?'合成测试':'真实来源视频')+' · 参考标签：'+(clip.reference_evidence||clip.evidence||'来源描述')+' · 作者：'+(clip.attribution||'见来源页')+' · 许可：'+clip.license+' · ';const link=document.createElement('a');link.href=clip.source_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='查看原始视频及授权';$('provenance').append(desc,link)}else $('provenance').textContent='本地上传 · 仅在此浏览器读取';$('run').disabled=state.busy||!$('video').getAttribute('src');updateComparisonSelection();if(!state.busy)say('已选择'+(clip?.label_zh?'「'+clip.label_zh+'」':'本地视频')+'；点击「开始识别」后将在浏览器执行真实推理。')}
 $('upload').onchange=e=>{const f=e.target.files?.[0];if(!f)return;if(!['video/mp4','video/webm'].includes(f.type)){say('仅支持 MP4/WebM');return}if(f.size>120*1024*1024){say('文件超过 120 MB 的预览安全上限');return}const url=URL.createObjectURL(f);pick(url);state.objectUrl=url;};
 $('reset').onclick=()=>{if(state.busy){say('请先取消正在运行的推理，再清除视频。');return}state.cancelled=true;state.videoKey++;state.comparisonRows={};for(const el of compareInputs())el.checked=false;updateComparisonSelection();hideAnnotated();$('video').removeAttribute('src');$('video').load();$('results').textContent='已清除结果';$('evaluation').textContent='请选择视频并运行识别';$('metrics').replaceChildren();state.clip=null;if(state.objectUrl){URL.revokeObjectURL(state.objectUrl);state.objectUrl=null;}$('reference').textContent='参考动作：未选择样例';$('run').disabled=true;updateComparisonSelection();say('已清除当前视频')};
 $('cancel').onclick=()=>{state.cancelled=true;state.activeController?.abort();say('已请求取消；下载立即中断，WASM 调用结束后停止。')};
 $('export').onclick=()=>{const b=new Blob([JSON.stringify(state.last||{},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mvai-v103-diagnostics.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
-// V1.0.13: two independent bilingual sample sets. Only section 01 is changed.
+// V1.0.15: unify the two phone-use samples under one A-class behavior and add a licensed smoking clip.
 const SAMPLE_GROUPS=[
  {id:'daily',listId:'sample-list-a',slots:[
   {id:'wave',zh:'挥手',en:'Waving Hand',match:c=>c.label_en==='waving hand'||c.id==='real_waving_hand_001'||c.standard_action_id==='wave'},
-  {id:'phone_use',zh:'看手机',en:'Using Mobile Phone',match:c=>c.standard_action_id==='phone_use'},
-  {id:'phone_call',zh:'打电话',en:'Talking on Cell Phone',match:c=>c.standard_action_id==='phone_call'&&c.id!=='real_landline_call_005'&&c.phone_type!=='landline'},
+  {id:'using_phone',zh:'用手机',en:'Using Phone',match:c=>c.standard_action_id==='phone_use'},
   {id:'falling',zh:'摔倒',en:'Falling Down',match:c=>c.standard_action_id==='falling'},
   {id:'eating',zh:'吃东西',en:'Eating Food',match:c=>c.standard_action_id==='eating'},
-  {id:'sleep_posture',zh:'睡觉',en:'Sleeping',match:c=>c.standard_action_id==='sleep_posture'}
+  {id:'sleep_posture',zh:'睡觉',en:'Sleeping',match:c=>c.standard_action_id==='sleep_posture'},
+  {id:'smoking',zh:'抽烟',en:'Smoking',match:c=>c.id==='real_a_smoking_001'||c.standard_action_id==='smoking'}
  ]},
  {id:'common',listId:'sample-list-b',slots:[
   {id:'jogging',zh:'慢跑',en:'Jogging',match:c=>c.standard_action_id==='jogging'},
@@ -359,6 +359,17 @@ const SAMPLE_GROUPS=[
   {id:'hula_hooping',zh:'呼啦圈',en:'Hula Hooping',match:c=>c.standard_action_id==='hula_hooping'}
  ]}
 ];
+const SMOKING_SAMPLE=Object.freeze({
+ id:'real_a_smoking_001',standard_action_id:'smoking',label_zh:'抽烟',label_en:'smoking',
+ video_url:'https://videos.pexels.com/video-files/14500436/14500436-uhd_3840_2160_25fps.mp4',
+ source_url:'https://www.pexels.com/video/a-man-smoking-14500436/',
+ author:'Wizarto Production',attribution:'Wizarto Production',
+ license:'Pexels Free License',license_url:'https://www.pexels.com/license/',
+ external_use_approved:true,status:'approved_demo',synthetic:false,
+ reference_evidence:'source_description',evaluation_tier:'development_only',
+ verified_label:false,duration_s:6,
+ notice:'Development demonstration sample; not a reviewed benchmark.'
+});
 const goodSample=c=>{
  const relative=String(c?.relative_file||'');
  const file=relative.startsWith('demo/videos/')?relative.slice(12):'';
@@ -403,7 +414,7 @@ async function catalog(){
  const c=await r.json();
  if(c.schema_version!=='1.0'||c.dataset_id!==DATASET||!Array.isArray(c.items))throw Error('HF catalog schema 无效');
  state.catalog=c;
- const available=c.items.filter(goodSample);
+ const available=[...c.items.filter(goodSample),SMOKING_SAMPLE];
  let enabledCount=0;
  const slotStatus=[];
  for(const group of SAMPLE_GROUPS){
@@ -420,10 +431,12 @@ async function catalog(){
     btn.setAttribute('aria-label','播放'+slot.zh+'（'+slot.en+'）实拍视频');
     btn.onclick=()=>{
      const videoUrl=clip.video_url||('https://huggingface.co/datasets/'+DATASET+'/resolve/'+revision+'/'+clip.relative_file);
-     pick(videoUrl,clip);
+     const selectedClip=slot.id==='using_phone'?{...clip,display_label_zh:'用手机',display_label_en:'Using Phone'}:clip;
+     pick(videoUrl,selectedClip);
      document.querySelectorAll('.sample-list button').forEach(item=>item.classList.toggle('active',item===btn));
      $('sample-status').textContent=group.id==='common'?'B类用于 MoViNet Kinetics-600 与 VideoMAE Kinetics-400 的共同原生类别对照；MobileCLIP 当前仅配置 A 类日常行为文本提示，不计入 B 类评价。':
-      slot.id==='phone_call'?'手机通话样例：手机需清晰可见，并与有线电话区分。':
+      slot.id==='using_phone'?'看手机与打电话统一归为“用手机（Using Phone）”。':
+      slot.id==='smoking'?'抽烟样例：Pexels 实拍视频，展示吸烟动作及可见烟雾。':
       slot.id==='sleep_posture'?'睡觉样例展示可观察的卧床姿态，不证明人物生理上已经入睡。':
       slot.id==='falling'?'摔倒样例展示完整的失衡与倒地过程。':'';
     };
