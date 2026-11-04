@@ -14,6 +14,8 @@
 - DEV Dataset 分支：'v103-dev-samples'
 - 当前样例目录固定版本：'bb8570bf0bd2c19f1ac5f161f33e8a07728797a5'
 - 本次正式发布采用独立 release branch，避免把 dev 中 DocTags、科研雷达和其他尚未纳入本次验收的变更一并带入 main。
+- 正式发布 PR：<https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/pull/64>（目标 main；待合并）。
+- 发布分支：'release/video-action-v1-0-15'；原 DEV 开发 PR #63 不作为直接 main 发布入口。
 
 ## 2. 当前 V1.0.15 基线已经实现的能力
 
