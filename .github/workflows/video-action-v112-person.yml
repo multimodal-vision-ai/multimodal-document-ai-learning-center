@@ -1,0 +1,54 @@
+name: V1.0.12 tracked-person actual model inference and time axis
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'docs/assets/projects/video-action/browser-inference/**'
+      - 'scripts/video-action/test-v112-*.mjs'
+      - '.github/workflows/video-action-v112-person.yml'
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  actor-model:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [a0, a1, a2, videomae, mobileclip_s0, mobileclip_s2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Validate source and actor geometry
+        run: |
+          for f in app.js person-target.js continuous-segments.js continuous-movinet.js video-mae.js mobileclip.js; do
+            node --check docs/assets/projects/video-action/browser-inference/$f
+          done
+          node scripts/video-action/test-v112-person-target.mjs
+      - name: Install Chrome
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install chrome
+      - name: Create 16-second loop from approved real waving sample (test-only)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          curl -fLsS --retry 3 --connect-timeout 30             "https://huggingface.co/datasets/multimodal-vision-ai/mvai-daily-action-demo/resolve/45d5025de58f8b063a8fcf0c72d3ce7a18f049a6/demo/videos/real_waving_hand_001.mp4"             -o /tmp/mvai-waving.mp4
+          ffmpeg -hide_banner -loglevel error -y -stream_loop 4 -i /tmp/mvai-waving.mp4             -t 16 -an -c:v libx264 -preset ultrafast -crf 29             -pix_fmt yuv420p -movflags +faststart /tmp/mvai-waving-16s.mp4
+      - name: Browser must track the same person and run model over both real and long video
+        env:
+          MVAI_MODEL: ${{ matrix.model }}
+          MVAI_LONG_VIDEO: /tmp/mvai-waving-16s.mp4
+        run: |
+          python3 -m http.server 8765 --directory docs/assets/projects/video-action/browser-inference >/tmp/mvai-v112-http.log 2>&1 &
+          node scripts/video-action/test-v112-real-actor-browser.mjs
+      - name: Save per-model actor screenshots and execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mvai-v112-actor-${{ matrix.model }}
+          path: artifacts/video-action/v112-actor/
+          if-no-files-found: warn
+          retention-days: 14

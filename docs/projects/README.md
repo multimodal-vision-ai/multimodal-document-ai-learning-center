@@ -27,16 +27,18 @@ shanshui_scene: 7
     </article>
 
     <article class="mv-showcase-v18__card mv-showcase-v18__card--video" aria-labelledby="mv-showcase-video-title">
-      <div class="mv-showcase-v18__video-visual" role="img" aria-label="视频行为识别研究方向示意：打电话、玩手机、吃东西">
+      <div class="mv-showcase-v18__video-visual" role="img" aria-label="视频行为识别与分析实验平台：挥手、用手机、摔倒、吃东西、睡觉、抽烟">
         <span class="mv-showcase-v18__play" aria-hidden="true">▶</span>
         <span class="mv-showcase-v18__visual-caption">视频行为理解</span>
-        <span class="mv-showcase-v18__visual-tags">打电话 · 玩手机 · 吃东西</span>
+        <span class="mv-showcase-v18__visual-tags">挥手 · 用手机 · 摔倒 · 抽烟</span>
       </div>
       <div class="mv-showcase-v18__body">
         <span class="mv-showcase-v18__kicker">视觉理解 · 研究方向</span>
-        <h2 id="mv-showcase-video-title">视频行为识别模型</h2>
-        <p class="mv-showcase-v18__description">面向视频中的人物动作识别与分析。</p>
-        <p class="mv-showcase-v18__disclaimer">方案展示，暂未开放实时模型体验。</p>
+        <h2 id="mv-showcase-video-title">视频行为识别与分析</h2>
+        <p class="mv-showcase-v18__description">浏览器端实拍视频分析、主要人物定位与多模型行为识别对比。</p>
+        <a class="mv-showcase-v18__primary" href="../assets/projects/video-action/browser-inference/index.html" target="_blank" rel="noopener noreferrer">打开浏览器端实验平台 <span aria-hidden="true">↗</span></a>
+        <a class="mv-showcase-v18__secondary" href="vision-ai/">查看研究方向与技术说明 <span aria-hidden="true">→</span></a>
+        <p class="mv-showcase-v18__disclaimer">当前为公开模型基线的浏览器端实验与对比平台；自研视频行为识别方案将独立研发，不将第三方模型标注为自研成果。</p>
       </div>
     </article>
   </div>

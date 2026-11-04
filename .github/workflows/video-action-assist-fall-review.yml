@@ -1,0 +1,32 @@
+name: V1.0.3 ASSIST-IoT CC BY fall pilot source review
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/review_assist_fall.py
+      - .github/workflows/video-action-assist-fall-review.yml
+permissions: {contents: read}
+jobs:
+  review-open-fall-dataset:
+    if: github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install video audit dependencies
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'pillow>=10,<13'
+      - name: Verify public Zenodo archive and review actual source frames (NO HF mutation)
+        run: python scripts/video-action/review_assist_fall.py
+      - name: Store review contact sheets, no original video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v103-assist-fall-visual-review
+          path: artifacts/video-action/assist-fall-review/
+          retention-days: 7
+          if-no-files-found: warn

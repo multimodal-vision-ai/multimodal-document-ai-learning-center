@@ -1,0 +1,32 @@
+name: V1.0.3 IKAR openly licensed safe fall source review
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - scripts/video-action/review_ikar_fall.py
+      - .github/workflows/video-action-ikar-review.yml
+permissions: {contents: read}
+jobs:
+  audit-controlled-fall-samples:
+    if: github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg Pillow for contact sheets
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'pillow>=10,<13'
+      - name: Download verified CC BY 4.0 IKAR source and extract 3 bounded real fall preview sheets
+        run: python scripts/video-action/review_ikar_fall.py
+      - name: Upload only contact sheets and provenance index
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-action-v103-ikar-fall-review
+          path: artifacts/video-action/ikar-review/
+          retention-days: 7
+          if-no-files-found: warn
