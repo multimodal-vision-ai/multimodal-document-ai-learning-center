@@ -111,7 +111,7 @@ assert header_match, "Missing platform header"
 header_html = header_match.group(1)
 assert '<p>' not in header_html, "Do not show long header explanation by default"
 assert 'class="info-tip hero-help"' in header_html and 'aria-label="查看平台功能及多模型扩展说明"' in header_html
-assert "多模型能力对比" in header_html and "河海 R3 OvisOCR3 DocTags 0.8B 自研模型" in header_html
+assert "多模型能力对比" in header_html and "DocTags OvisOCR3 0.8B v1.0 · 自研模型" in header_html
 assert "当前内置 IBM Granite Docling 258M 公开基线" in header_html
 assert ".hero-heading .hero-help .tip-pop" in data and ".info-tip:focus-within>.tip-pop" in data
 assert "DocTags 浏览器端实时推理</h1>" not in header_html, "Old product header remains"
