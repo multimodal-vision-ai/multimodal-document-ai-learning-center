@@ -228,7 +228,7 @@ assert "当前内置 IBM Granite Docling 258M 公开基线" in header_html
 assert ".hero-heading .hero-help .tip-pop" in data and ".info-tip:focus-within>.tip-pop" in data
 assert "DocTags 浏览器端实时推理</h1>" not in header_html, "Old product header remains"
 
-assert 'src="./doctags-renderer.js"' in data, "Parser module not loaded"
+assert 'src="./doctags-renderer.js?v=1.6.1"' in data, "Versioned DocTags parser module not loaded"
 assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Missing comparison panes"
 assert 'id="rawDetails"' in data, "Raw DocTags should be collapsible"
 assert "renderComparison(result)" in data, "Real model output must drive rendering"
