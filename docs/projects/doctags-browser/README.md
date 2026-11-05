@@ -61,3 +61,10 @@ hide:
 - 既有 **03 原图与结构化结果对照** 同步滚动功能不变。
 
 [返回成果展厅](../README.md)
+
+
+## V1.10 浏览器缓存清理后的资源恢复
+
+- 九类样例缩略图与主预览统一通过 CORS-aware Blob 加载器获取；在 raw.githack CDN 重定向不可用时回退到 raw.githubusercontent.com，不再让缩略图直接请求可能失效的重定向地址。
+- DJX-0.8B 与 WC-2B 的 ONNX Runtime WebGPU 和 Transformers.js 运行时采用版本锁定的多 CDN 顺序回退（jsDelivr、Gcore、Fastly、TestingCF）。ONNX Runtime WASM 文件路径随成功加载的镜像自动切换。
+- 清除浏览器缓存后，模型权重需要重新下载；样例图片与运行时模块会重新请求。若所有镜像均不可访问，页面会明确报告 CDN 网络错误，而不误报为 ONNX 权重损坏。
