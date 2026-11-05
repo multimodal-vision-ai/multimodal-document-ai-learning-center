@@ -6,6 +6,8 @@ on:
       - "docs/**"
       - "mkdocs.yml"
       - "requirements-docs.txt"
+      - "scripts/kaggle/**"
+      - "hf-spaces/mvai-doctags-webgpu/**"
       - ".github/workflows/docs-quality.yml"
   push:
     branches:
@@ -26,6 +28,10 @@ jobs:
           cache-dependency-path: requirements-docs.txt
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
+      - name: Assemble DocTags challenge images
+        run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
+      - name: Validate DocTags challenge gallery
+        run: python scripts/kaggle/validate_doctags_challenge_gallery.py
       - name: Validate navigation and internal links
         run: mkdocs build --strict
 

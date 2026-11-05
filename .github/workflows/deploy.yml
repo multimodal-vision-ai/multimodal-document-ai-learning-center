@@ -33,6 +33,12 @@ jobs:
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
 
+      - name: Assemble DocTags challenge images
+        run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
+
+      - name: Validate DocTags challenge gallery
+        run: python scripts/kaggle/validate_doctags_challenge_gallery.py
+
       - name: Load reviewed radar data
         run: |
           if git ls-remote --exit-code --heads origin radar-data >/dev/null 2>&1; then
