@@ -4,8 +4,9 @@
   "use strict";
   const KEY="mvai-doctags-compatible-models-v1";
   const BUILTIN=Object.freeze({id:"onnx-community/granite-docling-258M-ONNX",name:"Granite Docling 258M · 公开基线",origin:"IBM / ONNX Community",builtIn:true,checked:true,parameterCount:"258M 参数"});
-  const R3=Object.freeze({id:"multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX",name:"MVAI-DocTags-A-0.8B-v1.0 · 自研",origin:"河海大学 · MVAI Lab",builtIn:true,checked:true,parameterCount:"0.8B 参数",adapter:"r3-ovisocr3",precision:"r3-fixed",runtime:"Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1",downloadSize:"约 2.52 GB",validatedDevice:"Chrome 157 / NVIDIA A800 80GB"});
-  const BUILTINS=Object.freeze([BUILTIN,R3]);
+  const R3=Object.freeze({id:"multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX",name:"MVAI-DocTags-DJX-0.8B-v1.0 · 自研",origin:"河海大学 · MVAI Lab",builtIn:true,checked:true,parameterCount:"0.8B 参数",adapter:"r3-ovisocr3",precision:"r3-fixed",runtime:"Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1",downloadSize:"约 2.52 GB",validatedDevice:"Chrome 157 / NVIDIA A800 80GB"});
+  const WANG_2B=Object.freeze({id:"multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX",name:"MVAI-DocTags-WC-2B-v1.0 · 自研",origin:"河海大学 · MVAI Lab",builtIn:true,checked:true,parameterCount:"2.2B 参数",adapter:"wang-qwen35-2b",precision:"r3-fixed",runtime:"Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1",downloadSize:"约 6.2 GB",validatedDevice:"Chrome 157 / NVIDIA A800 80GB"});
+  const BUILTINS=Object.freeze([BUILTIN,R3,WANG_2B]);
   const BUILTIN_IDS=new Set(BUILTINS.map(model=>model.id));
   const MAX_CUSTOM=8;
   function validRepoId(id){return typeof id==="string"&&id.length<=120&&/^[A-Za-z0-9][A-Za-z0-9_.-]*\/[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(id)&&!id.includes("..")&&!id.includes("--/")&&!id.startsWith("http");}
@@ -17,6 +18,6 @@
   function modelSizeLabel(id){const builtin=BUILTINS.find(model=>model.id===id);return builtin?.parameterCount||"未提供（自定义模型）";}
   function proportionalPosition(fromTop,fromHeight,fromViewport,toHeight,toViewport){const sourceMax=Math.max(0,Number(fromHeight)-Number(fromViewport));const targetMax=Math.max(0,Number(toHeight)-Number(toViewport));if(!Number.isFinite(sourceMax)||!Number.isFinite(targetMax)||!targetMax||!sourceMax)return 0;const ratio=Math.min(1,Math.max(0,Number(fromTop)/sourceMax));return Number.isFinite(ratio)?ratio*targetMax:0;}
   function recordResult(history,record){if(!record||!validRepoId(record.modelId)||!record.key||record.documentRevision==null||!record.tags)return history;const revision=Number(record.documentRevision);if(!Number.isInteger(revision)||revision<0)return history;const filtered=(Array.isArray(history)?history:[]).filter(item=>Number(item.documentRevision)===revision&&item.key!==record.key);return [...filtered,{...record,documentRevision:revision}].slice(-12);}
-  root.MVAIModelRegistry={BUILTIN,R3,BUILTINS,KEY,validRepoId,normalise,restore,save,getAll,key,modelSizeLabel,proportionalPosition,recordResult};
+  root.MVAIModelRegistry={BUILTIN,R3,WANG_2B,BUILTINS,KEY,validRepoId,normalise,restore,save,getAll,key,modelSizeLabel,proportionalPosition,recordResult};
   if(typeof module!=="undefined"&&module.exports)module.exports=root.MVAIModelRegistry;
 })(typeof globalThis==="object"?globalThis:this);
