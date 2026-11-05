@@ -67,7 +67,7 @@ export async function createAdapter({modelId = MODEL_ID, revision = MODEL_REVISI
     if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
     processor.tokenizer.chat_template = await template.text();
     prompt = trainedPrompt(processor.tokenizer);
-    // config.json declares the three Decoder shards; do not override it with true.
+    // config.json declares the per-file counts, including three Decoder shards; do not override it with true.
     model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
       revision, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'},
       progress_callback: info => onProgress({...info, stage: "model"}),
