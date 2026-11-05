@@ -1031,6 +1031,7 @@ $("load").onclick=async()=>{
    if(d?.file)lastLoadFile=d.file;
    if(d?.stage==="processor")loadPhase="processor";
    else if(d?.stage==="model")loadPhase="weights";
+   refreshLoadButtons();
    if(d.status==="progress_total"){
      const m=meter.update(d);
      if(!m)return;
