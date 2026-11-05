@@ -1,4 +1,5 @@
 import {MODEL_ID, MODEL_REVISION, trainedPrompt, RESPONSE_PREFIX, STOP_IDS, validateSettings} from './contract.mjs';
+import {createRangeFetch} from './range-download.mjs';
 
 export const VERSIONS = Object.freeze({transformers: '4.4.0-next.0', ort: '1.31.1'});
 const CDN = 'https://cdn.jsdelivr.net/npm/';
@@ -31,24 +32,55 @@ export async function createAdapter({modelId = MODEL_ID, revision = MODEL_REVISI
     lib.env.remotePathTemplate = '{model}/';
     // Keep the browser cache enabled when a model mirror is configured.
   }
-  const processor = await lib.AutoProcessor.from_pretrained(modelId, {
-    revision, progress_callback: info => onProgress({...info, stage: "processor"}),
+  // The embedding tensor is a single ~971 MiB ONNX external-data file.
+  // Fetch it through verified HTTP Range requests; all other model files use
+  // the original Transformers.js fetch/cache path unchanged.
+  const originalFetch = lib.env.fetch;
+  const rangeFetch = createRangeFetch({
+    modelId,
+    revision,
+    onEvent(event) {
+      if (event.type === "range-retry") {
+        onProgress({
+          status: "range-retry",
+          stage: "model",
+          file: "embed_tokens_fp16.onnx_data",
+          index: event.index,
+          attempt: event.attempt,
+          message: event.message
+        });
+      }
+    }
   });
-  const templateUrl = runtime.modelHost
-    ? `${runtime.modelHost}${modelId}/chat_template.jinja`
-    : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
-  const template = await fetch(templateUrl);
-  if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
-  processor.tokenizer.chat_template = await template.text();
-  const prompt = trainedPrompt(processor.tokenizer);
-  // Pin the exact HF bundle that contains the 3-shard decoder.
-  // Deliberately omit use_external_data_format here: an explicit boolean true
-  // overrides config.json and requests only one chunk. The model config declares
-  // per-file counts (decoder_model_merged_fp16.onnx = 3).
-  const model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
-    revision, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'},
-    progress_callback: info => onProgress({...info, stage: "model"}),
-  });
+  lib.env.fetch = rangeFetch;
+  let processor;
+  let model;
+  let prompt;
+  try {
+    processor = await lib.AutoProcessor.from_pretrained(modelId, {
+      revision, progress_callback: info => onProgress({...info, stage: "processor"}),
+    });
+    const templateUrl = runtime.modelHost
+      ? `${runtime.modelHost}${modelId}/chat_template.jinja`
+      : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
+    const template = await fetch(templateUrl);
+    if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
+    processor.tokenizer.chat_template = await template.text();
+    prompt = trainedPrompt(processor.tokenizer);
+    // config.json declares the three Decoder shards; do not override it with true.
+    model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
+      revision, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'},
+      progress_callback: info => onProgress({...info, stage: "model"}),
+    });
+  } finally {
+    lib.env.fetch = originalFetch;
+    // Also clean up after a later ONNX session error if the embedding file itself
+    // was already committed to the normal Transformers.js full-file cache.
+    await rangeFetch.cleanupIfCached({
+      remoteHost: lib.env.remoteHost,
+      remotePathTemplate: lib.env.remotePathTemplate
+    });
+  }
   const stopping = new lib.InterruptableStoppingCriteria();
   let busy = false;
   return {

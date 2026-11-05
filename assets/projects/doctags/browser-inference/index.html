@@ -873,6 +873,13 @@ $("cacheCheck").addEventListener("click",async()=>{
         modelFiles+=entries.filter(req=>decodeURIComponent(req.url).includes(selectedModel().id)).length;
       }
       parts.push("Cache Storage："+(candidates.length?"检测到缓存目录":"未检测到对应缓存目录")+"；文件条目 "+totalFiles+"；所选仓库相关条目 "+modelFiles+"（不保证文件齐全）。");
+      if(selectedModel().adapter==="wang-qwen35-2b"){
+        const {RANGE_CACHE_NAME}=await import("./adapters/wang-qwen35-2b/range-download.mjs");
+        if(keys.includes(RANGE_CACHE_NAME)){
+          const partial=await (await caches.open(RANGE_CACHE_NAME)).keys();
+          parts.push("WC-2B 分段下载缓存："+partial.length+" 个已完成分片；网络中断后可复用。");
+        }else parts.push("WC-2B 分段下载缓存：当前没有未完成分片。");
+      }
     }else parts.push("当前浏览器未提供 Cache API。");
     if(navigator.storage?.estimate){
       const est=await navigator.storage.estimate(),mb=n=>Math.round((n||0)/1048576);
@@ -896,7 +903,12 @@ $("cacheClear").addEventListener("click",async()=>{
         }
       }
     }
-    $("cacheInfo").textContent="已清理当前模型在本站点的 "+deleted+" 个缓存文件。请重新加载模型；其他模型缓存未修改。";
+    let rangeDeleted=false;
+    if(selectedModel().adapter==="wang-qwen35-2b"){
+      const {clearRangeCache}=await import("./adapters/wang-qwen35-2b/range-download.mjs");
+      rangeDeleted=await clearRangeCache();
+    }
+    $("cacheInfo").textContent="已清理当前模型在本站点的 "+deleted+" 个缓存文件"+(rangeDeleted?"，并清理 WC-2B 分段下载缓存":"")+"。请重新加载模型；其他模型缓存未修改。";
   }catch(err){$("cacheInfo").textContent="缓存清理失败："+err.message;}
 });
 $("cachePersist").addEventListener("click",async()=>{
@@ -953,6 +965,8 @@ $("load").onclick=async()=>{
      $("progress").value=Math.min(99,Math.max($("progress").value,overall));
      const eta=m.etaSeconds===null?"剩余时间计算中":"预计剩余 "+formatEta(m.etaSeconds);
      $("downloadStatus").textContent=entry.name+" · "+stageLabel+" "+m.progress.toFixed(1)+"% · "+formatBytes(m.loaded)+" / "+formatBytes(m.total)+" · "+formatRate(m.bytesPerSecond)+" · "+eta;
+   }else if(d.status==="range-retry"){
+     $("downloadStatus").textContent=entry.name+" · 网络波动，正在重试分片 "+(Number(d.index)+1)+"（第 "+d.attempt+" 次）";
    }else if(d.status==="progress"&&d.file){
      const stageLabel=d.stage==="processor"?"处理器":"模型权重";
      const percent=Number.isFinite(Number(d.progress))?" "+Number(d.progress).toFixed(1)+"%":"";
