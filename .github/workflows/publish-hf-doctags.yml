@@ -21,6 +21,9 @@ jobs:
       - name: Checkout approved DEV source
         uses: actions/checkout@v4
 
+      - name: Assemble DocTags challenge images
+        run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
+
       - name: Validate static Space bundle
         shell: bash
         run: |
@@ -31,6 +34,19 @@ jobs:
           for file in new_arxiv.png image-2.jpg code.jpg lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg 87664.png 06236926002285.png ar_page_0.png japanse_4_ibm.png zh_page_0.png; do
             test -s "hf-spaces/mvai-doctags-webgpu/samples/$file"
           done
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path("hf-spaces/mvai-doctags-webgpu/samples")
+          manifest = json.loads((root / "challenges/manifest.json").read_text(encoding="utf-8"))
+          assert len(manifest) == 28, "Expected 28 challenge samples"
+          for item in manifest:
+              path = root / item["file"]
+              assert path.is_file() and path.stat().st_size > 1000, f"Missing challenge image: {path}"
+              data = path.read_bytes()[:12]
+              assert data[:4] == b"RIFF" and data[8:12] == b"WEBP", f"Invalid WebP: {path}"
+          print("All 28 challenge samples verified.")
+          PY
           python scripts/kaggle/validate_browser_doctags_pilot.py
 
       - name: Check Hugging Face publish permission
@@ -47,7 +63,7 @@ jobs:
             echo "::notice title=HF publishing not enabled::Create a Public Static Space multimodal-vision-ai/mvai-doctags-webgpu, add a repository secret named HF_TOKEN, then rerun this workflow. DEV source is already safe; no public HF deployment was attempted."
           fi
 
-      - name: Publish Static Space bundle with nine built-in samples
+      - name: Publish Static Space bundle with official and challenge samples
         if: steps.hf.outputs.enabled == 'true'
         uses: huggingface/hub-sync@v0.3.0
         with:

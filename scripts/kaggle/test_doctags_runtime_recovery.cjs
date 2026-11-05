@@ -28,6 +28,24 @@ for (const folder of ["adapters/r3-ovisocr3", "adapters/wang-qwen35-2b"]) {
   assert.match(docAdapter, /new URL\('\.\/', ortUrl\)\.href/);
   assert.match(docAdapter, /const scopes = Object\.fromEntries\(transformersCandidates\.map/);
 }
+assert.match(html, /id="sourceChallenge"/, "Challenge sample source tab missing");
+assert.match(html, /id="sourceDocling"/, "Docling official source tab missing");
+assert.match(html, /id="sourceUpload"/, "Local upload source tab missing");
+assert.match(html, /选择示例文档[\s\S]*选择 Docling 官方文档[\s\S]*上传本地图片/, "Source tabs must use the approved concise labels and order");
+assert.doesNotMatch(html, /28 张困难样本|9 张官方样例|本地文件/, "Redundant sample-count/source labels must stay removed");
+assert.match(html, /id="challengeGallery"/, "Challenge gallery container missing");
+assert.match(html, /id="doclingGallery"/, "Docling gallery container missing");
+assert.match(html, /\.sample-strip\{display:flex;gap:9px;overflow-x:auto/, "Sample galleries must remain single-row horizontal strips");
+assert.match(html, /function setInputSource\(source\)/, "Three-source switcher missing");
+assert.match(html, /function renderChallengeTiles\(\)/, "Challenge samples must render as a horizontal strip");
+const challengeMatch = html.match(/const challengeSamples=(\[[\s\S]*?\]);/);
+assert.ok(challengeMatch, "Challenge sample manifest missing");
+const challengeSamples = JSON.parse(challengeMatch[1]);
+assert.equal(challengeSamples.length, 28, "All 28 challenge samples must be present");
+assert.equal(challengeSamples.filter(x => x.source === "原始扫描").length, 18, "18 original scans must be preserved");
+assert.equal(challengeSamples.filter(x => x.source === "脱敏模拟").length, 10, "10 simulated samples must be preserved");
+assert.ok(challengeSamples.some(x => x.file.endsWith("original_110_watermark_fingerprint.webp")), "Fingerprint/watermark challenge sample missing");
+assert.ok(challengeSamples.some(x => x.file.endsWith("synthetic_06_e_payment_voucher.webp")), "Electronic payment voucher sample missing");
 assert.match(html, /id="runAvailability"/, "Visible run readiness explanation missing");
 assert.match(html, /let loadingModel=false,loadPhase="idle"/, "Model loading lifecycle state missing");
 assert.match(html, /loadPhase==="initializing"\?"正在初始化 WebGPU…":"正在加载模型…"/, "Load button must show the current phase");

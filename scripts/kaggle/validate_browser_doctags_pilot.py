@@ -124,6 +124,10 @@ assert "--push" in WANG_REPACK.read_text(encoding="utf-8"), "WC-2B repack script
 assert "decoder_count == len(report['external_data_shards']['decoder_model_merged_fp16.onnx'])" in WANG_BUNDLE_VALIDATOR.read_text(encoding="utf-8"), "Bundle validator must check external-data chunk count"
 for script in (WANG_EXPORT, WANG_SHARDER, WANG_REPACK, WANG_BUNDLE_VALIDATOR, WANG_SHARD_TEST):
     compile(script.read_text(encoding="utf-8"), str(script), "exec")
+INSTALL_CHALLENGE_ASSETS = ROOT / "scripts/kaggle/install_doctags_challenge_assets.py"
+compile(INSTALL_CHALLENGE_ASSETS.read_text(encoding="utf-8"), str(INSTALL_CHALLENGE_ASSETS), "exec")
+ASSEMBLE_CHALLENGE_ARCHIVE = ROOT / "scripts/kaggle/assemble_doctags_challenge_archive.py"
+compile(ASSEMBLE_CHALLENGE_ARCHIVE.read_text(encoding="utf-8"), str(ASSEMBLE_CHALLENGE_ARCHIVE), "exec")
 assert 'src.toBlob' not in data, "R3 inference must not export a potentially tainted Canvas"
 assert 'RawImage.read(image)' in R3_ADAPTER_TEXT, "R3 adapter must decode Blob/File input directly"
 assert 'syntheticFallback' not in data and 'makeSample(' not in data, "Synthetic summary should be removed"
@@ -131,7 +135,35 @@ assert data.count('class="sample-source"') == 1, "Show source attribution exactl
 assert ' · 本项目本地托管</small>' not in data, "Source caption must remain concise"
 assert "样例来源：" in data, "Source caption is required"
 assert "sampleSelectionSerial" in data and "if(ticket!==sampleSelectionSerial)" in data, "Stale-response protection missing"
-assert 'inputRevision++;resetHistory();imageReady=true;name="ibm-demo-"' in data, "Switch must invalidate old results"
+assert 'inputRevision++;resetHistory();imageReady=true;name=(group==="challenge"?"mvaidoc-tags-challenge-":"ibm-demo-")+sample.id' in data, "Switch must invalidate old results and keep sample source identity"
+assert 'highlightSample(kind,group)' in data, "Sample selection must be scoped to the active source gallery"
+assert 'id="sourceChallenge"' in data and 'id="sourceDocling"' in data and 'id="sourceUpload"' in data, "Three document source controls are required"
+assert 'function setInputSource(source)' in data and 'id="challengeGallery"' in data and 'id="doclingGallery"' in data, "Document source switcher galleries are required"
+assert '.sample-strip{display:flex;gap:9px;overflow-x:auto' in data, "Both sample sources must use one-row horizontal scrolling"
+challenge_match = re.search(r"const challengeSamples=(\[[\s\S]*?\]);", data)
+assert challenge_match, "Challenge sample list is missing"
+challenge_items = json.loads(challenge_match.group(1))
+assert len(challenge_items) == 28, "All 28 challenge samples must be listed"
+assert all(not re.search(r"\s\d+$", item["label"]) for item in challenge_items), "Visible sample labels must not expose internal numeric IDs"
+assert len({item["label"] for item in challenge_items}) == 28, "Challenge sample labels must be unique"
+assert challenge_items[12]["label"] == "英文词汇笔记" and challenge_items[13]["label"] == "英文短语笔记" and challenge_items[14]["label"] == "中文手写笔记", "Handwritten sample labels must remain concise and distinguishable"
+assert challenge_items[1]["label"] == "中文声明文档" and challenge_items[21]["label"] == "英文论文表格", "English paper samples must remain distinguishable"
+assert sum(item["source"] == "原始扫描" for item in challenge_items) == 18
+assert sum(item["source"] == "脱敏模拟" for item in challenge_items) == 10
+challenge_manifest_path = HTML.parent / "samples/challenges/manifest.json"
+hf_challenge_manifest_path = SPACE.parent / "samples/challenges/manifest.json"
+challenge_manifest = json.loads(challenge_manifest_path.read_text(encoding="utf-8"))
+hf_challenge_manifest = json.loads(hf_challenge_manifest_path.read_text(encoding="utf-8"))
+assert [item["id"] for item in challenge_items] == [item["id"] for item in challenge_manifest], "Embedded challenge list and asset manifest differ"
+assert challenge_manifest == hf_challenge_manifest, "Learning Center and HF challenge manifests differ"
+for item in challenge_manifest:
+    paths = [HTML.parent / "samples" / item["file"], SPACE.parent / "samples" / item["file"]]
+    for asset in paths:
+        assert asset.is_file() and asset.stat().st_size > 1000, f"Missing challenge sample image: {asset}"
+        signature = asset.read_bytes()[:12]
+        assert signature[:4] == b"RIFF" and signature[8:12] == b"WEBP", f"Invalid WebP challenge sample: {asset}"
+    assert paths[0].read_bytes() == paths[1].read_bytes(), f"Challenge sample mirror differs: {item['id']}"
+assert 'setInputSource("challenge");' in data and 'loadLocalSample(challengeSamples[0].id,"challenge")' in data, "Default source must open the challenge sample gallery and first sample"
 assert "IBM Granite Docling 官方 DEMO" in data, "Example source credit missing"
 assert "await model.generate" in data, "WebGPU model inference must remain real"
 assert "renderComparison(result)" in data, "V1.6 live reconstruction must remain"

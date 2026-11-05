@@ -43,6 +43,9 @@ jobs:
       - name: Install MkDocs dependencies
         run: pip install -r requirements-docs.txt
 
+      - name: Assemble DocTags challenge images
+        run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
+
       - name: Hydrate optional research data (read-only)
         run: |
           if git ls-remote --exit-code --heads origin radar-data > /dev/null 2>&1; then
