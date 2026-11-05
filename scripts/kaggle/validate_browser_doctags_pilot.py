@@ -47,6 +47,9 @@ R3_ADAPTER_TEXT = R3_DOC_ADAPTER.read_text(encoding="utf-8")
 WANG_ADAPTER_TEXT = WANG_DOC_ADAPTER.read_text(encoding="utf-8")
 assert "useBrowserCache = typeof globalThis.caches" in WANG_ADAPTER_TEXT, "WC-2B browser cache must be explicitly enabled"
 assert "useWasmCache = typeof globalThis.caches" in WANG_ADAPTER_TEXT, "WC-2B WASM cache must be explicitly enabled"
+assert "MODEL_REVISION" in WANG_ADAPTER_TEXT, "WC-2B must pin the exact 3-shard HF model revision"
+assert "use_external_data_format: true" not in WANG_ADAPTER_TEXT, "WC-2B must honor per-file external-data chunk counts from config.json"
+assert "per-file counts" in WANG_ADAPTER_TEXT, "WC-2B multi-shard loading contract must be documented in adapter"
 assert 'stage: "processor"' in WANG_ADAPTER_TEXT and 'stage: "model"' in WANG_ADAPTER_TEXT, "WC-2B download stages must be distinguished"
 assert "useBrowserCache = typeof globalThis.caches" in R3_ADAPTER_TEXT, "R3 browser cache must be explicitly enabled"
 assert "useWasmCache = typeof globalThis.caches" in R3_ADAPTER_TEXT, "ONNX runtime WASM cache must be enabled"

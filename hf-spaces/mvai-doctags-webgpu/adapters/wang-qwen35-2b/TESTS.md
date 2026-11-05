@@ -89,3 +89,12 @@ The repack tool now writes a checker-only temporary ONNX file into the same dire
 The synthetic regression test now combines both conditions: a model with external-data tensors and the `SimplifiedLayerNormalization` operator. It verifies external-data path resolution, byte preservation, unchanged runtime operator domain and cleanup of the temporary checker file. Separately, every external tensor reference is checked for path confinement, valid offset/length, existing file and the 1.5 GB shard limit.
 
 This checker workaround is not a substitute for runtime validation. After upload, load and run WC-2B in the target Chrome + WebGPU environment.
+
+
+## Browser multi-shard loading fix
+
+The first browser attempt after the successful Kaggle upload failed during session creation with an out-of-bounds read from `decoder_model_merged_fp16.onnx_data`. Inspection of the WC-2B adapter found an explicit `use_external_data_format: true`. In Transformers.js, an explicit option takes precedence over the model's `transformers.js_config.use_external_data_format`; boolean `true` requests one chunk, while the uploaded decoder has three. The adapter now omits this override so Transformers.js reads the per-file chunk counts from `config.json`.
+
+The adapter also pins the model to HF revision `09f034d04e5a26620124e4b80923ffc2ec5899c7`, preventing a stale `main` URL/cache entry from mixing the pre-shard ONNX graph with the new shard files. The revision contains the 3-shard Decoder and config produced by Kaggle commit `09f034d04e5a26620124e4b80923ffc2ec5899c7`.
+
+Acceptance remains a fresh Windows Chrome load after clearing the WC-2B site cache. The browser must request the Decoder ONNX graph plus all three external-data chunks; session creation and a real DocTags inference must both succeed.

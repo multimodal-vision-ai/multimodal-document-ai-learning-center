@@ -1,4 +1,5 @@
 export const MODEL_ID = 'multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX';
+export const MODEL_REVISION = '09f034d04e5a26620124e4b80923ffc2ec5899c7';
 export const PROMPT = 'Convert this page to docling.';
 export const RESPONSE_PREFIX = '<think>\n\n</think>\n\n<doctag>';
 export const STOP_IDS = Object.freeze([248044, 248046, 248086]);

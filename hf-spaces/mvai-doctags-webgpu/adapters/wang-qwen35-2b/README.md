@@ -4,6 +4,7 @@
 
 - [原始 BF16 模型](https://huggingface.co/multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags)
 - [ONNX 模型](https://huggingface.co/multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX)
+- [当前浏览器分片版本（固定 revision）](https://huggingface.co/multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX/tree/09f034d04e5a26620124e4b80923ffc2ec5899c7)
 - [实测记录](TESTS.md)
 
 本目录仅负责该 2B 模型。独立验证页面位于 `project-notes/ocr-wang-qwen35-local-test/`，公共展厅的集成与发布由教师审核后统一处理。
@@ -104,3 +105,8 @@ python repack_decoder_shards.py --bundle /path/to/Wang-Qwen3.5-2B-DocTags-ONNX -
 ```
 
 脚本会先在临时目录生成分片、重写 ONNX 外部数据引用并运行兼容性 ONNX 图校验（对已知 ORT 扩展算子只在临时校验文件副本中跳过 schema 检查，并通过文件路径解析外部权重）；同时验证每个权重分片的路径、偏移、长度和大小。验证通过后再替换原文件。它只向 Hugging Face 提交更新后的 `config.json`、`onnx/decoder_model_merged_fp16.onnx` 和新生成的 `onnx/decoder_model_merged_fp16.onnx_data*`，并删除不再使用的旧分片。需要在 Kaggle Secrets 中配置有该模型仓库写权限的 `HF_TOKEN`。`.build/` 为中间结果，不发布。训练数据、内部测试图片、优化器状态和 4B 模型不属于此次发布。
+
+
+### 浏览器分片版本固定
+
+当前适配器固定使用 Hugging Face revision `09f034d04e5a26620124e4b80923ffc2ec5899c7`，该版本的 Decoder 外部权重为三个文件。适配器不得显式传入 `use_external_data_format: true`，因为布尔值会覆盖 `config.json` 中的分片数量并只请求一个 chunk。加载时必须让 Transformers.js 读取该 revision 的 `transformers.js_config.use_external_data_format` 映射，其中 `decoder_model_merged_fp16.onnx` 对应 3。更新模型仓库 revision 时，必须同步更新 `contract.mjs` 中的 `MODEL_REVISION`。
