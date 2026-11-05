@@ -16,7 +16,7 @@ DESTINATIONS = [
 ]
 LABELS = {
     "original_095_chinese_two_column": "中文双栏文档",
-    "original_096_english_article_table": "声明文档",
+    "original_096_english_article_table": "中文声明文档",
     "original_097_multicolumn_illustration": "多栏图文文档",
     "original_098_old_english_scan": "英文旧版扫描件",
     "original_099_dense_chinese_table": "中文复杂表格",
