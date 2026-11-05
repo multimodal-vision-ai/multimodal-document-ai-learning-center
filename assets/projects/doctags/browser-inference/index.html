@@ -319,6 +319,7 @@ main{max-width:1260px}
           <p>权重文件通常可通过浏览器 Cache Storage 复用，但重开页面后仍需重新初始化 GPU 实例；浏览器可自动清理缓存，不同站点域名不能共享缓存。</p>
           <div class="cache-actions">
             <button id="cacheCheck" type="button">查看模型缓存信息</button>
+            <button id="cacheClear" type="button">清理当前模型缓存</button>
             <button id="cachePersist" type="button">请求保留站点存储</button>
           </div>
           <div id="cacheInfo" role="status" aria-live="polite"></div>
@@ -879,6 +880,24 @@ $("cacheCheck").addEventListener("click",async()=>{
     }
   }catch(err){parts.push("缓存检查失败："+err.message)}
   $("cacheInfo").textContent=parts.join("\n");
+});
+$("cacheClear").addEventListener("click",async()=>{
+  const modelId=selectedModel().id;
+  try{
+    if(!("caches" in window))throw Error("当前浏览器未提供 Cache API");
+    const key=env.cacheKey||"transformers-cache";
+    const candidates=(await caches.keys()).filter(k=>k===key||k.startsWith(key+"-"));
+    let deleted=0;
+    for(const candidate of candidates){
+      const cache=await caches.open(candidate);
+      for(const request of await cache.keys()){
+        if(decodeURIComponent(request.url).includes(modelId)){
+          if(await cache.delete(request))deleted++;
+        }
+      }
+    }
+    $("cacheInfo").textContent="已清理当前模型在本站点的 "+deleted+" 个缓存文件。请重新加载模型；其他模型缓存未修改。";
+  }catch(err){$("cacheInfo").textContent="缓存清理失败："+err.message;}
 });
 $("cachePersist").addEventListener("click",async()=>{
   try{
