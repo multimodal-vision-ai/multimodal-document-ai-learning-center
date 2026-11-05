@@ -28,6 +28,7 @@ DJX-0.8B 首次下载约 2.52 GB，WC-2B 首次下载约 6.2 GB，均需要支�
 - DJX-0.8B 使用 `adapters/r3-ovisocr3/`，WC-2B 使用 `adapters/wang-qwen35-2b/`，分别通过独立适配器加载；两者的视觉计算为 FP32、词嵌入与文字生成 FP16，要求 WebGPU `shader-f16`。
 - 浏览器 Cache API 显式缓存模型权重和 ONNX Runtime WASM 文件（浏览器仍可能自动清理），保留默认缓存键以复用已有下载；单模型占用 GPU 显存，切换时尝试释放旧模型；刷新后需重新初始化。下载状态使用 Transformers.js v4 的 `progress_total` 显示综合进度、MB/s 和预计剩余时间。首次下载速度仍取决于访问者到 Hugging Face CDN 的实际网络路径；如需明显提高首次下载速度，应另行部署并验收区域 CDN 镜像。
 - 同一图片内保留不同模型或不同精度的实际推理结果，A/B 并排渲染比较。私人文档及推理结果不会被本应用持久保存。
+- **人工终止推理：** 推理过程中可以点击“终止推理”请求停止当前生成。已生成的部分输出会保留并标记为不完整，不计入 A/B 对比历史；模型仍保持加载，可重新运行。该操作为协作式中断，若浏览器 GPU 线程完全卡死，可能仍需刷新页面。
 - HF Space 根目录包含 README.md、index.html、doctags-renderer.js、model-registry.js；部署时必须同时保留 `adapters/r3-ovisocr3/` 和 `adapters/wang-qwen35-2b/` 两个目录及其中的 `adapter.mjs`、`contract.mjs`。
 
 ## V1.7.2 体验改进
