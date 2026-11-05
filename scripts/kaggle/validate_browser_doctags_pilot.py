@@ -136,7 +136,7 @@ assert 'highlightSample(kind,group)' in data, "Sample selection must be scoped t
 assert 'id="sourceChallenge"' in data and 'id="sourceDocling"' in data and 'id="sourceUpload"' in data, "Three document source controls are required"
 assert 'function setInputSource(source)' in data and 'id="challengeGallery"' in data and 'id="doclingGallery"' in data, "Document source switcher galleries are required"
 assert '.sample-strip{display:flex;gap:9px;overflow-x:auto' in data, "Both sample sources must use one-row horizontal scrolling"
-challenge_match = re.search(r"const challengeSamples=(\\[[\\s\\S]*?\\]);", data)
+challenge_match = re.search(r"const challengeSamples=(\[[\s\S]*?\]);", data)
 assert challenge_match, "Challenge sample list is missing"
 challenge_items = json.loads(challenge_match.group(1))
 assert len(challenge_items) == 28, "All 28 challenge samples must be listed"
