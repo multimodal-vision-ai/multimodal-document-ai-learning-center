@@ -509,7 +509,7 @@ function renderModelOptions(prefer){
   const loadedBefore=readLoadKeys();
   for(const m of allModels()){
     const option=document.createElement("option");option.value=m.id;
-    option.textContent=m.name+(loadedBefore.some(k=>k.startsWith(m.id+"::"))?" · 曾成功加载":"")+(m.checked?"":" · 待验证");
+    option.textContent=m.name+(loadedBefore.some(k=>k.startsWith(m.id+"::"))?" · 历史曾加载":"")+(m.checked?"":" · 待验证");
     select.appendChild(option);
   }
   const opt=document.createElement("option");opt.disabled=true;opt.textContent="其他自研模型 · 待接入兼容适配";select.appendChild(opt);
@@ -1038,9 +1038,11 @@ $("load").onclick=async()=>{
      const stageLabel=m.stage==="processor"?"处理器文件":"模型权重";
      const overall=m.stage==="processor"?m.progress*0.05:5+m.progress*0.95;
      if(m.stage==="model"&&m.progress>=99.5)loadPhase="initializing";
-     $("progress").value=Math.min(99,Math.max($("progress").value,overall));
+     $("progress").value=Math.min(95,Math.max($("progress").value,overall));
      const eta=m.etaSeconds===null?"剩余时间计算中":"预计剩余 "+formatEta(m.etaSeconds);
-     $("downloadStatus").textContent=entry.name+" · "+stageLabel+" "+m.progress.toFixed(1)+"% · "+formatBytes(m.loaded)+" / "+formatBytes(m.total)+" · "+formatRate(m.bytesPerSecond)+" · "+eta;
+     $("downloadStatus").textContent=loadPhase==="initializing"
+       ?entry.name+" · 权重文件下载接近完成（"+m.progress.toFixed(1)+"%），正在初始化 WebGPU…"
+       :entry.name+" · "+stageLabel+" "+m.progress.toFixed(1)+"% · "+formatBytes(m.loaded)+" / "+formatBytes(m.total)+" · "+formatRate(m.bytesPerSecond)+" · "+eta;
    }else if(d.status==="range-retry"){
      $("downloadStatus").textContent=entry.name+" · 网络波动，正在重试分片 "+(Number(d.index)+1)+"（第 "+d.attempt+" 次）";
    }else if(d.status==="progress"&&d.file){
