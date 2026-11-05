@@ -165,7 +165,7 @@ assert "MVAI-DocTags-WC-2B-v1.0" in data
 assert 'import("./adapters/r3-ovisocr3/adapter.mjs")' in data
 assert 'import("./adapters/wang-qwen35-2b/adapter.mjs")' in data
 assert "wangAdapter=await createAdapter" in data
-assert "await r3Adapter.recognize(sourceBlob" in data
+assert "adapter.recognize(sourceBlob" in data
 assert "RawImage.read(image)" in WANG_ADAPTER_TEXT
 assert 'value="r3-fixed"' in data
 assert "shader-f16" in data
