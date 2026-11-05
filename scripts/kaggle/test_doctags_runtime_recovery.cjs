@@ -31,6 +31,8 @@ for (const folder of ["adapters/r3-ovisocr3", "adapters/wang-qwen35-2b"]) {
 assert.match(html, /id="sourceChallenge"/, "Challenge sample source tab missing");
 assert.match(html, /id="sourceDocling"/, "Docling official source tab missing");
 assert.match(html, /id="sourceUpload"/, "Local upload source tab missing");
+assert.match(html, /选择示例文档[\s\S]*选择 Docling 官方文档[\s\S]*上传本地图片/, "Source tabs must use the approved concise labels and order");
+assert.doesNotMatch(html, /28 张困难样本|9 张官方样例|本地文件/, "Redundant sample-count/source labels must stay removed");
 assert.match(html, /id="challengeGallery"/, "Challenge gallery container missing");
 assert.match(html, /id="doclingGallery"/, "Docling gallery container missing");
 assert.match(html, /\.sample-strip\{display:flex;gap:9px;overflow-x:auto/, "Sample galleries must remain single-row horizontal strips");
