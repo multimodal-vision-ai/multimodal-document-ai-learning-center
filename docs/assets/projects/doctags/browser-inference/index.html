@@ -604,17 +604,37 @@ const leftPane=$("originalScroll"),rightPane=$("renderScroll"),rendered=$("rende
 const documentParser=globalThis.MVAIDocTags;
 let regions=[],blocks=[],activeLocation=null,syncing=false,renderGood=false;
 const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",handwritten:"#9b6b38",page_number:"#8b97a8",otsl:"#c78b31",table:"#c78b31",seal:"#d74b73"};
+function drawRegionLabel(block,scaleX,scaleY) {
+  const label=block.type;
+  const cssWidth=Math.max(1,compare.clientWidth||compare.width);
+  const fontSize=Math.max(9,Math.min(44,12*compare.width/cssWidth));
+  const padX=Math.ceil(fontSize*.45),padY=Math.ceil(fontSize*.2);
+  comp.font=`600 ${fontSize}px Arial,sans-serif`;
+  const labelWidth=Math.ceil(comp.measureText(label).width+padX*2);
+  const labelHeight=Math.ceil(fontSize+padY*2);
+  const x=block.loc[0]*scaleX,y=block.loc[1]*scaleY;
+  const labelX=Math.max(0,Math.min(compare.width-labelWidth,x));
+  const labelY=y>=labelHeight?y-labelHeight:Math.min(compare.height-labelHeight,y+1);
+  comp.fillStyle=BOXC[block.type]||"#4f77ae";
+  comp.fillRect(labelX,labelY,labelWidth,labelHeight);
+  comp.fillStyle="#fff";
+  comp.textBaseline="middle";
+  comp.fillText(label,labelX+padX,labelY+labelHeight/2);
+}
 function leftDraw(loc=null) {
   compare.width=src.width;compare.height=src.height;
   comp.drawImage(src,0,0);if(!src.width || !src.height)return;
   const scaleX=src.width/500,scaleY=src.height/500;
   if ($("bounds").checked && result) {
-    for (const block of regions.slice(0,280)) {
+    const visibleRegions=regions.slice(0,280);
+    for (const block of visibleRegions) {
       const [x1,y1,x2,y2]=block.loc;
       comp.strokeStyle=BOXC[block.type]||"#4f77ae";
       comp.lineWidth=Math.max(2,src.width/480);
       comp.strokeRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
     }
+    // Draw labels in a second pass so later bounding boxes cannot cover earlier labels.
+    for (const block of visibleRegions) drawRegionLabel(block,scaleX,scaleY);
   }
   if (loc) {
     const [x1,y1,x2,y2]=loc;
