@@ -133,7 +133,7 @@ assert header_match, "Missing platform header"
 header_html = header_match.group(1)
 assert '<p>' not in header_html, "Do not show long header explanation by default"
 assert 'class="info-tip hero-help"' in header_html and 'aria-label="查看平台功能及多模型扩展说明"' in header_html
-assert "多模型能力对比" in header_html and "DocTags OvisOCR3 0.8B v1.0 · 自研模型" in header_html
+assert "多模型能力对比" in header_html and "MVAI-DocTags-A-0.8B-v1.0 · 自研模型" in header_html
 assert "当前内置 IBM Granite Docling 258M 公开基线" in header_html
 assert ".hero-heading .hero-help .tip-pop" in data and ".info-tip:focus-within>.tip-pop" in data
 assert "DocTags 浏览器端实时推理</h1>" not in header_html, "Old product header remains"
@@ -145,7 +145,7 @@ assert "renderComparison(result)" in data, "Real model output must drive renderi
 assert "rendered.addEventListener" in data, "Source-to-result hover mapping missing"
 assert 'id="load"' in data and 'id="run"' in data
 assert "onnx-community/granite-docling-258M-ONNX" in data
-assert "DocTags OvisOCR3 0.8B v1.0" in data
+assert "MVAI-DocTags-A-0.8B-v1.0" in data
 assert 'import("./adapters/r3-ovisocr3/adapter.mjs")' in data
 assert "await r3Adapter.recognize(sourceBlob" in data
 assert 'value="r3-fixed"' in data
@@ -161,7 +161,7 @@ assert "shanshui_scene: 7" in HOME.read_text(encoding="utf-8")
 assert "视频行为识别模型" in HOME.read_text(encoding="utf-8")
 assert "Chrome 157" in GUIDE.read_text(encoding="utf-8")
 assert "NVIDIA A800 80GB" in GUIDE.read_text(encoding="utf-8")
-assert "DocTags OvisOCR3 0.8B v1.0" in GUIDE.read_text(encoding="utf-8")
+assert "MVAI-DocTags-A-0.8B-v1.0" in GUIDE.read_text(encoding="utf-8")
 matches = re.findall(r'<script type="module">([\s\S]*?)</script>', data)
 assert len(matches) == 1, "Exactly one JS module script expected"
 js = matches[0]
