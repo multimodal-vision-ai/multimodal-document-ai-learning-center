@@ -84,7 +84,7 @@ python test_browser.py \
 - 解码器使用 ORT GenAI 导出，显式 `exclude_mtp=true`，不启用辅助多词元预测头；保留完整主解码器及输出词表。
 - 图像编码器保持 FP32；循环状态和 KV 缓存类型以导出图与固定运行时协议为准。
 - `config.json` 仅添加 Transformers.js 外部数据和缓存设置；分词器、模板、generation config、processor config 与源文件逐字节一致。
-- 解码器中的 `ai.onnx::SimplifiedLayerNormalization` 是 [ORT WebGPU 支持的扩展](https://github.com/microsoft/onnxruntime/blob/main/js/web/docs/webgpu-operators.md)。标准 ONNX checker 尚无该算子的 schema。分片脚本只在内存中的校验副本里临时将该节点移入专用校验域，借此继续检查其余标准算子和图结构；实际保存及上传的 ONNX 文件不会改变节点域或计算图。外部权重的路径、偏移、长度、文件边界和分片大小另行严格验证。最终仍以 ORT WebGPU 实际加载和生成测试为准。
+- 解码器中的 `ai.onnx::SimplifiedLayerNormalization` 是 [ORT WebGPU 支持的扩展](https://github.com/microsoft/onnxruntime/blob/main/js/web/docs/webgpu-operators.md)。标准 ONNX checker 尚无该算子的 schema。分片脚本只在临时校验副本里将该节点移入专用校验域，并将副本放在外部权重分片旁边，以文件路径运行 Checker，确保相对权重路径可解析；实际保存及上传的 ONNX 文件不会改变节点域或计算图。外部权重的路径、偏移、长度、文件边界和分片大小另行严格验证。最终仍以 ORT WebGPU 实际加载和生成测试为准。
 
 大模型的 ONNX 外部权重可以由多个同名前缀的 `_data`、`_data_1`、`_data_2` 文件组成；`config.json` 中的 `transformers.js_config.use_external_data_format` 必须声明每个 ONNX 文件对应的分片数量。为避开 Chrome 单个 ArrayBuffer 约 2 GB 的限制，每个外部数据分片控制在 1.5 GB 以内。
 
@@ -103,4 +103,4 @@ os.environ["HF_TOKEN"] = UserSecretsClient().get_secret("HF_TOKEN")
 python repack_decoder_shards.py --bundle /path/to/Wang-Qwen3.5-2B-DocTags-ONNX --push
 ```
 
-脚本会先在临时目录生成分片、重写 ONNX 外部数据引用并运行兼容性 ONNX 图校验（对已知 ORT 扩展算子只在内存校验副本中跳过 schema 检查）；同时验证每个权重分片的路径、偏移、长度和大小。验证通过后再替换原文件。它只向 Hugging Face 提交更新后的 `config.json`、`onnx/decoder_model_merged_fp16.onnx` 和新生成的 `onnx/decoder_model_merged_fp16.onnx_data*`，并删除不再使用的旧分片。需要在 Kaggle Secrets 中配置有该模型仓库写权限的 `HF_TOKEN`。`.build/` 为中间结果，不发布。训练数据、内部测试图片、优化器状态和 4B 模型不属于此次发布。
+脚本会先在临时目录生成分片、重写 ONNX 外部数据引用并运行兼容性 ONNX 图校验（对已知 ORT 扩展算子只在临时校验文件副本中跳过 schema 检查，并通过文件路径解析外部权重）；同时验证每个权重分片的路径、偏移、长度和大小。验证通过后再替换原文件。它只向 Hugging Face 提交更新后的 `config.json`、`onnx/decoder_model_merged_fp16.onnx` 和新生成的 `onnx/decoder_model_merged_fp16.onnx_data*`，并删除不再使用的旧分片。需要在 Kaggle Secrets 中配置有该模型仓库写权限的 `HF_TOKEN`。`.build/` 为中间结果，不发布。训练数据、内部测试图片、优化器状态和 4B 模型不属于此次发布。

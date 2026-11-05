@@ -2,6 +2,8 @@
 """Repack ONNX external tensor data into browser-safe files."""
 from pathlib import Path
 import math
+import os
+import tempfile
 
 MAX_EXTERNAL_DATA_SHARD_BYTES = 1_500_000_000
 COPY_BLOCK_BYTES = 8 * 1024 * 1024
@@ -95,12 +97,14 @@ def validate_external_data_files(graph, data_dir, onnx,
 
 
 def check_model_with_ort_compatibility(model_path, onnx):
-    """Run ONNX structural checks while preserving ORT's default-domain contrib op.
+    """Check a temporary model copy while preserving runtime graph and external data.
 
     ONNX Runtime registers SimplifiedLayerNormalization in the ai.onnx domain,
     but the standard ONNX Python checker does not currently publish its schema.
-    Only a checker-only in-memory copy is adjusted to a private custom domain;
-    the model file and the graph passed to ONNX Runtime remain untouched.
+    Only a checker-only copy is adjusted to a private custom domain. The copy is
+    written beside its external-data shards and checked by file path, so ONNX
+    Checker can resolve external tensor locations relative to that directory.
+    The original model file and runtime graph remain untouched.
     """
     model = onnx.load(str(model_path), load_external_data=False)
     validation_domain = "mvai.validation_only"
@@ -131,9 +135,23 @@ def check_model_with_ort_compatibility(model_path, onnx):
         if not any(item.domain == validation_domain for item in model.opset_import):
             model.opset_import.append(onnx.helper.make_opsetid(validation_domain, 1))
 
-    # This still checks graph structure and every standard ONNX operator.
-    # Only the known ORT operator is skipped in this temporary checker copy.
-    onnx.checker.check_model(model, check_custom_domain=False)
+    # The ModelProto overload has no model-directory context. With external
+    # tensors it may resolve relative locations against the process CWD and
+    # report that a valid shard is missing. Write a temporary checker-only ONNX
+    # file beside the real shards, then use the path overload so locations are
+    # resolved relative to that file. The production model is never modified.
+    fd, checker_name = tempfile.mkstemp(
+        prefix=".mvai-checker-", suffix=".onnx", dir=Path(model_path).parent
+    )
+    os.close(fd)
+    checker_path = Path(checker_name)
+    try:
+        onnx.save_model(model, str(checker_path))
+        onnx.checker.check_model(
+            str(checker_path), check_custom_domain=False
+        )
+    finally:
+        checker_path.unlink(missing_ok=True)
 
     if runtime_ops:
         return {
@@ -142,7 +160,7 @@ def check_model_with_ort_compatibility(model_path, onnx):
             "opset": default_opset,
             "nodes": len(runtime_ops),
             "model_file_modified": False,
-            "note": "Only an in-memory checker copy used a private domain; the saved ONNX graph is unchanged.",
+            "note": "Only a temporary checker file beside the external shards used a private domain; the runtime ONNX graph and shard files are unchanged.",
         }
     return {
         "status": "passed",

@@ -84,31 +84,30 @@ def main():
                 new_stream.seek(new_offset)
                 assert old_stream.read(old_length) == new_stream.read(new_length)
 
-        # The standard ONNX checker does not register this ORT runtime operator.
-        # The compatibility checker must validate all other graph structure while
-        # leaving the saved model's original ai.onnx node unchanged.
-        ort_graph = helper.make_graph(
-            [helper.make_node(
-                "SimplifiedLayerNormalization", ["x", "scale"], ["y"],
-                name="test_simplified_layer_norm",
-            )],
-            "ort_simplified_layer_norm_test",
-            [helper.make_tensor_value_info("x", TensorProto.FLOAT, [1, 4])],
-            [helper.make_tensor_value_info("y", TensorProto.FLOAT, [1, 4])],
-            [numpy_helper.from_array(np.ones((4,), dtype=np.float32), name="scale")],
-        )
-        ort_model = helper.make_model(
-            ort_graph, opset_imports=[helper.make_opsetid("", 22)]
-        )
-        ort_model_path = root / "ort_runtime_operator.onnx"
+        # Add the ORT runtime operator to a model that already references the
+        # generated external-data shards. This regression test catches both the
+        # missing-schema exception and incorrect relative-path resolution.
+        ort_model = onnx.load(str(target_model), load_external_data=False)
+        node = ort_model.graph.node[0]
+        node.op_type = "SimplifiedLayerNormalization"
+        node.domain = ""
+        node.ClearField("input")
+        node.input.extend(["weight_0", "weight_1"])
+        for opset in ort_model.opset_import:
+            if opset.domain in ("", "ai.onnx"):
+                opset.version = 22
+        ort_model_path = output_dir / "ort_runtime_operator_with_external_data.onnx"
         onnx.save_model(ort_model, str(ort_model_path))
+        original_locations = external_data_locations(ort_model.graph, onnx)
         validation = check_model_with_ort_compatibility(ort_model_path, onnx)
         assert validation["status"] == "passed_with_ort_runtime_operator_schema_exception"
         assert validation["operator"] == "ai.onnx::SimplifiedLayerNormalization"
         saved_model = onnx.load(str(ort_model_path), load_external_data=False)
         assert saved_model.graph.node[0].domain == "", "Saved runtime graph must remain unchanged"
+        assert external_data_locations(saved_model.graph, onnx) == original_locations
+        assert not list(output_dir.glob(".mvai-checker-*.onnx")), "Temporary checker file must be removed"
 
-    print("ONNX external-data sharding tests: byte preservation, shard boundaries, external references and ORT-op checker compatibility PASS")
+    print("ONNX external-data sharding tests: byte preservation, shard boundaries, external path resolution and ORT-op checker compatibility PASS")
 
 
 if __name__ == "__main__":
