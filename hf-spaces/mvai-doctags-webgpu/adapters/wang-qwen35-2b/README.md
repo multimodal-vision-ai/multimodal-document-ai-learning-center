@@ -92,7 +92,12 @@ python test_browser.py \
 
 ```bash
 # Kaggle：先在 Secrets 中添加 HF_TOKEN，再执行：
-python repack_decoder_shards.py --push
+from kaggle_secrets import UserSecretsClient
+import os
+os.environ["HF_TOKEN"] = UserSecretsClient().get_secret("HF_TOKEN")
+
+!pip install onnx==1.23.2 huggingface_hub
+!python repack_decoder_shards.py --push
 
 # 或者对已经下载到本地的 bundle 执行：
 python repack_decoder_shards.py --bundle /path/to/Wang-Qwen3.5-2B-DocTags-ONNX --push
