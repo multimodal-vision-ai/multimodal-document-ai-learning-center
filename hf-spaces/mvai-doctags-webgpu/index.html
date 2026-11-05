@@ -19,6 +19,9 @@ header p{color:#deebfe;line-height:1.65;font-size:13px;max-width:760px}
 .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:13px 0}
 button,.file{border:1px solid #c9d8ed;background:white;color:#225182;font-weight:650;padding:9px 12px;border-radius:9px;font-size:12px}
 .primary{background:#255fc0;color:white;border-color:#255fc0}
+.stop-action{background:#fff3f1;color:#ad3838;border-color:#e7b7b1}
+.stop-action:hover:not(:disabled){background:#ffe8e5}
+#stop[hidden]{display:none}
 .file{position:relative;display:inline-flex;overflow:hidden;cursor:pointer}
 .file input{position:absolute;inset:0;opacity:0;cursor:pointer}
 #view{height:510px;max-height:65vh;border:1px solid #d9e4f1;background:#f5f8fc;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -292,6 +295,7 @@ main{max-width:1260px}
       </div>
       <div class="row run-actions">
         <button class="primary" id="run" type="button" disabled>开始推理</button>
+        <button class="stop-action" id="stop" type="button" hidden disabled>终止推理</button>
         <button id="saveDT" type="button" disabled>下载 DocTags</button>
       </div>
       <div class="status inference-status" id="status" role="status" aria-live="polite">等待推理</div>
@@ -409,12 +413,14 @@ if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) 
 <script src="./doctags-renderer.js"></script>
 <script src="./model-registry.js"></script>
 <script type="module">
-import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
+import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,InterruptableStoppingCriteria,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
 import {createDownloadMeter,formatBytes,formatRate,formatEta} from "./adapters/r3-ovisocr3/download-metrics.mjs";
 env.useBrowserCache = true; // Cache Storage; browser may evict under quota pressure
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
+const graniteStopping=new InterruptableStoppingCriteria();
 let model,processor,r3Adapter=null,wangAdapter=null,loaded=false,busy=false,imageReady=false,result="",name="";
+let inferenceRunning=false,stopRequested=false,activeStop=null;
 let sourceBlob=null; // Original File/Blob for direct self-built-model decoding; no Canvas export.
 const registry=globalThis.MVAIModelRegistry;
 let gpuDetected=false,activeKey=null,activeModelName="",inputRevision=0,runHistory=[];
@@ -448,6 +454,12 @@ function showRunMetrics(modelId,seconds){
   $("runDuration").textContent="推理时长："+Number(seconds).toFixed(1)+" 秒";
   $("runMetrics").hidden=false;
 }
+function refreshInferenceControls(){
+  const button=$("stop");
+  button.hidden=!inferenceRunning;
+  button.disabled=!inferenceRunning||stopRequested;
+  button.textContent=stopRequested?"正在终止…":"终止推理";
+}
 function refreshLoadButtons(){
   const already=loaded&&activeKey===selectedKey();
   $("load").disabled=busy||!gpuDetected||already;
@@ -465,6 +477,7 @@ function refreshLoadButtons(){
       :entry.adapter==="wang-qwen35-2b"
         ?"MVAI-DocTags-WC-2B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 6.2 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试，其他设备仍需实测。"
         :"模型："+entry.name+"。首次加载需要手动启动；成功后切换模型或精度将自动加载。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
+  refreshInferenceControls();
 }
 function maybeAutoLoadSelectedModel(){
   if(!hasLoadedSuccessfully||busy)return;
@@ -1013,62 +1026,107 @@ $("load").onclick=async()=>{
  }finally{busy=false;renderModelOptions(entry.id);}
 };
 $("run").onclick=async()=>{
- if(busy||!loaded||!imageReady||activeKey!==selectedKey())return;
- const entry=selectedModel();
- busy=true;refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
- try{
-   let seconds=0,ended=true,generatedTokens=0,tokensPerSecond=0;
-   if(entry.adapter==="r3-ovisocr3"||entry.adapter==="wang-qwen35-2b"){
-     const adapter=entry.adapter==="r3-ovisocr3"?r3Adapter:wangAdapter;
-     if(!adapter)throw Error(entry.name+" 适配器尚未就绪，请重新加载模型。");
-     if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
-     const output=await adapter.recognize(sourceBlob,{
-       onText(chunk){$("tags").textContent=($("tags").textContent==="等待新的推理输出。"?"":$("tags").textContent)+chunk;},
-       onTokens(n){$("downloadStatus").textContent=entry.name+" 正在生成："+n+" 个词元";}
-     });
-     result=output.text;
-     seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);
-     ended=Boolean(output.ended);
-     generatedTokens=Number(output.generatedTokens)||0;
-     tokensPerSecond=Number(output.tokensPerSecond)||0;
-     if(!result)throw Error(entry.name+" 模型返回空结果");
+  if(busy||!loaded||!imageReady||activeKey!==selectedKey())return;
+  const entry=selectedModel();
+  const adapter=entry.adapter==="r3-ovisocr3"?r3Adapter:entry.adapter==="wang-qwen35-2b"?wangAdapter:null;
+  busy=true;inferenceRunning=true;stopRequested=false;
+  activeStop=adapter?()=>adapter.stop():()=>graniteStopping.interrupt();
+  refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
+  try{
+    let seconds=0,ended=true,generatedTokens=0,tokensPerSecond=0;
+    if(entry.adapter==="r3-ovisocr3"||entry.adapter==="wang-qwen35-2b"){
+      if(!adapter)throw Error(entry.name+" 适配器尚未就绪，请重新加载模型。");
+      if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
+      const output=await adapter.recognize(sourceBlob,{
+        onText(chunk){$("tags").textContent=($("tags").textContent==="等待新的推理输出。"?"":$("tags").textContent)+chunk;},
+        onTokens(n){$("downloadStatus").textContent=entry.name+" 正在生成："+n+" 个词元";}
+      });
+      result=output.text;
+      seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);
+      ended=Boolean(output.ended);
+      generatedTokens=Number(output.generatedTokens)||0;
+      tokensPerSecond=Number(output.tokensPerSecond)||0;
+      if(stopRequested&&generatedTokens===0)result="";
+    }else{
+      graniteStopping.reset();
+      const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
+      const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
+      const inputs=await processor(prompt,[raw],{do_image_splitting:true});let streamed="";
+      const generated=await model.generate({
+        ...inputs,max_new_tokens:2048,do_sample:false,stopping_criteria:graniteStopping,
+        streamer:new TextStreamer(processor.tokenizer,{skip_prompt:true,skip_special_tokens:false,callback_function:chunk=>{streamed+=chunk;$("tags").textContent=streamed}})
+      });
+      const tokens=generated.slice(null,[inputs.input_ids.dims.at(-1),null]);
+      result=(processor.batch_decode(tokens,{skip_special_tokens:false})[0]||streamed).replace(/<\|end_of_text\|>$/,"").trim();
+      seconds=(performance.now()-start)/1000;
+    }
+    if(!result&&stopRequested){
+      $("tags").textContent="已终止推理，尚未生成可用输出。";
+      $("compareDiagnostic").textContent="本次推理已由用户终止；没有生成可核验的 DocTags 输出，未计入 A/B 对比历史。";
+      status("已终止推理 · 模型仍保持加载，可重新运行。");
+      return;
+    }
+    if(!result)throw Error("模型返回空结果");
+    $("tags").textContent=result;
+    const boxes=show(result);renderComparison(result);
+    $("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
+    const adapterLabel=entry.adapter==="r3-ovisocr3"?"DJX-0.8B":entry.adapter==="wang-qwen35-2b"?"WC-2B":null;
+    $("timing").textContent=adapterLabel
+      ?adapterLabel+" WebGPU · "+generatedTokens+" 词元 · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" 词元/秒 · Transformers.js 4.4.0-next.0 / ORT Web 1.31.1 · 输入："+name+" · 带坐标标签 "+boxes+" 个"
+      :"GPU 推理约 "+seconds.toFixed(1)+" 秒 · 模型："+activeModelName+" · 输入："+name+" · 带坐标标签 "+boxes+" 个";
+    const completedNormally=ended&&!stopRequested;
+    if(completedNormally){
+      const precisionLabel=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"视觉 FP32 / 文字 FP16":$("dtype").value==="quality"?"fp32":"q4";
+      updateHistory({key:activeKey,modelId:entry.id,documentRevision:inputRevision,tags:result,seconds:Number(seconds),label:activeModelName+" · "+precisionLabel});
+    }else if(stopRequested){
+      $("compareDiagnostic").textContent="本次推理已由用户终止，以下为已生成的部分输出；结果不完整，未计入多模型结果对比。";
+    }else{
+      $("compareDiagnostic").textContent="本次生成未出现正常结束标记，输出可能不完整；未将其加入多模型结果对比。可下载原始输出并核对。";
+    }
+    showRunMetrics(entry.id,seconds);
+    status(stopRequested
+      ?"已终止推理 · 当前输出不完整，未计入多模型对比；模型仍保持加载"
+      :ended?"推理完成 · 请查看下方对照结果":"生成未正常结束 · 当前输出可能不完整，请核对原始 DocTags");
+  }catch(e){
+   if(stopRequested){
+     const partial=$("tags").textContent;
+     if(partial&&partial!=="等待新的推理输出。"){
+       result=partial;
+       $("saveDT").disabled=false;
+       try{const boxes=show(result);renderComparison(result);$("saveImg").disabled=boxes===0;}catch{$("saveImg").disabled=true;}
+       $("compareDiagnostic").textContent="本次推理已由用户终止，以下为已生成的部分输出；结果不完整，未计入多模型结果对比。";
+       $("timing").textContent="推理已中断 · 输入："+name+" · 已保留部分输出";
+       showRunMetrics(entry.id,(performance.now()-start)/1000);
+     }else{
+       $("tags").textContent="已终止推理，尚未生成可用输出。";
+       $("compareDiagnostic").textContent="本次推理已由用户终止；没有生成可核验的 DocTags 输出，未计入 A/B 对比历史。";
+       clearRunMetrics();
+     }
+     status("已终止推理 · 模型仍保持加载，可重新运行。");
    }else{
-     const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
-     const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
-     const inputs=await processor(prompt,[raw],{do_image_splitting:true});let streamed="";
-     const generated=await model.generate({...inputs,max_new_tokens:2048,do_sample:false,streamer:new TextStreamer(processor.tokenizer,{skip_prompt:true,skip_special_tokens:false,callback_function:chunk=>{streamed+=chunk;$("tags").textContent=streamed}})});
-     const tokens=generated.slice(null,[inputs.input_ids.dims.at(-1),null]);
-     result=(processor.batch_decode(tokens,{skip_special_tokens:false})[0]||streamed).replace(/<\|end_of_text\|>$/,"").trim();
-     seconds=(performance.now()-start)/1000;
+     console.error("Inference failure",e);
+     const message=e?.message||String(e);
+     const inputFailure=e?.name==="SecurityError"||/tainted|toBlob|cross-origin/i.test(message);
+     const hint=inputFailure
+       ?"请重新选择内置样例或上传本地图片后重试。"
+       :"请检查输入图片和 WebGPU 设备状态；如持续失败，请提供浏览器控制台错误。";
+     status("推理失败："+message+"。"+hint);
+     $("tags").textContent="本次没有可核验的完整模型输出。";
    }
-   if(!result)throw Error("模型返回空结果");
-   $("tags").textContent=result;
-   const boxes=show(result);renderComparison(result);
-   $("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
-   const adapterLabel=entry.adapter==="r3-ovisocr3"?"DJX-0.8B":entry.adapter==="wang-qwen35-2b"?"WC-2B":null;
-   $("timing").textContent=adapterLabel
-     ?adapterLabel+" WebGPU · "+generatedTokens+" 词元 · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" 词元/秒 · Transformers.js 4.4.0-next.0 / ORT Web 1.31.1 · 输入："+name+" · 带坐标标签 "+boxes+" 个"
-     :"GPU 推理约 "+seconds.toFixed(1)+" 秒 · 模型："+activeModelName+" · 输入："+name+" · 带坐标标签 "+boxes+" 个";
-   if(ended){
-     const precisionLabel=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"视觉 FP32 / 文字 FP16":$("dtype").value==="quality"?"fp32":"q4";
-     updateHistory({key:activeKey,modelId:entry.id,documentRevision:inputRevision,tags:result,seconds:Number(seconds),label:activeModelName+" · "+precisionLabel});
-   }else{
-     $("compareDiagnostic").textContent="本次生成未出现正常结束标记，输出可能不完整；未将其加入多模型结果对比。可下载原始输出并核对。";
-   }
-   showRunMetrics(entry.id,seconds);
-   status(ended?"推理完成 · 请查看下方对照结果":"生成未正常结束 · 当前输出可能不完整，请核对原始 DocTags");
- }catch(e){
-  console.error("Inference failure",e);
-  const message=e?.message||String(e);
-  const inputFailure=e?.name==="SecurityError"||/tainted|toBlob|cross-origin/i.test(message);
-  const hint=inputFailure
-    ?"请重新选择内置样例或上传本地图片后重试。"
-    :"请检查输入图片和 WebGPU 设备状态；如持续失败，请提供浏览器控制台错误。";
-  status("推理失败："+message+"。"+hint);
-  $("tags").textContent="本次没有可核验的完整模型输出。";
-}
- finally{busy=false;refreshLoadButtons()}
+  }finally{
+    if(stopRequested)$("downloadStatus").textContent=entry.name+" 已终止生成；模型仍保持加载。";
+    busy=false;inferenceRunning=false;stopRequested=false;activeStop=null;
+    refreshLoadButtons();
+  }
 };
+$("stop").onclick=()=>{
+  if(!inferenceRunning||stopRequested)return;
+  stopRequested=true;
+  refreshInferenceControls();
+  status("正在请求终止…当前 WebGPU 运算结束后将停止生成。");
+  try{activeStop?.();}catch(error){status("终止请求失败："+(error?.message||String(error)));}
+};
+
 renderModelOptions(registry.BUILTIN.id);loadLocalSample("doc");detect();
 </script>
 </body>
