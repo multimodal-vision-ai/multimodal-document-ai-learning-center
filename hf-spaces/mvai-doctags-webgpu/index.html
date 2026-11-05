@@ -208,6 +208,7 @@ main{max-width:1260px}
 .sample-tile[aria-pressed="true"]{border-color:#326be8;background:#edf4ff;box-shadow:0 0 0 2px #326be81b;color:#184eae}
 .sample-tile canvas,.sample-tile img{display:block;width:75px;height:92px;border:1px solid #e1e7f0;border-radius:3px;background:#fff;object-fit:contain}
 .sample-tile span{font-size:11px;font-weight:700;line-height:1.35;white-space:nowrap}
+.sample-tile img[hidden]{display:none!important}
 .sample-scroll{display:inline-grid;place-items:center;width:29px;min-height:42px;padding:0;border:1px solid #d8e4f2;border-radius:8px;background:#f4f8ff;color:#376aa9;font-size:21px}
 .sample-scroll:hover{background:#e8f1ff}
 .sample-scroll:disabled{opacity:.35}
@@ -772,6 +773,27 @@ async function fetchSampleBlob(filename){
   }
   throw new Error("图片请求失败："+(lastError?.message||String(lastError)));
 }
+async function loadSampleThumbnail(btn,item){
+  const img=btn.querySelector("img");
+  try{
+    // Use the same CORS-aware Blob loader as the large preview. Direct <img src>
+    // requests cannot use the raw.githack -> raw.githubusercontent fallback.
+    const blob=await fetchSampleBlob(item.file);
+    const objectUrl=URL.createObjectURL(blob);
+    if(!btn.isConnected){URL.revokeObjectURL(objectUrl);return;}
+    const previous=img.dataset.objectUrl;
+    if(previous)URL.revokeObjectURL(previous);
+    img.dataset.objectUrl=objectUrl;
+    img.hidden=false;
+    img.src=objectUrl;
+    delete btn.dataset.thumbnailError;
+  }catch(error){
+    img.removeAttribute("src");
+    img.hidden=true;
+    btn.dataset.thumbnailError="true";
+    console.warn("Sample thumbnail unavailable:",item.file,error);
+  }
+}
 function highlightSample(kind){
   document.querySelectorAll(".sample-tile").forEach(btn=>{
     btn.setAttribute("aria-pressed",String(btn.dataset.sample===kind));
@@ -813,7 +835,7 @@ function initSampleGallery(){
   document.querySelectorAll(".sample-tile").forEach(btn=>{
     const item=localSamples.find(x=>x.id===btn.dataset.sample);
     if(!item)return;
-    btn.querySelector("img").src=sampleBase+item.file;
+    void loadSampleThumbnail(btn,item);
     btn.addEventListener("click",()=>loadLocalSample(item.id));
   });
   const strip=$("sampleStrip");
@@ -1019,9 +1041,12 @@ $("load").onclick=async()=>{
    loaded=false;activeKey=null;processor=null;
    const loadError=String(err?.message||err);
    const allocationFailure=/Array buffer allocation failed|ArrayBuffer allocation|allocate.*buffer/i.test(loadError);
+   const runtimeNetworkFailure=/CDN 加载失败/.test(loadError);
    const loadDiagnosis=allocationFailure
      ?"浏览器无法分配 ONNX 权重缓冲区。WC-2B 的解码器外部权重必须拆分为多个不超过 1.5 GB 的分片，并在模型 config.json 中声明准确分片数量；若已完成分片，仍可能是本机可用内存不足。这不是 shader-f16 检测失败。"
-     :"请核对模型 ONNX 文件、外部数据分片、Transformers.js/ONNX Runtime 版本及 WebGPU shader-f16 支持。";
+     :runtimeNetworkFailure
+       ?"浏览器未能下载 ONNX Runtime / Transformers.js 运行时。程序已自动尝试多个 CDN 镜像；请检查网络或代理后重试。此次失败发生在模型权重加载前。"
+       :"请核对模型 ONNX 文件、外部数据分片、Transformers.js/ONNX Runtime 版本及 WebGPU shader-f16 支持。";
    $("downloadStatus").textContent="模型加载失败："+loadError+"。"+loadDiagnosis+"旧 GPU 模型已释放；可以重新选择其他模型。";
  }finally{busy=false;renderModelOptions(entry.id);}
 };
