@@ -76,3 +76,12 @@ CPU 原模型使用 PyTorch 2.10.0、Transformers 5.6.2、FP32、4 个线程；�
 The first exported bundle contained a single `decoder_model_merged_fp16.onnx_data` file of 3,832,349,440 bytes. This exceeds Chrome's approximately 2 GiB per-ArrayBuffer limit on some browser/runtime combinations, even though the same bundle loaded on the controlled A800 test host. The browser release must therefore split the decoder external data into multiple files, each no larger than 1.5 GB, and declare the exact chunk count in `transformers.js_config.use_external_data_format`.
 
 Run `python test_external_data_sharding.py` for the synthetic byte-preservation regression test, then run `python repack_decoder_shards.py --push` on Kaggle with `HF_TOKEN` stored as a Kaggle Secret. After upload, rerun `validate_bundle.py` and the browser test on the target Windows/Chrome device. The earlier A800 result is not evidence that the original monolithic package is portable to ordinary desktops.
+
+
+## Kaggle browser-safe re-sharding: checker compatibility
+
+The first Kaggle run stopped at `onnx.checker.check_model` with `No Op registered for SimplifiedLayerNormalization with domain_version of 22`. This is a known schema gap: ONNX Runtime uses `ai.onnx::SimplifiedLayerNormalization`, while the standard ONNX Python checker does not publish that schema (see [ONNX issue #6582](https://github.com/onnx/onnx/issues/6582)). ONNX Runtime Web's WebGPU operator list includes `SimplifiedLayerNormalization` in `ai.onnx(1+)`.
+
+The repack tool now validates a temporary in-memory copy: only the known operator node is assigned a private validation domain, then the standard checker validates the remaining built-in graph. The original ONNX file is never rewritten by this check. Separately, every external tensor reference is checked for path confinement, valid offset/length, existing file and the 1.5 GB shard limit. A synthetic regression test confirms the original saved node remains in its original domain.
+
+This checker workaround is not a substitute for runtime validation. After upload, load and run WC-2B in the target Chrome + WebGPU environment.

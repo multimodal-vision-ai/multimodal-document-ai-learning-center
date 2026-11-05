@@ -16,6 +16,8 @@ def validate(args):
     from external_data_sharding import (
         MAX_EXTERNAL_DATA_SHARD_BYTES,
         external_data_locations,
+        validate_external_data_files,
+        check_model_with_ort_compatibility,
     )
     torch.set_num_threads(args.threads)
     root, config = local_config(args.model)
@@ -67,27 +69,18 @@ def validate(args):
     report['onnx_checker'] = {}
     files = assets + ['config.json', 'preprocessor_config.json']
     for name in ['embed_tokens_fp16.onnx', 'vision_encoder.onnx', 'decoder_model_merged_fp16.onnx']:
-        try:
-            onnx.checker.check_model(str(bundle / 'onnx' / name))
-            report['onnx_checker'][name] = 'passed'
-        except onnx.checker.ValidationError as error:
-            # ORT intentionally registers this contrib operator in ai.onnx.
-            # Standard ONNX has no schema for it (onnx/onnx issue #6582).
-            # Keep the runtime graph unchanged and require real WebGPU testing.
-            if name != 'decoder_model_merged_fp16.onnx' or 'No Op registered for SimplifiedLayerNormalization' not in str(error):
-                raise
-            report['onnx_checker'][name] = {
-                'status': 'requires_onnxruntime_contrib_schema',
-                'operator': 'ai.onnx::SimplifiedLayerNormalization',
-                'webgpu_validation_required': True,
-            }
+        model_path = bundle / 'onnx' / name
+        report['onnx_checker'][name] = check_model_with_ort_compatibility(model_path, onnx)
         files += ['onnx/' + name, 'onnx/' + name + '_data']
     report['external_data_shards'] = {}
     artifact_files = set(files)
     for name in ['embed_tokens_fp16.onnx', 'vision_encoder.onnx', 'decoder_model_merged_fp16.onnx']:
         model_path = bundle / 'onnx' / name
         graph = onnx.load(str(model_path), load_external_data=False)
-        locations = external_data_locations(graph.graph, onnx)
+        external_validation = validate_external_data_files(
+            graph.graph, bundle / 'onnx', onnx, MAX_EXTERNAL_DATA_SHARD_BYTES
+        )
+        locations = external_validation['files']
         assert locations, f'{name} has no external-data references'
         shard_records = []
         for location in locations:

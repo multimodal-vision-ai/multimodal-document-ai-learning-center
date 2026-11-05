@@ -14,6 +14,8 @@ from external_data_sharding import (
     MAX_EXTERNAL_DATA_SHARD_BYTES,
     external_data_locations,
     shard_external_data,
+    validate_external_data_files,
+    check_model_with_ort_compatibility,
 )
 
 DEFAULT_REPO = "multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX"
@@ -81,7 +83,13 @@ def repack(bundle):
         )
         temp_model = temp_dir / model_path.name
         onnx.save_model(graph, str(temp_model))
-        onnx.checker.check_model(str(temp_model))
+        graph_validation = check_model_with_ort_compatibility(temp_model, onnx)
+        repacked_graph = onnx.load(str(temp_model), load_external_data=False)
+        external_validation = validate_external_data_files(
+            repacked_graph.graph, temp_dir, onnx, MAX_EXTERNAL_DATA_SHARD_BYTES
+        )
+        if set(external_validation["files"]) != {path.name for path in shards}:
+            raise ValueError("Generated shard files and ONNX external-data references do not match")
 
         config = json.loads(config_path.read_text(encoding="utf-8"))
         js_config = config.setdefault("transformers.js_config", {})
@@ -146,6 +154,8 @@ def repack(bundle):
                 for shard in shards
             ],
             "config": config["transformers.js_config"]["use_external_data_format"],
+            "graph_validation": graph_validation,
+            "external_data_validation": external_validation,
             "old_external_data_files": old_locations,
         }
     finally:
