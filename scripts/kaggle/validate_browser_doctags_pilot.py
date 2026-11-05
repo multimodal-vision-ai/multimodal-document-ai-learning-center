@@ -28,10 +28,20 @@ R3_DOC_CONTRACT = ROOT / "docs/assets/projects/doctags/browser-inference/adapter
 R3_HF_CONTRACT = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/contract.mjs"
 R3_DOC_DOWNLOAD = ROOT / "docs/assets/projects/doctags/browser-inference/adapters/r3-ovisocr3/download-metrics.mjs"
 R3_HF_DOWNLOAD = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/download-metrics.mjs"
+WANG_DOC_ADAPTER = ROOT / "docs/assets/projects/doctags/browser-inference/adapters/wang-qwen35-2b/adapter.mjs"
+WANG_HF_ADAPTER = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/wang-qwen35-2b/adapter.mjs"
+WANG_DOC_CONTRACT = ROOT / "docs/assets/projects/doctags/browser-inference/adapters/wang-qwen35-2b/contract.mjs"
+WANG_HF_CONTRACT = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/wang-qwen35-2b/contract.mjs"
 assert R3_DOC_ADAPTER.read_bytes() == R3_HF_ADAPTER.read_bytes(), "R3 adapters diverged"
 assert R3_DOC_CONTRACT.read_bytes() == R3_HF_CONTRACT.read_bytes(), "R3 contracts diverged"
 assert R3_DOC_DOWNLOAD.read_bytes() == R3_HF_DOWNLOAD.read_bytes(), "R3 download helpers diverged"
+assert WANG_DOC_ADAPTER.read_bytes() == WANG_HF_ADAPTER.read_bytes(), "WC-2B adapters diverged"
+assert WANG_DOC_CONTRACT.read_bytes() == WANG_HF_CONTRACT.read_bytes(), "WC-2B contracts diverged"
 R3_ADAPTER_TEXT = R3_DOC_ADAPTER.read_text(encoding="utf-8")
+WANG_ADAPTER_TEXT = WANG_DOC_ADAPTER.read_text(encoding="utf-8")
+assert "useBrowserCache = typeof globalThis.caches" in WANG_ADAPTER_TEXT, "WC-2B browser cache must be explicitly enabled"
+assert "useWasmCache = typeof globalThis.caches" in WANG_ADAPTER_TEXT, "WC-2B WASM cache must be explicitly enabled"
+assert 'stage: "processor"' in WANG_ADAPTER_TEXT and 'stage: "model"' in WANG_ADAPTER_TEXT, "WC-2B download stages must be distinguished"
 assert "useBrowserCache = typeof globalThis.caches" in R3_ADAPTER_TEXT, "R3 browser cache must be explicitly enabled"
 assert "useWasmCache = typeof globalThis.caches" in R3_ADAPTER_TEXT, "ONNX runtime WASM cache must be enabled"
 assert "lib.env.useBrowserCache = false" not in R3_ADAPTER_TEXT, "Mirror mode must not disable browser caching"
@@ -40,6 +50,11 @@ REGISTRY_TEXT = REGISTRY.read_text(encoding="utf-8")
 assert "multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX" in REGISTRY_TEXT
 assert 'adapter:"r3-ovisocr3"' in REGISTRY_TEXT
 assert "0.8B 参数" in REGISTRY_TEXT
+assert "multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX" in REGISTRY_TEXT
+assert 'adapter:"wang-qwen35-2b"' in REGISTRY_TEXT
+assert "MVAI-DocTags-DJX-0.8B-v1.0 · 自研" in REGISTRY_TEXT
+assert "MVAI-DocTags-WC-2B-v1.0 · 自研" in REGISTRY_TEXT
+assert "2.2B 参数" in REGISTRY_TEXT
 assert 'src="./model-registry.js"' in data, "Model registry must be loaded"
 for control in ('modelSelect','newModelRepo','addModel','cacheCheck','cachePersist','compareA','compareB','compareBodyA','compareBodyB'):
     assert 'id="'+control+'"' in data, f"Missing V1.7 control {control}"
@@ -109,7 +124,7 @@ for detail_id in ("modelManage", "cacheManager", "rawDetails", "compareDetails")
     assert not re.search(r'<details[^>]*\bid="'+detail_id+r'"[^>]*\bopen\b', data), f"{detail_id} must be closed by default"
 ids = re.findall(r'\bid="([^"]+)"', data)
 assert len(ids) == len(set(ids)), f"Duplicated HTML IDs: {[x for x in set(ids) if ids.count(x)>1]}"
-assert "首次加载 R3 模型约下载 2.52 GB" in data, "R3 download warning not visible"
+assert "首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB" in data, "Self-built model download warning not visible"
 assert "模型加载失败：" in data and "推理失败：" in data, "Critical errors must remain visible"
 assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Original/result rendering must remain"
 assert "updateHistory({" in data and "refreshHistorySelectors()" in data, "Multi-model result history lost"
@@ -133,7 +148,7 @@ assert header_match, "Missing platform header"
 header_html = header_match.group(1)
 assert '<p>' not in header_html, "Do not show long header explanation by default"
 assert 'class="info-tip hero-help"' in header_html and 'aria-label="查看平台功能及多模型扩展说明"' in header_html
-assert "多模型能力对比" in header_html and "MVAI-DocTags-A-0.8B-v1.0 · 自研模型" in header_html
+assert "多模型能力对比" in header_html and "MVAI-DocTags-DJX-0.8B-v1.0 · 自研" in header_html and "MVAI-DocTags-WC-2B-v1.0 · 自研" in header_html
 assert "当前内置 IBM Granite Docling 258M 公开基线" in header_html
 assert ".hero-heading .hero-help .tip-pop" in data and ".info-tip:focus-within>.tip-pop" in data
 assert "DocTags 浏览器端实时推理</h1>" not in header_html, "Old product header remains"
@@ -145,9 +160,14 @@ assert "renderComparison(result)" in data, "Real model output must drive renderi
 assert "rendered.addEventListener" in data, "Source-to-result hover mapping missing"
 assert 'id="load"' in data and 'id="run"' in data
 assert "onnx-community/granite-docling-258M-ONNX" in data
-assert "MVAI-DocTags-A-0.8B-v1.0" in data
+assert "MVAI-DocTags-DJX-0.8B-v1.0" in data
+assert "MVAI-DocTags-WC-2B-v1.0" in data
 assert 'import("./adapters/r3-ovisocr3/adapter.mjs")' in data
+assert 'import("./adapters/wang-qwen35-2b/adapter.mjs")' in data
+assert "wangAdapter=await createAdapter" in data
 assert "await r3Adapter.recognize(sourceBlob" in data
+assert "adapter.recognize(sourceBlob" in data
+assert "RawImage.read(image)" in WANG_ADAPTER_TEXT
 assert 'value="r3-fixed"' in data
 assert "shader-f16" in data
 assert "registry.BUILTINS" in data
@@ -161,7 +181,8 @@ assert "shanshui_scene: 7" in HOME.read_text(encoding="utf-8")
 assert "视频行为识别模型" in HOME.read_text(encoding="utf-8")
 assert "Chrome 157" in GUIDE.read_text(encoding="utf-8")
 assert "NVIDIA A800 80GB" in GUIDE.read_text(encoding="utf-8")
-assert "MVAI-DocTags-A-0.8B-v1.0" in GUIDE.read_text(encoding="utf-8")
+assert "MVAI-DocTags-DJX-0.8B-v1.0" in GUIDE.read_text(encoding="utf-8")
+assert "MVAI-DocTags-WC-2B-v1.0" in GUIDE.read_text(encoding="utf-8")
 matches = re.findall(r'<script type="module">([\s\S]*?)</script>', data)
 assert len(matches) == 1, "Exactly one JS module script expected"
 js = matches[0]
@@ -174,8 +195,11 @@ subprocess.run(["node", "--check", str(REGISTRY)], check=True)
 subprocess.run(["node", "--check", str(R3_DOC_ADAPTER)], check=True)
 subprocess.run(["node", "--check", str(R3_DOC_CONTRACT)], check=True)
 subprocess.run(["node", "--check", str(R3_DOC_DOWNLOAD)], check=True)
+subprocess.run(["node", "--check", str(WANG_DOC_ADAPTER)], check=True)
+subprocess.run(["node", "--check", str(WANG_DOC_CONTRACT)], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_download_metrics.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/test_contract.mjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_model_registry.cjs")], check=True)
+subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_wang_qwen35_2b_contract.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_render_parser.cjs")], check=True)
 print("Browser inference Static Space: content contract + parser fixture + Node JS syntax PASS")
