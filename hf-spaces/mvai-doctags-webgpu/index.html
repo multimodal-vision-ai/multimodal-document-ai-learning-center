@@ -60,6 +60,8 @@ a{color:#1762bf}
 .rendered-document p{margin:8px 0 14px}
 .rendered-document .render-block{border-left:3px solid transparent;border-radius:4px;transition:background-color .12s;scroll-margin:22px;white-space:pre-wrap}
 .rendered-document .render-block:hover,.rendered-document .render-block:focus-visible{border-left-color:#3e6fdb;background:#eaf1ff;outline:none}
+.rendered-document .render-handwritten{border-left-color:#c5d4e7;padding-left:9px;color:#304866}
+.rendered-document .render-page-number{text-align:center;color:#8998ab;font-size:11px;margin:20px 0 0}
 .rendered-document .render-placeholder{padding:18px;margin:10px 0;border:1px dashed #b9cbe5;border-radius:10px;color:#637995;background:#f5f8fc;font-size:12px}
 .rendered-document .render-tbl{margin:18px 0;max-width:100%;overflow:auto;white-space:normal}
 .rendered-document table{border-collapse:collapse;table-layout:auto;width:100%;font-size:12px}
@@ -601,7 +603,7 @@ const compare=$("compareCanvas"),comp=compare.getContext("2d");
 const leftPane=$("originalScroll"),rightPane=$("renderScroll"),rendered=$("rendered");
 const documentParser=globalThis.MVAIDocTags;
 let regions=[],blocks=[],activeLocation=null,syncing=false,renderGood=false;
-const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",otsl:"#c78b31",table:"#c78b31",seal:"#d74b73"};
+const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",handwritten:"#9b6b38",page_number:"#8b97a8",otsl:"#c78b31",table:"#c78b31",seal:"#d74b73"};
 function leftDraw(loc=null) {
   compare.width=src.width;compare.height=src.height;
   comp.drawImage(src,0,0);if(!src.width || !src.height)return;
@@ -671,7 +673,8 @@ function addBlock(block,index) {
   else if(kind.startsWith("section_header_level_")) {
     const level=Math.min(5,Number(kind.slice(-1))+1);
     element=document.createElement("h"+level);
-  }else if(kind==="text"||kind==="caption"||kind==="footnote"||kind==="page_header"||kind==="page_footer")element=document.createElement("p");
+  }else if(kind==="text"||kind==="handwritten"||kind==="caption"||kind==="footnote"||kind==="page_header"||kind==="page_footer")element=document.createElement("p");
+  else if(kind==="page_number")element=document.createElement("p");
   else if(kind==="list_item")element=document.createElement("li");
   else if(kind==="code")element=document.createElement("pre");
   else if(kind==="ordered_list"||kind==="unordered_list"){
@@ -691,6 +694,8 @@ function addBlock(block,index) {
     element.textContent=block.text;
   }
   element.classList.add("render-block");
+  if(kind==="handwritten")element.classList.add("render-handwritten");
+  if(kind==="page_number")element.classList.add("render-page-number");
   element.tabIndex=0;
   element.dataset.blockIndex=String(index);
   element.title=block.loc?"悬停定位至原文位置":"模型未给出该元素的有效位置框";

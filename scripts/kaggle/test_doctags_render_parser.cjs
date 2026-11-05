@@ -26,4 +26,22 @@ const unsafe=parser.parse("<text><loc_1><loc_2><loc_50><loc_90>&lt;img src=x one
 assert.equal(unsafe.blocks[0].text,"<img src=x onerror=alert(1)>");
 assert.equal(unsafe.blocks[0].loc[0],1);
 assert.equal(parser.parse("This is unstructured garbage").blocks.length,0);
-console.log("DocTags parser fixtures passed: title, reading order, OTSL rows, merged-cell disclosure, and safe text extraction.");
+
+// Regression fixture: handwritten notes and page numbers must not be silently dropped.
+const handwritingSample="<doctag>"+
+  "<text><loc_379><loc_36><loc_394><loc_43>NO.</text>"+
+  "<text><loc_379><loc_50><loc_398><loc_56>Date</text>"+
+  "<handwritten><loc_68><loc_63><loc_360><loc_80>for a moment,片刻,一会儿; for the moment 暂时,一时;</handwritten>"+
+  "<handwritten><loc_70><loc_80><loc_258><loc_96>Thinking for a moment, he agreed.</handwritten>"+
+  "<handwritten><loc_46><loc_95><loc_220><loc_111>37. next year, the next year</handwritten>"+
+  "<page_number><loc_234><loc_477><loc_246><loc_487>18</page_number>"+
+  "</doctag>";
+const handwriting=parser.parse(handwritingSample);
+assert.equal(handwriting.blocks.length,6,"Both handwritten blocks and page number must be parsed");
+assert.deepEqual(handwriting.blocks.map(block=>block.type),["text","text","handwritten","handwritten","handwritten","page_number"]);
+assert.equal(handwriting.blocks[2].text,"for a moment,片刻,一会儿; for the moment 暂时,一时;");
+assert.equal(handwriting.blocks[3].text,"Thinking for a moment, he agreed.");
+assert.equal(handwriting.blocks[5].text,"18");
+assert.deepEqual(handwriting.blocks[2].loc,[68,63,360,80]);
+assert.equal(parser.rects(handwritingSample).length,6);
+console.log("DocTags parser fixtures passed: headings, text, handwritten notes, page numbers, OTSL rows, merged cells, and safe text extraction.");
