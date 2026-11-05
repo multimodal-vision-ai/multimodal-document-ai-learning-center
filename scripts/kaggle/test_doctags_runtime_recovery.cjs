@@ -39,5 +39,8 @@ assert.match(html, /连续 "\+silent\+" 秒没有新的下载进度/, "No-progre
 assert.match(html, /loadPhase="ready"/, "Model must enter ready only after adapter creation succeeds");
 assert.match(html, /模型已在当前 GPU 会话中就绪/, "Successful load must report current-session readiness");
 assert.match(html, /历史加载记录仅表示曾经成功加载/, "Historical cache marker must not imply current-session readiness");
+assert.match(html, /历史曾加载/, "Historical model-load badge must be clearly labeled as historical");
+assert.match(html, /Math.min\(95,Math.max\(\$\("progress"\)\.value,overall\)\)/, "Progress bar must reserve 100% for a fully initialized model");
+assert.match(html, /权重文件下载接近完成.*正在初始化 WebGPU/, "Final weight stage must be distinguished from a ready model");
 
 console.log("Runtime recovery contract: CORS-safe thumbnails, CDN failover for ORT/Transformers.js, adapter mirrors and error diagnosis PASS");
