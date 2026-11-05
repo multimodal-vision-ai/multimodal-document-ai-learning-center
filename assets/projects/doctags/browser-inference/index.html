@@ -215,6 +215,15 @@ main{max-width:1260px}
 .sample-scroll:disabled{opacity:.35}
 .sample-source{display:block;margin:0 0 11px;font-size:11px;line-height:1.5;color:#6d7f96}
 .sample-source a{color:#225fc1}
+.input-source-tabs{display:grid;grid-template-columns:1fr 1.28fr 1fr;gap:8px;margin:0 0 8px;min-width:0}
+.source-tab{min-width:0;min-height:40px;padding:8px 7px;border:1px solid #dbe5f2;border-radius:9px;background:#fff;color:#365777;font-size:12px;font-weight:750;white-space:nowrap;transition:border-color .12s,background-color .12s,box-shadow .12s}
+.source-tab:hover{border-color:#7fa8e9;background:#f5f9ff}
+.source-tab[aria-pressed="true"]{border-color:#326be8;background:#edf4ff;box-shadow:0 0 0 2px #326be81b;color:#184eae}
+.source-tab:disabled{opacity:.45;cursor:not-allowed}
+.sample-gallery[hidden],.sample-source[hidden]{display:none!important}
+.sample-tile[data-thumbnail-error="true"] img{display:none}
+.sample-tile[data-thumbnail-error="true"]::before{content:"文档";display:grid;place-items:center;width:75px;height:92px;border:1px solid #e1e7f0;border-radius:3px;background:linear-gradient(180deg,#fff 0%,#f5f7fa 100%);color:#9aa9bb;font-size:13px}
+@media(max-width:760px){.input-source-tabs{grid-template-columns:1fr 1.25fr 1fr;gap:5px}.source-tab{font-size:11px;padding:8px 4px}.sample-gallery{grid-template-columns:25px minmax(0,1fr) 25px;gap:4px}.sample-tile{flex-basis:94px}.sample-scroll{width:25px}}
 .sample-tile:focus-visible,.sample-scroll:focus-visible{outline:2px solid #3277e8;outline-offset:2px}
 @media(max-width:760px){.sample-gallery{grid-template-columns:25px minmax(0,1fr) 25px;gap:4px}.sample-tile{flex-basis:94px}.sample-scroll{width:25px}}
 </style>
@@ -240,28 +249,35 @@ main{max-width:1260px}
   <div class="card input-panel">
     <div class="panel-heading">
       <h2>01 · 文档输入</h2>
-      <details class="info-tip"><summary aria-label="文档格式及隐私说明">ⓘ</summary><div class="tip-pop">默认提供九类源自 IBM Granite Docling DEMO 的真实图片样例，文件已在本站本地托管。可上传已授权、已脱敏的 PNG、JPG、WebP 单页图片，最大 12 MB。用户上传文件在本机浏览器处理，不会自动发送到实验室服务器。所有示例图片从本站资源目录加载，无需访问外部图片服务。</div></details>
+      <details class="info-tip"><summary aria-label="文档格式及隐私说明">ⓘ</summary><div class="tip-pop">可在示例文档、Docling 官方文档与本地图片之间切换；官方样例源自 IBM Granite Docling DEMO，文件已在本站本地托管。可上传已授权、已脱敏的 PNG、JPG、WebP 单页图片，最大 12 MB。用户上传文件在本机浏览器处理，不会自动发送到实验室服务器。所有示例图片从本站资源目录加载，无需访问外部图片服务。</div></details>
     </div>
-    <div class="row input-actions">
-      <span class="sample-label">选择示例文档</span>
-      <label class="file">上传本地图片<input id="file" type="file" accept="image/png,image/jpeg,image/webp" aria-label="上传本地文档图片"></label>
+    <div class="input-source-tabs" role="group" aria-label="选择文档来源">
+      <button id="sourceChallenge" class="source-tab" type="button" aria-pressed="false">选择示例文档</button>
+      <button id="sourceDocling" class="source-tab" type="button" aria-pressed="true">选择 Docling 官方文档</button>
+      <button id="sourceUpload" class="source-tab" type="button" aria-pressed="false">上传本地图片</button>
+      <input id="file" type="file" accept="image/png,image/jpeg,image/webp" aria-label="上传本地文档图片" hidden>
     </div>
-    <div class="sample-gallery" aria-label="内置文档样例">
-      <button id="samplePrev" class="sample-scroll" type="button" aria-label="向左浏览样例">‹</button>
-      <div id="sampleStrip" class="sample-strip" role="group" aria-label="选择内置文档样例">
-        <button id="sample" class="sample-tile" type="button" data-sample="doc" aria-pressed="true"><img alt="" loading="eager" decoding="async"><span>整页文档</span></button>
-        <button class="sample-tile" type="button" data-sample="table" aria-pressed="false"><img alt="" loading="eager" decoding="async"><span>表格识别</span></button>
-        <button class="sample-tile" type="button" data-sample="code" aria-pressed="false"><img alt="" loading="eager" decoding="async"><span>代码识别</span></button>
-        <button class="sample-tile" type="button" data-sample="image" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>图片理解</span></button>
-        <button class="sample-tile" type="button" data-sample="formula" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>公式识别</span></button>
-        <button class="sample-tile" type="button" data-sample="chart" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>图表提取</span></button>
-        <button class="sample-tile" type="button" data-sample="arabic" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>阿拉伯语</span></button>
-        <button class="sample-tile" type="button" data-sample="japanese" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>日语</span></button>
-        <button class="sample-tile" type="button" data-sample="chinese" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>中文文档</span></button>
+    <div id="challengeGallery" class="sample-gallery" aria-label="选择示例文档" hidden>
+      <button id="challengePrev" class="sample-scroll" type="button" aria-label="向左浏览示例文档">‹</button>
+      <div id="challengeStrip" class="sample-strip" role="group" aria-label="选择示例文档"></div>
+      <button id="challengeNext" class="sample-scroll" type="button" aria-label="向右浏览示例文档">›</button>
+    </div>
+    <div id="doclingGallery" class="sample-gallery" aria-label="Docling 官方文档">
+      <button id="samplePrev" class="sample-scroll" type="button" aria-label="向左浏览官方文档">‹</button>
+      <div id="sampleStrip" class="sample-strip" role="group" aria-label="选择 Docling 官方文档">
+        <button id="sample" class="sample-tile" type="button" data-group="docling" data-sample="doc" aria-pressed="true"><img alt="" loading="eager" decoding="async"><span>整页文档</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="table" aria-pressed="false"><img alt="" loading="eager" decoding="async"><span>表格识别</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="code" aria-pressed="false"><img alt="" loading="eager" decoding="async"><span>代码识别</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="image" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>图片理解</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="formula" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>公式识别</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="chart" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>图表提取</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="arabic" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>阿拉伯语</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="japanese" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>日语</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="chinese" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>中文文档</span></button>
       </div>
-      <button id="sampleNext" class="sample-scroll" type="button" aria-label="向右浏览样例">›</button>
+      <button id="sampleNext" class="sample-scroll" type="button" aria-label="向右浏览官方文档">›</button>
     </div>
-    <small class="sample-source">样例来源：<a href="https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo" target="_blank" rel="noopener noreferrer">IBM Granite Docling 官方 DEMO</a></small>
+    <small id="sampleSource" class="sample-source">样例来源：<a href="https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo" target="_blank" rel="noopener noreferrer">IBM Granite Docling 官方 DEMO</a></small>
     <div id="view"><canvas id="preview" aria-label="文档输入与解析标注预览" role="img"></canvas></div>
     <div class="input-footer">
       <small id="fileName">正在载入示例文档…</small>
@@ -478,6 +494,7 @@ function refreshLoadButtons(){
   $("run").disabled=busy||!imageReady||!already;
   $("run").title=runReason;
   $("runAvailability").textContent=runReason;
+  ["sourceChallenge","sourceDocling","sourceUpload"].forEach(id=>$(id).disabled=busy);
   $("modelSelect").disabled=busy;
   $("dtype").disabled=busy||["r3-ovisocr3","wang-qwen35-2b"].includes(selectedModel().adapter);
   $("addModel").disabled=busy;
@@ -759,6 +776,205 @@ const localSamples=[
   {id:"japanese",file:"japanse_4_ibm.png",label:"日语"},
   {id:"chinese",file:"zh_page_0.png",label:"中文文档"}
 ];
+// The 28 challenge documents are served from the local static samples directory.
+const challengeSamples=[
+  {
+    "id": "original_095_chinese_two_column",
+    "file": "challenges/original_095_chinese_two_column.webp",
+    "label": "中文双栏文档",
+    "source": "原始扫描",
+    "note": "双栏中文正文与蓝色标注"
+  },
+  {
+    "id": "original_096_english_article_table",
+    "file": "challenges/original_096_english_article_table.webp",
+    "label": "中文声明文档",
+    "source": "原始扫描",
+    "note": "英文正文与嵌入表格"
+  },
+  {
+    "id": "original_097_multicolumn_illustration",
+    "file": "challenges/original_097_multicolumn_illustration.webp",
+    "label": "多栏图文文档",
+    "source": "原始扫描",
+    "note": "多栏文字、图片与标注"
+  },
+  {
+    "id": "original_098_old_english_scan",
+    "file": "challenges/original_098_old_english_scan.webp",
+    "label": "英文旧版扫描件",
+    "source": "原始扫描",
+    "note": "英文多栏与纸张干扰"
+  },
+  {
+    "id": "original_099_dense_chinese_table",
+    "file": "challenges/original_099_dense_chinese_table.webp",
+    "label": "中文复杂表格",
+    "source": "原始扫描",
+    "note": "复杂中文表头与单元格"
+  },
+  {
+    "id": "original_100_english_data_table",
+    "file": "challenges/original_100_english_data_table.webp",
+    "label": "英文数据表",
+    "source": "原始扫描",
+    "note": "英文数据表与正文"
+  },
+  {
+    "id": "original_101_english_long_table",
+    "file": "challenges/original_101_english_long_table.webp",
+    "label": "英文长表格",
+    "source": "原始扫描",
+    "note": "连续长表格与数值"
+  },
+  {
+    "id": "original_102_table_and_text",
+    "file": "challenges/original_102_table_and_text.webp",
+    "label": "表格与正文混排",
+    "source": "原始扫描",
+    "note": "表格与双栏正文混排"
+  },
+  {
+    "id": "original_103_english_newspaper",
+    "file": "challenges/original_103_english_newspaper.webp",
+    "label": "英文报纸版面",
+    "source": "原始扫描",
+    "note": "新闻多栏、标题与人物图片"
+  },
+  {
+    "id": "original_104_multicolumn_paper",
+    "file": "challenges/original_104_multicolumn_paper.webp",
+    "label": "多栏学术论文",
+    "source": "原始扫描",
+    "note": "学术论文多栏版面"
+  },
+  {
+    "id": "original_109_chinese_clauses",
+    "file": "challenges/original_109_chinese_clauses.webp",
+    "label": "中文条款文档",
+    "source": "原始扫描",
+    "note": "章节编号与条款层级"
+  },
+  {
+    "id": "original_110_watermark_fingerprint",
+    "file": "challenges/original_110_watermark_fingerprint.webp",
+    "label": "水印与指纹干扰",
+    "source": "原始扫描",
+    "note": "斜向水印与指纹图案干扰"
+  },
+  {
+    "id": "original_111_handwritten_lines",
+    "file": "challenges/original_111_handwritten_lines.webp",
+    "label": "英文词汇笔记",
+    "source": "原始扫描",
+    "note": "横线纸上的手写内容"
+  },
+  {
+    "id": "original_112_handwritten_lines",
+    "file": "challenges/original_112_handwritten_lines.webp",
+    "label": "英文短语笔记",
+    "source": "原始扫描",
+    "note": "横线纸上的手写内容"
+  },
+  {
+    "id": "original_113_handwritten_notes",
+    "file": "challenges/original_113_handwritten_notes.webp",
+    "label": "中文手写笔记",
+    "source": "原始扫描",
+    "note": "中文手写条目与荧光标记"
+  },
+  {
+    "id": "original_114_mixed_language_notes",
+    "file": "challenges/original_114_mixed_language_notes.webp",
+    "label": "中英混合手写记录",
+    "source": "原始扫描",
+    "note": "中英混合手写与荧光标记"
+  },
+  {
+    "id": "original_115_stamp_fragment",
+    "file": "challenges/original_115_stamp_fragment.webp",
+    "label": "公章残缺页面",
+    "source": "原始扫描",
+    "note": "页面截断与红色公章"
+  },
+  {
+    "id": "original_116_stamp_page",
+    "file": "challenges/original_116_stamp_page.webp",
+    "label": "印章文档页面",
+    "source": "原始扫描",
+    "note": "印章与少量页面文字"
+  },
+  {
+    "id": "synthetic_01_bank_transactions",
+    "file": "challenges/synthetic_01_bank_transactions.webp",
+    "label": "银行交易明细",
+    "source": "脱敏模拟",
+    "note": "交易表格、账户摘要与旧纸纹理"
+  },
+  {
+    "id": "synthetic_02_court_notice",
+    "file": "challenges/synthetic_02_court_notice.webp",
+    "label": "法院告知书",
+    "source": "脱敏模拟",
+    "note": "公文层级、正文与回执表格"
+  },
+  {
+    "id": "synthetic_03_engineering_price_table",
+    "file": "challenges/synthetic_03_engineering_price_table.webp",
+    "label": "工程单价表",
+    "source": "脱敏模拟",
+    "note": "工程计价表格与淡化墨迹"
+  },
+  {
+    "id": "synthetic_04_english_paper_tables",
+    "file": "challenges/synthetic_04_english_paper_tables.webp",
+    "label": "英文论文表格",
+    "source": "脱敏模拟",
+    "note": "英文论文连续多表格"
+  },
+  {
+    "id": "synthetic_05_linear_algebra_formulas",
+    "file": "challenges/synthetic_05_linear_algebra_formulas.webp",
+    "label": "线性代数公式教材",
+    "source": "脱敏模拟",
+    "note": "矩阵、公式与正文混排"
+  },
+  {
+    "id": "synthetic_06_e_payment_voucher",
+    "file": "challenges/synthetic_06_e_payment_voucher.webp",
+    "label": "电子支付凭证",
+    "source": "脱敏模拟",
+    "note": "凭证字段、长交易表格与印章"
+  },
+  {
+    "id": "synthetic_07_chinese_newspaper",
+    "file": "challenges/synthetic_07_chinese_newspaper.webp",
+    "label": "中文旧报纸",
+    "source": "脱敏模拟",
+    "note": "中文多栏、标题与插图"
+  },
+  {
+    "id": "synthetic_08_material_receipt",
+    "file": "challenges/synthetic_08_material_receipt.webp",
+    "label": "材料入库验收单",
+    "source": "脱敏模拟",
+    "note": "入库验收表单与打孔旧纸"
+  },
+  {
+    "id": "synthetic_09_experiment_record",
+    "file": "challenges/synthetic_09_experiment_record.webp",
+    "label": "手写实验记录",
+    "source": "脱敏模拟",
+    "note": "实验字段与数据混排；并非真实手写"
+  },
+  {
+    "id": "synthetic_10_material_test_report",
+    "file": "challenges/synthetic_10_material_test_report.webp",
+    "label": "材料检测报告",
+    "source": "脱敏模拟",
+    "note": "检测项目、表格与文字混排"
+  }
+];
 let sampleSelectionSerial=0;
 async function fetchSampleBlob(filename){
   const primary=new URL(sampleBase+filename,document.baseURI);
@@ -806,14 +1022,17 @@ async function loadSampleThumbnail(btn,item){
     console.warn("Sample thumbnail unavailable:",item.file,error);
   }
 }
-function highlightSample(kind){
+function highlightSample(kind,group){
   document.querySelectorAll(".sample-tile").forEach(btn=>{
-    btn.setAttribute("aria-pressed",String(btn.dataset.sample===kind));
+    const active=Boolean(kind&&group&&btn.dataset.sample===kind&&btn.dataset.group===group);
+    btn.setAttribute("aria-pressed",String(active));
   });
 }
-async function loadLocalSample(kind){
+async function loadLocalSample(kind,group="docling"){
   if(busy){status("推理进行中，请完成后再切换文档。");return;}
-  const sample=localSamples.find(x=>x.id===kind);if(!sample)return;
+  const collection=group==="challenge"?challengeSamples:localSamples;
+  const sample=collection.find(x=>x.id===kind);if(!sample)return;
+  setInputSource(group);
   const ticket=++sampleSelectionSerial;
   $("run").disabled=true;
   status("正在打开内置示例："+sample.label+"…");
@@ -831,10 +1050,10 @@ async function loadLocalSample(kind){
       c.drawImage(bitmap,0,0,src.width,src.height);
     }finally{bitmap.close?.();}
     sourceBlob=blob;
-    inputRevision++;resetHistory();imageReady=true;name="ibm-demo-"+sample.file;
-    $("file").value="";highlightSample(kind);
+    inputRevision++;resetHistory();imageReady=true;name=(group==="challenge"?"mvaidoc-tags-challenge-":"ibm-demo-")+sample.id;
+    $("file").value="";highlightSample(kind,group);
     clearResult();show();leftDraw();
-    $("fileName").textContent="内置样例 · "+sample.label+" · "+src.width+"×"+src.height;
+    $("fileName").textContent=(group==="challenge"?"示例文档":"Docling 官方文档")+" · "+sample.label+" · "+src.width+"×"+src.height;
     refreshLoadButtons();
     status("已载入："+sample.label+"；"+(loaded&&activeKey===selectedKey()?"模型已就绪，可以推理。":"请先完成当前模型加载。"));
   }catch(error){
@@ -843,23 +1062,85 @@ async function loadLocalSample(kind){
     status("内置样例载入失败："+error.message+"。请尝试刷新页面或上传本地图片。");
   }
 }
-function initSampleGallery(){
-  document.querySelectorAll(".sample-tile").forEach(btn=>{
-    const item=localSamples.find(x=>x.id===btn.dataset.sample);
-    if(!item)return;
-    void loadSampleThumbnail(btn,item);
-    btn.addEventListener("click",()=>loadLocalSample(item.id));
-  });
-  const strip=$("sampleStrip");
-  function updateArrows(){
-    $("samplePrev").disabled=strip.scrollLeft<2;
-    $("sampleNext").disabled=strip.scrollLeft+strip.clientWidth>=strip.scrollWidth-2;
+const sampleGalleryControllers={};
+function renderChallengeTiles(){
+  const strip=$("challengeStrip");
+  const fragment=document.createDocumentFragment();
+  for(const item of challengeSamples){
+    const button=document.createElement("button");
+    button.type="button";button.className="sample-tile";
+    button.dataset.group="challenge";button.dataset.sample=item.id;
+    button.setAttribute("aria-pressed","false");
+    button.title=item.source+" · "+item.note;
+    const img=document.createElement("img");
+    img.alt="";img.loading="lazy";img.decoding="async";
+    const label=document.createElement("span");
+    label.textContent=item.label;
+    button.append(img,label);fragment.append(button);
   }
-  $("samplePrev").addEventListener("click",()=>strip.scrollBy({left:-240,behavior:"smooth"}));
-  $("sampleNext").addEventListener("click",()=>strip.scrollBy({left:240,behavior:"smooth"}));
+  strip.replaceChildren(fragment);
+}
+function bindSampleGallery({group,stripId,prevId,nextId,items,lazy=false}){
+  const strip=$(stripId),buttons=[...strip.querySelectorAll(".sample-tile")];
+  const itemById=new Map(items.map(item=>[item.id,item]));
+  const loadButton=btn=>{
+    if(btn.dataset.thumbnailRequested==="true")return;
+    const item=itemById.get(btn.dataset.sample);if(!item)return;
+    btn.dataset.thumbnailRequested="true";
+    void loadSampleThumbnail(btn,item);
+  };
+  let observer=null;
+  if(lazy&&"IntersectionObserver" in window){
+    observer=new IntersectionObserver(entries=>{
+      for(const entry of entries){if(entry.isIntersecting){loadButton(entry.target);observer.unobserve(entry.target);}}
+    },{root:strip,rootMargin:"0px 220px"});
+    buttons.forEach(btn=>observer.observe(btn));
+  }else{
+    buttons.forEach(loadButton);
+  }
+  buttons.forEach(btn=>{
+    const item=itemById.get(btn.dataset.sample);if(!item)return;
+    btn.addEventListener("click",()=>loadLocalSample(item.id,group));
+  });
+  function updateArrows(){
+    const max=strip.scrollWidth-strip.clientWidth;
+    $(prevId).disabled=strip.scrollLeft<2;
+    $(nextId).disabled=max<=2||strip.scrollLeft>=max-2;
+  }
+  $(prevId).addEventListener("click",()=>strip.scrollBy({left:-240,behavior:"smooth"}));
+  $(nextId).addEventListener("click",()=>strip.scrollBy({left:240,behavior:"smooth"}));
   strip.addEventListener("scroll",updateArrows,{passive:true});
+  sampleGalleryControllers[group]={updateArrows,loadVisible:()=>{
+    if(observer){for(const btn of buttons){const r=btn.getBoundingClientRect(),s=strip.getBoundingClientRect();if(r.right>=s.left-220&&r.left<=s.right+220)loadButton(btn);}}
+    else buttons.forEach(loadButton);
+    requestAnimationFrame(updateArrows);
+  }};
   window.addEventListener("resize",updateArrows);
   requestAnimationFrame(updateArrows);
+}
+function setInputSource(source){
+  const active={challenge:"sourceChallenge",docling:"sourceDocling",upload:"sourceUpload"};
+  for(const [key,id] of Object.entries(active))$(id).setAttribute("aria-pressed",String(key===source));
+  $("challengeGallery").hidden=source!=="challenge";
+  $("doclingGallery").hidden=source!=="docling";
+  $("sampleSource").hidden=source!=="docling";
+  if(source==="challenge")sampleGalleryControllers.challenge?.loadVisible();
+  if(source==="docling")sampleGalleryControllers.docling?.updateArrows();
+  if(source==="challenge")status("请选择一份示例文档。");
+  else if(source==="docling")status("请选择一份 Docling 官方文档。");
+  else status("请选择本地图片。");
+}
+function initSampleGallery(){
+  renderChallengeTiles();
+  bindSampleGallery({group:"docling",stripId:"sampleStrip",prevId:"samplePrev",nextId:"sampleNext",items:localSamples});
+  bindSampleGallery({group:"challenge",stripId:"challengeStrip",prevId:"challengePrev",nextId:"challengeNext",items:challengeSamples,lazy:true});
+  $("sourceChallenge").addEventListener("click",()=>{if(!busy)setInputSource("challenge");else status("推理进行中，请完成后再切换文档。");});
+  $("sourceDocling").addEventListener("click",()=>{if(!busy)setInputSource("docling");else status("推理进行中，请完成后再切换文档。");});
+  $("sourceUpload").addEventListener("click",()=>{
+    if(busy){status("推理进行中，请完成后再上传图片。");return;}
+    setInputSource("upload");$("file").click();
+  });
+  setInputSource("challenge");
 }
 function clearResult(){result="";$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveImg").disabled=true;$("timing").textContent="";clearRunMetrics();resetComparison();}
 function status(text){$("status").textContent=text;}
@@ -874,8 +1155,9 @@ $("file").onchange=async event=>{
     const scale=Math.min(1,1500/Math.max(im.width,im.height));
     src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);im.close?.();
     sourceBlob=file;
-    inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();highlightSample(null);
+    inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();highlightSample(null,null);setInputSource("upload");
     $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";refreshLoadButtons();
+    status(loaded&&activeKey===selectedKey()?"本地图片已载入；可以开始推理。":"本地图片已载入；请先完成模型加载。");
   }catch(e){status("读取失败："+e.message)}
 };
 $("clear").onclick=()=>{$("bounds").checked=false;show();leftDraw();};
@@ -1202,7 +1484,7 @@ $("stop").onclick=()=>{
   try{activeStop?.();}catch(error){status("终止请求失败："+(error?.message||String(error)));}
 };
 
-renderModelOptions(registry.BUILTIN.id);loadLocalSample("doc");detect();
+renderModelOptions(registry.BUILTIN.id);loadLocalSample(challengeSamples[0].id,"challenge");detect();
 </script>
 </body>
 </html>
