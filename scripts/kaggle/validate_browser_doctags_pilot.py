@@ -142,8 +142,19 @@ challenge_items = json.loads(challenge_match.group(1))
 assert len(challenge_items) == 28, "All 28 challenge samples must be listed"
 assert sum(item["source"] == "原始扫描" for item in challenge_items) == 18
 assert sum(item["source"] == "脱敏模拟" for item in challenge_items) == 10
-challenge_manifest = json.loads((HTML.parent / "samples/challenges/manifest.json").read_text(encoding="utf-8"))
+challenge_manifest_path = HTML.parent / "samples/challenges/manifest.json"
+hf_challenge_manifest_path = SPACE.parent / "samples/challenges/manifest.json"
+challenge_manifest = json.loads(challenge_manifest_path.read_text(encoding="utf-8"))
+hf_challenge_manifest = json.loads(hf_challenge_manifest_path.read_text(encoding="utf-8"))
 assert [item["id"] for item in challenge_items] == [item["id"] for item in challenge_manifest], "Embedded challenge list and asset manifest differ"
+assert challenge_manifest == hf_challenge_manifest, "Learning Center and HF challenge manifests differ"
+for item in challenge_manifest:
+    paths = [HTML.parent / "samples" / item["file"], SPACE.parent / "samples" / item["file"]]
+    for asset in paths:
+        assert asset.is_file() and asset.stat().st_size > 1000, f"Missing challenge sample image: {asset}"
+        signature = asset.read_bytes()[:12]
+        assert signature[:4] == b"RIFF" and signature[8:12] == b"WEBP", f"Invalid WebP challenge sample: {asset}"
+    assert paths[0].read_bytes() == paths[1].read_bytes(), f"Challenge sample mirror differs: {item['id']}"
 assert "IBM Granite Docling 官方 DEMO" in data, "Example source credit missing"
 assert "await model.generate" in data, "WebGPU model inference must remain real"
 assert "renderComparison(result)" in data, "V1.6 live reconstruction must remain"
