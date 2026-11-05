@@ -43,6 +43,24 @@ python -m http.server 8000 --bind 127.0.0.1
 
 页面只用于本地验证，提供选图、开始、停止、原始 DocTags 下载和区域框，不修改公共展厅或自动发布新页面。
 
+### 从服务器现有文件加载
+
+普通静态页中的权重由浏览器直接访问 HF，端口转发仅提供页面文件。为方便远程机器调试，可使用独立的本地源服务：
+
+```bash
+python project-notes/ocr-wang-qwen35-local-test/serve_preview.py \
+  --port 18766 --model-dir /path/to/onnx-release \
+  --runtime-dir /path/to/runtime-packages \
+  --diagnostics /path/to/client-load-errors.jsonl
+```
+
+将 18766 转发到浏览器所在机器后，打开 `http://localhost:18766/project-notes/ocr-wang-qwen35-local-test/`。
+该入口从服务器读取已转换模型及固定运行时，提供 HTTP Range 和跨源隔离响应头。
+权重仍需通过连接传到浏览器，推理使用浏览器所在机器的 GPU；约 6.2 GB 的传输量不变。完整文件会尝试写入浏览器缓存。
+
+页面的“下载进度与完整错误”按文件显示已接收字节、总量和百分比；多个文件并行时不把单文件进度误标为全模型进度。
+加载失败后保留阶段、完整异常和设备限制，后续并行回调不会覆盖错误。本地源服务会把加载诊断写入指定 JSONL，便于排查客户端失败。
+
 ## 转换与验证
 
 在隔离环境安装 `requirements-export.txt`，PyTorch 使用 2.10.0。转换仅用 CPU，保留原训练环境。

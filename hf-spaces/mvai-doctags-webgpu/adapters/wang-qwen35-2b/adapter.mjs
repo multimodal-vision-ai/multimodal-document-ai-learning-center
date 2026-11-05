@@ -5,10 +5,15 @@ const CDN = 'https://cdn.jsdelivr.net/npm/';
 
 /** Only this adapter uses the newer runtime. The exhibit's other models are unchanged. */
 export async function createAdapter({modelId = MODEL_ID, revision = 'main', onProgress = () => {}, runtime = {}} = {}) {
+  onProgress({status: 'stage', stage: '检查 WebGPU 设备'});
   if (!navigator.gpu) throw new Error('浏览器没有提供 WebGPU，请使用支持 WebGPU 的 Chrome 或 Edge。');
   const gpu = await navigator.gpu.requestAdapter();
   if (!gpu) throw new Error('浏览器无法访问可用的 WebGPU 设备。');
   if (!gpu.features.has('shader-f16')) throw new Error('当前设备缺少半精度计算支持（shader-f16）。');
+  onProgress({status: 'device', device: {vendor: gpu.info?.vendor, architecture: gpu.info?.architecture,
+    shaderF16: true, maxBufferSize: gpu.limits.maxBufferSize,
+    maxStorageBufferBindingSize: gpu.limits.maxStorageBufferBindingSize}});
+  onProgress({status: 'stage', stage: '加载推理运行时'});
   const ortUrl = runtime.ortUrl ?? `${CDN}onnxruntime-web@${VERSIONS.ort}/dist/ort.webgpu.bundle.min.mjs`;
   const transformersUrl = runtime.transformersUrl ?? `${CDN}@huggingface/transformers@${VERSIONS.transformers}/dist/transformers.web.min.js`;
   const imports = document.createElement('script');
@@ -26,10 +31,12 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
     lib.env.allowLocalModels = false;
     lib.env.remoteHost = runtime.modelHost;
     lib.env.remotePathTemplate = '{model}/';
-    lib.env.useBrowserCache = false;
+    lib.env.useBrowserCache = runtime.useBrowserCache ?? false;
   }
   const options = {revision, progress_callback: onProgress};
+  onProgress({status: 'stage', stage: '读取配置与词表'});
   const processor = await lib.AutoProcessor.from_pretrained(modelId, options);
+  onProgress({status: 'stage', stage: '读取对话模板'});
   const templateUrl = runtime.modelHost
     ? `${runtime.modelHost}${modelId}/chat_template.jinja`
     : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
@@ -37,6 +44,7 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
   if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
   processor.tokenizer.chat_template = await template.text();
   const prompt = trainedPrompt(processor.tokenizer);
+  onProgress({status: 'stage', stage: '下载 ONNX 权重并初始化 GPU 会话'});
   const model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
     ...options, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
   });
