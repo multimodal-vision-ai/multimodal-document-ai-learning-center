@@ -607,8 +607,8 @@ const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",hand
 function drawRegionLabel(block,scaleX,scaleY) {
   const label=block.type;
   const cssWidth=Math.max(1,compare.clientWidth||compare.width);
-  const fontSize=Math.max(9,Math.min(44,12*compare.width/cssWidth));
-  const padX=Math.ceil(fontSize*.45),padY=Math.ceil(fontSize*.2);
+  const fontSize=Math.max(8,Math.min(36,10*compare.width/cssWidth));
+  const padX=Math.ceil(fontSize*.35),padY=Math.ceil(fontSize*.16);
   comp.font=`600 ${fontSize}px Arial,sans-serif`;
   const labelWidth=Math.ceil(comp.measureText(label).width+padX*2);
   const labelHeight=Math.ceil(fontSize+padY*2);
