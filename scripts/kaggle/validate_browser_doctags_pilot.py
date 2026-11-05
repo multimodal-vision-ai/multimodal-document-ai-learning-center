@@ -124,6 +124,8 @@ assert "--push" in WANG_REPACK.read_text(encoding="utf-8"), "WC-2B repack script
 assert "decoder_count == len(report['external_data_shards']['decoder_model_merged_fp16.onnx'])" in WANG_BUNDLE_VALIDATOR.read_text(encoding="utf-8"), "Bundle validator must check external-data chunk count"
 for script in (WANG_EXPORT, WANG_SHARDER, WANG_REPACK, WANG_BUNDLE_VALIDATOR, WANG_SHARD_TEST):
     compile(script.read_text(encoding="utf-8"), str(script), "exec")
+INSTALL_CHALLENGE_ASSETS = ROOT / "scripts/kaggle/install_doctags_challenge_assets.py"
+compile(INSTALL_CHALLENGE_ASSETS.read_text(encoding="utf-8"), str(INSTALL_CHALLENGE_ASSETS), "exec")
 assert 'src.toBlob' not in data, "R3 inference must not export a potentially tainted Canvas"
 assert 'RawImage.read(image)' in R3_ADAPTER_TEXT, "R3 adapter must decode Blob/File input directly"
 assert 'syntheticFallback' not in data and 'makeSample(' not in data, "Synthetic summary should be removed"
