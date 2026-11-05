@@ -224,13 +224,13 @@ main{max-width:1260px}
     <summary aria-label="查看平台功能及多模型扩展说明" title="平台说明">ⓘ</summary>
     <div class="tip-pop" role="note">
       本平台面向文档结构化解析与多模型能力对比：对同一文档选择兼容模型，查看 DocTags、版面定位及结构化渲染结果，并比较不同模型的解析效果。
-      当前内置 IBM Granite Docling 258M 公开基线，以及 MVAI-DocTags-A-0.8B-v1.0 · 自研模型。两者采用独立推理适配器；R3 需要支持 shader-f16 的 WebGPU 设备。
+      当前内置 IBM Granite Docling 258M 公开基线，以及 MVAI-DocTags-DJX-0.8B-v1.0 · 自研和 MVAI-DocTags-WC-2B-v1.0 · 自研模型。两款自研模型使用独立推理适配器，均需要支持 shader-f16 的 WebGPU 设备。
       支持的模型在访问者浏览器中使用 WebGPU 推理，当前仍属实验功能。模型兼容性和解析准确率须按实际结果核验。
     </div>
   </details>
 </div>
 </header>
-<div class="notice compact-notice"><strong>技术预览</strong> · 首次加载 R3 模型约下载 2.52 GB；其他模型文件也可能较大。<details class="info-tip"><summary aria-label="查看下载、兼容性与隐私提醒">ⓘ</summary><div class="tip-pop">建议使用支持 WebGPU 的桌面浏览器和稳定网络。模型下载后可复用浏览器缓存，但显存实例仍需初始化。请勿上传含敏感个人信息或未经授权的文档；模型兼容性与解析准确率尚待系统验收。</div></details></div>
+<div class="notice compact-notice"><strong>技术预览</strong> · 首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB。<details class="info-tip"><summary aria-label="查看下载、兼容性与隐私提醒">ⓘ</summary><div class="tip-pop">建议使用支持 WebGPU 的桌面浏览器和稳定网络。模型下载后可复用浏览器缓存，但显存实例仍需初始化。请勿上传含敏感个人信息或未经授权的文档；模型兼容性与解析准确率尚待系统验收。</div></details></div>
 <div class="cols workspace">
   <div class="card input-panel">
     <div class="panel-heading">
@@ -275,12 +275,12 @@ main{max-width:1260px}
     <div class="control-fields">
       <div class="field-heading">
         <label for="modelSelect">选择推理模型</label>
-        <details class="info-tip"><summary aria-label="模型选择说明">ⓘ</summary><div class="tip-pop" id="modelHelp">内置 IBM Granite Docling 258M 公开基线和 MVAI-DocTags-A-0.8B-v1.0 · 自研模型。R3 使用独立 ONNX/WebGPU 适配器，需支持 shader-f16；其他公开 ONNX 模型仍须单独验证兼容性。</div></details>
+        <details class="info-tip"><summary aria-label="模型选择说明">ⓘ</summary><div class="tip-pop" id="modelHelp">内置 IBM Granite Docling 258M 公开基线、MVAI-DocTags-DJX-0.8B-v1.0 · 自研和 MVAI-DocTags-WC-2B-v1.0 · 自研。两款自研模型使用独立 ONNX/WebGPU 适配器，需支持 shader-f16；其他公开 ONNX 模型仍须单独验证兼容性。</div></details>
       </div>
       <select id="modelSelect" aria-label="选择推理模型"></select>
       <div class="field-heading">
         <label for="dtype">模型配置</label>
-        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">Granite 的 fp32/q4 用于切换同一模型的精度；R3 使用固定混合精度（视觉 FP32、文字 FP16），不提供 q4 切换。</div></details>
+        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">Granite 的 fp32/q4 用于切换同一模型的精度；DJX-0.8B 和 WC-2B 使用固定混合精度（视觉 FP32、文字 FP16），不提供 q4 切换。</div></details>
       </div>
       <div class="row config-row">
         <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option><option value="r3-fixed" hidden disabled>固定混合精度 · 视觉 FP32 / 文字 FP16</option></select>
@@ -413,8 +413,8 @@ import {createDownloadMeter,formatBytes,formatRate,formatEta} from "./adapters/r
 env.useBrowserCache = true; // Cache Storage; browser may evict under quota pressure
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
-let model,processor,r3Adapter=null,loaded=false,busy=false,imageReady=false,result="",name="";
-let sourceBlob=null; // Original File/Blob for direct R3 decoding; no Canvas export.
+let model,processor,r3Adapter=null,wangAdapter=null,loaded=false,busy=false,imageReady=false,result="",name="";
+let sourceBlob=null; // Original File/Blob for direct self-built-model decoding; no Canvas export.
 const registry=globalThis.MVAIModelRegistry;
 let gpuDetected=false,activeKey=null,activeModelName="",inputRevision=0,runHistory=[];
 let customModels=registry.restore(localStorage);
@@ -426,10 +426,10 @@ function allModels(){return [...registry.BUILTINS,...customModels];}
 function selectedModel(){return allModels().find(m=>m.id===$("modelSelect").value)||registry.BUILTIN;}
 function selectedKey(){
   const entry=selectedModel();
-  return registry.key(entry.id,entry.adapter==="r3-ovisocr3"?"r3-fixed":$("dtype").value);
+  return registry.key(entry.id,["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"r3-fixed":$("dtype").value);
 }
 function syncModelConfiguration(){
-  const fixed=selectedModel().adapter==="r3-ovisocr3";
+  const fixed=["r3-ovisocr3","wang-qwen35-2b"].includes(selectedModel().adapter);
   const fixedOption=$("dtype").querySelector('option[value="r3-fixed"]');
   fixedOption.hidden=!fixed;
   fixedOption.disabled=!fixed;
@@ -453,15 +453,17 @@ function refreshLoadButtons(){
   $("load").textContent=already?"已加载":"加载所选模型";
   $("run").disabled=busy||!imageReady||!already;
   $("modelSelect").disabled=busy;
-  $("dtype").disabled=busy||selectedModel().adapter==="r3-ovisocr3";
+  $("dtype").disabled=busy||["r3-ovisocr3","wang-qwen35-2b"].includes(selectedModel().adapter);
   $("addModel").disabled=busy;
   $("removeModel").disabled=busy||selectedModel().builtIn;
   const entry=selectedModel();
   $("modelHelp").textContent=already
     ?"所选模型已在当前 GPU 会话中就绪；直接点击开始真正推理。"
     :entry.adapter==="r3-ovisocr3"
-      ?"MVAI-DocTags-A-0.8B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 2.52 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试，其他设备仍需实测。"
-      :"模型："+entry.name+"。首次加载需要手动启动；成功后切换模型或精度将自动加载。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
+      ?"MVAI-DocTags-DJX-0.8B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 2.52 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试，其他设备仍需实测。"
+      :entry.adapter==="wang-qwen35-2b"
+        ?"MVAI-DocTags-WC-2B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 6.2 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试，其他设备仍需实测。"
+        :"模型："+entry.name+"。首次加载需要手动启动；成功后切换模型或精度将自动加载。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
 }
 function maybeAutoLoadSelectedModel(){
   if(!hasLoadedSuccessfully||busy)return;
@@ -942,11 +944,15 @@ $("load").onclick=async()=>{
  };
  try{
    if(r3Adapter){await r3Adapter.dispose();r3Adapter=null;}
+   if(wangAdapter){await wangAdapter.dispose();wangAdapter=null;}
    if(model){await model.dispose?.();model=null;}
    processor=null;loaded=false;activeKey=null;
    if(entry.adapter==="r3-ovisocr3"){
      const {createAdapter}=await import("./adapters/r3-ovisocr3/adapter.mjs");
      r3Adapter=await createAdapter({modelId:entry.id,onProgress});
+   }else if(entry.adapter==="wang-qwen35-2b"){
+     const {createAdapter}=await import("./adapters/wang-qwen35-2b/adapter.mjs");
+     wangAdapter=await createAdapter({modelId:entry.id,onProgress});
    }else{
      processor=await AutoProcessor.from_pretrained(entry.id);
      model=await AutoModelForVision2Seq.from_pretrained(entry.id,{
@@ -958,13 +964,14 @@ $("load").onclick=async()=>{
    loaded=true;activeKey=key;activeModelName=entry.name;
    $("progress").value=100;
    hasLoadedSuccessfully=true;markSuccessfulLoad(key);
-   $("downloadStatus").textContent=entry.adapter==="r3-ovisocr3"?"模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）":"模型已加载 · 可开始推理";
+   $("downloadStatus").textContent=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）":"模型已加载 · 可开始推理";
  }catch(err){
    console.error("Model load failure",err);
    if(r3Adapter){try{await r3Adapter.dispose();}catch{} r3Adapter=null;}
+   if(wangAdapter){try{await wangAdapter.dispose();}catch{} wangAdapter=null;}
    if(model){try{await model.dispose?.();}catch{} model=null;}
    loaded=false;activeKey=null;processor=null;
-   $("downloadStatus").textContent="模型加载失败："+err.message+"。R3 需要兼容的 ONNX 运行时和支持 shader-f16 的 WebGPU；其他自定义仓库也必须兼容对应的 DocTags 接口。旧 GPU 模型已释放；可以重新选择其他模型。";
+   $("downloadStatus").textContent="模型加载失败："+err.message+"。自研模型需要兼容的 ONNX 运行时和支持 shader-f16 的 WebGPU；其他自定义仓库也必须兼容对应的 DocTags 接口。旧 GPU 模型已释放；可以重新选择其他模型。";
  }finally{busy=false;renderModelOptions(entry.id);}
 };
 $("run").onclick=async()=>{
@@ -973,19 +980,20 @@ $("run").onclick=async()=>{
  busy=true;refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
  try{
    let seconds=0,ended=true,generatedTokens=0,tokensPerSecond=0;
-   if(entry.adapter==="r3-ovisocr3"){
-     if(!r3Adapter)throw Error("R3 适配器尚未就绪，请重新加载模型。");
+   if(entry.adapter==="r3-ovisocr3"||entry.adapter==="wang-qwen35-2b"){
+     const adapter=entry.adapter==="r3-ovisocr3"?r3Adapter:wangAdapter;
+     if(!adapter)throw Error(entry.name+" 适配器尚未就绪，请重新加载模型。");
      if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
-     const output=await r3Adapter.recognize(sourceBlob,{
+     const output=await adapter.recognize(sourceBlob,{
        onText(chunk){$("tags").textContent=($("tags").textContent==="等待新的推理输出。"?"":$("tags").textContent)+chunk;},
-       onTokens(n){$("downloadStatus").textContent="R3 正在生成："+n+" 个词元";}
+       onTokens(n){$("downloadStatus").textContent=entry.name+" 正在生成："+n+" 个词元";}
      });
      result=output.text;
      seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);
      ended=Boolean(output.ended);
      generatedTokens=Number(output.generatedTokens)||0;
      tokensPerSecond=Number(output.tokensPerSecond)||0;
-     if(!result)throw Error("R3 模型返回空结果");
+     if(!result)throw Error(entry.name+" 模型返回空结果");
    }else{
      const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
      const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
@@ -999,11 +1007,12 @@ $("run").onclick=async()=>{
    $("tags").textContent=result;
    const boxes=show(result);renderComparison(result);
    $("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
-   $("timing").textContent=entry.adapter==="r3-ovisocr3"
-     ?"R3 WebGPU · "+generatedTokens+" 词元 · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" 词元/秒 · Transformers.js 4.4.0-next.0 / ORT Web 1.31.1 · 输入："+name+" · 带坐标标签 "+boxes+" 个"
+   const adapterLabel=entry.adapter==="r3-ovisocr3"?"DJX-0.8B":entry.adapter==="wang-qwen35-2b"?"WC-2B":null;
+   $("timing").textContent=adapterLabel
+     ?adapterLabel+" WebGPU · "+generatedTokens+" 词元 · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" 词元/秒 · Transformers.js 4.4.0-next.0 / ORT Web 1.31.1 · 输入："+name+" · 带坐标标签 "+boxes+" 个"
      :"GPU 推理约 "+seconds.toFixed(1)+" 秒 · 模型："+activeModelName+" · 输入："+name+" · 带坐标标签 "+boxes+" 个";
    if(ended){
-     const precisionLabel=entry.adapter==="r3-ovisocr3"?"视觉 FP32 / 文字 FP16":$("dtype").value==="quality"?"fp32":"q4";
+     const precisionLabel=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"视觉 FP32 / 文字 FP16":$("dtype").value==="quality"?"fp32":"q4";
      updateHistory({key:activeKey,modelId:entry.id,documentRevision:inputRevision,tags:result,seconds:Number(seconds),label:activeModelName+" · "+precisionLabel});
    }else{
      $("compareDiagnostic").textContent="本次生成未出现正常结束标记，输出可能不完整；未将其加入多模型结果对比。可下载原始输出并核对。";
