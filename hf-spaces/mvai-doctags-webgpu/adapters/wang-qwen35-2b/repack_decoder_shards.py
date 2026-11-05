@@ -44,11 +44,18 @@ def download_bundle(repo_id, revision, token):
     ))
     work = Path(tempfile.mkdtemp(prefix="mvai-wc2b-download-"))
     (work / "onnx").mkdir()
-    shutil.copy2(snapshot / "config.json", work / "config.json")
-    shutil.copy2(snapshot / "onnx" / MODEL_FILE, work / "onnx" / MODEL_FILE)
+
+    def link_or_copy(source, destination):
+        try:
+            os.link(Path(source).resolve(strict=True), destination)
+        except OSError:
+            shutil.copy2(source, destination)
+
+    link_or_copy(snapshot / "config.json", work / "config.json")
+    link_or_copy(snapshot / "onnx" / MODEL_FILE, work / "onnx" / MODEL_FILE)
     for source in (snapshot / "onnx").glob(MODEL_FILE + "_data*"):
         if source.is_file():
-            shutil.copy2(source, work / "onnx" / source.name)
+            link_or_copy(source, work / "onnx" / source.name)
     return work
 
 
