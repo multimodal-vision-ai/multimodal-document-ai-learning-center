@@ -6,6 +6,7 @@
 <style>
 :root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#193251;background:#f4f7fc}*{box-sizing:border-box}
 body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+#runAvailability{display:block;margin:-5px 0 9px;color:#607995;font-size:11px;line-height:1.55}
 main{max-width:1200px;margin:auto;padding:20px}
 header{background:linear-gradient(115deg,#152e54,#305c9d);border-radius:16px;padding:23px 25px;color:white}
 header h1{font-size:clamp(22px,3vw,30px);margin:5px 0}
@@ -19,6 +20,9 @@ header p{color:#deebfe;line-height:1.65;font-size:13px;max-width:760px}
 .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:13px 0}
 button,.file{border:1px solid #c9d8ed;background:white;color:#225182;font-weight:650;padding:9px 12px;border-radius:9px;font-size:12px}
 .primary{background:#255fc0;color:white;border-color:#255fc0}
+.stop-action{background:#fff3f1;color:#ad3838;border-color:#e7b7b1}
+.stop-action:hover:not(:disabled){background:#ffe8e5}
+#stop[hidden]{display:none}
 .file{position:relative;display:inline-flex;overflow:hidden;cursor:pointer}
 .file input{position:absolute;inset:0;opacity:0;cursor:pointer}
 #view{height:510px;max-height:65vh;border:1px solid #d9e4f1;background:#f5f8fc;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -205,6 +209,7 @@ main{max-width:1260px}
 .sample-tile[aria-pressed="true"]{border-color:#326be8;background:#edf4ff;box-shadow:0 0 0 2px #326be81b;color:#184eae}
 .sample-tile canvas,.sample-tile img{display:block;width:75px;height:92px;border:1px solid #e1e7f0;border-radius:3px;background:#fff;object-fit:contain}
 .sample-tile span{font-size:11px;font-weight:700;line-height:1.35;white-space:nowrap}
+.sample-tile img[hidden]{display:none!important}
 .sample-scroll{display:inline-grid;place-items:center;width:29px;min-height:42px;padding:0;border:1px solid #d8e4f2;border-radius:8px;background:#f4f8ff;color:#376aa9;font-size:21px}
 .sample-scroll:hover{background:#e8f1ff}
 .sample-scroll:disabled{opacity:.35}
@@ -224,13 +229,13 @@ main{max-width:1260px}
     <summary aria-label="查看平台功能及多模型扩展说明" title="平台说明">ⓘ</summary>
     <div class="tip-pop" role="note">
       本平台面向文档结构化解析与多模型能力对比：对同一文档选择兼容模型，查看 DocTags、版面定位及结构化渲染结果，并比较不同模型的解析效果。
-      当前内置 IBM Granite Docling 258M 公开基线；后续可以接入经过适配和验证的自研模型。
+      当前内置 IBM Granite Docling 258M 公开基线，以及 MVAI-DocTags-DJX-0.8B-v1.0 · 自研和 MVAI-DocTags-WC-2B-v1.0 · 自研模型。两款自研模型使用独立推理适配器，均需要支持 shader-f16 的 WebGPU 设备。
       支持的模型在访问者浏览器中使用 WebGPU 推理，当前仍属实验功能。模型兼容性和解析准确率须按实际结果核验。
     </div>
   </details>
 </div>
 </header>
-<div class="notice compact-notice"><strong>技术预览</strong> · 首次加载模型可能下载 1 GB 以上文件。<details class="info-tip"><summary aria-label="查看下载、兼容性与隐私提醒">ⓘ</summary><div class="tip-pop">建议使用支持 WebGPU 的桌面浏览器和稳定网络。模型下载后可复用浏览器缓存，但显存实例仍需初始化。请勿上传含敏感个人信息或未经授权的文档；模型兼容性与解析准确率尚待系统验收。</div></details></div>
+<div class="notice compact-notice"><strong>技术预览</strong> · 首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB。<details class="info-tip"><summary aria-label="查看下载、兼容性与隐私提醒">ⓘ</summary><div class="tip-pop">建议使用支持 WebGPU 的桌面浏览器和稳定网络。模型下载后可复用浏览器缓存，但显存实例仍需初始化。请勿上传含敏感个人信息或未经授权的文档；模型兼容性与解析准确率尚待系统验收。</div></details></div>
 <div class="cols workspace">
   <div class="card input-panel">
     <div class="panel-heading">
@@ -275,15 +280,15 @@ main{max-width:1260px}
     <div class="control-fields">
       <div class="field-heading">
         <label for="modelSelect">选择推理模型</label>
-        <details class="info-tip"><summary aria-label="模型选择说明">ⓘ</summary><div class="tip-pop" id="modelHelp">内置 IBM Granite Docling 258M 公开基线。后续可添加使用相同处理器与 DocTags 协议的公开 ONNX 模型，不保证所有 HF 模型兼容。</div></details>
+        <details class="info-tip"><summary aria-label="模型选择说明">ⓘ</summary><div class="tip-pop" id="modelHelp">内置 IBM Granite Docling 258M 公开基线、MVAI-DocTags-DJX-0.8B-v1.0 · 自研和 MVAI-DocTags-WC-2B-v1.0 · 自研。两款自研模型使用独立 ONNX/WebGPU 适配器，需支持 shader-f16；其他公开 ONNX 模型仍须单独验证兼容性。</div></details>
       </div>
       <select id="modelSelect" aria-label="选择推理模型"></select>
       <div class="field-heading">
         <label for="dtype">模型配置</label>
-        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">fp32：优先保证推理一致性，但显存要求较高；q4：尝试减少部分解码权重的显存占用，可能影响输出质量。两种配置是同一模型的不同精度。</div></details>
+        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">Granite 的 fp32/q4 用于切换同一模型的精度；DJX-0.8B 和 WC-2B 使用固定混合精度（视觉 FP32、文字 FP16），不提供 q4 切换。</div></details>
       </div>
       <div class="row config-row">
-        <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option></select>
+        <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option><option value="r3-fixed" hidden disabled>固定混合精度 · 视觉 FP32 / 文字 FP16</option></select>
         <button class="primary" id="load" type="button" disabled>加载模型</button>
       </div>
       <div class="load-metrics">
@@ -292,8 +297,10 @@ main{max-width:1260px}
       </div>
       <div class="row run-actions">
         <button class="primary" id="run" type="button" disabled>开始推理</button>
+        <button class="stop-action" id="stop" type="button" hidden disabled>终止推理</button>
         <button id="saveDT" type="button" disabled>下载 DocTags</button>
       </div>
+      <small id="runAvailability" role="status" aria-live="polite">等待模型和文档就绪。</small>
       <div class="status inference-status" id="status" role="status" aria-live="polite">等待推理</div>
       <div id="runMetrics" class="run-metrics" role="status" aria-live="polite" hidden>
         <span id="runModelSize"></span><span id="runDuration"></span>
@@ -319,6 +326,7 @@ main{max-width:1260px}
           <p>权重文件通常可通过浏览器 Cache Storage 复用，但重开页面后仍需重新初始化 GPU 实例；浏览器可自动清理缓存，不同站点域名不能共享缓存。</p>
           <div class="cache-actions">
             <button id="cacheCheck" type="button">查看模型缓存信息</button>
+            <button id="cacheClear" type="button">清理当前模型缓存</button>
             <button id="cachePersist" type="button">请求保留站点存储</button>
           </div>
           <div id="cacheInfo" role="status" aria-live="polite"></div>
@@ -408,20 +416,38 @@ if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) 
 <script src="./doctags-renderer.js"></script>
 <script src="./model-registry.js"></script>
 <script type="module">
-import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
+import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,InterruptableStoppingCriteria,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
+import {createDownloadMeter,formatBytes,formatRate,formatEta} from "./adapters/r3-ovisocr3/download-metrics.mjs";
 env.useBrowserCache = true; // Cache Storage; browser may evict under quota pressure
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
-let model,processor,loaded=false,busy=false,imageReady=false,result="",name="";
+const graniteStopping=new InterruptableStoppingCriteria();
+let model,processor,r3Adapter=null,wangAdapter=null,loaded=false,busy=false,imageReady=false,result="",name="";
+let inferenceRunning=false,stopRequested=false,activeStop=null;
+let loadingModel=false,loadPhase="idle",loadStartedAt=0,lastLoadProgressAt=0,lastLoadFile="",loadWatchdog=null;
+let sourceBlob=null; // Original File/Blob for direct self-built-model decoding; no Canvas export.
 const registry=globalThis.MVAIModelRegistry;
 let gpuDetected=false,activeKey=null,activeModelName="",inputRevision=0,runHistory=[];
 let customModels=registry.restore(localStorage);
 const LAST_KEY="mvai-doctags-successful-loads-v1"; // only model keys, no documents
 function readLoadKeys(){try{return JSON.parse(localStorage.getItem(LAST_KEY)||"[]").filter(s=>typeof s==="string").slice(-30)}catch{return []}}
+let hasLoadedSuccessfully=readLoadKeys().length>0,pendingAutoLoad=false;
 function markSuccessfulLoad(key){try{localStorage.setItem(LAST_KEY,JSON.stringify([...new Set([...readLoadKeys(),key])].slice(-30)))}catch{}}
-function allModels(){return [registry.BUILTIN,...customModels];}
+function allModels(){return [...registry.BUILTINS,...customModels];}
 function selectedModel(){return allModels().find(m=>m.id===$("modelSelect").value)||registry.BUILTIN;}
-function selectedKey(){return registry.key(selectedModel().id,$("dtype").value);}
+function selectedKey(){
+  const entry=selectedModel();
+  return registry.key(entry.id,["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"r3-fixed":$("dtype").value);
+}
+function syncModelConfiguration(){
+  const fixed=["r3-ovisocr3","wang-qwen35-2b"].includes(selectedModel().adapter);
+  const fixedOption=$("dtype").querySelector('option[value="r3-fixed"]');
+  fixedOption.hidden=!fixed;
+  fixedOption.disabled=!fixed;
+  if(fixed)$("dtype").value="r3-fixed";
+  else if($("dtype").value==="r3-fixed")$("dtype").value="quality";
+  $("dtype").disabled=busy||fixed;
+}
 function clearRunMetrics(){
   $("runMetrics").hidden=true;
   $("runModelSize").textContent="";
@@ -432,29 +458,63 @@ function showRunMetrics(modelId,seconds){
   $("runDuration").textContent="推理时长："+Number(seconds).toFixed(1)+" 秒";
   $("runMetrics").hidden=false;
 }
+function refreshInferenceControls(){
+  const button=$("stop");
+  button.hidden=!inferenceRunning;
+  button.disabled=!inferenceRunning||stopRequested;
+  button.textContent=stopRequested?"正在终止…":"终止推理";
+}
 function refreshLoadButtons(){
   const already=loaded&&activeKey===selectedKey();
   $("load").disabled=busy||!gpuDetected||already;
-  $("load").textContent=already?"已加载":"加载所选模型";
+  $("load").textContent=loadingModel
+    ?(loadPhase==="initializing"?"正在初始化 WebGPU…":"正在加载模型…")
+    :already?"已加载":"加载所选模型";
+  const runReason=busy
+    ?(loadingModel?"模型仍在加载或初始化；完成后才能推理。":"模型正在推理，请等待完成或终止。")
+    :!already?"当前选择的模型尚未在本次页面会话中完成加载，请先加载模型。"
+    :!imageReady?"模型已就绪；请先选择示例文档或上传本地图片。"
+    :"模型与文档均已就绪，可以开始推理。";
   $("run").disabled=busy||!imageReady||!already;
+  $("run").title=runReason;
+  $("runAvailability").textContent=runReason;
   $("modelSelect").disabled=busy;
-  $("dtype").disabled=busy;
+  $("dtype").disabled=busy||["r3-ovisocr3","wang-qwen35-2b"].includes(selectedModel().adapter);
   $("addModel").disabled=busy;
   $("removeModel").disabled=busy||selectedModel().builtIn;
+  const entry=selectedModel();
   $("modelHelp").textContent=already
     ?"所选模型已在当前 GPU 会话中就绪；直接点击开始真正推理。"
-    :"模型："+selectedModel().name+"。"+(selectedModel().checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同。";
+    :entry.adapter==="r3-ovisocr3"
+      ?"MVAI-DocTags-DJX-0.8B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 2.52 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试，其他设备仍需实测。"
+      :entry.adapter==="wang-qwen35-2b"
+        ?"MVAI-DocTags-WC-2B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 6.2 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试，其他设备仍需实测。"
+        :"模型："+entry.name+"。首次加载需要手动启动；成功后切换模型或精度将自动加载。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
+  refreshInferenceControls();
+}
+function maybeAutoLoadSelectedModel(){
+  if(!hasLoadedSuccessfully||busy)return;
+  if(loaded&&activeKey===selectedKey()){pendingAutoLoad=false;return;}
+  pendingAutoLoad=true;
+  if(!gpuDetected)return;
+  refreshLoadButtons();
+  if(!$("load").disabled){
+    pendingAutoLoad=false;
+    $("downloadStatus").textContent="已成功加载过模型，正在自动切换并加载："+selectedModel().name+"…";
+    $("load").click();
+  }
 }
 function renderModelOptions(prefer){
   const select=$("modelSelect");select.replaceChildren();
   const loadedBefore=readLoadKeys();
   for(const m of allModels()){
     const option=document.createElement("option");option.value=m.id;
-    option.textContent=m.name+(loadedBefore.some(k=>k.startsWith(m.id+"::"))?" · 曾成功加载":"")+(m.checked?"":" · 待验证");
+    option.textContent=m.name+(loadedBefore.some(k=>k.startsWith(m.id+"::"))?" · 历史曾加载":"")+(m.checked?"":" · 待验证");
     select.appendChild(option);
   }
-  const opt=document.createElement("option");opt.disabled=true;opt.textContent="未来自研模型 · 待接入 ONNX 权重";select.appendChild(opt);
+  const opt=document.createElement("option");opt.disabled=true;opt.textContent="其他自研模型 · 待接入兼容适配";select.appendChild(opt);
   select.value=allModels().some(m=>m.id===prefer)?prefer:registry.BUILTIN.id;
+  syncModelConfiguration();
   refreshLoadButtons();
 }
 function resetHistory(){
@@ -462,7 +522,17 @@ function resetHistory(){
   refreshHistorySelectors();
 }
 function updateHistory(record){
-  runHistory=registry.recordResult(runHistory,record);
+  const revision=Number(record?.documentRevision);
+  if(!record?.key||!record?.modelId||!record?.tags||!Number.isInteger(revision)||revision!==inputRevision){
+    $("compareDiagnostic").textContent="本次结果未能加入对比记录：输入版本或模型输出信息不完整。";
+    return;
+  }
+  const normalized={...record,documentRevision:revision};
+  const accepted=registry.recordResult(runHistory,normalized);
+  const acceptedCurrent=accepted.some(item=>item.key===normalized.key&&Number(item.documentRevision)===revision&&item.modelId===normalized.modelId&&item.tags===normalized.tags&&Number(item.seconds)===Number(normalized.seconds));
+  runHistory=acceptedCurrent
+    ?accepted
+    :[...runHistory.filter(item=>item.documentRevision===revision&&item.key!==normalized.key),normalized].slice(-12);
   refreshHistorySelectors();
 }
 function refreshHistorySelectors(){
@@ -690,6 +760,52 @@ const localSamples=[
   {id:"chinese",file:"zh_page_0.png",label:"中文文档"}
 ];
 let sampleSelectionSerial=0;
+async function fetchSampleBlob(filename){
+  const primary=new URL(sampleBase+filename,document.baseURI);
+  const candidates=[primary];
+  // raw.githack may redirect to a CDN hostname. A same-origin-only fetch blocks
+  // that redirect; try CORS, then fall back to GitHub's CORS-enabled raw host.
+  if(["raw.githack.com","rawcdn.githack.com"].includes(location.hostname)){
+    const parts=primary.pathname.split("/").filter(Boolean);
+    if(parts[0]==="multimodal-vision-ai"&&parts[1]==="multimodal-document-ai-learning-center"&&parts.length>=5){
+      const fallback=new URL(primary.href);
+      fallback.hostname="raw.githubusercontent.com";
+      candidates.push(fallback);
+    }
+  }
+  let lastError=null;
+  for(const url of candidates){
+    try{
+      const response=await fetch(url.href,{mode:"cors",credentials:"omit",cache:"force-cache"});
+      if(!response.ok)throw new Error("HTTP "+response.status);
+      const blob=await response.blob();
+      if(!blob.type.startsWith("image/"))throw new Error("响应不是图片文件（"+(blob.type||"未知类型")+"）");
+      return blob;
+    }catch(error){lastError=error;}
+  }
+  throw new Error("图片请求失败："+(lastError?.message||String(lastError)));
+}
+async function loadSampleThumbnail(btn,item){
+  const img=btn.querySelector("img");
+  try{
+    // Use the same CORS-aware Blob loader as the large preview. Direct <img src>
+    // requests cannot use the raw.githack -> raw.githubusercontent fallback.
+    const blob=await fetchSampleBlob(item.file);
+    const objectUrl=URL.createObjectURL(blob);
+    if(!btn.isConnected){URL.revokeObjectURL(objectUrl);return;}
+    const previous=img.dataset.objectUrl;
+    if(previous)URL.revokeObjectURL(previous);
+    img.dataset.objectUrl=objectUrl;
+    img.hidden=false;
+    img.src=objectUrl;
+    delete btn.dataset.thumbnailError;
+  }catch(error){
+    img.removeAttribute("src");
+    img.hidden=true;
+    btn.dataset.thumbnailError="true";
+    console.warn("Sample thumbnail unavailable:",item.file,error);
+  }
+}
 function highlightSample(kind){
   document.querySelectorAll(".sample-tile").forEach(btn=>{
     btn.setAttribute("aria-pressed",String(btn.dataset.sample===kind));
@@ -702,26 +818,28 @@ async function loadLocalSample(kind){
   $("run").disabled=true;
   status("正在打开内置示例："+sample.label+"…");
   try{
-    // Official PNG/JPEG images are hosted locally and rasterized into the existing Canvas.
-    const image=new Image();
-    image.decoding="async";
-    image.src=sampleBase+sample.file;
-    await image.decode();
-    if(ticket!==sampleSelectionSerial)return;
-    if(!image.naturalWidth||!image.naturalHeight)throw Error("图片尺寸无效");
-    const scale=Math.min(1,1500/Math.max(image.naturalWidth,image.naturalHeight));
-    src.width=Math.round(image.naturalWidth*scale);
-    src.height=Math.round(image.naturalHeight*scale);
-    c.drawImage(image,0,0,src.width,src.height);
+    // Read the sample as a Blob. CORS + raw.githubusercontent.com fallback handles
+    // preview-CDN redirects while preserving the original bytes for R3 inference.
+    const blob=await fetchSampleBlob(sample.file);
+    const bitmap=await createImageBitmap(blob);
+    if(ticket!==sampleSelectionSerial){bitmap.close?.();return;}
+    try{
+      if(!bitmap.width||!bitmap.height)throw Error("图片尺寸无效");
+      const scale=Math.min(1,1500/Math.max(bitmap.width,bitmap.height));
+      src.width=Math.round(bitmap.width*scale);
+      src.height=Math.round(bitmap.height*scale);
+      c.drawImage(bitmap,0,0,src.width,src.height);
+    }finally{bitmap.close?.();}
+    sourceBlob=blob;
     inputRevision++;resetHistory();imageReady=true;name="ibm-demo-"+sample.file;
     $("file").value="";highlightSample(kind);
     clearResult();show();leftDraw();
     $("fileName").textContent="内置样例 · "+sample.label+" · "+src.width+"×"+src.height;
-    $("run").disabled=!loaded||activeKey!==selectedKey();
-    status("已载入："+sample.label+"，可执行模型推理。");
+    refreshLoadButtons();
+    status("已载入："+sample.label+"；"+(loaded&&activeKey===selectedKey()?"模型已就绪，可以推理。":"请先完成当前模型加载。"));
   }catch(error){
     if(ticket!==sampleSelectionSerial)return;
-    $("run").disabled=!loaded||!imageReady||activeKey!==selectedKey();
+    refreshLoadButtons();
     status("内置样例载入失败："+error.message+"。请尝试刷新页面或上传本地图片。");
   }
 }
@@ -729,7 +847,7 @@ function initSampleGallery(){
   document.querySelectorAll(".sample-tile").forEach(btn=>{
     const item=localSamples.find(x=>x.id===btn.dataset.sample);
     if(!item)return;
-    btn.querySelector("img").src=sampleBase+item.file;
+    void loadSampleThumbnail(btn,item);
     btn.addEventListener("click",()=>loadLocalSample(item.id));
   });
   const strip=$("sampleStrip");
@@ -755,8 +873,9 @@ $("file").onchange=async event=>{
     if(ticket!==sampleSelectionSerial){im.close?.();return;}
     const scale=Math.min(1,1500/Math.max(im.width,im.height));
     src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);im.close?.();
+    sourceBlob=file;
     inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();highlightSample(null);
-    $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";$("run").disabled=!loaded;
+    $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";refreshLoadButtons();
   }catch(e){status("读取失败："+e.message)}
 };
 $("clear").onclick=()=>{$("bounds").checked=false;show();leftDraw();};
@@ -764,8 +883,23 @@ function download(blob,filename){const u=URL.createObjectURL(blob),a=document.cr
 $("saveImg").onclick=()=>{if(result)show(result);preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png")};
 $("saveDT").onclick=()=>{if(result)download(new Blob([result],{type:"text/plain;charset=utf-8"}),"mvai-doctags-result.dt")};
 
-$("modelSelect").addEventListener("change",()=>{clearRunMetrics();refreshLoadButtons();$("downloadStatus").textContent=loaded&&activeKey===selectedKey()?"已在 GPU 中加载；可直接推理。":"请选择加载所选模型；如权重仍在磁盘缓存中，将尽量避免重新下载。";});
-$("dtype").addEventListener("change",()=>{clearRunMetrics();refreshLoadButtons();});
+$("modelSelect").addEventListener("change",()=>{
+  syncModelConfiguration();clearRunMetrics();refreshLoadButtons();
+  if(loaded&&activeKey===selectedKey()){
+    $("downloadStatus").textContent="当前模型已在本次 GPU 会话中就绪。";
+    status("模型已就绪；可使用当前文档开始推理。");
+  }else{
+    status("已切换模型；当前选择尚未在本次页面会话中完成加载。");
+    $("downloadStatus").textContent=hasLoadedSuccessfully
+      ?"历史加载记录仅表示曾经成功加载；当前页面会话仍需完成模型加载。"
+      :"当前模型尚未加载；请点击“加载所选模型”。";
+  }
+  if(hasLoadedSuccessfully){maybeAutoLoadSelectedModel();return;}
+});
+$("dtype").addEventListener("change",()=>{
+  clearRunMetrics();refreshLoadButtons();
+  if(hasLoadedSuccessfully)maybeAutoLoadSelectedModel();
+});
 $("addModel").addEventListener("click",()=>{
   const status=$("registryState");
   try{
@@ -794,6 +928,13 @@ $("cacheCheck").addEventListener("click",async()=>{
         modelFiles+=entries.filter(req=>decodeURIComponent(req.url).includes(selectedModel().id)).length;
       }
       parts.push("Cache Storage："+(candidates.length?"检测到缓存目录":"未检测到对应缓存目录")+"；文件条目 "+totalFiles+"；所选仓库相关条目 "+modelFiles+"（不保证文件齐全）。");
+      if(selectedModel().adapter==="wang-qwen35-2b"){
+        const {RANGE_CACHE_NAME}=await import("./adapters/wang-qwen35-2b/range-download.mjs");
+        if(keys.includes(RANGE_CACHE_NAME)){
+          const partial=await (await caches.open(RANGE_CACHE_NAME)).keys();
+          parts.push("WC-2B 分段下载缓存："+partial.length+" 个已完成分片；网络中断后可复用。");
+        }else parts.push("WC-2B 分段下载缓存：当前没有未完成分片。");
+      }
     }else parts.push("当前浏览器未提供 Cache API。");
     if(navigator.storage?.estimate){
       const est=await navigator.storage.estimate(),mb=n=>Math.round((n||0)/1048576);
@@ -801,6 +942,29 @@ $("cacheCheck").addEventListener("click",async()=>{
     }
   }catch(err){parts.push("缓存检查失败："+err.message)}
   $("cacheInfo").textContent=parts.join("\n");
+});
+$("cacheClear").addEventListener("click",async()=>{
+  const modelId=selectedModel().id;
+  try{
+    if(!("caches" in window))throw Error("当前浏览器未提供 Cache API");
+    const key=env.cacheKey||"transformers-cache";
+    const candidates=(await caches.keys()).filter(k=>k===key||k.startsWith(key+"-"));
+    let deleted=0;
+    for(const candidate of candidates){
+      const cache=await caches.open(candidate);
+      for(const request of await cache.keys()){
+        if(decodeURIComponent(request.url).includes(modelId)){
+          if(await cache.delete(request))deleted++;
+        }
+      }
+    }
+    let rangeDeleted=false;
+    if(selectedModel().adapter==="wang-qwen35-2b"){
+      const {clearRangeCache}=await import("./adapters/wang-qwen35-2b/range-download.mjs");
+      rangeDeleted=await clearRangeCache();
+    }
+    $("cacheInfo").textContent="已清理当前模型在本站点的 "+deleted+" 个缓存文件"+(rangeDeleted?"，并清理 WC-2B 分段下载缓存":"")+"。请重新加载模型；其他模型缓存未修改。";
+  }catch(err){$("cacheInfo").textContent="缓存清理失败："+err.message;}
 });
 $("cachePersist").addEventListener("click",async()=>{
   try{
@@ -837,65 +1001,207 @@ $("historySync").addEventListener("change",()=>{
 
 async function detect(){if(!window.isSecureContext||!navigator.gpu){$("device").textContent="当前设备不支持 WebGPU 或不在安全页面。可使用 Kaggle。";return}
 try{const adapter=await navigator.gpu.requestAdapter({powerPreference:"high-performance"});
-if(adapter){$("device").textContent="WebGPU 已就绪";gpuDetected=true;refreshLoadButtons()}
+if(adapter){$("device").textContent="WebGPU 已就绪";gpuDetected=true;refreshLoadButtons();if(pendingAutoLoad)maybeAutoLoadSelectedModel()}
 else $("device").textContent="未找到可用 GPU 适配器；请使用 Kaggle。"}
 catch(e){$("device").textContent="WebGPU 初始化失败："+e.message}}
 $("load").onclick=async()=>{
-if(busy||!gpuDetected)return;
-const entry=selectedModel(),key=selectedKey(),precision=$("dtype").value;
-if(loaded&&activeKey===key){refreshLoadButtons();return;}
-busy=true;clearRunMetrics();refreshLoadButtons();$("downloadStatus").textContent="切换模型中：释放旧 GPU 实例并准备加载 "+entry.name+"…";
-$("progress").value=0;
-const progress={};
-try{
-  if(model){await model.dispose?.();model=null;}
-  processor=null;loaded=false;activeKey=null;
-  processor=await AutoProcessor.from_pretrained(entry.id);
-  model=await AutoModelForVision2Seq.from_pretrained(entry.id,{
-    device:"webgpu",
-    dtype:{embed_tokens:"fp16",vision_encoder:"fp32",decoder_model_merged:precision==="compact"?"q4":"fp32"},
-    progress_callback:d=>{
-      if(d.status==="progress"&&d.file&&d.total){
-        progress[d.file]={loaded:d.loaded,total:d.total};
-        const files=Object.values(progress);
-        const total=files.reduce((s,x)=>s+x.total,0),done=files.reduce((s,x)=>s+x.loaded,0);
-        if(total){$("progress").value=Math.min(100,Math.round(100*done/total));$("downloadStatus").textContent=entry.name+"：下载约 "+$("progress").value+"%（如已有缓存则可能直接读取）";}
-      }
-    }
-  });
-  loaded=true;activeKey=key;activeModelName=entry.name;
-  $("progress").value=100;
-  markSuccessfulLoad(key);
-  $("downloadStatus").textContent="模型已加载 · 可开始推理";
-}catch(err){
-  console.error("Model load failure",err);
-  loaded=false;activeKey=null;model=null;processor=null;
-  $("downloadStatus").textContent="模型加载失败："+err.message+"。自定义仓库需要兼容 ONNX 权重与 DocTags processor。旧 GPU 模型已释放；可以重新选择其他模型。";
-}finally{busy=false;renderModelOptions(entry.id);}
+ if(busy||!gpuDetected)return;
+ const entry=selectedModel(),key=selectedKey(),precision=$("dtype").value;
+ if(loaded&&activeKey===key){refreshLoadButtons();return;}
+ busy=true;loadingModel=true;loadPhase="preparing";loadStartedAt=performance.now();lastLoadProgressAt=loadStartedAt;lastLoadFile="";
+ clearRunMetrics();refreshLoadButtons();status("正在加载模型："+entry.name+"。下载完成后还需要初始化 WebGPU。");
+ $("downloadStatus").textContent="正在准备 WebGPU 运行环境与模型文件…";
+ $("progress").value=0;
+ if(loadWatchdog)clearInterval(loadWatchdog);
+ loadWatchdog=setInterval(()=>{
+   if(!loadingModel)return;
+   const now=performance.now(),elapsed=Math.round((now-loadStartedAt)/1000),silent=Math.round((now-lastLoadProgressAt)/1000);
+   if(silent>=45){
+     const detail=lastLoadFile?" 当前文件："+lastLoadFile+"。":"";
+     $("downloadStatus").textContent=loadPhase==="initializing"
+       ?"模型文件下载接近完成，浏览器仍在初始化 WebGPU。已等待 "+elapsed+" 秒；这一步没有新的文件下载进度。"
+       :"模型加载已等待 "+elapsed+" 秒，连续 "+silent+" 秒没有新的下载进度。"+detail+"请检查网络连接；若长时间不变，需查看浏览器控制台错误。";
+   }else if(loadPhase==="initializing"){
+     $("downloadStatus").textContent="模型权重文件下载接近完成，正在初始化 WebGPU；已等待 "+elapsed+" 秒。";
+   }
+ },5000);
+ const meter=createDownloadMeter();
+ const onProgress=d=>{
+   lastLoadProgressAt=performance.now();
+   if(d?.file)lastLoadFile=d.file;
+   if(d?.stage==="processor")loadPhase="processor";
+   else if(d?.stage==="model")loadPhase="weights";
+   refreshLoadButtons();
+   if(d.status==="progress_total"){
+     const m=meter.update(d);
+     if(!m)return;
+     const stageLabel=m.stage==="processor"?"处理器文件":"模型权重";
+     const overall=m.stage==="processor"?m.progress*0.05:5+m.progress*0.95;
+     if(m.stage==="model"&&m.progress>=99.5)loadPhase="initializing";
+     $("progress").value=Math.min(95,Math.max($("progress").value,overall));
+     const eta=m.etaSeconds===null?"剩余时间计算中":"预计剩余 "+formatEta(m.etaSeconds);
+     $("downloadStatus").textContent=loadPhase==="initializing"
+       ?entry.name+" · 权重文件下载接近完成（"+m.progress.toFixed(1)+"%），正在初始化 WebGPU…"
+       :entry.name+" · "+stageLabel+" "+m.progress.toFixed(1)+"% · "+formatBytes(m.loaded)+" / "+formatBytes(m.total)+" · "+formatRate(m.bytesPerSecond)+" · "+eta;
+   }else if(d.status==="range-retry"){
+     $("downloadStatus").textContent=entry.name+" · 网络波动，正在重试分片 "+(Number(d.index)+1)+"（第 "+d.attempt+" 次）";
+   }else if(d.status==="progress"&&d.file){
+     const stageLabel=d.stage==="processor"?"处理器":"模型权重";
+     const percent=Number.isFinite(Number(d.progress))?" "+Number(d.progress).toFixed(1)+"%":"";
+     $("downloadStatus").textContent=entry.name+" · "+stageLabel+" · "+d.file+percent;
+   }else if(d.file){
+     $("downloadStatus").textContent=entry.name+"："+d.file+"…";
+   }
+ };
+ try{
+   if(r3Adapter){await r3Adapter.dispose();r3Adapter=null;}
+   if(wangAdapter){await wangAdapter.dispose();wangAdapter=null;}
+   if(model){await model.dispose?.();model=null;}
+   processor=null;loaded=false;activeKey=null;
+   if(entry.adapter==="r3-ovisocr3"){
+     const {createAdapter}=await import("./adapters/r3-ovisocr3/adapter.mjs");
+     r3Adapter=await createAdapter({modelId:entry.id,onProgress});
+   }else if(entry.adapter==="wang-qwen35-2b"){
+     const {createAdapter}=await import("./adapters/wang-qwen35-2b/adapter.mjs");
+     wangAdapter=await createAdapter({modelId:entry.id,onProgress});
+   }else{
+     processor=await AutoProcessor.from_pretrained(entry.id);
+     model=await AutoModelForVision2Seq.from_pretrained(entry.id,{
+       device:"webgpu",
+       dtype:{embed_tokens:"fp16",vision_encoder:"fp32",decoder_model_merged:precision==="compact"?"q4":"fp32"},
+       progress_callback:onProgress
+     });
+   }
+   loaded=true;activeKey=key;activeModelName=entry.name;loadPhase="ready";
+   $("progress").value=100;
+   hasLoadedSuccessfully=true;markSuccessfulLoad(key);
+   $("downloadStatus").textContent=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）· 当前 GPU 会话就绪":"模型已加载 · 可开始推理";
+ }catch(err){
+   loadPhase="error";
+   console.error("Model load failure",err);
+   if(r3Adapter){try{await r3Adapter.dispose();}catch{} r3Adapter=null;}
+   if(wangAdapter){try{await wangAdapter.dispose();}catch{} wangAdapter=null;}
+   if(model){try{await model.dispose?.();}catch{} model=null;}
+   loaded=false;activeKey=null;processor=null;
+   const loadError=String(err?.message||err);
+   const allocationFailure=/Array buffer allocation failed|ArrayBuffer allocation|allocate.*buffer/i.test(loadError);
+   const runtimeNetworkFailure=/CDN 加载失败/.test(loadError);
+   const loadDiagnosis=allocationFailure
+     ?"浏览器无法分配 ONNX 权重缓冲区。WC-2B 的解码器外部权重必须拆分为多个不超过 1.5 GB 的分片，并在模型 config.json 中声明准确分片数量；若已完成分片，仍可能是本机可用内存不足。这不是 shader-f16 检测失败。"
+     :runtimeNetworkFailure
+       ?"浏览器未能下载 ONNX Runtime / Transformers.js 运行时。程序已自动尝试多个 CDN 镜像；请检查网络或代理后重试。此次失败发生在模型权重加载前。"
+       :"请核对模型 ONNX 文件、外部数据分片、Transformers.js/ONNX Runtime 版本及 WebGPU shader-f16 支持。";
+   $("downloadStatus").textContent="模型加载失败："+loadError+"。"+loadDiagnosis+"旧 GPU 模型已释放；可以重新选择其他模型。";
+ }finally{
+   busy=false;loadingModel=false;
+   if(loadWatchdog){clearInterval(loadWatchdog);loadWatchdog=null;}
+   renderModelOptions(entry.id);
+   refreshLoadButtons();
+   status(loaded&&activeKey===selectedKey()?"模型已在当前 GPU 会话中就绪；可以开始推理。":"模型未能完成加载；请查看上方加载状态与错误信息。");
+ }
 };
 $("run").onclick=async()=>{
-if(busy||!loaded||!imageReady||activeKey!==selectedKey())return;
-busy=true;refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
-try{
-const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
-const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
-const inputs=await processor(prompt,[raw],{do_image_splitting:true});let streamed="";
-const generated=await model.generate({...inputs,max_new_tokens:2048,do_sample:false,streamer:new TextStreamer(processor.tokenizer,{skip_prompt:true,skip_special_tokens:false,callback_function:chunk=>{streamed+=chunk;$("tags").textContent=streamed}})});
-const tokens=generated.slice(null,[inputs.input_ids.dims.at(-1),null]);
-result=(processor.batch_decode(tokens,{skip_special_tokens:false})[0]||streamed).replace(/<\|end_of_text\|>$/,"").trim();
-if(!result)throw Error("模型返回空结果");
-$("tags").textContent=result;const boxes=show(result),seconds=((performance.now()-start)/1000).toFixed(1);renderComparison(result);
-$("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
-$("timing").textContent="GPU 推理约 "+seconds+" 秒 · 模型："+activeModelName+" · 输入："+name+" · 带坐标标签 "+boxes+" 个";
-updateHistory({
- key:activeKey,modelId:selectedModel().id,documentRevision:inputRevision,tags:result,
- seconds:Number(seconds),label:activeModelName+" · "+($("dtype").value==="quality"?"fp32":"q4")
-});
-showRunMetrics(selectedModel().id,seconds);
-status("推理完成 · 请查看下方对照结果");
-}catch(e){console.error(e);status("推理失败："+e.message+"。请改用 Kaggle 或换设备重试。");$("tags").textContent="本次没有可核验的完整模型输出。";}
-finally{busy=false;refreshLoadButtons()}
+  if(busy||!loaded||!imageReady||activeKey!==selectedKey())return;
+  const entry=selectedModel();
+  const adapter=entry.adapter==="r3-ovisocr3"?r3Adapter:entry.adapter==="wang-qwen35-2b"?wangAdapter:null;
+  busy=true;inferenceRunning=true;stopRequested=false;
+  activeStop=adapter?()=>adapter.stop():()=>graniteStopping.interrupt();
+  refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
+  try{
+    let seconds=0,ended=true,generatedTokens=0,tokensPerSecond=0;
+    if(entry.adapter==="r3-ovisocr3"||entry.adapter==="wang-qwen35-2b"){
+      if(!adapter)throw Error(entry.name+" 适配器尚未就绪，请重新加载模型。");
+      if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
+      const output=await adapter.recognize(sourceBlob,{
+        onText(chunk){$("tags").textContent=($("tags").textContent==="等待新的推理输出。"?"":$("tags").textContent)+chunk;},
+        onTokens(n){$("downloadStatus").textContent=entry.name+" 正在生成："+n+" 个词元";}
+      });
+      result=output.text;
+      seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);
+      ended=Boolean(output.ended);
+      generatedTokens=Number(output.generatedTokens)||0;
+      tokensPerSecond=Number(output.tokensPerSecond)||0;
+      if(stopRequested&&generatedTokens===0)result="";
+    }else{
+      graniteStopping.reset();
+      const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
+      const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
+      const inputs=await processor(prompt,[raw],{do_image_splitting:true});let streamed="";
+      const generated=await model.generate({
+        ...inputs,max_new_tokens:2048,do_sample:false,stopping_criteria:graniteStopping,
+        streamer:new TextStreamer(processor.tokenizer,{skip_prompt:true,skip_special_tokens:false,callback_function:chunk=>{streamed+=chunk;$("tags").textContent=streamed}})
+      });
+      const tokens=generated.slice(null,[inputs.input_ids.dims.at(-1),null]);
+      result=(processor.batch_decode(tokens,{skip_special_tokens:false})[0]||streamed).replace(/<\|end_of_text\|>$/,"").trim();
+      seconds=(performance.now()-start)/1000;
+    }
+    if(!result&&stopRequested){
+      $("tags").textContent="已终止推理，尚未生成可用输出。";
+      $("compareDiagnostic").textContent="本次推理已由用户终止；没有生成可核验的 DocTags 输出，未计入 A/B 对比历史。";
+      status("已终止推理 · 模型仍保持加载，可重新运行。");
+      return;
+    }
+    if(!result)throw Error("模型返回空结果");
+    $("tags").textContent=result;
+    const boxes=show(result);renderComparison(result);
+    $("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
+    const adapterLabel=entry.adapter==="r3-ovisocr3"?"DJX-0.8B":entry.adapter==="wang-qwen35-2b"?"WC-2B":null;
+    $("timing").textContent=adapterLabel
+      ?adapterLabel+" WebGPU · "+generatedTokens+" 词元 · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" 词元/秒 · Transformers.js 4.4.0-next.0 / ORT Web 1.31.1 · 输入："+name+" · 带坐标标签 "+boxes+" 个"
+      :"GPU 推理约 "+seconds.toFixed(1)+" 秒 · 模型："+activeModelName+" · 输入："+name+" · 带坐标标签 "+boxes+" 个";
+    const completedNormally=ended&&!stopRequested;
+    if(completedNormally){
+      const precisionLabel=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"视觉 FP32 / 文字 FP16":$("dtype").value==="quality"?"fp32":"q4";
+      updateHistory({key:activeKey,modelId:entry.id,documentRevision:inputRevision,tags:result,seconds:Number(seconds),label:activeModelName+" · "+precisionLabel});
+    }else if(stopRequested){
+      $("compareDiagnostic").textContent="本次推理已由用户终止，以下为已生成的部分输出；结果不完整，未计入多模型结果对比。";
+    }else{
+      $("compareDiagnostic").textContent="本次生成未出现正常结束标记，输出可能不完整；未将其加入多模型结果对比。可下载原始输出并核对。";
+    }
+    showRunMetrics(entry.id,seconds);
+    status(stopRequested
+      ?"已终止推理 · 当前输出不完整，未计入多模型对比；模型仍保持加载"
+      :ended?"推理完成 · 请查看下方对照结果":"生成未正常结束 · 当前输出可能不完整，请核对原始 DocTags");
+  }catch(e){
+   if(stopRequested){
+     const partial=$("tags").textContent;
+     if(partial&&partial!=="等待新的推理输出。"){
+       result=partial;
+       $("saveDT").disabled=false;
+       try{const boxes=show(result);renderComparison(result);$("saveImg").disabled=boxes===0;}catch{$("saveImg").disabled=true;}
+       $("compareDiagnostic").textContent="本次推理已由用户终止，以下为已生成的部分输出；结果不完整，未计入多模型结果对比。";
+       $("timing").textContent="推理已中断 · 输入："+name+" · 已保留部分输出";
+       showRunMetrics(entry.id,(performance.now()-start)/1000);
+     }else{
+       $("tags").textContent="已终止推理，尚未生成可用输出。";
+       $("compareDiagnostic").textContent="本次推理已由用户终止；没有生成可核验的 DocTags 输出，未计入 A/B 对比历史。";
+       clearRunMetrics();
+     }
+     status("已终止推理 · 模型仍保持加载，可重新运行。");
+   }else{
+     console.error("Inference failure",e);
+     const message=e?.message||String(e);
+     const inputFailure=e?.name==="SecurityError"||/tainted|toBlob|cross-origin/i.test(message);
+     const hint=inputFailure
+       ?"请重新选择内置样例或上传本地图片后重试。"
+       :"请检查输入图片和 WebGPU 设备状态；如持续失败，请提供浏览器控制台错误。";
+     status("推理失败："+message+"。"+hint);
+     $("tags").textContent="本次没有可核验的完整模型输出。";
+   }
+  }finally{
+    if(stopRequested)$("downloadStatus").textContent=entry.name+" 已终止生成；模型仍保持加载。";
+    busy=false;inferenceRunning=false;stopRequested=false;activeStop=null;
+    refreshLoadButtons();
+  }
 };
+$("stop").onclick=()=>{
+  if(!inferenceRunning||stopRequested)return;
+  stopRequested=true;
+  refreshInferenceControls();
+  status("正在请求终止…当前 WebGPU 运算结束后将停止生成。");
+  try{activeStop?.();}catch(error){status("终止请求失败："+(error?.message||String(error)));}
+};
+
 renderModelOptions(registry.BUILTIN.id);loadLocalSample("doc");detect();
 </script>
 </body>
