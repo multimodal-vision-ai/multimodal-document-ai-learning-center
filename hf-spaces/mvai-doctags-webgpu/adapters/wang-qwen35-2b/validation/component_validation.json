@@ -1,0 +1,129 @@
+{
+  "source_sha256": "f299d2ff0d0cdd72a54232b3c4720d2f600df5a6b5ec148528579d7c7fd777e0",
+  "vocab_size": 248654,
+  "original_assets_unchanged": {
+    "tokenizer.json": true,
+    "tokenizer_config.json": true,
+    "chat_template.jinja": true,
+    "processor_config.json": true,
+    "generation_config.json": true
+  },
+  "added_tokens_single_and_lossless": 610,
+  "added_token_embedding_max_abs": 0.0,
+  "lm_head_matches_source": [
+    0,
+    248044,
+    248046,
+    248085,
+    248086,
+    248653
+  ],
+  "vision_against_native_checkpoint": [
+    {
+      "grid": [
+        1,
+        4,
+        4
+      ],
+      "shape": [
+        4,
+        2048
+      ],
+      "cosine": 0.9999998807907104,
+      "max_abs": 0.0001220703125,
+      "mean_abs": 2.547458279877901e-07
+    },
+    {
+      "grid": [
+        1,
+        6,
+        8
+      ],
+      "shape": [
+        12,
+        2048
+      ],
+      "cosine": 0.9999999403953552,
+      "max_abs": 0.000244140625,
+      "mean_abs": 1.2115342542529106e-06
+    },
+    {
+      "grid": [
+        1,
+        22,
+        34
+      ],
+      "shape": [
+        187,
+        2048
+      ],
+      "cosine": 0.9999980330467224,
+      "max_abs": 0.001953125,
+      "mean_abs": 1.07802316051675e-06
+    }
+  ],
+  "onnx_checker": {
+    "embed_tokens_fp16.onnx": "passed",
+    "vision_encoder.onnx": "passed",
+    "decoder_model_merged_fp16.onnx": {
+      "status": "requires_onnxruntime_contrib_schema",
+      "operator": "ai.onnx::SimplifiedLayerNormalization",
+      "webgpu_validation_required": true
+    }
+  },
+  "artifacts": {
+    "tokenizer.json": {
+      "bytes": 20096839,
+      "sha256": "f5bba2e6475edff23d428898bde38d59280f2370c374df64ee0a2edb3bc0927c"
+    },
+    "tokenizer_config.json": {
+      "bytes": 1139,
+      "sha256": "e98f1901ac6f0adff67b1d540bfa0c36ac1a0cf59eb72ed78146ef89aafa1182"
+    },
+    "chat_template.jinja": {
+      "bytes": 7755,
+      "sha256": "273d8e0e683b885071fb17e08d71e5f2a5ddfb5309756181681de4f5a1822d80"
+    },
+    "processor_config.json": {
+      "bytes": 1351,
+      "sha256": "a4742fbcb0fc0dfa4f4acd2af13230133ccfbf7ca74499e51275be7c6bec4241"
+    },
+    "generation_config.json": {
+      "bytes": 115,
+      "sha256": "265579a8b4ae793b451baf40b93fbb5e8c19a197899ad36c787f838ca8303254"
+    },
+    "config.json": {
+      "bytes": 2769,
+      "sha256": "2a5d706503628db3256fae9fbb2a5357ab6f1708cd9d62a9d8b65c6473c06bef"
+    },
+    "preprocessor_config.json": {
+      "bytes": 570,
+      "sha256": "4008e4d6927b3207af791fcacda85c1996be4ade3a913404614a235cd9d397bd"
+    },
+    "onnx/embed_tokens_fp16.onnx": {
+      "bytes": 284,
+      "sha256": "78d9396088b60ae5e02223266112c9de0629a513d654d509daec8f5d685deb9a"
+    },
+    "onnx/embed_tokens_fp16.onnx_data": {
+      "bytes": 1018486784,
+      "sha256": "9348916d5787ecb5994e416313dc6e1373f6a43a9dad55b74f72ff6f969712f3"
+    },
+    "onnx/vision_encoder.onnx": {
+      "bytes": 3740209,
+      "sha256": "9e100de8fd7dd0a75577ad1eba7948dfa4ae9d30b62ef3af1612d9158c6e4975"
+    },
+    "onnx/vision_encoder.onnx_data": {
+      "bytes": 1325666304,
+      "sha256": "28d472cfbc15c72e74c287547c96a484ca1e938b8b7ceb506df05ebe5ae08403"
+    },
+    "onnx/decoder_model_merged_fp16.onnx": {
+      "bytes": 277228,
+      "sha256": "4d92d56dedeb17db1c06b2601bb34cb0f7de43b501172e6e8206ec93eed3851a"
+    },
+    "onnx/decoder_model_merged_fp16.onnx_data": {
+      "bytes": 3832349440,
+      "sha256": "f0f25611b3e5e3988012f3691fe7087a46bdfd6b5e19584b42135abad761f500"
+    }
+  },
+  "success": true
+}
