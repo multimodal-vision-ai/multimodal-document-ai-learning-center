@@ -2,126 +2,126 @@
   {
     "id": "original_095_chinese_two_column",
     "file": "challenges/original_095_chinese_two_column.webp",
-    "label": "中文双栏 95",
+    "label": "中文双栏文档",
     "source": "原始扫描",
     "note": "双栏中文正文与蓝色标注"
   },
   {
     "id": "original_096_english_article_table",
     "file": "challenges/original_096_english_article_table.webp",
-    "label": "英文论文 96",
+    "label": "英文论文表格",
     "source": "原始扫描",
     "note": "英文正文与嵌入表格"
   },
   {
     "id": "original_097_multicolumn_illustration",
     "file": "challenges/original_097_multicolumn_illustration.webp",
-    "label": "多栏图文 97",
+    "label": "多栏图文文档",
     "source": "原始扫描",
     "note": "多栏文字、图片与标注"
   },
   {
     "id": "original_098_old_english_scan",
     "file": "challenges/original_098_old_english_scan.webp",
-    "label": "旧英文扫描 98",
+    "label": "英文旧版扫描件",
     "source": "原始扫描",
     "note": "英文多栏与纸张干扰"
   },
   {
     "id": "original_099_dense_chinese_table",
     "file": "challenges/original_099_dense_chinese_table.webp",
-    "label": "中文表格 99",
+    "label": "中文复杂表格",
     "source": "原始扫描",
     "note": "复杂中文表头与单元格"
   },
   {
     "id": "original_100_english_data_table",
     "file": "challenges/original_100_english_data_table.webp",
-    "label": "英文数据 100",
+    "label": "英文数据表",
     "source": "原始扫描",
     "note": "英文数据表与正文"
   },
   {
     "id": "original_101_english_long_table",
     "file": "challenges/original_101_english_long_table.webp",
-    "label": "英文长表 101",
+    "label": "英文长表格",
     "source": "原始扫描",
     "note": "连续长表格与数值"
   },
   {
     "id": "original_102_table_and_text",
     "file": "challenges/original_102_table_and_text.webp",
-    "label": "表格正文 102",
+    "label": "表格与正文混排",
     "source": "原始扫描",
     "note": "表格与双栏正文混排"
   },
   {
     "id": "original_103_english_newspaper",
     "file": "challenges/original_103_english_newspaper.webp",
-    "label": "英文报纸 103",
+    "label": "英文报纸版面",
     "source": "原始扫描",
     "note": "新闻多栏、标题与人物图片"
   },
   {
     "id": "original_104_multicolumn_paper",
     "file": "challenges/original_104_multicolumn_paper.webp",
-    "label": "多栏论文 104",
+    "label": "多栏学术论文",
     "source": "原始扫描",
     "note": "学术论文多栏版面"
   },
   {
     "id": "original_109_chinese_clauses",
     "file": "challenges/original_109_chinese_clauses.webp",
-    "label": "中文条款 109",
+    "label": "中文条款文档",
     "source": "原始扫描",
     "note": "章节编号与条款层级"
   },
   {
     "id": "original_110_watermark_fingerprint",
     "file": "challenges/original_110_watermark_fingerprint.webp",
-    "label": "水印指纹 110",
+    "label": "水印与指纹干扰",
     "source": "原始扫描",
     "note": "斜向水印与指纹图案干扰"
   },
   {
     "id": "original_111_handwritten_lines",
     "file": "challenges/original_111_handwritten_lines.webp",
-    "label": "横线记录 111",
+    "label": "中英词汇释义手写笔记",
     "source": "原始扫描",
     "note": "横线纸上的手写内容"
   },
   {
     "id": "original_112_handwritten_lines",
     "file": "challenges/original_112_handwritten_lines.webp",
-    "label": "横线记录 112",
+    "label": "英语短语与例句手写笔记",
     "source": "原始扫描",
     "note": "横线纸上的手写内容"
   },
   {
     "id": "original_113_handwritten_notes",
     "file": "challenges/original_113_handwritten_notes.webp",
-    "label": "手写笔记 113",
+    "label": "中文手写实验笔记",
     "source": "原始扫描",
     "note": "中文手写条目与荧光标记"
   },
   {
     "id": "original_114_mixed_language_notes",
     "file": "challenges/original_114_mixed_language_notes.webp",
-    "label": "中英手写 114",
+    "label": "中英混合手写记录",
     "source": "原始扫描",
     "note": "中英混合手写与荧光标记"
   },
   {
     "id": "original_115_stamp_fragment",
     "file": "challenges/original_115_stamp_fragment.webp",
-    "label": "盖章残页 115",
+    "label": "公章残缺页面",
     "source": "原始扫描",
     "note": "页面截断与红色公章"
   },
   {
     "id": "original_116_stamp_page",
     "file": "challenges/original_116_stamp_page.webp",
-    "label": "盖章页 116",
+    "label": "印章文档页面",
     "source": "原始扫描",
     "note": "印章与少量页面文字"
   },
@@ -149,14 +149,14 @@
   {
     "id": "synthetic_04_english_paper_tables",
     "file": "challenges/synthetic_04_english_paper_tables.webp",
-    "label": "英文多表格",
+    "label": "英文学术论文多表格",
     "source": "脱敏模拟",
     "note": "英文论文连续多表格"
   },
   {
     "id": "synthetic_05_linear_algebra_formulas",
     "file": "challenges/synthetic_05_linear_algebra_formulas.webp",
-    "label": "公式教材",
+    "label": "线性代数公式教材",
     "source": "脱敏模拟",
     "note": "矩阵、公式与正文混排"
   },
@@ -177,14 +177,14 @@
   {
     "id": "synthetic_08_material_receipt",
     "file": "challenges/synthetic_08_material_receipt.webp",
-    "label": "材料入库验收",
+    "label": "材料入库验收单",
     "source": "脱敏模拟",
     "note": "入库验收表单与打孔旧纸"
   },
   {
     "id": "synthetic_09_experiment_record",
     "file": "challenges/synthetic_09_experiment_record.webp",
-    "label": "实验记录 09",
+    "label": "手写实验记录",
     "source": "脱敏模拟",
     "note": "实验字段与数据混排；并非真实手写"
   },
