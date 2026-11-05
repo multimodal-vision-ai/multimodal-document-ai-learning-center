@@ -1,10 +1,10 @@
-import {MODEL_ID, trainedPrompt, RESPONSE_PREFIX, STOP_IDS, validateSettings} from './contract.mjs';
+import {MODEL_ID, MODEL_REVISION, trainedPrompt, RESPONSE_PREFIX, STOP_IDS, validateSettings} from './contract.mjs';
 
 export const VERSIONS = Object.freeze({transformers: '4.4.0-next.0', ort: '1.31.1'});
 const CDN = 'https://cdn.jsdelivr.net/npm/';
 
 /** Only this adapter uses the newer runtime. The exhibit's other models are unchanged. */
-export async function createAdapter({modelId = MODEL_ID, revision = 'main', onProgress = () => {}, runtime = {}} = {}) {
+export async function createAdapter({modelId = MODEL_ID, revision = MODEL_REVISION, onProgress = () => {}, runtime = {}} = {}) {
   if (!navigator.gpu) throw new Error('浏览器没有提供 WebGPU，请使用支持 WebGPU 的 Chrome 或 Edge。');
   const gpu = await navigator.gpu.requestAdapter();
   if (!gpu) throw new Error('浏览器无法访问可用的 WebGPU 设备。');
@@ -41,8 +41,12 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
   if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
   processor.tokenizer.chat_template = await template.text();
   const prompt = trainedPrompt(processor.tokenizer);
+  // Pin the exact HF bundle that contains the 3-shard decoder.
+  // Deliberately omit use_external_data_format here: an explicit boolean true
+  // overrides config.json and requests only one chunk. The model config declares
+  // per-file counts (decoder_model_merged_fp16.onnx = 3).
   const model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
-    revision, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
+    revision, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'},
     progress_callback: info => onProgress({...info, stage: "model"}),
   });
   const stopping = new lib.InterruptableStoppingCriteria();
