@@ -13,11 +13,10 @@ def validate(args):
     from transformers import AutoTokenizer
     from transformers.models.qwen3_5.modeling_qwen3_5 import Qwen3_5VisionModel
     from export_onnx import checkpoint_tensor, file_sha256, local_config
-from external_data_sharding import (
-    MAX_EXTERNAL_DATA_SHARD_BYTES,
-    external_data_locations,
-    iter_tensors,
-)
+    from external_data_sharding import (
+        MAX_EXTERNAL_DATA_SHARD_BYTES,
+        external_data_locations,
+    )
     torch.set_num_threads(args.threads)
     root, config = local_config(args.model)
     bundle = args.bundle

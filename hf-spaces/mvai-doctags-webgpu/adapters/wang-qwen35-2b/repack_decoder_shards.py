@@ -194,10 +194,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     token = os.environ.get("HF_TOKEN")
+    if args.push and not token:
+        raise RuntimeError("Set HF_TOKEN in Kaggle Secrets before using --push")
     bundle = args.bundle or download_bundle(args.repo_id, args.revision, token)
     result = repack(bundle)
     if args.push:
-        if not token:
-            raise RuntimeError("Set HF_TOKEN in Kaggle Secrets before using --push")
         result["upload"] = upload_bundle(bundle, args.repo_id, args.revision, token, result)
     print(json.dumps(result, ensure_ascii=False, indent=2))
