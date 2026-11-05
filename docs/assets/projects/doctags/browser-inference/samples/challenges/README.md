@@ -1,6 +1,6 @@
 # DocTags challenge sample assets
 
-Upload all 28 optimized WebP files from the companion resource ZIP into this directory, alongside `manifest.json`.
+From the repository root, run `python scripts/kaggle/install_doctags_challenge_assets.py /path/to/DocTags_28个困难样本_WebP资源包.zip`. The script validates the archive and mirrors all 28 WebP files plus the manifest and README into both locations. The quality validator requires byte-identical copies.
 
 - 18 original scan images: `original_*.webp`
 - 10 de-identified simulated documents: `synthetic_*.webp`
