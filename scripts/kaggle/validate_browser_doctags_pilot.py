@@ -131,7 +131,19 @@ assert data.count('class="sample-source"') == 1, "Show source attribution exactl
 assert ' · 本项目本地托管</small>' not in data, "Source caption must remain concise"
 assert "样例来源：" in data, "Source caption is required"
 assert "sampleSelectionSerial" in data and "if(ticket!==sampleSelectionSerial)" in data, "Stale-response protection missing"
-assert 'inputRevision++;resetHistory();imageReady=true;name="ibm-demo-"' in data, "Switch must invalidate old results"
+assert 'inputRevision++;resetHistory();imageReady=true;name=(group==="challenge"?"mvaidoc-tags-challenge-":"ibm-demo-")+sample.id' in data, "Switch must invalidate old results and keep sample source identity"
+assert 'highlightSample(kind,group)' in data, "Sample selection must be scoped to the active source gallery"
+assert 'id="sourceChallenge"' in data and 'id="sourceDocling"' in data and 'id="sourceUpload"' in data, "Three document source controls are required"
+assert 'function setInputSource(source)' in data and 'id="challengeGallery"' in data and 'id="doclingGallery"' in data, "Document source switcher galleries are required"
+assert '.sample-strip{display:flex;gap:9px;overflow-x:auto' in data, "Both sample sources must use one-row horizontal scrolling"
+challenge_match = re.search(r"const challengeSamples=(\\[[\\s\\S]*?\\]);", data)
+assert challenge_match, "Challenge sample list is missing"
+challenge_items = json.loads(challenge_match.group(1))
+assert len(challenge_items) == 28, "All 28 challenge samples must be listed"
+assert sum(item["source"] == "原始扫描" for item in challenge_items) == 18
+assert sum(item["source"] == "脱敏模拟" for item in challenge_items) == 10
+challenge_manifest = json.loads((HTML.parent / "samples/challenges/manifest.json").read_text(encoding="utf-8"))
+assert [item["id"] for item in challenge_items] == [item["id"] for item in challenge_manifest], "Embedded challenge list and asset manifest differ"
 assert "IBM Granite Docling 官方 DEMO" in data, "Example source credit missing"
 assert "await model.generate" in data, "WebGPU model inference must remain real"
 assert "renderComparison(result)" in data, "V1.6 live reconstruction must remain"
