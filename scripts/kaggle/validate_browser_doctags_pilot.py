@@ -94,7 +94,7 @@ assert '{mode:"cors",credentials:"omit",cache:"force-cache"}' in data, "Sample r
 assert 'fallback.hostname="raw.githubusercontent.com"' in data, "GitHub raw fallback missing"
 assert 'await fetchSampleBlob(sample.file)' in data and 'createImageBitmap(blob)' in data, "Built-in samples must be fetched as Blobs"
 assert 'sourceBlob=blob' in data and 'sourceBlob=file' in data, "Original image Blob must be retained for R3 inference"
-assert 'r3Adapter.recognize(sourceBlob' in data, "R3 must consume original Blob without Canvas export"
+assert 'adapter.recognize(sourceBlob' in data, "Self-built adapters must consume original Blob without Canvas export"
 assert 'src.toBlob' not in data, "R3 inference must not export a potentially tainted Canvas"
 assert 'RawImage.read(image)' in R3_ADAPTER_TEXT, "R3 adapter must decode Blob/File input directly"
 assert 'syntheticFallback' not in data and 'makeSample(' not in data, "Synthetic summary should be removed"
@@ -166,7 +166,6 @@ assert 'import("./adapters/r3-ovisocr3/adapter.mjs")' in data
 assert 'import("./adapters/wang-qwen35-2b/adapter.mjs")' in data
 assert "wangAdapter=await createAdapter" in data
 assert "await r3Adapter.recognize(sourceBlob" in data
-assert "adapter.recognize(sourceBlob" in data
 assert "RawImage.read(image)" in WANG_ADAPTER_TEXT
 assert 'value="r3-fixed"' in data
 assert "shader-f16" in data
