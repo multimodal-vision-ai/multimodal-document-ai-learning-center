@@ -69,3 +69,41 @@ CPU 原模型使用 PyTorch 2.10.0、Transformers 5.6.2、FP32、4 个线程；�
 - [390px 宽截图](validation/screenshot-mobile.png)
 
 本记录证明该合成短页的实际功能与转换一致性；尚未重跑完整 OCR benchmark、长页、复杂表格或不同品牌设备的准确率与兼容性测试。
+
+
+## Browser external-data sharding correction
+
+The first exported bundle contained a single `decoder_model_merged_fp16.onnx_data` file of 3,832,349,440 bytes. This exceeds Chrome's approximately 2 GiB per-ArrayBuffer limit on some browser/runtime combinations, even though the same bundle loaded on the controlled A800 test host. The browser release must therefore split the decoder external data into multiple files, each no larger than 1.5 GB, and declare the exact chunk count in `transformers.js_config.use_external_data_format`.
+
+Run `python test_external_data_sharding.py` for the synthetic byte-preservation regression test, then run `python repack_decoder_shards.py --push` on Kaggle with `HF_TOKEN` stored as a Kaggle Secret. After upload, rerun `validate_bundle.py` and the browser test on the target Windows/Chrome device. The earlier A800 result is not evidence that the original monolithic package is portable to ordinary desktops.
+
+
+## Kaggle browser-safe re-sharding: checker compatibility
+
+The first Kaggle run stopped at `onnx.checker.check_model` with `No Op registered for SimplifiedLayerNormalization with domain_version of 22`. This is a known schema gap: ONNX Runtime uses `ai.onnx::SimplifiedLayerNormalization`, while the standard ONNX Python checker does not publish that schema (see [ONNX issue #6582](https://github.com/onnx/onnx/issues/6582)). ONNX Runtime Web's WebGPU operator list includes `SimplifiedLayerNormalization` in `ai.onnx(1+)`.
+
+The first compatibility implementation passed an in-memory `ModelProto` to ONNX Checker. That overload has no model-directory context and could resolve relative external-data locations against the Kaggle process working directory, producing a false "not regular file" error even when the shard existed beside the model.
+
+The repack tool now writes a checker-only temporary ONNX file into the same directory as the external-data shards, changes only the known operator node's domain in that temporary copy, and calls `onnx.checker.check_model(str(checker_path), check_custom_domain=False)`. The checker can therefore resolve each relative external-data location beside the file. The temporary checker file is deleted in a `finally` block. The actual runtime ONNX file, operator domain, graph, weights and shard bytes are not modified by the check.
+
+The synthetic regression test now combines both conditions: a model with external-data tensors and the `SimplifiedLayerNormalization` operator. It verifies external-data path resolution, byte preservation, unchanged runtime operator domain and cleanup of the temporary checker file. Separately, every external tensor reference is checked for path confinement, valid offset/length, existing file and the 1.5 GB shard limit.
+
+This checker workaround is not a substitute for runtime validation. After upload, load and run WC-2B in the target Chrome + WebGPU environment.
+
+
+## Browser multi-shard loading fix
+
+The first browser attempt after the successful Kaggle upload failed during session creation with an out-of-bounds read from `decoder_model_merged_fp16.onnx_data`. Inspection of the WC-2B adapter found an explicit `use_external_data_format: true`. In Transformers.js, an explicit option takes precedence over the model's `transformers.js_config.use_external_data_format`; boolean `true` requests one chunk, while the uploaded decoder has three. The adapter now omits this override so Transformers.js reads the per-file chunk counts from `config.json`.
+
+The adapter also pins the model to HF revision `09f034d04e5a26620124e4b80923ffc2ec5899c7`, preventing a stale `main` URL/cache entry from mixing the pre-shard ONNX graph with the new shard files. The revision contains the 3-shard Decoder and config produced by Kaggle commit `09f034d04e5a26620124e4b80923ffc2ec5899c7`.
+
+Acceptance remains a fresh Windows Chrome load after clearing the WC-2B site cache. The browser must request the Decoder ONNX graph plus all three external-data chunks; session creation and a real DocTags inference must both succeed.
+
+
+## HTTP Range download validation
+
+The Windows Chrome test confirmed that the Hugging Face Xet CDN supports single-range requests for the 1,018,486,784-byte embedding external-data file: HTTP 206, `Content-Range: bytes 0-1048575/1018486784`, and `Accept-Ranges: bytes`.
+
+The WC-2B adapter now intercepts only `onnx/embed_tokens_fp16.onnx_data` through Transformers.js' documented `env.fetch` hook. It requests 32 MiB byte ranges with three concurrent workers, validates every 206 response and exact Content-Range/byte length, retries transient failures up to three times with exponential backoff, and streams ordered 1 MiB pieces into the normal Transformers.js loader. Each completed range is stored in a revision-specific same-origin Cache Storage entry; a later attempt reuses completed ranges. Once Transformers.js has successfully committed the complete model file to its normal cache, the temporary range cache is removed. The model's ONNX graph, tensor layout, model revision and inference runtime remain unchanged.
+
+The cache manager's WC-2B cleanup action also removes partial range entries. Unit tests cover ordered byte reconstruction, 206 validation, retry after a simulated connection close, and persistent reuse of completed ranges. This is code-level validation; a fresh Windows Chrome full-model load is still required before acceptance.

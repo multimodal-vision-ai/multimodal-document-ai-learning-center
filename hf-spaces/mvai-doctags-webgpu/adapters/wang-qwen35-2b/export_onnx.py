@@ -13,6 +13,11 @@ import shutil
 import subprocess
 import sys
 
+from external_data_sharding import (
+    external_data_locations,
+    shard_external_data,
+)
+
 HELPERS = Path(__file__).resolve().parents[1] / 'r3-ovisocr3' / 'export_onnx.py'
 spec = importlib.util.spec_from_file_location('mvai_qwen35_export_helpers', HELPERS)
 shared = importlib.util.module_from_spec(spec)
@@ -78,9 +83,75 @@ def export_vision(root, output):
     print(json.dumps({'component': 'vision', 'model_path': str(target), 'compute_dtype': 'float32', 'output_dtype': 'float16'}), flush=True)
 
 
+
+
+def package_decoder(root, output, exported):
+    """Rename cache I/O and re-pack decoder weights into browser-safe shards."""
+    import onnx
+
+    _, config = local_config(root)
+    graph = onnx.load(exported / 'decoder_model_merged.onnx', load_external_data=False)
+    mapping = {}
+    for layer, kind in enumerate(config.text_config.layer_types):
+        if kind == 'linear_attention':
+            for prefix in ('past', 'present'):
+                for state in ('conv', 'recurrent'):
+                    mapping[f'{prefix}.{layer}.{state}'] = f'{prefix}_{state}.{layer}'
+
+    def rename(part):
+        for value in (*part.input, *part.output, *part.value_info):
+            value.name = mapping.get(value.name, value.name)
+            for dim in value.type.tensor_type.shape.dim:
+                if dim.dim_param == 'kv_cache_dim':
+                    dim.dim_value = config.text_config.head_dim
+        for node in part.node:
+            for names in (node.input, node.output):
+                for index, name in enumerate(names):
+                    names[index] = mapping.get(name, name)
+            for attribute in node.attribute:
+                if attribute.type == onnx.AttributeProto.GRAPH:
+                    rename(attribute.g)
+                elif attribute.type == onnx.AttributeProto.GRAPHS:
+                    for nested in attribute.graphs:
+                        rename(nested)
+
+    rename(graph.graph)
+    target_dir = output / 'onnx'
+    target_dir.mkdir(exist_ok=True)
+    target = target_dir / 'decoder_model_merged_fp16.onnx'
+    if target.exists():
+        raise FileExistsError(target)
+    shards = shard_external_data(
+        graph.graph, exported, target_dir, target.name
+    )
+    onnx.save_model(graph, str(target))
+    onnx.checker.check_model(str(target))
+    print(json.dumps({
+        'component': 'decoder',
+        'model_path': str(target),
+        'cache_io_renames': len(mapping),
+        'external_data_shards': [
+            {'file': path.name, 'bytes': path.stat().st_size} for path in shards
+        ],
+    }), flush=True)
+
+
 def write_assets(root, output):
     config = json.loads((root / 'config.json').read_text())
-    config['transformers.js_config'] = {'use_external_data_format': True, 'kv_cache_dtype': {'fp16': 'float16'}}
+    decoder_path = output / 'onnx' / 'decoder_model_merged_fp16.onnx'
+    decoder_chunks = 1
+    if decoder_path.is_file():
+        import onnx
+        decoder_graph = onnx.load(str(decoder_path), load_external_data=False)
+        decoder_chunks = len(external_data_locations(decoder_graph.graph, onnx))
+    config['transformers.js_config'] = {
+        'use_external_data_format': {
+            'embed_tokens_fp16.onnx': 1,
+            'vision_encoder.onnx': 1,
+            'decoder_model_merged_fp16.onnx': decoder_chunks,
+        },
+        'kv_cache_dtype': {'fp16': 'float16'},
+    }
     (output / 'config.json').write_text(json.dumps(config, indent=2) + '\n')
     processor = json.loads((root / 'processor_config.json').read_text())
     image = {**processor['image_processor'], 'processor_class': processor['processor_class']}
@@ -103,7 +174,7 @@ def export_decoder(root, output):
         '--extra_options', 'filename=decoder_model_merged.onnx', 'exclude_embeds=true',
         'prune_lm_head=true', 'exclude_mtp=true',
     ], check=True)
-    shared.package_decoder(root, output, exported)
+    package_decoder(root, output, exported)
 
 
 def main():

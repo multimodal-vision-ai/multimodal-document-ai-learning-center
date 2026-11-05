@@ -1,45 +1,115 @@
-import {MODEL_ID, trainedPrompt, RESPONSE_PREFIX, STOP_IDS, validateSettings} from './contract.mjs';
+import {MODEL_ID, MODEL_REVISION, trainedPrompt, RESPONSE_PREFIX, STOP_IDS, validateSettings} from './contract.mjs';
+import {createRangeFetch} from './range-download.mjs';
 
 export const VERSIONS = Object.freeze({transformers: '4.4.0-next.0', ort: '1.31.1'});
-const CDN = 'https://cdn.jsdelivr.net/npm/';
+const CDN_BASES = Object.freeze([
+  'https://cdn.jsdelivr.net/npm/',
+  'https://gcore.jsdelivr.net/npm/',
+  'https://fastly.jsdelivr.net/npm/',
+  'https://testingcf.jsdelivr.net/npm/',
+]);
+function uniqueUrls(values) { return [...new Set(values.filter(Boolean))]; }
+async function importFirstAvailable(urls, label) {
+  const failures = [];
+  for (const [index, url] of urls.entries()) {
+    try {
+      const module = await import(url);
+      if (index > 0) console.warn(label + ' CDN fallback selected:', url);
+      return {module, url};
+    } catch (error) {
+      let host = url;
+      try { host = new URL(url).host; } catch {}
+      failures.push(host + ': ' + (error?.message || String(error)));
+    }
+  }
+  throw new Error(label + ' CDN 加载失败，已尝试多个镜像节点：' + failures.join('；') + '。请检查网络或代理后重试。');
+}
 
 /** Only this adapter uses the newer runtime. The exhibit's other models are unchanged. */
-export async function createAdapter({modelId = MODEL_ID, revision = 'main', onProgress = () => {}, runtime = {}} = {}) {
+export async function createAdapter({modelId = MODEL_ID, revision = MODEL_REVISION, onProgress = () => {}, runtime = {}} = {}) {
   if (!navigator.gpu) throw new Error('浏览器没有提供 WebGPU，请使用支持 WebGPU 的 Chrome 或 Edge。');
   const gpu = await navigator.gpu.requestAdapter();
   if (!gpu) throw new Error('浏览器无法访问可用的 WebGPU 设备。');
   if (!gpu.features.has('shader-f16')) throw new Error('当前设备缺少半精度计算支持（shader-f16）。');
-  const ortUrl = runtime.ortUrl ?? `${CDN}onnxruntime-web@${VERSIONS.ort}/dist/ort.webgpu.bundle.min.mjs`;
-  const transformersUrl = runtime.transformersUrl ?? `${CDN}@huggingface/transformers@${VERSIONS.transformers}/dist/transformers.web.min.js`;
+  const ortFile = 'onnxruntime-web@' + VERSIONS.ort + '/dist/ort.webgpu.bundle.min.mjs';
+  const transformersFile = '@huggingface/transformers@' + VERSIONS.transformers + '/dist/transformers.web.min.js';
+  const ortCandidates = uniqueUrls([runtime.ortUrl, ...CDN_BASES.map(base => base + ortFile)]);
+  const {module: ort, url: ortUrl} = await importFirstAvailable(ortCandidates, 'ONNX Runtime WebGPU');
+  ort.env.wasm.wasmPaths = runtime.wasmPaths ?? new URL('./', ortUrl).href;
+  ort.env.wasm.numThreads = 1;
+
+  const preferredBase = CDN_BASES.find(base => ortUrl.startsWith(base)) || CDN_BASES[0];
+  const transformersCandidates = uniqueUrls([
+    runtime.transformersUrl,
+    ...[preferredBase, ...CDN_BASES].map(base => base + transformersFile),
+  ]);
+  const scopes = Object.fromEntries(transformersCandidates.map(url => [url, {
+    'onnxruntime-web/webgpu': ortUrl, 'onnxruntime-common': ortUrl,
+  }]));
   const imports = document.createElement('script');
   imports.type = 'importmap';
-  imports.textContent = JSON.stringify({scopes: {[transformersUrl]: {
-    'onnxruntime-web/webgpu': ortUrl, 'onnxruntime-common': ortUrl,
-  }}});
+  imports.textContent = JSON.stringify({scopes});
   document.head.append(imports);
-  const ort = await import(ortUrl);
-  ort.env.wasm.wasmPaths = runtime.wasmPaths ?? `${CDN}onnxruntime-web@${VERSIONS.ort}/dist/`;
-  ort.env.wasm.numThreads = 1;
-  const lib = await import(transformersUrl);
+  const {module: lib} = await importFirstAvailable(transformersCandidates, 'Transformers.js');
+  lib.env.useBrowserCache = typeof globalThis.caches !== "undefined";
+  lib.env.useWasmCache = typeof globalThis.caches !== "undefined";
+  try { await navigator.storage?.persist?.(); } catch { /* Cache still works without persistent-storage permission. */ }
   if (runtime.modelHost) {
     lib.env.allowRemoteModels = true;
     lib.env.allowLocalModels = false;
     lib.env.remoteHost = runtime.modelHost;
     lib.env.remotePathTemplate = '{model}/';
-    lib.env.useBrowserCache = false;
+    // Keep the browser cache enabled when a model mirror is configured.
   }
-  const options = {revision, progress_callback: onProgress};
-  const processor = await lib.AutoProcessor.from_pretrained(modelId, options);
-  const templateUrl = runtime.modelHost
-    ? `${runtime.modelHost}${modelId}/chat_template.jinja`
-    : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
-  const template = await fetch(templateUrl);
-  if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
-  processor.tokenizer.chat_template = await template.text();
-  const prompt = trainedPrompt(processor.tokenizer);
-  const model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
-    ...options, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
+  // The embedding tensor is a single ~971 MiB ONNX external-data file.
+  // Fetch it through verified HTTP Range requests; all other model files use
+  // the original Transformers.js fetch/cache path unchanged.
+  const originalFetch = lib.env.fetch;
+  const rangeFetch = createRangeFetch({
+    modelId,
+    revision,
+    onEvent(event) {
+      if (event.type === "range-retry") {
+        onProgress({
+          status: "range-retry",
+          stage: "model",
+          file: "embed_tokens_fp16.onnx_data",
+          index: event.index,
+          attempt: event.attempt,
+          message: event.message
+        });
+      }
+    }
   });
+  lib.env.fetch = rangeFetch;
+  let processor;
+  let model;
+  let prompt;
+  try {
+    processor = await lib.AutoProcessor.from_pretrained(modelId, {
+      revision, progress_callback: info => onProgress({...info, stage: "processor"}),
+    });
+    const templateUrl = runtime.modelHost
+      ? `${runtime.modelHost}${modelId}/chat_template.jinja`
+      : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
+    const template = await fetch(templateUrl);
+    if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
+    processor.tokenizer.chat_template = await template.text();
+    prompt = trainedPrompt(processor.tokenizer);
+    // config.json declares the per-file counts, including three Decoder shards; do not override it with true.
+    model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
+      revision, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'},
+      progress_callback: info => onProgress({...info, stage: "model"}),
+    });
+  } finally {
+    lib.env.fetch = originalFetch;
+    // Also clean up after a later ONNX session error if the embedding file itself
+    // was already committed to the normal Transformers.js full-file cache.
+    await rangeFetch.cleanupIfCached({
+      remoteHost: lib.env.remoteHost,
+      remotePathTemplate: lib.env.remotePathTemplate
+    });
+  }
   const stopping = new lib.InterruptableStoppingCriteria();
   let busy = false;
   return {

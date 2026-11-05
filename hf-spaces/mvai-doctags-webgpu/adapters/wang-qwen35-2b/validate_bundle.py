@@ -13,6 +13,12 @@ def validate(args):
     from transformers import AutoTokenizer
     from transformers.models.qwen3_5.modeling_qwen3_5 import Qwen3_5VisionModel
     from export_onnx import checkpoint_tensor, file_sha256, local_config
+    from external_data_sharding import (
+        MAX_EXTERNAL_DATA_SHARD_BYTES,
+        external_data_locations,
+        validate_external_data_files,
+        check_model_with_ort_compatibility,
+    )
     torch.set_num_threads(args.threads)
     root, config = local_config(args.model)
     bundle = args.bundle
@@ -63,22 +69,46 @@ def validate(args):
     report['onnx_checker'] = {}
     files = assets + ['config.json', 'preprocessor_config.json']
     for name in ['embed_tokens_fp16.onnx', 'vision_encoder.onnx', 'decoder_model_merged_fp16.onnx']:
-        try:
-            onnx.checker.check_model(str(bundle / 'onnx' / name))
-            report['onnx_checker'][name] = 'passed'
-        except onnx.checker.ValidationError as error:
-            # ORT intentionally registers this contrib operator in ai.onnx.
-            # Standard ONNX has no schema for it (onnx/onnx issue #6582).
-            # Keep the runtime graph unchanged and require real WebGPU testing.
-            if name != 'decoder_model_merged_fp16.onnx' or 'No Op registered for SimplifiedLayerNormalization' not in str(error):
-                raise
-            report['onnx_checker'][name] = {
-                'status': 'requires_onnxruntime_contrib_schema',
-                'operator': 'ai.onnx::SimplifiedLayerNormalization',
-                'webgpu_validation_required': True,
-            }
+        model_path = bundle / 'onnx' / name
+        report['onnx_checker'][name] = check_model_with_ort_compatibility(model_path, onnx)
         files += ['onnx/' + name, 'onnx/' + name + '_data']
-    report['artifacts'] = {name: {'bytes': (bundle / name).stat().st_size, 'sha256': file_sha256(bundle / name)} for name in files}
+    report['external_data_shards'] = {}
+    artifact_files = set(files)
+    for name in ['embed_tokens_fp16.onnx', 'vision_encoder.onnx', 'decoder_model_merged_fp16.onnx']:
+        model_path = bundle / 'onnx' / name
+        graph = onnx.load(str(model_path), load_external_data=False)
+        external_validation = validate_external_data_files(
+            graph.graph, bundle / 'onnx', onnx, MAX_EXTERNAL_DATA_SHARD_BYTES
+        )
+        locations = external_validation['files']
+        assert locations, f'{name} has no external-data references'
+        shard_records = []
+        for location in locations:
+            shard_path = (bundle / 'onnx' / location).resolve(strict=True)
+            assert shard_path.is_relative_to((bundle / 'onnx').resolve())
+            size = shard_path.stat().st_size
+            assert size <= MAX_EXTERNAL_DATA_SHARD_BYTES, (
+                f'{location} is {size:,} bytes; browser shard limit is '
+                f'{MAX_EXTERNAL_DATA_SHARD_BYTES:,}'
+            )
+            artifact_files.add('onnx/' + name)
+            artifact_files.add('onnx/' + location)
+            shard_records.append({
+                'file': location, 'bytes': size, 'sha256': file_sha256(shard_path)
+            })
+        report['external_data_shards'][name] = shard_records
+    config_json = json.loads((bundle / 'config.json').read_text(encoding='utf-8'))
+    external_config = config_json.get('transformers.js_config', {}).get('use_external_data_format')
+    assert isinstance(external_config, dict), 'use_external_data_format must declare per-model shard counts'
+    decoder_count = external_config.get('decoder_model_merged_fp16.onnx')
+    assert decoder_count == len(report['external_data_shards']['decoder_model_merged_fp16.onnx']), (
+        'Decoder shard count in config.json does not match the actual external-data files'
+    )
+    assert decoder_count >= 2, 'Decoder external data must be split into multiple browser-safe shards'
+    report['artifacts'] = {
+        name: {'bytes': (bundle / name).stat().st_size, 'sha256': file_sha256(bundle / name)}
+        for name in sorted(artifact_files)
+    }
     report['success'] = True
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')

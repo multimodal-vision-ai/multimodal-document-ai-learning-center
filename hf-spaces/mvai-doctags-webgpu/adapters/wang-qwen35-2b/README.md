@@ -4,6 +4,7 @@
 
 - [原始 BF16 模型](https://huggingface.co/multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags)
 - [ONNX 模型](https://huggingface.co/multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX)
+- [当前浏览器分片版本（固定 revision）](https://huggingface.co/multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX/tree/09f034d04e5a26620124e4b80923ffc2ec5899c7)
 - [实测记录](TESTS.md)
 
 本目录仅负责该 2B 模型。独立验证页面位于 `project-notes/ocr-wang-qwen35-local-test/`，公共展厅的集成与发布由教师审核后统一处理。
@@ -84,6 +85,35 @@ python test_browser.py \
 - 解码器使用 ORT GenAI 导出，显式 `exclude_mtp=true`，不启用辅助多词元预测头；保留完整主解码器及输出词表。
 - 图像编码器保持 FP32；循环状态和 KV 缓存类型以导出图与固定运行时协议为准。
 - `config.json` 仅添加 Transformers.js 外部数据和缓存设置；分词器、模板、generation config、processor config 与源文件逐字节一致。
-- 解码器中的 `ai.onnx::SimplifiedLayerNormalization` 是 [ORT WebGPU 支持的扩展](https://github.com/microsoft/onnxruntime/blob/main/js/web/docs/webgpu-operators.md)。标准 ONNX checker 缺少该 schema 的情况会明确记录，并以实际浏览器加载和生成验证补足。
+- 解码器中的 `ai.onnx::SimplifiedLayerNormalization` 是 [ORT WebGPU 支持的扩展](https://github.com/microsoft/onnxruntime/blob/main/js/web/docs/webgpu-operators.md)。标准 ONNX checker 尚无该算子的 schema。分片脚本只在临时校验副本里将该节点移入专用校验域，并将副本放在外部权重分片旁边，以文件路径运行 Checker，确保相对权重路径可解析；实际保存及上传的 ONNX 文件不会改变节点域或计算图。外部权重的路径、偏移、长度、文件边界和分片大小另行严格验证。最终仍以 ORT WebGPU 实际加载和生成测试为准。
 
-每个 `.onnx` 必须带同名 `_data` 文件。`.build/` 为中间结果，不发布。训练数据、内部测试图片、优化器状态和 4B 模型不属于此次发布。
+大模型的 ONNX 外部权重可以由多个同名前缀的 `_data`、`_data_1`、`_data_2` 文件组成；`config.json` 中的 `transformers.js_config.use_external_data_format` 必须声明每个 ONNX 文件对应的分片数量。为避开 Chrome 单个 ArrayBuffer 约 2 GB 的限制，每个外部数据分片控制在 1.5 GB 以内。
+
+如果已有完整 ONNX bundle，不需要重新导出模型，可直接运行以下脚本重新分片解码器权重并更新 `config.json`：
+
+```bash
+# Kaggle：先在 Secrets 中添加 HF_TOKEN，再执行：
+from kaggle_secrets import UserSecretsClient
+import os
+os.environ["HF_TOKEN"] = UserSecretsClient().get_secret("HF_TOKEN")
+
+!pip install onnx==1.23.2 huggingface_hub
+!python repack_decoder_shards.py --push
+
+# 或者对已经下载到本地的 bundle 执行：
+python repack_decoder_shards.py --bundle /path/to/Wang-Qwen3.5-2B-DocTags-ONNX --push
+```
+
+脚本会先在临时目录生成分片、重写 ONNX 外部数据引用并运行兼容性 ONNX 图校验（对已知 ORT 扩展算子只在临时校验文件副本中跳过 schema 检查，并通过文件路径解析外部权重）；同时验证每个权重分片的路径、偏移、长度和大小。验证通过后再替换原文件。它只向 Hugging Face 提交更新后的 `config.json`、`onnx/decoder_model_merged_fp16.onnx` 和新生成的 `onnx/decoder_model_merged_fp16.onnx_data*`，并删除不再使用的旧分片。需要在 Kaggle Secrets 中配置有该模型仓库写权限的 `HF_TOKEN`。`.build/` 为中间结果，不发布。训练数据、内部测试图片、优化器状态和 4B 模型不属于此次发布。
+
+
+### 浏览器分片版本固定
+
+当前适配器固定使用 Hugging Face revision `09f034d04e5a26620124e4b80923ffc2ec5899c7`，该版本的 Decoder 外部权重为三个文件。适配器不得显式传入 `use_external_data_format: true`，因为布尔值会覆盖 `config.json` 中的分片数量并只请求一个 chunk。加载时必须让 Transformers.js 读取该 revision 的 `transformers.js_config.use_external_data_format` 映射，其中 `decoder_model_merged_fp16.onnx` 对应 3。更新模型仓库 revision 时，必须同步更新 `contract.mjs` 中的 `MODEL_REVISION`。
+
+
+## Reliable browser download for the embedding tensor
+
+The browser adapter uses HTTP Range requests for the large `embed_tokens_fp16.onnx_data` file only. It fetches 32 MiB ranges with three concurrent requests, validates each response, retries transient network failures up to three times, and stores completed ranges in a revision-specific Cache Storage cache. If the browser connection closes, the next load reuses completed ranges instead of downloading the entire file again. The completed file is still assembled and handed to Transformers.js as the original single ONNX external-data file; no ONNX graph or tensor references are rewritten.
+
+The normal Transformers.js full-file cache remains the source for subsequent successful loads. Temporary range entries are deleted after that full-file cache entry is confirmed, or can be removed through the exhibit's selected-model cache cleanup.

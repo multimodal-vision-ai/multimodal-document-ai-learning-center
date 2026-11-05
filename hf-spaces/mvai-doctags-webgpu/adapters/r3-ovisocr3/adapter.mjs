@@ -1,7 +1,28 @@
 import {MODEL_ID, directPrompt, validateSettings} from './contract.mjs';
 
 export const VERSIONS = Object.freeze({transformers: '4.4.0-next.0', ort: '1.31.1'});
-const CDN = 'https://cdn.jsdelivr.net/npm/';
+const CDN_BASES = Object.freeze([
+  'https://cdn.jsdelivr.net/npm/',
+  'https://gcore.jsdelivr.net/npm/',
+  'https://fastly.jsdelivr.net/npm/',
+  'https://testingcf.jsdelivr.net/npm/',
+]);
+function uniqueUrls(values) { return [...new Set(values.filter(Boolean))]; }
+async function importFirstAvailable(urls, label) {
+  const failures = [];
+  for (const [index, url] of urls.entries()) {
+    try {
+      const module = await import(url);
+      if (index > 0) console.warn(label + ' CDN fallback selected:', url);
+      return {module, url};
+    } catch (error) {
+      let host = url;
+      try { host = new URL(url).host; } catch {}
+      failures.push(host + ': ' + (error?.message || String(error)));
+    }
+  }
+  throw new Error(label + ' CDN 加载失败，已尝试多个镜像节点：' + failures.join('；') + '。请检查网络或代理后重试。');
+}
 
 /** Only this adapter uses the newer runtime. The exhibit's other models are unchanged. */
 export async function createAdapter({modelId = MODEL_ID, revision = 'main', onProgress = () => {}, runtime = {}} = {}) {
@@ -9,27 +30,40 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
   const gpu = await navigator.gpu.requestAdapter();
   if (!gpu) throw new Error('浏览器无法访问可用的 WebGPU 设备。');
   if (!gpu.features.has('shader-f16')) throw new Error('当前设备缺少半精度计算支持（shader-f16）。');
-  const ortUrl = runtime.ortUrl ?? `${CDN}onnxruntime-web@${VERSIONS.ort}/dist/ort.webgpu.bundle.min.mjs`;
-  const transformersUrl = runtime.transformersUrl ?? `${CDN}@huggingface/transformers@${VERSIONS.transformers}/dist/transformers.web.min.js`;
+  const ortFile = 'onnxruntime-web@' + VERSIONS.ort + '/dist/ort.webgpu.bundle.min.mjs';
+  const transformersFile = '@huggingface/transformers@' + VERSIONS.transformers + '/dist/transformers.web.min.js';
+  const ortCandidates = uniqueUrls([runtime.ortUrl, ...CDN_BASES.map(base => base + ortFile)]);
+  const {module: ort, url: ortUrl} = await importFirstAvailable(ortCandidates, 'ONNX Runtime WebGPU');
+  ort.env.wasm.wasmPaths = runtime.wasmPaths ?? new URL('./', ortUrl).href;
+  ort.env.wasm.numThreads = 1;
+
+  const preferredBase = CDN_BASES.find(base => ortUrl.startsWith(base)) || CDN_BASES[0];
+  const transformersCandidates = uniqueUrls([
+    runtime.transformersUrl,
+    ...[preferredBase, ...CDN_BASES].map(base => base + transformersFile),
+  ]);
+  const scopes = Object.fromEntries(transformersCandidates.map(url => [url, {
+    'onnxruntime-web/webgpu': ortUrl, 'onnxruntime-common': ortUrl,
+  }]));
   const imports = document.createElement('script');
   imports.type = 'importmap';
-  imports.textContent = JSON.stringify({scopes: {[transformersUrl]: {
-    'onnxruntime-web/webgpu': ortUrl, 'onnxruntime-common': ortUrl,
-  }}});
+  imports.textContent = JSON.stringify({scopes});
   document.head.append(imports);
-  const ort = await import(ortUrl);
-  ort.env.wasm.wasmPaths = runtime.wasmPaths ?? `${CDN}onnxruntime-web@${VERSIONS.ort}/dist/`;
-  ort.env.wasm.numThreads = 1;
-  const lib = await import(transformersUrl);
+  const {module: lib} = await importFirstAvailable(transformersCandidates, 'Transformers.js');
+  // Cache model and runtime assets across page reloads; retain the default cache key.
+  lib.env.useBrowserCache = typeof globalThis.caches !== 'undefined';
+  lib.env.useWasmCache = typeof globalThis.caches !== 'undefined';
+  try { await navigator.storage?.persist?.(); } catch { /* Cache still works without persistent-storage permission. */ }
   if (runtime.modelHost) {
     lib.env.allowRemoteModels = true;
     lib.env.allowLocalModels = false;
     lib.env.remoteHost = runtime.modelHost;
     lib.env.remotePathTemplate = '{model}/';
-    lib.env.useBrowserCache = false;
+    // A configured mirror must use the same browser cache.
   }
-  const options = {revision, progress_callback: onProgress};
-  const processor = await lib.AutoProcessor.from_pretrained(modelId, options);
+  const processor = await lib.AutoProcessor.from_pretrained(modelId, {
+    revision, progress_callback: info => onProgress({...info, stage: 'processor'}),
+  });
   const templateUrl = runtime.modelHost
     ? `${runtime.modelHost}${modelId}/chat_template.jinja`
     : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
@@ -38,7 +72,8 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
   processor.tokenizer.chat_template = await template.text();
   const prompt = directPrompt(processor.tokenizer);
   const model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
-    ...options, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
+    revision, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
+    progress_callback: info => onProgress({...info, stage: 'model'}),
   });
   const stopping = new lib.InterruptableStoppingCriteria();
   let busy = false;
@@ -60,6 +95,7 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
       try {
         processor.image_processor.min_pixels = config.minPixels;
         processor.image_processor.max_pixels = config.maxPixels;
+        // RawImage.read accepts Blob/File directly; avoid exporting a potentially tainted Canvas.
         const raw = image instanceof lib.RawImage ? image : await lib.RawImage.read(image);
         const inputs = await processor(prompt, raw);
         const promptLength = inputs.input_ids.dims.at(-1);
