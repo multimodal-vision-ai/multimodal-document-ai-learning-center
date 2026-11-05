@@ -62,7 +62,7 @@ assert "MVAI-DocTags-DJX-0.8B-v1.0 · 自研" in REGISTRY_TEXT
 assert "MVAI-DocTags-WC-2B-v1.0 · 自研" in REGISTRY_TEXT
 assert "2.2B 参数" in REGISTRY_TEXT
 assert 'src="./model-registry.js"' in data, "Model registry must be loaded"
-for control in ('modelSelect','newModelRepo','addModel','cacheCheck','cachePersist','compareA','compareB','compareBodyA','compareBodyB'):
+for control in ('modelSelect','newModelRepo','addModel','cacheCheck','cacheClear','cachePersist','compareA','compareB','compareBodyA','compareBodyB'):
     assert 'id="'+control+'"' in data, f"Missing V1.7 control {control}"
 assert "env.useBrowserCache = true" in data, "Granite browser cache not enabled"
 assert "createDownloadMeter" in data and "progress_total" in data, "Aggregate model progress missing"
@@ -154,6 +154,7 @@ assert 'id="sync"' in data, "V1.6 original/result scroll option must remain"
 assert "模型大小（参数量）" in data, "Do not conflate parameters with disk size"
 
 assert "浏览器 Cache Storage" in data, "Cache explanation lost"
+assert 'id="cacheClear"' in data and 'cache.delete(request)' in data, "Selected-model cache cleanup is required after replacing large model files"
 # V1.7.3: only the platform name is visible by default. Model information remains accurate,
 # accessible via click, hover and keyboard, and future models are not claimed as deployed.
 assert '<h1>实时文档结构化解析-DocTags</h1>' in data
