@@ -147,7 +147,7 @@ assert len(challenge_items) == 28, "All 28 challenge samples must be listed"
 assert all(not re.search(r"\s\d+$", item["label"]) for item in challenge_items), "Visible sample labels must not expose internal numeric IDs"
 assert len({item["label"] for item in challenge_items}) == 28, "Challenge sample labels must be unique"
 assert challenge_items[12]["label"] == "英文词汇笔记" and challenge_items[13]["label"] == "英文短语笔记" and challenge_items[14]["label"] == "中文手写笔记", "Handwritten sample labels must remain concise and distinguishable"
-assert challenge_items[1]["label"] == "声明文档" and challenge_items[21]["label"] == "英文论文表格", "English paper samples must remain distinguishable"
+assert challenge_items[1]["label"] == "中文声明文档" and challenge_items[21]["label"] == "英文论文表格", "English paper samples must remain distinguishable"
 assert sum(item["source"] == "原始扫描" for item in challenge_items) == 18
 assert sum(item["source"] == "脱敏模拟" for item in challenge_items) == 10
 challenge_manifest_path = HTML.parent / "samples/challenges/manifest.json"
