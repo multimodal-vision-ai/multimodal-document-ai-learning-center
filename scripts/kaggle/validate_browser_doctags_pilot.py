@@ -142,6 +142,9 @@ challenge_match = re.search(r"const challengeSamples=(\[[\s\S]*?\]);", data)
 assert challenge_match, "Challenge sample list is missing"
 challenge_items = json.loads(challenge_match.group(1))
 assert len(challenge_items) == 28, "All 28 challenge samples must be listed"
+assert all(not re.search(r"\s\d+$", item["label"]) for item in challenge_items), "Visible sample labels must not expose internal numeric IDs"
+assert len({item["label"] for item in challenge_items}) == 28, "Challenge sample labels must be unique"
+assert challenge_items[12]["label"] == "中英词汇释义手写笔记" and challenge_items[13]["label"] == "英语短语与例句手写笔记", "Handwritten ruled-paper samples must be distinguishable"
 assert sum(item["source"] == "原始扫描" for item in challenge_items) == 18
 assert sum(item["source"] == "脱敏模拟" for item in challenge_items) == 10
 challenge_manifest_path = HTML.parent / "samples/challenges/manifest.json"
