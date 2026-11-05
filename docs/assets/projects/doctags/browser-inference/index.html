@@ -61,7 +61,7 @@ a{color:#1762bf}
 .rendered-document .render-block{border-left:3px solid transparent;border-radius:4px;transition:background-color .12s;scroll-margin:22px;white-space:pre-wrap}
 .rendered-document .render-block:hover,.rendered-document .render-block:focus-visible{border-left-color:#3e6fdb;background:#eaf1ff;outline:none}
 .rendered-document .render-handwritten{border-left-color:#c5d4e7;padding-left:9px;color:#304866}
-.rendered-document .render-page-number{text-align:center;color:#8998ab;font-size:11px;margin:20px 0 0}
+.rendered-document .render-page-number{text-align:center;color:#566c89;font-size:11px;margin:20px 0 0}
 .rendered-document .render-placeholder{padding:18px;margin:10px 0;border:1px dashed #b9cbe5;border-radius:10px;color:#637995;background:#f5f8fc;font-size:12px}
 .rendered-document .render-tbl{margin:18px 0;max-width:100%;overflow:auto;white-space:normal}
 .rendered-document table{border-collapse:collapse;table-layout:auto;width:100%;font-size:12px}
@@ -603,12 +603,12 @@ const compare=$("compareCanvas"),comp=compare.getContext("2d");
 const leftPane=$("originalScroll"),rightPane=$("renderScroll"),rendered=$("rendered");
 const documentParser=globalThis.MVAIDocTags;
 let regions=[],blocks=[],activeLocation=null,syncing=false,renderGood=false;
-const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",handwritten:"#9b6b38",page_number:"#8b97a8",otsl:"#c78b31",table:"#c78b31",seal:"#d74b73"};
+const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",handwritten:"#9b6b38",page_number:"#566c89",otsl:"#c78b31",table:"#c78b31",seal:"#d74b73"};
 function drawRegionLabel(block,scaleX,scaleY) {
   const label=block.type;
   const cssWidth=Math.max(1,compare.clientWidth||compare.width);
-  const fontSize=Math.max(8,Math.min(36,10*compare.width/cssWidth));
-  const padX=Math.ceil(fontSize*.35),padY=Math.ceil(fontSize*.16);
+  const fontSize=Math.max(1,8*compare.width/cssWidth);
+  const padX=Math.ceil(fontSize*.3),padY=Math.ceil(fontSize*.12);
   comp.font=`600 ${fontSize}px Arial,sans-serif`;
   const labelWidth=Math.ceil(comp.measureText(label).width+padX*2);
   const labelHeight=Math.ceil(fontSize+padY*2);
