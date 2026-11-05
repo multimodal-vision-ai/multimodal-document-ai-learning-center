@@ -1,4 +1,5 @@
 import {MODEL_ID, trainedPrompt, RESPONSE_PREFIX, STOP_IDS, validateSettings} from './contract.mjs';
+import {createRangeFetcher} from './range-fetch.mjs';
 
 export const VERSIONS = Object.freeze({transformers: '4.4.0-next.0', ort: '1.31.1'});
 const CDN = 'https://cdn.jsdelivr.net/npm/';
@@ -45,9 +46,15 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
   processor.tokenizer.chat_template = await template.text();
   const prompt = trainedPrompt(processor.tokenizer);
   onProgress({status: 'stage', stage: '下载 ONNX 权重并初始化 GPU 会话'});
-  const model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
-    ...options, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
-  });
+  const downloads = runtime.rangeDownloads && runtime.modelHost
+    ? createRangeFetcher({baseUrl: `${runtime.modelHost}${modelId}/`, onNotice: onProgress}) : null;
+  let model;
+  try {
+    model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
+      ...options, ...(downloads ? {env: {fetch: downloads.fetch}} : {}),
+      device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
+    });
+  } finally { downloads?.close(); }
   const stopping = new lib.InterruptableStoppingCriteria();
   let busy = false;
   return {

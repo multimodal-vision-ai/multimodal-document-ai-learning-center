@@ -4,7 +4,7 @@ const $ = id => document.getElementById(id);
 let adapter, blobUrl, busy = false, text = '';
 const preview = window.WANG_PREVIEW_CONFIG ?? {};
 let loadSequence = 0;
-if (preview.sourceLabel) $('source').textContent = `模型来源：${preview.sourceLabel}。三份权重仍需传输到浏览器，总量约 6.2 GB。`;
+if (preview.sourceLabel) $('source').textContent = `模型来源：${preview.sourceLabel}。三份权重仍需传输到浏览器，总量约 6.2 GB。${preview.adapterOptions?.runtime?.rangeDownloads ? '已启用 16 MiB 分段下载、失败重试和分段缓存。' : ''}`;
 function status(message) { $('status').textContent = message; }
 function bytes(value) {
   if (!Number.isFinite(value)) return '大小未知';
@@ -28,13 +28,13 @@ async function load(options = {}) {
   if (busy) throw new Error('当前操作尚未完成。');
   const sequence = ++loadSequence;
   let finished = false, phase = '开始加载', device;
-  const files = new Map();
-  const diagnostic = () => ({phase, files: Object.fromEntries(files), device,
+  const files = new Map(), notices = [];
+  const diagnostic = () => ({phase, files: Object.fromEntries(files), notices, device,
     browser: navigator.userAgent, deviceMemoryGB: navigator.deviceMemory,
     secureContext: window.isSecureContext, crossOriginIsolated: window.crossOriginIsolated});
   const renderProgress = () => {
     $('loadDetails').textContent = [`阶段：${phase}`, ...[...files].map(([name, file]) =>
-      `${file.done ? '完成' : '下载'} ${name}\n  ${bytes(file.loaded)} / ${bytes(file.total)}${Number.isFinite(file.percent) ? ` · ${file.percent.toFixed(1)}%（单文件）` : ''}`)].join('\n');
+      `${file.done ? '完成' : '下载'} ${name}\n  ${bytes(file.loaded)} / ${bytes(file.total)}${Number.isFinite(file.percent) ? ` · ${file.percent.toFixed(1)}%（单文件）` : ''}`), ...notices].join('\n');
   };
   $('status').removeAttribute('data-error');
   busy = true; controls(); status('正在加载模型…');
@@ -43,6 +43,10 @@ async function load(options = {}) {
       if (finished || sequence !== loadSequence) return;
       if (p.status === 'stage') { phase = p.stage; status(phase + '…'); }
       if (p.status === 'device') device = p.device;
+      if (p.status === 'notice') {
+        notices.push(p.message); if (notices.length > 12) notices.shift();
+        status(p.message);
+      }
       if (p.file) {
         const previous = files.get(p.file) ?? {};
         const total = Number.isFinite(p.total) ? p.total : previous.total;

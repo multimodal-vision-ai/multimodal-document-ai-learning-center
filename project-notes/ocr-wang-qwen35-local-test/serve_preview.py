@@ -7,12 +7,15 @@ import json
 from pathlib import Path
 import re
 import threading
+import time
 from urllib.parse import unquote, urlsplit
 
 PAGE = '/project-notes/ocr-wang-qwen35-local-test/'
 
 
 class Preview(http.server.SimpleHTTPRequestHandler):
+    protocol_version = 'HTTP/1.1'
+
     def end_headers(self):
         self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
         self.send_header('Cross-Origin-Embedder-Policy', 'require-corp')
@@ -40,7 +43,8 @@ class Preview(http.server.SimpleHTTPRequestHandler):
                 'sourceLabel': '服务器现有文件（通过端口转发传输，推理仍使用你的电脑显卡）',
                 'diagnosticsUrl': '/_preview/diagnostics',
                 'adapterOptions': {'modelId': 'checkpoint', 'runtime': {
-                    'useBrowserCache': True,
+                    'useBrowserCache': False,
+                    'rangeDownloads': True,
                     'modelHost': origin + '/local-model/',
                     'ortUrl': origin + '/local-runtime/ort/dist/ort.webgpu.bundle.min.mjs',
                     'wasmPaths': origin + '/local-runtime/ort/dist/',
@@ -63,9 +67,13 @@ class Preview(http.server.SimpleHTTPRequestHandler):
             self.send_error(404)
             return None
         stream = target.open('rb')
-        size = target.stat().st_size
+        stat = target.stat()
+        size = stat.st_size
+        # mtime and size change when the local file is replaced; no multi-GB hash per request.
+        etag = f'"{stat.st_mtime_ns:x}-{size:x}"'
         start, end, partial = 0, size - 1, False
-        if header := self.headers.get('Range'):
+        header = self.headers.get('Range')
+        if header and self.headers.get('If-Range', etag) == etag:
             match = re.fullmatch(r'bytes=(\d*)-(\d*)', header)
             if match and any(match.groups()):
                 left, right = match.groups()
@@ -85,23 +93,42 @@ class Preview(http.server.SimpleHTTPRequestHandler):
         self.send_header('Content-Type', self.guess_type(str(target)))
         self.send_header('Content-Length', str(end - start + 1))
         self.send_header('Accept-Ranges', 'bytes')
-        self.send_header('Last-Modified', self.date_time_string(target.stat().st_mtime))
+        self.send_header('Last-Modified', self.date_time_string(stat.st_mtime))
+        self.send_header('ETag', etag)
+        self.send_header('Cache-Control', 'no-store')
         if partial: self.send_header('Content-Range', f'bytes {start}-{end}/{size}')
         self.end_headers()
         stream.seek(start)
         self.byte_range = end - start + 1
+        self.transfer = (time.monotonic(), start, end, size)
         return stream
 
     def copyfile(self, source, output):
+        sent = 0
         try:
             remaining = getattr(self, 'byte_range', None)
             while remaining is None or remaining > 0:
                 data = source.read(1 << 20 if remaining is None else min(1 << 20, remaining))
                 if not data: break
                 output.write(data)
+                sent += len(data)
                 if remaining is not None: remaining -= len(data)
         except (BrokenPipeError, ConnectionResetError):
             pass
+        finally:
+            transfer = getattr(self, 'transfer', None)
+            if transfer and transfer[3] >= 1 << 20:
+                started, start, end, _ = transfer
+                self.log_message('transfer %s bytes=%s-%s sent=%s/%s seconds=%.2f %s',
+                                 urlsplit(self.path).path, start, end, sent, end - start + 1,
+                                 time.monotonic() - started,
+                                 'complete' if sent == end - start + 1 else 'interrupted')
+
+    def do_GET(self):
+        # HTTP/1.1 can reuse the handler for another request.
+        self.transfer = None
+        self.byte_range = None
+        super().do_GET()
 
     def do_POST(self):
         if urlsplit(self.path).path != '/_preview/diagnostics':
