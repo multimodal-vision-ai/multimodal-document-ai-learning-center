@@ -11,7 +11,7 @@
   .controls{display:flex;align-items:center;flex-wrap:wrap;gap:12px}button,select,input{font:inherit}button,select{padding:9px 16px;border:1px solid #c6d6ef;border-radius:8px;background:white;color:#164ba4}button.primary{background:#245cf0;color:white;border-color:#245cf0}button:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,select:focus-visible{outline:3px solid #9cbbff;outline-offset:2px}
   .columns{display:grid;grid-template-columns:1fr 1fr;gap:20px}.stage{position:relative;line-height:0}.stage img{width:100%;height:auto}.stage svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
   textarea{width:100%;height:65vh;min-height:340px;resize:vertical;border:1px solid #dbe5f4;padding:14px;font:14px/1.6 ui-monospace,monospace;color:#16304c;background:#fafcff;white-space:pre}
-  h2{font-size:18px;margin:0 0 16px}#status{min-height:24px;overflow-wrap:anywhere}#metrics{font-variant-numeric:tabular-nums;color:#526682}a{color:#245cf0}.note{font-size:14px}input[type=file]{max-width:100%}@media(max-width:800px){main{padding:0 14px}.columns{grid-template-columns:1fr}header{display:block}textarea{height:440px}}
+  h2{font-size:18px;margin:0 0 16px}#status{min-height:24px;overflow-wrap:anywhere}#metrics{font-variant-numeric:tabular-nums;color:#526682}a{color:#245cf0}.note{font-size:14px}input[type=file]{max-width:100%}#loadDetails{white-space:pre-wrap;overflow-wrap:anywhere;max-height:320px;overflow:auto;font:13px/1.6 ui-monospace,monospace}#status[data-error=true]{color:#a42c29}@media(max-width:800px){main{padding:0 14px}.columns{grid-template-columns:1fr}header{display:block}textarea{height:440px}}
 </style>
 <main>
   <header><div><h1>Wang Qwen3.5 2B DocTags</h1><p>wangcheng · 2B 模型 · 浏览器本地识别 · 视觉单精度 / 文字半精度</p></div><a href="https://huggingface.co/multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX" target="_blank" rel="noopener">HF 模型与说明 ↗</a></header>
@@ -24,6 +24,8 @@
       <button id="download" disabled>下载 .doctags</button>
     </div>
     <p id="status" role="status" aria-live="polite">等待加载。首次下载需要数 GB 模型文件，请使用支持半精度WebGPU的浏览器。</p>
+    <p id="source" class="note">模型来源：HF 在线仓库。三份权重约 1.02、1.33、3.83 GB；下载百分比按单个文件显示。</p>
+    <details id="loadDiagnostics"><summary>下载进度与完整错误</summary><pre id="loadDetails">尚未开始加载。</pre></details>
     <div id="metrics"></div>
     <p class="note">固定提示词：Convert this page to docling. · 输出上限4096词元 · 重复惩罚1.02 · 输出不做文本后处理。图片只在本浏览器处理。</p>
   </section>

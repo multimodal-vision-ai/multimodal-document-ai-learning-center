@@ -2,7 +2,21 @@ import {createAdapter} from '../../hf-spaces/mvai-doctags-webgpu/adapters/wang-q
 
 const $ = id => document.getElementById(id);
 let adapter, blobUrl, busy = false, text = '';
+const preview = window.WANG_PREVIEW_CONFIG ?? {};
+let loadSequence = 0;
+if (preview.sourceLabel) $('source').textContent = `模型来源：${preview.sourceLabel}。三份权重仍需传输到浏览器，总量约 6.2 GB。${preview.adapterOptions?.runtime?.rangeDownloads ? '已启用 16 MiB 分段下载、失败重试和分段缓存。' : ''}`;
 function status(message) { $('status').textContent = message; }
+function bytes(value) {
+  if (!Number.isFinite(value)) return '大小未知';
+  return value >= 1e9 ? `${(value / 1e9).toFixed(2)} GB` : `${(value / 1e6).toFixed(1)} MB`;
+}
+function errorText(error) {
+  const parts = [];
+  for (let item = error, n = 0; item && n < 3; item = item.cause, n++) {
+    parts.push(item.message ? `${item.name ?? 'Error'}: ${item.message}` : String(item));
+  }
+  return parts.join('\n原因：');
+}
 function controls() {
   $('load').disabled = busy || !!adapter;
   $('run').disabled = busy || !adapter || !$('image').hasAttribute('src');
@@ -11,15 +25,56 @@ function controls() {
   $('download').disabled = !text;
 }
 async function load(options = {}) {
+  if (busy) throw new Error('当前操作尚未完成。');
+  const sequence = ++loadSequence;
+  let finished = false, phase = '开始加载', device;
+  const files = new Map(), notices = [];
+  const diagnostic = () => ({phase, files: Object.fromEntries(files), notices, device,
+    browser: navigator.userAgent, deviceMemoryGB: navigator.deviceMemory,
+    secureContext: window.isSecureContext, crossOriginIsolated: window.crossOriginIsolated});
+  const renderProgress = () => {
+    $('loadDetails').textContent = [`阶段：${phase}`, ...[...files].map(([name, file]) =>
+      `${file.done ? '完成' : '下载'} ${name}\n  ${bytes(file.loaded)} / ${bytes(file.total)}${Number.isFinite(file.percent) ? ` · ${file.percent.toFixed(1)}%（单文件）` : ''}`), ...notices].join('\n');
+  };
+  $('status').removeAttribute('data-error');
   busy = true; controls(); status('正在加载模型…');
   try {
-    adapter = await createAdapter({...options, onProgress(p) {
-      status(p.file ? `加载 ${p.file}${Number.isFinite(p.progress) ? ` · ${p.progress.toFixed(0)}%` : ''}` : '正在创建推理会话…');
+    adapter = await createAdapter({...preview.adapterOptions, ...options, onProgress(p) {
+      if (finished || sequence !== loadSequence) return;
+      if (p.status === 'stage') { phase = p.stage; status(phase + '…'); }
+      if (p.status === 'device') device = p.device;
+      if (p.status === 'notice') {
+        notices.push(p.message); if (notices.length > 12) notices.shift();
+        status(p.message);
+      }
+      if (p.file) {
+        const previous = files.get(p.file) ?? {};
+        const total = Number.isFinite(p.total) ? p.total : previous.total;
+        const done = p.status === 'done' || previous.done;
+        const loaded = done && Number.isFinite(total) ? total : Number.isFinite(p.loaded) ? p.loaded : previous.loaded;
+        const percent = done ? 100 : Number.isFinite(p.progress) ? p.progress : previous.percent;
+        files.set(p.file, {loaded, total, percent, done: !!done});
+        status(`${done ? '已接收' : '加载'} ${p.file}${Number.isFinite(percent) ? ` · ${percent.toFixed(0)}%（单文件）` : ''}`);
+      }
+      renderProgress();
     }});
+    phase = '模型已加载'; renderProgress();
     status('模型已加载，可以选择图片识别。');
     return {versions: adapter.versions, modelId: adapter.modelId};
-  } catch (e) { status(`加载失败：${e.message}`); throw e; }
-  finally { busy = false; controls(); }
+  } catch (e) {
+    finished = true;
+    const message = errorText(e);
+    status(`加载失败（${phase}）：${message}`);
+    $('status').dataset.error = 'true';
+    $('loadDiagnostics').open = true;
+    const details = {...diagnostic(), error: message, stack: e?.stack};
+    $('loadDetails').textContent = JSON.stringify(details, null, 2);
+    if (preview.diagnosticsUrl) {
+      const body = JSON.stringify(details).replace(/(https?:\/\/[^\s"?#]+)[?#][^\s"]*/g, '$1');
+      fetch(preview.diagnosticsUrl, {method: 'POST', headers: {'Content-Type': 'application/json'}, body}).catch(() => {});
+    }
+    throw e;
+  } finally { finished = true; busy = false; controls(); }
 }
 function drawBoxes(raw) {
   const svg = $('boxes'); svg.replaceChildren(); svg.setAttribute('viewBox', '0 0 500 500'); svg.setAttribute('preserveAspectRatio', 'none');

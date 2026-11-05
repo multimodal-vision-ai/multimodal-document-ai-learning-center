@@ -1,0 +1,55 @@
+{
+  "transport": {
+    "localSource": true,
+    "rangeStatus": 206,
+    "rangeBytes": 32,
+    "crossOriginIsolated": true,
+    "sourceLabel": "模型来源：服务器现有文件（通过端口转发传输，推理仍使用你的电脑显卡）。三份权重仍需传输到浏览器，总量约 6.2 GB。已启用 16 MiB 分段下载、失败重试和分段缓存。"
+  },
+  "processor": {
+    "doctag": [
+      248085
+    ],
+    "remoteResources": []
+  },
+  "ranges": {
+    "firstNetwork": 2,
+    "secondNetwork": 0,
+    "bytes": 33554432,
+    "hash": "eeb7e8b440b434737bc8ddb81a585a19f359bb68f6c9f263e857afb8237b3d5c",
+    "cachedHash": "eeb7e8b440b434737bc8ddb81a585a19f359bb68f6c9f263e857afb8237b3d5c"
+  },
+  "bodyRetry": {
+    "ranges": 2,
+    "bytes": 16777216,
+    "hash": "c4f280f508a71a49994f51d354f80ddb5d2c645bd8460b7e1d038928add08dea",
+    "notices": [
+      "decoder_model_merged_fp16.onnx_data：16 MiB 分段下载，已完成分段可在重试时复用。",
+      "decoder_model_merged_fp16.onnx_data 字节 0-16777215 连接中断，重试 1/3"
+    ]
+  },
+  "sdkHook": {
+    "ranges": 2,
+    "weightHooks": 3,
+    "error": "TypeError: Failed to fetch",
+    "rangeDownloads": true,
+    "wholeFileCache": false
+  },
+  "errorUi": {
+    "status": "加载失败（检查 WebGPU 设备）：Error: 浏览器没有提供 WebGPU，请使用支持 WebGPU 的 Chrome 或 Edge。",
+    "error": "true",
+    "details": "{\n  \"phase\": \"检查 WebGPU 设备\",\n  \"files\": {},\n  \"notices\": [],\n  \"browser\": \"WangPreviewTransportSmokeTest/1.0\",\n  \"deviceMemoryGB\": 32,\n  \"secureContext\": true,\n  \"crossOriginIsolated\": true,\n  \"error\": \"Error: 浏览器没有提供 WebGPU，请使用支持 WebGPU 的 Chrome 或 Edge。\",\n  \"stack\": \"Error: 浏览器没有提供 WebGPU，请使用支持 WebGPU 的 Chrome 或 Edge。\\n    at createAdapter (http://127.0.0.1:18766/hf-spaces/mvai-doctags-webgpu/adapters/wang-qwen35-2b/adapter.mjs:10:29)\\n    at Object.load (http://127.0.0.1:18766/project-notes/ocr-wang-qwen35-local-test/demo.mjs:42:21)\\n    at <anonymous>:3:27\\n    at <anonymous>:6:9\"\n}",
+    "detailsOpen": true
+  },
+  "success": true,
+  "validationContext": {
+    "testedAtUtc": "2026-11-05T03:34:55.935258+00:00",
+    "runtime": {
+      "transformers": "4.4.0-next.0",
+      "ort": "1.31.1"
+    },
+    "browser": "Chrome 157 headless, Linux, --disable-gpu",
+    "scope": "Local HTTP transport and deliberate failure probes only. SDK probe uses WASM download path and is cancelled after two ranges; no full model inference, server GPU use, or user Windows/tunnel reproduction.",
+    "nodeFaultTestsPassed": 8
+  }
+}
