@@ -1,0 +1,140 @@
+.mv-shanshui {
+  margin-top: 3rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--md-default-fg-color--lighter);
+}
+
+.mv-shanshui__figure {
+  margin: 0;
+}
+
+.mv-shanshui__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.45rem;
+  background: var(--md-default-bg-color);
+}
+
+.mv-shanshui__caption {
+  margin-top: 0.55rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
+  font-style: normal;
+}
+
+.mv-shanshui__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.mv-shanshui__picker {
+  width: fit-content;
+}
+
+.mv-shanshui__picker summary {
+  cursor: pointer;
+  list-style: none;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.mv-shanshui__picker summary * {
+  font-style: normal;
+}
+
+.mv-shanshui__picker summary::-webkit-details-marker {
+  display: none;
+}
+
+.mv-shanshui__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.mv-shanshui__options button {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-style: normal;
+}
+
+.mv-shanshui__options button[aria-pressed="true"] {
+  border-color: var(--md-accent-fg-color);
+  color: var(--md-accent-fg-color);
+}
+
+.mv-shanshui__options button:focus-visible,
+.mv-shanshui__picker summary:focus-visible,
+.mv-shanshui__fullscreen:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
+}
+
+.mv-shanshui__fullscreen {
+  flex: 0 0 auto;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.35rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.mv-shanshui__fullscreen:hover {
+  border-color: var(--md-accent-fg-color);
+  color: var(--md-accent-fg-color);
+}
+
+.mv-shanshui:fullscreen,
+.mv-shanshui:-webkit-full-screen {
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 1.5rem;
+  overflow: auto;
+  background: var(--md-default-bg-color);
+}
+
+.mv-shanshui:fullscreen .mv-shanshui__figure,
+.mv-shanshui:-webkit-full-screen .mv-shanshui__figure {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+  margin: 0 auto;
+  max-width: 90rem;
+}
+
+.mv-shanshui:fullscreen .mv-shanshui__image,
+.mv-shanshui:-webkit-full-screen .mv-shanshui__image {
+  max-height: calc(100vh - 6rem);
+  object-fit: contain;
+}
+
+.mv-shanshui:fullscreen .mv-shanshui__caption,
+.mv-shanshui:-webkit-full-screen .mv-shanshui__caption {
+  flex: 0 0 auto;
+}
+
+@media screen and (max-width: 44.984375em) {
+  .mv-shanshui {
+    margin-top: 2.4rem;
+  }
+
+  .mv-shanshui__controls {
+    align-items: flex-start;
+  }
+}
