@@ -32,6 +32,8 @@ WANG_DOC_ADAPTER = ROOT / "docs/assets/projects/doctags/browser-inference/adapte
 WANG_HF_ADAPTER = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/wang-qwen35-2b/adapter.mjs"
 WANG_DOC_CONTRACT = ROOT / "docs/assets/projects/doctags/browser-inference/adapters/wang-qwen35-2b/contract.mjs"
 WANG_HF_CONTRACT = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/wang-qwen35-2b/contract.mjs"
+WANG_DOC_RANGE = ROOT / "docs/assets/projects/doctags/browser-inference/adapters/wang-qwen35-2b/range-download.mjs"
+WANG_HF_RANGE = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/wang-qwen35-2b/range-download.mjs"
 WANG_ADAPTER_DIR = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/wang-qwen35-2b"
 WANG_EXPORT = WANG_ADAPTER_DIR / "export_onnx.py"
 WANG_SHARDER = WANG_ADAPTER_DIR / "external_data_sharding.py"
@@ -43,8 +45,13 @@ assert R3_DOC_CONTRACT.read_bytes() == R3_HF_CONTRACT.read_bytes(), "R3 contract
 assert R3_DOC_DOWNLOAD.read_bytes() == R3_HF_DOWNLOAD.read_bytes(), "R3 download helpers diverged"
 assert WANG_DOC_ADAPTER.read_bytes() == WANG_HF_ADAPTER.read_bytes(), "WC-2B adapters diverged"
 assert WANG_DOC_CONTRACT.read_bytes() == WANG_HF_CONTRACT.read_bytes(), "WC-2B contracts diverged"
+assert WANG_DOC_RANGE.read_bytes() == WANG_HF_RANGE.read_bytes(), "WC-2B range download helpers diverged"
 R3_ADAPTER_TEXT = R3_DOC_ADAPTER.read_text(encoding="utf-8")
 WANG_ADAPTER_TEXT = WANG_DOC_ADAPTER.read_text(encoding="utf-8")
+assert "createRangeFetch" in WANG_ADAPTER_TEXT, "WC-2B must use the Range download helper"
+assert "lib.env.fetch = rangeFetch" in WANG_ADAPTER_TEXT, "WC-2B Range fetch override is missing"
+assert "cleanupIfCached" in WANG_ADAPTER_TEXT, "WC-2B range cache cleanup hook is missing"
+assert "RANGE_CACHE_NAME" in data and "clearRangeCache" in data, "WC-2B partial cache must be visible and clearable in the exhibit"
 assert "useBrowserCache = typeof globalThis.caches" in WANG_ADAPTER_TEXT, "WC-2B browser cache must be explicitly enabled"
 assert "useWasmCache = typeof globalThis.caches" in WANG_ADAPTER_TEXT, "WC-2B WASM cache must be explicitly enabled"
 assert "MODEL_REVISION" in WANG_ADAPTER_TEXT, "WC-2B must pin the exact 3-shard HF model revision"
@@ -218,10 +225,12 @@ subprocess.run(["node", "--check", str(R3_DOC_ADAPTER)], check=True)
 subprocess.run(["node", "--check", str(R3_DOC_CONTRACT)], check=True)
 subprocess.run(["node", "--check", str(R3_DOC_DOWNLOAD)], check=True)
 subprocess.run(["node", "--check", str(WANG_DOC_ADAPTER)], check=True)
+subprocess.run(["node", "--check", str(WANG_DOC_RANGE)], check=True)
 subprocess.run(["node", "--check", str(WANG_DOC_CONTRACT)], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_download_metrics.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/test_contract.mjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_model_registry.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_wang_qwen35_2b_contract.cjs")], check=True)
+subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_wang_qwen35_2b_range_download.mjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_render_parser.cjs")], check=True)
 print("Browser inference Static Space: content contract + parser fixture + Node JS syntax PASS")

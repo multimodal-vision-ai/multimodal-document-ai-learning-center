@@ -110,3 +110,10 @@ python repack_decoder_shards.py --bundle /path/to/Wang-Qwen3.5-2B-DocTags-ONNX -
 ### 浏览器分片版本固定
 
 当前适配器固定使用 Hugging Face revision `09f034d04e5a26620124e4b80923ffc2ec5899c7`，该版本的 Decoder 外部权重为三个文件。适配器不得显式传入 `use_external_data_format: true`，因为布尔值会覆盖 `config.json` 中的分片数量并只请求一个 chunk。加载时必须让 Transformers.js 读取该 revision 的 `transformers.js_config.use_external_data_format` 映射，其中 `decoder_model_merged_fp16.onnx` 对应 3。更新模型仓库 revision 时，必须同步更新 `contract.mjs` 中的 `MODEL_REVISION`。
+
+
+## Reliable browser download for the embedding tensor
+
+The browser adapter uses HTTP Range requests for the large `embed_tokens_fp16.onnx_data` file only. It fetches 32 MiB ranges with three concurrent requests, validates each response, retries transient network failures up to three times, and stores completed ranges in a revision-specific Cache Storage cache. If the browser connection closes, the next load reuses completed ranges instead of downloading the entire file again. The completed file is still assembled and handed to Transformers.js as the original single ONNX external-data file; no ONNX graph or tensor references are rewritten.
+
+The normal Transformers.js full-file cache remains the source for subsequent successful loads. Temporary range entries are deleted after that full-file cache entry is confirmed, or can be removed through the exhibit's selected-model cache cleanup.

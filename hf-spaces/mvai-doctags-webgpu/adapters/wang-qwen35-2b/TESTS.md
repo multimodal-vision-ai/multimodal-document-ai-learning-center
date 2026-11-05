@@ -98,3 +98,12 @@ The first browser attempt after the successful Kaggle upload failed during sessi
 The adapter also pins the model to HF revision `09f034d04e5a26620124e4b80923ffc2ec5899c7`, preventing a stale `main` URL/cache entry from mixing the pre-shard ONNX graph with the new shard files. The revision contains the 3-shard Decoder and config produced by Kaggle commit `09f034d04e5a26620124e4b80923ffc2ec5899c7`.
 
 Acceptance remains a fresh Windows Chrome load after clearing the WC-2B site cache. The browser must request the Decoder ONNX graph plus all three external-data chunks; session creation and a real DocTags inference must both succeed.
+
+
+## HTTP Range download validation
+
+The Windows Chrome test confirmed that the Hugging Face Xet CDN supports single-range requests for the 1,018,486,784-byte embedding external-data file: HTTP 206, `Content-Range: bytes 0-1048575/1018486784`, and `Accept-Ranges: bytes`.
+
+The WC-2B adapter now intercepts only `onnx/embed_tokens_fp16.onnx_data` through Transformers.js' documented `env.fetch` hook. It requests 32 MiB byte ranges with three concurrent workers, validates every 206 response and exact Content-Range/byte length, retries transient failures up to three times with exponential backoff, and streams ordered 1 MiB pieces into the normal Transformers.js loader. Each completed range is stored in a revision-specific same-origin Cache Storage entry; a later attempt reuses completed ranges. Once Transformers.js has successfully committed the complete model file to its normal cache, the temporary range cache is removed. The model's ONNX graph, tensor layout, model revision and inference runtime remain unchanged.
+
+The cache manager's WC-2B cleanup action also removes partial range entries. Unit tests cover ordered byte reconstruction, 206 validation, retry after a simulated connection close, and persistent reuse of completed ranges. This is code-level validation; a fresh Windows Chrome full-model load is still required before acceptance.
