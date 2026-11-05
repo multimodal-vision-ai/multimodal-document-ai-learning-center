@@ -1,10 +1,9 @@
 # DocTags challenge sample assets
 
-From the repository root, run `python scripts/kaggle/install_doctags_challenge_assets.py /path/to/DocTags_28个困难样本_WebP资源包.zip`. The script validates the archive and mirrors all 28 WebP files plus the manifest and README into both locations. The quality validator requires byte-identical copies.
+The gallery contains 28 WebP challenge samples: 18 original scans and 10 de-identified simulated documents. All visible labels are descriptive and omit internal source numbers.
 
-- 18 original scan images: `original_*.webp`
-- 10 de-identified simulated documents: `synthetic_*.webp`
 - Longest image edge: 1500 px; WebP quality: 78.
-- The browser gallery loads thumbnails lazily and sends the original WebP Blob through the existing local inference flow.
+- The browser gallery loads local thumbnails lazily and passes the original WebP Blob into the existing inference flow.
+- original_110_watermark_fingerprint.webp contains a fingerprint image. The project owner explicitly approved public display of this image on 2026-11-05; it is intentionally retained without blurring.
 
-**Publication check:** `original_110_watermark_fingerprint.webp` contains a fingerprint image. Confirm that the source is authorized for public display before merging the final assets.
+For repository builds, the 28-image archive is stored in 12 binary parts. GitHub Actions reassembles and validates the archive, extracts the WebP files into both the Learning Center and HF Static Space bundles, then removes the transport parts from the published output.
