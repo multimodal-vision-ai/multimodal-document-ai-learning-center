@@ -22,7 +22,7 @@ shanshui_scene: 7
         <p class="mv-showcase-v18__description">文档版面、文本、表格与阅读顺序的结构化解析。</p>
         <a class="mv-showcase-v18__primary" href="https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/" target="_blank" rel="noopener noreferrer">打开 HF 在线体验 <span aria-hidden="true">↗</span></a>
         <a class="mv-showcase-v18__secondary" href="../assets/projects/doctags/interactive-demo/index.html">查看解析样例 <span aria-hidden="true">→</span></a>
-        <p class="mv-showcase-v18__disclaimer">在线演示内置 IBM Granite Docling 258M 公开基线与DocTags OvisOCR3 0.8B v1.0 · 自研模型；R3 需要支持 shader-f16 的 WebGPU 设备。</p>
+        <p class="mv-showcase-v18__disclaimer">在线演示内置 IBM Granite Docling 258M 公开基线，以及 MVAI-DocTags-DJX-0.8B-v1.0 和 MVAI-DocTags-WC-2B-v1.0 两款自研模型；自研模型需要支持 shader-f16 的 WebGPU 设备。</p>
       </div>
     </article>
 
