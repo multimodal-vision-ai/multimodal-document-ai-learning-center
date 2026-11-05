@@ -187,6 +187,14 @@ assert 'src="./doctags-renderer.js"' in data, "Parser module not loaded"
 assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Missing comparison panes"
 assert 'id="rawDetails"' in data, "Raw DocTags should be collapsible"
 assert "renderComparison(result)" in data, "Real model output must drive rendering"
+assert 'id="stop"' in data and "终止推理" in data, "Manual inference stop control missing"
+assert "InterruptableStoppingCriteria" in data and "const graniteStopping=new InterruptableStoppingCriteria()" in data, "Granite interrupt criterion missing"
+assert "stopping_criteria:graniteStopping" in data and "graniteStopping.interrupt()" in data, "Granite stop signal is not wired to generation"
+assert "function refreshInferenceControls()" in data and "activeStop?.()" in data, "Stop button state/action wiring missing"
+assert "const completedNormally=ended&&!stopRequested" in data and "本次推理已由用户终止" in data, "Interrupted output must be marked incomplete and excluded from A/B history"
+assert "stop() { stopping.interrupt(); }" in R3_ADAPTER_TEXT and "stop() { stopping.interrupt(); }" in WANG_ADAPTER_TEXT, "Self-built adapters must expose cooperative stop"
+assert "终止推理" in GUIDE.read_text(encoding="utf-8"), "User guide must document manual stop"
+assert "终止推理" in SPACE_README.read_text(encoding="utf-8"), "HF Space README must document manual stop"
 assert "rendered.addEventListener" in data, "Source-to-result hover mapping missing"
 assert 'id="load"' in data and 'id="run"' in data
 assert "onnx-community/granite-docling-258M-ONNX" in data
@@ -231,6 +239,7 @@ subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_download_metrics
 subprocess.run(["node", str(ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/test_contract.mjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_model_registry.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_wang_qwen35_2b_contract.cjs")], check=True)
+subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_inference_stop.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_wang_qwen35_2b_range_download.mjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_render_parser.cjs")], check=True)
 print("Browser inference Static Space: content contract + parser fixture + Node JS syntax PASS")
