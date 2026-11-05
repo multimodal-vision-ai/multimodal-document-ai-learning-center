@@ -240,6 +240,7 @@ subprocess.run(["node", str(ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ov
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_model_registry.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_wang_qwen35_2b_contract.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_inference_stop.cjs")], check=True)
+subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_runtime_recovery.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_wang_qwen35_2b_range_download.mjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_render_parser.cjs")], check=True)
 print("Browser inference Static Space: content contract + parser fixture + Node JS syntax PASS")
