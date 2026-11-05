@@ -69,3 +69,10 @@ CPU 原模型使用 PyTorch 2.10.0、Transformers 5.6.2、FP32、4 个线程；�
 - [390px 宽截图](validation/screenshot-mobile.png)
 
 本记录证明该合成短页的实际功能与转换一致性；尚未重跑完整 OCR benchmark、长页、复杂表格或不同品牌设备的准确率与兼容性测试。
+
+
+## Browser external-data sharding correction
+
+The first exported bundle contained a single `decoder_model_merged_fp16.onnx_data` file of 3,832,349,440 bytes. This exceeds Chrome's approximately 2 GiB per-ArrayBuffer limit on some browser/runtime combinations, even though the same bundle loaded on the controlled A800 test host. The browser release must therefore split the decoder external data into multiple files, each no larger than 1.5 GB, and declare the exact chunk count in `transformers.js_config.use_external_data_format`.
+
+Run `python test_external_data_sharding.py` for the synthetic byte-preservation regression test, then run `python repack_decoder_shards.py --push` on Kaggle with `HF_TOKEN` stored as a Kaggle Secret. After upload, rerun `validate_bundle.py` and the browser test on the target Windows/Chrome device. The earlier A800 result is not evidence that the original monolithic package is portable to ordinary desktops.

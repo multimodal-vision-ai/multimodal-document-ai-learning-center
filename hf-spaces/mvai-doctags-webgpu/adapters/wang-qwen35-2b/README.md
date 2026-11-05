@@ -86,4 +86,16 @@ python test_browser.py \
 - `config.json` 仅添加 Transformers.js 外部数据和缓存设置；分词器、模板、generation config、processor config 与源文件逐字节一致。
 - 解码器中的 `ai.onnx::SimplifiedLayerNormalization` 是 [ORT WebGPU 支持的扩展](https://github.com/microsoft/onnxruntime/blob/main/js/web/docs/webgpu-operators.md)。标准 ONNX checker 缺少该 schema 的情况会明确记录，并以实际浏览器加载和生成验证补足。
 
-每个 `.onnx` 必须带同名 `_data` 文件。`.build/` 为中间结果，不发布。训练数据、内部测试图片、优化器状态和 4B 模型不属于此次发布。
+大模型的 ONNX 外部权重可以由多个同名前缀的 `_data`、`_data_1`、`_data_2` 文件组成；`config.json` 中的 `transformers.js_config.use_external_data_format` 必须声明每个 ONNX 文件对应的分片数量。为避开 Chrome 单个 ArrayBuffer 约 2 GB 的限制，每个外部数据分片控制在 1.5 GB 以内。
+
+如果已有完整 ONNX bundle，不需要重新导出模型，可直接运行以下脚本重新分片解码器权重并更新 `config.json`：
+
+```bash
+# Kaggle：先在 Secrets 中添加 HF_TOKEN，再执行：
+python repack_decoder_shards.py --push
+
+# 或者对已经下载到本地的 bundle 执行：
+python repack_decoder_shards.py --bundle /path/to/Wang-Qwen3.5-2B-DocTags-ONNX --push
+```
+
+脚本会先在临时目录生成分片、重写 ONNX 外部数据引用并运行 ONNX checker；验证通过后再替换原文件。它只向 Hugging Face 提交更新后的 `config.json`、`onnx/decoder_model_merged_fp16.onnx` 和新生成的 `onnx/decoder_model_merged_fp16.onnx_data*`，并删除不再使用的旧分片。需要在 Kaggle Secrets 中配置有该模型仓库写权限的 `HF_TOKEN`。`.build/` 为中间结果，不发布。训练数据、内部测试图片、优化器状态和 4B 模型不属于此次发布。

@@ -971,7 +971,12 @@ $("load").onclick=async()=>{
    if(wangAdapter){try{await wangAdapter.dispose();}catch{} wangAdapter=null;}
    if(model){try{await model.dispose?.();}catch{} model=null;}
    loaded=false;activeKey=null;processor=null;
-   $("downloadStatus").textContent="模型加载失败："+err.message+"。自研模型需要兼容的 ONNX 运行时和支持 shader-f16 的 WebGPU；其他自定义仓库也必须兼容对应的 DocTags 接口。旧 GPU 模型已释放；可以重新选择其他模型。";
+   const loadError=String(err?.message||err);
+   const allocationFailure=/Array buffer allocation failed|ArrayBuffer allocation|allocate.*buffer/i.test(loadError);
+   const loadDiagnosis=allocationFailure
+     ?"浏览器无法分配 ONNX 权重缓冲区。WC-2B 的解码器外部权重必须拆分为多个不超过 1.5 GB 的分片，并在模型 config.json 中声明准确分片数量；若已完成分片，仍可能是本机可用内存不足。这不是 shader-f16 检测失败。"
+     :"请核对模型 ONNX 文件、外部数据分片、Transformers.js/ONNX Runtime 版本及 WebGPU shader-f16 支持。";
+   $("downloadStatus").textContent="模型加载失败："+loadError+"。"+loadDiagnosis+"旧 GPU 模型已释放；可以重新选择其他模型。";
  }finally{busy=false;renderModelOptions(entry.id);}
 };
 $("run").onclick=async()=>{
