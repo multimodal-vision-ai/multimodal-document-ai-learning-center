@@ -126,6 +126,8 @@ for script in (WANG_EXPORT, WANG_SHARDER, WANG_REPACK, WANG_BUNDLE_VALIDATOR, WA
     compile(script.read_text(encoding="utf-8"), str(script), "exec")
 INSTALL_CHALLENGE_ASSETS = ROOT / "scripts/kaggle/install_doctags_challenge_assets.py"
 compile(INSTALL_CHALLENGE_ASSETS.read_text(encoding="utf-8"), str(INSTALL_CHALLENGE_ASSETS), "exec")
+ASSEMBLE_CHALLENGE_ARCHIVE = ROOT / "scripts/kaggle/assemble_doctags_challenge_archive.py"
+compile(ASSEMBLE_CHALLENGE_ARCHIVE.read_text(encoding="utf-8"), str(ASSEMBLE_CHALLENGE_ARCHIVE), "exec")
 assert 'src.toBlob' not in data, "R3 inference must not export a potentially tainted Canvas"
 assert 'RawImage.read(image)' in R3_ADAPTER_TEXT, "R3 adapter must decode Blob/File input directly"
 assert 'syntheticFallback' not in data and 'makeSample(' not in data, "Synthetic summary should be removed"
@@ -160,6 +162,7 @@ for item in challenge_manifest:
         signature = asset.read_bytes()[:12]
         assert signature[:4] == b"RIFF" and signature[8:12] == b"WEBP", f"Invalid WebP challenge sample: {asset}"
     assert paths[0].read_bytes() == paths[1].read_bytes(), f"Challenge sample mirror differs: {item['id']}"
+assert 'setInputSource("challenge");' in data and 'loadLocalSample(challengeSamples[0].id,"challenge")' in data, "Default source must open the challenge sample gallery and first sample"
 assert "IBM Granite Docling 官方 DEMO" in data, "Example source credit missing"
 assert "await model.generate" in data, "WebGPU model inference must remain real"
 assert "renderComparison(result)" in data, "V1.6 live reconstruction must remain"
