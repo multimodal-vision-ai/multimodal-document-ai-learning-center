@@ -4,7 +4,7 @@
   "use strict";
   const KEY="mvai-doctags-compatible-models-v1";
   const BUILTIN=Object.freeze({id:"onnx-community/granite-docling-258M-ONNX",name:"Granite Docling 258M · 公开基线",origin:"IBM / ONNX Community",builtIn:true,checked:true,parameterCount:"258M 参数"});
-  const R3=Object.freeze({id:"multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX",name:"DocTags OvisOCR3 0.8B v1.0 · 自研",origin:"河海大学 · MVAI Lab",builtIn:true,checked:true,parameterCount:"0.8B 参数",adapter:"r3-ovisocr3",precision:"r3-fixed",runtime:"Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1",downloadSize:"约 2.52 GB",validatedDevice:"Chrome 157 / NVIDIA A800 80GB"});
+  const R3=Object.freeze({id:"multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX",name:"MVAI-DocTags-A-0.8B-v1.0 · 自研",origin:"河海大学 · MVAI Lab",builtIn:true,checked:true,parameterCount:"0.8B 参数",adapter:"r3-ovisocr3",precision:"r3-fixed",runtime:"Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1",downloadSize:"约 2.52 GB",validatedDevice:"Chrome 157 / NVIDIA A800 80GB"});
   const BUILTINS=Object.freeze([BUILTIN,R3]);
   const BUILTIN_IDS=new Set(BUILTINS.map(model=>model.id));
   const MAX_CUSTOM=8;

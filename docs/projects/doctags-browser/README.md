@@ -5,7 +5,7 @@ hide:
 
 # 实时文档结构化解析-DocTags · 多模型技术预览
 
-这是一个可扩展的文档结构化解析与多模型对比实验平台：可针对同一输入文档切换经过适配的兼容模型，查看 DocTags、版面位置及结构化渲染结果，进行 A/B 对比。当前内置 **IBM Granite Docling 258M ONNX 公开基线** 和 **DocTags OvisOCR3 0.8B v1.0 ONNX 自研模型**。两者使用独立推理适配器，浏览器推理使用访问者本机 WebGPU，不需要实验室提供推理服务器；兼容性与解析准确率需按实际运行验证。
+这是一个可扩展的文档结构化解析与多模型对比实验平台：可针对同一输入文档切换经过适配的兼容模型，查看 DocTags、版面位置及结构化渲染结果，进行 A/B 对比。当前内置 **IBM Granite Docling 258M ONNX 公开基线** 和 **MVAI-DocTags-A-0.8B-v1.0 ONNX 自研模型（基于 OvisOCR3）**。两者使用独立推理适配器，浏览器推理使用访问者本机 WebGPU，不需要实验室提供推理服务器；兼容性与解析准确率需按实际运行验证。
 
 [打开浏览器端推理实验](../../assets/projects/doctags/browser-inference/index.html){ .md-button .md-button--primary }
 
@@ -13,7 +13,7 @@ hide:
 
 **一张文档、多模型顺序推理：** 在“02 · WebGPU 推理”中选择模型，点击“加载所选模型”，然后运行。切换另一模型后继续使用相同输入；“05 · 多模型结果对比”会保存当前页面内同一图片的两次完整推理输出，选择 A/B 分别显示结构化重建结果。Granite 支持 fp32/q4 配置；R3 使用固定混合精度（视觉 FP32、文字 FP16），不提供 q4 切换。不同精度不等于不同模型。
 
-**自研模型：** 选择“DocTags OvisOCR3 0.8B v1.0 · 自研”。模型约下载 2.52 GB，使用 Transformers.js 4.4.0-next.0 与 ONNX Runtime Web 1.31.1，需要支持 `shader-f16` 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试；其他显卡、浏览器和移动设备尚需单独验证。模型仓库：[DocTags OvisOCR3 0.8B v1.0 ONNX](https://huggingface.co/multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX)。
+**自研模型：** 选择“MVAI-DocTags-A-0.8B-v1.0 · 自研”。模型约下载 2.52 GB，使用 Transformers.js 4.4.0-next.0 与 ONNX Runtime Web 1.31.1，需要支持 `shader-f16` 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试；其他显卡、浏览器和移动设备尚需单独验证。模型仓库：[MVAI-DocTags-A-0.8B-v1.0 ONNX](https://huggingface.co/multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX)。
 
 **接入未来自研模型：** 点击“添加兼容模型”，输入公开的 Hugging Face 模型仓库 ID（如 `multimodal-vision-ai/model-onnx`）和显示名称。仅登记模型并不代表可以成功加载：必须提供与当前 Granite Docling processor、DocTags 提示词及 ONNX 加载器兼容的权重；其他模型架构需要单独开发适配层。不要输入私有仓库、访问令牌或身份凭证。
 

@@ -6,7 +6,7 @@ const storage={getItem:key=>data[key]??null,setItem:(key,val)=>{data[key]=val;}}
 a.equal(model.getAll(storage).length,2);
 a.equal(model.BUILTIN.checked,true);
 a.equal(model.R3.id,"multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX");
-a.equal(model.R3.name,"DocTags OvisOCR3 0.8B v1.0 · 自研");
+a.equal(model.R3.name,"MVAI-DocTags-A-0.8B-v1.0 · 自研");
 a.equal(model.R3.adapter,"r3-ovisocr3");
 a.equal(model.R3.parameterCount,"0.8B 参数");
 a.ok(model.validRepoId("multimodal-vision-ai/mvai-docling-onnx"));
