@@ -45,3 +45,9 @@ DJX-0.8B 首次下载约 2.52 GB，WC-2B 首次下载约 6.2 GB，均需要支�
 页面包含九类 IBM Granite Docling 官方演示文档：整页文档、表格、代码、图像、公式、图表、阿拉伯语、日语和中文文档，均为 PNG/JPEG 格式，保存在 `samples/` 中。从本站同源读取为 Blob 并绘制到 Canvas 预览；DJX-0.8B 与 WC-2B 推理均直接读取 Blob，不再调用 `canvas.toBlob()`。切换示例时清空上一文档的推理结果和 A/B 对比历史。
 
 图片来源：[IBM Granite Docling Demo](https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/tree/main/data/images)，原项目 [Apache-2.0](https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/blob/main/README.md)。图像如包含其他权利人的内容，仍以原始素材许可为准。所有样例仅用于本平台科研展示与测试，不代表实验室自研模型性能。
+
+## V1.10 缓存清理与 CDN 恢复
+
+- 九类样例缩略图改为复用 CORS-aware Blob 加载器，与主预览使用相同的 raw.githack / raw.githubusercontent.com 回退逻辑，避免浏览器清理缓存后直接图片请求显示破图。
+- DJX-0.8B 与 WC-2B 的 ONNX Runtime WebGPU 和 Transformers.js 使用版本锁定的多 CDN 回退：jsDelivr、Gcore、Fastly、TestingCF。WASM 文件目录自动跟随成功加载的 ONNX Runtime 镜像。
+- 浏览器缓存清理后，模型权重仍需重新下载；运行时脚本和样例图片会自动重新获取。所有镜像均不可访问时，界面会显示明确的 CDN 网络诊断。
