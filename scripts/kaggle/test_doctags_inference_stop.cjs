@@ -11,11 +11,11 @@ assert.match(html, /<button class="stop-action" id="stop" type="button" hidden d
 const scriptMatch = html.match(/<script type="module">([\s\S]*?)<\/script>/);
 assert.ok(scriptMatch, "inference module script must exist");
 assert.match(scriptMatch[1], /InterruptableStoppingCriteria/);
-assert.match(module[1], /stopping_criteria:graniteStopping/);
-assert.match(module[1], /activeStop=adapter\?\(\)=>adapter\.stop\(\):\(\)=>graniteStopping\.interrupt\(\)/);
-assert.match(module[1], /const completedNormally=ended&&!stopRequested/);
-assert.match(module[1], /if\(completedNormally\)\{/);
-assert.match(module[1], /已终止推理 · 当前输出不完整/);
+assert.match(scriptMatch[1], /stopping_criteria:graniteStopping/);
+assert.match(scriptMatch[1], /activeStop=adapter\?\(\)=>adapter\.stop\(\):\(\)=>graniteStopping\.interrupt\(\)/);
+assert.match(scriptMatch[1], /const completedNormally=ended&&!stopRequested/);
+assert.match(scriptMatch[1], /if\(completedNormally\)\{/);
+assert.match(scriptMatch[1], /已终止推理 · 当前输出不完整/);
 for (const relative of [
   "adapters/r3-ovisocr3/adapter.mjs",
   "adapters/wang-qwen35-2b/adapter.mjs"
