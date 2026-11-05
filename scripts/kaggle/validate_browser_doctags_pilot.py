@@ -19,6 +19,7 @@ assert "sdk: static" in SPACE_README.read_text(encoding="utf-8")
 PARSER = ROOT / "docs/assets/projects/doctags/browser-inference/doctags-renderer.js"
 HF_PARSER = ROOT / "hf-spaces/mvai-doctags-webgpu/doctags-renderer.js"
 assert PARSER.read_bytes() == HF_PARSER.read_bytes(), "DocTags parsers diverged"
+assert '<script src="./doctags-renderer.js?v=1.6.1"></script>' in data, "DocTags parser script must be versioned to prevent stale cached parser code"
 PARSER_TEXT = PARSER.read_text(encoding="utf-8")
 assert "handwritten|page_number" in PARSER_TEXT, "Handwritten text and page-number tags must be parsed"
 assert 'kind==="handwritten"' in data and 'kind==="page_number"' in data, "Handwritten text and page numbers must have explicit render paths"
