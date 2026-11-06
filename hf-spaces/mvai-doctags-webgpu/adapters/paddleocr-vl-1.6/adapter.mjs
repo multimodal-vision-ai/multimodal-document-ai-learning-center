@@ -267,10 +267,11 @@ export async function createAdapter({
             task: region.task,
             maxGeneratedTokens: region.task === "table" ? 2048 : 1024,
             onProgress: event => progress({
+              ...event,
               stage: "recognition",
+              substage: event.stage ?? event.kind ?? "inference",
               region: index + 1,
-              totalRegions: regions.length,
-              ...event
+              totalRegions: regions.length
             })
           });
           if (typeof reply?.text !== "string") {
