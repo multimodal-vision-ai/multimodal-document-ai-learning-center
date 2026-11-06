@@ -83,7 +83,7 @@ function drawResult(result){
   ctx.drawImage(bitmap,0,0);
   const parsed=window.MVAINativeOCR.parsePaddle(result.text,{width:bitmap.width,height:bitmap.height});
   window.MVAINativeOCRRenderer.renderBoxes(ctx,parsed,bitmap.width,bitmap.height,{showLabels:true});
-  window.MVAINativeOCRRenderer.renderBlocks(parsed,$("blocks"));
+  window.MVAINativeOCRRenderer.renderBlocks(parsed,$("blocks"),bitmap);
   $("raw").textContent=result.text;
   $("meta").textContent=[
     "版面区域："+result.totalRegions,
