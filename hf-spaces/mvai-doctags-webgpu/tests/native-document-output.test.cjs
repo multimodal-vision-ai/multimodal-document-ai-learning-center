@@ -50,6 +50,19 @@ test("PaddleOCR-VL refuses to treat plain OCR text as a located document",()=>{
   assert.equal(parsed.warnings.length,1);
 });
 
+test("Paddle native JSON keeps the exact OTSL block_content while the display parser reads it separately",()=>{
+  const otsl="<fcel>机构<fcel>代码<nl><fcel>中国银行<fcel>601988.SH<nl>";
+  const raw=JSON.stringify({width:1200,height:800,parsing_res_list:[
+    {block_bbox:[10,20,900,700],block_label:"table",block_content:otsl,block_id:7,block_order:3}
+  ]});
+  const parsed=core.parsePaddle(raw,{width:1200,height:800});
+  assert.equal(parsed.raw,raw);
+  assert.equal(parsed.blocks[0].content,otsl);
+  const display=core.parseOTSL(parsed.blocks[0].content);
+  assert.equal(display.rows[1][1].text,"601988.SH");
+  assert.equal(parsed.blocks[0].content,otsl);
+});
+
 test("PaddleOCR-VL OTSL restores rows, cells and empty cells without changing source text",()=>{
   const source="<fcel>年份<fcel>地区<nl><fcel>2025<ecel><nl>";
   const parsed=core.parseOTSL(source);
