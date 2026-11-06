@@ -50,7 +50,7 @@
 - The Paddle runtime and layout SDK are loaded from pinned external CDN URLs; a self-hosted mirror has not yet been prepared.
 - Native result routing into the production page's 03/04/05 panes and model registry is intentionally not done yet.
 - Runtime performance, cold/warm cache behavior, memory stability, stop/dispose behavior, and original three-model regression tests remain outstanding.
-- The new runtime files have not yet been mirrored into `docs/assets/projects/doctags/browser-inference`, and no HF Space or main branch deployment has occurred.
+- The isolated Paddle acceptance page and its two adapter modules are mirrored into `docs/assets/projects/doctags/browser-inference` for the PR-specific DEV preview; CI now checks byte-for-byte parity with the HF Space source. Ovis runtime files are not yet mirrored. No HF Space or main branch deployment has occurred.
 
 ## Next execution sequence
 1. Run the Paddle standalone page on Chrome + RTX 3080 10GB. Verify cold load, warm-up, text/table/formula/chart/image sample, bbox alignment, partial stop, repeat inference, and dispose. Record console errors and timings.
