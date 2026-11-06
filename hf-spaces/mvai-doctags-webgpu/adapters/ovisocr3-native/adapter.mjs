@@ -63,12 +63,14 @@ export async function createAdapter({modelId = ONNX_MODEL_ID, revision, onProgre
     lib.env.remotePathTemplate = '{model}/';
     // A configured mirror must use the same browser cache.
   }
-  const processor = await lib.AutoProcessor.from_pretrained(modelId, {
-    revision, progress_callback: info => onProgress({...info, stage: 'processor'}),
-  });
+  // Validate the immutable ONNX commit and its provenance before any model
+  // asset download; "main" and the official BF16 source repo are not accepted.
   const bundle = await fetchBundleContract({
     modelId, revision, modelHost: runtime.modelHost,
     fetcher: runtime.fetcher ?? fetch
+  });
+  const processor = await lib.AutoProcessor.from_pretrained(modelId, {
+    revision, progress_callback: info => onProgress({...info, stage: 'processor'}),
   });
   const template = await (runtime.fetcher ?? fetch)(
     modelFileUrl(modelId, revision, "chat_template.jinja", runtime.modelHost)
