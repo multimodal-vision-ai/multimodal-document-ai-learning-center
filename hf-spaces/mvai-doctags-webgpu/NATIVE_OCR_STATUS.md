@@ -31,6 +31,7 @@
 - Layout manifest: PP-DocLayoutV3 FP16; 74,279,796 bytes; source model manifest includes SHA-256 validation.
 - Published manifest URL: `https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json`. The source-tree path `models/pp-doclayoutv3/manifest.json` is staged by the upstream Pages build to `/models/manifest.json`; using the source-tree path as a public URL causes HTTP 404.
 - The adapter now loads the pinned browser SDK and VLM runtime directly, explicitly requests WebGPU FP16 and disables fallback. It bypasses the upstream adaptive factory and creates exactly one WebRuntime (the upstream factory would create up to three runtime handles on an RTX 3080); software-rendering adapters are rejected.
+- Fixed the second browser-load failure: the SDK had constructed its module Worker from jsDelivr, which the browser rejected as cross-origin. The adapter now overrides the SDK's worker-base global immediately before detector creation so `inference.worker.js` resolves to the same-origin `vendor/ppdoclayoutv3/` directory. A staging script downloads the exact v1.2.0 worker (732,503 bytes), verifies SHA-256 `128380b8f435c07b1dec25542355708dbd99e033b2fcf994d13d12bc8b3a6a6b`, and places it in the Space and DEV asset trees. The DEV workflow checks the published worker bytes and URL-base file.
 - It performs a one-token warm-up because the VLM engine downloads its large model assets lazily on first inference. The model is not reported ready until this real download and warm-up finish.
 - The pipeline detects regions in original page pixels, preserves reading order, crops from the original image, routes OCR/table/formula/chart tasks, and assembles native `parsing_res_list`.
 - Stop can interrupt layout detection. The upstream VLM does not expose token-level cancellation; if a region is decoding, that region finishes, then the adapter stops and returns completed native blocks marked incomplete.
@@ -49,6 +50,7 @@
 - Ovis standalone acceptance page, adapter and source contract are also mirrored into the MkDocs DEV assets. CI checks their byte-for-byte parity and public reachability; the page remains gated on the future validated ONNX bundle.
 - Paddle result assembly now rejects a missing region recognition result instead of silently filling an empty content field; intentionally skipped image regions remain explicitly represented.
 - Fixed the Paddle layout manifest URL after the first RTX 3080 browser load returned HTTP 404. The adapter now requests the upstream Pages-staged `/models/manifest.json`, and a regression test guards this exact published path.
+- Added a regression test proving that the resolved PP-DocLayoutV3 worker URL has the same origin as the demo page and a CI-pinned worker staging check.
 - Ovis decoder packaging and validation now run `onnx.checker` after external-data packaging.
 
 ## Not yet accepted / not exposed
