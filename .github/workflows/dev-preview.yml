@@ -445,6 +445,35 @@ jobs:
             test -s "$RUNNER_TEMP/$(basename "$asset")"
           done
           echo "PaddleOCR-VL-1.6 standalone test page and all local assets are publicly reachable."
+      - name: Verify the upstream PP-DocLayoutV3 published manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest_url="https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json"
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+              "$manifest_url" -o "$RUNNER_TEMP/pp-doclayout-manifest.json"; then
+              break
+            fi
+            if [ "$attempt" -eq 6 ]; then
+              echo "::error::Published PP-DocLayoutV3 manifest is not reachable: $manifest_url"
+              exit 1
+            fi
+            sleep 10
+          done
+          python - "$RUNNER_TEMP/pp-doclayout-manifest.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          manifest = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          assert manifest["model"]["id"] == "pp-doclayoutv3"
+          fp16 = next(item for item in manifest["variants"] if item["id"] == "fp16")
+          assert fp16["bytes"] == 74279796
+          assert fp16["url"] == "https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/model-fp16.onnx"
+          assert len(fp16["sha256"]) == 64
+          print("Published PP-DocLayoutV3 manifest and FP16 asset metadata verified.")
+          PY
       - name: Verify OvisOCR3 standalone browser test page
         shell: bash
         run: |
