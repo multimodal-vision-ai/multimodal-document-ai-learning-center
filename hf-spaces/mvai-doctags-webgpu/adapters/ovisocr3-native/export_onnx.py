@@ -285,7 +285,8 @@ def package_decoder(model_root, output, exported):
         raise ValueError("Expected one decoder external data file")
     shutil.copyfile(next(iter(data_sources)), Path(str(target) + "_data"))
     onnx.save(graph, target)
-    print(json.dumps({"component": "decoder", "model_path": str(target), "cache_io_renames": len(mapping)}), flush=True)
+    onnx.checker.check_model(str(target))
+    print(json.dumps({"component": "decoder", "model_path": str(target), "cache_io_renames": len(mapping), "onnx_check": "passed"}), flush=True)
 
 
 def export_decoder(model_root, output):
