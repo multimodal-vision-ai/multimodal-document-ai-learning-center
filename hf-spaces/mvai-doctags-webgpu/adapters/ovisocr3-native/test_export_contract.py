@@ -36,14 +36,29 @@ def input_names(name):
     return set(ast.literal_eval(entry))
 
 
-for component in ("embedding", "vision"):
-    expected = input_names(f"get_{component}_io_config")
-    actual = return_dict_keys(f"get_{component}_dummy_inputs")
-    if expected != actual:
-        raise SystemExit(
-            f"{component} exporter dummy inputs mismatch: "
-            f"io_config={sorted(expected)} dummy_inputs={sorted(actual)}"
-        )
+# Vision uses named dictionary inputs with the dynamo exporter.
+expected_vision = input_names("get_vision_io_config")
+actual_vision = return_dict_keys("get_vision_dummy_inputs")
+if expected_vision != actual_vision:
+    raise SystemExit(
+        "vision exporter dummy inputs mismatch: "
+        f"io_config={sorted(expected_vision)} dummy_inputs={sorted(actual_vision)}"
+    )
+
+# Embedding uses the legacy TorchScript exporter: dummy inputs must be
+# positional args, not a dict that can be misinterpreted as kwargs.
+embedding_input_names = input_names("get_embedding_io_config")
+embedding_dummy = function("get_embedding_dummy_inputs")
+embedding_return = next(
+    item.value for item in ast.walk(embedding_dummy)
+    if isinstance(item, ast.Return)
+)
+if not isinstance(embedding_return, ast.Tuple):
+    raise SystemExit("embedding dummy inputs must be a positional tuple")
+if len(embedding_return.elts) != len(embedding_input_names):
+    raise SystemExit(
+        "embedding positional dummy-input count does not match ONNX input_names"
+    )
 
 # The official OvisOCR3 repository ships preprocessor_config.json with a
 # top-level size object. Keep its normalization fields and only lower the
@@ -96,6 +111,17 @@ if "embedding.num_embeddings" not in embedding_dummy_source:
     raise SystemExit(
         "Embedding dummy-input callback must derive vocabulary size "
         "from the loaded nn.Embedding module"
+    )
+
+if "return (input_ids,)" not in embedding_dummy_source:
+    raise SystemExit(
+        "Embedding dummy-input callback must return one positional input tensor"
+    )
+
+export_component_source = ast.get_source_segment(SOURCE_TEXT, function("export_component"))
+if 'target_opset = 21 if component == "vision" else 20' not in export_component_source:
+    raise SystemExit(
+        "Embedding must use opset 20 for the pinned legacy exporter; vision keeps opset 21"
     )
 
 validator_path = Path(__file__).with_name("validate_bundle.py")
