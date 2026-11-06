@@ -22,4 +22,6 @@ jobs:
         with:
           node-version: '22'
       - name: Check native JSON and layout contracts
-        run: node --test hf-spaces/mvai-doctags-webgpu/tests/native-document-output.test.cjs hf-spaces/mvai-doctags-webgpu/tests/native-adapters.test.mjs
+        run: node --test hf-spaces/mvai-doctags-webgpu/tests/native-document-output.test.cjs hf-spaces/mvai-doctags-webgpu/tests/native-adapters.test.mjs hf-spaces/mvai-doctags-webgpu/tests/ovisocr3-contract.test.mjs
+      - name: Check Ovis exporter Python syntax
+        run: python -m py_compile hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/export_onnx.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/validate_bundle.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/test_reference.py
