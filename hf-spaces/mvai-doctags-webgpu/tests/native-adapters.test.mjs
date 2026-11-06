@@ -1,8 +1,18 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {orderedRegions,taskForLabel,assemblePaddleResult} from "../adapters/paddleocr-vl-1.6/pipeline-contract.mjs";
-import {createSingleRuntimeVlm,LAYOUT_MANIFEST_URL} from "../adapters/paddleocr-vl-1.6/adapter.mjs";
+import {createSingleRuntimeVlm,LAYOUT_MANIFEST_URL,resolveLayoutWorkerUrls} from "../adapters/paddleocr-vl-1.6/adapter.mjs";
 import {directPrompt,ONNX_MODEL_ID,requireNativeOnnxBundle} from "../adapters/ovisocr3-native/contract.mjs";
+
+test("Paddle layout worker resolves to the demo page origin",()=>{
+  const moduleUrl="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-74/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs";
+  const urls=resolveLayoutWorkerUrls(moduleUrl);
+  assert.equal(new URL(urls.baseUrl).origin,new URL(moduleUrl).origin);
+  assert.equal(new URL(urls.workerUrl).origin,new URL(moduleUrl).origin);
+  assert.equal(new URL(urls.baseUrl).pathname,"/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-74/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/worker-base.js");
+  assert.equal(new URL(urls.workerUrl).pathname,"/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-74/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js");
+  assert.equal(new URL("./inference.worker.js",urls.baseUrl).href,urls.workerUrl);
+});
 
 test("Paddle layout detector uses the deployed Pages manifest, not the source-tree path",()=>{
   const url=new URL(LAYOUT_MANIFEST_URL);
