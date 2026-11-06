@@ -27,6 +27,7 @@ python -m venv .venv-ovis
 source .venv-ovis/bin/activate
 python -m pip install --upgrade pip
 python -m pip install torch==2.10.0
+python -m pip install huggingface_hub>=0.34.0
 python -m pip install -r hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/requirements-export.txt
 ~~~
 
@@ -87,6 +88,18 @@ python hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/test_reference.py 
 ~~~
 
 The exported bundle is not considered ready until the same image produces valid native Structured JSON in real Chrome WebGPU, with matching text, category order, and plausible bbox positions. A CPU PyTorch result or ONNX CPU session is not browser WebGPU acceptance.
+
+## Prepare and upload the validated bundle
+
+Only after component validation reports success, create a clean staging folder and upload it to the MVAI Hugging Face organization:
+
+~~~bash
+export HF_TOKEN=YOUR_WRITE_TOKEN
+bash hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/upload_bundle.sh \
+  ./release/ovisocr3-webgpu
+~~~
+
+The staging script verifies every artifact's byte count and SHA-256 against the validation report, includes the original Apache-2.0 license and validation evidence, and excludes intermediate .build files. It refuses to upload if the component validation report is missing or unsuccessful. After upload, record the new repository's full commit SHA; the browser adapter deliberately rejects a floating main revision.
 
 ## Publication gate
 
