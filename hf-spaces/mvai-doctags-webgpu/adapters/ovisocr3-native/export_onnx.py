@@ -153,8 +153,34 @@ def get_embedding_io_config(model_path=None):
 def get_embedding_dummy_inputs(model=None):
     import torch
 
+    # Olive passes a PyTorchModelHandler to dummy_inputs_func, not the
+    # underlying nn.Embedding module. Resolve the model through Olive's
+    # public load_model() API; the handler caches the loaded module.
+    if model is None:
+        vocabulary = 2
+    elif isinstance(model, torch.nn.Embedding):
+        # Keep direct-module invocation useful for isolated tests.
+        vocabulary = model.num_embeddings
+    elif callable(getattr(model, "load_model", None)):
+        embedding = model.load_model()
+        if not isinstance(embedding, torch.nn.Embedding):
+            raise TypeError(
+                "OvisOCR3 embedding dummy-input callback expected "
+                "PyTorchModelHandler.load_model() to return torch.nn.Embedding; "
+                f"received {type(embedding).__name__}"
+            )
+        vocabulary = embedding.num_embeddings
+    else:
+        raise TypeError(
+            "OvisOCR3 embedding dummy-input callback expects an Olive "
+            "PyTorchModelHandler or torch.nn.Embedding; "
+            f"received {type(model).__name__}"
+        )
+
+    if vocabulary < 1:
+        raise ValueError(f"Embedding vocabulary must be positive, got {vocabulary}")
+
     # Use generic valid IDs; official OvisOCR3 vocabulary must never inherit DJX-specific IDs.
-    vocabulary = model.num_embeddings if model is not None else 2
     return {"input_ids": torch.tensor([[0, min(1, vocabulary - 1)]], dtype=torch.int64)}
 
 
