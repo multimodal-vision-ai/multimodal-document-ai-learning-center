@@ -33,7 +33,7 @@ Approximate cold download:
 - PP-DocLayoutV3 fp16 ONNX: 74.3 MB
 - Total: approximately 2.11 GB
 
-The layout detector and VLM remain loaded together because the approved two-stage pipeline needs both. Only one user-selected document model pipeline should be active at a time. The VLM runtime's adaptive pool may create multiple WebGPU runtime handles, but this adapter processes page regions sequentially; it does not run concurrent region inference.
+The layout detector and VLM remain loaded together because the approved two-stage pipeline needs both. Only one user-selected document model pipeline should be active at a time. The upstream convenience factory creates multiple runtime handles on high-end GPUs (up to three on an RTX 3080). This adapter deliberately bypasses that factory and constructs exactly one `WebRuntime`; page regions are processed sequentially to reduce GPU-context and memory pressure.
 
 ## Stop behavior
 
