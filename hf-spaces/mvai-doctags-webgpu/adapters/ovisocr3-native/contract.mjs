@@ -29,8 +29,8 @@ export async function fetchBundleContract({
   fetcher = fetch
 } = {}) {
   requireNativeOnnxBundle(modelId);
-  if (typeof revision !== "string" || !revision.trim()) {
-    throw new Error("必须指定 ONNX 模型仓库的固定 revision。");
+  if (typeof revision !== "string" || !/^[0-9a-f]{40}$/i.test(revision)) {
+    throw new Error("必须指定 ONNX 模型仓库的完整 40 位 commit SHA，不能使用 main 或浮动标签。");
   }
   const metadataResponse = await fetcher(modelFileUrl(modelId, revision, "source-model.json", modelHost));
   if (!metadataResponse.ok) throw new Error("无法读取 OvisOCR3 来源校验文件：" + metadataResponse.status);
