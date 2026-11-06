@@ -9,7 +9,14 @@ const metadata = {
   format_version: BUNDLE_FORMAT_VERSION,
   source_model_id: SOURCE_MODEL_ID,
   source_revision: SOURCE_REVISION,
-  model_type: "qwen3_5"
+  model_type: "qwen3_5",
+  source_weights_sha256: "b".repeat(64)
+};
+const validation = {
+  success: true,
+  source_model_id: SOURCE_MODEL_ID,
+  source_revision: SOURCE_REVISION,
+  source_weights_sha256: metadata.source_weights_sha256
 };
 const prompt = `Analyze the document structure and extract text content. Return a single JSON array in natural reading order.
 Each element follows this schema: {"bbox": [x_min, y_min, x_max, y_max], "category": "string", "content": "string"}.
@@ -26,6 +33,9 @@ const fakeFetch = async url => {
   if (url.endsWith("source-model.json")) return {
     ok: true, json: async () => metadata
   };
+  if (url.endsWith("validation/component_validation.json")) return {
+    ok: true, json: async () => validation
+  };
   if (url.endsWith("prompts/document_structured.txt")) return {
     ok: true, text: async () => prompt
   };
@@ -36,7 +46,8 @@ const bundle = await fetchBundleContract({
 });
 assert.equal(bundle.metadata.source_revision, SOURCE_REVISION);
 assert.equal(bundle.prompt, prompt);
-assert.equal(calls.length, 2);
+assert.equal(calls.length, 3);
+assert.equal(bundle.validation.success, true);
 await assert.rejects(fetchBundleContract({
   modelId: ONNX_MODEL_ID, revision: "main", fetcher: fakeFetch
 }), /40 位 commit SHA/);
