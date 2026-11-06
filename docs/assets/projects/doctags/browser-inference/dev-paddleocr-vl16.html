@@ -68,6 +68,8 @@ function logProgress(event){
     status("模型下载："+mb(loaded)+" / "+mb(total)+" MB\n资源："+(event.asset||"")+"\n来源缓存："+(event.fromPersistentCache?"是":"否"));
   }else if(event.stage==="layout-load"){
     status("PP-DocLayoutV3："+(event.phase||event.stage)+" · "+(event.status||""));
+  }else if(event.stage==="layout-worker"){
+    status("PP-DocLayoutV3 Worker：同源资源已就绪\\n"+(event.url||""));
   }else if(event.stage==="vlm-warmup"){
     status("PaddleOCR-VL-1.6 预热："+(event.stage||"")+" · "+(event.asset||event.kind||""));
   }else if(event.stage==="recognition"){
