@@ -2443,6 +2443,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#worker-securityerror-2026-11-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      Worker 跨域 SecurityError 故障与修复（2026-11-06）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       已完成代码
@@ -2662,6 +2671,21 @@
 <li>发布脚本同时将 FP16/FP32 ONNX 变体 URL 改写为 <code>/models/model-fp16.onnx</code> 和 <code>/models/model-fp32.onnx</code>。</li>
 </ul>
 <p>已将适配器 <code>LAYOUT_MANIFEST_URL</code> 改为实际 Pages 地址，并导出该常量供回归测试；新增 Node 测试，确保今后不会再次使用源目录路径。DEV CI 还会直接请求上游 Pages Manifest，检查模型 ID、FP16 文件大小和权重 URL。该网络检查已通过，说明修复地址当前可访问且返回预期的模型元数据。</p>
+<h3 id="worker-securityerror-2026-11-06">Worker 跨域 SecurityError 故障与修复（2026-11-06）<a class="headerlink" href="#worker-securityerror-2026-11-06" title="Permanent link">&para;</a></h3>
+<p>Manifest 修复后，第二次浏览器验收在 SDK 创建 Worker 时失败：</p>
+<p><code>SecurityError: Failed to construct 'Worker': Script at 'https://cdn.jsdelivr.net/npm/web-sdk-pp-doclayoutv3@1.2.0/dist/inference.worker.js' cannot be accessed from origin 'https://raw.githack.com'.</code></p>
+<p>根因：上游 <code>browser-global.js</code> 通过 <code>document.currentScript.src</code> 记录自身的 jsDelivr 地址；<code>worker-bridge.ts</code> 随后使用 <code>new Worker(new URL("./inference.worker.js", __PPDOCLAYOUT_MODULE_URL__), {type:"module"})</code>。这使模块 Worker 的 URL 落在 CDN 域名，而当前页面来自 raw.githack，浏览器拒绝跨源 Worker。</p>
+<p>已确认上游 SDK 的 worker bundle 是单文件构建（无顶层静态 import），文件大小 732,503 bytes。为保留后台 Worker 推理，不退化为主线程执行，采用同源静态托管：</p>
+<ul>
+<li>新增 <code>scripts/stage-ppdoclayout-worker.mjs</code>，从固定 npm 版本下载 <code>inference.worker.js</code>。</li>
+<li>固定大小 732,503 bytes、SHA-256 <code>128380b8f435c07b1dec25542355708dbd99e033b2fcf994d13d12bc8b3a6a6b</code>；不匹配则拒绝发布。</li>
+<li>同时生成 <code>vendor/ppdoclayoutv3/worker-base.js</code> 作为 SDK 的 URL 基准文件。</li>
+<li>适配器在 <code>createDocLayout()</code> 前将 <code>globalThis.__PPDOCLAYOUT_SCRIPT_URL__</code> 覆盖为本地同源基准 URL，使 SDK 构造的 Worker 指向 <code>vendor/ppdoclayoutv3/inference.worker.js</code>。</li>
+<li>DEV workflow 将文件复制到 MkDocs 静态资源目录，并在发布后验证 worker 文件大小、SHA-256 和 base 文件可访问。</li>
+<li>添加 URL 回归测试，保证 Worker 与演示页面同源。</li>
+</ul>
+<p>HF Static Space 部署时，必须先在 Space 根目录执行 <code>node scripts/stage-ppdoclayout-worker.mjs</code>，并将生成的 <code>vendor/ppdoclayoutv3/</code> 目录与适配器一起上传。</p>
+<p>注意：此修复保留 Worker 执行模式；ONNX Runtime WASM 仍通过已配置的 CDN 路径加载。当前代码与静态资源检查通过，不等于真实浏览器 Worker 已成功初始化，仍需用户在 Chrome + RTX 3080 实测。</p>
 <h3 id="_4">已完成代码<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>两阶段流程：PP-DocLayoutV3 检测版面区域 → PaddleOCR-VL-1.6 对每个区域执行 OCR、表格、公式或图表识别。</li>
