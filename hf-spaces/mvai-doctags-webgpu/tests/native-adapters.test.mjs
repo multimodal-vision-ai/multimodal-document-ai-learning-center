@@ -21,6 +21,7 @@ test("Layout SDK box is page pixel box, with reading order preserved",()=>{
   assert.equal(results.model_settings.use_layout_detection,true);
   assert.deepEqual(results.parsing_res_list[1].block_bbox,[60,100,450,250]);
   assert.equal(results.parsing_res_list[1].block_content,"<table><tr><td>数值</td></tr></table>");
+  assert.throws(()=>assemblePaddleResult(regions,[{text:"标题"},undefined],{width:1000,height:600}),/禁止用空字符串补齐/);
 });
 
 test("Never generate artificial boxes, reading order or unsupported formats",()=>{
