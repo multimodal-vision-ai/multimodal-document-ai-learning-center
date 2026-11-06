@@ -40,9 +40,12 @@
 ## Completed in the isolated feature branch
 - Native Ovis/Paddle JSON parsers with raw-output preservation and strict bbox validation.
 - Safe renderer for text and allow-listed HTML tables; no unsafe `innerHTML`.
+- Added a native Paddle OTSL parser and safe table renderer for `<fcel>`, `<ecel>`, `<lcel>`, `<ucel>`, `<xcel>`, and `<nl>`. It reconstructs cell grids and merge spans for display only; original `block_content` and raw JSON remain unchanged. The original OTSL is available in a collapsed disclosure; malformed structures fall back to raw text with a warning.
+- Added parser tests for normal/empty cells, horizontal/vertical/two-axis merges, malformed markers, and raw-output safety; mirrored renderer/parser files are checked byte-for-byte by CI.
 - Ovis exporter, component validator, PyTorch reference runner, and hash-checked HF upload staging.
 - Pinned Paddle browser dependencies and a concrete layout-to-VLM WebGPU adapter with model warm-up and partial-stop handling.
 - Independent Paddle browser acceptance page.
+- PaddleOCR-VL-1.6 completed its first real browser inference on a Chinese financial document: WebGPU FP16 model load/warm-up succeeded; PP-DocLayoutV3 produced page-positioned title/text/table/page-number regions; the native right pane displayed Paddle parsing output. Table structure was returned as OTSL, not HTML, so visual table rendering remained the next acceptance item.
 - Offline parser/contract tests and CI syntax checks for Python and upload scripts.
 - The Ovis exporter dummy-input names are now checked against each ONNX component's declared input names; this caught and fixed an input versus input_ids mismatch before model conversion.
 - Native Ovis HTML table/image tag detection was corrected; the safe renderer continues to use DOM node creation and never injects untrusted HTML.
@@ -56,7 +59,7 @@
 ## Not yet accepted / not exposed
 - Official OvisOCR3 checkpoint has not yet been downloaded, exported, parity-validated, or uploaded to the MVAI HF model repository.
 - OvisOCR3 has not yet passed a real Chrome WebGPU document test.
-- PaddleOCR-VL-1.6 has not yet passed a real Chrome WebGPU document test on the target GPU.
+- PaddleOCR-VL-1.6 has completed its first real Chrome WebGPU inference on the target GPU. Final visual acceptance is still pending: rerun the same complex Chinese table document after the OTSL renderer update and verify cell order, empty cells, merged cells, and raw OTSL preservation.
 - The PP-DocLayoutV3 inference Worker is now staged as a same-origin static asset. The SDK browser-global bundle, Paddle VLM engine, and ONNX Runtime WASM files still use pinned external CDN URLs; self-hosting those remaining runtime components has not yet been prepared.
 - Native result routing into the production page's 03/04/05 panes and model registry is intentionally not done yet.
 - Runtime performance, cold/warm cache behavior, memory stability, stop/dispose behavior, and original three-model regression tests remain outstanding.
