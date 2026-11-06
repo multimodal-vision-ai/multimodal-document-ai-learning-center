@@ -17,6 +17,11 @@ import shutil
 import subprocess
 import sys
 
+OFFICIAL_SOURCE_MODEL_ID = "ATH-MaaS/OvisOCR3"
+OFFICIAL_SOURCE_REVISION = "fd1f43b9a3f7041013831c11535c066e95adeef7"
+OLIVE_RECIPE_COMMIT = "74c2ab2f0bdd5acabcb05b24e9edf145e1020e12"
+OLIVE_VISION_SOURCE_SHA256 = "f1ae970216a0b96d56ff2ad35fb99cbff6e358fd15fbc2b87cb95e815de6ba78"
+
 
 def file_sha256(path):
     digest = hashlib.sha256()
@@ -289,7 +294,7 @@ def export_decoder(model_root, output):
     package_decoder(model_root, output, exported)
 
 
-def write_browser_assets(root, output):
+def write_browser_assets(root, output, source_revision):
     config = json.loads(root.joinpath("config.json").read_text())
     config["transformers.js_config"] = {
         "use_external_data_format": True,
@@ -298,16 +303,53 @@ def write_browser_assets(root, output):
     output.joinpath("config.json").write_text(json.dumps(config, indent=2) + "\n")
     processor = json.loads(root.joinpath("processor_config.json").read_text())
     preprocessor = {**processor["image_processor"], "processor_class": processor["processor_class"]}
-    # The browser loader reads the flattened image config. Trained normalization is unchanged.
+    # Conservative browser default; the source processor's normalization is unchanged.
     preprocessor["min_pixels"] = 448 * 448
     preprocessor["max_pixels"] = 1440 * 1440
     output.joinpath("preprocessor_config.json").write_text(json.dumps(preprocessor, indent=2) + "\n")
-    for name in ("generation_config.json", "tokenizer.json", "tokenizer_config.json", "processor_config.json", "chat_template.jinja"):
+    assets = (
+        "generation_config.json", "tokenizer.json", "tokenizer_config.json",
+        "processor_config.json", "chat_template.jinja", "merges.txt", "vocab.json",
+        "video_preprocessor_config.json",
+    )
+    for name in assets:
         source, destination = root / name, output / name
+        if not source.is_file():
+            continue
         if destination.exists() and source.read_bytes() != destination.read_bytes():
             raise ValueError(f"Refusing to replace a different model asset: {destination}")
         if not destination.exists():
             shutil.copy2(source, destination)
+
+    source_prompts = root / "prompts"
+    prompt = source_prompts / "document_structured.txt"
+    if not prompt.is_file():
+        raise FileNotFoundError("Official OvisOCR3 Structured prompt is missing")
+    shutil.copytree(source_prompts, output / "prompts", dirs_exist_ok=True)
+    license_source = root / "LICENSE"
+    if license_source.is_file():
+        shutil.copy2(license_source, output / "LICENSE")
+
+    weights = root / "model.safetensors"
+    if not weights.is_file():
+        raise FileNotFoundError("Expected the official single-file model.safetensors checkpoint")
+    generation = json.loads((root / "generation_config.json").read_text())
+    metadata = {
+        "format_version": 1,
+        "source_model_id": OFFICIAL_SOURCE_MODEL_ID,
+        "source_revision": source_revision,
+        "source_weights_sha256": file_sha256(weights),
+        "model_type": config.model_type,
+        "vocab_size": config.text_config.vocab_size,
+        "eos_token_id": generation.get("eos_token_id"),
+        "prompt_sha256": file_sha256(prompt),
+        "license": "Apache-2.0",
+        "olive_recipe_commit": OLIVE_RECIPE_COMMIT,
+        "olive_vision_source_sha256": OLIVE_VISION_SOURCE_SHA256,
+    }
+    output.joinpath("source-model.json").write_text(
+        json.dumps(metadata, ensure_ascii=False, indent=2) + "\n"
+    )
 
 
 def main(argv=None):
@@ -315,12 +357,17 @@ def main(argv=None):
     parser.add_argument("--model", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--recipe-dir", required=True, type=Path)
-    parser.add_argument("--vision-source-sha256", required=True)
+    parser.add_argument("--source-revision", default=OFFICIAL_SOURCE_REVISION)
+    parser.add_argument("--vision-source-sha256", default=OLIVE_VISION_SOURCE_SHA256)
     parser.add_argument("--components", nargs="+", choices=["embedding", "vision", "decoder"], default=["embedding", "vision", "decoder"])
     parser.add_argument("--threads", type=int, default=4)
     args = parser.parse_args(argv)
     if args.threads < 1:
         parser.error("--threads must be positive")
+    if args.source_revision != OFFICIAL_SOURCE_REVISION:
+        parser.error("source revision must match the pinned official OvisOCR3 commit")
+    if args.vision_source_sha256 != OLIVE_VISION_SOURCE_SHA256:
+        parser.error("vision source SHA-256 must match the pinned Olive recipe source")
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
     os.environ["OMP_NUM_THREADS"] = str(args.threads)
     os.environ["MKL_NUM_THREADS"] = str(args.threads)
@@ -341,8 +388,8 @@ def main(argv=None):
             export_decoder(root, args.output_dir)
         else:
             export_component(component, root, args.output_dir)
-    write_browser_assets(root, args.output_dir)
-    print(json.dumps({"completed_components": args.components, "vocab_size": config.text_config.vocab_size}), flush=True)
+    write_browser_assets(root, args.output_dir, args.source_revision)
+    print(json.dumps({"completed_components": args.components, "vocab_size": config.text_config.vocab_size, "source_model": OFFICIAL_SOURCE_MODEL_ID, "source_revision": args.source_revision, "olive_recipe_commit": OLIVE_RECIPE_COMMIT}), flush=True)
 
 
 if __name__ == "__main__":
