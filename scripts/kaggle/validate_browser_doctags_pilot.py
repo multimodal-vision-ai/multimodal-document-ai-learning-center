@@ -19,6 +19,19 @@ assert "sdk: static" in SPACE_README.read_text(encoding="utf-8")
 PARSER = ROOT / "docs/assets/projects/doctags/browser-inference/doctags-renderer.js"
 HF_PARSER = ROOT / "hf-spaces/mvai-doctags-webgpu/doctags-renderer.js"
 assert PARSER.read_bytes() == HF_PARSER.read_bytes(), "DocTags parsers diverged"
+assert '<script src="./doctags-renderer.js?v=1.6.1"></script>' in data, "DocTags parser script must be versioned to prevent stale cached parser code"
+PARSER_TEXT = PARSER.read_text(encoding="utf-8")
+assert "handwritten|page_number" in PARSER_TEXT, "Handwritten text and page-number tags must be parsed"
+assert 'kind==="handwritten"' in data and 'kind==="page_number"' in data, "Handwritten text and page numbers must have explicit render paths"
+assert ".render-handwritten" in data and ".render-page-number" in data, "Handwritten and page-number display styles are missing"
+assert "function drawRegionLabel(block,scaleX,scaleY)" in data, "Original-document overlay must render a label for each region"
+assert "comp.measureText(label)" in data and "comp.fillText(label" in data, "Original-document tag labels must be legible canvas text"
+assert "const fontSize=Math.max(1,8*compare.width/cssWidth);" in data, "Original-document tag labels must use the compact 8px font scale"
+assert "const padX=Math.ceil(fontSize*.3),padY=Math.ceil(fontSize*.12);" in data, "Original-document tag label padding must remain compact"
+assert 'page_number:"#566c89"' in data, "Page-number overlay label must meet readable contrast"
+assert "color:#566c89;font-size:11px;margin:20px 0 0" in data, "Rendered page numbers must meet readable contrast"
+assert "for (const block of visibleRegions) drawRegionLabel(block,scaleX,scaleY)" in data, "All visible original-document boxes must receive tag labels"
+assert "const visibleRegions=regions.slice(0,280)" in data, "Original-document box and label rendering must share the same region limit"
 REGISTRY = ROOT / "docs/assets/projects/doctags/browser-inference/model-registry.js"
 HF_REGISTRY = ROOT / "hf-spaces/mvai-doctags-webgpu/model-registry.js"
 assert REGISTRY.read_bytes() == HF_REGISTRY.read_bytes(), "Model registries diverged"
@@ -215,7 +228,7 @@ assert "当前内置 IBM Granite Docling 258M 公开基线" in header_html
 assert ".hero-heading .hero-help .tip-pop" in data and ".info-tip:focus-within>.tip-pop" in data
 assert "DocTags 浏览器端实时推理</h1>" not in header_html, "Old product header remains"
 
-assert 'src="./doctags-renderer.js"' in data, "Parser module not loaded"
+assert 'src="./doctags-renderer.js?v=1.6.1"' in data, "Versioned DocTags parser module not loaded"
 assert 'id="compareCanvas"' in data and 'id="rendered"' in data, "Missing comparison panes"
 assert 'id="rawDetails"' in data, "Raw DocTags should be collapsible"
 assert "renderComparison(result)" in data, "Real model output must drive rendering"
