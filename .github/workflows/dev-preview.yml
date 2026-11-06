@@ -67,6 +67,17 @@ jobs:
             echo "Worker has no dynamic import expressions."
           fi
           node --input-type=module --check < "$dest/inference.worker.js"
+          python - "$dest/inference.worker.js" <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+          source = Path(sys.argv[1]).read_text(encoding="utf-8")
+          for pattern in ("import(", "import.meta", "new URL("):
+              matches = list(re.finditer(re.escape(pattern), source))
+              print(f"{pattern}: {len(matches)} occurrence(s)")
+              for match in matches[:8]:
+                  print(source[max(0, match.start()-140):match.end()+220])
+          PY
 
       - name: Assemble DocTags challenge images
         run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
