@@ -2,7 +2,7 @@
 
 **更新时间：** 2026-11-06  
 **当前 PR：** [#74 — WIP: OvisOCR3 + PaddleOCR-VL-1.6 native WebGPU integration](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/pull/74)  
-**当前 head commit（更新时）：** `b2c1bb54c7de4aa39952b6277b117503ab55477f`  
+**本轮 Manifest 修复代码提交：** `1135c18b5f95dba7d31a97dafa6ec139090832fc`  
 **开发分支：** `feat/ovisocr3-paddleocr-vl16-webgpu-20261106`  
 **基线分支：** `dev`  
 **状态：** Draft；不允许合并到 dev/main，不允许部署正式 HF Space。
@@ -52,6 +52,22 @@
 - 版面模型：PP-DocLayoutV3 FP16，74,279,796 bytes
 - VLM 模型包：2,038,286,862 bytes；两者冷启动下载约 2.11 GB。
 
+### Manifest 404 故障与修复（2026-11-06）
+
+用户首次在 RTX 3080 Chrome 验收时，收到：
+
+`DocLayoutError: Model manifest request failed with 404`
+
+根因不是 GPU、显存或模型权重，而是将上游 Git 仓库源文件路径误当作 GitHub Pages 的公开发布路径。
+
+- 源仓库位置：`models/pp-doclayoutv3/manifest.json`
+- Pages 构建脚本：`scripts/stage-pages-models.mjs`
+- 实际发布位置：`apps/demo/dist/models/manifest.json`
+- 实际公开 URL：`https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json`
+- 发布脚本同时将 FP16/FP32 ONNX 变体 URL 改写为 `/models/model-fp16.onnx` 和 `/models/model-fp32.onnx`。
+
+已将适配器 `LAYOUT_MANIFEST_URL` 改为实际 Pages 地址，并导出该常量供回归测试；新增 Node 测试，确保今后不会再次使用源目录路径。DEV CI 还会直接请求上游 Pages Manifest，检查模型 ID、FP16 文件大小和权重 URL。该网络检查已通过，说明修复地址当前可访问且返回预期的模型元数据。
+
 ### 已完成代码
 
 - 两阶段流程：PP-DocLayoutV3 检测版面区域 → PaddleOCR-VL-1.6 对每个区域执行 OCR、表格、公式或图表识别。
@@ -72,7 +88,7 @@ PR 专属 DEV 页面构建已通过公开访问检查。入口文件：
 `docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html`
 
 **已通过 CI 公开可访问检查的独立验收入口：**  
-https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/e4ef4f1aca7ff0eee58826fb84849d60d0c23f05/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
+https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/d432c5483c76c07b80f2d9740568fbc4b74a5ac6/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
 
 该页面不改变正式页面。Ovis 预备验收页面（尚无 ONNX bundle，暂不能运行模型）也已通过公开资源检查：  
 https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/e4ef4f1aca7ff0eee58826fb84849d60d0c23f05/assets/projects/doctags/browser-inference/dev-ovisocr3.html
