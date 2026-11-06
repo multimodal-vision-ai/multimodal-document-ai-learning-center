@@ -23,6 +23,14 @@ const LAYOUT_SCRIPT_URLS = CDN_BASES.map(base =>
 );
 export const LAYOUT_MANIFEST_URL =
   "https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json";
+
+/* The SDK's bundled worker is resolved relative to this URL. Keep the base
+   and worker on the same origin as the demo page to satisfy Worker security. */
+export function resolveLayoutWorkerUrls(moduleUrl = import.meta.url) {
+  const baseUrl = new URL("../../vendor/ppdoclayoutv3/worker-base.js", moduleUrl);
+  const workerUrl = new URL("./inference.worker.js", baseUrl);
+  return {baseUrl: baseUrl.href, workerUrl: workerUrl.href};
+}
 const VLM_ENGINE_URLS = CDN_BASES.map(base =>
   base + "gh/glebkudr/paddleocr-vl-webgpu@" + VLM_ENGINE_COMMIT +
   "/web/engine/browser_ocr_runtime.mjs"
@@ -102,6 +110,17 @@ function loadVlmModule(onProgress = () => {}) {
 
 async function createDefaultLayout(onProgress) {
   const api = await loadLayoutSdk(onProgress);
+  const workerUrls = resolveLayoutWorkerUrls();
+  const pageOrigin = globalThis.location?.origin;
+  if (!pageOrigin || new URL(workerUrls.workerUrl).origin !== pageOrigin) {
+    throw new Error(
+      "PP-DocLayoutV3 inference worker must be served from the same origin as the demo page."
+    );
+  }
+  // browser-global.js initially records its jsDelivr URL. Override that base
+  // before createDocLayout builds its Worker(new URL("./inference.worker.js", ...)).
+  globalThis.__PPDOCLAYOUT_SCRIPT_URL__ = workerUrls.baseUrl;
+  onProgress({stage: "layout-worker", status: "same-origin", url: workerUrls.workerUrl});
   const detector = await api.createDocLayout({
     model: LAYOUT_MANIFEST_URL,
     backend: "webgpu",
