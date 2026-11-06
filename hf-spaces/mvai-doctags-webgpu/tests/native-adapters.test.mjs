@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {orderedRegions,taskForLabel,assemblePaddleResult} from "../adapters/paddleocr-vl-1.6/pipeline-contract.mjs";
-import {directPrompt,requireNativeOnnxBundle} from "../adapters/ovisocr3-native/contract.mjs";
+import {directPrompt,ONNX_MODEL_ID,requireNativeOnnxBundle} from "../adapters/ovisocr3-native/contract.mjs";
 
 test("Layout SDK box is page pixel box, with reading order preserved",()=>{
   const regions=orderedRegions([
@@ -26,8 +26,8 @@ test("Never generate artificial boxes, reading order or unsupported formats",()=
 
 test("Ovis native contract cannot reuse official BF16 checkpoint as ONNX",()=>{
   assert.throws(()=>requireNativeOnnxBundle("ATH-MaaS/OvisOCR3"),/不是 WebGPU ONNX/);
-  assert.throws(()=>requireNativeOnnxBundle(""),/模型仓库/);
-  assert.equal(requireNativeOnnxBundle("org/converted-onnx"),"org/converted-onnx");
+  assert.throws(()=>requireNativeOnnxBundle(""),/专用 ONNX/);
+  assert.equal(requireNativeOnnxBundle(ONNX_MODEL_ID),ONNX_MODEL_ID);
   const tokenizer={apply_chat_template(msg){assert.equal(msg[0].content[1].text,"STRUCTURED PROMPT");return "x<|im_start|>assistant\n";}};
   assert.equal(directPrompt(tokenizer,"STRUCTURED PROMPT"),"x<|im_start|>assistant\n");
 });
