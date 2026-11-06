@@ -54,7 +54,11 @@
       node=wrap;
     }else if(IMAGE_CATEGORIES.has(block.type)){
       node=doc.createElement("div");node.className="unknown-region";
-      node.textContent="图像/图表区域（请参考左侧定位框；保留模型原文）\n"+block.content;
+      const crop=imageCrop(block,sourceImage,doc);
+      if(crop)node.appendChild(crop);
+      const caption=doc.createElement("div");
+      caption.textContent=block.type+"（原图区域裁剪）";
+      node.appendChild(caption);
     }else if(["display_formula","inline_formula"].includes(block.type)){
       node=doc.createElement("p");node.textContent=block.content;
       node.style.whiteSpace="pre-wrap";
