@@ -79,7 +79,7 @@
     details.append(summary,pre);
     return details;
   }
-  function blockNode(block,index,doc,sourceImage) {
+  function blockNode(block,index,doc,sourceImage,onSelect=null) {
     let node;
     if(block.type==="table"){
       const wrap=doc.createElement("div");wrap.className="render-tbl";
@@ -136,13 +136,17 @@
     node.classList.add("render-block");
     node.tabIndex=0;
     node.dataset.blockIndex=String(index);
-    node.title="悬停定位至原始文档位置";
+    node.title=typeof onSelect==="function"?"点击高亮原图中的对应版面区域":"悬停定位至原始文档位置";
+    if(typeof onSelect==="function") {
+      node.style.cursor="pointer";
+      node.addEventListener("click",()=>onSelect(index,block));
+    }
     return node;
   }
-  function renderBlocks(parsed,container,sourceImage=null){
+  function renderBlocks(parsed,container,sourceImage=null,{onSelect=null}={}){
     const doc=container.ownerDocument;
     container.replaceChildren();
-    parsed.blocks.forEach((block,index)=>container.appendChild(blockNode(block,index,doc,sourceImage)));
+    parsed.blocks.forEach((block,index)=>container.appendChild(blockNode(block,index,doc,sourceImage,onSelect)));
     if(parsed.blocks.length===0) {
       const p=doc.createElement("p");p.className="render-placeholder";
       p.textContent="本次输出没有有效的原生定位元素，请检查原始 JSON。";
