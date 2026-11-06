@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MVAI · OvisOCR3 WebGPU 独立验收</title>
+<style>
+:root{color-scheme:light;font-family:Inter,"Microsoft YaHei",Arial,sans-serif;color:#18212f;background:#f5f7fa}
+*{box-sizing:border-box}body{margin:0;padding:24px;max-width:1440px;margin-inline:auto}
+h1{font-size:22px;margin:0 0 6px}p{color:#5a6575;line-height:1.55}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0}
+button{border:1px solid #cbd5e1;background:#fff;color:#18212f;padding:9px 14px;border-radius:7px;cursor:pointer}
+button.primary{background:#1f5d9b;color:white;border-color:#1f5d9b}button:disabled{opacity:.45;cursor:not-allowed}
+input[type=text]{width:min(520px,100%);padding:9px;border:1px solid #cbd5e1;border-radius:7px;font:13px ui-monospace,Consolas,monospace}
+input[type=file]{max-width:320px}
+.status{padding:12px 14px;background:#fff;border:1px solid #dce3eb;border-radius:8px;white-space:pre-wrap;font:13px/1.5 ui-monospace,Consolas,monospace;min-height:76px}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:16px;margin-top:16px}
+.panel{background:white;border:1px solid #dce3eb;border-radius:8px;padding:14px;min-width:0}
+.panel h2{font-size:15px;margin:0 0 12px}
+#preview{width:100%;height:auto;display:block;background:#eef2f6}
+#blocks{font-size:13px;line-height:1.55;max-height:620px;overflow:auto}
+.render-block{padding:6px 8px;border-bottom:1px solid #edf0f4;white-space:pre-wrap;overflow-wrap:anywhere}
+.render-tbl table{border-collapse:collapse;max-width:100%;font-size:12px}
+.render-tbl td,.render-tbl th{border:1px solid #cbd5e1;padding:3px 6px}
+#raw{max-height:420px;overflow:auto;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.small{font-size:12px;color:#667085}
+@media(max-width:850px){body{padding:14px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+<h1>MVAI · OvisOCR3 0.8B 浏览器 WebGPU 独立验收</h1>
+<p>独立测试页，不修改正式页面。模型运行前必须先完成官方 BF16 权重转换、组件一致性验证，并将 ONNX bundle 上传至 MVAI Hugging Face 仓库。此页只加载经过验证的固定 commit，不接受 main 浮动版本。</p>
+<div class="toolbar">
+  <label>ONNX bundle commit SHA：
+    <input id="revision" type="text" minlength="40" maxlength="40" placeholder="上传完成后填写 40 位 commit SHA">
+  </label>
+  <button id="load" class="primary" disabled>加载模型</button>
+  <button id="dispose" disabled>释放模型</button>
+</div>
+<div class="toolbar">
+  <input id="file" type="file" accept="image/*">
+  <button id="run" disabled>运行 Structured 解析</button>
+  <button id="stop" disabled>停止推理</button>
+</div>
+<div class="status" id="status">等待 ONNX bundle 上传并填写固定 commit SHA。当前模型仓库：multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX</div>
+<div class="grid">
+  <section class="panel">
+    <h2>原图与 bbox 定位框</h2>
+    <canvas id="preview"></canvas>
+    <p class="small" id="meta">尚未运行</p>
+  </section>
+  <section class="panel">
+    <h2>原生 Structured 结果渲染</h2>
+    <div id="blocks"></div>
+  </section>
+</div>
+<section class="panel" style="margin-top:16px">
+  <h2>原始 JSON（不做 DocTags 转换）</h2>
+  <pre id="raw"></pre>
+</section>
+<script src="./native-document-output.js"></script>
+<script src="./native-result-renderer.js"></script>
+<script type="module">
+import {createAdapter} from "./adapters/ovisocr3-native/adapter.mjs";
+const $=id=>document.getElementById(id);
+let adapter=null,file=null,bitmap=null,running=false,tokenCount=0;
+function status(message){$("status").textContent=message;}
+function validRevision(value){return /^[0-9a-f]{40}$/i.test(value.trim());}
+$("revision").addEventListener("input",()=>{
+  $("load").disabled=!validRevision($("revision").value)||!!adapter;
+});
+$("file").addEventListener("change",async event=>{
+  file=event.target.files?.[0]||null;
+  if(bitmap){bitmap.close();bitmap=null;}
+  if(file)bitmap=await createImageBitmap(file);
+  $("run").disabled=!adapter||!file;
+  if(bitmap){
+    const canvas=$("preview"),ctx=canvas.getContext("2d");
+    canvas.width=bitmap.width;canvas.height=bitmap.height;ctx.drawImage(bitmap,0,0);
+    $("meta").textContent="原图："+bitmap.width+" × "+bitmap.height+" · "+file.name;
+  }else{$("preview").width=0;$("preview").height=0;}
+});
+$("load").addEventListener("click",async()=>{
+  const revision=$("revision").value.trim();
+  if(!validRevision(revision))return;
+  $("load").disabled=true;
+  try{
+    adapter=await createAdapter({
+      revision,
+      onProgress:event=>{
+        const stage=event.stage||"load";
+        const fileName=event.file||event.name||event.fileName||"";
+        const loaded=Number(event.loaded)||Number(event.loadedBytes)||0;
+        const total=Number(event.total)||Number(event.totalBytes)||0;
+        status("OvisOCR3 模型加载："+stage+
+          (fileName?"\n"+fileName:"")+
+          (total?"\n"+(loaded/1e6).toFixed(1)+" / "+(total/1e6).toFixed(1)+" MB":""));
+      }
+    });
+    status("模型加载完成。\n来源："+adapter.sourceModelId+
+      "\n来源 revision："+adapter.sourceRevision+
+      "\nONNX bundle revision："+adapter.revision+
+      "\nWebGPU："+JSON.stringify(adapter.gpu||{}));
+    $("run").disabled=!file;$("dispose").disabled=false;
+  }catch(error){
+    status("加载失败：\n"+(error?.stack||error));
+    $("load").disabled=false;
+  }
+});
+function renderResult(result){
+  $("raw").textContent=result.text;
+  const canvas=$("preview"),ctx=canvas.getContext("2d");
+  canvas.width=bitmap.width;canvas.height=bitmap.height;ctx.drawImage(bitmap,0,0);
+  let parsed=null;
+  try{
+    parsed=window.MVAINativeOCR.parseOvis(result.text);
+    window.MVAINativeOCRRenderer.renderBoxes(ctx,parsed,bitmap.width,bitmap.height,{showLabels:true});
+    window.MVAINativeOCRRenderer.renderBlocks(parsed,$("blocks"),bitmap);
+  }catch(error){
+    $("blocks").textContent="当前输出尚未形成完整 JSON，不能安全绘制定位框。原始生成文本已保留。\\n"+error.message;
+  }
+  $("meta").textContent=[
+    "结构元素："+(parsed?.total??"未完成"),
+    "有效定位："+(parsed?.blocks.length??0),
+    "生成 tokens："+result.generatedTokens,
+    "推理耗时："+result.totalSeconds.toFixed(2)+" s",
+    "生成速度："+result.tokensPerSecond.toFixed(2)+" tokens/s",
+    "完整结束："+(result.ended?"是":"否（可能达到 token 上限或被停止）")
+  ].join("  ·  ");
+}
+$("run").addEventListener("click",async()=>{
+  if(!adapter||!file||running)return;
+  running=true;tokenCount=0;$("run").disabled=true;$("stop").disabled=false;
+  let streamed="";
+  try{
+    const result=await adapter.recognize(file,{
+      onText:chunk=>{streamed+=chunk;},
+      onTokens:n=>{tokenCount=n;status("OvisOCR3 Structured 生成中 · "+n+" tokens");}
+    });
+    renderResult(result);
+    status("解析完成。\n输出长度："+result.text.length+
+      " characters\n生成 tokens："+result.generatedTokens+
+      "\n结束标记："+(result.ended?"已结束":"未结束"));
+  }catch(error){
+    status("推理失败：\n"+(error?.stack||error)+"\n已接收 tokens："+tokenCount);
+    $("raw").textContent=streamed;
+  }finally{running=false;$("run").disabled=!adapter||!file;$("stop").disabled=true;}
+});
+$("stop").addEventListener("click",()=>{
+  adapter?.stop();$("stop").disabled=true;status("已请求停止生成，等待当前 WebGPU 解码返回。");
+});
+$("dispose").addEventListener("click",async()=>{
+  if(!adapter||running)return;
+  try{await adapter.dispose();adapter=null;$("run").disabled=true;$("dispose").disabled=true;$("load").disabled=!validRevision($("revision").value);status("模型资源已释放。");}
+  catch(error){status("释放失败："+(error?.message||error));}
+});
+</script>
+</body>
+</html>
