@@ -109,7 +109,7 @@ The bundle is intended for local browser inference. It is not an API service and
     print(json.dumps({
         "success": True,
         "staging": str(staging),
-        "files": len(copied) + 3,
+        "files": len(copied) + 4,
         "bytes": sum((staging / item).stat().st_size for item in copied)
     }, ensure_ascii=False), flush=True)
 
