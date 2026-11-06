@@ -45,7 +45,7 @@ export function assemblePaddleResult(regions,recognitions,{width,height}={}) {
   if(blocks.some(block=>typeof block.block_content!=="string"))
     throw new Error("识别结果包含非字符串内容。");
   return {
-    width,height,page_index:null,page_count:1,
+    input_path:null,width,height,page_index:null,page_count:1,
     model_settings:{
       pipeline_model:"PaddleOCR-VL-1.6",
       use_doc_preprocessor:false,
