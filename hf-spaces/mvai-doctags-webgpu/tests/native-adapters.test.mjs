@@ -1,8 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {orderedRegions,taskForLabel,assemblePaddleResult} from "../adapters/paddleocr-vl-1.6/pipeline-contract.mjs";
-import {createSingleRuntimeVlm} from "../adapters/paddleocr-vl-1.6/adapter.mjs";
+import {createSingleRuntimeVlm,LAYOUT_MANIFEST_URL} from "../adapters/paddleocr-vl-1.6/adapter.mjs";
 import {directPrompt,ONNX_MODEL_ID,requireNativeOnnxBundle} from "../adapters/ovisocr3-native/contract.mjs";
+
+test("Paddle layout detector uses the deployed Pages manifest, not the source-tree path",()=>{
+  const url=new URL(LAYOUT_MANIFEST_URL);
+  assert.equal(url.origin,"https://chenmohan123.github.io");
+  assert.equal(url.pathname,"/web-sdk-PP-DocLayoutV3/models/manifest.json");
+  assert.equal(url.pathname.includes("/models/pp-doclayoutv3/"),false);
+});
 
 test("Layout SDK box is page pixel box, with reading order preserved",()=>{
   const regions=orderedRegions([
