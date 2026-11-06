@@ -27,7 +27,7 @@ python -m venv .venv-ovis
 source .venv-ovis/bin/activate
 python -m pip install --upgrade pip
 python -m pip install torch==2.10.0
-python -m pip install huggingface_hub>=0.34.0
+python -m pip install 'huggingface_hub>=0.34.0'
 python -m pip install -r hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/requirements-export.txt
 ~~~
 
@@ -48,7 +48,15 @@ git checkout 74c2ab2f0bdd5acabcb05b24e9edf145e1020e12
 cd ..
 ~~~
 
-Run the export from the repository root:
+Recommended: run the complete pinned download → export → component-validation sequence with one command (the script does not upload anything by default):
+
+~~~bash
+bash hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/run_conversion.sh
+~~~
+
+The default working directory is `.cache/ovisocr3-webgpu`. Set `OVIS_THREADS=4` to tune CPU threads. If you deliberately need to replace an earlier partial export, set `CLEAN_OUTPUT=1`. To upload after a successful validation, explicitly set `UPLOAD=1` and provide `HF_TOKEN`; the upload script repeats the hash checks before publishing.
+
+Run the individual export steps manually if you need to debug a component:
 
 ~~~bash
 python hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/export_onnx.py \
