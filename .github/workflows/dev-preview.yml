@@ -42,42 +42,17 @@ jobs:
 
       - name: Install MkDocs dependencies
         run: pip install -r requirements-docs.txt
-      - name: Inspect pinned PP-DocLayoutV3 worker asset
+      - name: Stage hash-verified PP-DocLayoutV3 worker for same-origin loading
         shell: bash
         run: |
           set -euo pipefail
-          dest="docs/assets/projects/doctags/browser-inference/vendor/pp-doclayoutv3"
-          mkdir -p "$dest"
-          curl --fail --location --retry 3 --retry-all-errors --connect-timeout 15 --max-time 120 \
-            "https://cdn.jsdelivr.net/npm/web-sdk-pp-doclayoutv3@1.2.0/dist/inference.worker.js" \
-            -o "$dest/inference.worker.js"
-          test -s "$dest/inference.worker.js"
-          echo "PP-DocLayoutV3 worker bytes: $(wc -c < "$dest/inference.worker.js")"
-          echo "PP-DocLayoutV3 worker SHA-256:"
-          sha256sum "$dest/inference.worker.js"
-          if grep -Eq '^[[:space:]]*import[[:space:]]' "$dest/inference.worker.js"; then
-            echo "Worker contains static import declarations."
-            grep -Eo '^[[:space:]]*import[^;]{0,180}' "$dest/inference.worker.js" | head -10 || true
-          else
-            echo "Worker has no top-level static import declarations."
-          fi
-          if grep -Eq 'import[[:space:]]*\(' "$dest/inference.worker.js"; then
-            echo "Worker contains dynamic import expressions."
-          else
-            echo "Worker has no dynamic import expressions."
-          fi
-          node --input-type=module --check < "$dest/inference.worker.js"
-          python - "$dest/inference.worker.js" <<'PY'
-          import re
-          import sys
-          from pathlib import Path
-          source = Path(sys.argv[1]).read_text(encoding="utf-8")
-          for pattern in ("import(", "import.meta", "new URL("):
-              matches = list(re.finditer(re.escape(pattern), source))
-              print(f"{pattern}: {len(matches)} occurrence(s)")
-              for match in matches[:8]:
-                  print(source[max(0, match.start()-140):match.end()+220])
-          PY
+          node hf-spaces/mvai-doctags-webgpu/scripts/stage-ppdoclayout-worker.mjs
+          node --input-type=module --check < hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3/inference.worker.js
+          mkdir -p docs/assets/projects/doctags/browser-inference/vendor
+          cp -a hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3 \
+            docs/assets/projects/doctags/browser-inference/vendor/
+          test -s docs/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/worker-base.js
+          sha256sum docs/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js
 
       - name: Assemble DocTags challenge images
         run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
@@ -481,6 +456,24 @@ jobs:
             test -s "$RUNNER_TEMP/$(basename "$asset")"
           done
           echo "PaddleOCR-VL-1.6 standalone test page and all local assets are publicly reachable."
+      - name: Verify same-origin PP-DocLayoutV3 worker asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview_sha="$(git rev-parse HEAD)"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$preview_sha"
+          worker="$base/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+            "$worker" -o "$RUNNER_TEMP/inference.worker.js"
+          test "$(wc -c < "$RUNNER_TEMP/inference.worker.js")" -eq 732503
+          echo "128380b8f435c07b1dec25542355708dbd99e033b2fcf994d13d12bc8b3a6a6b  $RUNNER_TEMP/inference.worker.js" \
+            | sha256sum --check
+          base_asset="$base/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/worker-base.js"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+            "$base_asset" -o "$RUNNER_TEMP/worker-base.js"
+          grep -q "Same-origin URL base" "$RUNNER_TEMP/worker-base.js"
+          echo "Same-origin PP-DocLayoutV3 worker and URL base are publicly reachable."
+
       - name: Verify the upstream PP-DocLayoutV3 published manifest
         shell: bash
         run: |
