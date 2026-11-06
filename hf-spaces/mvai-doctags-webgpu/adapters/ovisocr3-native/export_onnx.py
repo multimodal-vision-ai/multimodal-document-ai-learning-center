@@ -329,8 +329,43 @@ def package_decoder(model_root, output, exported):
         raise ValueError("Expected one decoder external data file")
     shutil.copyfile(next(iter(data_sources)), Path(str(target) + "_data"))
     onnx.save(graph, target)
-    onnx.checker.check_model(str(target))
-    print(json.dumps({"component": "decoder", "model_path": str(target), "cache_io_renames": len(mapping), "onnx_check": "passed"}), flush=True)
+
+    # ONNX Runtime GenAI emits SimplifiedLayerNormalization in the default
+    # ONNX domain. This operator is implemented by ONNX Runtime (including
+    # its WebGPU EP), but is not registered in the standalone Python ONNX
+    # checker schema. Do not rewrite or remove it merely to satisfy that
+    # checker. Validate the packaged graph with the target runtime instead.
+    import onnxruntime as ort
+
+    session_options = ort.SessionOptions()
+    session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
+    session = ort.InferenceSession(
+        str(target),
+        sess_options=session_options,
+        providers=["CPUExecutionProvider"],
+    )
+    input_names = [value.name for value in session.get_inputs()]
+    output_names = [value.name for value in session.get_outputs()]
+    if not input_names or not output_names:
+        raise ValueError("Decoder runtime validation found missing graph inputs or outputs")
+
+    simplified_norm_count = sum(
+        node.op_type == "SimplifiedLayerNormalization"
+        for node in graph.graph.node
+    )
+    if simplified_norm_count == 0:
+        raise ValueError("Expected the ORT GenAI SimplifiedLayerNormalization operator")
+
+    print(json.dumps({
+        "component": "decoder",
+        "model_path": str(target),
+        "cache_io_renames": len(mapping),
+        "runtime_validation": "onnxruntime_session_load_passed",
+        "runtime_inputs": input_names,
+        "runtime_outputs": output_names,
+        "simplified_layer_normalization_nodes": simplified_norm_count,
+        "standalone_onnx_checker": "not_applicable_for_ort_runtime_operator",
+    }), flush=True)
 
 
 def export_decoder(model_root, output):
