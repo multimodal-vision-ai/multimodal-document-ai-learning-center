@@ -193,8 +193,11 @@ export async function createAdapter({
       if (busy) throw new Error("请先停止当前推理并等待当前区域完成，再释放 PaddleOCR 模型。");
       if (disposed) return;
       disposed = true;
-      await vlm.dispose();
-      await layout.dispose();
+      try {
+        await vlm.dispose();
+      } finally {
+        await layout.dispose();
+      }
     },
     async recognize(blob, {
       onRegion = () => {},
@@ -288,7 +291,7 @@ export async function createAdapter({
 
         const completedRegions = regions.slice(0, recognitions.length);
         const native = assemblePaddleResult(completedRegions, recognitions);
-        const ended = !stopRequested && completedRegions.length === regions.length;
+        const ended = completedRegions.length === regions.length;
         const recognitionMs = performance.now() - recognitionStarted;
         const result = {
           text: JSON.stringify(native, null, 2),
