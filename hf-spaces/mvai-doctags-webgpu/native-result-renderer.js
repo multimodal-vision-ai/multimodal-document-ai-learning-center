@@ -55,7 +55,7 @@
         const td=doc.createElement("td");
         if(cell.colspan>1)td.colSpan=cell.colspan;
         if(cell.rowspan>1)td.rowSpan=cell.rowspan;
-        td.textContent=cell.text;
+        td.textContent=cell.text.trim();
         td.style.whiteSpace="pre-wrap";
         td.style.verticalAlign="top";
         tr.appendChild(td);
