@@ -38,7 +38,7 @@
 - Ovis 转换说明：`hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/README.md`
 - Paddle 接入说明：`hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/README.md`
 
-当前 PR head commit（写本文时）：`99118b194522ee320a64d23429a39a163bf63cc3`。继续研发前先读取 PR #74 当前 head，避免在旧提交上工作。
+PR #74 的 head SHA 会随每次修复更新。继续研发前必须实时读取 PR #74 最新 head，不能使用本交接文档中的历史提交 SHA。
 
 ## 三、PaddleOCR-VL-1.6 当前进展
 
@@ -109,7 +109,7 @@ PR 专属 DEV 页面构建已通过公开访问检查。入口文件：
 `docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html`
 
 **已通过 CI 公开可访问检查的独立验收入口：**  
-https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/d432c5483c76c07b80f2d9740568fbc4b74a5ac6/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
+https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/520dbd0d5aa78e8482d92b6267d74e41cc5cbe5f/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
 
 该页面不改变正式页面。Ovis 预备验收页面（尚无 ONNX bundle，暂不能运行模型）也已通过公开资源检查：  
 https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/e4ef4f1aca7ff0eee58826fb84849d60d0c23f05/assets/projects/doctags/browser-inference/dev-ovisocr3.html
@@ -176,6 +176,8 @@ PR #74 已有以下自动检查通过记录：
 - DEV 镜像文件逐字节一致性
 - MkDocs strict build
 - Paddle 独立验收页及本地资源公开可访问检查
+- PP-DocLayoutV3 Worker 同源静态资源公开检查（732,503 bytes、SHA-256 固定值、worker-base.js 同源基准）
+- Worker URL 同源解析回归测试
 
 这些测试只验证代码结构、契约和静态页面资源，不证明模型推理准确率或 GPU 可运行。
 
@@ -184,6 +186,8 @@ PR #74 已有以下自动检查通过记录：
 ### A. 先完成 Paddle 本机验收
 
 在桌面 Chrome / Edge + NVIDIA RTX 3080 10GB 上：
+- 首先确认页面状态显示 PP-DocLayoutV3 Worker 同源资源已就绪；浏览器 Network 中 `inference.worker.js` 应从当前 raw.githack 页面相同 origin 加载，不再请求 jsDelivr Worker。
+- 确认 Console 不再出现 `SecurityError: Failed to construct 'Worker'`，并确认 Worker 初始化成功后才继续加载版面模型。
 - 确认 `navigator.gpu` 与 `shader-f16` 可用。
 - 冷启动加载约 2.11 GB 资源，确认实际 GPU adapter 和单 runtime。
 - 选择含文字、表格、公式、图表、图片的脱敏测试页。
