@@ -2,6 +2,7 @@
 
 **更新时间：** 2026-11-06  
 **当前 PR：** [#74 — WIP: OvisOCR3 + PaddleOCR-VL-1.6 native WebGPU integration](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/pull/74)  
+**当前 head commit（更新时）：** `b2c1bb54c7de4aa39952b6277b117503ab55477f`  
 **开发分支：** `feat/ovisocr3-paddleocr-vl16-webgpu-20261106`  
 **基线分支：** `dev`  
 **状态：** Draft；不允许合并到 dev/main，不允许部署正式 HF Space。
@@ -68,6 +69,9 @@
 PR 专属 DEV 页面构建已通过公开访问检查。入口文件：
 
 `docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html`
+
+**已通过 CI 公开可访问检查的独立验收入口：**  
+https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/97d528692479473206c52698715ce5ca30a3c40b/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
 
 该页面不改变正式页面。打开后：
 1. 点击“加载模型并预热”，等待约 2.11 GB 的模型资源下载与预热完成。
