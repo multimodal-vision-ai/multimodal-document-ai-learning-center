@@ -1,228 +1,287 @@
-# MVAI DocTags · OvisOCR3 + PaddleOCR-VL-1.6 WebGPU 接入交接
+# MVAI DocTags · OvisOCR3 + PaddleOCR-VL-1.6 WebGPU 接入交接文档
 
-**更新时间：** 2026-11-06  
-**当前 PR：** [#74 — WIP: OvisOCR3 + PaddleOCR-VL-1.6 native WebGPU integration](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/pull/74)  
-**本轮 Manifest 修复代码提交：** `1135c18b5f95dba7d31a97dafa6ec139090832fc`  
+**更新时间：** 2026-11-06 13:31（北京时间）  
+**仓库：** `multimodal-vision-ai/multimodal-document-ai-learning-center`  
+**PR：** [#74 — OvisOCR3 + PaddleOCR-VL-1.6 native WebGPU integration](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/pull/74)  
 **开发分支：** `feat/ovisocr3-paddleocr-vl16-webgpu-20261106`  
 **基线分支：** `dev`  
-**状态：** PaddleOCR-VL-1.6 已完成人工验收；PR #74 仍为 Draft，OvisOCR3 转换与真实浏览器验收尚未完成，因此暂不合并 dev/main、不部署正式 HF Space。
+**当前 head：** `50a0ba99be0cc0e35a66e4fd7e99269c74a21c29`（继续工作前必须重新读取 PR head）  
+**状态：** PaddleOCR-VL-1.6 已通过用户人工验收；OvisOCR3 转换和浏览器验收是下一阶段主线。PR #74 保持 Draft，不合并、不部署正式 HF Space。
 
-## 一、已经批准的目标与边界
+---
 
-仅增加两个浏览器端 WebGPU OCR 模型：
+## 1. 下一轮工作的明确目标
 
-1. **ATH-MaaS/OvisOCR3 0.8B**
-2. **PaddlePaddle/PaddleOCR-VL-1.6 0.9B**
+下一轮只推进 **OvisOCR3 0.8B 的 ONNX 转换、组件一致性验证、HF 模型仓库上传和浏览器 WebGPU 验收**。
 
-必须遵守：
+PaddleOCR-VL-1.6 已通过当前阶段人工验收，不要为了继续开发而改动它已经验收通过的实现。
 
-- 新模型输出保留各自原生格式，不转换成 DocTags。
-- 必须输出真实版面定位信息；缺少 bbox 的结果不接受，也不允许补造坐标。
-- 浏览器本地 WebGPU 推理；不采用服务端推理，不静默回退 CPU/WASM。
-- 不改变正式页面现有界面、布局、按钮和交互。
-- 不影响现有 Granite Docling 258M、MVAI-DocTags-DJX-0.8B、MVAI-DocTags-WC-2B。
-- 真实浏览器 GPU 验收和原有模型回归测试通过前，不得注册到正式模型列表。
-- 只有人工验收后才可合并和发布。
+最终仍然只接入两个新增模型：
 
-## 二、仓库与代码位置
+1. `ATH-MaaS/OvisOCR3`（0.8B）
+2. `PaddlePaddle/PaddleOCR-VL-1.6`（0.9B）
 
-- 仓库：`multimodal-vision-ai/multimodal-document-ai-learning-center`
-- 当前开发 PR：#74
-- 主要源码：`hf-spaces/mvai-doctags-webgpu/`
-- Paddle 独立验收页面：`hf-spaces/mvai-doctags-webgpu/dev-paddleocr-vl16.html`
-- Ovis 独立验收页面：`hf-spaces/mvai-doctags-webgpu/dev-ovisocr3.html`
-- Ovis DEV 预览镜像：`docs/assets/projects/doctags/browser-inference/dev-ovisocr3.html`（待 ONNX bundle 上传后才能运行模型）
-- 原生输出解析：`hf-spaces/mvai-doctags-webgpu/native-document-output.js`
-- 原生结果渲染：`hf-spaces/mvai-doctags-webgpu/native-result-renderer.js`
-- 技术状态：`hf-spaces/mvai-doctags-webgpu/NATIVE_OCR_STATUS.md`
-- Ovis 转换说明：`hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/README.md`
-- Paddle 接入说明：`hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/README.md`
+### 必须遵守的边界
 
-PR #74 的 head SHA 会随每次修复更新。继续研发前必须实时读取 PR #74 最新 head，不能使用本交接文档中的历史提交 SHA。
+- 两个模型都保留各自原生输出格式，**不得转换成 DocTags**。
+- 必须输出模型真实提供的版面定位信息；缺少 bbox 时拒绝或明确报告，不允许补造坐标。
+- 推理在浏览器本地使用 WebGPU；不采用服务端推理，不允许静默回退 CPU/WASM。
+- 不改变正式页面现有布局、按钮、操作流程和视觉设计。
+- 不影响现有三个模型：Granite Docling 258M、MVAI-DocTags-DJX-0.8B、MVAI-DocTags-WC-2B。
+- 新模型未通过真实浏览器 GPU 验收前，不得加入正式模型注册表。
+- 未经用户人工批准，不合并到 `dev/main`，不发布正式 HF Space。
 
-## 三、PaddleOCR-VL-1.6 当前进展
+---
 
-### 固定依赖
+## 2. 当前仓库与开发纪律
 
-- VLM 源模型：`PaddlePaddle/PaddleOCR-VL-1.6`
+| 项目 | 路径/地址 |
+|---|---|
+| 主仓库 | `multimodal-vision-ai/multimodal-document-ai-learning-center` |
+| PR | [#74](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/pull/74) |
+| 当前分支 | `feat/ovisocr3-paddleocr-vl16-webgpu-20261106` |
+| 主要源代码 | `hf-spaces/mvai-doctags-webgpu/` |
+| Ovis 适配器 | `hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/` |
+| Paddle 适配器 | `hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/` |
+| 原生输出解析 | `hf-spaces/mvai-doctags-webgpu/native-document-output.js` |
+| 原生结果渲染 | `hf-spaces/mvai-doctags-webgpu/native-result-renderer.js` |
+| 技术状态 | `hf-spaces/mvai-doctags-webgpu/NATIVE_OCR_STATUS.md` |
+| 本交接文档 | `docs/projects/doctags-browser/NATIVE_OCR_HANDOFF_2026-11-06.md` |
+
+**继续开发前先读取 PR #74 最新 head、PR 描述和 CI 状态。** 本文中的 head SHA 是交接时快照，不可作为后续提交的固定基线。所有修改继续提交到当前 feature branch 和 PR #74，不要新开分支，不要 cherry-pick 到 main。
+
+---
+
+## 3. PaddleOCR-VL-1.6：当前阶段已验收
+
+### 3.1 模型与运行配置
+
+- 官方源模型：`PaddlePaddle/PaddleOCR-VL-1.6`
 - 浏览器模型包：`glebkudr/PaddleOCR-VL-1.6-WebGPU`
 - 浏览器模型 revision：`5219606297d00bbd23b2ec193271af0c0b427dfc`
-- WebGPU 推理引擎：`glebkudr/paddleocr-vl-webgpu` commit `f7d2f8aa40639497e1dbd95f2f8793e664b90758`
-- 版面检测 SDK：`web-sdk-PP-DocLayoutV3` v1.2.0，commit `3aedb7b35af49a1c207fd4f846211366a9d09973`
-- 版面模型：PP-DocLayoutV3 FP16，74,279,796 bytes
-- VLM 模型包：2,038,286,862 bytes；两者冷启动下载约 2.11 GB。
+- 浏览器推理引擎：`glebkudr/paddleocr-vl-webgpu` commit `f7d2f8aa40639497e1dbd95f2f8793e664b90758`
+- 版面检测：PP-DocLayoutV3 FP16，74,279,796 bytes
+- VLM 模型包：2,038,286,862 bytes
+- 用户实测：RTX 3080，WebGPU FP16，Runtime Count = 1，模型加载与预热成功。
 
-### Manifest 404 故障与修复（2026-11-06）
+### 3.2 已解决的两项真实浏览器故障
 
-用户首次在 RTX 3080 Chrome 验收时，收到：
+1. Manifest 404：适配器改为访问上游 Pages 实际发布的 `https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json`，并加入回归测试。
+2. Worker 跨域 SecurityError：固定 PP-DocLayoutV3 v1.2.0 Worker，大小 732,503 bytes，SHA-256 为 `128380b8f435c07b1dec25542355708dbd99e033b2fcf994d13d12bc8b3a6a6b`；由项目同源静态目录托管，保留 Worker 执行模式。
 
-`DocLayoutError: Model manifest request failed with 404`
+### 3.3 原生输出和版面还原
 
-根因不是 GPU、显存或模型权重，而是将上游 Git 仓库源文件路径误当作 GitHub Pages 的公开发布路径。
+- 两阶段流程：PP-DocLayoutV3 检测版面 → PaddleOCR-VL-1.6 对区域执行 OCR、表格、公式或图表识别。
+- 原生结果为 Paddle 风格 `parsing_res_list`，包括 `block_bbox`、`block_label`、`block_content`、`block_id`、`block_order`。
+- bbox 采用原始图像像素坐标；裁剪从原图执行；不制造或猜测坐标。
+- OTSL 解析器支持 `<fcel>`、`<ecel>`、`<lcel>`、`<ucel>`、`<xcel>`、`<nl>`，用于恢复单元格和合并关系，仅服务于展示。
+- 右侧可视化表格保留原始 OTSL 折叠查看；原始 `block_content` 和 JSON 不被改写。
+- 点击右侧文本/表格结果块，左侧原图高亮相应 bbox。
+- 不转换成 DocTags，不改变模型原生输出。
 
-- 源仓库位置：`models/pp-doclayoutv3/manifest.json`
-- Pages 构建脚本：`scripts/stage-pages-models.mjs`
-- 实际发布位置：`apps/demo/dist/models/manifest.json`
-- 实际公开 URL：`https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json`
-- 发布脚本同时将 FP16/FP32 ONNX 变体 URL 改写为 `/models/model-fp16.onnx` 和 `/models/model-fp32.onnx`。
+### 3.4 用户人工验收结论
 
-已将适配器 `LAYOUT_MANIFEST_URL` 改为实际 Pages 地址，并导出该常量供回归测试；新增 Node 测试，确保今后不会再次使用源目录路径。DEV CI 还会直接请求上游 Pages Manifest，检查模型 ID、FP16 文件大小和权重 URL。该网络检查已通过，说明修复地址当前可访问且返回预期的模型元数据。
+**2026-11-06，用户已确认人工验收通过：解析与版面还原都没有问题。**
 
-### Worker 跨域 SecurityError 故障与修复（2026-11-06）
+这项结论覆盖当前测试文档的真实浏览器推理、原图版面定位、原生结构化解析和 OTSL 表格渲染。公式/图表专项、停止/重复运行、资源稳定性和原有三个模型回归，仍属于后续整体验收范围，但不再阻塞当前转向 OvisOCR3。
 
-Manifest 修复后，第二次浏览器验收在 SDK 创建 Worker 时失败：
+Paddle 独立验收页：
+[打开 PaddleOCR-VL-1.6 DEV 验收页](https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-74/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html)
 
-`SecurityError: Failed to construct 'Worker': Script at 'https://cdn.jsdelivr.net/npm/web-sdk-pp-doclayoutv3@1.2.0/dist/inference.worker.js' cannot be accessed from origin 'https://raw.githack.com'.`
+**不要重做或随意修改已经通过人工验收的 Paddle 基础流程。** 如 Ovis 接入确实需要共用渲染器改动，先检查是否会影响 Paddle，再增加回归测试。
 
-根因：上游 `browser-global.js` 通过 `document.currentScript.src` 记录自身的 jsDelivr 地址；`worker-bridge.ts` 随后使用 `new Worker(new URL("./inference.worker.js", __PPDOCLAYOUT_MODULE_URL__), {type:"module"})`。这使模块 Worker 的 URL 落在 CDN 域名，而当前页面来自 raw.githack，浏览器拒绝跨源 Worker。
+---
 
-已确认上游 SDK 的 worker bundle 是单文件构建（无顶层静态 import），文件大小 732,503 bytes。为保留后台 Worker 推理，不退化为主线程执行，采用同源静态托管：
+## 4. OvisOCR3：下一阶段主线
 
-- 新增 `scripts/stage-ppdoclayout-worker.mjs`，从固定 npm 版本下载 `inference.worker.js`。
-- 固定大小 732,503 bytes、SHA-256 `128380b8f435c07b1dec25542355708dbd99e033b2fcf994d13d12bc8b3a6a6b`；不匹配则拒绝发布。
-- 同时生成 `vendor/ppdoclayoutv3/worker-base.js` 作为 SDK 的 URL 基准文件。
-- 适配器在 `createDocLayout()` 前将 `globalThis.__PPDOCLAYOUT_SCRIPT_URL__` 覆盖为本地同源基准 URL，使 SDK 构造的 Worker 指向 `vendor/ppdoclayoutv3/inference.worker.js`。
-- DEV workflow 将文件复制到 MkDocs 静态资源目录，并在发布后验证 worker 文件大小、SHA-256 和 base 文件可访问。
-- 添加 URL 回归测试，保证 Worker 与演示页面同源。
-
-HF Static Space 部署时，必须先在 Space 根目录执行 `node scripts/stage-ppdoclayout-worker.mjs`，并将生成的 `vendor/ppdoclayoutv3/` 目录与适配器一起上传。
-
-注意：此修复保留 Worker 执行模式；ONNX Runtime WASM 仍通过已配置的 CDN 路径加载。当前代码与静态资源检查通过，不等于真实浏览器 Worker 已成功初始化，仍需用户在 Chrome + RTX 3080 实测。
-
-### 已完成代码
-
-- 两阶段流程：PP-DocLayoutV3 检测版面区域 → PaddleOCR-VL-1.6 对每个区域执行 OCR、表格、公式或图表识别。
-- 版面坐标以原始图片像素为准，区域裁剪从原图进行；不使用缩放后的坐标冒充原图坐标。
-- 保留阅读顺序、区域标签和原始识别文本。
-- 原生结果使用 Paddle 风格的 `parsing_res_list` 字段：`block_bbox`、`block_label`、`block_content`、`block_id`、`block_order`。
-- 图像区域不强行 OCR，渲染时展示原图对应裁剪区域。
-- 缺少或越界 bbox 会拒绝生成定位框。
-- 首次模型加载会执行一个真实 token 的预热；未完成下载和预热不报告模型 ready。
-- 停止按钮可以中止布局检测；如果正在执行某个 VLM 区域生成，等待当前区域结束后停止，并保留已完成区域，标记为不完整。
-- 已绕开上游默认的自适应多运行时工厂：RTX 3080 原本可能创建最多 3 个运行时，本项目改为单 WebGPU runtime、顺序识别，降低显存和 GPU context 压力。
-- 测试诊断会显示实际 GPU adapter 名称、设备类型和 runtime 数量；拒绝 SwiftShader 等软件渲染适配器。
-
-### 独立验收页
-
-PR 专属 DEV 页面构建已通过公开访问检查。入口文件：
-
-`docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html`
-
-**已通过 CI 公开可访问检查的独立验收入口：**  
-https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/520dbd0d5aa78e8482d92b6267d74e41cc5cbe5f/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
-
-该页面不改变正式页面。Ovis 预备验收页面（尚无 ONNX bundle，暂不能运行模型）也已通过公开资源检查：  
-https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/e4ef4f1aca7ff0eee58826fb84849d60d0c23f05/assets/projects/doctags/browser-inference/dev-ovisocr3.html
-
-打开 Paddle 页面后：
-1. 点击“加载模型并预热”，等待约 2.11 GB 的模型资源下载与预热完成。
-2. 上传一张包含文字、表格、公式、图表或图片区域的单页文档。
-3. 点击“运行文档解析”。
-4. 检查原图上的版面框、区域标签、原生 JSON、完成区域数量和推理耗时。
-5. 测试停止、再次运行和释放模型。
-
-**注意：** 本项目尚未在用户 RTX 3080 上完成真实浏览器 GPU 验收。静态 CI 通过不等于推理成功。
-
-**人工验收结论（2026-11-06）：通过。** 用户在更新 OTSL 原生渲染后的 DEV 页面复测，确认解析与版面还原均正常。此结论仅覆盖 Paddle 当前文档样例的解析/版面还原，不替代后续公式、图表、停止/重复运行、资源稳定性和原有模型回归测试。
-
-## 四、OvisOCR3 当前进展
-
-### 固定来源与输出契约
+### 4.1 固定模型来源与原生输出契约
 
 - 官方模型：`ATH-MaaS/OvisOCR3`
-- 固定 source commit：`17f255e2c8ae6d18d5d5edb0a474bd4ed39aef90`
-- 官方权重：BF16 Safetensors，约 1.71 GB
+- 固定源 revision：`17f255e2c8ae6d18d5d5edb0a474bd4ed39aef90`
+- 架构：Qwen3.5-0.8B
+- 源权重：BF16 Safetensors，约 1.71 GB
 - 许可证：Apache-2.0
-- 原生 Structured 输出为 JSON 数组，每个元素包括 `bbox`、`category`、`content`。
-- bbox 坐标是相对于输入图像的 0–1000 归一化整数坐标。
-- 表格保留 HTML，公式保留 LaTeX；图片区域保留官方输出内容，渲染器可根据 bbox 裁剪原图。
-- 浏览器不能直接把官方 BF16 仓库当作 ONNX WebGPU 模型加载。
+- 目标 ONNX 仓库：`multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX`
+- 浏览器运行时：Transformers.js 4.4.0-next.0 + ONNX Runtime Web 1.31.1
+- 浏览器执行：WebGPU + shader-f16，不允许静默 CPU 回退。
 
-### 已完成代码
+OvisOCR3 的官方 Structured 任务输出 JSON 数组，元素包含：
 
-- 独立的 Ovis 原生适配器，不复用 DJX 自研模型权重。
-- 官方 Structured prompt 固定在 bundle 中，并通过 SHA-256 校验。
-- 独立 ONNX exporter、component parity validator、PyTorch source reference runner。
-- 上传前 staging 工具会核对文件大小和 SHA-256，且要求验证报告成功。
-- 新增 `run_conversion.sh`：固定下载官方模型、固定 Olive recipe、执行 ONNX 导出和组件一致性验证。默认不上传；只有明确设置 `UPLOAD=1` 和 `HF_TOKEN` 才上传。
-- 导出器 IO 静态检查曾发现并修复 embedding dummy input 的 `input` / `input_ids` 不匹配。
-- 视觉编码器导出明确提取 `pooler_output`，并与原始模型输出验证。
-- 浏览器适配器只接受专用 HF ONNX 仓库 `multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX` 的完整 40 位 commit SHA。
-- Ovis 独立验收页、适配器和来源契约已镜像到 DEV 静态资源；CI 会检查文件一致性和公开可访问性。当前仍没有已上传的 ONNX bundle，因此该页面暂时只能作为预备验收入口。
+- `bbox`：相对于输入图片的 0–1000 归一化整数坐标；
+- `category`：区域类别；
+- `content`：原生内容。
 
-### 尚未完成
+表格保留 HTML，公式保留 LaTeX，文本和图片区域保留官方格式。浏览器端需要把 bbox 映射回原图像素用于定位显示，但不得改写原始 JSON 或转换成 DocTags。
 
-- 官方 BF16 权重尚未实际下载并转换。
-- ONNX embedding、vision、decoder 尚未执行真实转换和组件一致性验证。
-- ONNX bundle 尚未上传 HF。
-- Ovis 尚未通过 Chrome WebGPU 真实推理和 bbox 对齐验收。
+**官方 BF16 仓库不能直接当成 Transformers.js WebGPU 模型加载，必须先完成 ONNX 转换和打包。**
 
-## 五、原生输出渲染与测试
+### 4.2 已经准备好的代码
 
-- `native-document-output.js` 分别解析 Ovis 与 Paddle 原生输出，不做 DocTags 转换。
-- Ovis bbox 从归一化 1000 坐标换算到原图像素。
-- Paddle bbox 保持原图像素坐标。
-- `native-result-renderer.js` 使用 DOM 节点创建安全渲染文本与 allow-listed HTML table，不将模型输出直接写入 `innerHTML`。
-- 已新增 PaddleOCR-VL 原生 OTSL 解析器：识别 `<fcel>`、`<ecel>`、`<lcel>`、`<ucel>`、`<xcel>`、`<nl>`，恢复单元格、空单元格及 colspan/rowspan；不改写 `parsing_res_list[].block_content` 或原始 JSON。
-- OTSL 表格在右侧以安全 DOM 节点渲染；同时提供默认折叠的“查看原始 OTSL”，原始标记仍可逐字检查。若结构不合法，显示警告并保留原文，不猜测或伪造表格结构。
-- Paddle DEV 页右侧结果块支持点击联动：重新绘制原图并高亮对应原始像素 bbox；仅增加交互，不改变布局和模型推理。
-- OTSL 解析器已增加普通单元格、空单元格、横向合并、纵向合并、双向合并和异常结构测试；Space 源文件与 DEV 镜像同步。
-- 已修复 Ovis HTML table/image 标签检测中的正则转义问题。
-- `docs/assets/projects/doctags/browser-inference/` 是 DEV 预览镜像；CI 使用 `cmp` 检查它与 HF Space 源码完全一致。
+目录：`hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/`
 
-## 六、自动化检查状态
+已准备：
 
-PR #74 已有以下自动检查通过记录：
+- `README.md`：环境、转换、验证、上传及验收说明。
+- `run_conversion.sh`：固定源 revision 下载、固定 Olive recipe、ONNX 导出和组件验证的一键流程。
+- `export_onnx.py`：embedding、vision encoder、decoder 导出与浏览器资产打包。
+- `validate_bundle.py`：导出 bundle 对照 BF16 源模型的组件验证。
+- `test_reference.py`：原始 PyTorch BF16 模型参考推理。
+- `upload_bundle.sh` 及配套上传/哈希检查逻辑：验证通过后才允许上传。
+- `requirements-export.txt`：固定导出依赖。
 
-- Native OCR JSON / bbox / layout contract tests
-- Ovis exporter IO contract test（不需要安装大型 ML 依赖）
-- JavaScript adapter module syntax
-- Python exporter / validator / upload scripts syntax
-- 两个 shell 脚本语法
-- DEV 镜像文件逐字节一致性
-- MkDocs strict build
-- Paddle 独立验收页及本地资源公开可访问检查
-- PP-DocLayoutV3 Worker 同源静态资源公开检查（732,503 bytes、SHA-256 固定值、worker-base.js 同源基准）
-- Worker URL 同源解析回归测试
+已修复/加入的保护：
 
-这些测试只验证代码结构、契约和静态页面资源，不证明模型推理准确率或 GPU 可运行。
+- 固定官方 OvisOCR3 source revision。
+- 固定 Microsoft Olive recipe commit：`74c2ab2f0bdd5acabcb05b24e9edf145e1020e12`。
+- 固定 Olive vision source SHA-256：`f1ae970216a0b96d56ff2ad35fb99cbff6e358fd15fbc2b87cb95e815de6ba78`。
+- embedding dummy input 名称与 ONNX IO contract 已修正。
+- vision encoder 明确提取 `pooler_output`。
+- decoder 外部数据打包后执行 ONNX checker。
+- 记录 source checkpoint、prompt、tokenizer 等 provenance/hash。
+- 上传默认关闭；只有显式设置 `UPLOAD=1` 并提供 `HF_TOKEN` 才上传。
+- 浏览器适配器要求目标 HF 仓库完整 40 位 commit SHA，不允许浮动引用 main。
 
-## 七、下一步执行顺序
+**重要：上述是代码和导出流程准备完成，不代表 Ovis 模型已经转换成功。** 截至本交接时，官方权重尚未完成实际导出、组件一致性验证或 HF 上传。
 
-### A. Paddle 本机验收（已通过，后续补充压力测试）
+### 4.3 下一轮具体执行顺序
 
-用户已在桌面浏览器 + NVIDIA RTX 3080 上确认解析与版面还原正常。基础验收不再阻塞后续 Ovis 工作。后续有条件时补充以下压力/边界测试：
-- 首先确认页面状态显示 PP-DocLayoutV3 Worker 同源资源已就绪；浏览器 Network 中 `inference.worker.js` 应从当前 raw.githack 页面相同 origin 加载，不再请求 jsDelivr Worker。
-- 确认 Console 不再出现 `SecurityError: Failed to construct 'Worker'`，并确认 Worker 初始化成功后才继续加载版面模型。
-- 确认 `navigator.gpu` 与 `shader-f16` 可用。
-- 冷启动加载约 2.11 GB 资源，确认实际 GPU adapter 和单 runtime。
-- 选择含文字、表格、公式、图表、图片的脱敏测试页。
-- 检查版面框与原图位置是否对齐，标签与阅读顺序是否合理。
-- 对含复杂表格的文档重新运行 Paddle 推理，检查右侧是否渲染成 HTML 表格；展开“查看原始 OTSL”确认源内容与 JSON 中 `block_content` 完全一致。
-- 特别核对 colspan、rowspan、空单元格和多层表头；若 OTSL 不符合当前解析约束，确认页面保留原始输出并显示警告，不出现伪造单元格。
-- 记录 layout、区域识别、总耗时和区域完成数量。
-- 测试布局阶段停止、区域生成中停止、重复运行、释放模型。
-- 若失败，先收集浏览器 Console 错误、页面状态文本和截图，不要修改正式页面。
+#### 第一步：先审阅导出流程，不要盲目启动长任务
 
-### B. 当前主线：完成 OvisOCR3 转换
+在当前分支读取：
+- `adapters/ovisocr3-native/README.md`
+- `run_conversion.sh`
+- `export_onnx.py`
+- `validate_bundle.py`
+- `requirements-export.txt`
+- `upload_bundle.sh)
 
-在用户 WSL / Kaggle 等 Python 3.11 环境：
-1. 安装 README 中固定版本的导出依赖。
-2. 执行 `bash hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/run_conversion.sh`。
-3. 检查 `validation/component_validation.json`。
-4. 必要时执行 `test_reference.py`，用同一测试图片运行原始 BF16 source reference。
-5. 组件验证成功后，人工确认再设置 `UPLOAD=1` 上传。
-6. 记录 HF 仓库完整 commit SHA，并在 Ovis DEV 页面固定该 SHA。
-7. 在 Chrome + RTX 3080 上验证原生 JSON、bbox、HTML 表格、LaTeX 公式和停止行为。
+检查命令、依赖版本、文件名、模型权重格式和输出目录是否彼此一致。若发现问题，先修复并增加小型静态/契约测试。
 
-### C. 最后才做生产接入
+#### 第二步：准备独立 Python 3.11 环境
 
-两个模型均通过真实浏览器 GPU 验收后：
-- 将原生结果接入现有 03/04/05 区域。
-- 只增加两个模型选择项，不改变现有 UI 布局和交互。
-- 验证 Granite Docling、DJX-0.8B、WC-2B 原功能不退化。
-- 通过老师人工审核后，才批准 PR、合并 dev/main 和部署 HF Space。
+推荐在用户 WSL 或具备足够内存和磁盘的 Linux 环境中执行。此任务是模型格式转换和推理验证，不是训练，不进行微调。
 
-## 八、下一轮聊天启动指令
+README 中给出的基础环境命令：
 
-请先读取本交接文档、`hf-spaces/mvai-doctags-webgpu/NATIVE_OCR_STATUS.md` 和 GitHub PR #74 最新状态。继续使用现有 feature branch 和 Draft PR，不要从头重做，不要修改 main，不要部署 HF Space。先完成 Paddle RTX 3080 实测支持，再继续 Ovis 转换与真实 WebGPU 验证。所有“完成”结论必须由实际日志或测试证据支持。
+```bash
+python -m venv .venv-ovis
+source .venv-ovis/bin/activate
+python -m pip install --upgrade pip
+python -m pip install torch==2.10.0
+python -m pip install 'huggingface_hub>=0.34.0'
+python -m pip install -r hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/requirements-export.txt
+```
+
+#### 第三步：执行固定版本转换
+
+```bash
+bash hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/run_conversion.sh
+```
+
+默认输出目录为仓库根目录下：
+
+` .cache/ovisocr3-webgpu `
+
+可通过第一个参数指定其他工作目录。默认不会上传模型。
+
+注意：
+- 转换前确认磁盘空间足够，模型源文件、ONNX 中间文件和最终 bundle 会同时占用空间。
+- 如果上次留下不完整输出，先检查内容；只有确认可以丢弃后才设置 `CLEAN_OUTPUT=1`。
+- CPU 线程可通过 `OVIS_THREADS=4` 调整。
+- 不要一开始就设置 `UPLOAD=1`。
+
+#### 第四步：检查转换与组件一致性
+
+必须检查：
+
+`<工作目录>/release/ovisocr3-webgpu/validation/component_validation.json`
+
+确认 embedding、vision encoder、decoder、外部权重文件、tokenizer、prompt 和 source hash 均通过。若任一组件不通过，停止上传，先定位问题。
+
+如需参考模型输出，按 README 使用 `test_reference.py`，在同一张脱敏文档图片上运行官方 BF16 源模型，保存原始输出和耗时。CPU 参考推理可用于正确性对照，但不能代替浏览器 WebGPU 验收。
+
+#### 第五步：人工确认后上传 HF
+
+只有组件验证成功、文件清单和哈希检查通过后，才由用户确认是否上传到：
+
+`multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX`
+
+上传后记录该仓库完整 40 位 commit SHA。禁止使用浮动 main revision。未得到用户明确确认，不执行上传。
+
+#### 第六步：完成真实浏览器 WebGPU 验收
+
+Ovis DEV 页面已经准备，但没有 ONNX bundle 前不能真正推理：
+
+[打开 OvisOCR3 DEV 验收页](https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-74/assets/projects/doctags/browser-inference/dev-ovisocr3.html)
+
+上传成功后：
+- 将适配器配置为新上传的完整 HF commit SHA。
+- 检查模型文件、tokenizer、prompt 和外部数据加载。
+- 使用与 Paddle 相同的文档图片进行推理。
+- 检查原生 JSON 是否可解析，bbox 是否在 0–1000 合法范围并准确映射回原图。
+- 检查 category、reading order、文本、HTML 表格、LaTeX 公式及图片区域。
+- 检查浏览器确实使用 WebGPU + shader-f16，不允许 CPU/WASM 静默回退。
+- 测试冷启动、预热、重复推理、停止和资源释放。
+- 保存页面截图、原始 JSON、Console 日志、模型 commit SHA 和推理耗时。
+
+只有真实 Chrome + RTX 3080 浏览器推理成功，才可以标记 Ovis 验收通过。
+
+---
+
+## 5. 两模型都通过后才进行的工作
+
+OvisOCR3 通过人工验收后，才进入统一集成阶段：
+
+1. 将 OvisOCR3 与 PaddleOCR-VL-1.6 的原生结果分别接入现有 03/04/05 展示区域。
+2. 只增加两个模型选项，不改变现有界面布局、按钮和交互。
+3. 保持每个模型自己的原生输出格式与 bbox 语义。
+4. 对 Granite Docling 258M、MVAI-DocTags-DJX-0.8B、MVAI-DocTags-WC-2B 做完整回归，确认没有功能退化。
+5. 对比同一批文档上的识别效果、版面定位、推理时间、模型下载量、显存和缓存表现。
+6. DEV 页面交给用户人工审核。
+7. 用户明确批准后，才合并和正式部署。
+
+不要在 Ovis 尚未通过真实浏览器验收时提前把两个模型接入正式模型列表。
+
+---
+
+## 6. 当前 CI 与 PR 状态
+
+交接时 PR #74 最新 head 为：
+
+`50a0ba99be0cc0e35a66e4fd7e99269c74a21c29`
+
+该提交对应的自动化检查：
+
+| 检查 | 结果 |
+|---|---|
+| Native OCR output contracts | 通过 |
+| DEV Preview isolated static build | 通过 |
+| Documentation quality | 通过 |
+
+其中 Native OCR contract tests 为 19 项、0 失败。DEV 构建、公开资源检查和文档质量检查均通过。
+
+PR 仍为 Draft。CI 通过只代表代码契约、构建和静态资源检查通过，不能替代 Ovis 模型转换、组件 parity 或真实 WebGPU 推理。
+
+PR 描述中保留了当前验收状态和 DEV 预览入口。继续工作时以 GitHub 最新 PR 信息为准。
+
+---
+
+## 7. 相关文件与状态记录
+
+- 技术状态：`hf-spaces/mvai-doctags-webgpu/NATIVE_OCR_STATUS.md`
+- Ovis 转换指南：`hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/README.md`
+- Ovis 转换脚本：`hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/run_conversion.sh`
+- Paddle 接入指南：`hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/README.md`
+- PR #74：<https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/pull/74>
+
+---
+
+## 8. 下一聊天窗口启动指令
+
+请先读取本交接文档、`hf-spaces/mvai-doctags-webgpu/NATIVE_OCR_STATUS.md)、OvisOCR3 adapter README 和 GitHub PR #74 的最新状态。
+
+从当前 feature branch 和 Draft PR #74 继续，不要重新创建分支，不要重做 PaddleOCR-VL-1.6，不要修改 main，不要部署 HF Space。
+
+**当前唯一主线是：先审阅并执行 OvisOCR3 0.8B 的固定版本 ONNX 转换，完成组件一致性验证；经用户确认后再上传 HF，然后进行真实浏览器 WebGPU 验收。**
+
+每个阶段都要提供可核查的文件、日志、哈希、测试结果或浏览器证据。遇到转换错误先定位原因，不要跳过 parity 验证，不要用静态 CI 通过冒充模型验收。用户的 RTX 3080 是最终浏览器验收设备。
