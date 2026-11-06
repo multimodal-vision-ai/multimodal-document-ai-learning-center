@@ -84,7 +84,22 @@ if "isinstance(output, torch.Tensor)" not in vision_source:
 
 validator_path = Path(__file__).with_name("validate_bundle.py")
 validator_source = validator_path.read_text(encoding="utf-8")
+validator_tree = ast.parse(validator_source, filename=str(validator_path))
 if "preprocessor_config_matches_source_except_resolution" not in validator_source:
     raise SystemExit("Bundle validator must verify the official preprocessor configuration")
+validate_function = next(
+    node for node in validator_tree.body
+    if isinstance(node, ast.FunctionDef) and node.name == "validate"
+)
+required_assignment = next(
+    node for node in ast.walk(validate_function)
+    if isinstance(node, ast.Assign)
+    and any(isinstance(target, ast.Name) and target.id == "required" for target in node.targets)
+)
+required_artifacts = ast.literal_eval(required_assignment.value)
+if "preprocessor_config.json" not in required_artifacts:
+    raise SystemExit("Bundle validator must require the official preprocessor_config.json")
+if "processor_config.json" in required_artifacts:
+    raise SystemExit("Bundle validator must not require non-existent processor_config.json")
 
-print("OvisOCR3 exporter IO, processor-schema and vision-output contract checks passed")
+print("OvisOCR3 exporter IO, processor-schema, vision-output and bundle-asset contract checks passed")
