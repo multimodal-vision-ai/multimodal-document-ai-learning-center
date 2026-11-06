@@ -44,13 +44,70 @@
     canvas.style.height="auto";
     return canvas;
   }
+  function otslTable(parsed,doc) {
+    const table=doc.createElement("table");
+    table.className="otsl-table";
+    table.setAttribute("aria-label","PaddleOCR-VL 原生 OTSL 表格");
+    const body=doc.createElement("tbody");
+    for(const rowCells of parsed.rows) {
+      const tr=doc.createElement("tr");
+      for(const cell of rowCells) {
+        const td=doc.createElement("td");
+        if(cell.colspan>1)td.colSpan=cell.colspan;
+        if(cell.rowspan>1)td.rowSpan=cell.rowspan;
+        td.textContent=cell.text;
+        td.style.whiteSpace="pre-wrap";
+        td.style.verticalAlign="top";
+        tr.appendChild(td);
+      }
+      body.appendChild(tr);
+    }
+    table.appendChild(body);
+    return table;
+  }
+  function otslSource(content,parsed,doc) {
+    const details=doc.createElement("details");
+    details.className="otsl-source";
+    details.style.marginTop="8px";
+    const summary=doc.createElement("summary");
+    summary.textContent="查看原始 OTSL（"+parsed.rows.length+" 行 · "+parsed.cellCount+" 个单元格）";
+    const pre=doc.createElement("pre");
+    pre.textContent=content;
+    pre.style.whiteSpace="pre-wrap";
+    pre.style.overflowWrap="anywhere";
+    pre.style.fontSize="11px";
+    details.append(summary,pre);
+    return details;
+  }
   function blockNode(block,index,doc,sourceImage) {
     let node;
     if(block.type==="table"){
       const wrap=doc.createElement("div");wrap.className="render-tbl";
       const table=safeTable(block.content,doc);
-      if(table)wrap.appendChild(table);
-      else wrap.textContent=block.content;
+      if(table) {
+        wrap.appendChild(table);
+      } else {
+        try {
+          const parsed=root.MVAINativeOCR?.parseOTSL(block.content);
+          if(parsed) {
+            wrap.appendChild(otslTable(parsed,doc));
+            wrap.appendChild(otslSource(block.content,parsed,doc));
+          } else {
+            const raw=doc.createElement("pre");
+            raw.textContent=block.content;
+            wrap.appendChild(raw);
+          }
+        } catch(error) {
+          const warning=doc.createElement("p");
+          warning.className="otsl-warning";
+          warning.textContent="OTSL 结构暂时无法可靠还原，以下保留模型原始输出："+(error?.message||String(error));
+          const raw=doc.createElement("pre");
+          raw.textContent=block.content;
+          raw.style.whiteSpace="pre-wrap";
+          raw.style.overflowWrap="anywhere";
+          wrap.append(warning,raw);
+        }
+      }
       node=wrap;
     }else if(IMAGE_CATEGORIES.has(block.type)){
       node=doc.createElement("div");node.className="unknown-region";
@@ -119,7 +176,7 @@
     }
     return count;
   }
-  const api=Object.freeze({renderBlocks,renderBoxes,safeTable});
+  const api=Object.freeze({renderBlocks,renderBoxes,safeTable,otslTable,otslSource});
   root.MVAINativeOCRRenderer=api;
   if(typeof module!=="undefined" && module.exports) module.exports=api;
 })(typeof globalThis==="object"?globalThis:this);
