@@ -34,8 +34,8 @@ jobs:
         run: |
           python -m py_compile hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/export_onnx.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/validate_bundle.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/test_reference.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/prepare_upload.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/test_export_contract.py
           python hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/test_export_contract.py
-      - name: Check upload shell script syntax
-        run: bash -n hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/upload_bundle.sh
+      - name: Check Ovis shell workflow syntax
+        run: bash -n hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/upload_bundle.sh hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/run_conversion.sh
       - name: Verify DEV preview mirrors match the Space source
         run: |
           cmp hf-spaces/mvai-doctags-webgpu/native-document-output.js docs/assets/projects/doctags/browser-inference/native-document-output.js
