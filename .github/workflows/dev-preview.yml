@@ -42,6 +42,31 @@ jobs:
 
       - name: Install MkDocs dependencies
         run: pip install -r requirements-docs.txt
+      - name: Inspect pinned PP-DocLayoutV3 worker asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          dest="docs/assets/projects/doctags/browser-inference/vendor/pp-doclayoutv3"
+          mkdir -p "$dest"
+          curl --fail --location --retry 3 --retry-all-errors --connect-timeout 15 --max-time 120 \
+            "https://cdn.jsdelivr.net/npm/web-sdk-pp-doclayoutv3@1.2.0/dist/inference.worker.js" \
+            -o "$dest/inference.worker.js"
+          test -s "$dest/inference.worker.js"
+          echo "PP-DocLayoutV3 worker bytes: $(wc -c < "$dest/inference.worker.js")"
+          echo "PP-DocLayoutV3 worker SHA-256:"
+          sha256sum "$dest/inference.worker.js"
+          if grep -Eq '^[[:space:]]*import[[:space:]]' "$dest/inference.worker.js"; then
+            echo "Worker contains static import declarations."
+            grep -Eo '^[[:space:]]*import[^;]{0,180}' "$dest/inference.worker.js" | head -10 || true
+          else
+            echo "Worker has no top-level static import declarations."
+          fi
+          if grep -Eq 'import[[:space:]]*\(' "$dest/inference.worker.js"; then
+            echo "Worker contains dynamic import expressions."
+          else
+            echo "Worker has no dynamic import expressions."
+          fi
+          node --input-type=module --check < "$dest/inference.worker.js"
 
       - name: Assemble DocTags challenge images
         run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
