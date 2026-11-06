@@ -20,6 +20,7 @@ test("Never generate artificial boxes, reading order or unsupported formats",()=
   assert.throws(()=>orderedRegions([{box:{xMin:0,yMin:0,xMax:12,yMax:4},label:"text"}],{width:20,height:10}),/readingOrder/);
   assert.throws(()=>assemblePaddleResult([{}],[]),/数量不匹配/);
   assert.equal(taskForLabel("image"),null);
+  assert.equal(taskForLabel("formula"),"formula");
   assert.equal(taskForLabel("display_formula"),"formula");
   assert.equal(taskForLabel("chart"),"chart");
 });
