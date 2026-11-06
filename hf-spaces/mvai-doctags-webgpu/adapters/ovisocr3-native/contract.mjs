@@ -51,8 +51,21 @@ export async function fetchBundleContract({
   if (validation.success !== true ||
       validation.source_model_id !== SOURCE_MODEL_ID ||
       validation.source_revision !== SOURCE_REVISION ||
-      validation.source_weights_sha256 !== metadata.source_weights_sha256) {
-    throw new Error("ONNX 组件验证报告与官方 OvisOCR3 来源不一致。");
+      validation.source_weights_sha256 !== metadata.source_weights_sha256 ||
+      validation.structured_prompt_sha256 !== metadata.prompt_sha256 ||
+      !/^[0-9a-f]{64}$/i.test(String(metadata.source_weights_sha256 || "")) ||
+      !/^[0-9a-f]{64}$/i.test(String(metadata.prompt_sha256 || "")) ||
+      JSON.stringify(metadata.eos_token_id) !== JSON.stringify([248044, 248046])) {
+    throw new Error("ONNX 组件验证报告、权重哈希或生成配置与官方 OvisOCR3 来源不一致。");
+  }
+  const requiredArtifacts = [
+    "onnx/embed_tokens_fp16.onnx",
+    "onnx/vision_encoder.onnx",
+    "onnx/decoder_model_merged_fp16.onnx"
+  ];
+  if (!validation.artifacts ||
+      requiredArtifacts.some(name => !validation.artifacts[name]?.sha256)) {
+    throw new Error("ONNX 组件验证报告缺少必要的浏览器推理模型文件。");
   }
   const promptResponse = await fetcher(modelFileUrl(modelId, revision, "prompts/document_structured.txt", modelHost));
   if (!promptResponse.ok) throw new Error("无法读取随模型固定的 Structured 提示词：" + promptResponse.status);
@@ -63,6 +76,15 @@ export async function fetchBundleContract({
       !prompt.includes('"content"') ||
       !prompt.includes("[0, 1000)")) {
     throw new Error("OvisOCR3 Structured 提示词缺少官方 JSON/坐标契约。");
+  }
+  const promptDigest = await crypto.subtle.digest(
+    "SHA-256", new TextEncoder().encode(prompt)
+  );
+  const promptHash = Array.from(new Uint8Array(promptDigest), byte =>
+    byte.toString(16).padStart(2, "0")
+  ).join("");
+  if (promptHash !== metadata.prompt_sha256) {
+    throw new Error("ONNX 模型包中的 Structured 提示词哈希与来源清单不一致。");
   }
   return Object.freeze({metadata, validation, prompt});
 }
