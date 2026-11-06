@@ -46,6 +46,20 @@ DJX-0.8B 首次下载约 2.52 GB，WC-2B 首次下载约 6.2 GB，均需要支�
 
 图片来源：[IBM Granite Docling Demo](https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/tree/main/data/images)，原项目 [Apache-2.0](https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo/blob/main/README.md)。图像如包含其他权利人的内容，仍以原始素材许可为准。所有样例仅用于本平台科研展示与测试，不代表实验室自研模型性能。
 
+## PaddleOCR-VL-1.6 独立验收资源（实验性）
+
+PaddleOCR-VL-1.6 的 PP-DocLayoutV3 版面检测 SDK 使用 Web Worker。浏览器不允许从当前 Space 页面直接构造指向 jsDelivr 的跨域 Worker，因此该适配器将 Worker 文件作为本站同源静态资源提供。
+
+在将 Paddle 独立验收页及适配器上传到 HF Static Space 前，先在 Space 仓库根目录执行：
+
+```bash
+node scripts/stage-ppdoclayout-worker.mjs
+```
+
+该脚本从固定版本的 jsDelivr 下载 PP-DocLayoutV3 v1.2.0 Worker，并校验文件大小与 SHA-256；生成的 `vendor/ppdoclayoutv3/worker-base.js` 和 `inference.worker.js` 必须与 `dev-paddleocr-vl16.html`、`adapters/paddleocr-vl-1.6/` 一起上传。适配器会在创建版面检测器前，将 SDK 的 Worker URL 基准切换到同源 `vendor/ppdoclayoutv3/` 目录。不要只上传 HTML 和适配器而遗漏该目录。
+
+当前仅用于独立验收，不会自动加入正式模型列表或修改正式推理流程。
+
 ## V1.10 缓存清理与 CDN 恢复
 
 - 九类样例缩略图改为复用 CORS-aware Blob 加载器，与主预览使用相同的 raw.githack / raw.githubusercontent.com 回退逻辑，避免浏览器清理缓存后直接图片请求显示破图。
