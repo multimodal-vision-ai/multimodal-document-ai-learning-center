@@ -12,39 +12,62 @@ export const VLM_ENGINE_COMMIT = "f7d2f8aa40639497e1dbd95f2f8793e664b90758";
 export const MODEL_DOWNLOAD_BYTES = 2_038_286_862;
 export const LAYOUT_DOWNLOAD_BYTES = 74_279_796;
 
-const LAYOUT_SCRIPT_URL =
-  "https://cdn.jsdelivr.net/npm/web-sdk-pp-doclayoutv3@" +
-  LAYOUT_SDK_VERSION + "/dist/browser-global.js";
+const CDN_BASES = Object.freeze([
+  "https://cdn.jsdelivr.net/",
+  "https://gcore.jsdelivr.net/",
+  "https://fastly.jsdelivr.net/",
+  "https://testingcf.jsdelivr.net/"
+]);
+const LAYOUT_SCRIPT_URLS = CDN_BASES.map(base =>
+  base + "npm/web-sdk-pp-doclayoutv3@" + LAYOUT_SDK_VERSION + "/dist/browser-global.js"
+);
 const LAYOUT_MANIFEST_URL =
   "https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/pp-doclayoutv3/manifest.json";
-const VLM_ENGINE_URL =
-  "https://cdn.jsdelivr.net/gh/glebkudr/paddleocr-vl-webgpu@" +
-  VLM_ENGINE_COMMIT + "/web/engine/browser_ocr_runtime.mjs";
+const VLM_ENGINE_URLS = CDN_BASES.map(base =>
+  base + "gh/glebkudr/paddleocr-vl-webgpu@" + VLM_ENGINE_COMMIT +
+  "/web/engine/browser_ocr_runtime.mjs"
+);
 
 let layoutScriptPromise;
 let vlmModulePromise;
 
-function loadLayoutSdk() {
-  if (globalThis.PPDocLayout?.createDocLayout) {
-    return Promise.resolve(globalThis.PPDocLayout);
+function loadLayoutSdk(onProgress = () => {}) {
+  const existing = globalThis.PPDocLayout;
+  if (existing?.createDocLayout) {
+    if (existing.CURRENT_SDK_VERSION !== LAYOUT_SDK_VERSION) {
+      throw new Error("页面中已存在不同版本的 PP-DocLayoutV3 SDK。");
+    }
+    return Promise.resolve(existing);
   }
   if (!layoutScriptPromise) {
-    layoutScriptPromise = new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = LAYOUT_SCRIPT_URL;
-      script.async = true;
-      script.crossOrigin = "anonymous";
-      script.onload = () => {
-        const api = globalThis.PPDocLayout;
-        if (!api?.createDocLayout || api.CURRENT_SDK_VERSION !== LAYOUT_SDK_VERSION) {
-          reject(new Error("PP-DocLayoutV3 浏览器 SDK 版本或导出接口不匹配。"));
-          return;
+    layoutScriptPromise = (async () => {
+      const failures = [];
+      for (const url of LAYOUT_SCRIPT_URLS) {
+        try {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = url;
+            script.async = true;
+            script.crossOrigin = "anonymous";
+            script.onload = resolve;
+            script.onerror = () => {
+              script.remove();
+              reject(new Error("script load failed"));
+            };
+            document.head.appendChild(script);
+          });
+          const api = globalThis.PPDocLayout;
+          if (!api?.createDocLayout || api.CURRENT_SDK_VERSION !== LAYOUT_SDK_VERSION) {
+            throw new Error("SDK export/version mismatch");
+          }
+          onProgress({stage:"layout-sdk",status:"loaded",url});
+          return api;
+        } catch (error) {
+          failures.push(url + " — " + (error?.message || String(error)));
         }
-        resolve(api);
-      };
-      script.onerror = () => reject(new Error("PP-DocLayoutV3 浏览器 SDK 加载失败。"));
-      document.head.appendChild(script);
-    }).catch(error => {
+      }
+      throw new Error("PP-DocLayoutV3 SDK 所有固定镜像均加载失败：" + failures.join("；"));
+    })().catch(error => {
       layoutScriptPromise = null;
       throw error;
     });
@@ -52,18 +75,33 @@ function loadLayoutSdk() {
   return layoutScriptPromise;
 }
 
-function loadVlmModule() {
+function loadVlmModule(onProgress = () => {}) {
   if (!vlmModulePromise) {
-    vlmModulePromise = import(VLM_ENGINE_URL).catch(error => {
+    vlmModulePromise = (async () => {
+      const failures = [];
+      for (const url of VLM_ENGINE_URLS) {
+        try {
+          const module = await import(url);
+          if (typeof module.createPaddleOcrVlEngine !== "function") {
+            throw new Error("engine factory export missing");
+          }
+          onProgress({stage:"vlm-engine",status:"loaded",url});
+          return module;
+        } catch (error) {
+          failures.push(url + " — " + (error?.message || String(error)));
+        }
+      }
+      throw new Error("PaddleOCR-VL-1.6 WebGPU 引擎所有固定镜像均加载失败：" + failures.join("；"));
+    })().catch(error => {
       vlmModulePromise = null;
-      throw new Error("PaddleOCR-VL-1.6 WebGPU 引擎加载失败：" + error.message);
+      throw error;
     });
   }
   return vlmModulePromise;
 }
 
 async function createDefaultLayout(onProgress) {
-  const api = await loadLayoutSdk();
+  const api = await loadLayoutSdk(onProgress);
   const detector = await api.createDocLayout({
     model: LAYOUT_MANIFEST_URL,
     backend: "webgpu",
@@ -79,8 +117,8 @@ async function createDefaultLayout(onProgress) {
   return detector;
 }
 
-async function createDefaultVlm() {
-  const module = await loadVlmModule();
+async function createDefaultVlm(onProgress = () => {}) {
+  const module = await loadVlmModule(onProgress);
   return module.createPaddleOcrVlEngine();
 }
 
@@ -160,7 +198,7 @@ export async function createAdapter({
     if (layout.runtime?.backend !== "webgpu" || layout.runtime?.precision !== "fp16") {
       throw new Error("版面检测必须运行在 WebGPU FP16，不能使用 CPU/WASM。");
     }
-    vlm = await (dependencies.createVlm ?? createDefaultVlm)();
+    vlm = await (dependencies.createVlm ?? createDefaultVlm)(onProgress);
     if (!vlm || typeof vlm.recognizeCanvas !== "function" || typeof vlm.dispose !== "function") {
       throw new Error("PaddleOCR-VL-1.6 WebGPU 引擎接口不完整。");
     }
