@@ -153,12 +153,23 @@ function regionContent(text, task) {
   return text;
 }
 
-function emptyNative() {
-  return {parsing_res_list: []};
+function emptyNative(width,height) {
+  return {
+    width,height,page_index:null,page_count:1,
+    model_settings:{
+      pipeline_model:"PaddleOCR-VL-1.6",
+      use_doc_preprocessor:false,
+      use_layout_detection:true,
+      use_chart_recognition:true,
+      format_block_content:false,
+      layout_model:"PP-DocLayoutV3"
+    },
+    parsing_res_list:[]
+  };
 }
 
-function stoppedBeforeLayout(started, reason) {
-  const native = emptyNative();
+function stoppedBeforeLayout(started, reason, width, height) {
+  const native = emptyNative(width,height);
   return {
     text: JSON.stringify(native),
     native,
@@ -262,13 +273,13 @@ export async function createAdapter({
           detection = await layout.detect(blob, {signal: activeController.signal});
         } catch (error) {
           if (stopRequested && (error?.code === "ABORTED" || error?.name === "AbortError")) {
-            return stoppedBeforeLayout(started, "layout");
+            return stoppedBeforeLayout(started, "layout", width, height);
           }
           throw error;
         } finally {
           activeController = null;
         }
-        if (stopRequested) return stoppedBeforeLayout(started, "layout");
+        if (stopRequested) return stoppedBeforeLayout(started, "layout", width, height);
         if (layout.runtime?.backend !== "webgpu" || layout.runtime?.precision !== "fp16") {
           throw new Error("版面检测运行时发生变化，已终止推理。");
         }
@@ -329,7 +340,7 @@ export async function createAdapter({
         }
 
         const completedRegions = regions.slice(0, recognitions.length);
-        const native = assemblePaddleResult(completedRegions, recognitions);
+        const native = assemblePaddleResult(completedRegions, recognitions, {width, height});
         const ended = completedRegions.length === regions.length;
         const recognitionMs = performance.now() - recognitionStarted;
         const result = {
