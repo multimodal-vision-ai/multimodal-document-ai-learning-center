@@ -22,8 +22,10 @@ def run(args):
     image = Image.open(args.image).convert("RGB")
 
     processor = AutoProcessor.from_pretrained(model_dir, local_files_only=True)
-    processor.image_processor.min_pixels = args.min_pixels
-    processor.image_processor.max_pixels = args.max_pixels
+    processor.image_processor.size = {
+        "shortest_edge": args.min_pixels,
+        "longest_edge": args.max_pixels,
+    }
     messages = [{"role": "user", "content": [
         {"type": "image"}, {"type": "text", "text": prompt_text}
     ]}]
