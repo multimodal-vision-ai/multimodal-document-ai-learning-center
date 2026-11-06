@@ -37,7 +37,7 @@ const bundle = await fetchBundleContract({
 assert.equal(bundle.metadata.source_revision, SOURCE_REVISION);
 assert.equal(bundle.prompt, prompt);
 assert.equal(calls.length, 2);
-assert.throws(() => fetchBundleContract({
+await assert.rejects(fetchBundleContract({
   modelId: ONNX_MODEL_ID, revision: "main", fetcher: fakeFetch
 }), /40 位 commit SHA/);
 
