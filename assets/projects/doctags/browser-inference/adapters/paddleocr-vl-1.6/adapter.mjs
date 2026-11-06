@@ -136,7 +136,12 @@ export async function createSingleRuntimeVlm({engineModule,runtimeModule}={}) {
       current:remaining=>Math.max(0,Math.min(1,Number.isFinite(remaining)?remaining:1)),
       recordWave:()=>null
     });
-    return new engineModule.PaddleOcrVlEngine([runtime],singleConcurrency);
+    const engine=new engineModule.PaddleOcrVlEngine([runtime],singleConcurrency);
+    Object.defineProperty(engine,"runtimeInfo",{
+      value:Object.freeze({...capabilities,runtimeCount:1,parallelism:1}),
+      enumerable:true
+    });
+    return engine;
   }catch(error){
     try{runtime.free();}catch{}
     throw error;
@@ -256,7 +261,10 @@ export async function createAdapter({
       downloadBytes: MODEL_DOWNLOAD_BYTES + LAYOUT_DOWNLOAD_BYTES,
       layoutModel: LAYOUT_MODEL,
       layoutBytes: LAYOUT_DOWNLOAD_BYTES,
-      backend: "WebGPU FP16"
+      backend: "WebGPU FP16",
+      gpuAdapter: vlm.runtimeInfo?.adapter_name ?? "WebGPU adapter",
+      gpuDeviceType: vlm.runtimeInfo?.adapter_device_type ?? "unknown",
+      runtimeCount: vlm.runtimeInfo?.runtimeCount ?? 1
     }),
     stop() {
       if (!busy) return;
