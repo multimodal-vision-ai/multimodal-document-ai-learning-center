@@ -19,6 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run DocTags parser regression tests
+        run: node scripts/kaggle/test_doctags_render_parser.cjs
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
