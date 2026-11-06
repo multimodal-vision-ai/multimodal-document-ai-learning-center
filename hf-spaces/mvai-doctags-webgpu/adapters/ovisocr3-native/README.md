@@ -83,7 +83,10 @@ This checks:
 - unchanged tokenizer vocabulary, special tokens, chat template, and generation config;
 - sampled input embedding and tied output-projection weights against the source checkpoint;
 - vision encoder parity at three image grids;
+- decoder graph structure, expected GatedDeltaNet/CausalConvWithState layer counts, custom-op imports, and every external-data range;
 - all required ONNX external-data files and browser assets.
+
+The Python export environment uses the generic CPU Execution Provider, which does not implement the decoder's target GatedDeltaNet kernel. Therefore the validator deliberately does not create a CPU ONNX Runtime Session for the decoder. This is not a decoder execution failure: the decoder graph is structurally checked here, and actual operator execution is a mandatory separate acceptance step in Chrome using ONNX Runtime WebGPU 1.31.1. Do not replace GatedDeltaNet merely to make the CPU checker pass.
 
 Run an original PyTorch reference on a permitted test image:
 
