@@ -285,3 +285,53 @@ PR 描述中保留了当前验收状态和 DEV 预览入口。继续工作时以
 **当前唯一主线是：先审阅并执行 OvisOCR3 0.8B 的固定版本 ONNX 转换，完成组件一致性验证；经用户确认后再上传 HF，然后进行真实浏览器 WebGPU 验收。**
 
 每个阶段都要提供可核查的文件、日志、哈希、测试结果或浏览器证据。遇到转换错误先定位原因，不要跳过 parity 验证，不要用静态 CI 通过冒充模型验收。用户的 RTX 3080 是最终浏览器验收设备。
+
+---
+
+## 9. 2026-11-06 后续推进记录：Ovis 转换前审查
+
+本轮已重新核对 PR #74 的最新 head，并在当前 feature branch 继续提交。**最新 head：**
+
+`c28c7aa0f7539b22b1389c605472144f0979175a`
+
+### 9.1 转换工具链发现并修复的问题
+
+1. 官方固定版本仓库提供 `preprocessor_config.json`，而不是 `processor_config.json`。导出器现已读取官方文件结构，保留归一化/patch 配置，仅将浏览器图像尺寸范围调整为 448²–1440²；验证器检查源文件哈希及允许的尺寸变化。
+2. `config.json` 被解析为字典，之前却使用对象属性访问。现已改为字典键访问。
+3. 固定 Olive recipe 的 `Qwen3_5VisionModel` 返回 Tensor，而非 `pooler_output` 对象。视觉导出封装现兼容两种返回形式。
+4. bundle 必需文件列表已移除不存在的 `processor_config.json`，改为要求 `preprocessor_config.json`。
+5. 上传准备脚本增加了预处理配置 provenance 与尺寸限制检查。
+6. `run_conversion.sh` 在下载模型前先执行 Python 编译和轻量 contract tests，并在下载后检查所有关键源文件。
+
+### 9.2 静态检查结果
+
+最新 head `c28c7aa0f7539b22b1389c605472144f0979175a` 的 GitHub Actions：
+- Native OCR output contracts：通过
+- DEV Preview isolated static build：通过
+- Documentation quality：通过
+
+Native OCR contract 日志明确显示：
+`OvisOCR3 exporter IO, processor-schema, vision-output and bundle-asset contract checks passed`
+
+### 9.3 当前真实执行状态
+
+**尚未下载官方权重，尚未开始 ONNX 导出。** 因此目前没有组件 parity 报告、ONNX 推理结果或 Ovis WebGPU 验收结果。上述 CI 只验证脚本语法和静态契约，不代表模型已经转换成功。
+
+### 9.4 下一步在 Linux / WSL 执行
+
+在本地仓库切换到当前分支并拉取最新 head 后，创建独立 Python 3.11 环境，按本文件第 4.3 节准备依赖，然后执行：
+
+```bash
+bash hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/run_conversion.sh
+```
+
+默认输出目录：
+
+`.cache/ovisocr3-webgpu/release/ovisocr3-webgpu`
+
+首先检查：
+
+`.cache/ovisocr3-webgpu/release/ovisocr3-webgpu/validation/component_validation.json`
+
+成功后，使用相同文档图片运行 `test_reference.py`，保存原始 BF16 PyTorch 参考 JSON。然后由用户明确确认 HF 上传，再固定完整 HF commit SHA，进行 Chrome + RTX 3080 真实 WebGPU 验收。未完成这些步骤前，Ovis 不得加入 active model registry；PR #74 继续保持 Draft，不合并、不部署。
+
