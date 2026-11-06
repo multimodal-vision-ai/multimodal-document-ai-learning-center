@@ -25,7 +25,26 @@
     }
     return clone(original);
   }
-  function blockNode(block,index,doc) {
+  function imageCrop(block,sourceImage,doc) {
+    const core=root.MVAINativeOCR;
+    if(!core || !sourceImage || !Number.isFinite(sourceImage.width) || !Number.isFinite(sourceImage.height))return null;
+    const [left,top,right,bottom]=core.toPixelBox(block,sourceImage.width,sourceImage.height);
+    const x1=Math.max(0,Math.min(sourceImage.width,Math.floor(left)));
+    const y1=Math.max(0,Math.min(sourceImage.height,Math.floor(top)));
+    const x2=Math.max(0,Math.min(sourceImage.width,Math.ceil(right)));
+    const y2=Math.max(0,Math.min(sourceImage.height,Math.ceil(bottom)));
+    if(x2<=x1||y2<=y1)return null;
+    const canvas=doc.createElement("canvas");
+    canvas.width=x2-x1;canvas.height=y2-y1;
+    const ctx=canvas.getContext("2d");
+    if(!ctx)return null;
+    ctx.drawImage(sourceImage,x1,y1,x2-x1,y2-y1,0,0,canvas.width,canvas.height);
+    canvas.className="render-crop";
+    canvas.style.maxWidth="100%";
+    canvas.style.height="auto";
+    return canvas;
+  }
+  function blockNode(block,index,doc,sourceImage) {
     let node;
     if(block.type==="table"){
       const wrap=doc.createElement("div");wrap.className="render-tbl";
@@ -35,8 +54,22 @@
       node=wrap;
     }else if(IMAGE_CATEGORIES.has(block.type)){
       node=doc.createElement("div");node.className="unknown-region";
-      node.textContent="图像/图表区域（请参考左侧定位框；保留模型原文）\n"+block.content;
-    }else if(["display_formula","inline_formula"].includes(block.type)){
+      const crop=imageCrop(block,sourceImage,doc);
+      if(crop)node.appendChild(crop);
+      const caption=doc.createElement("div");
+      caption.textContent=block.type+"（原图区域裁剪）";
+      node.appendChild(caption);
+      const raw=String(block.content||"").trim();
+      if(/^<table\\b/i.test(raw)){
+        const table=safeTable(raw,doc);
+        if(table)node.appendChild(table);
+      }else if(raw && !/^<img\\b/i.test(raw)){
+        const text=doc.createElement("pre");
+        text.textContent=raw;
+        text.style.whiteSpace="pre-wrap";
+        node.appendChild(text);
+      }
+    }else if(["formula","display_formula","inline_formula"].includes(block.type)){
       node=doc.createElement("p");node.textContent=block.content;
       node.style.whiteSpace="pre-wrap";
     }else{
@@ -49,10 +82,10 @@
     node.title="悬停定位至原始文档位置";
     return node;
   }
-  function renderBlocks(parsed,container){
+  function renderBlocks(parsed,container,sourceImage=null){
     const doc=container.ownerDocument;
     container.replaceChildren();
-    parsed.blocks.forEach((block,index)=>container.appendChild(blockNode(block,index,doc)));
+    parsed.blocks.forEach((block,index)=>container.appendChild(blockNode(block,index,doc,sourceImage)));
     if(parsed.blocks.length===0) {
       const p=doc.createElement("p");p.className="render-placeholder";
       p.textContent="本次输出没有有效的原生定位元素，请检查原始 JSON。";
