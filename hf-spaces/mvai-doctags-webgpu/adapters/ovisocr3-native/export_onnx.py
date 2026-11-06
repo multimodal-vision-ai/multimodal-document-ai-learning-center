@@ -284,6 +284,103 @@ def eliminate_identical_casts(path):
     onnx.checker.check_model(str(path))
 
 
+def inspect_decoder_graph(model_path, expected_linear_layers):
+    """Validate decoder graph structure and external data without the wrong CPU EP.
+
+    GatedDeltaNet is a target WebGPU operator. The generic Python CPU EP used
+    by the export environment does not provide its kernel, so CPU Session
+    creation is not a valid acceptance test for this browser-targeted graph.
+    Actual operator execution is verified later in Chrome with ONNX Runtime WebGPU.
+    """
+    import onnx
+
+    model_path = Path(model_path).resolve(strict=True)
+    model = onnx.load(model_path, load_external_data=False)
+    graph = model.graph
+    if not graph.input or not graph.output:
+        raise ValueError("Decoder graph must declare at least one input and output")
+
+    op_counts = {}
+    external_files = set()
+    external_tensor_count = 0
+    model_root = model_path.parent.resolve()
+
+    def visit(part):
+        nonlocal external_tensor_count
+        for node in part.node:
+            op_counts[node.op_type] = op_counts.get(node.op_type, 0) + 1
+            for attribute in node.attribute:
+                if attribute.type == onnx.AttributeProto.GRAPH:
+                    visit(attribute.g)
+                elif attribute.type == onnx.AttributeProto.GRAPHS:
+                    for child in attribute.graphs:
+                        visit(child)
+        for tensor in part.initializer:
+            entries = {item.key: item.value for item in tensor.external_data}
+            if tensor.data_location == onnx.TensorProto.EXTERNAL or entries:
+                location = entries.get("location")
+                if not location:
+                    raise ValueError(f"External tensor has no location: {tensor.name}")
+                external_path = (model_root / location).resolve()
+                if not external_path.is_relative_to(model_root) or not external_path.is_file():
+                    raise ValueError(f"Decoder external data is missing or escapes bundle: {location}")
+                try:
+                    offset = int(entries.get("offset", "0"))
+                    length = int(entries["length"])
+                except (KeyError, TypeError, ValueError) as error:
+                    raise ValueError(f"Invalid external-data range for tensor {tensor.name}") from error
+                if offset < 0 or length <= 0 or offset + length > external_path.stat().st_size:
+                    raise ValueError(f"Decoder external-data range is out of bounds: {tensor.name}")
+                external_files.add(external_path)
+                external_tensor_count += 1
+
+    visit(graph)
+
+    gated_delta_count = op_counts.get("GatedDeltaNet", 0)
+    causal_conv_count = op_counts.get("CausalConvWithState", 0)
+    if gated_delta_count != expected_linear_layers:
+        raise ValueError(
+            "Decoder GatedDeltaNet count does not match source linear-attention layers: "
+            f"expected={expected_linear_layers}, actual={gated_delta_count}"
+        )
+    if causal_conv_count != expected_linear_layers:
+        raise ValueError(
+            "Decoder CausalConvWithState count does not match source linear-attention layers: "
+            f"expected={expected_linear_layers}, actual={causal_conv_count}"
+        )
+    if op_counts.get("SimplifiedLayerNormalization", 0) == 0:
+        raise ValueError("Decoder is missing SimplifiedLayerNormalization")
+    if op_counts.get("GroupQueryAttention", 0) == 0:
+        raise ValueError("Decoder is missing GroupQueryAttention")
+    if not external_tensor_count or len(external_files) != 1:
+        raise ValueError(
+            "Decoder must reference exactly one external-data file; "
+            f"tensors={external_tensor_count}, files={len(external_files)}"
+        )
+
+    microsoft_opset = next(
+        (item.version for item in model.opset_import if item.domain == "com.microsoft"),
+        None,
+    )
+    if microsoft_opset is None:
+        raise ValueError("Decoder is missing the com.microsoft custom-operator opset import")
+
+    return {
+        "graph_inputs": [value.name for value in graph.input],
+        "graph_outputs": [value.name for value in graph.output],
+        "operator_counts": op_counts,
+        "expected_linear_attention_layers": expected_linear_layers,
+        "gated_delta_net_nodes": gated_delta_count,
+        "causal_conv_with_state_nodes": causal_conv_count,
+        "simplified_layer_normalization_nodes": op_counts["SimplifiedLayerNormalization"],
+        "external_data_file": str(next(iter(external_files))),
+        "external_tensor_count": external_tensor_count,
+        "com_microsoft_opset": microsoft_opset,
+        "structural_validation": "passed",
+        "execution_validation": "deferred_to_chrome_webgpu",
+    }
+
+
 def package_decoder(model_root, output, exported):
     """Use Transformers.js cache names; preserve every operation and tensor."""
     import onnx
@@ -330,41 +427,19 @@ def package_decoder(model_root, output, exported):
     shutil.copyfile(next(iter(data_sources)), Path(str(target) + "_data"))
     onnx.save(graph, target)
 
-    # ONNX Runtime GenAI emits SimplifiedLayerNormalization in the default
-    # ONNX domain. This operator is implemented by ONNX Runtime (including
-    # its WebGPU EP), but is not registered in the standalone Python ONNX
-    # checker schema. Do not rewrite or remove it merely to satisfy that
-    # checker. Validate the packaged graph with the target runtime instead.
-    import onnxruntime as ort
-
-    session_options = ort.SessionOptions()
-    session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
-    session = ort.InferenceSession(
-        str(target),
-        sess_options=session_options,
-        providers=["CPUExecutionProvider"],
+    # The graph is explicitly exported for WebGPU. The Python CPU EP has no
+    # GatedDeltaNet kernel, so a CPU InferenceSession is not a valid test here.
+    # Preserve all operators and validate graph structure, custom-op counts,
+    # and every external-data range. Actual execution is gated on Chrome WebGPU.
+    expected_linear_layers = sum(
+        kind == "linear_attention" for kind in config.text_config.layer_types
     )
-    input_names = [value.name for value in session.get_inputs()]
-    output_names = [value.name for value in session.get_outputs()]
-    if not input_names or not output_names:
-        raise ValueError("Decoder runtime validation found missing graph inputs or outputs")
-
-    simplified_norm_count = sum(
-        node.op_type == "SimplifiedLayerNormalization"
-        for node in graph.graph.node
-    )
-    if simplified_norm_count == 0:
-        raise ValueError("Expected the ORT GenAI SimplifiedLayerNormalization operator")
-
+    validation = inspect_decoder_graph(target, expected_linear_layers)
     print(json.dumps({
         "component": "decoder",
         "model_path": str(target),
         "cache_io_renames": len(mapping),
-        "runtime_validation": "onnxruntime_session_load_passed",
-        "runtime_inputs": input_names,
-        "runtime_outputs": output_names,
-        "simplified_layer_normalization_nodes": simplified_norm_count,
-        "standalone_onnx_checker": "not_applicable_for_ort_runtime_operator",
+        **validation,
     }), flush=True)
 
 
