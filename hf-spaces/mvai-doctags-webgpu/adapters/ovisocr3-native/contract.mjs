@@ -1,6 +1,6 @@
 /* Pinned source/output contract for official ATH-MaaS OvisOCR3. */
 export const SOURCE_MODEL_ID = "ATH-MaaS/OvisOCR3";
-export const SOURCE_REVISION = "fd1f43b9a3f7041013831c11535c066e95adeef7";
+export const SOURCE_REVISION = "17f255e2c8ae6d18d5d5edb0a474bd4ed39aef90";
 export const ONNX_MODEL_ID = "multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX";
 export const BUNDLE_FORMAT_VERSION = 1;
 export const DEFAULTS = Object.freeze({
