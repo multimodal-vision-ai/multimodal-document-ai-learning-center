@@ -10,7 +10,11 @@ test("Layout SDK box is page pixel box, with reading order preserved",()=>{
   ],{width:1000,height:600});
   assert.equal(regions[0].label,"doc_title");
   assert.equal(regions[1].task,"table");
-  const results=assemblePaddleResult(regions,[{text:"标题"},{text:"<table><tr><td>数值</td></tr></table>"}]);
+  const results=assemblePaddleResult(regions,[{text:"标题"},{text:"<table><tr><td>数值</td></tr></table>"}],{width:1000,height:600});
+  assert.equal(results.width,1000);
+  assert.equal(results.height,600);
+  assert.equal(results.model_settings.pipeline_model,"PaddleOCR-VL-1.6");
+  assert.equal(results.model_settings.use_layout_detection,true);
   assert.deepEqual(results.parsing_res_list[1].block_bbox,[60,100,450,250]);
   assert.equal(results.parsing_res_list[1].block_content,"<table><tr><td>数值</td></tr></table>");
 });
