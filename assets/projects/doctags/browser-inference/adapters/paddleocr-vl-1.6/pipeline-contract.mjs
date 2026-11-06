@@ -37,13 +37,13 @@ export function assemblePaddleResult(regions,recognitions,{width,height}={}) {
     throw new Error("布局区域与 VLM 识别结果数量不匹配。");
   if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)
     throw new Error("Paddle 原生结果必须记录原始页面宽高。");
+  if(recognitions.some(item=>!item||typeof item.text!=="string"))
+    throw new Error("每个版面区域都必须有明确的原始识别文本；禁止用空字符串补齐缺失结果。");
   const blocks=regions.map((region,index)=>({
     block_bbox:[...region.box],block_label:region.label,
-    block_content:recognitions[index]?.text ?? "",
+    block_content:recognitions[index].text,
     block_id:region.index,block_order:region.readingOrder
   }));
-  if(blocks.some(block=>typeof block.block_content!=="string"))
-    throw new Error("识别结果包含非字符串内容。");
   return {
     input_path:null,width,height,page_index:null,page_count:1,
     model_settings:{
