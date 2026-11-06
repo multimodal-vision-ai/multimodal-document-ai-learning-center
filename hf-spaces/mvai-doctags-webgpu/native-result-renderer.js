@@ -59,7 +59,7 @@
       const caption=doc.createElement("div");
       caption.textContent=block.type+"（原图区域裁剪）";
       node.appendChild(caption);
-    }else if(["display_formula","inline_formula"].includes(block.type)){
+    }else if(["formula","display_formula","inline_formula"].includes(block.type)){
       node=doc.createElement("p");node.textContent=block.content;
       node.style.whiteSpace="pre-wrap";
     }else{
