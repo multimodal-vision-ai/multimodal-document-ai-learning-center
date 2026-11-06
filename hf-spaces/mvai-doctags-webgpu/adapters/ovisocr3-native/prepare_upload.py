@@ -38,6 +38,8 @@ def main():
         or metadata.get("source_model_id") != SOURCE_ID
         or metadata.get("source_revision") != SOURCE_REVISION
         or report.get("source_weights_sha256") != metadata.get("source_weights_sha256")
+        or report.get("structured_prompt_sha256") != metadata.get("prompt_sha256")
+        or metadata.get("eos_token_id") != [248044, 248046]
     ):
         raise SystemExit("Source revision/provenance/parity report mismatch; refusing upload.")
     artifacts = report.get("artifacts")
