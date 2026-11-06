@@ -124,6 +124,30 @@ if 'target_opset = 21 if component == "vision" else 20' not in export_component_
         "Embedding must use opset 20 for the pinned legacy exporter; vision keeps opset 21"
     )
 
+# ORT GenAI's decoder graph contains SimplifiedLayerNormalization. The
+# standalone ONNX checker does not register this ORT runtime operator, so
+# validate the packaged decoder with ONNX Runtime rather than rewriting it.
+decoder_package_source = ast.get_source_segment(SOURCE_TEXT, function("package_decoder"))
+if "onnx.checker.check_model" in decoder_package_source:
+    raise SystemExit("Decoder packaging must not reject ORT runtime operators via onnx.checker")
+if "ort.InferenceSession(" not in decoder_package_source:
+    raise SystemExit("Decoder packaging must validate the graph through ONNX Runtime")
+if "SimplifiedLayerNormalization" not in decoder_package_source:
+    raise SystemExit("Decoder packaging must explicitly account for SimplifiedLayerNormalization")
+
+decoder_validation_start = validator_source.index(
+    'decoder_path = bundle / "onnx" / "decoder_model_merged_fp16.onnx"'
+)
+decoder_validation_end = validator_source.index(
+    'head = next((tensor for tensor in decoder.graph.initializer',
+    decoder_validation_start,
+)
+decoder_validation_source = validator_source[decoder_validation_start:decoder_validation_end]
+if "onnx.checker.check_model" in decoder_validation_source:
+    raise SystemExit("Bundle validation must not use standalone ONNX checker for the GenAI decoder")
+if "ort.InferenceSession(" not in decoder_validation_source:
+    raise SystemExit("Bundle validation must load the decoder with ONNX Runtime")
+
 validator_path = Path(__file__).with_name("validate_bundle.py")
 validator_source = validator_path.read_text(encoding="utf-8")
 validator_tree = ast.parse(validator_source, filename=str(validator_path))
