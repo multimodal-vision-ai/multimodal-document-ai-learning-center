@@ -3,7 +3,7 @@
 ## Model and output contract
 
 - Source model: https://huggingface.co/ATH-MaaS/OvisOCR3
-- Pinned source revision: fd1f43b9a3f7041013831c11535c066e95adeef7
+- Pinned source revision: 17f255e2c8ae6d18d5d5edb0a474bd4ed39aef90
 - Architecture: Qwen3.5-0.8B; BF16 source checkpoint (about 1.71 GB)
 - License: Apache-2.0
 - Target ONNX repository: multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX
@@ -34,7 +34,7 @@ Download the exact official model revision:
 
 ~~~bash
 hf download ATH-MaaS/OvisOCR3 \
-  --revision fd1f43b9a3f7041013831c11535c066e95adeef7 \
+  --revision 17f255e2c8ae6d18d5d5edb0a474bd4ed39aef90 \
   --local-dir ./source/OvisOCR3
 ~~~
 
