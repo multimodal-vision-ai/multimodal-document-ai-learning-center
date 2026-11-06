@@ -2750,6 +2750,9 @@
 <li>Ovis bbox 从归一化 1000 坐标换算到原图像素。</li>
 <li>Paddle bbox 保持原图像素坐标。</li>
 <li><code>native-result-renderer.js</code> 使用 DOM 节点创建安全渲染文本与 allow-listed HTML table，不将模型输出直接写入 <code>innerHTML</code>。</li>
+<li>已新增 PaddleOCR-VL 原生 OTSL 解析器：识别 <code>&lt;fcel&gt;</code>、<code>&lt;ecel&gt;</code>、<code>&lt;lcel&gt;</code>、<code>&lt;ucel&gt;</code>、<code>&lt;xcel&gt;</code>、<code>&lt;nl&gt;</code>，恢复单元格、空单元格及 colspan/rowspan；不改写 <code>parsing_res_list[].block_content</code> 或原始 JSON。</li>
+<li>OTSL 表格在右侧以安全 DOM 节点渲染；同时提供默认折叠的“查看原始 OTSL”，原始标记仍可逐字检查。若结构不合法，显示警告并保留原文，不猜测或伪造表格结构。</li>
+<li>OTSL 解析器已增加普通单元格、空单元格、横向合并、纵向合并、双向合并和异常结构测试；Space 源文件与 DEV 镜像同步。</li>
 <li>已修复 Ovis HTML table/image 标签检测中的正则转义问题。</li>
 <li><code>docs/assets/projects/doctags/browser-inference/</code> 是 DEV 预览镜像；CI 使用 <code>cmp</code> 检查它与 HF Space 源码完全一致。</li>
 </ul>
@@ -2777,6 +2780,8 @@
 - 冷启动加载约 2.11 GB 资源，确认实际 GPU adapter 和单 runtime。
 - 选择含文字、表格、公式、图表、图片的脱敏测试页。
 - 检查版面框与原图位置是否对齐，标签与阅读顺序是否合理。
+- 对含复杂表格的文档重新运行 Paddle 推理，检查右侧是否渲染成 HTML 表格；展开“查看原始 OTSL”确认源内容与 JSON 中 <code>block_content</code> 完全一致。
+- 特别核对 colspan、rowspan、空单元格和多层表头；若 OTSL 不符合当前解析约束，确认页面保留原始输出并显示警告，不出现伪造单元格。
 - 记录 layout、区域识别、总耗时和区域完成数量。
 - 测试布局阶段停止、区域生成中停止、重复运行、释放模型。
 - 若失败，先收集浏览器 Console 错误、页面状态文本和截图，不要修改正式页面。</p>
