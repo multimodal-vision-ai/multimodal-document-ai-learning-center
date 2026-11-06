@@ -180,8 +180,13 @@ def get_embedding_dummy_inputs(model=None):
     if vocabulary < 1:
         raise ValueError(f"Embedding vocabulary must be positive, got {vocabulary}")
 
-    # Use generic valid IDs; official OvisOCR3 vocabulary must never inherit DJX-specific IDs.
-    return {"input_ids": torch.tensor([[0, min(1, vocabulary - 1)]], dtype=torch.int64)}
+    # The pinned Olive 0.13.0 path uses the legacy TorchScript ONNX
+    # exporter for this component. Its args contract is positional; a dict
+    # here is not a reliable kwargs mapping and can reach forward() as no
+    # positional inputs. Return a one-element tuple matching input_names.
+    # Use generic valid IDs; never inherit DJX-specific token IDs.
+    input_ids = torch.tensor([[0, min(1, vocabulary - 1)]], dtype=torch.int64)
+    return (input_ids,)
 
 
 def export_component(component, model_root, output):
@@ -208,7 +213,14 @@ def export_component(component, model_root, output):
     def make_pass(kind, config):
         return kind(accelerator, kind.generate_config(accelerator, config, disable_search=True))
 
-    converter = make_pass(OnnxConversion, {"use_dynamo_exporter": component == "vision", "target_opset": 21})
+    # The embedding path deliberately uses Olive's legacy TorchScript
+    # exporter, which supports opset <=20 in the pinned PyTorch 2.10 build.
+    # Vision uses dynamo=True and keeps opset 21 for the Qwen3.5 graph.
+    target_opset = 21 if component == "vision" else 20
+    converter = make_pass(
+        OnnxConversion,
+        {"use_dynamo_exporter": component == "vision", "target_opset": target_opset},
+    )
     handler = converter.run(handler, str(work / "float32.onnx"))
     if component == "vision":
         surgery = make_pass(
