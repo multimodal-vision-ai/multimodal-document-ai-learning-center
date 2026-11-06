@@ -6,7 +6,7 @@ export function taskForLabel(label) {
   if(SKIP_OCR.has(label))return null;
   if(label==="table")return "table";
   if(label==="chart")return "chart";
-  if(FORMULAS.has(label))return "formula";
+  if(label==="formula" || FORMULAS.has(label))return "formula";
   return "ocr";
 }
 export function orderedRegions(detections,{width,height}) {
