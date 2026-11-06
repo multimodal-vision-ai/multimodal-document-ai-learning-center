@@ -1,4 +1,4 @@
-import {fetchStructuredPrompt, directPrompt, requireNativeOnnxBundle, validateSettings} from './contract.mjs';
+import {fetchBundleContract, directPrompt, modelFileUrl, ONNX_MODEL_ID, requireNativeOnnxBundle, validateSettings} from './contract.mjs';
 
 export const VERSIONS = Object.freeze({transformers: '4.4.0-next.0', ort: '1.31.1'});
 const CDN_BASES = Object.freeze([
@@ -26,7 +26,7 @@ async function importFirstAvailable(urls, label) {
 
 /** Official OvisOCR3 native-JSON adapter. This is NOT the DJX/DocTags model.
  * Requires real separately exported official OvisOCR3 ONNX weights and verification. */
-export async function createAdapter({modelId, revision = 'main', onProgress = () => {}, runtime = {}} = {}) {
+export async function createAdapter({modelId = ONNX_MODEL_ID, revision, onProgress = () => {}, runtime = {}} = {}) {
   requireNativeOnnxBundle(modelId);
   if (!navigator.gpu) throw new Error('浏览器没有提供 WebGPU，请使用支持 WebGPU 的 Chrome 或 Edge。');
   const gpu = await navigator.gpu.requestAdapter();
@@ -66,14 +66,27 @@ export async function createAdapter({modelId, revision = 'main', onProgress = ()
   const processor = await lib.AutoProcessor.from_pretrained(modelId, {
     revision, progress_callback: info => onProgress({...info, stage: 'processor'}),
   });
-  const templateUrl = runtime.modelHost
-    ? `${runtime.modelHost}${modelId}/chat_template.jinja`
-    : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
-  const template = await fetch(templateUrl);
-  if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
+  const bundle = await fetchBundleContract({
+    modelId, revision, modelHost: runtime.modelHost,
+    fetcher: runtime.fetcher ?? fetch
+  });
+  const template = await (runtime.fetcher ?? fetch)(
+    modelFileUrl(modelId, revision, "chat_template.jinja", runtime.modelHost)
+  );
+  if (!template.ok) throw new Error(`加载模型原始对话模板失败：HTTP ${template.status}`);
   processor.tokenizer.chat_template = await template.text();
-  const structuredPrompt = await fetchStructuredPrompt();
-  const prompt = directPrompt(processor.tokenizer, structuredPrompt);
+  const prompt = directPrompt(processor.tokenizer, bundle.prompt);
+  const generationResponse = await (runtime.fetcher ?? fetch)(
+    modelFileUrl(modelId, revision, "generation_config.json", runtime.modelHost)
+  );
+  if (!generationResponse.ok) throw new Error(`加载官方生成配置失败：HTTP ${generationResponse.status}`);
+  const generationConfig = await generationResponse.json();
+  const eosTokenIds = Array.isArray(generationConfig.eos_token_id)
+    ? generationConfig.eos_token_id.map(Number)
+    : [Number(generationConfig.eos_token_id)];
+  if (![248044, 248046].every(id => eosTokenIds.includes(id))) {
+    throw new Error("ONNX 包的 EOS 配置与官方 OvisOCR3 不一致。");
+  }
   const model = await lib.AutoModelForImageTextToText.from_pretrained(modelId, {
     revision, device: 'webgpu', dtype: {vision_encoder:'fp32',embed_tokens:'fp16',decoder_model_merged:'fp16'}, use_external_data_format: true,
     progress_callback: info => onProgress({...info, stage: 'model'}),
@@ -81,7 +94,7 @@ export async function createAdapter({modelId, revision = 'main', onProgress = ()
   const stopping = new lib.InterruptableStoppingCriteria();
   let busy = false;
   return {
-    modelId, revision, versions: VERSIONS, gpu: gpu.info,
+    modelId, revision, sourceModelId: bundle.metadata.source_model_id, sourceRevision: bundle.metadata.source_revision, versions: VERSIONS, gpu: gpu.info,
     stop() { stopping.interrupt(); },
     async dispose() {
       if (busy) throw new Error('请先停止当前识别。');
@@ -114,7 +127,7 @@ export async function createAdapter({modelId, revision = 'main', onProgress = ()
         });
         const generated = await model.generate({
           ...inputs, max_new_tokens: config.maxNewTokens, do_sample: false,
-          repetition_penalty: 1.0, eos_token_id: [248044, 248046],
+          repetition_penalty: 1.0, eos_token_id: eosTokenIds,
           streamer, stopping_criteria: stopping,
         });
         const ids = generated.tolist()[0].slice(promptLength);
@@ -128,7 +141,7 @@ export async function createAdapter({modelId, revision = 'main', onProgress = ()
           firstTokenSeconds: firstTokenAt === null ? null : (firstTokenAt-prefill)/1000,
           decodeTokensPerSecond: firstTokenAt === null || ids.length < 2 ? null : (ids.length-1)/((performance.now()-firstTokenAt)/1000),
           totalSeconds: (performance.now() - start) / 1000,
-          ended: ids.length > 0 && [248044, 248046].includes(Number(ids.at(-1))),
+          ended: ids.length > 0 && eosTokenIds.includes(Number(ids.at(-1))),
           settings: config, postprocess: false,
         };
       } finally { busy = false; }
