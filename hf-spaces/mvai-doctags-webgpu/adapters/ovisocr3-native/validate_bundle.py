@@ -135,7 +135,9 @@ def validate(model, bundle, threads, expected_source_revision):
 
     # Verify the decoder's tied output projection references the same source rows.
     decoder_path = bundle / "onnx" / "decoder_model_merged_fp16.onnx"
+    onnx.checker.check_model(str(decoder_path))
     decoder = onnx.load(decoder_path, load_external_data=False)
+    report["decoder_graph_check"] = True
     head = next((tensor for tensor in decoder.graph.initializer if tensor.name == "lm_head.MatMul.weight"), None)
     if head is None:
         raise ValueError("Expected decoder lm_head.MatMul.weight initializer is missing")
