@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MVAI · PaddleOCR-VL-1.6 WebGPU 独立验收页</title>
+<style>
+:root{color-scheme:light;font-family:Inter,"Microsoft YaHei",Arial,sans-serif;color:#18212f;background:#f5f7fa}
+*{box-sizing:border-box}body{margin:0;padding:24px;max-width:1440px;margin-inline:auto}
+h1{font-size:22px;margin:0 0 6px}p{color:#5a6575;line-height:1.55}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
+button{border:1px solid #cbd5e1;background:#fff;color:#18212f;padding:9px 14px;border-radius:7px;cursor:pointer}
+button.primary{background:#1f5d9b;color:white;border-color:#1f5d9b}
+button:disabled{opacity:.45;cursor:not-allowed}
+input[type=file]{max-width:340px}
+.status{padding:12px 14px;background:#fff;border:1px solid #dce3eb;border-radius:8px;white-space:pre-wrap;font:13px/1.5 ui-monospace,Consolas,monospace;min-height:72px}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:16px;margin-top:16px}
+.panel{background:white;border:1px solid #dce3eb;border-radius:8px;padding:14px;min-width:0}
+.panel h2{font-size:15px;margin:0 0 12px}
+#preview{width:100%;height:auto;display:block;background:#eef2f6}
+#blocks{font-size:13px;line-height:1.55;max-height:620px;overflow:auto}
+.render-block{padding:6px 8px;border-bottom:1px solid #edf0f4;white-space:pre-wrap;overflow-wrap:anywhere}
+.render-tbl table{border-collapse:collapse;max-width:100%;font-size:12px}
+.render-tbl td,.render-tbl th{border:1px solid #cbd5e1;padding:3px 6px}
+#raw{max-height:380px;overflow:auto;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.small{font-size:12px;color:#667085}
+@media(max-width:850px){body{padding:14px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+<h1>MVAI · PaddleOCR-VL-1.6 浏览器 WebGPU 独立验收</h1>
+<p>独立研发测试页，不修改正式模型列表和生产界面。首次加载约 2.11 GB（VLM 权重与版面模型）；推理完全在浏览器 WebGPU 中执行，不使用服务器推理或 CPU 回退。</p>
+<div class="toolbar">
+  <button id="load" class="primary">加载模型并预热</button>
+  <button id="dispose" disabled>释放模型</button>
+  <input id="file" type="file" accept="image/*">
+  <button id="run" disabled>运行文档解析</button>
+  <button id="stop" disabled>停止推理</button>
+</div>
+<div class="status" id="status">等待加载。请使用支持 WebGPU + shader-f16 的 Chrome/Edge。</div>
+<div class="grid">
+  <section class="panel">
+    <h2>原图与版面定位框</h2>
+    <canvas id="preview"></canvas>
+    <p class="small" id="meta">尚未运行</p>
+  </section>
+  <section class="panel">
+    <h2>原生 Paddle 结构化结果</h2>
+    <div id="blocks"></div>
+  </section>
+</div>
+<section class="panel" style="margin-top:16px">
+  <h2>原始 JSON（含未完成标记）</h2>
+  <pre id="raw"></pre>
+</section>
+<script src="./native-document-output.js"></script>
+<script src="./native-result-renderer.js"></script>
+<script type="module">
+import {createAdapter} from "./adapters/paddleocr-vl-1.6/adapter.mjs";
+
+const $=id=>document.getElementById(id);
+let adapter=null,selectedFile=null,bitmap=null,running=false;
+function status(message){$("status").textContent=message;}
+function logProgress(event){
+  if(event.kind==="download"){
+    const loaded=Number(event.modelLoadedBytes)||0,total=Number(event.modelTotalBytes)||0;
+    const mb=n=>(n/1e6).toFixed(1);
+    status("模型下载："+mb(loaded)+" / "+mb(total)+" MB\n资源："+(event.asset||"")+"\n来源缓存："+(event.fromPersistentCache?"是":"否"));
+  }else if(event.stage==="layout-load"){
+    status("PP-DocLayoutV3："+(event.phase||event.stage)+" · "+(event.status||""));
+  }else if(event.stage==="vlm-warmup"){
+    status("PaddleOCR-VL-1.6 预热："+(event.stage||"")+" · "+(event.asset||event.kind||""));
+  }else if(event.stage==="recognition"){
+    status("区域识别："+(event.region||"")+"/"+(event.totalRegions||"")+" · "+(event.task||event.substage||event.stage||"")+"\n"+(event.detail||event.substage||event.stage||""));
+  }else{
+    status(JSON.stringify(event,null,2));
+  }
+}
+function drawResult(result){
+  if(!selectedFile||!bitmap)return;
+  const canvas=$("preview"),ctx=canvas.getContext("2d");
+  canvas.width=bitmap.width;canvas.height=bitmap.height;
+  ctx.drawImage(bitmap,0,0);
+  const parsed=window.MVAINativeOCR.parsePaddle(result.text,{width:bitmap.width,height:bitmap.height});
+  window.MVAINativeOCRRenderer.renderBoxes(ctx,parsed,bitmap.width,bitmap.height,{showLabels:true});
+  window.MVAINativeOCRRenderer.renderBlocks(parsed,$("blocks"),bitmap);
+  $("raw").textContent=result.text;
+  $("meta").textContent=[
+    "版面区域："+result.totalRegions,
+    "完成区域："+result.completedRegions,
+    "版面检测："+(result.layoutSeconds||0).toFixed(2)+" s",
+    "区域识别："+(result.recognitionSeconds||0).toFixed(2)+" s",
+    "总耗时："+(result.totalSeconds||0).toFixed(2)+" s",
+    "完整结果："+(result.ended?"是":"否（部分结果）")
+  ].join("  ·  ");
+}
+$("file").addEventListener("change",async event=>{
+  selectedFile=event.target.files?.[0]||null;
+  if(bitmap){bitmap.close();bitmap=null;}
+  $("run").disabled=!adapter||!selectedFile;
+  if(!selectedFile){$("preview").width=0;$("preview").height=0;return;}
+  bitmap=await createImageBitmap(selectedFile);
+  const canvas=$("preview"),ctx=canvas.getContext("2d");
+  canvas.width=bitmap.width;canvas.height=bitmap.height;ctx.drawImage(bitmap,0,0);
+  $("meta").textContent="原图："+bitmap.width+" × "+bitmap.height+" · "+selectedFile.name;
+});
+$("load").addEventListener("click",async()=>{
+  $("load").disabled=true;
+  try{
+    adapter=await createAdapter({onProgress:logProgress});
+    status("模型加载并预热完成。\n"+JSON.stringify(adapter.model,null,2));
+    $("run").disabled=!selectedFile;
+    $("dispose").disabled=false;
+  }catch(error){
+    status("加载失败：\n"+(error?.stack||error));
+    $("load").disabled=false;
+  }
+});
+$("run").addEventListener("click",async()=>{
+  if(!adapter||!selectedFile||running)return;
+  running=true;$("run").disabled=true;$("stop").disabled=false;
+  try{
+    const result=await adapter.recognize(selectedFile,{
+      onProgress:logProgress,
+      onRegion:event=>status("已完成区域 "+(event.index+1)+" · "+(event.region?.label||"")+
+        (event.skipped?"（图像区域跳过 OCR）":""))
+    });
+    drawResult(result);
+    status((result.ended?"解析完成":"已停止，保留已完成区域")+
+      "\n完成 "+result.completedRegions+" / "+result.totalRegions+" 个区域"+
+      "\n耗时 "+result.totalSeconds.toFixed(2)+" s");
+  }catch(error){status("推理失败：\n"+(error?.stack||error));}
+  finally{running=false;$("run").disabled=!adapter||!selectedFile;$("stop").disabled=true;}
+});
+$("stop").addEventListener("click",()=>{
+  adapter?.stop();status("已请求停止。若当前区域正在生成，系统会完成当前区域后停止，并保留部分结果。");
+  $("stop").disabled=true;
+});
+$("dispose").addEventListener("click",async()=>{
+  if(!adapter||running)return;
+  try{await adapter.dispose();adapter=null;$("run").disabled=true;$("dispose").disabled=true;$("load").disabled=false;status("模型资源已释放。");}
+  catch(error){status("释放失败："+(error?.message||error));}
+});
+</script>
+</body>
+</html>
