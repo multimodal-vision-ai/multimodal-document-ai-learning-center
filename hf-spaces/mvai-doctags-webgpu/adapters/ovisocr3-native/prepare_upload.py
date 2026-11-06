@@ -25,6 +25,10 @@ def main():
     args = parser.parse_args()
     bundle = args.bundle.resolve(strict=True)
     staging = args.staging.resolve()
+    if staging == bundle or staging in bundle.parents or bundle in staging.parents:
+        raise SystemExit("Staging directory must be separate from the validated bundle; refusing destructive copy.")
+    if staging == Path(staging.anchor):
+        raise SystemExit("Filesystem root cannot be used as the staging directory.")
     report_path = bundle / "validation" / "component_validation.json"
     metadata_path = bundle / "source-model.json"
     if not report_path.is_file() or not metadata_path.is_file():
