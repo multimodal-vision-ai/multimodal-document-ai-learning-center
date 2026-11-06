@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import {createHash} from "node:crypto";
 import {
   BUNDLE_FORMAT_VERSION, DEFAULTS, ONNX_MODEL_ID, SOURCE_MODEL_ID, SOURCE_REVISION,
   directPrompt, fetchBundleContract, modelFileUrl, requireNativeOnnxBundle, validateSettings
@@ -10,17 +11,28 @@ const metadata = {
   source_model_id: SOURCE_MODEL_ID,
   source_revision: SOURCE_REVISION,
   model_type: "qwen3_5",
-  source_weights_sha256: "b".repeat(64)
+  source_weights_sha256: "b".repeat(64),
+  prompt_sha256: ""
 };
 const validation = {
   success: true,
   source_model_id: SOURCE_MODEL_ID,
   source_revision: SOURCE_REVISION,
-  source_weights_sha256: metadata.source_weights_sha256
+  source_weights_sha256: metadata.source_weights_sha256,
+  structured_prompt_sha256: "",
+  artifacts: {
+    "onnx/embed_tokens_fp16.onnx": {sha256:"1".repeat(64)},
+    "onnx/vision_encoder.onnx": {sha256:"2".repeat(64)},
+    "onnx/decoder_model_merged_fp16.onnx": {sha256:"3".repeat(64)}
+  }
 };
 const prompt = `Analyze the document structure and extract text content. Return a single JSON array in natural reading order.
 Each element follows this schema: {"bbox": [x_min, y_min, x_max, y_max], "category": "string", "content": "string"}.
 The bbox coordinates are integers scaled to [0, 1000).`;
+const promptHash = createHash("sha256").update(prompt).digest("hex");
+metadata.prompt_sha256 = promptHash;
+metadata.eos_token_id = [248044, 248046];
+validation.structured_prompt_sha256 = promptHash;
 
 assert.equal(requireNativeOnnxBundle(ONNX_MODEL_ID), ONNX_MODEL_ID);
 assert.throws(() => requireNativeOnnxBundle(SOURCE_MODEL_ID), /专用 ONNX/);
@@ -48,6 +60,16 @@ assert.equal(bundle.metadata.source_revision, SOURCE_REVISION);
 assert.equal(bundle.prompt, prompt);
 assert.equal(calls.length, 3);
 assert.equal(bundle.validation.success, true);
+const tamperedFetch = async url => {
+  const response = await fakeFetch(url);
+  if (url.endsWith("prompts/document_structured.txt")) {
+    return {ok:true,text:async()=>prompt+" altered"};
+  }
+  return response;
+};
+await assert.rejects(fetchBundleContract({
+  modelId: ONNX_MODEL_ID, revision: commit, fetcher: tamperedFetch
+}), /提示词哈希/);
 await assert.rejects(fetchBundleContract({
   modelId: ONNX_MODEL_ID, revision: "main", fetcher: fakeFetch
 }), /40 位 commit SHA/);
