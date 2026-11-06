@@ -71,7 +71,7 @@ function logProgress(event){
   }else if(event.stage==="vlm-warmup"){
     status("PaddleOCR-VL-1.6 预热："+(event.stage||"")+" · "+(event.asset||event.kind||""));
   }else if(event.stage==="recognition"){
-    status("区域识别："+(event.region||"")+"/"+(event.totalRegions||"")+" · "+(event.task||event.stage||"")+"\n"+(event.detail||event.stage||""));
+    status("区域识别："+(event.region||"")+"/"+(event.totalRegions||"")+" · "+(event.task||event.substage||event.stage||"")+"\n"+(event.detail||event.substage||event.stage||""));
   }else{
     status(JSON.stringify(event,null,2));
   }
