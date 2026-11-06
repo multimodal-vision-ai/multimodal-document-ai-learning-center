@@ -82,10 +82,16 @@ function drawResult(result){
   if(!selectedFile||!bitmap)return;
   const canvas=$("preview"),ctx=canvas.getContext("2d");
   canvas.width=bitmap.width;canvas.height=bitmap.height;
-  ctx.drawImage(bitmap,0,0);
   const parsed=window.MVAINativeOCR.parsePaddle(result.text,{width:bitmap.width,height:bitmap.height});
-  window.MVAINativeOCRRenderer.renderBoxes(ctx,parsed,bitmap.width,bitmap.height,{showLabels:true});
-  window.MVAINativeOCRRenderer.renderBlocks(parsed,$("blocks"),bitmap);
+  const drawHighlight=highlight=>{
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(bitmap,0,0);
+    window.MVAINativeOCRRenderer.renderBoxes(ctx,parsed,bitmap.width,bitmap.height,{highlight,showLabels:true});
+  };
+  drawHighlight(null);
+  window.MVAINativeOCRRenderer.renderBlocks(parsed,$("blocks"),bitmap,{
+    onSelect:index=>drawHighlight(index)
+  });
   $("raw").textContent=result.text;
   $("meta").textContent=[
     "版面区域："+result.totalRegions,
