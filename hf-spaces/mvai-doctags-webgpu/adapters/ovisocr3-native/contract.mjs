@@ -41,6 +41,19 @@ export async function fetchBundleContract({
       metadata.model_type !== "qwen3_5") {
     throw new Error("ONNX 模型包与批准的 OvisOCR3 官方来源不一致。");
   }
+  const validationResponse = await fetcher(modelFileUrl(
+    modelId, revision, "validation/component_validation.json", modelHost
+  ));
+  if (!validationResponse.ok) {
+    throw new Error("ONNX 模型包缺少通过校验的组件验证报告；禁止加载未验收模型。");
+  }
+  const validation = await validationResponse.json();
+  if (validation.success !== true ||
+      validation.source_model_id !== SOURCE_MODEL_ID ||
+      validation.source_revision !== SOURCE_REVISION ||
+      validation.source_weights_sha256 !== metadata.source_weights_sha256) {
+    throw new Error("ONNX 组件验证报告与官方 OvisOCR3 来源不一致。");
+  }
   const promptResponse = await fetcher(modelFileUrl(modelId, revision, "prompts/document_structured.txt", modelHost));
   if (!promptResponse.ok) throw new Error("无法读取随模型固定的 Structured 提示词：" + promptResponse.status);
   const prompt = await promptResponse.text();
@@ -51,7 +64,7 @@ export async function fetchBundleContract({
       !prompt.includes("[0, 1000)")) {
     throw new Error("OvisOCR3 Structured 提示词缺少官方 JSON/坐标契约。");
   }
-  return Object.freeze({metadata, prompt});
+  return Object.freeze({metadata, validation, prompt});
 }
 
 export function directPrompt(tokenizer, structuredPrompt) {
