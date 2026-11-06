@@ -15,6 +15,25 @@
 
 Do not construct the public URL from the source repository path `models/pp-doclayoutv3/manifest.json`. The upstream Pages build runs `scripts/stage-pages-models.mjs`, which stages the manifest at `apps/demo/dist/models/manifest.json` and rewrites the model variant URLs to `/models/model-fp16.onnx` and `/models/model-fp32.onnx`. The source-tree path is not the deployed Pages path and returns HTTP 404.
 
+## Same-origin inference worker
+
+The SDK's browser-global bundle creates its module worker relative to `globalThis.__PPDOCLAYOUT_SCRIPT_URL__`. When the SDK bundle is loaded from jsDelivr, that produces a cross-origin Worker URL and the browser rejects it from the DEV/Space origin.
+
+The adapter now overrides that SDK worker base immediately before `createDocLayout()` with a same-origin URL resolved from its own module location:
+
+- URL base: `../../vendor/ppdoclayoutv3/worker-base.js`
+- Worker: `../../vendor/ppdoclayoutv3/inference.worker.js`
+
+The actual v1.2.0 worker is pinned to 732,503 bytes and SHA-256 `128380b8f435c07b1dec25542355708dbd99e033b2fcf994d13d12bc8b3a6a6b`. It is downloaded by `scripts/stage-ppdoclayout-worker.mjs`, hash-verified, and staged into the local `vendor/ppdoclayoutv3/` directory. The DEV build copies this directory into the public MkDocs asset tree and verifies the exact public worker bytes. This keeps Worker construction same-origin; ONNX Runtime WASM assets continue to use their explicitly configured CDN path.
+
+Before uploading the standalone adapter to a Hugging Face Static Space, run:
+
+```bash
+node scripts/stage-ppdoclayout-worker.mjs
+```
+
+Upload the generated `vendor/ppdoclayoutv3/worker-base.js` and `inference.worker.js` alongside the adapter. Do not point the SDK worker base back at the jsDelivr browser-global URL.
+
 The browser runtime and PP-DocLayoutV3 SDK are Apache-2.0. Keep their upstream license and attribution notices with any vendored distribution. The original Paddle model card/license must also be retained with the model pack.
 
 ## Actual execution sequence
