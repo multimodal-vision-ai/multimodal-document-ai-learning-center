@@ -82,6 +82,100 @@
     blocks.sort((a,b)=>a.order-b.order || a.index-b.index);
     return {format:"paddleocr-vl16-pipeline-json",raw,blocks,warnings,total:items.length};
   }
+  const OTSL_TOKENS = new Set(["fcel","ecel","lcel","ucel","xcel","nl"]);
+  function parseOTSL(input) {
+    if (typeof input !== "string") throw new TypeError("OTSL 输入必须是字符串。");
+    if (input.length > MAX_RAW_CHARS) throw new Error("OTSL 内容超过 10 MiB 限额，拒绝渲染。");
+    const tokenPattern = /<(fcel|ecel|lcel|ucel|xcel|nl)>/g;
+    const matches = [...input.matchAll(tokenPattern)];
+    if (matches.length === 0) return null;
+    if (matches.length > 20000) throw new Error("OTSL 标记数量超过 20,000，拒绝渲染。");
+    const rows = [[]], slots = [[]], cells = [];
+    let row = 0, col = 0, rowHasToken = false;
+    let previousKind = null, previousCell = null, previousEnd = 0;
+    const assignText = text => {
+      if (previousKind === "fcel" && previousCell) previousCell.text += text;
+      else if (text.trim()) throw new Error("OTSL 单元格标记之间出现无法归属的文本。");
+    };
+    const putSlot = (r, c, cell) => {
+      if (c >= 1000 || r >= 1000) throw new Error("OTSL 表格行列超过 1,000，拒绝渲染。");
+      slots[r] ||= [];
+      if (slots[r][c]) throw new Error("OTSL 合并单元格发生重叠，无法可靠恢复表格。");
+      slots[r][c] = cell;
+    };
+    for (const match of matches) {
+      assignText(input.slice(previousEnd, match.index));
+      const kind = match[1];
+      if (!OTSL_TOKENS.has(kind)) throw new Error("发现不支持的 OTSL 标记。");
+      if (kind === "nl") {
+        if (!rowHasToken) throw new Error("OTSL 出现空行结束标记。");
+        row++;
+        if (row >= 1000) throw new Error("OTSL 表格行数超过 1,000，拒绝渲染。");
+        rows[row] = [];
+        slots[row] = [];
+        col = 0;
+        rowHasToken = false;
+        previousKind = "nl";
+        previousCell = null;
+      } else if (kind === "fcel" || kind === "ecel") {
+        const cell = {
+          row, col, text: "", rowspan: 1, colspan: 1, empty: kind === "ecel"
+        };
+        putSlot(row, col, cell);
+        rows[row].push(cell);
+        cells.push(cell);
+        previousKind = kind;
+        previousCell = cell;
+        col++;
+        rowHasToken = true;
+      } else if (kind === "lcel") {
+        const left = slots[row]?.[col - 1];
+        if (!left || left.row !== row || left.col + left.colspan !== col)
+          throw new Error("OTSL <lcel> 找不到可向右扩展的左侧单元格。");
+        left.colspan++;
+        putSlot(row, col, left);
+        previousKind = kind;
+        previousCell = left;
+        col++;
+        rowHasToken = true;
+      } else if (kind === "ucel") {
+        const above = slots[row - 1]?.[col];
+        if (!above || above.row + above.rowspan !== row)
+          throw new Error("OTSL <ucel> 找不到可向下扩展的上方单元格。");
+        above.rowspan++;
+        putSlot(row, col, above);
+        previousKind = kind;
+        previousCell = above;
+        col++;
+        rowHasToken = true;
+      } else if (kind === "xcel") {
+        const left = slots[row]?.[col - 1];
+        const above = slots[row - 1]?.[col];
+        if (!left || !above || left !== above
+          || left.col + left.colspan !== col
+          || left.row + left.rowspan !== row)
+          throw new Error("OTSL <xcel> 无法对应同一个左侧及上方合并单元格。");
+        left.colspan++;
+        left.rowspan++;
+        putSlot(row, col, left);
+        previousKind = kind;
+        previousCell = left;
+        col++;
+        rowHasToken = true;
+      }
+      previousEnd = match.index + match[0].length;
+    }
+    assignText(input.slice(previousEnd));
+    if (!rowHasToken && rows.length > 1) rows.pop();
+    if (rows.length === 0 || cells.length === 0)
+      throw new Error("OTSL 没有可渲染的表格单元格。");
+    return {
+      rows,
+      cellCount: cells.length,
+      maxColumns: Math.max(0, ...slots.map(line => line.length)),
+      format: "paddleocr-vl-otsl"
+    };
+  }
   function toPixelBox(block, width, height) {
     if (!Number.isFinite(width) || !Number.isFinite(height) || width<=0 || height<=0)
       throw new Error("缺少有效原图宽高。");
@@ -91,7 +185,7 @@
     const [x1,y1,x2,y2]=block.bbox;
     return [x1*factor[0],y1*factor[1],x2*factor[0],y2*factor[1]];
   }
-  const api = Object.freeze({parseOvis, parsePaddle, toPixelBox});
+  const api = Object.freeze({parseOvis, parsePaddle, parseOTSL, toPixelBox});
   root.MVAINativeOCR = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof globalThis === "object" ? globalThis : this);
