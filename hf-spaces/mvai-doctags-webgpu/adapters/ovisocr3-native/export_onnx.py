@@ -99,10 +99,16 @@ def get_vision_model(model_path=None):
         def forward(self, pixel_values, image_grid_thw):
             # Preserve vision arithmetic in fp32; match the decoder's fp16 image embeddings.
             output = self.visual(pixel_values, grid_thw=image_grid_thw)
-            pooled = getattr(output, "pooler_output", None)
+            # The pinned Olive recipe's Qwen3_5VisionModel returns the pooled
+            # feature tensor directly; Transformers' native implementation
+            # returns a ModelOutput exposing pooler_output. Accept both forms.
+            if isinstance(output, torch.Tensor):
+                pooled = output
+            else:
+                pooled = getattr(output, "pooler_output", None)
             if pooled is None:
-                raise ValueError("Official Qwen3.5 vision encoder did not return pooler_output")
-            return pooled.to(torch.float16)
+                raise ValueError("Qwen3.5 vision encoder returned neither a tensor nor pooler_output")
+            return pooled.to(dtype=torch.float16)
 
     return Encoder(load_vision(model_path)).eval()
 
@@ -299,22 +305,41 @@ def export_decoder(model_root, output):
     package_decoder(model_root, output, exported)
 
 
+def browser_preprocessor_config(source):
+    """Preserve the official Qwen image-processor schema with browser-safe limits."""
+    if not isinstance(source, dict) or not isinstance(source.get("size"), dict):
+        raise ValueError("Official OvisOCR3 preprocessor_config.json has no size object")
+    size = source["size"]
+    if not {"shortest_edge", "longest_edge"}.issubset(size):
+        raise ValueError("Official OvisOCR3 preprocessor size keys are incomplete")
+    result = dict(source)
+    result["size"] = {
+        **size,
+        "shortest_edge": 448 * 448,
+        "longest_edge": 1440 * 1440,
+    }
+    return result
+
+
 def write_browser_assets(root, output, source_revision):
-    config = json.loads(root.joinpath("config.json").read_text())
-    config["transformers.js_config"] = {
+    # Keep the original model configuration as JSON. Do not treat the decoded
+    # dictionary as a Transformers config object.
+    model_config = json.loads(root.joinpath("config.json").read_text())
+    model_config["transformers.js_config"] = {
         "use_external_data_format": True,
         "kv_cache_dtype": {"fp16": "float16"},
     }
-    output.joinpath("config.json").write_text(json.dumps(config, indent=2) + "\n")
-    processor = json.loads(root.joinpath("processor_config.json").read_text())
-    preprocessor = {**processor["image_processor"], "processor_class": processor["processor_class"]}
-    # Conservative browser default; the source processor's normalization is unchanged.
-    preprocessor["min_pixels"] = 448 * 448
-    preprocessor["max_pixels"] = 1440 * 1440
+    output.joinpath("config.json").write_text(json.dumps(model_config, indent=2) + "\n")
+
+    source_preprocessor_path = root / "preprocessor_config.json"
+    if not source_preprocessor_path.is_file():
+        raise FileNotFoundError("Official OvisOCR3 preprocessor_config.json is missing")
+    source_preprocessor = json.loads(source_preprocessor_path.read_text())
+    preprocessor = browser_preprocessor_config(source_preprocessor)
     output.joinpath("preprocessor_config.json").write_text(json.dumps(preprocessor, indent=2) + "\n")
     assets = (
         "generation_config.json", "tokenizer.json", "tokenizer_config.json",
-        "processor_config.json", "chat_template.jinja", "merges.txt", "vocab.json",
+        "chat_template.jinja", "merges.txt", "vocab.json",
         "video_preprocessor_config.json",
     )
     for name in assets:
@@ -344,10 +369,13 @@ def write_browser_assets(root, output, source_revision):
         "source_model_id": OFFICIAL_SOURCE_MODEL_ID,
         "source_revision": source_revision,
         "source_weights_sha256": file_sha256(weights),
-        "model_type": config.model_type,
-        "vocab_size": config.text_config.vocab_size,
+        "model_type": model_config["model_type"],
+        "vocab_size": model_config["text_config"]["vocab_size"],
         "eos_token_id": generation.get("eos_token_id"),
         "prompt_sha256": file_sha256(prompt),
+        "source_preprocessor_sha256": file_sha256(source_preprocessor_path),
+        "browser_min_pixels": 448 * 448,
+        "browser_max_pixels": 1440 * 1440,
         "license": "Apache-2.0",
         "olive_recipe_commit": OLIVE_RECIPE_COMMIT,
         "olive_vision_source_sha256": OLIVE_VISION_SOURCE_SHA256,
