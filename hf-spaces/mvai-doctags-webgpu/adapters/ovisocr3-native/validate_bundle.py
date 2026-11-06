@@ -217,7 +217,7 @@ def validate(model, bundle, threads, expected_source_revision):
 
     required = [
         "config.json", "generation_config.json", "preprocessor_config.json",
-        "processor_config.json", "tokenizer.json", "tokenizer_config.json",
+        "tokenizer.json", "tokenizer_config.json",
         "chat_template.jinja", "source-model.json", "prompts/document_structured.txt",
         "onnx/embed_tokens_fp16.onnx", "onnx/embed_tokens_fp16.onnx_data",
         "onnx/vision_encoder.onnx", "onnx/vision_encoder.onnx_data",
