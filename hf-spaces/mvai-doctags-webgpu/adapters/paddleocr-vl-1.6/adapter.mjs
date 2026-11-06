@@ -155,7 +155,7 @@ function regionContent(text, task) {
 
 function emptyNative(width,height) {
   return {
-    width,height,page_index:null,page_count:1,
+    input_path:null,width,height,page_index:null,page_count:1,
     model_settings:{
       pipeline_model:"PaddleOCR-VL-1.6",
       use_doc_preprocessor:false,
