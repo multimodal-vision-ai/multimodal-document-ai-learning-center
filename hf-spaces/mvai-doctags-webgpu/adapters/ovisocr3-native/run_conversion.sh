@@ -37,14 +37,23 @@ fi
 
 mkdir -p "$(dirname "$SOURCE_DIR")" "$(dirname "$RECIPE_ROOT")" "$(dirname "$BUNDLE_DIR")"
 
+echo "[0/5] Running lightweight exporter contract and syntax checks..."
+python -m py_compile "$SCRIPT_DIR/export_onnx.py" "$SCRIPT_DIR/validate_bundle.py" \
+  "$SCRIPT_DIR/test_reference.py" "$SCRIPT_DIR/prepare_upload.py"
+python "$SCRIPT_DIR/test_export_contract.py"
+
 echo "[1/5] Downloading the pinned official OvisOCR3 source checkpoint..."
 hf download "$SOURCE_ID" \
   --revision "$SOURCE_REVISION" \
   --local-dir "$SOURCE_DIR"
 
-test -s "$SOURCE_DIR/config.json"
-test -s "$SOURCE_DIR/model.safetensors"
-test -s "$SOURCE_DIR/prompts/document_structured.txt"
+for asset in config.json model.safetensors preprocessor_config.json generation_config.json \
+  tokenizer.json tokenizer_config.json chat_template.jinja LICENSE prompts/document_structured.txt; do
+  test -s "$SOURCE_DIR/$asset" || {
+    echo "Pinned OvisOCR3 checkpoint is missing required asset: $asset" >&2
+    exit 2
+  }
+done
 
 echo "[2/5] Preparing the pinned Microsoft Olive recipe..."
 if [[ ! -d "$RECIPE_ROOT/.git" ]]; then
