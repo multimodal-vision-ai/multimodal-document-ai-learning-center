@@ -65,7 +65,7 @@ python hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/export_onnx.py \
   --recipe-dir ./olive-recipes/Qwen-Qwen3.5-0.8B/builtin
 ~~~
 
-The script checks the exact source revision argument and exact vision-source SHA-256. It exports the vision encoder, token embeddings, and merged FP16 decoder for WebGPU, then copies the model's original tokenizer/template/prompt assets. The resulting bundle includes source-model.json with source checkpoint and prompt hashes.
+The script runs Python syntax and exporter-contract checks before downloading the checkpoint. It verifies the required files at the pinned source revision, including the official `preprocessor_config.json`, then checks the exact source revision argument and exact vision-source SHA-256. It exports the vision encoder, token embeddings, and merged FP16 decoder for WebGPU, then copies the model's original tokenizer/template/prompt assets. The original image-normalization settings are retained; only the browser image-size limits are reduced to 448²–1440² pixels. The resulting bundle includes source-model.json with source checkpoint, prompt, and preprocessor hashes.
 
 ## Required validation
 
