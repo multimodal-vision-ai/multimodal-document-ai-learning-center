@@ -163,6 +163,7 @@ https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-cen
 - `native-result-renderer.js` 使用 DOM 节点创建安全渲染文本与 allow-listed HTML table，不将模型输出直接写入 `innerHTML`。
 - 已新增 PaddleOCR-VL 原生 OTSL 解析器：识别 `<fcel>`、`<ecel>`、`<lcel>`、`<ucel>`、`<xcel>`、`<nl>`，恢复单元格、空单元格及 colspan/rowspan；不改写 `parsing_res_list[].block_content` 或原始 JSON。
 - OTSL 表格在右侧以安全 DOM 节点渲染；同时提供默认折叠的“查看原始 OTSL”，原始标记仍可逐字检查。若结构不合法，显示警告并保留原文，不猜测或伪造表格结构。
+- Paddle DEV 页右侧结果块支持点击联动：重新绘制原图并高亮对应原始像素 bbox；仅增加交互，不改变布局和模型推理。
 - OTSL 解析器已增加普通单元格、空单元格、横向合并、纵向合并、双向合并和异常结构测试；Space 源文件与 DEV 镜像同步。
 - 已修复 Ovis HTML table/image 标签检测中的正则转义问题。
 - `docs/assets/projects/doctags/browser-inference/` 是 DEV 预览镜像；CI 使用 `cmp` 检查它与 HF Space 源码完全一致。
