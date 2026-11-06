@@ -98,7 +98,11 @@ def get_vision_model(model_path=None):
 
         def forward(self, pixel_values, image_grid_thw):
             # Preserve vision arithmetic in fp32; match the decoder's fp16 image embeddings.
-            return self.visual(pixel_values, grid_thw=image_grid_thw).to(torch.float16)
+            output = self.visual(pixel_values, grid_thw=image_grid_thw)
+            pooled = getattr(output, "pooler_output", None)
+            if pooled is None:
+                raise ValueError("Official Qwen3.5 vision encoder did not return pooler_output")
+            return pooled.to(torch.float16)
 
     return Encoder(load_vision(model_path)).eval()
 
