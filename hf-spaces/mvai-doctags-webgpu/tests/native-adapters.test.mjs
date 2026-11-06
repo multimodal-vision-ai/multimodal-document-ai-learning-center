@@ -26,7 +26,7 @@ test("Never generate artificial boxes, reading order or unsupported formats",()=
 });
 
 test("Ovis native contract cannot reuse official BF16 checkpoint as ONNX",()=>{
-  assert.throws(()=>requireNativeOnnxBundle("ATH-MaaS/OvisOCR3"),/不是 WebGPU ONNX/);
+  assert.throws(()=>requireNativeOnnxBundle("ATH-MaaS/OvisOCR3"),/专用 ONNX/);
   assert.throws(()=>requireNativeOnnxBundle(""),/专用 ONNX/);
   assert.equal(requireNativeOnnxBundle(ONNX_MODEL_ID),ONNX_MODEL_ID);
   const tokenizer={apply_chat_template(msg){assert.equal(msg[0].content[1].text,"STRUCTURED PROMPT");return "x<|im_start|>assistant\n";}};
