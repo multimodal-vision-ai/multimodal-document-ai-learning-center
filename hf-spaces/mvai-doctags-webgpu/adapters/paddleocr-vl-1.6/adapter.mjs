@@ -133,7 +133,7 @@ export async function createSingleRuntimeVlm({engineModule,runtimeModule}={}) {
     if(/swiftshader|llvmpipe|software|cpu/.test(adapter))
       throw new Error("PaddleOCR-VL detected a software adapter; real WebGPU is required.");
     const singleConcurrency=Object.freeze({
-      current:remaining=>Math.max(1,Math.min(1,Number.isFinite(remaining)?remaining:1)),
+      current:remaining=>Math.max(0,Math.min(1,Number.isFinite(remaining)?remaining:1)),
       recordWave:()=>null
     });
     return new engineModule.PaddleOcrVlEngine([runtime],singleConcurrency);
