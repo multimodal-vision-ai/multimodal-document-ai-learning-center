@@ -77,3 +77,32 @@
 - Source of truth: `hf-spaces/mvai-doctags-webgpu`; mirror runtime files into `docs/assets/projects/doctags/browser-inference` only after runtime acceptance.
 - No model enters `model-registry.js` while its real browser runtime is unvalidated.
 - Static contract tests are not proof of a real WebGPU model integration.
+
+## 2026-11-06 — OvisOCR3 conversion preflight audit
+
+The Ovis conversion toolchain was reviewed against the exact pinned official source revision and the pinned Microsoft Olive recipe before any large checkpoint download or export.
+
+### Issues found and fixed
+
+- The official source checkpoint contains `preprocessor_config.json`, not `processor_config.json`. The exporter now reads the official top-level `size` schema, preserves the original normalization and patch settings, and changes only the approved browser resolution limits (448²–1440² pixels).
+- The exporter previously treated the decoded `config.json` dictionary as an object. It now reads `model_type` and `text_config.vocab_size` through dictionary keys.
+- The pinned Olive recipe's `Qwen3_5VisionModel` returns the pooled feature tensor directly, while the native Transformers implementation exposes `pooler_output`. The vision wrapper now accepts both documented output forms.
+- The bundle validator no longer requires the absent `processor_config.json`; it requires and validates `preprocessor_config.json`, including source SHA-256 and the narrowly permitted browser-size change.
+- The upload staging gate now requires the preprocessor provenance and the validated browser-size settings.
+- `run_conversion.sh` now runs Python syntax and lightweight exporter-contract tests before downloading the 1.71 GB source checkpoint, then checks all required source assets immediately after download.
+
+### Static validation
+
+Latest feature-branch commit: `e2cb26094c5dea42133467347dd56cda7194d527`.
+
+GitHub Actions on that commit:
+- Native OCR output contracts: passed; exporter IO, processor-schema, vision-output and bundle-asset contract checks passed.
+- DEV Preview isolated static build: passed.
+- Documentation quality: passed.
+
+### Still not executed
+
+The official checkpoint has **not** yet been downloaded or converted. No ONNX component-parity report exists, no ONNX bundle has been uploaded, and no Ovis browser inference has been run. Static CI validates the scripts and contracts only; it is not model-conversion or GPU-inference acceptance.
+
+Next action: run the pinned conversion on the dedicated Linux/Python 3.11 environment, inspect the component validation report, then run the original BF16 reference and real Chrome WebGPU acceptance on the target RTX 3080. HF upload remains a separate explicit approval gate.
+
