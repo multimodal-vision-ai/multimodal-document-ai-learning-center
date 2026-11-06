@@ -31,6 +31,7 @@
 - 主要源码：`hf-spaces/mvai-doctags-webgpu/`
 - Paddle 独立验收页面：`hf-spaces/mvai-doctags-webgpu/dev-paddleocr-vl16.html`
 - Ovis 独立验收页面：`hf-spaces/mvai-doctags-webgpu/dev-ovisocr3.html`
+- Ovis DEV 预览镜像：`docs/assets/projects/doctags/browser-inference/dev-ovisocr3.html`（待 ONNX bundle 上传后才能运行模型）
 - 原生输出解析：`hf-spaces/mvai-doctags-webgpu/native-document-output.js`
 - 原生结果渲染：`hf-spaces/mvai-doctags-webgpu/native-result-renderer.js`
 - 技术状态：`hf-spaces/mvai-doctags-webgpu/NATIVE_OCR_STATUS.md`
@@ -105,6 +106,7 @@ https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-cen
 - 导出器 IO 静态检查曾发现并修复 embedding dummy input 的 `input` / `input_ids` 不匹配。
 - 视觉编码器导出明确提取 `pooler_output`，并与原始模型输出验证。
 - 浏览器适配器只接受专用 HF ONNX 仓库 `multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX` 的完整 40 位 commit SHA。
+- Ovis 独立验收页、适配器和来源契约已镜像到 DEV 静态资源；CI 会检查文件一致性和公开可访问性。当前仍没有已上传的 ONNX bundle，因此该页面暂时只能作为预备验收入口。
 
 ### 尚未完成
 
