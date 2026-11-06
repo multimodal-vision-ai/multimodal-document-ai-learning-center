@@ -107,15 +107,20 @@ $("load").addEventListener("click",async()=>{
   }
 });
 function renderResult(result){
-  const parsed=window.MVAINativeOCR.parseOvis(result.text);
+  $("raw").textContent=result.text;
   const canvas=$("preview"),ctx=canvas.getContext("2d");
   canvas.width=bitmap.width;canvas.height=bitmap.height;ctx.drawImage(bitmap,0,0);
-  window.MVAINativeOCRRenderer.renderBoxes(ctx,parsed,bitmap.width,bitmap.height,{showLabels:true});
-  window.MVAINativeOCRRenderer.renderBlocks(parsed,$("blocks"),bitmap);
-  $("raw").textContent=result.text;
+  let parsed=null;
+  try{
+    parsed=window.MVAINativeOCR.parseOvis(result.text);
+    window.MVAINativeOCRRenderer.renderBoxes(ctx,parsed,bitmap.width,bitmap.height,{showLabels:true});
+    window.MVAINativeOCRRenderer.renderBlocks(parsed,$("blocks"),bitmap);
+  }catch(error){
+    $("blocks").textContent="当前输出尚未形成完整 JSON，不能安全绘制定位框。原始生成文本已保留。\\n"+error.message;
+  }
   $("meta").textContent=[
-    "结构元素："+parsed.total,
-    "有效定位："+parsed.blocks.length,
+    "结构元素："+(parsed?.total??"未完成"),
+    "有效定位："+(parsed?.blocks.length??0),
     "生成 tokens："+result.generatedTokens,
     "推理耗时："+result.totalSeconds.toFixed(2)+" s",
     "生成速度："+result.tokensPerSecond.toFixed(2)+" tokens/s",
