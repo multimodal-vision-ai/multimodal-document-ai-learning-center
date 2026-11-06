@@ -56,11 +56,11 @@ def checkpoint_tensor(root, name):
 
 
 def vision_reference():
-    path = Path(os.environ["R3_ONNX_RECIPE_DIR"]) / "codes" / "modeling_qwen3_5.py"
-    expected = os.environ.get("R3_ONNX_VISION_SOURCE_SHA256")
+    path = Path(os.environ["OVIS_ONNX_RECIPE_DIR"]) / "codes" / "modeling_qwen3_5.py"
+    expected = os.environ.get("OVIS_ONNX_VISION_SOURCE_SHA256")
     if not expected or file_sha256(path) != expected:
         raise ValueError("Vision export source does not match its pinned SHA-256")
-    spec = importlib.util.spec_from_file_location("r3_qwen35_export_reference", path)
+    spec = importlib.util.spec_from_file_location("ovis_qwen35_export_reference", path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
@@ -373,8 +373,8 @@ def main(argv=None):
     os.environ["MKL_NUM_THREADS"] = str(args.threads)
     os.environ["HF_HUB_OFFLINE"] = "1"
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
-    os.environ["R3_ONNX_RECIPE_DIR"] = str(args.recipe_dir.resolve(strict=True))
-    os.environ["R3_ONNX_VISION_SOURCE_SHA256"] = args.vision_source_sha256
+    os.environ["OVIS_ONNX_RECIPE_DIR"] = str(args.recipe_dir.resolve(strict=True))
+    os.environ["OVIS_ONNX_VISION_SOURCE_SHA256"] = args.vision_source_sha256
     if hasattr(os, "sched_getaffinity"):
         cpus = sorted(os.sched_getaffinity(0))
         os.sched_setaffinity(0, cpus[:args.threads])
