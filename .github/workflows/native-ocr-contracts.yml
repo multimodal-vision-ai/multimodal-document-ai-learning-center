@@ -1,0 +1,25 @@
+name: Native OCR output contracts
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'hf-spaces/mvai-doctags-webgpu/native-*.js'
+      - 'hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/**'
+      - 'hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/**'
+      - 'hf-spaces/mvai-doctags-webgpu/tests/native-*'
+      - '.github/workflows/native-ocr-contracts.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check native JSON and layout contracts
+        run: node --test hf-spaces/mvai-doctags-webgpu/tests/native-document-output.test.cjs hf-spaces/mvai-doctags-webgpu/tests/native-adapters.test.mjs
