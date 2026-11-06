@@ -50,6 +50,48 @@ test("PaddleOCR-VL refuses to treat plain OCR text as a located document",()=>{
   assert.equal(parsed.warnings.length,1);
 });
 
+test("PaddleOCR-VL OTSL restores rows, cells and empty cells without changing source text",()=>{
+  const source="<fcel>年份<fcel>地区<nl><fcel>2025<ecel><nl>";
+  const parsed=core.parseOTSL(source);
+  assert.equal(parsed.format,"paddleocr-vl-otsl");
+  assert.equal(parsed.rows.length,2);
+  assert.equal(parsed.cellCount,4);
+  assert.equal(parsed.rows[0][0].text,"年份");
+  assert.equal(parsed.rows[0][1].text,"地区");
+  assert.equal(parsed.rows[1][0].text,"2025");
+  assert.equal(parsed.rows[1][1].empty,true);
+  assert.equal(parsed.rows[1][1].text,"");
+  assert.equal(parsed.maxColumns,2);
+});
+
+test("PaddleOCR-VL OTSL restores horizontal and vertical merged cells",()=>{
+  const horizontal=core.parseOTSL("<fcel>合并标题<lcel><nl><fcel>A<fcel>B<nl>");
+  assert.equal(horizontal.rows[0][0].colspan,2);
+  assert.equal(horizontal.rows[0][0].rowspan,1);
+  assert.equal(horizontal.rows[1].length,2);
+  const vertical=core.parseOTSL("<fcel>跨行<fcel>表头<nl><ucel><fcel>数据<nl>");
+  assert.equal(vertical.rows[0][0].rowspan,2);
+  assert.equal(vertical.rows[1].length,1);
+  assert.equal(vertical.rows[1][0].text,"数据");
+});
+
+test("PaddleOCR-VL OTSL restores a cell merged both horizontally and vertically",()=>{
+  const parsed=core.parseOTSL("<fcel>跨行跨列<lcel><nl><ucel><xcel><fcel>右下角<nl>");
+  const merged=parsed.rows[0][0];
+  assert.equal(merged.colspan,2);
+  assert.equal(merged.rowspan,2);
+  assert.equal(parsed.rows[1].length,1);
+  assert.equal(parsed.rows[1][0].text,"右下角");
+});
+
+test("PaddleOCR-VL OTSL rejects malformed merges and keeps non-OTSL content untouched",()=>{
+  assert.equal(core.parseOTSL("<table><tr><td>HTML</td></tr></table>"),null);
+  assert.throws(()=>core.parseOTSL("<lcel><nl>"),/左侧单元格/);
+  assert.throws(()=>core.parseOTSL("<ucel><nl>"),/上方单元格/);
+  assert.throws(()=>core.parseOTSL("<fcel>A<nl><xcel><nl>"),/左侧及上方/);
+  assert.throws(()=>core.parseOTSL("<fcel>A<ecel>unexpected<nl>"),/无法归属/);
+});
+
 test("Unknown coordinate systems are rejected instead of guessed",()=>{
   assert.throws(()=>core.toPixelBox({bbox:[0,0,10,10],coordinateSystem:"unknown"},100,100),/未知坐标/);
 });
@@ -61,6 +103,8 @@ test("Native Ovis HTML tags are recognized without unsafe HTML injection",()=>{
   assert.ok(renderer.includes(String.raw`/^<img\b/i`));
   assert.ok(!renderer.includes(String.raw`/^<table\\b/i`));
   assert.ok(!renderer.includes(String.raw`/^<img\\b/i`));
+  assert.ok(renderer.includes("parseOTSL(block.content)"));
+  assert.ok(renderer.includes("查看原始 OTSL"));
   assert.equal(renderer.includes(".innerHTML ="),false);
   assert.equal(renderer.includes(".innerHTML="),false);
 });
