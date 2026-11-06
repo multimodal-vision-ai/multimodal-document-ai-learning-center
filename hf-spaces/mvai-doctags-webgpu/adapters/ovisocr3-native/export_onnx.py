@@ -149,7 +149,7 @@ def get_embedding_dummy_inputs(model=None):
 
     # Use generic valid IDs; official OvisOCR3 vocabulary must never inherit DJX-specific IDs.
     vocabulary = model.num_embeddings if model is not None else 2
-    return {"input": torch.tensor([[0, min(1, vocabulary - 1)]], dtype=torch.int64)}
+    return {"input_ids": torch.tensor([[0, min(1, vocabulary - 1)]], dtype=torch.int64)}
 
 
 def export_component(component, model_root, output):
