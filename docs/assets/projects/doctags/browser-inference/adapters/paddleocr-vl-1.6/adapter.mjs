@@ -21,8 +21,8 @@ const CDN_BASES = Object.freeze([
 const LAYOUT_SCRIPT_URLS = CDN_BASES.map(base =>
   base + "npm/web-sdk-pp-doclayoutv3@" + LAYOUT_SDK_VERSION + "/dist/browser-global.js"
 );
-const LAYOUT_MANIFEST_URL =
-  "https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/pp-doclayoutv3/manifest.json";
+export const LAYOUT_MANIFEST_URL =
+  "https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json";
 const VLM_ENGINE_URLS = CDN_BASES.map(base =>
   base + "gh/glebkudr/paddleocr-vl-webgpu@" + VLM_ENGINE_COMMIT +
   "/web/engine/browser_ocr_runtime.mjs"
