@@ -25,7 +25,26 @@
     }
     return clone(original);
   }
-  function blockNode(block,index,doc) {
+  function imageCrop(block,sourceImage,doc) {
+    const core=root.MVAINativeOCR;
+    if(!core || !sourceImage || !Number.isFinite(sourceImage.width) || !Number.isFinite(sourceImage.height))return null;
+    const [left,top,right,bottom]=core.toPixelBox(block,sourceImage.width,sourceImage.height);
+    const x1=Math.max(0,Math.min(sourceImage.width,Math.floor(left)));
+    const y1=Math.max(0,Math.min(sourceImage.height,Math.floor(top)));
+    const x2=Math.max(0,Math.min(sourceImage.width,Math.ceil(right)));
+    const y2=Math.max(0,Math.min(sourceImage.height,Math.ceil(bottom)));
+    if(x2<=x1||y2<=y1)return null;
+    const canvas=doc.createElement("canvas");
+    canvas.width=x2-x1;canvas.height=y2-y1;
+    const ctx=canvas.getContext("2d");
+    if(!ctx)return null;
+    ctx.drawImage(sourceImage,x1,y1,x2-x1,y2-y1,0,0,canvas.width,canvas.height);
+    canvas.className="render-crop";
+    canvas.style.maxWidth="100%";
+    canvas.style.height="auto";
+    return canvas;
+  }
+  function blockNode(block,index,doc,sourceImage) {
     let node;
     if(block.type==="table"){
       const wrap=doc.createElement("div");wrap.className="render-tbl";
@@ -49,10 +68,10 @@
     node.title="悬停定位至原始文档位置";
     return node;
   }
-  function renderBlocks(parsed,container){
+  function renderBlocks(parsed,container,sourceImage=null){
     const doc=container.ownerDocument;
     container.replaceChildren();
-    parsed.blocks.forEach((block,index)=>container.appendChild(blockNode(block,index,doc)));
+    parsed.blocks.forEach((block,index)=>container.appendChild(blockNode(block,index,doc,sourceImage)));
     if(parsed.blocks.length===0) {
       const p=doc.createElement("p");p.className="render-placeholder";
       p.textContent="本次输出没有有效的原生定位元素，请检查原始 JSON。";
