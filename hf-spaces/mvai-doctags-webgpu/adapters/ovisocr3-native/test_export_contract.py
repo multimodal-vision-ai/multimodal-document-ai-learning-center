@@ -135,6 +135,10 @@ if "ort.InferenceSession(" not in decoder_package_source:
 if "SimplifiedLayerNormalization" not in decoder_package_source:
     raise SystemExit("Decoder packaging must explicitly account for SimplifiedLayerNormalization")
 
+validator_path = Path(__file__).with_name("validate_bundle.py")
+validator_source = validator_path.read_text(encoding="utf-8")
+validator_tree = ast.parse(validator_source, filename=str(validator_path))
+
 decoder_validation_start = validator_source.index(
     'decoder_path = bundle / "onnx" / "decoder_model_merged_fp16.onnx"'
 )
@@ -147,10 +151,6 @@ if "onnx.checker.check_model" in decoder_validation_source:
     raise SystemExit("Bundle validation must not use standalone ONNX checker for the GenAI decoder")
 if "ort.InferenceSession(" not in decoder_validation_source:
     raise SystemExit("Bundle validation must load the decoder with ONNX Runtime")
-
-validator_path = Path(__file__).with_name("validate_bundle.py")
-validator_source = validator_path.read_text(encoding="utf-8")
-validator_tree = ast.parse(validator_source, filename=str(validator_path))
 if "preprocessor_config_matches_source_except_resolution" not in validator_source:
     raise SystemExit("Bundle validator must verify the official preprocessor configuration")
 validate_function = next(
