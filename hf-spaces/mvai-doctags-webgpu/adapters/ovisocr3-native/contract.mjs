@@ -32,3 +32,14 @@ export function requireNativeOnnxBundle(modelId) {
     throw new Error("未指定已验证的 OvisOCR3 ONNX 模型仓库 ID。");
   return modelId;
 }
+
+export function validateSettings(settings={}) {
+  const value={...DEFAULTS,...settings};
+  for(const field of ["minPixels","maxPixels","maxNewTokens"]){
+    if(!Number.isSafeInteger(value[field])||value[field]<=0)
+      throw new Error(field+" 必须为正整数。");
+  }
+  if(value.minPixels>value.maxPixels||value.maxPixels>2880*2880||value.maxNewTokens>16384)
+    throw new Error("原生 OvisOCR3 推理参数超过安全范围。");
+  return value;
+}
