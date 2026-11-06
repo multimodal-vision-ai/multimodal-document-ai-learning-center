@@ -82,11 +82,11 @@ function loadVlmModule(onProgress = () => {}) {
       for (const url of VLM_ENGINE_URLS) {
         try {
           const module = await import(url);
-          if (typeof module.createPaddleOcrVlEngine !== "function") {
-            throw new Error("engine factory export missing");
+          if (typeof module.PaddleOcrVlEngine !== "function") {
+            throw new Error("PaddleOcrVlEngine class export missing");
           }
           onProgress({stage:"vlm-engine",status:"loaded",url});
-          return module;
+          return {module,url};
         } catch (error) {
           failures.push(url + " — " + (error?.message || String(error)));
         }
@@ -117,9 +117,37 @@ async function createDefaultLayout(onProgress) {
   return detector;
 }
 
+/* Construct exactly one upstream WebRuntime.
+   The upstream convenience factory creates 2–3 runtime handles on an RTX 3080;
+   our single-document workflow is sequential and must not reserve extra GPU contexts. */
+export async function createSingleRuntimeVlm({engineModule,runtimeModule}={}) {
+  if(typeof engineModule?.PaddleOcrVlEngine!=="function"
+    ||typeof runtimeModule?.default!=="function"
+    ||typeof runtimeModule?.WebRuntime?.create!=="function")
+    throw new Error("Paddle WebGPU runtime exports are incomplete.");
+  await runtimeModule.default();
+  const runtime=await runtimeModule.WebRuntime.create();
+  try{
+    const capabilities=JSON.parse(runtime.capabilities_json());
+    const adapter=String(capabilities.adapter_name||"").toLowerCase();
+    if(/swiftshader|llvmpipe|software|cpu/.test(adapter))
+      throw new Error("PaddleOCR-VL detected a software adapter; real WebGPU is required.");
+    const singleConcurrency=Object.freeze({
+      current:remaining=>Math.max(1,Math.min(1,Number.isFinite(remaining)?remaining:1)),
+      recordWave:()=>null
+    });
+    return new engineModule.PaddleOcrVlEngine([runtime],singleConcurrency);
+  }catch(error){
+    try{runtime.free();}catch{}
+    throw error;
+  }
+}
+
 async function createDefaultVlm(onProgress = () => {}) {
-  const module = await loadVlmModule(onProgress);
-  return module.createPaddleOcrVlEngine();
+  const loaded = await loadVlmModule(onProgress);
+  const runtimeUrl = new URL("./pkg/pvlc_runtime_web.js",loaded.url).href;
+  const runtimeModule = await import(runtimeUrl);
+  return createSingleRuntimeVlm({engineModule:loaded.module,runtimeModule});
 }
 
 async function warmupVlm(vlm, onProgress) {
