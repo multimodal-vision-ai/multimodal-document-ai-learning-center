@@ -45,6 +45,7 @@
 - The Ovis exporter dummy-input names are now checked against each ONNX component's declared input names; this caught and fixed an input versus input_ids mismatch before model conversion.
 - Native Ovis HTML table/image tag detection was corrected; the safe renderer continues to use DOM node creation and never injects untrusted HTML.
 - Paddle standalone acceptance page, adapter and pipeline contract are mirrored into the MkDocs DEV assets. CI checks byte-for-byte mirror parity and verifies the published test page and its local assets are reachable.
+- Ovis standalone acceptance page, adapter and source contract are also mirrored into the MkDocs DEV assets. CI checks their byte-for-byte parity and public reachability; the page remains gated on the future validated ONNX bundle.
 - Paddle result assembly now rejects a missing region recognition result instead of silently filling an empty content field; intentionally skipped image regions remain explicitly represented.
 - Ovis decoder packaging and validation now run `onnx.checker` after external-data packaging.
 
