@@ -97,6 +97,7 @@ function drawResult(result){
 $("file").addEventListener("change",async event=>{
   selectedFile=event.target.files?.[0]||null;
   if(bitmap){bitmap.close();bitmap=null;}
+  $("run").disabled=!adapter||!selectedFile;
   if(!selectedFile){$("preview").width=0;$("preview").height=0;return;}
   bitmap=await createImageBitmap(selectedFile);
   const canvas=$("preview"),ctx=canvas.getContext("2d");
