@@ -1,7 +1,7 @@
-/* MVAI DocTags render parser V1.6. Text-only, tolerant reader; no HTML injection. */
+/* MVAI DocTags render parser V1.6.1. Includes handwritten text and page numbers. */
 (function (root) {
   "use strict";
-  const ALLOWED = "title|section_header_level_[1-6]|text|otsl|table|list_item|caption|picture|figure|formula|code|footnote|page_header|page_footer|checkbox_selected|checkbox_unselected|unordered_list|ordered_list";
+  const ALLOWED = "title|section_header_level_[1-6]|text|handwritten|page_number|otsl|table|list_item|caption|picture|figure|formula|code|footnote|page_header|page_footer|checkbox_selected|checkbox_unselected|unordered_list|ordered_list";
   const BLOCK_RE = new RegExp("<(" + ALLOWED + ")>(?:<loc_(\\d+)><loc_(\\d+)><loc_(\\d+)><loc_(\\d+)>)?([\\s\\S]*?)<\\/\\1>", "gi");
   const STRUCTURAL_RE = /<\/?(?:[a-z_][a-z_0-9-]*)(?:\s[^>]*)?>/gi;
   const LOC_RE = /<loc_\d+>/g;
