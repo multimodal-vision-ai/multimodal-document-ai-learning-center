@@ -1,6 +1,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const core = require("../native-document-output.js");
 
 test("OvisOCR3 uses original structured JSON and normalized coordinates",()=>{
@@ -51,4 +52,14 @@ test("PaddleOCR-VL refuses to treat plain OCR text as a located document",()=>{
 
 test("Unknown coordinate systems are rejected instead of guessed",()=>{
   assert.throws(()=>core.toPixelBox({bbox:[0,0,10,10],coordinateSystem:"unknown"},100,100),/未知坐标/);
+});
+
+
+test("Native Ovis HTML tags are recognized without unsafe HTML injection",()=>{
+  const renderer=fs.readFileSync(require.resolve("../native-result-renderer.js"),"utf8");
+  assert.ok(renderer.includes(String.raw`/^<table\b/i`));
+  assert.ok(renderer.includes(String.raw`/^<img\b/i`));
+  assert.ok(!renderer.includes(String.raw`/^<table\\b/i`));
+  assert.ok(!renderer.includes(String.raw`/^<img\\b/i`));
+  assert.ok(!/\\.innerHTML\\s*=/.test(renderer));
 });
