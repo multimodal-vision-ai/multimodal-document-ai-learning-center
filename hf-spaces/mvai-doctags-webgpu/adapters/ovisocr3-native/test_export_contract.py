@@ -124,16 +124,22 @@ if 'target_opset = 21 if component == "vision" else 20' not in export_component_
         "Embedding must use opset 20 for the pinned legacy exporter; vision keeps opset 21"
     )
 
-# ORT GenAI's decoder graph contains SimplifiedLayerNormalization. The
-# standalone ONNX checker does not register this ORT runtime operator, so
-# validate the packaged decoder with ONNX Runtime rather than rewriting it.
+# The decoder is exported for WebGPU. The Python CPU EP has no
+# GatedDeltaNet kernel, so decoder validation must be structural here and
+# actual execution must be deferred to the browser WebGPU acceptance test.
 decoder_package_source = ast.get_source_segment(SOURCE_TEXT, function("package_decoder"))
 if "onnx.checker.check_model" in decoder_package_source:
-    raise SystemExit("Decoder packaging must not reject ORT runtime operators via onnx.checker")
-if "ort.InferenceSession(" not in decoder_package_source:
-    raise SystemExit("Decoder packaging must validate the graph through ONNX Runtime")
-if "SimplifiedLayerNormalization" not in decoder_package_source:
-    raise SystemExit("Decoder packaging must explicitly account for SimplifiedLayerNormalization")
+    raise SystemExit("Decoder packaging must not use the standalone ONNX checker")
+if "CPUExecutionProvider" in decoder_package_source or "ort.InferenceSession(" in decoder_package_source:
+    raise SystemExit("Decoder packaging must not attempt CPU Session validation")
+if "inspect_decoder_graph(" not in decoder_package_source:
+    raise SystemExit("Decoder packaging must call inspect_decoder_graph")
+decoder_inspector_source = ast.get_source_segment(SOURCE_TEXT, function("inspect_decoder_graph"))
+for required_operator in ("GatedDeltaNet", "CausalConvWithState", "SimplifiedLayerNormalization", "GroupQueryAttention"):
+    if required_operator not in decoder_inspector_source:
+        raise SystemExit("Decoder structural validation is missing " + required_operator)
+if "external_data" not in decoder_inspector_source or "execution_validation" not in decoder_inspector_source:
+    raise SystemExit("Decoder validation must verify external data and defer execution to WebGPU")
 
 validator_path = Path(__file__).with_name("validate_bundle.py")
 validator_source = validator_path.read_text(encoding="utf-8")
@@ -149,8 +155,10 @@ decoder_validation_end = validator_source.index(
 decoder_validation_source = validator_source[decoder_validation_start:decoder_validation_end]
 if "onnx.checker.check_model" in decoder_validation_source:
     raise SystemExit("Bundle validation must not use standalone ONNX checker for the GenAI decoder")
-if "ort.InferenceSession(" not in decoder_validation_source:
-    raise SystemExit("Bundle validation must load the decoder with ONNX Runtime")
+if "ort.InferenceSession(" in decoder_validation_source or "CPUExecutionProvider" in decoder_validation_source:
+    raise SystemExit("Bundle validation must not use the CPU EP for the WebGPU decoder")
+if "inspect_decoder_graph(" not in decoder_validation_source:
+    raise SystemExit("Bundle validation must use inspect_decoder_graph for the decoder")
 if "preprocessor_config_matches_source_except_resolution" not in validator_source:
     raise SystemExit("Bundle validator must verify the official preprocessor configuration")
 validate_function = next(
