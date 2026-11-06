@@ -32,9 +32,11 @@ export function orderedRegions(detections,{width,height}) {
   out.sort((a,b)=>a.readingOrder-b.readingOrder||a.index-b.index);
   return out;
 }
-export function assemblePaddleResult(regions,recognitions) {
+export function assemblePaddleResult(regions,recognitions,{width,height}={}) {
   if(!Array.isArray(regions)||!Array.isArray(recognitions)||regions.length!==recognitions.length)
     throw new Error("布局区域与 VLM 识别结果数量不匹配。");
+  if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0)
+    throw new Error("Paddle 原生结果必须记录原始页面宽高。");
   const blocks=regions.map((region,index)=>({
     block_bbox:[...region.box],block_label:region.label,
     block_content:recognitions[index]?.text ?? "",
@@ -42,5 +44,16 @@ export function assemblePaddleResult(regions,recognitions) {
   }));
   if(blocks.some(block=>typeof block.block_content!=="string"))
     throw new Error("识别结果包含非字符串内容。");
-  return {parsing_res_list:blocks};
+  return {
+    width,height,page_index:null,page_count:1,
+    model_settings:{
+      pipeline_model:"PaddleOCR-VL-1.6",
+      use_doc_preprocessor:false,
+      use_layout_detection:true,
+      use_chart_recognition:true,
+      format_block_content:false,
+      layout_model:"PP-DocLayoutV3"
+    },
+    parsing_res_list:blocks
+  };
 }
