@@ -152,11 +152,11 @@
         const left = slots[row]?.[col - 1];
         const above = slots[row - 1]?.[col];
         if (!left || !above || left !== above
-          || left.col + left.colspan !== col
-          || left.row + left.rowspan !== row)
+          || left.col > col || left.col + left.colspan <= col
+          || left.row > row || left.row + left.rowspan <= row)
           throw new Error("OTSL <xcel> 无法对应同一个左侧及上方合并单元格。");
-        left.colspan++;
-        left.rowspan++;
+        // Both spans were established by the adjacent <lcel>/<ucel> markers.
+        // <xcel> identifies their shared intersection; it does not add a new row/column.
         putSlot(row, col, left);
         previousKind = kind;
         previousCell = left;
