@@ -84,6 +84,24 @@ async function createDefaultVlm() {
   return module.createPaddleOcrVlEngine();
 }
 
+async function warmupVlm(vlm, onProgress) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 448;
+  canvas.height = 448;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("无法创建 PaddleOCR WebGPU 模型预热画布。");
+  context.fillStyle = "#fff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  // The upstream engine downloads and uploads model weights lazily on the
+  // first recognition call. One deterministic token warms the real engine
+  // before the UI reports the model as loaded.
+  return vlm.recognizeCanvas(canvas, {
+    task: "ocr",
+    maxGeneratedTokens: 1,
+    onProgress: event => onProgress({stage: "vlm-warmup", ...event})
+  });
+}
+
 function regionContent(text, task) {
   const prefix = ({
     ocr: "OCR:",
@@ -146,6 +164,7 @@ export async function createAdapter({
     if (!vlm || typeof vlm.recognizeCanvas !== "function" || typeof vlm.dispose !== "function") {
       throw new Error("PaddleOCR-VL-1.6 WebGPU 引擎接口不完整。");
     }
+    await (dependencies.warmup ?? warmupVlm)(vlm, onProgress);
   } catch (error) {
     try { await vlm?.dispose?.(); } catch {}
     try { await layout?.dispose?.(); } catch {}
