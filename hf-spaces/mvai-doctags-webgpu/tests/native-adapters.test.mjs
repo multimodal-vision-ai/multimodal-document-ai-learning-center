@@ -13,6 +13,9 @@ test("Layout SDK box is page pixel box, with reading order preserved",()=>{
   const results=assemblePaddleResult(regions,[{text:"标题"},{text:"<table><tr><td>数值</td></tr></table>"}],{width:1000,height:600});
   assert.equal(results.width,1000);
   assert.equal(results.height,600);
+  assert.equal(results.input_path,null);
+  assert.equal(results.page_index,null);
+  assert.equal(results.page_count,1);
   assert.equal(results.model_settings.pipeline_model,"PaddleOCR-VL-1.6");
   assert.equal(results.model_settings.use_layout_detection,true);
   assert.deepEqual(results.parsing_res_list[1].block_bbox,[60,100,450,250]);
