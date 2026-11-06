@@ -41,6 +41,7 @@
 - Native Ovis/Paddle JSON parsers with raw-output preservation and strict bbox validation.
 - Safe renderer for text and allow-listed HTML tables; no unsafe `innerHTML`.
 - Added a native Paddle OTSL parser and safe table renderer for `<fcel>`, `<ecel>`, `<lcel>`, `<ucel>`, `<xcel>`, and `<nl>`. It reconstructs cell grids and merge spans for display only; original `block_content` and raw JSON remain unchanged. The original OTSL is available in a collapsed disclosure; malformed structures fall back to raw text with a warning.
+- Paddle DEV result blocks are selectable: clicking a text/table block redraws the original page and highlights that block's original-pixel bbox. This adds no panel or layout changes.
 - Added parser tests for normal/empty cells, horizontal/vertical/two-axis merges, malformed markers, and raw-output safety; mirrored renderer/parser files are checked byte-for-byte by CI.
 - Ovis exporter, component validator, PyTorch reference runner, and hash-checked HF upload staging.
 - Pinned Paddle browser dependencies and a concrete layout-to-VLM WebGPU adapter with model warm-up and partial-stop handling.
