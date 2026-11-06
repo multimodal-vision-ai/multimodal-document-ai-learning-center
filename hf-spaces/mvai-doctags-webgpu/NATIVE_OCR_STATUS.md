@@ -57,7 +57,7 @@
 - Official OvisOCR3 checkpoint has not yet been downloaded, exported, parity-validated, or uploaded to the MVAI HF model repository.
 - OvisOCR3 has not yet passed a real Chrome WebGPU document test.
 - PaddleOCR-VL-1.6 has not yet passed a real Chrome WebGPU document test on the target GPU.
-- The Paddle runtime and layout SDK are loaded from pinned external CDN URLs; a self-hosted mirror has not yet been prepared.
+- The PP-DocLayoutV3 inference Worker is now staged as a same-origin static asset. The SDK browser-global bundle, Paddle VLM engine, and ONNX Runtime WASM files still use pinned external CDN URLs; self-hosting those remaining runtime components has not yet been prepared.
 - Native result routing into the production page's 03/04/05 panes and model registry is intentionally not done yet.
 - Runtime performance, cold/warm cache behavior, memory stability, stop/dispose behavior, and original three-model regression tests remain outstanding.
 - The isolated Paddle acceptance page and its two adapter modules are mirrored into `docs/assets/projects/doctags/browser-inference` for the PR-specific DEV preview; CI now checks byte-for-byte parity with the HF Space source. Ovis runtime files are not yet mirrored. No HF Space or main branch deployment has occurred.
