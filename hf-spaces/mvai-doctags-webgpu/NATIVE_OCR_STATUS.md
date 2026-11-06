@@ -29,6 +29,7 @@
 - Browser FP16 model pack: `glebkudr/PaddleOCR-VL-1.6-WebGPU` revision `5219606297d00bbd23b2ec193271af0c0b427dfc`; 2,038,286,862 bytes.
 - Layout SDK: `web-sdk-pp-doclayoutv3` version 1.2.0; pinned upstream commit `3aedb7b35af49a1c207fd4f846211366a9d09973`.
 - Layout manifest: PP-DocLayoutV3 FP16; 74,279,796 bytes; source model manifest includes SHA-256 validation.
+- Published manifest URL: `https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json`. The source-tree path `models/pp-doclayoutv3/manifest.json` is staged by the upstream Pages build to `/models/manifest.json`; using the source-tree path as a public URL causes HTTP 404.
 - The adapter now loads the pinned browser SDK and VLM runtime directly, explicitly requests WebGPU FP16 and disables fallback. It bypasses the upstream adaptive factory and creates exactly one WebRuntime (the upstream factory would create up to three runtime handles on an RTX 3080); software-rendering adapters are rejected.
 - It performs a one-token warm-up because the VLM engine downloads its large model assets lazily on first inference. The model is not reported ready until this real download and warm-up finish.
 - The pipeline detects regions in original page pixels, preserves reading order, crops from the original image, routes OCR/table/formula/chart tasks, and assembles native `parsing_res_list`.
@@ -47,6 +48,7 @@
 - Paddle standalone acceptance page, adapter and pipeline contract are mirrored into the MkDocs DEV assets. CI checks byte-for-byte mirror parity and verifies the published test page and its local assets are reachable.
 - Ovis standalone acceptance page, adapter and source contract are also mirrored into the MkDocs DEV assets. CI checks their byte-for-byte parity and public reachability; the page remains gated on the future validated ONNX bundle.
 - Paddle result assembly now rejects a missing region recognition result instead of silently filling an empty content field; intentionally skipped image regions remain explicitly represented.
+- Fixed the Paddle layout manifest URL after the first RTX 3080 browser load returned HTTP 404. The adapter now requests the upstream Pages-staged `/models/manifest.json`, and a regression test guards this exact published path.
 - Ovis decoder packaging and validation now run `onnx.checker` after external-data packaging.
 
 ## Not yet accepted / not exposed
