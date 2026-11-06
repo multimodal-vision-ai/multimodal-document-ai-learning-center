@@ -8,6 +8,10 @@ on:
       - 'hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/**'
       - 'hf-spaces/mvai-doctags-webgpu/tests/native-*'
       - 'hf-spaces/mvai-doctags-webgpu/tests/ovisocr3-*'
+      - 'docs/assets/projects/doctags/browser-inference/native-document-output.js'
+      - 'docs/assets/projects/doctags/browser-inference/native-result-renderer.js'
+      - 'docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html'
+      - 'docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/**'
       - '.github/workflows/native-ocr-contracts.yml'
   workflow_dispatch:
 
@@ -30,3 +34,10 @@ jobs:
         run: python -m py_compile hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/export_onnx.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/validate_bundle.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/test_reference.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/prepare_upload.py
       - name: Check upload shell script syntax
         run: bash -n hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/upload_bundle.sh
+      - name: Verify DEV preview mirrors match the Space source
+        run: |
+          cmp hf-spaces/mvai-doctags-webgpu/native-document-output.js docs/assets/projects/doctags/browser-inference/native-document-output.js
+          cmp hf-spaces/mvai-doctags-webgpu/native-result-renderer.js docs/assets/projects/doctags/browser-inference/native-result-renderer.js
+          cmp hf-spaces/mvai-doctags-webgpu/dev-paddleocr-vl16.html docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
+          cmp hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/adapter.mjs docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs
+          cmp hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/pipeline-contract.mjs docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/pipeline-contract.mjs
