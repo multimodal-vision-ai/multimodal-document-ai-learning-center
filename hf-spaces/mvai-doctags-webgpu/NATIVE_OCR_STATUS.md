@@ -21,7 +21,7 @@
 - The browser adapter accepts only the dedicated `multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX` repository and requires its immutable 40-character commit SHA.
 - The bundle contract now requires a successful source-parity report, source checkpoint hash, tokenizer parity, prompt hash, and pinned source revision before model files are downloaded.
 - The exporter pins Microsoft Olive recipe commit `74c2ab2f0bdd5acabcb05b24e9edf145e1020e12` and the vision source SHA-256. It copies the official prompt, license, tokenizer, chat template, and generation config.
-- A hash-verified staging/upload script is prepared. It refuses to upload without a successful component validation report and excludes temporary build artifacts.
+- A hash-verified staging/upload script is prepared. It refuses to upload without a successful component validation report and excludes temporary build artifacts. A pinned `run_conversion.sh` now automates source download, Olive recipe checkout, export and component validation; it does not upload unless `UPLOAD=1` is explicitly set.
 
 ### PaddleOCR-VL-1.6
 - Official source: https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.6
