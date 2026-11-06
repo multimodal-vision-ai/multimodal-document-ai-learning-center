@@ -61,5 +61,6 @@ test("Native Ovis HTML tags are recognized without unsafe HTML injection",()=>{
   assert.ok(renderer.includes(String.raw`/^<img\b/i`));
   assert.ok(!renderer.includes(String.raw`/^<table\\b/i`));
   assert.ok(!renderer.includes(String.raw`/^<img\\b/i`));
-  assert.ok(!/\\.innerHTML\\s*=/.test(renderer));
+  assert.equal(renderer.includes(".innerHTML ="),false);
+  assert.equal(renderer.includes(".innerHTML="),false);
 });
