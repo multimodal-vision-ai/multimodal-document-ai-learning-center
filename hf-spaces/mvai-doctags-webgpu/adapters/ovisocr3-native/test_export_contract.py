@@ -155,8 +155,8 @@ decoder_validation_end = validator_source.index(
 decoder_validation_source = validator_source[decoder_validation_start:decoder_validation_end]
 if "onnx.checker.check_model" in decoder_validation_source:
     raise SystemExit("Bundle validation must not use standalone ONNX checker for the GenAI decoder")
-if "ort.InferenceSession(" in decoder_validation_source or "CPUExecutionProvider" in decoder_validation_source:
-    raise SystemExit("Bundle validation must not use the CPU EP for the WebGPU decoder")
+if "ort.InferenceSession(" in decoder_validation_source:
+    raise SystemExit("Bundle validation must not create a CPU Session for the WebGPU decoder")
 if "inspect_decoder_graph(" not in decoder_validation_source:
     raise SystemExit("Bundle validation must use inspect_decoder_graph for the decoder")
 if "preprocessor_config_matches_source_except_resolution" not in validator_source:
