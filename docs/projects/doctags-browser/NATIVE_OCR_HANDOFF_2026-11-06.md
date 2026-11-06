@@ -38,7 +38,7 @@
 - Ovis 转换说明：`hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/README.md`
 - Paddle 接入说明：`hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/README.md`
 
-当前 PR head commit（写本文时）：`178ea7ac5355f58cda0e33953383929e1da46f6f`。继续研发前先读取 PR #74 当前 head，避免在旧提交上工作。
+当前 PR head commit（写本文时）：`99118b194522ee320a64d23429a39a163bf63cc3`。继续研发前先读取 PR #74 当前 head，避免在旧提交上工作。
 
 ## 三、PaddleOCR-VL-1.6 当前进展
 
@@ -72,9 +72,12 @@ PR 专属 DEV 页面构建已通过公开访问检查。入口文件：
 `docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html`
 
 **已通过 CI 公开可访问检查的独立验收入口：**  
-https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/97d528692479473206c52698715ce5ca30a3c40b/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
+https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/e4ef4f1aca7ff0eee58826fb84849d60d0c23f05/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
 
-该页面不改变正式页面。打开后：
+该页面不改变正式页面。Ovis 预备验收页面（尚无 ONNX bundle，暂不能运行模型）也已通过公开资源检查：  
+https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/e4ef4f1aca7ff0eee58826fb84849d60d0c23f05/assets/projects/doctags/browser-inference/dev-ovisocr3.html
+
+打开 Paddle 页面后：
 1. 点击“加载模型并预热”，等待约 2.11 GB 的模型资源下载与预热完成。
 2. 上传一张包含文字、表格、公式、图表或图片区域的单页文档。
 3. 点击“运行文档解析”。
