@@ -15,6 +15,7 @@ from transformers.models.qwen3_5.modeling_qwen3_5 import Qwen3_5VisionModel
 from export_onnx import (
     OFFICIAL_SOURCE_MODEL_ID,
     OFFICIAL_SOURCE_REVISION,
+    browser_preprocessor_config,
     checkpoint_tensor,
     file_sha256,
     local_config,
@@ -22,7 +23,7 @@ from export_onnx import (
 
 ASSET_NAMES = (
     "generation_config.json", "tokenizer.json", "tokenizer_config.json",
-    "processor_config.json", "chat_template.jinja", "merges.txt", "vocab.json",
+    "chat_template.jinja", "merges.txt", "vocab.json",
     "video_preprocessor_config.json",
 )
 
@@ -87,6 +88,29 @@ def validate(model, bundle, threads, expected_source_revision):
     if file_sha256(prompt_bundle) != prompt_sha or metadata.get("prompt_sha256") != prompt_sha:
         raise ValueError("Structured prompt does not match the pinned official source")
     report["structured_prompt_sha256"] = prompt_sha
+
+    # The official repository provides preprocessor_config.json (not
+    # processor_config.json). The browser bundle changes only the documented
+    # resolution limits; all other image-normalization settings must stay exact.
+    source_preprocessor_path = root / "preprocessor_config.json"
+    bundle_preprocessor_path = bundle / "preprocessor_config.json"
+    if not source_preprocessor_path.is_file() or not bundle_preprocessor_path.is_file():
+        raise FileNotFoundError("Official or exported preprocessor_config.json is missing")
+    source_preprocessor = json.loads(source_preprocessor_path.read_text())
+    expected_preprocessor = browser_preprocessor_config(source_preprocessor)
+    actual_preprocessor = json.loads(bundle_preprocessor_path.read_text())
+    if actual_preprocessor != expected_preprocessor:
+        raise ValueError("Browser preprocessor config differs from the official source beyond the approved resolution limits")
+    if metadata.get("source_preprocessor_sha256") != file_sha256(source_preprocessor_path):
+        raise ValueError("Source preprocessor_config.json SHA-256 differs from the bundle provenance")
+    if (
+        metadata.get("browser_min_pixels") != 448 * 448
+        or metadata.get("browser_max_pixels") != 1440 * 1440
+    ):
+        raise ValueError("Browser image resolution limits differ from the validated export settings")
+    report["preprocessor_config_matches_source_except_resolution"] = True
+    report["source_preprocessor_sha256"] = file_sha256(source_preprocessor_path)
+    report["browser_image_size"] = actual_preprocessor["size"]
 
     source_tokenizer = AutoTokenizer.from_pretrained(root, local_files_only=True)
     bundle_tokenizer = AutoTokenizer.from_pretrained(bundle, local_files_only=True)
