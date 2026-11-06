@@ -12,6 +12,8 @@ on:
       - 'docs/assets/projects/doctags/browser-inference/native-result-renderer.js'
       - 'docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html'
       - 'docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/**'
+      - 'docs/assets/projects/doctags/browser-inference/dev-ovisocr3.html'
+      - 'docs/assets/projects/doctags/browser-inference/adapters/ovisocr3-native/**'
       - '.github/workflows/native-ocr-contracts.yml'
   workflow_dispatch:
 
@@ -43,3 +45,6 @@ jobs:
           cmp hf-spaces/mvai-doctags-webgpu/dev-paddleocr-vl16.html docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html
           cmp hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/adapter.mjs docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs
           cmp hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/pipeline-contract.mjs docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/pipeline-contract.mjs
+          cmp hf-spaces/mvai-doctags-webgpu/dev-ovisocr3.html docs/assets/projects/doctags/browser-inference/dev-ovisocr3.html
+          cmp hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/adapter.mjs docs/assets/projects/doctags/browser-inference/adapters/ovisocr3-native/adapter.mjs
+          cmp hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/contract.mjs docs/assets/projects/doctags/browser-inference/adapters/ovisocr3-native/contract.mjs
