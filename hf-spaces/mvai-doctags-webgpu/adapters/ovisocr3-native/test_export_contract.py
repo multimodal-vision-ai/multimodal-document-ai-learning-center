@@ -4,7 +4,10 @@ import ast
 from pathlib import Path
 
 SOURCE = Path(__file__).with_name("export_onnx.py")
-TREE = ast.parse(SOURCE.read_text(encoding="utf-8"), filename=str(SOURCE))
+SOURCE_TEXT = SOURCE.read_text(encoding="utf-8")
+TREE = ast.parse(SOURCE_TEXT, filename=str(SOURCE))
+
+from export_onnx import browser_preprocessor_config
 
 
 def function(name):
@@ -42,4 +45,46 @@ for component in ("embedding", "vision"):
             f"io_config={sorted(expected)} dummy_inputs={sorted(actual)}"
         )
 
-print("OvisOCR3 exporter IO contract checks passed")
+# The official OvisOCR3 repository ships preprocessor_config.json with a
+# top-level size object. Keep its normalization fields and only lower the
+# image resolution ceiling for browser memory.
+official_preprocessor = {
+    "size": {"shortest_edge": 65536, "longest_edge": 16777216},
+    "patch_size": 16,
+    "image_mean": [0.5, 0.5, 0.5],
+    "image_std": [0.5, 0.5, 0.5],
+    "processor_class": "Qwen3VLProcessor",
+}
+browser_preprocessor = browser_preprocessor_config(official_preprocessor)
+if browser_preprocessor["size"] != {
+    "shortest_edge": 448 * 448,
+    "longest_edge": 1440 * 1440,
+}:
+    raise SystemExit("Browser preprocessor resolution limits are incorrect")
+if browser_preprocessor["patch_size"] != official_preprocessor["patch_size"]:
+    raise SystemExit("Browser preprocessor changed the official patch size")
+if browser_preprocessor["image_mean"] != official_preprocessor["image_mean"]:
+    raise SystemExit("Browser preprocessor changed official image normalization")
+if official_preprocessor["size"]["longest_edge"] != 16777216:
+    raise SystemExit("Browser preprocessor mutated the original source config")
+
+browser_assets_source = ast.get_source_segment(SOURCE_TEXT, function("write_browser_assets"))
+if '"processor_config.json"' in browser_assets_source:
+    raise SystemExit("Exporter must not require a non-existent official processor_config.json")
+if '"preprocessor_config.json"' not in browser_assets_source:
+    raise SystemExit("Exporter must consume the official preprocessor_config.json")
+if 'model_config["model_type"]' not in browser_assets_source:
+    raise SystemExit("Exporter must read model_type from the decoded config dictionary")
+if 'model_config["text_config"]["vocab_size"]' not in browser_assets_source:
+    raise SystemExit("Exporter must read vocab_size from the decoded config dictionary")
+
+vision_source = ast.get_source_segment(SOURCE_TEXT, function("get_vision_model"))
+if "isinstance(output, torch.Tensor)" not in vision_source:
+    raise SystemExit("Exporter must accept the pinned Olive vision model's tensor output")
+
+validator_path = Path(__file__).with_name("validate_bundle.py")
+validator_source = validator_path.read_text(encoding="utf-8")
+if "preprocessor_config_matches_source_except_resolution" not in validator_source:
+    raise SystemExit("Bundle validator must verify the official preprocessor configuration")
+
+print("OvisOCR3 exporter IO, processor-schema and vision-output contract checks passed")
