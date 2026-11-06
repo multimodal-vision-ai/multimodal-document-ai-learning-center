@@ -47,6 +47,7 @@
 - Pinned Paddle browser dependencies and a concrete layout-to-VLM WebGPU adapter with model warm-up and partial-stop handling.
 - Independent Paddle browser acceptance page.
 - PaddleOCR-VL-1.6 completed its first real browser inference on a Chinese financial document: WebGPU FP16 model load/warm-up succeeded; PP-DocLayoutV3 produced page-positioned title/text/table/page-number regions; the native right pane displayed Paddle parsing output. Table structure was returned as OTSL, not HTML, so visual table rendering remained the next acceptance item.
+- Following the OTSL renderer implementation, the user manually retested the DEV page and confirmed on 2026-11-06 that parsing and layout reconstruction are correct. PaddleOCR-VL-1.6's native OTSL table rendering is accepted for this stage.
 - Offline parser/contract tests and CI syntax checks for Python and upload scripts.
 - The Ovis exporter dummy-input names are now checked against each ONNX component's declared input names; this caught and fixed an input versus input_ids mismatch before model conversion.
 - Native Ovis HTML table/image tag detection was corrected; the safe renderer continues to use DOM node creation and never injects untrusted HTML.
@@ -60,7 +61,7 @@
 ## Not yet accepted / not exposed
 - Official OvisOCR3 checkpoint has not yet been downloaded, exported, parity-validated, or uploaded to the MVAI HF model repository.
 - OvisOCR3 has not yet passed a real Chrome WebGPU document test.
-- PaddleOCR-VL-1.6 has completed its first real Chrome WebGPU inference on the target GPU. Final visual acceptance is still pending: rerun the same complex Chinese table document after the OTSL renderer update and verify cell order, empty cells, merged cells, and raw OTSL preservation.
+- **PaddleOCR-VL-1.6 人工验收通过（2026-11-06）**：用户在目标浏览器 / RTX 3080 上复测 OTSL 渲染更新后的版本，确认文档解析与版面还原均正常。验收覆盖原图版面定位、原生结构化解析与表格可视化；该模型可视为本阶段通过。更广泛的公式/图表样例、停止/重复运行、显存稳定性与原有三模型回归仍需后续专项测试。
 - The PP-DocLayoutV3 inference Worker is now staged as a same-origin static asset. The SDK browser-global bundle, Paddle VLM engine, and ONNX Runtime WASM files still use pinned external CDN URLs; self-hosting those remaining runtime components has not yet been prepared.
 - Native result routing into the production page's 03/04/05 panes and model registry is intentionally not done yet.
 - Runtime performance, cold/warm cache behavior, memory stability, stop/dispose behavior, and original three-model regression tests remain outstanding.
