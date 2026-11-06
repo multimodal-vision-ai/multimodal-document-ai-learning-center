@@ -82,6 +82,22 @@ vision_source = ast.get_source_segment(SOURCE_TEXT, function("get_vision_model")
 if "isinstance(output, torch.Tensor)" not in vision_source:
     raise SystemExit("Exporter must accept the pinned Olive vision model's tensor output")
 
+# Olive 0.13.0 invokes dummy_inputs_func with PyTorchModelHandler,
+# not the underlying torch.nn.Embedding module.
+embedding_dummy_source = ast.get_source_segment(
+    SOURCE_TEXT, function("get_embedding_dummy_inputs")
+)
+if "model.load_model()" not in embedding_dummy_source:
+    raise SystemExit(
+        "Embedding dummy-input callback must resolve the nn.Embedding "
+        "through Olive PyTorchModelHandler.load_model()"
+    )
+if "embedding.num_embeddings" not in embedding_dummy_source:
+    raise SystemExit(
+        "Embedding dummy-input callback must derive vocabulary size "
+        "from the loaded nn.Embedding module"
+    )
+
 validator_path = Path(__file__).with_name("validate_bundle.py")
 validator_source = validator_path.read_text(encoding="utf-8")
 validator_tree = ast.parse(validator_source, filename=str(validator_path))
