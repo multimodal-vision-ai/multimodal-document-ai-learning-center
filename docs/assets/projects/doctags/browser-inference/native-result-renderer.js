@@ -60,10 +60,10 @@
       caption.textContent=block.type+"（原图区域裁剪）";
       node.appendChild(caption);
       const raw=String(block.content||"").trim();
-      if(/^<table\\b/i.test(raw)){
+      if(/^<table\b/i.test(raw)){
         const table=safeTable(raw,doc);
         if(table)node.appendChild(table);
-      }else if(raw && !/^<img\\b/i.test(raw)){
+      }else if(raw && !/^<img\b/i.test(raw)){
         const text=doc.createElement("pre");
         text.textContent=raw;
         text.style.whiteSpace="pre-wrap";
