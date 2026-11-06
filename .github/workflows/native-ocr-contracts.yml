@@ -24,6 +24,8 @@ jobs:
           node-version: '22'
       - name: Check native JSON and layout contracts
         run: node --test hf-spaces/mvai-doctags-webgpu/tests/native-document-output.test.cjs hf-spaces/mvai-doctags-webgpu/tests/native-adapters.test.mjs hf-spaces/mvai-doctags-webgpu/tests/ovisocr3-contract.test.mjs
+      - name: Check browser adapter module syntax
+        run: node --check hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/adapter.mjs && node --check hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/adapter.mjs && node --check hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/pipeline-contract.mjs && node --check hf-spaces/mvai-doctags-webgpu/native-document-output.js && node --check hf-spaces/mvai-doctags-webgpu/native-result-renderer.js
       - name: Check Ovis exporter Python syntax
         run: python -m py_compile hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/export_onnx.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/validate_bundle.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/test_reference.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/prepare_upload.py
       - name: Check upload shell script syntax
