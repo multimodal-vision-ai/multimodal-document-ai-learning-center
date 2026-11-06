@@ -65,6 +65,7 @@ test("Paddle browser engine creates one WebGPU runtime, not the upstream multi-r
   assert.equal(captured.runtimes.length,1);
   assert.equal(captured.runtimes[0],runtime);
   assert.equal(captured.concurrency.current(8),1);
+  assert.equal(captured.concurrency.current(0),0);
   assert.equal(freed,0);
 });
 
