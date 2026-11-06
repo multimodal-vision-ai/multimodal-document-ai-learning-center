@@ -5,7 +5,7 @@
 **本轮 Manifest 修复代码提交：** `1135c18b5f95dba7d31a97dafa6ec139090832fc`  
 **开发分支：** `feat/ovisocr3-paddleocr-vl16-webgpu-20261106`  
 **基线分支：** `dev`  
-**状态：** Draft；不允许合并到 dev/main，不允许部署正式 HF Space。
+**状态：** PaddleOCR-VL-1.6 已完成人工验收；PR #74 仍为 Draft，OvisOCR3 转换与真实浏览器验收尚未完成，因此暂不合并 dev/main、不部署正式 HF Space。
 
 ## 一、已经批准的目标与边界
 
@@ -123,6 +123,8 @@ https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-cen
 
 **注意：** 本项目尚未在用户 RTX 3080 上完成真实浏览器 GPU 验收。静态 CI 通过不等于推理成功。
 
+**人工验收结论（2026-11-06）：通过。** 用户在更新 OTSL 原生渲染后的 DEV 页面复测，确认解析与版面还原均正常。此结论仅覆盖 Paddle 当前文档样例的解析/版面还原，不替代后续公式、图表、停止/重复运行、资源稳定性和原有模型回归测试。
+
 ## 四、OvisOCR3 当前进展
 
 ### 固定来源与输出契约
@@ -187,9 +189,9 @@ PR #74 已有以下自动检查通过记录：
 
 ## 七、下一步执行顺序
 
-### A. 先完成 Paddle 本机验收
+### A. Paddle 本机验收（已通过，后续补充压力测试）
 
-在桌面 Chrome / Edge + NVIDIA RTX 3080 10GB 上：
+用户已在桌面浏览器 + NVIDIA RTX 3080 上确认解析与版面还原正常。基础验收不再阻塞后续 Ovis 工作。后续有条件时补充以下压力/边界测试：
 - 首先确认页面状态显示 PP-DocLayoutV3 Worker 同源资源已就绪；浏览器 Network 中 `inference.worker.js` 应从当前 raw.githack 页面相同 origin 加载，不再请求 jsDelivr Worker。
 - 确认 Console 不再出现 `SecurityError: Failed to construct 'Worker'`，并确认 Worker 初始化成功后才继续加载版面模型。
 - 确认 `navigator.gpu` 与 `shader-f16` 可用。
@@ -202,7 +204,7 @@ PR #74 已有以下自动检查通过记录：
 - 测试布局阶段停止、区域生成中停止、重复运行、释放模型。
 - 若失败，先收集浏览器 Console 错误、页面状态文本和截图，不要修改正式页面。
 
-### B. 完成 OvisOCR3 转换
+### B. 当前主线：完成 OvisOCR3 转换
 
 在用户 WSL / Kaggle 等 Python 3.11 环境：
 1. 安装 README 中固定版本的导出依赖。
