@@ -10,6 +10,11 @@
 | Layout detector SDK | web-sdk-pp-doclayoutv3 1.2.0 @ 3aedb7b35af49a1c207fd4f846211366a9d09973 | Browser PP-DocLayoutV3 detection |
 | Layout model | PP-DocLayoutV3 fp16 | 74,279,796 bytes; source manifest SHA-256 checked by SDK |
 
+**Published manifest URL:**  
+`https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json`
+
+Do not construct the public URL from the source repository path `models/pp-doclayoutv3/manifest.json`. The upstream Pages build runs `scripts/stage-pages-models.mjs`, which stages the manifest at `apps/demo/dist/models/manifest.json` and rewrites the model variant URLs to `/models/model-fp16.onnx` and `/models/model-fp32.onnx`. The source-tree path is not the deployed Pages path and returns HTTP 404.
+
 The browser runtime and PP-DocLayoutV3 SDK are Apache-2.0. Keep their upstream license and attribution notices with any vendored distribution. The original Paddle model card/license must also be retained with the model pack.
 
 ## Actual execution sequence
