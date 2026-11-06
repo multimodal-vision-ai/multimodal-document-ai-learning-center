@@ -43,7 +43,7 @@ export async function stagePpDocLayoutWorker({ fetchImpl = fetch, outputRoot = v
   await writeFile(workerPath, bytes);
   await writeFile(
     basePath,
-    "/* Same-origin URL base for PP-DocLayoutV3 v1.2.0 worker resolution. */\\n"
+    "/* Same-origin URL base for PP-DocLayoutV3 v1.2.0 worker resolution. */\n"
   );
 
   return {
@@ -57,6 +57,6 @@ export async function stagePpDocLayoutWorker({ fetchImpl = fetch, outputRoot = v
 if (process.argv[1] !== undefined && resolve(process.argv[1]) === scriptPath) {
   const result = await stagePpDocLayoutWorker();
   process.stdout.write(
-    `Staged PP-DocLayoutV3 worker: ${result.bytes} bytes, SHA-256 ${result.sha256}\\n`
+    `Staged PP-DocLayoutV3 worker: ${result.bytes} bytes, SHA-256 ${result.sha256}\n`
   );
 }
