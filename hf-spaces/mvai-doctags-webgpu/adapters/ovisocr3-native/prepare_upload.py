@@ -43,6 +43,10 @@ def main():
         or metadata.get("source_revision") != SOURCE_REVISION
         or report.get("source_weights_sha256") != metadata.get("source_weights_sha256")
         or report.get("structured_prompt_sha256") != metadata.get("prompt_sha256")
+        or report.get("source_preprocessor_sha256") != metadata.get("source_preprocessor_sha256")
+        or report.get("preprocessor_config_matches_source_except_resolution") is not True
+        or metadata.get("browser_min_pixels") != 448 * 448
+        or metadata.get("browser_max_pixels") != 1440 * 1440
         or metadata.get("eos_token_id") != [248044, 248046]
     ):
         raise SystemExit("Source revision/provenance/parity report mismatch; refusing upload.")
