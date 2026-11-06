@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {orderedRegions,taskForLabel,assemblePaddleResult} from "../adapters/paddleocr-vl-1.6/pipeline-contract.mjs";
+import {createSingleRuntimeVlm} from "../adapters/paddleocr-vl-1.6/adapter.mjs";
 import {directPrompt,ONNX_MODEL_ID,requireNativeOnnxBundle} from "../adapters/ovisocr3-native/contract.mjs";
 
 test("Layout SDK box is page pixel box, with reading order preserved",()=>{
@@ -38,4 +39,42 @@ test("Ovis native contract cannot reuse official BF16 checkpoint as ONNX",()=>{
   assert.equal(requireNativeOnnxBundle(ONNX_MODEL_ID),ONNX_MODEL_ID);
   const tokenizer={apply_chat_template(msg){assert.equal(msg[0].content[1].text,"STRUCTURED PROMPT");return "x<|im_start|>assistant\n";}};
   assert.equal(directPrompt(tokenizer,"STRUCTURED PROMPT"),"x<|im_start|>assistant\n");
+});
+
+
+test("Paddle browser engine creates one WebGPU runtime, not the upstream multi-runtime pool",async()=>{
+  let runtimeCreates=0,freed=0,initialized=0;
+  let captured=null;
+  class FakeEngine{
+    constructor(runtimes,concurrency){captured={runtimes,concurrency};}
+  }
+  const runtime={
+    capabilities_json:()=>JSON.stringify({adapter_name:"NVIDIA GeForce RTX 3080",adapter_device_type:"DiscreteGpu"}),
+    free:()=>{freed++;}
+  };
+  const engine=await createSingleRuntimeVlm({
+    engineModule:{PaddleOcrVlEngine:FakeEngine},
+    runtimeModule:{
+      default:async()=>{initialized++;},
+      WebRuntime:{create:async()=>{runtimeCreates++;return runtime;}}
+    }
+  });
+  assert.ok(engine instanceof FakeEngine);
+  assert.equal(initialized,1);
+  assert.equal(runtimeCreates,1);
+  assert.equal(captured.runtimes.length,1);
+  assert.equal(captured.runtimes[0],runtime);
+  assert.equal(captured.concurrency.current(8),1);
+  assert.equal(freed,0);
+});
+
+test("Paddle browser engine rejects software rendering and frees the runtime",async()=>{
+  let freed=0;
+  const runtime={capabilities_json:()=>JSON.stringify({adapter_name:"SwiftShader"}),
+    free:()=>{freed++;}};
+  await assert.rejects(createSingleRuntimeVlm({
+    engineModule:{PaddleOcrVlEngine:class{}},
+    runtimeModule:{default:async()=>{},WebRuntime:{create:async()=>runtime}}
+  }),/software adapter/);
+  assert.equal(freed,1);
 });
