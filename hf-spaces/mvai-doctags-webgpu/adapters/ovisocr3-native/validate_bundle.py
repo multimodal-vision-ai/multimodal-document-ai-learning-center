@@ -18,6 +18,7 @@ from export_onnx import (
     browser_preprocessor_config,
     checkpoint_tensor,
     file_sha256,
+    inspect_decoder_graph,
     local_config,
 )
 
@@ -161,30 +162,16 @@ def validate(model, bundle, threads, expected_source_revision):
     decoder_path = bundle / "onnx" / "decoder_model_merged_fp16.onnx"
     decoder = onnx.load(decoder_path, load_external_data=False)
 
-    # ORT GenAI emits SimplifiedLayerNormalization, an ONNX Runtime operator
-    # that the standalone onnx.checker schema registry does not recognize.
-    # Validate the decoder with ONNX Runtime itself instead of rewriting the
-    # operator or treating this known checker limitation as model corruption.
-    simplified_norm_count = sum(
-        node.op_type == "SimplifiedLayerNormalization"
-        for node in decoder.graph.node
+    # The decoder is a WebGPU-targeted graph. Do not create a Python CPU
+    # Session here: CPUExecutionProvider has no GatedDeltaNet kernel. Validate
+    # graph structure and external-data ranges, then defer actual execution to
+    # the Chrome WebGPU acceptance test.
+    expected_linear_layers = sum(
+        kind == "linear_attention" for kind in config.text_config.layer_types
     )
-    if simplified_norm_count == 0:
-        raise ValueError("Expected ORT GenAI SimplifiedLayerNormalization in the decoder graph")
-    decoder_session = ort.InferenceSession(
-        str(decoder_path), options, providers=["CPUExecutionProvider"]
+    report["decoder_graph_check"] = inspect_decoder_graph(
+        decoder_path, expected_linear_layers
     )
-    decoder_inputs = [item.name for item in decoder_session.get_inputs()]
-    decoder_outputs = [item.name for item in decoder_session.get_outputs()]
-    if not decoder_inputs or not decoder_outputs:
-        raise ValueError("Decoder ONNX Runtime session has missing inputs or outputs")
-    report["decoder_graph_check"] = {
-        "onnxruntime_session_load": True,
-        "inputs": decoder_inputs,
-        "outputs": decoder_outputs,
-        "simplified_layer_normalization_nodes": simplified_norm_count,
-        "standalone_onnx_checker": "not_applicable_for_ort_runtime_operator",
-    }
     head = next((tensor for tensor in decoder.graph.initializer if tensor.name == "lm_head.MatMul.weight"), None)
     if head is None:
         raise ValueError("Expected decoder lm_head.MatMul.weight initializer is missing")
