@@ -2669,6 +2669,48 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2026-11-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      2026-11-07 更新：模型验收完成，转入统一平台集成
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2026-11-07 更新：模型验收完成，转入统一平台集成">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      已验收模型与固定版本
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      当前集成实现
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      发布顺序
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2995,6 +3037,50 @@ python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </sp
 <p>首先检查：</p>
 <p><code>.cache/ovisocr3-webgpu/release/ovisocr3-webgpu/validation/component_validation.json</code></p>
 <p>成功后，使用相同文档图片运行 <code>test_reference.py</code>，保存原始 BF16 PyTorch 参考 JSON。然后由用户明确确认 HF 上传，再固定完整 HF commit SHA，进行 Chrome + RTX 3080 真实 WebGPU 验收。未完成这些步骤前，Ovis 不得加入 active model registry；PR #74 继续保持 Draft，不合并、不部署。</p>
+<hr />
+<h2 id="2026-11-07">2026-11-07 更新：模型验收完成，转入统一平台集成<a class="headerlink" href="#2026-11-07" title="Permanent link">&para;</a></h2>
+<p>本交接文档前半部分记录的是转换和独立验证阶段；以下状态为当前有效状态。</p>
+<h3 id="_5">已验收模型与固定版本<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>固定版本</th>
+<th>浏览器验收</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OvisOCR3 0.8B</td>
+<td>ONNX bundle commit de391cb93aa2ee1b67692bdba1b143bf8e4a9f98；源 revision 17f255e2c8ae6d18d5d5edb0a474bd4ed39aef90</td>
+<td>Chrome 155 / RTX 3080 10GB；1024²；13 个有效结构元素和 13 个定位；完整生成</td>
+</tr>
+<tr>
+<td>PaddleOCR-VL-1.6 0.9B</td>
+<td>browser model revision 5219606297d00bbd23b2ec193271af0c0b427dfc</td>
+<td>Chrome 155 / RTX 3080 10GB；解析与版面还原人工验收通过</td>
+</tr>
+</tbody>
+</table>
+<p>OvisOCR3 一次性能记录：1458 tokens、34.61 秒、42.82 tokens/s。用户已确认当前演示效果足够，停止进一步 Decoder 优化。</p>
+<h3 id="_6">当前集成实现<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>PR #74 仍以 dev 为目标分支，所有集成改动在独立 feature branch。</li>
+<li>模型注册表新增 OvisOCR3 和 PaddleOCR-VL-1.6，保留 Granite、DJX-0.8B、WC-2B 原有模型。</li>
+<li>生产 DocTags 页面通过独立 adapter 调用两款原生模型。</li>
+<li>原生输出分别由 native-document-output.js 和 native-result-renderer.js 解析/渲染；不转换为 DocTags。</li>
+<li>左侧原图位置框、右侧结构化阅读视图、悬停/点击定位、A/B 历史和 JSON 下载已接入。</li>
+<li>HF Space 与 docs 页面、registry、adapter 和 parser/render assets 必须保持逐字节一致。</li>
+<li>PP-DocLayoutV3 Worker 不提交到仓库；由 stage-ppdoclayout-worker.mjs 从固定 URL 下载并校验字节数与 SHA-256，然后分别暂存到 HF Space 和 docs preview 目录。DEV、docs-quality、native contract 和 HF publish 工作流均需先执行 staging。</li>
+</ul>
+<h3 id="_7">发布顺序<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ol>
+<li>CI 完成：原生解析器测试、五模型 registry 测试、页面镜像检查、JS/Python 静态验证、Worker SHA 校验、DEV 预览资源探测。</li>
+<li>用户在统一平台 DEV 页面人工检查五模型选择、模型加载、推理、原生输出、定位框、A/B、下载和旧模型回归。</li>
+<li>用户确认后合并 PR #74 到 dev；dev 的 publish-hf-doctags.yml 会在 HF_TOKEN 配置时同步 Static Space。</li>
+<li>HF Space 验收通过后，再将 dev 中已批准内容提升至 main，正式发布 GitHub Pages。</li>
+</ol>
+<p>未经用户确认，不直接合并 main。</p>
 
 
 
