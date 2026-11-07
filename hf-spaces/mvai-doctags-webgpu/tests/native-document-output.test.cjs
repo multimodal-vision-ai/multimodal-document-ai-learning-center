@@ -27,6 +27,36 @@ test("OvisOCR3 does not fabricate boxes for unstructured or malformed output",()
   assert.equal(result.warnings.length,2);
 });
 
+
+test("OvisOCR3 accepts a leading empty think wrapper and preserves exact raw output",()=>{
+  const json=JSON.stringify([
+    {bbox:[389,51,587,65],category:"header",content:"2.2 Solving Ax = 0 and Ax = b"},
+    {bbox:[110,435,885,497],category:"display_formula",content:"$$ E = mc^2 $$"},
+    {bbox:[238,659,872,718],category:"table",content:"<table><tr><td>Columns of A</td></tr></table>"}
+  ]);
+  const raw="<think>\n\n</think>\n\n"+json;
+  const parsed=core.parseOvis(raw);
+  assert.equal(parsed.raw,raw);
+  assert.equal(parsed.total,3);
+  assert.equal(parsed.blocks.length,3);
+  assert.deepEqual(parsed.blocks[0].bbox,[389,51,587,65]);
+  assert.equal(parsed.blocks[1].type,"display_formula");
+  assert.equal(parsed.blocks[2].type,"table");
+});
+
+test("OvisOCR3 ignores a non-empty leading think wrapper only for parsing",()=>{
+  const json=JSON.stringify([{bbox:[10,20,300,400],category:"text",content:"recognized text"}]);
+  const raw="<think>internal preamble with [brackets] and symbols</think>\n"+json;
+  const parsed=core.parseOvis(raw);
+  assert.equal(parsed.raw,raw);
+  assert.equal(parsed.blocks.length,1);
+  assert.equal(parsed.blocks[0].content,"recognized text");
+});
+
+test("OvisOCR3 still rejects malformed JSON after a think wrapper",()=>{
+  assert.throws(()=>core.parseOvis("<think></think>\n[{bad json}]"),/有效 JSON/);
+});
+
 test("PaddleOCR-VL requires layout pipeline positions in source pixels",()=>{
   const original = {parsing_res_list:[
     {block_bbox:[40,50,100,120],block_label:"table",block_content:"<table><tr><td>中文</td></tr></table>",block_id:2,block_order:2},
