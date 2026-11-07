@@ -51,12 +51,12 @@
             font-family="STSong, 'Noto Serif CJK SC', 'AR PL SungtiL GB', serif"
             font-size="34" letter-spacing="5" fill="#1c2934">万径人踪灭。</text>
       <!-- Expressive cursive-style signature. Local brush strokes reinforce the running-script feeling. -->
-      <g transform="rotate(-8 365 490)">
-        <text x="300" y="500" font-family="STXingkai, '华文行草', FZShuTi, 'AR PL KaitiM GB', cursive"
-              font-size="55" font-style="italic" font-weight="700" letter-spacing="-7"
+      <g transform="rotate(-12 365 490)">
+        <text x="300" y="500" font-family="FZShuTi, '华文行草', 'STXingkai', '华文行楷', 'AR PL KaitiM GB', cursive"
+              font-size="61" font-style="italic" font-weight="700" letter-spacing="-10"
               fill="#182b38" stroke="#182b38" stroke-width=".55" paint-order="stroke">柳宗元</text>
         <path d="M296 512 C326 523 365 516 396 499 C407 493 417 489 426 492"
-              fill="none" stroke="#263a47" stroke-width="3.5" stroke-linecap="round" opacity=".82"/>
+              fill="none" stroke="#263a47" stroke-width="4.6" stroke-linecap="round" opacity=".88"/>
         <path d="M315 518 C341 525 367 518 386 510" fill="none" stroke="#263a47" stroke-width="1.6" stroke-linecap="round"/>
       </g>
       <!-- Vermilion seal. -->
