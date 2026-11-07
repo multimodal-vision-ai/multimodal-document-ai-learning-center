@@ -444,6 +444,7 @@ const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getC
 const graniteStopping=new InterruptableStoppingCriteria();
 let model,processor,r3Adapter=null,wangAdapter=null,ovisNativeAdapter=null,paddleNativeAdapter=null,loaded=false,busy=false,imageReady=false,result="",name="";
 let nativeParsed=null,nativeFormat=null,nativeHighlight=null,sourceBitmap=null,sourceImageWidth=0,sourceImageHeight=0;
+window.addEventListener("pagehide",()=>{sourceBitmap?.close?.();sourceBitmap=null;});
 let inferenceRunning=false,stopRequested=false,activeStop=null;
 let loadingModel=false,loadPhase="idle",loadStartedAt=0,lastLoadProgressAt=0,lastLoadFile="",loadWatchdog=null;
 let sourceBlob=null; // Original File/Blob for direct self-built-model decoding; no Canvas export.
@@ -1221,7 +1222,7 @@ $("file").onchange=async event=>{
 $("clear").onclick=()=>{$("bounds").checked=false;show();leftDraw();};
 function download(blob,filename){const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
 $("saveImg").onclick=()=>{if(result){if(nativeFormat){if(nativeParsed)showNative(nativeParsed);else show();}else show(result);}preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png")};
-$("saveDT").onclick=()=>{if(result){const native=["ovisocr3-native","paddleocr-vl16-native","ovisocr3-native","paddleocr-vl-1.6"].includes(nativeFormat)||["ovisocr3-native","paddleocr-vl-1.6"].includes(selectedModel().adapter);download(new Blob([result],{type:native?"application/json;charset=utf-8":"text/plain;charset=utf-8"}),native?"mvai-native-ocr-result.json":"mvai-doctags-result.dt")}};
+$("saveDT").onclick=()=>{if(result){const native=["ovisocr3-native","paddleocr-vl16-native"].includes(nativeFormat)||["ovisocr3-native","paddleocr-vl-1.6"].includes(selectedModel().adapter);download(new Blob([result],{type:native?"application/json;charset=utf-8":"text/plain;charset=utf-8"}),native?"mvai-native-ocr-result.json":"mvai-doctags-result.dt")}};
 
 $("modelSelect").addEventListener("change",()=>{
   syncModelConfiguration();clearRunMetrics();refreshLoadButtons();
