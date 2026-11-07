@@ -1,6 +1,7 @@
 /* Full browser-local PaddleOCR-VL-1.6 pipeline: PP-DocLayoutV3 + 0.9B VLM.
    No server inference, no CPU/WASM fallback, no DocTags conversion. */
 import {orderedRegions, assemblePaddleResult} from "./pipeline-contract.mjs";
+import {PADDLE_VLM_DOWNLOAD_BYTES, PADDLE_LAYOUT_DOWNLOAD_BYTES} from "./progress.mjs";
 
 export const SOURCE_MODEL = "PaddlePaddle/PaddleOCR-VL-1.6";
 export const BROWSER_MODEL = "glebkudr/PaddleOCR-VL-1.6-WebGPU";
@@ -9,8 +10,8 @@ export const LAYOUT_MODEL = "PP-DocLayoutV3";
 export const LAYOUT_SDK_VERSION = "1.2.0";
 export const LAYOUT_SDK_COMMIT = "3aedb7b35af49a1c207fd4f846211366a9d09973";
 export const VLM_ENGINE_COMMIT = "f7d2f8aa40639497e1dbd95f2f8793e664b90758";
-export const MODEL_DOWNLOAD_BYTES = 2_038_286_862;
-export const LAYOUT_DOWNLOAD_BYTES = 74_279_796;
+export const MODEL_DOWNLOAD_BYTES = PADDLE_VLM_DOWNLOAD_BYTES;
+export const LAYOUT_DOWNLOAD_BYTES = PADDLE_LAYOUT_DOWNLOAD_BYTES;
 
 const CDN_BASES = Object.freeze([
   "https://cdn.jsdelivr.net/",
@@ -133,6 +134,14 @@ async function createDefaultLayout(onProgress) {
     await detector.dispose();
     throw new Error("PP-DocLayoutV3 未以 WebGPU FP16 运行；禁止回退到 WASM/CPU。");
   }
+  onProgress({
+    stage: "layout-load",
+    phase: "ready",
+    status: "complete",
+    loadedBytes: LAYOUT_DOWNLOAD_BYTES,
+    totalBytes: LAYOUT_DOWNLOAD_BYTES,
+    source: detector.loadTimings?.modelSource ?? "unknown"
+  });
   return detector;
 }
 
@@ -266,6 +275,13 @@ export async function createAdapter({
       throw new Error("PaddleOCR-VL-1.6 WebGPU 引擎接口不完整。");
     }
     await (dependencies.warmup ?? warmupVlm)(vlm, onProgress);
+    onProgress({
+      stage: "vlm-warmup",
+      kind: "ready",
+      status: "complete",
+      modelLoadedBytes: MODEL_DOWNLOAD_BYTES,
+      modelTotalBytes: MODEL_DOWNLOAD_BYTES
+    });
   } catch (error) {
     try { await vlm?.dispose?.(); } catch {}
     try { await layout?.dispose?.(); } catch {}
@@ -328,13 +344,17 @@ export async function createAdapter({
           detection = await layout.detect(blob, {signal: activeController.signal});
         } catch (error) {
           if (stopRequested && (error?.code === "ABORTED" || error?.name === "AbortError")) {
+            progress({stage: "layout", status: "stopped", completedRegions: 0, totalRegions: 0});
             return stoppedBeforeLayout(started, "layout", width, height);
           }
           throw error;
         } finally {
           activeController = null;
         }
-        if (stopRequested) return stoppedBeforeLayout(started, "layout", width, height);
+        if (stopRequested) {
+          progress({stage: "layout", status: "stopped", completedRegions: 0, totalRegions: 0});
+          return stoppedBeforeLayout(started, "layout", width, height);
+        }
         if (layout.runtime?.backend !== "webgpu" || layout.runtime?.precision !== "fp16") {
           throw new Error("版面检测运行时发生变化，已终止推理。");
         }
@@ -348,15 +368,31 @@ export async function createAdapter({
           stage: "layout",
           status: "complete",
           regions: regions.length,
+          totalRegions: regions.length,
           seconds: detection.timings?.totalMs / 1000
         });
         const recognitionStarted = performance.now();
 
         for (const [index, region] of regions.entries()) {
           if (stopRequested) break;
+          progress({
+            stage: "recognition",
+            status: "region-start",
+            region: index + 1,
+            totalRegions: regions.length,
+            completedRegions: recognitions.length
+          });
           if (region.task === null) {
             recognitions.push({text: "", rawText: "", skipped: true});
             onRegion({index, region, skipped: true});
+            progress({
+              stage: "recognition",
+              status: "region-complete",
+              region: index + 1,
+              totalRegions: regions.length,
+              completedRegions: recognitions.length,
+              skipped: true
+            });
             continue;
           }
           const [x1, y1, x2, y2] = region.box;
@@ -375,7 +411,8 @@ export async function createAdapter({
               stage: "recognition",
               substage: event.stage ?? event.kind ?? "inference",
               region: index + 1,
-              totalRegions: regions.length
+              totalRegions: regions.length,
+              completedRegions: recognitions.length
             })
           });
           if (typeof reply?.text !== "string") {
@@ -392,6 +429,13 @@ export async function createAdapter({
           recognitions.push(recognition);
           rawOutputs.push({index, label: region.label, task: region.task, text: reply.text});
           onRegion({index, region, ...recognition});
+          progress({
+            stage: "recognition",
+            status: "region-complete",
+            region: index + 1,
+            totalRegions: regions.length,
+            completedRegions: recognitions.length
+          });
         }
 
         const completedRegions = regions.slice(0, recognitions.length);

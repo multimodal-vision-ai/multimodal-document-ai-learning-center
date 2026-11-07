@@ -9,6 +9,13 @@ const read=relative=>readFile(new URL(relative,import.meta.url),"utf8");
 
 test("both accepted native models are registered with immutable model revisions",()=>{
   assert.equal(registry.getAll({getItem:()=>null}).length,5);
+  assert.deepEqual(registry.BUILTINS.map(model=>model.id),[
+    "multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX",
+    "multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX",
+    "onnx-community/granite-docling-258M-ONNX",
+    "multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX",
+    "glebkudr/PaddleOCR-VL-1.6-WebGPU"
+  ]);
   assert.equal(registry.OVIS_NATIVE.id,"multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX");
   assert.equal(registry.OVIS_NATIVE.adapter,"ovisocr3-native");
   assert.equal(registry.OVIS_NATIVE.revision,"de391cb93aa2ee1b67692bdba1b143bf8e4a9f98");
@@ -20,7 +27,7 @@ test("both accepted native models are registered with immutable model revisions"
 });
 
 test("HF Space and Learning Center production pages and model registries are byte-identical",async()=>{
-  const [spaceIndex,docsIndex,spaceRegistry,docsRegistry,spaceNative,docsNative,spaceRenderer,docsRenderer]=await Promise.all([
+  const [spaceIndex,docsIndex,spaceRegistry,docsRegistry,spaceNative,docsNative,spaceRenderer,docsRenderer,spaceProgress,docsProgress]=await Promise.all([
     read("../index.html"),
     read("../../../docs/assets/projects/doctags/browser-inference/index.html"),
     read("../model-registry.js"),
@@ -28,16 +35,22 @@ test("HF Space and Learning Center production pages and model registries are byt
     read("../native-document-output.js"),
     read("../../../docs/assets/projects/doctags/browser-inference/native-document-output.js"),
     read("../native-result-renderer.js"),
-    read("../../../docs/assets/projects/doctags/browser-inference/native-result-renderer.js")
+    read("../../../docs/assets/projects/doctags/browser-inference/native-result-renderer.js"),
+    read("../adapters/paddleocr-vl-1.6/progress.mjs"),
+    read("../../../docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/progress.mjs")
   ]);
   assert.equal(spaceIndex,docsIndex);
   assert.equal(spaceRegistry,docsRegistry);
   assert.equal(spaceNative,docsNative);
   assert.equal(spaceRenderer,docsRenderer);
+  assert.equal(spaceProgress,docsProgress);
 });
 
 test("production UI loads native parsers and routes each model through its dedicated adapter",async()=>{
   const html=await read("../index.html");
+  assert.match(html,/model-registry\.js\?v=mvai-order-20261107-2/);
+  assert.match(html,/select\.value=allModels\(\)\.some\(m=>m\.id===prefer\)\?prefer:registry\.R3\.id/);
+  assert.match(html,/renderModelOptions\(registry\.R3\.id\);loadLocalSample/);
   assert.match(html,/native-document-output\.js\?v=native-ocr-/);
   assert.match(html,/native-result-renderer\.js\?v=native-ocr-/);
   assert.match(html,/import\("\.\/adapters\/ovisocr3-native\/adapter\.mjs"\)/);
@@ -52,6 +65,16 @@ test("production UI loads native parsers and routes each model through its dedic
   assert.match(html,/下载原生 JSON/);
   assert.match(html,/sourceImageWidth=bitmap\.width/);
   assert.match(html,/sourceImageHeight=bitmap\.height/);
+});
+
+test("Paddle progress UI uses byte events and a separate region-based inference bar",async()=>{
+  const html=await read("../index.html");
+  assert.match(html,/id="inferenceProgressPanel"/);
+  assert.match(html,/id="inferenceProgress"/);
+  assert.match(html,/renderPaddleDownloadProgress\(d\)/);
+  assert.match(html,/onProgress:renderPaddleInferenceProgress/);
+  assert.match(html,/updatePaddleDownloadProgress\(paddleDownloadProgress,event\)/);
+  assert.match(html,/normalizePaddleInferenceProgress\(event\)/);
 });
 
 test("native adapter, contract and Paddle worker resources are mirrored to the public Space",async()=>{

@@ -32,6 +32,8 @@ section+section{border-top:1px solid #e1e7f1;margin-top:16px;padding-top:15px}
 .status{background:#f1f5fb;border-radius:9px;padding:10px;color:#3a5880;font-size:12px;white-space:pre-wrap;line-height:1.6}
 select{max-width:100%;padding:8px;border:1px solid #ccdaec;border-radius:8px;background:white;font-size:12px}
 progress{width:100%;height:8px;margin:10px 0 2px;accent-color:#326bc6}
+.load-metrics[hidden]{display:none!important}
+.inference-progress{margin-top:7px}
 #tags{height:260px;overflow:auto;background:#0e1930;color:#caf7de;border-radius:9px;padding:13px;font:11px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
 .links{background:#f6f9fc;border-radius:9px;padding:11px 14px;line-height:1.8;font-size:12px;color:#62738a}
 a{color:#1762bf}
@@ -320,6 +322,10 @@ main{max-width:1260px}
       </div>
       <small id="runAvailability" role="status" aria-live="polite">等待模型和文档就绪。</small>
       <div class="status inference-status" id="status" role="status" aria-live="polite">等待推理</div>
+      <div id="inferenceProgressPanel" class="load-metrics inference-progress" hidden>
+        <progress id="inferenceProgress" max="100" aria-label="PaddleOCR-VL 推理进度"></progress>
+        <small id="inferenceProgressStatus" aria-live="polite"></small>
+      </div>
       <div id="runMetrics" class="run-metrics" role="status" aria-live="polite" hidden>
         <span id="runModelSize"></span><span id="runDuration"></span>
       </div>
@@ -432,12 +438,13 @@ if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) 
 </script>
 <canvas id="source" hidden></canvas>
 <script src="./doctags-renderer.js?v=1.6.1"></script>
-<script src="./model-registry.js"></script>
+<script src="./model-registry.js?v=mvai-order-20261107-2"></script>
 <script src="./native-document-output.js?v=native-ocr-20261107"></script>
 <script src="./native-result-renderer.js?v=native-ocr-20261107"></script>
 <script type="module">
 import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,InterruptableStoppingCriteria,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
 import {createDownloadMeter,formatBytes,formatRate,formatEta} from "./adapters/r3-ovisocr3/download-metrics.mjs";
+import {createPaddleDownloadProgress,updatePaddleDownloadProgress,normalizePaddleInferenceProgress,PADDLE_LAYOUT_DOWNLOAD_BYTES} from "./adapters/paddleocr-vl-1.6/progress.mjs";
 env.useBrowserCache = true; // Cache Storage; browser may evict under quota pressure
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
@@ -448,6 +455,7 @@ window.addEventListener("pagehide",()=>{sourceBitmap?.close?.();sourceBitmap=nul
 let inferenceRunning=false,stopRequested=false,activeStop=null;
 let loadingModel=false,loadPhase="idle",loadStartedAt=0,lastLoadProgressAt=0,lastLoadFile="",loadWatchdog=null;
 let sourceBlob=null; // Original File/Blob for direct self-built-model decoding; no Canvas export.
+let paddleDownloadProgress=createPaddleDownloadProgress();
 const registry=globalThis.MVAIModelRegistry;
 let gpuDetected=false,activeKey=null,activeModelName="",inputRevision=0,runHistory=[];
 let customModels=registry.restore(localStorage);
@@ -477,6 +485,126 @@ function syncModelConfiguration(){
   else if(["r3-fixed","native-fixed"].includes($("dtype").value))$("dtype").value="quality";
   $("dtype").disabled=busy||fixed;
 }
+function renderPaddleDownloadProgress(event) {
+  const summary=updatePaddleDownloadProgress(paddleDownloadProgress,event);
+  const layoutBytes=event?.stage==="layout-load"&&event?.phase==="model"&&event?.status==="progress";
+  const vlmBytes=event?.kind==="download";
+  const ready=event?.phase==="ready"||(event?.stage==="vlm-warmup"&&event?.kind==="ready");
+  if(summary.hasProgress||ready)$("progress").value=summary.progress;
+  else $("progress").removeAttribute("value");
+
+  const overall="整体文件准备 "+formatBytes(summary.loadedBytes)+" / "+formatBytes(summary.totalBytes)+" · "+summary.progress.toFixed(1)+"%";
+  if(vlmBytes){
+    const loaded=Number(event.assetLoadedBytes),total=Number(event.assetTotalBytes);
+    const perAsset=Number.isFinite(loaded)
+      ?" · 当前资源 "+formatBytes(loaded)+(Number.isFinite(total)&&total>0?" / "+formatBytes(total):"")
+      :"";
+    const source=event.fromPersistentCache?"读取浏览器缓存":"网络下载";
+    $("downloadStatus").textContent="PaddleOCR-VL-1.6 · "+source+"："+(event.asset||"模型权重")+perAsset+" · "+overall;
+    return;
+  }
+  if(layoutBytes){
+    const loaded=Number(event.loadedBytes)||summary.layoutLoadedBytes;
+    const total=Number(event.totalBytes)||PADDLE_LAYOUT_DOWNLOAD_BYTES;
+    $("downloadStatus").textContent="PP-DocLayoutV3 · 下载版面模型 "+formatBytes(loaded)+" / "+formatBytes(total)+" · "+overall;
+    return;
+  }
+  if(event?.stage==="layout-load"&&event?.phase==="ready"){
+    const sources={network:"网络下载",cache:"浏览器缓存",memory:"内存复用",custom:"自定义模型"};
+    const source=sources[event.source]||"已就绪";
+    $("downloadStatus").textContent="PP-DocLayoutV3 · 版面模型已就绪（"+source+"） · "+overall;
+    return;
+  }
+  if(event?.stage==="vlm-warmup"&&event?.kind==="ready"){
+    $("downloadStatus").textContent="PaddleOCR-VL-1.6 · 模型权重已就绪，WebGPU 预热完成 · "+overall;
+    return;
+  }
+  if(event?.kind==="inference"){
+    const stages={
+      preprocess:"图像预处理",
+      patch_embedding:"视觉特征提取",
+      vision_encoder:"视觉编码",
+      projector:"视觉特征投影",
+      prompt:"构建识别提示",
+      decoder_prefill:"Decoder 预填充",
+      generation:"首次生成预热"
+    };
+    const stage=stages[event.stage]||event.stage||"模型预热";
+    $("downloadStatus").textContent="PaddleOCR-VL-1.6 · 模型预热："+stage+(event.detail?" · "+event.detail:"")+" · "+overall;
+    return;
+  }
+  const labels={
+    "layout-sdk":"加载 PP-DocLayoutV3 SDK",
+    "layout-worker":"准备同源版面检测 Worker",
+    "layout-load":"加载 PP-DocLayoutV3 模型",
+    "vlm-engine":"加载 PaddleOCR-VL WebGPU 引擎",
+    "vlm-warmup":"预热 PaddleOCR-VL 模型"
+  };
+  const label=labels[event?.stage]||"PaddleOCR-VL-1.6 初始化";
+  const detail=(event?.phase?" · "+event.phase:"")+(event?.status?" · "+event.status:"");
+  $("downloadStatus").textContent=label+detail+(summary.hasProgress?" · "+overall:"");
+}
+
+function renderPaddleInferenceProgress(event) {
+  const panel=$("inferenceProgressPanel"),bar=$("inferenceProgress"),label=$("inferenceProgressStatus");
+  panel.hidden=false;
+  const info=normalizePaddleInferenceProgress(event);
+  if(event?.stage==="layout"&&event?.status==="start"){
+    bar.removeAttribute("value");
+    label.textContent="正在执行 PP-DocLayoutV3 版面分析…";
+    return;
+  }
+  if(event?.stage==="layout"&&event?.status==="stopped"){
+    bar.value=0;
+    label.textContent="版面分析已停止，尚未完成区域识别。";
+    return;
+  }
+  if(event?.stage==="layout"&&event?.status==="complete"){
+    if(info.totalRegions===0){
+      bar.value=100;
+      label.textContent="版面分析完成，没有检测到需要识别的区域。";
+    }else{
+      bar.value=0;
+      label.textContent="版面分析完成 · 检测到 "+info.totalRegions+" 个区域，准备逐区域识别。";
+    }
+    return;
+  }
+  if(event?.stage!=="recognition")return;
+  bar.value=info.progress;
+  const region=Number(event.region)||0,total=info.totalRegions,completed=info.completedRegions;
+  if(event.status==="region-start"){
+    label.textContent="区域处理 "+completed+" / "+total+" · 正在处理第 "+region+" 个区域。";
+    return;
+  }
+  if(event.status==="region-complete"){
+    label.textContent="区域处理 "+completed+" / "+total+(event.skipped?" · 非文字图像区域，按规则跳过 OCR。":" · 当前区域已完成。");
+    return;
+  }
+  if(event.status==="complete"){
+    label.textContent="推理完成 · 已处理全部 "+completed+" / "+total+" 个版面区域。";
+    return;
+  }
+  if(event.status==="stopped"){
+    label.textContent="推理已停止 · 已完成 "+completed+" / "+total+" 个版面区域。";
+    return;
+  }
+  if(event.kind==="download"){
+    label.textContent="区域 "+region+" / "+total+" · 正在补充读取模型资源："+(event.asset||"模型文件");
+    return;
+  }
+  const stages={
+    preprocess:"图像预处理",
+    patch_embedding:"视觉特征提取",
+    vision_encoder:"视觉编码",
+    projector:"视觉特征投影",
+    prompt:"构建识别提示",
+    decoder_prefill:"Decoder 预填充",
+    generation:"文本生成"
+  };
+  const stage=stages[event.substage]||event.substage||"GPU 推理";
+  label.textContent="区域处理 "+completed+" / "+total+" · 第 "+region+" 个区域 · "+stage+(event.detail?" · "+event.detail:"");
+}
+
 function clearRunMetrics(){
   $("runMetrics").hidden=true;
   $("runModelSize").textContent="";
@@ -547,7 +675,7 @@ function renderModelOptions(prefer){
     select.appendChild(option);
   }
   const opt=document.createElement("option");opt.disabled=true;opt.textContent="其他自研模型 · 待接入兼容适配";select.appendChild(opt);
-  select.value=allModels().some(m=>m.id===prefer)?prefer:registry.BUILTIN.id;
+  select.value=allModels().some(m=>m.id===prefer)?prefer:registry.R3.id;
   syncModelConfiguration();
   refreshLoadButtons();
 }
@@ -1351,6 +1479,8 @@ $("load").onclick=async()=>{
  if(loaded&&activeKey===key){refreshLoadButtons();return;}
  busy=true;loadingModel=true;loadPhase="preparing";loadStartedAt=performance.now();lastLoadProgressAt=loadStartedAt;lastLoadFile="";
  clearRunMetrics();refreshLoadButtons();status("正在加载模型："+entry.name+"。下载完成后还需要初始化 WebGPU。");
+ $("inferenceProgressPanel").hidden=true;
+ paddleDownloadProgress=createPaddleDownloadProgress();
  $("downloadStatus").textContent="正在准备 WebGPU 运行环境与模型文件…";
  $("progress").value=0;
  if(loadWatchdog)clearInterval(loadWatchdog);
@@ -1370,15 +1500,17 @@ $("load").onclick=async()=>{
  const onProgress=d=>{
    lastLoadProgressAt=performance.now();
    if(d?.file)lastLoadFile=d.file;
-   if(d?.stage==="processor")loadPhase="processor";
-   else if(d?.stage==="model")loadPhase="weights";
+   else if(d?.asset)lastLoadFile=d.asset;
    refreshLoadButtons();
    if(entry.adapter==="paddleocr-vl-1.6"){
-     $("progress").removeAttribute("value");
-     const labels={"layout-sdk":"加载 PP-DocLayoutV3 SDK","layout-worker":"准备同源版面检测 Worker","layout-load":"加载 PP-DocLayoutV3 模型","vlm-engine":"加载 PaddleOCR-VL WebGPU 引擎","vlm-warmup":"下载并预热 PaddleOCR-VL 模型"};
-     $("downloadStatus").textContent=(labels[d?.stage]||"PaddleOCR-VL-1.6 初始化")+(d?.status?" · "+d.status:"");
+     if(d?.kind==="download"||d?.phase==="model")loadPhase="weights";
+     else if(d?.kind==="inference"||d?.stage==="vlm-engine"||d?.phase==="session")loadPhase="initializing";
+     else loadPhase="preparing";
+     renderPaddleDownloadProgress(d);
      return;
    }
+   if(d?.stage==="processor")loadPhase="processor";
+   else if(d?.stage==="model")loadPhase="weights";
    if(d.status==="progress_total"){
      const m=meter.update(d);
      if(!m)return;
@@ -1465,6 +1597,13 @@ $("run").onclick=async()=>{
   const adapter=entry.adapter==="r3-ovisocr3"?r3Adapter:entry.adapter==="wang-qwen35-2b"?wangAdapter:entry.adapter==="ovisocr3-native"?ovisNativeAdapter:entry.adapter==="paddleocr-vl-1.6"?paddleNativeAdapter:null;
   busy=true;inferenceRunning=true;stopRequested=false;
   activeStop=adapter?()=>adapter.stop():()=>graniteStopping.interrupt();
+  if(entry.adapter==="paddleocr-vl-1.6"){
+    $("inferenceProgressPanel").hidden=false;
+    $("inferenceProgress").removeAttribute("value");
+    $("inferenceProgressStatus").textContent="正在执行 PP-DocLayoutV3 版面分析…";
+  }else{
+    $("inferenceProgressPanel").hidden=true;
+  }
   refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
   let nativeOutputFormat=entry.adapter==="ovisocr3-native"?"ovisocr3-native":entry.adapter==="paddleocr-vl-1.6"?"paddleocr-vl16-native":null;
   let nativeParseValid=true,nativeRegionCount=0,nativeTotalRegions=0;
@@ -1478,7 +1617,7 @@ $("run").onclick=async()=>{
     }else if(entry.adapter==="paddleocr-vl-1.6"){
       if(!paddleNativeAdapter)throw Error("PaddleOCR-VL-1.6 适配器尚未就绪，请重新加载模型。");
       if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
-      const output=await paddleNativeAdapter.recognize(sourceBlob,{onProgress:event=>{$("downloadStatus").textContent="PaddleOCR-VL-1.6 · "+(event?.stage||event?.kind||"推理")+" · "+(event?.region?event.region+"/"+(event.totalRegions||"?"):"");}});
+      const output=await paddleNativeAdapter.recognize(sourceBlob,{onProgress:renderPaddleInferenceProgress});
       result=output.text;seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);ended=Boolean(output.ended);nativeRegionCount=Number(output.completedRegions)||0;nativeTotalRegions=Number(output.totalRegions)||0;
     }else if(entry.adapter==="r3-ovisocr3"||entry.adapter==="wang-qwen35-2b"){
       if(!adapter)throw Error(entry.name+" 适配器尚未就绪，请重新加载模型。");
@@ -1564,10 +1703,14 @@ $("run").onclick=async()=>{
        ?"请重新选择内置样例或上传本地图片后重试。"
        :"请检查输入图片和 WebGPU 设备状态；如持续失败，请提供浏览器控制台错误。";
      status("推理失败："+message+"。"+hint);
+     if(entry.adapter==="paddleocr-vl-1.6"){
+       $("inferenceProgressPanel").hidden=false;
+       $("inferenceProgressStatus").textContent="推理失败："+message;
+     }
      $("tags").textContent="本次没有可核验的完整模型输出。";
    }
   }finally{
-    if(stopRequested)$("downloadStatus").textContent=entry.name+" 已终止生成；模型仍保持加载。";
+    if(stopRequested&&entry.adapter!=="paddleocr-vl-1.6")$("downloadStatus").textContent=entry.name+" 已终止生成；模型仍保持加载。";
     busy=false;inferenceRunning=false;stopRequested=false;activeStop=null;
     refreshLoadButtons();
   }
@@ -1580,7 +1723,7 @@ $("stop").onclick=()=>{
   try{activeStop?.();}catch(error){status("终止请求失败："+(error?.message||String(error)));}
 };
 
-renderModelOptions(registry.BUILTIN.id);loadLocalSample(challengeSamples[0].id,"challenge");detect();
+renderModelOptions(registry.R3.id);loadLocalSample(challengeSamples[0].id,"challenge");detect();
 </script>
 </body>
 </html>

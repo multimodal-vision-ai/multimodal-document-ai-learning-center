@@ -27,10 +27,13 @@ const item=model.normalise({id:"multimodal-vision-ai/mvai-docling-onnx",name:"�
 model.save(storage,[item]);
 const restored=model.getAll(storage);
 a.equal(restored.length,6);
-a.equal(restored[1].id,model.OVIS_NATIVE.id);
-a.equal(restored[2].id,model.PADDLE_NATIVE.id);
-a.equal(restored[3].id,model.R3.id);
-a.equal(restored[4].id,model.WANG_2B.id);
+a.deepEqual(restored.slice(0,5).map(item=>item.id),[
+  model.R3.id,
+  model.WANG_2B.id,
+  model.BUILTIN.id,
+  model.OVIS_NATIVE.id,
+  model.PADDLE_NATIVE.id
+]);
 a.equal(restored[5].checked,false);
 a.equal(restored[5].origin.includes("待兼容性验证"),true);
 a.throws(()=>model.normalise({id:model.BUILTIN.id,name:"duplicate"}));

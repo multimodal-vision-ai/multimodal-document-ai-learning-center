@@ -8,7 +8,7 @@
   const WANG_2B=Object.freeze({id:"multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX",name:"MVAI-DocTags-WC-2B-v1.0 · 自研",origin:"河海大学 · MVAI Lab",builtIn:true,checked:true,parameterCount:"2.2B 参数",adapter:"wang-qwen35-2b",precision:"r3-fixed",runtime:"Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1",downloadSize:"约 6.2 GB",validatedDevice:"Chrome 157 / NVIDIA A800 80GB"});
   const OVIS_NATIVE=Object.freeze({id:"multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX",name:"OvisOCR3 0.8B · 原生 Structured",origin:"ATH-MaaS / MVAI WebGPU ONNX",builtIn:true,checked:true,parameterCount:"0.8B 参数",adapter:"ovisocr3-native",precision:"native-fixed",revision:"de391cb93aa2ee1b67692bdba1b143bf8e4a9f98",runtime:"Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1",validatedDevice:"Chrome 155 / NVIDIA RTX 3080 10GB"});
   const PADDLE_NATIVE=Object.freeze({id:"glebkudr/PaddleOCR-VL-1.6-WebGPU",name:"PaddleOCR-VL-1.6 0.9B · WebGPU",origin:"PaddlePaddle / WebGPU conversion",builtIn:true,checked:true,parameterCount:"0.9B 参数",adapter:"paddleocr-vl-1.6",precision:"native-fixed",revision:"5219606297d00bbd23b2ec193271af0c0b427dfc",runtime:"PP-DocLayoutV3 1.2.0 + PaddleOCR-VL WebGPU",downloadSize:"约 2.11 GB",validatedDevice:"Chrome 155 / NVIDIA RTX 3080 10GB"});
-  const BUILTINS=Object.freeze([BUILTIN,OVIS_NATIVE,PADDLE_NATIVE,R3,WANG_2B]);
+  const BUILTINS=Object.freeze([R3,WANG_2B,BUILTIN,OVIS_NATIVE,PADDLE_NATIVE]);
   const BUILTIN_IDS=new Set(BUILTINS.map(model=>model.id));
   const MAX_CUSTOM=8;
   function validRepoId(id){return typeof id==="string"&&id.length<=120&&/^[A-Za-z0-9][A-Za-z0-9_.-]*\/[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(id)&&!id.includes("..")&&!id.includes("--/")&&!id.startsWith("http");}
