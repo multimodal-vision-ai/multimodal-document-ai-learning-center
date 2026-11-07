@@ -1,0 +1,155 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {orderedRegions,taskForLabel,assemblePaddleResult} from "../adapters/paddleocr-vl-1.6/pipeline-contract.mjs";
+import {createSingleRuntimeVlm,LAYOUT_MANIFEST_URL,resolveLayoutWorkerUrls} from "../adapters/paddleocr-vl-1.6/adapter.mjs";
+import {directPrompt,ONNX_MODEL_ID,requireNativeOnnxBundle} from "../adapters/ovisocr3-native/contract.mjs";
+import {createPaddleDownloadProgress,updatePaddleDownloadProgress,normalizePaddleInferenceProgress,PADDLE_TOTAL_DOWNLOAD_BYTES} from "../adapters/paddleocr-vl-1.6/progress.mjs";
+
+test("Paddle download progress combines actual layout and VLM byte events",()=>{
+  const state=createPaddleDownloadProgress();
+  let summary=updatePaddleDownloadProgress(state,{
+    stage:"layout-load",phase:"model",status:"progress",
+    loadedBytes:37_139_898,totalBytes:74_279_796
+  });
+  assert.equal(summary.layoutLoadedBytes,37_139_898);
+  assert.equal(summary.vlmLoadedBytes,0);
+  assert.equal(summary.totalBytes,PADDLE_TOTAL_DOWNLOAD_BYTES);
+  assert.ok(summary.progress>0&&summary.progress<5);
+
+  summary=updatePaddleDownloadProgress(state,{
+    stage:"layout-load",phase:"ready",status:"complete",source:"cache"
+  });
+  assert.equal(summary.layoutLoadedBytes,74_279_796);
+  assert.equal(summary.layoutSource,"cache");
+
+  summary=updatePaddleDownloadProgress(state,{
+    stage:"vlm-warmup",kind:"download",asset:"Vision weights",
+    assetLoadedBytes:1_019_143_431,modelLoadedBytes:1_019_143_431,
+    modelTotalBytes:2_038_286_862,fromPersistentCache:true
+  });
+  assert.equal(summary.vlmLoadedBytes,1_019_143_431);
+  assert.equal(summary.vlmSource,"cache");
+  assert.ok(summary.progress>50&&summary.progress<100);
+
+  summary=updatePaddleDownloadProgress(state,{
+    stage:"vlm-warmup",kind:"ready",status:"complete"
+  });
+  assert.equal(summary.progress,100);
+  assert.equal(summary.loadedBytes,PADDLE_TOTAL_DOWNLOAD_BYTES);
+});
+
+test("Paddle inference progress reflects completed regions, not elapsed time",()=>{
+  assert.deepEqual(normalizePaddleInferenceProgress({
+    status:"region-complete",completedRegions:2,totalRegions:5
+  }),{
+    completedRegions:2,totalRegions:5,progress:40,determinate:true
+  });
+  assert.deepEqual(normalizePaddleInferenceProgress({
+    status:"complete",completedRegions:0,totalRegions:0
+  }),{
+    completedRegions:0,totalRegions:0,progress:100,determinate:true
+  });
+  assert.equal(normalizePaddleInferenceProgress({
+    status:"region-complete",completedRegions:9,totalRegions:4
+  }).completedRegions,4);
+  assert.equal(normalizePaddleInferenceProgress({
+    stage:"layout",status:"complete",regions:6
+  }).totalRegions,6);
+});
+
+test("Paddle layout worker resolves to the demo page origin",()=>{
+  const moduleUrl="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-74/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs";
+  const urls=resolveLayoutWorkerUrls(moduleUrl);
+  assert.equal(new URL(urls.baseUrl).origin,new URL(moduleUrl).origin);
+  assert.equal(new URL(urls.workerUrl).origin,new URL(moduleUrl).origin);
+  assert.equal(new URL(urls.baseUrl).pathname,"/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-74/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/worker-base.js");
+  assert.equal(new URL(urls.workerUrl).pathname,"/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-74/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js");
+  assert.equal(new URL("./inference.worker.js",urls.baseUrl).href,urls.workerUrl);
+});
+
+test("Paddle layout detector uses the deployed Pages manifest, not the source-tree path",()=>{
+  const url=new URL(LAYOUT_MANIFEST_URL);
+  assert.equal(url.origin,"https://chenmohan123.github.io");
+  assert.equal(url.pathname,"/web-sdk-PP-DocLayoutV3/models/manifest.json");
+  assert.equal(url.pathname.includes("/models/pp-doclayoutv3/"),false);
+});
+
+test("Layout SDK box is page pixel box, with reading order preserved",()=>{
+  const regions=orderedRegions([
+    {box:{xMin:60,yMin:100,xMax:450,yMax:250},label:"table",readingOrder:2,score:0.99},
+    {box:{xMin:10,yMin:10,xMax:800,yMax:50},label:"doc_title",readingOrder:1,score:0.98}
+  ],{width:1000,height:600});
+  assert.equal(regions[0].label,"doc_title");
+  assert.equal(regions[1].task,"table");
+  const results=assemblePaddleResult(regions,[{text:"标题"},{text:"<table><tr><td>数值</td></tr></table>"}],{width:1000,height:600});
+  assert.equal(results.width,1000);
+  assert.equal(results.height,600);
+  assert.equal(results.input_path,null);
+  assert.equal(results.page_index,null);
+  assert.equal(results.page_count,1);
+  assert.equal(results.model_settings.pipeline_model,"PaddleOCR-VL-1.6");
+  assert.equal(results.model_settings.use_layout_detection,true);
+  assert.deepEqual(results.parsing_res_list[1].block_bbox,[60,100,450,250]);
+  assert.equal(results.parsing_res_list[1].block_content,"<table><tr><td>数值</td></tr></table>");
+  assert.throws(()=>assemblePaddleResult(regions,[{text:"标题"},undefined],{width:1000,height:600}),/禁止用空字符串补齐/);
+});
+
+test("Never generate artificial boxes, reading order or unsupported formats",()=>{
+  assert.throws(()=>orderedRegions([{box:{xMin:0,yMin:0,xMax:12,yMax:4},label:"text"}],{width:10,height:10}),/坐标越界/);
+  assert.throws(()=>orderedRegions([{box:{xMin:0,yMin:0,xMax:12,yMax:4},label:"text"}],{width:20,height:10}),/readingOrder/);
+  assert.throws(()=>assemblePaddleResult([{}],[]),/数量不匹配/);
+  assert.equal(taskForLabel("image"),null);
+  assert.equal(taskForLabel("formula"),"formula");
+  assert.equal(taskForLabel("display_formula"),"formula");
+  assert.equal(taskForLabel("chart"),"chart");
+});
+
+test("Ovis native contract cannot reuse official BF16 checkpoint as ONNX",()=>{
+  assert.throws(()=>requireNativeOnnxBundle("ATH-MaaS/OvisOCR3"),/专用 ONNX/);
+  assert.throws(()=>requireNativeOnnxBundle(""),/专用 ONNX/);
+  assert.equal(requireNativeOnnxBundle(ONNX_MODEL_ID),ONNX_MODEL_ID);
+  const tokenizer={apply_chat_template(msg){assert.equal(msg[0].content[1].text,"STRUCTURED PROMPT");return "x<|im_start|>assistant\n";}};
+  assert.equal(directPrompt(tokenizer,"STRUCTURED PROMPT"),"x<|im_start|>assistant\n");
+});
+
+
+test("Paddle browser engine creates one WebGPU runtime, not the upstream multi-runtime pool",async()=>{
+  let runtimeCreates=0,freed=0,initialized=0;
+  let captured=null;
+  class FakeEngine{
+    constructor(runtimes,concurrency){captured={runtimes,concurrency};}
+  }
+  const runtime={
+    capabilities_json:()=>JSON.stringify({adapter_name:"NVIDIA GeForce RTX 3080",adapter_device_type:"DiscreteGpu"}),
+    free:()=>{freed++;}
+  };
+  const engine=await createSingleRuntimeVlm({
+    engineModule:{PaddleOcrVlEngine:FakeEngine},
+    runtimeModule:{
+      default:async()=>{initialized++;},
+      WebRuntime:{create:async()=>{runtimeCreates++;return runtime;}}
+    }
+  });
+  assert.ok(engine instanceof FakeEngine);
+  assert.equal(initialized,1);
+  assert.equal(runtimeCreates,1);
+  assert.equal(captured.runtimes.length,1);
+  assert.equal(captured.runtimes[0],runtime);
+  assert.equal(captured.concurrency.current(8),1);
+  assert.equal(captured.concurrency.current(0),0);
+  assert.equal(engine.runtimeInfo.adapter_name,"NVIDIA GeForce RTX 3080");
+  assert.equal(engine.runtimeInfo.runtimeCount,1);
+  assert.equal(engine.runtimeInfo.parallelism,1);
+  assert.equal(freed,0);
+});
+
+test("Paddle browser engine rejects software rendering and frees the runtime",async()=>{
+  let freed=0;
+  const runtime={capabilities_json:()=>JSON.stringify({adapter_name:"SwiftShader"}),
+    free:()=>{freed++;}};
+  await assert.rejects(createSingleRuntimeVlm({
+    engineModule:{PaddleOcrVlEngine:class{}},
+    runtimeModule:{default:async()=>{},WebRuntime:{create:async()=>runtime}}
+  }),/software adapter/);
+  assert.equal(freed,1);
+});

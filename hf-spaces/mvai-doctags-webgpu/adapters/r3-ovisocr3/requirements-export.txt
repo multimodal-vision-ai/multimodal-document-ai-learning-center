@@ -1,0 +1,10 @@
+# Install in an isolated environment. Torch must match the installed CUDA/CPU runtime.
+transformers==5.12.1
+safetensors==0.8.0
+onnx==1.23.2
+onnxruntime==1.31.1
+onnxruntime-genai==0.19.0
+onnxscript==0.7.2
+onnx-ir==1.1.0
+olive-ai==0.13.0
+websockets==15.0.1
