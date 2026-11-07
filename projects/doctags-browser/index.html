@@ -2536,11 +2536,11 @@
 <h2 id="_1">使用流程<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ol>
 <li>用支持 WebGPU 的桌面版 Chrome 或 Edge 打开实验页；选择九类从 IBM Granite Docling 官方 DEMO 镜像到本站的文档样例，或上传已脱敏的本地文档。</li>
-<li>在检测到 WebGPU 后手动点击 <strong>加载模型</strong>。首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB；两款自研模型均需要设备支持 <code>shader-f16</code>，加载前会检查该能力。</li>
-<li>从模型列表选择 <strong>Granite Docling 258M 公共基线</strong>，或添加已完成兼容性验证的公开 ONNX 模型，点击 <strong>开始真正推理</strong>。产生结果后，下方将<strong>原始文档与重建后的结构化结果并排显示</strong>：右侧把标题、正文和 OTSL 表格渲染为阅读版面，左侧显示原图与位置框。悬停右侧结构块可定位到左侧对应区域；可以关闭位置框，也可启用按比例同步滚动（仅辅助查看，不是逐行校准）。</li>
+<li>在检测到 WebGPU 后手动点击 <strong>加载模型</strong>。首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB，PaddleOCR-VL-1.6 约下载 2.11 GB；OvisOCR3 也需要下载固定 ONNX bundle。Ovis/Paddle/DJX/WC 均使用固定 WebGPU 配置，需要设备支持 <code>shader-f16</code>。</li>
+<li>从模型列表选择五款内置模型之一，点击 <strong>开始真正推理</strong>。Granite/DJX/WC 的输出为 DocTags；OvisOCR3 输出原生 Structured JSON；PaddleOCR-VL-1.6 输出 parsing_res_list/OTSL。产生结果后，原图与重建后的结构化结果并排显示：左侧显示原图与位置框，右侧按对应模型的原生格式渲染阅读版面。悬停右侧结构块可定位到左侧对应区域；可以关闭位置框，也可启用按比例同步滚动（仅辅助查看，不是逐行校准）。</li>
 </ol>
 <p><strong>人工终止推理：</strong> 推理过程中可以点击 <strong>终止推理</strong> 请求停止当前生成。已经生成的部分输出会保留并标记为不完整，不计入多模型 A/B 对比历史；模型仍保持加载，可以重新运行。此操作是协作式中断，需要等待当前 WebGPU 运算结束；若浏览器 GPU 线程完全卡死，可能仍需刷新页面。
-4. 切换另一个模型（或同一模型的其他精度），在相同文档上再次运行。页面最下方 <strong>05 · 多模型结果对比</strong> 将展示 A/B 两组实际推理结果。原始 DocTags 被折叠至页面底部的“原始输出与技术诊断”；复杂合并单元格、缺失位置或不完整标签应结合原图人工核对。下载 <code>.dt</code> 或标注图可保存分析结果。
+4. 切换另一个模型，在相同文档上再次运行。页面最下方 <strong>05 · 多模型结果对比</strong> 将展示 A/B 两组实际推理结果，并根据每条记录的输出格式选择 DocTags、Ovis Structured JSON 或 Paddle parsing_res_list 渲染器。原始输出被折叠至“模型原始输出与技术诊断”；原生模型下载 <code>.json</code>，DocTags 模型下载 <code>.dt</code>。复杂合并单元格、缺失位置或不完整标签应结合原图人工核对。
 5. 上传自己的 PNG、JPG 或 WebP 单页图片时，务必提前脱敏。
 6. GPU 不支持、模型加载失败或中文内容解析不佳时，使用 <a href="../doctags-kaggle/index.html">Kaggle 个人 GPU 试点</a>，或者 <a href="../../assets/projects/doctags/interactive-demo/index.html">免登录查看已有解析样例</a>。</p>
 <div class="admonition warning">
@@ -2548,7 +2548,7 @@
 <p>页面内置 Granite、OvisOCR3、PaddleOCR-VL-1.6、DJX-0.8B 和 WC-2B 五款模型。OvisOCR3 与 PaddleOCR-VL-1.6 已在 Chrome 155 / NVIDIA RTX 3080 10GB 完成实际浏览器推理及人工结构化结果验收；DJX/WC 已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试。上述验收不等于完整 OCR benchmark，尚不能据此宣称跨设备准确率、长页或所有复杂表格均已验证。</p>
 </div>
 <h2 id="hf-organization">接入 HF Organization<a class="headerlink" href="#hf-organization" title="Permanent link">&para;</a></h2>
-<p>与此页面相同的可部署源码位于仓库的 hf-spaces/mvai-doctags-webgpu 目录。Organization 创建 <strong>Static Space</strong> 后，除 README.md、index.html、doctags-renderer.js、model-registry.js 外，还必须保留 <code>adapters/r3-ovisocr3/</code> 与 <code>adapters/wang-qwen35-2b/</code> 两个模型适配器目录及其文件。不需要 HF 付费 GPU。</p>
+<p>与此页面相同的可部署源码位于仓库的 hf-spaces/mvai-doctags-webgpu 目录。Organization 创建 <strong>Static Space</strong> 后，除 README.md、index.html、doctags-renderer.js、model-registry.js、native-document-output.js 和 native-result-renderer.js 外，还必须保留 r3-ovisocr3、wang-qwen35-2b、ovisocr3-native、paddleocr-vl-1.6 四个适配器目录及 vendor/ppdoclayoutv3 Worker 资源。不需要 HF 付费 GPU。</p>
 <p><strong>V1.6 对照区只在模型真实生成结果后才显示重建内容，不会加载预设的“标准答案”。</strong> 网页结构化渲染不是逐像素复刻 PDF，不得将左右视觉差异直接视为定量准确率指标。</p>
 <h2 id="v171">V1.7.1 精简交互界面<a class="headerlink" href="#v171" title="Permanent link">&para;</a></h2>
 <ul>
