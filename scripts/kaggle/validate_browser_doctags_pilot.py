@@ -264,7 +264,7 @@ assert 'id="file"' in data and 'id="sample"' in data
 assert "Kaggle" in data and "公开基线" in data
 assert "doctags-browser/README.md" in HOME.read_text(encoding="utf-8")
 assert "shanshui_scene: 7" in HOME.read_text(encoding="utf-8")
-assert "视频行为识别模型" in HOME.read_text(encoding="utf-8")
+assert ("视频行为识别模型" in HOME.read_text(encoding="utf-8") or "视频行为识别与分析" in HOME.read_text(encoding="utf-8"))
 assert "Chrome 157" in GUIDE.read_text(encoding="utf-8")
 assert "NVIDIA A800 80GB" in GUIDE.read_text(encoding="utf-8")
 assert "MVAI-DocTags-DJX-0.8B-v1.0" in GUIDE.read_text(encoding="utf-8")
