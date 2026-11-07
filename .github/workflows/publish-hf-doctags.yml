@@ -24,11 +24,25 @@ jobs:
       - name: Assemble DocTags challenge images
         run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
 
+      - name: Stage hash-verified PP-DocLayoutV3 worker for native model integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          node hf-spaces/mvai-doctags-webgpu/scripts/stage-ppdoclayout-worker.mjs
+          node --input-type=module --check < hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3/inference.worker.js
+          mkdir -p docs/assets/projects/doctags/browser-inference/vendor
+          cp -a hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3 docs/assets/projects/doctags/browser-inference/vendor/
+          test -s hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3/worker-base.js
+          test -s docs/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js
+
       - name: Validate static Space bundle
         shell: bash
         run: |
           set -euo pipefail
-          for file in README.md index.html doctags-renderer.js model-registry.js; do
+          for file in README.md index.html doctags-renderer.js model-registry.js native-document-output.js native-result-renderer.js; do
+            test -s "hf-spaces/mvai-doctags-webgpu/$file"
+          done
+          for file in adapters/ovisocr3-native/adapter.mjs adapters/ovisocr3-native/contract.mjs adapters/ovisocr3-native/README.md adapters/paddleocr-vl-1.6/adapter.mjs adapters/paddleocr-vl-1.6/pipeline-contract.mjs vendor/ppdoclayoutv3/worker-base.js vendor/ppdoclayoutv3/inference.worker.js; do
             test -s "hf-spaces/mvai-doctags-webgpu/$file"
           done
           for file in new_arxiv.png image-2.jpg code.jpg lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg 87664.png 06236926002285.png ar_page_0.png japanse_4_ibm.png zh_page_0.png; do
@@ -94,5 +108,19 @@ jobs:
           done
           if [[ "$found" != "true" ]]; then
             echo "::warning title=Public Space not yet verified::HF upload succeeded, but the public hf.space URL did not pass the HTML content probe. Check Space build status and test it manually."
+          fi
+
+          if [[ "$found" == "true" ]]; then
+            curl -fsSL --max-time 20 "${base}index.html" -o /tmp/mvai-hf-doctags-index.html
+            grep -q "OvisOCR3 0.8B" /tmp/mvai-hf-doctags-index.html
+            grep -q "PaddleOCR-VL-1.6 0.9B" /tmp/mvai-hf-doctags-index.html
+            curl -fsSL --max-time 20 "${base}model-registry.js" -o /tmp/mvai-hf-model-registry.js
+            grep -q "de391cb93aa2ee1b67692bdba1b143bf8e4a9f98" /tmp/mvai-hf-model-registry.js
+            grep -q "5219606297d00bbd23b2ec193271af0c0b427dfc" /tmp/mvai-hf-model-registry.js
+            for asset in native-document-output.js native-result-renderer.js adapters/ovisocr3-native/adapter.mjs adapters/paddleocr-vl-1.6/adapter.mjs vendor/ppdoclayoutv3/inference.worker.js; do
+              curl -fsSL --max-time 20 "${base}${asset}" -o "/tmp/$(basename "$asset")"
+              test -s "/tmp/$(basename "$asset")"
+            done
+            echo "Public HF Space integrated native model registry and runtime assets verified."
           fi
 

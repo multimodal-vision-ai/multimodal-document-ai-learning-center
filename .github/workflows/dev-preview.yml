@@ -42,6 +42,17 @@ jobs:
 
       - name: Install MkDocs dependencies
         run: pip install -r requirements-docs.txt
+      - name: Stage hash-verified PP-DocLayoutV3 worker for same-origin loading
+        shell: bash
+        run: |
+          set -euo pipefail
+          node hf-spaces/mvai-doctags-webgpu/scripts/stage-ppdoclayout-worker.mjs
+          node --input-type=module --check < hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3/inference.worker.js
+          mkdir -p docs/assets/projects/doctags/browser-inference/vendor
+          cp -a hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3 \
+            docs/assets/projects/doctags/browser-inference/vendor/
+          test -s docs/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/worker-base.js
+          sha256sum docs/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js
 
       - name: Assemble DocTags challenge images
         run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
@@ -423,3 +434,124 @@ jobs:
             grep -q "$model" "$RUNNER_TEMP/vision-demo-v1.js"
           done
           echo "Vision AI DEV page and all three model configurations verified."
+      - name: Verify PaddleOCR-VL-1.6 standalone browser test page
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview_sha="$(git rev-parse HEAD)"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$preview_sha"
+          page="$base/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html?preview_build=${GITHUB_SHA}"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+            -D "$RUNNER_TEMP/paddle-preview.headers" "$page" -o "$RUNNER_TEMP/paddle-preview.html"
+          grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/paddle-preview.headers"
+          grep -q "PaddleOCR-VL-1.6 浏览器 WebGPU 独立验收" "$RUNNER_TEMP/paddle-preview.html"
+          grep -q 'adapters/paddleocr-vl-1.6/adapter.mjs' "$RUNNER_TEMP/paddle-preview.html"
+          for asset in \
+            assets/projects/doctags/browser-inference/native-document-output.js \
+            assets/projects/doctags/browser-inference/native-result-renderer.js \
+            assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs \
+            assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/pipeline-contract.mjs; do
+            curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+              "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
+            test -s "$RUNNER_TEMP/$(basename "$asset")"
+          done
+          echo "PaddleOCR-VL-1.6 standalone test page and all local assets are publicly reachable."
+      - name: Verify same-origin PP-DocLayoutV3 worker asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview_sha="$(git rev-parse HEAD)"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$preview_sha"
+          worker="$base/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+            "$worker" -o "$RUNNER_TEMP/inference.worker.js"
+          test "$(wc -c < "$RUNNER_TEMP/inference.worker.js")" -eq 732503
+          echo "128380b8f435c07b1dec25542355708dbd99e033b2fcf994d13d12bc8b3a6a6b  $RUNNER_TEMP/inference.worker.js" \
+            | sha256sum --check
+          base_asset="$base/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/worker-base.js"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+            "$base_asset" -o "$RUNNER_TEMP/worker-base.js"
+          grep -q "Same-origin URL base" "$RUNNER_TEMP/worker-base.js"
+          echo "Same-origin PP-DocLayoutV3 worker and URL base are publicly reachable."
+
+      - name: Verify the upstream PP-DocLayoutV3 published manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest_url="https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/manifest.json"
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+              "$manifest_url" -o "$RUNNER_TEMP/pp-doclayout-manifest.json"; then
+              break
+            fi
+            if [ "$attempt" -eq 6 ]; then
+              echo "::error::Published PP-DocLayoutV3 manifest is not reachable: $manifest_url"
+              exit 1
+            fi
+            sleep 10
+          done
+          python - "$RUNNER_TEMP/pp-doclayout-manifest.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          manifest = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          assert manifest["model"]["id"] == "pp-doclayoutv3"
+          fp16 = next(item for item in manifest["variants"] if item["id"] == "fp16")
+          assert fp16["bytes"] == 74279796
+          assert fp16["url"] == "https://chenmohan123.github.io/web-sdk-PP-DocLayoutV3/models/model-fp16.onnx"
+          assert len(fp16["sha256"]) == 64
+          print("Published PP-DocLayoutV3 manifest and FP16 asset metadata verified.")
+          PY
+      - name: Verify OvisOCR3 standalone browser test page
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview_sha="$(git rev-parse HEAD)"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$preview_sha"
+          page="$base/assets/projects/doctags/browser-inference/dev-ovisocr3.html?preview_build=${GITHUB_SHA}"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+            -D "$RUNNER_TEMP/ovis-preview.headers" "$page" -o "$RUNNER_TEMP/ovis-preview.html"
+          grep -Eiq '^content-type:[[:space:]]*text/html([;[:space:]]|$)' "$RUNNER_TEMP/ovis-preview.headers"
+          grep -q "OvisOCR3 0.8B 浏览器 WebGPU 独立验收" "$RUNNER_TEMP/ovis-preview.html"
+          grep -q 'adapters/ovisocr3-native/adapter.mjs' "$RUNNER_TEMP/ovis-preview.html"
+          for asset in \
+            assets/projects/doctags/browser-inference/native-document-output.js \
+            assets/projects/doctags/browser-inference/native-result-renderer.js \
+            assets/projects/doctags/browser-inference/adapters/ovisocr3-native/adapter.mjs \
+            assets/projects/doctags/browser-inference/adapters/ovisocr3-native/contract.mjs; do
+            curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
+              "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
+            test -s "$RUNNER_TEMP/$(basename "$asset")"
+          done
+
+          echo "OvisOCR3 standalone test page and all local assets are publicly reachable."
+
+      - name: Verify integrated native OCR models in the production DocTags page
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview_sha="$(git rev-parse HEAD)"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$preview_sha"
+          page="$base/assets/projects/doctags/browser-inference/index.html?preview_build=${GITHUB_SHA}"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$page" -o "$RUNNER_TEMP/doctags-integrated.html"
+          for marker in "OvisOCR3 0.8B" "PaddleOCR-VL-1.6 0.9B" "native-document-output.js" "native-result-renderer.js" "ovisocr3-native/adapter.mjs" "paddleocr-vl-1.6/adapter.mjs"; do
+            grep -q "$marker" "$RUNNER_TEMP/doctags-integrated.html"
+          done
+          registry="$base/assets/projects/doctags/browser-inference/model-registry.js?preview_build=${GITHUB_SHA}"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$registry" -o "$RUNNER_TEMP/native-model-registry.js"
+          grep -q "de391cb93aa2ee1b67692bdba1b143bf8e4a9f98" "$RUNNER_TEMP/native-model-registry.js"
+          grep -q "5219606297d00bbd23b2ec193271af0c0b427dfc" "$RUNNER_TEMP/native-model-registry.js"
+          for asset in \
+            assets/projects/doctags/browser-inference/native-document-output.js \
+            assets/projects/doctags/browser-inference/native-result-renderer.js \
+            assets/projects/doctags/browser-inference/adapters/ovisocr3-native/adapter.mjs \
+            assets/projects/doctags/browser-inference/adapters/ovisocr3-native/contract.mjs \
+            assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs \
+            assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/pipeline-contract.mjs \
+            assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/worker-base.js \
+            assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js; do
+            curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
+            test -s "$RUNNER_TEMP/$(basename "$asset")"
+          done
+          echo "Integrated DocTags page, native model registry, both adapters and same-origin layout worker assets are publicly reachable."
