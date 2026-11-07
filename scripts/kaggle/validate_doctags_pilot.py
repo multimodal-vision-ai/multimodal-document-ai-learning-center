@@ -32,7 +32,10 @@ guide = GUIDE.read_text(encoding="utf-8")
 home = HOME.read_text(encoding="utf-8")
 assert "mvai_doctags_kaggle_pilot.ipynb" in guide
 assert "doctags-kaggle/README.md" in home
-assert "interactive-demo/index.html" in home
+assert "https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/" in home
+assert ">在线体验" in home, "The single online-experience entry is missing"
+assert "查看解析样例" not in home, "The retired sample link should stay removed"
+assert "在线演示为 IBM Granite" not in home, "The retired baseline disclaimer should stay removed"
 assert "shanshui_scene: 7" in home
 assert "视频行为识别模型" in home, "Video card accidentally removed"
 print(f"Kaggle pilot static QA passed: {len(code)} syntax-checked code cells")
