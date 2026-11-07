@@ -35,6 +35,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Stage hash-verified PP-DocLayoutV3 worker for native model integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          node hf-spaces/mvai-doctags-webgpu/scripts/stage-ppdoclayout-worker.mjs
+          node --input-type=module --check < hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3/inference.worker.js
+          mkdir -p docs/assets/projects/doctags/browser-inference/vendor
+          cp -a hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3 docs/assets/projects/doctags/browser-inference/vendor/
+          test -s hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3/worker-base.js
+          test -s docs/assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js
+
       - name: Check native JSON, layout and production integration contracts
         run: node --test hf-spaces/mvai-doctags-webgpu/tests/native-document-output.test.cjs hf-spaces/mvai-doctags-webgpu/tests/native-adapters.test.mjs hf-spaces/mvai-doctags-webgpu/tests/ovisocr3-contract.test.mjs hf-spaces/mvai-doctags-webgpu/tests/native-models-integration.test.mjs && node scripts/kaggle/test_doctags_model_registry.cjs
       - name: Check browser adapter and pinned asset staging script syntax
