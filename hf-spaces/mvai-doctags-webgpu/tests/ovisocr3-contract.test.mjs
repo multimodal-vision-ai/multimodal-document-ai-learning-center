@@ -4,6 +4,7 @@ import {
   BUNDLE_FORMAT_VERSION, DEFAULTS, ONNX_MODEL_ID, SOURCE_MODEL_ID, SOURCE_REVISION,
   directPrompt, fetchBundleContract, modelFileUrl, requireNativeOnnxBundle, validateSettings
 } from "../adapters/ovisocr3-native/contract.mjs";
+import {createSessionProfiler, createTokenOnlyStreamer} from "../adapters/ovisocr3-native/adapter.mjs";
 
 const commit = "a".repeat(40);
 const metadata = {
@@ -90,3 +91,44 @@ assert.throws(() => validateSettings({maxNewTokens: 0}));
 assert.throws(() => validateSettings({maxNewTokens: 16385}));
 assert.throws(() => directPrompt({apply_chat_template: () => "bad"}, prompt));
 console.log("OvisOCR3 native contract checks passed");
+
+
+// Performance optimization contracts: no per-token prefix decoding, and per-session timing.
+{
+  const counts=[];
+  const streamer=createTokenOnlyStreamer(count=>counts.push(count));
+  streamer.put([[11n,12n,13n]]); // Initial prompt must be ignored.
+  streamer.put([[21n]]);
+  streamer.put([[22n]]);
+  streamer.end();
+  assert.deepEqual(streamer.tokenIds,[21n,22n]);
+  assert.equal(streamer.tokenCount,2);
+  assert.equal(streamer.ended,true);
+  assert.deepEqual(counts,[1,2]);
+}
+
+{
+  let clock=0;
+  const session={
+    config:{device:"webgpu",dtype:"fp16"},
+    inputNames:["input_ids"],
+    outputNames:["logits"],
+    async run(value){clock+=value;return value;}
+  };
+  const profiler=createSessionProfiler({decoder_model_merged:session},()=>clock);
+  await session.run(7);
+  await session.run(11);
+  await session.run(13);
+  const snapshot=profiler.snapshot();
+  const decoder=snapshot.sessions.decoder_model_merged;
+  assert.equal(decoder.calls,3);
+  assert.equal(decoder.totalMs,31);
+  assert.equal(decoder.firstCallMs,7);
+  assert.equal(decoder.subsequentCalls,2);
+  assert.equal(decoder.subsequentTotalMs,24);
+  assert.equal(snapshot.phases.decoderPrefillMs,7);
+  assert.equal(snapshot.phases.decoderDecodeAverageMs,12);
+  profiler.reset();
+  assert.equal(profiler.snapshot().sessions.decoder_model_merged.calls,0);
+  profiler.restore();
+}
