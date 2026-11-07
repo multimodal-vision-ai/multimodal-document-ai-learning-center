@@ -3,6 +3,56 @@ import assert from "node:assert/strict";
 import {orderedRegions,taskForLabel,assemblePaddleResult} from "../adapters/paddleocr-vl-1.6/pipeline-contract.mjs";
 import {createSingleRuntimeVlm,LAYOUT_MANIFEST_URL,resolveLayoutWorkerUrls} from "../adapters/paddleocr-vl-1.6/adapter.mjs";
 import {directPrompt,ONNX_MODEL_ID,requireNativeOnnxBundle} from "../adapters/ovisocr3-native/contract.mjs";
+import {createPaddleDownloadProgress,updatePaddleDownloadProgress,normalizePaddleInferenceProgress,PADDLE_TOTAL_DOWNLOAD_BYTES} from "../adapters/paddleocr-vl-1.6/progress.mjs";
+
+test("Paddle download progress combines actual layout and VLM byte events",()=>{
+  const state=createPaddleDownloadProgress();
+  let summary=updatePaddleDownloadProgress(state,{
+    stage:"layout-load",phase:"model",status:"progress",
+    loadedBytes:37_139_898,totalBytes:74_279_796
+  });
+  assert.equal(summary.layoutLoadedBytes,37_139_898);
+  assert.equal(summary.vlmLoadedBytes,0);
+  assert.equal(summary.totalBytes,PADDLE_TOTAL_DOWNLOAD_BYTES);
+  assert.ok(summary.progress>0&&summary.progress<5);
+
+  summary=updatePaddleDownloadProgress(state,{
+    stage:"layout-load",phase:"ready",status:"complete",source:"cache"
+  });
+  assert.equal(summary.layoutLoadedBytes,74_279_796);
+  assert.equal(summary.layoutSource,"cache");
+
+  summary=updatePaddleDownloadProgress(state,{
+    stage:"vlm-warmup",kind:"download",asset:"Vision weights",
+    assetLoadedBytes:1_019_143_431,modelLoadedBytes:1_019_143_431,
+    modelTotalBytes:2_038_286_862,fromPersistentCache:true
+  });
+  assert.equal(summary.vlmLoadedBytes,1_019_143_431);
+  assert.equal(summary.vlmSource,"cache");
+  assert.ok(summary.progress>50&&summary.progress<100);
+
+  summary=updatePaddleDownloadProgress(state,{
+    stage:"vlm-warmup",kind:"ready",status:"complete"
+  });
+  assert.equal(summary.progress,100);
+  assert.equal(summary.loadedBytes,PADDLE_TOTAL_DOWNLOAD_BYTES);
+});
+
+test("Paddle inference progress reflects completed regions, not elapsed time",()=>{
+  assert.deepEqual(normalizePaddleInferenceProgress({
+    status:"region-complete",completedRegions:2,totalRegions:5
+  }),{
+    completedRegions:2,totalRegions:5,progress:40,determinate:true
+  });
+  assert.deepEqual(normalizePaddleInferenceProgress({
+    status:"complete",completedRegions:0,totalRegions:0
+  }),{
+    completedRegions:0,totalRegions:0,progress:100,determinate:true
+  });
+  assert.equal(normalizePaddleInferenceProgress({
+    status:"region-complete",completedRegions:9,totalRegions:4
+  }).completedRegions,4);
+});
 
 test("Paddle layout worker resolves to the demo page origin",()=>{
   const moduleUrl="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-pr-74/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs";
