@@ -94,7 +94,8 @@ assert "await model.dispose?.()" in data, "Old WebGPU model not released on swit
 assert "activeKey!==selectedKey()" in data, "Running unselected GPU model must be prevented"
 assert "registry.recordResult(runHistory,normalized)" in data, "Same-input history must be recorded"
 assert "function maybeAutoLoadSelectedModel()" in data and "if(hasLoadedSuccessfully)maybeAutoLoadSelectedModel()" in data, "Model switching must auto-load after the first successful load"
-assert "fixedOption.hidden=!fixed" in data and "fixedOption.disabled=!fixed" in data, "R3 precision option must be hidden for other models"
+assert "fixedOption.hidden=!legacyFixed" in data and "fixedOption.disabled=!legacyFixed" in data, "R3 precision option must be hidden for other models"
+assert "nativeFixedOption.hidden=!nativeFixed" in data and "nativeFixedOption.disabled=!nativeFixed" in data, "Native model precision must remain fixed"
 assert '<option value="r3-fixed" hidden disabled>固定混合精度' in data, "R3 precision label must omit the R3 prefix"
 assert "R3 固定混合精度" not in data, "R3 prefix must not appear in the precision label"
 assert "acceptedCurrent" in data and "runHistory.filter(item=>item.documentRevision===revision" in data, "Every completed model result must be retained for the same input"
@@ -289,3 +290,49 @@ subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_runtime_recovery
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_wang_qwen35_2b_range_download.mjs")], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_render_parser.cjs")], check=True)
 print("Browser inference Static Space: content contract + parser fixture + Node JS syntax PASS")
+
+
+# 2026-11-07: accepted native OvisOCR3 and PaddleOCR-VL-1.6 are wired into the production UI.
+NATIVE_OUTPUT = ROOT / "hf-spaces/mvai-doctags-webgpu/native-document-output.js"
+NATIVE_OUTPUT_DOCS = ROOT / "docs/assets/projects/doctags/browser-inference/native-document-output.js"
+NATIVE_RENDERER = ROOT / "hf-spaces/mvai-doctags-webgpu/native-result-renderer.js"
+NATIVE_RENDERER_DOCS = ROOT / "docs/assets/projects/doctags/browser-inference/native-result-renderer.js"
+OVIS_NATIVE_ADAPTER = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/adapter.mjs"
+OVIS_NATIVE_CONTRACT = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/contract.mjs"
+PADDLE_NATIVE_ADAPTER = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/adapter.mjs"
+PADDLE_NATIVE_CONTRACT = ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/pipeline-contract.mjs"
+for space_file, docs_file in (
+    (NATIVE_OUTPUT, NATIVE_OUTPUT_DOCS),
+    (NATIVE_RENDERER, NATIVE_RENDERER_DOCS),
+    (OVIS_NATIVE_ADAPTER, ROOT / "docs/assets/projects/doctags/browser-inference/adapters/ovisocr3-native/adapter.mjs"),
+    (OVIS_NATIVE_CONTRACT, ROOT / "docs/assets/projects/doctags/browser-inference/adapters/ovisocr3-native/contract.mjs"),
+    (PADDLE_NATIVE_ADAPTER, ROOT / "docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs"),
+    (PADDLE_NATIVE_CONTRACT, ROOT / "docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/pipeline-contract.mjs"),
+):
+    assert space_file.is_file() and docs_file.is_file(), f"Missing native model asset: {space_file}"
+    assert space_file.read_bytes() == docs_file.read_bytes(), f"Native model asset mirror differs: {space_file}"
+OVIS_TEXT = OVIS_NATIVE_ADAPTER.read_text(encoding="utf-8")
+PADDLE_TEXT = PADDLE_NATIVE_ADAPTER.read_text(encoding="utf-8")
+assert "de391cb93aa2ee1b67692bdba1b143bf8e4a9f98" in REGISTRY_TEXT
+assert "5219606297d00bbd23b2ec193271af0c0b427dfc" in REGISTRY_TEXT
+assert "multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX" in REGISTRY_TEXT
+assert "glebkudr/PaddleOCR-VL-1.6-WebGPU" in REGISTRY_TEXT
+assert 'adapter:"ovisocr3-native"' in REGISTRY_TEXT and 'adapter:"paddleocr-vl-1.6"' in REGISTRY_TEXT
+assert 'src="./native-document-output.js?v=native-ocr-20261107"' in data
+assert 'src="./native-result-renderer.js?v=native-ocr-20261107"' in data
+assert 'import("./adapters/ovisocr3-native/adapter.mjs")' in data
+assert 'import("./adapters/paddleocr-vl-1.6/adapter.mjs")' in data
+assert 'maxPixels:1024*1024' in data, "Ovis integration default must use the accepted 1024² baseline"
+assert "nativeCore.parseOvis" in data and "nativeCore.parsePaddle" in data
+assert "nativeRenderer.renderBlocks" in data and "nativeRenderer.renderBoxes" in data
+assert 'outputFormat:nativeOutputFormat||"doctags"' in data, "Native output format must remain explicit in model history"
+assert 'value.outputFormat==="ovisocr3-native"' in data, "A/B history must preserve native result renderer"
+assert "不转换成 DocTags" in data, "Native formats must not be coerced into DocTags"
+assert "sourceImageWidth=bitmap.width" in data and "sourceImageHeight=bitmap.height" in data
+assert "createAdapter({modelId:entry.id,revision:entry.revision,onProgress})" in data
+assert "paddleNativeAdapter=await createAdapter({onProgress})" in data
+subprocess.run(["node", "--check", str(OVIS_NATIVE_ADAPTER)], check=True)
+subprocess.run(["node", "--check", str(OVIS_NATIVE_CONTRACT)], check=True)
+subprocess.run(["node", "--check", str(PADDLE_NATIVE_ADAPTER)], check=True)
+subprocess.run(["node", "--check", str(PADDLE_NATIVE_CONTRACT)], check=True)
+subprocess.run(["node", "--test", str(ROOT / "hf-spaces/mvai-doctags-webgpu/tests/native-models-integration.test.mjs")], check=True)
