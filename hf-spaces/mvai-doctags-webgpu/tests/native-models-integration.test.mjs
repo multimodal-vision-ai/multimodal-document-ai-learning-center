@@ -9,6 +9,13 @@ const read=relative=>readFile(new URL(relative,import.meta.url),"utf8");
 
 test("both accepted native models are registered with immutable model revisions",()=>{
   assert.equal(registry.getAll({getItem:()=>null}).length,5);
+  assert.deepEqual(registry.BUILTINS.map(model=>model.id),[
+    "multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX",
+    "multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX",
+    "onnx-community/granite-docling-258M-ONNX",
+    "multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX",
+    "glebkudr/PaddleOCR-VL-1.6-WebGPU"
+  ]);
   assert.equal(registry.OVIS_NATIVE.id,"multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX");
   assert.equal(registry.OVIS_NATIVE.adapter,"ovisocr3-native");
   assert.equal(registry.OVIS_NATIVE.revision,"de391cb93aa2ee1b67692bdba1b143bf8e4a9f98");
