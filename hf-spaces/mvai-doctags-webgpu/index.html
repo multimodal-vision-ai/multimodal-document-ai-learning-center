@@ -240,13 +240,13 @@ main{max-width:1260px}
     <summary aria-label="查看平台功能及多模型扩展说明" title="平台说明">ⓘ</summary>
     <div class="tip-pop" role="note">
       本平台面向文档结构化解析与多模型能力对比：对同一文档选择兼容模型，查看 DocTags、版面定位及结构化渲染结果，并比较不同模型的解析效果。
-      当前内置 IBM Granite Docling 258M 公开基线，以及 MVAI-DocTags-DJX-0.8B-v1.0 · 自研和 MVAI-DocTags-WC-2B-v1.0 · 自研模型。两款自研模型使用独立推理适配器，均需要支持 shader-f16 的 WebGPU 设备。
+      当前内置 IBM Granite Docling 258M 公开基线、OvisOCR3 0.8B、PaddleOCR-VL-1.6 0.9B，以及 MVAI-DocTags-DJX-0.8B-v1.0 · 自研和 MVAI-DocTags-WC-2B-v1.0 · 自研模型。OvisOCR3 与 PaddleOCR-VL-1.6 保留各自原生 Structured JSON / parsing_res_list 输出，不转换成 DocTags；均使用浏览器本机 WebGPU。
       支持的模型在访问者浏览器中使用 WebGPU 推理，当前仍属实验功能。模型兼容性和解析准确率须按实际结果核验。
     </div>
   </details>
 </div>
 </header>
-<div class="notice compact-notice"><strong>技术预览</strong> · 首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB。<details class="info-tip"><summary aria-label="查看下载、兼容性与隐私提醒">ⓘ</summary><div class="tip-pop">建议使用支持 WebGPU 的桌面浏览器和稳定网络。模型下载后可复用浏览器缓存，但显存实例仍需初始化。请勿上传含敏感个人信息或未经授权的文档；模型兼容性与解析准确率尚待系统验收。</div></details></div>
+<div class="notice compact-notice"><strong>技术预览</strong> · 首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB；OvisOCR3 与 PaddleOCR-VL-1.6 还需下载各自的模型资源。<details class="info-tip"><summary aria-label="查看下载、兼容性与隐私提醒">ⓘ</summary><div class="tip-pop">建议使用支持 WebGPU 的桌面浏览器和稳定网络。模型下载后可复用浏览器缓存，但显存实例仍需初始化。请勿上传含敏感个人信息或未经授权的文档；模型兼容性与解析准确率尚待系统验收。</div></details></div>
 <div class="cols workspace">
   <div class="card input-panel">
     <div class="panel-heading">
@@ -303,10 +303,10 @@ main{max-width:1260px}
       <select id="modelSelect" aria-label="选择推理模型"></select>
       <div class="field-heading">
         <label for="dtype">模型配置</label>
-        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">Granite 的 fp32/q4 用于切换同一模型的精度；DJX-0.8B 和 WC-2B 使用固定混合精度（视觉 FP32、文字 FP16），不提供 q4 切换。</div></details>
+        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">Granite 的 fp32/q4 用于切换同一模型的精度；DJX-0.8B 和 WC-2B 使用固定混合精度（视觉 FP32、文字 FP16）；OvisOCR3 与 PaddleOCR-VL-1.6 使用各自已验证的固定 WebGPU 配置，不提供 q4 切换。</div></details>
       </div>
       <div class="row config-row">
-        <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option><option value="r3-fixed" hidden disabled>固定混合精度 · 视觉 FP32 / 文字 FP16</option></select>
+        <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option><option value="r3-fixed" hidden disabled>固定混合精度 · 视觉 FP32 / 文字 FP16</option><option value="native-fixed" hidden disabled>固定配置 · 原生 WebGPU</option></select>
         <button class="primary" id="load" type="button" disabled>加载模型</button>
       </div>
       <div class="load-metrics">
@@ -366,7 +366,7 @@ main{max-width:1260px}
   <div class="compare-top">
     <div>
       <h2>03 · 推理结果对照</h2>
-      <details class="info-tip inline-info"><summary aria-label="结果对照说明">ⓘ</summary><div class="tip-pop">左侧为原图和位置框，右侧据真实生成的 DocTags 重建标题、段落、表格和阅读顺序。重建不是像素级复制。</div></details>
+      <details class="info-tip inline-info"><summary aria-label="结果对照说明">ⓘ</summary><div class="tip-pop">左侧为原图和真实位置框；右侧按所选模型的原生输出重建阅读结果。Granite/DJX/WC 使用 DocTags，OvisOCR3 保留 Structured JSON，PaddleOCR-VL-1.6 保留 parsing_res_list 与 OTSL。不同格式不会相互转换。</div></details>
     </div>
     <div class="compare-controls">
       <label><input id="bounds" type="checkbox" checked> 显示位置框</label>
@@ -387,7 +387,7 @@ main{max-width:1260px}
   
 </section>
 <details id="rawDetails" class="advanced-collapsed">
-  <summary>04 · DocTags 原始输出与技术诊断</summary>
+  <summary>04 · 模型原始输出与技术诊断</summary>
   <div class="raw-interior">
     
     <pre id="tags">模型生成的标签将出现在这里。</pre>
@@ -433,6 +433,8 @@ if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) 
 <canvas id="source" hidden></canvas>
 <script src="./doctags-renderer.js?v=1.6.1"></script>
 <script src="./model-registry.js"></script>
+<script src="./native-document-output.js?v=native-ocr-20261107"></script>
+<script src="./native-result-renderer.js?v=native-ocr-20261107"></script>
 <script type="module">
 import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,InterruptableStoppingCriteria,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
 import {createDownloadMeter,formatBytes,formatRate,formatEta} from "./adapters/r3-ovisocr3/download-metrics.mjs";
@@ -440,7 +442,8 @@ env.useBrowserCache = true; // Cache Storage; browser may evict under quota pres
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
 const graniteStopping=new InterruptableStoppingCriteria();
-let model,processor,r3Adapter=null,wangAdapter=null,loaded=false,busy=false,imageReady=false,result="",name="";
+let model,processor,r3Adapter=null,wangAdapter=null,ovisNativeAdapter=null,paddleNativeAdapter=null,loaded=false,busy=false,imageReady=false,result="",name="";
+let nativeParsed=null,nativeFormat=null,nativeHighlight=null,sourceBitmap=null,sourceImageWidth=0,sourceImageHeight=0;
 let inferenceRunning=false,stopRequested=false,activeStop=null;
 let loadingModel=false,loadPhase="idle",loadStartedAt=0,lastLoadProgressAt=0,lastLoadFile="",loadWatchdog=null;
 let sourceBlob=null; // Original File/Blob for direct self-built-model decoding; no Canvas export.
@@ -455,15 +458,22 @@ function allModels(){return [...registry.BUILTINS,...customModels];}
 function selectedModel(){return allModels().find(m=>m.id===$("modelSelect").value)||registry.BUILTIN;}
 function selectedKey(){
   const entry=selectedModel();
-  return registry.key(entry.id,["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"r3-fixed":$("dtype").value);
+  const legacyFixed=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter);
+  const nativeFixed=["ovisocr3-native","paddleocr-vl-1.6"].includes(entry.adapter);
+  return registry.key(entry.id,legacyFixed?"r3-fixed":nativeFixed?"native-fixed":$("dtype").value);
 }
 function syncModelConfiguration(){
-  const fixed=["r3-ovisocr3","wang-qwen35-2b"].includes(selectedModel().adapter);
+  const adapter=selectedModel().adapter;
+  const legacyFixed=["r3-ovisocr3","wang-qwen35-2b"].includes(adapter);
+  const nativeFixed=["ovisocr3-native","paddleocr-vl-1.6"].includes(adapter);
+  const fixed=legacyFixed||nativeFixed;
   const fixedOption=$("dtype").querySelector('option[value="r3-fixed"]');
-  fixedOption.hidden=!fixed;
-  fixedOption.disabled=!fixed;
-  if(fixed)$("dtype").value="r3-fixed";
-  else if($("dtype").value==="r3-fixed")$("dtype").value="quality";
+  fixedOption.hidden=!legacyFixed;fixedOption.disabled=!legacyFixed;
+  const nativeFixedOption=$("dtype").querySelector('option[value="native-fixed"]');
+  nativeFixedOption.hidden=!nativeFixed;nativeFixedOption.disabled=!nativeFixed;
+  if(legacyFixed)$("dtype").value="r3-fixed";
+  else if(nativeFixed)$("dtype").value="native-fixed";
+  else if(["r3-fixed","native-fixed"].includes($("dtype").value))$("dtype").value="quality";
   $("dtype").disabled=busy||fixed;
 }
 function clearRunMetrics(){
@@ -498,17 +508,21 @@ function refreshLoadButtons(){
   $("runAvailability").textContent=runReason;
   ["sourceChallenge","sourceDocling","sourceUpload"].forEach(id=>$(id).disabled=busy);
   $("modelSelect").disabled=busy;
-  $("dtype").disabled=busy||["r3-ovisocr3","wang-qwen35-2b"].includes(selectedModel().adapter);
+  $("dtype").disabled=busy||["r3-ovisocr3","wang-qwen35-2b","ovisocr3-native","paddleocr-vl-1.6"].includes(selectedModel().adapter);
   $("addModel").disabled=busy;
   $("removeModel").disabled=busy||selectedModel().builtIn;
   const entry=selectedModel();
   $("modelHelp").textContent=already
     ?"所选模型已在当前 GPU 会话中就绪；直接点击开始真正推理。"
-    :entry.adapter==="r3-ovisocr3"
-      ?"MVAI-DocTags-DJX-0.8B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 2.52 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试，其他设备仍需实测。"
-      :entry.adapter==="wang-qwen35-2b"
-        ?"MVAI-DocTags-WC-2B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 6.2 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试，其他设备仍需实测。"
-        :"模型："+entry.name+"。首次加载需要手动启动；成功后切换模型或精度将自动加载。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
+    :entry.adapter==="ovisocr3-native"
+      ?"OvisOCR3 0.8B 原生 Structured 模型。固定 ONNX bundle commit："+entry.revision+"；Vision FP32、Embedding/Decoder FP16，浏览器本机 WebGPU 推理；原始输出为 bbox/category/content JSON，不转换为 DocTags。已在 Chrome 155 / RTX 3080 10GB 完成 1024² 实际推理验收。"
+      :entry.adapter==="paddleocr-vl-1.6"
+        ?"PaddleOCR-VL-1.6 0.9B 原生模型。PP-DocLayoutV3 + VLM 两阶段 WebGPU FP16；浏览器模型包 revision："+entry.revision+"；首次下载约 2.11 GB。输出保留 parsing_res_list / OTSL，不转换为 DocTags；已在 Chrome 155 / RTX 3080 10GB 完成解析与版面还原验收。"
+        :entry.adapter==="r3-ovisocr3"
+          ?"MVAI-DocTags-DJX-0.8B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 2.52 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试，其他设备仍需实测。"
+          :entry.adapter==="wang-qwen35-2b"
+            ?"MVAI-DocTags-WC-2B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 6.2 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试，其他设备仍需实测。"
+            :"模型："+entry.name+"。首次加载需要手动启动；成功后切换模型或精度将自动加载。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
   refreshInferenceControls();
 }
 function maybeAutoLoadSelectedModel(){
@@ -582,11 +596,17 @@ function compareRecord(which){
     const tip=document.createElement("div");tip.className="render-placeholder";tip.textContent="等待该模型完成一次推理。";holder.appendChild(tip);pane.appendChild(holder);return null;}
   heading.textContent=value.label+" · "+value.seconds+" 秒";
   const article=document.createElement("article");article.className="rendered-document";
-  const parsed=documentParser.parse(value.tags);
-  if(parsed.blocks.length){parsed.blocks.forEach((block,i)=>article.appendChild(addBlock(block,i)));}
-  else {const tip=document.createElement("div");tip.className="render-placeholder";tip.textContent="DocTags 无可重建结构，可下载原始输出核对。";article.appendChild(tip);}
-  pane.appendChild(article);
-  return {value,counts:{blocks:parsed.blocks.length,tables:parsed.blocks.filter(b=>["otsl","table"].includes(b.type)).length}};
+  let parsed,counts;
+  if(value.outputFormat==="ovisocr3-native"||value.outputFormat==="paddleocr-vl16-native"){
+    parsed=parseNativeResult(value.tags,value.outputFormat);
+    const stats=nativeRenderer.renderBlocks(parsed,article,sourceBitmap);counts={blocks:stats.blocks,tables:stats.tables};
+  }else{
+    parsed=documentParser.parse(value.tags);
+    if(parsed.blocks.length)parsed.blocks.forEach((block,i)=>article.appendChild(addBlock(block,i)));
+    else {const tip=document.createElement("div");tip.className="render-placeholder";tip.textContent="DocTags 无可重建结构，可下载原始输出核对。";article.appendChild(tip);}
+    counts={blocks:parsed.blocks.length,tables:parsed.blocks.filter(b=>["otsl","table"].includes(b.type)).length};
+  }
+  pane.appendChild(article);return {value,counts};
 }
 function displayHistoryComparison(){
   const a=compareRecord("A"),b=compareRecord("B");
@@ -602,6 +622,8 @@ const palette={title:"#2c62d0",text:"#159b72",table:"#c08423",otsl:"#c08423",sea
 const compare=$("compareCanvas"),comp=compare.getContext("2d");
 const leftPane=$("originalScroll"),rightPane=$("renderScroll"),rendered=$("rendered");
 const documentParser=globalThis.MVAIDocTags;
+const nativeCore=globalThis.MVAINativeOCR;
+const nativeRenderer=globalThis.MVAINativeOCRRenderer;
 let regions=[],blocks=[],activeLocation=null,syncing=false,renderGood=false;
 const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",handwritten:"#9b6b38",page_number:"#566c89",otsl:"#c78b31",table:"#c78b31",seal:"#d74b73"};
 function drawRegionLabel(block,scaleX,scaleY) {
@@ -624,6 +646,7 @@ function drawRegionLabel(block,scaleX,scaleY) {
 function leftDraw(loc=null) {
   compare.width=src.width;compare.height=src.height;
   comp.drawImage(src,0,0);if(!src.width || !src.height)return;
+  if(nativeParsed){if($("bounds").checked){const sx=src.width/(sourceImageWidth||src.width),sy=src.height/(sourceImageHeight||src.height);comp.save();comp.setTransform(sx,0,0,sy,0,0);nativeRenderer.renderBoxes(comp,nativeParsed,sourceImageWidth||src.width,sourceImageHeight||src.height,{highlight:nativeHighlight});comp.restore();}return;}
   const scaleX=src.width/500,scaleY=src.height/500;
   if ($("bounds").checked && result) {
     const visibleRegions=regions.slice(0,280);
@@ -721,7 +744,26 @@ function addBlock(block,index) {
   element.title=block.loc?"悬停定位至原文位置":"模型未给出该元素的有效位置框";
   return element;
 }
+function parseNativeResult(raw,format){
+  if(format==="ovisocr3-native")return nativeCore.parseOvis(raw);
+  if(format==="paddleocr-vl16-native")return nativeCore.parsePaddle(raw,{width:sourceImageWidth,height:sourceImageHeight});
+  throw new Error("未知的原生 OCR 输出格式："+format);
+}
+function showNative(parsed){
+  preview.width=src.width;preview.height=src.height;v.drawImage(src,0,0);
+  const width=sourceImageWidth||src.width,height=sourceImageHeight||src.height,sx=src.width/width,sy=src.height/height;
+  v.save();v.setTransform(sx,0,0,sy,0,0);const count=nativeRenderer.renderBoxes(v,parsed,width,height);v.restore();return count;
+}
+function renderNativeComparison(parsed,format){
+  nativeParsed=parsed;nativeFormat=format;nativeHighlight=null;regions=[];blocks=[];activeLocation=null;rendered.replaceChildren();
+  const stats=nativeRenderer.renderBlocks(parsed,rendered,sourceBitmap,{onSelect:index=>{nativeHighlight=index;leftDraw();}});
+  const label=format==="ovisocr3-native"?"OvisOCR3 Structured JSON":"PaddleOCR-VL-1.6 parsing_res_list / OTSL";
+  const warnings=parsed.warnings?.length?"；提示："+parsed.warnings.join("；"):"";
+  $("compareStatus").textContent=label+" · 原生结构块："+stats.blocks+" · 表格："+stats.tables+" · 有效定位："+parsed.blocks.length+warnings;
+  leftDraw();leftPane.scrollTop=0;rightPane.scrollTop=0;return stats.blocks;
+}
 function renderComparison(tags){
+  nativeParsed=null;nativeFormat=null;nativeHighlight=null;
   rendered.replaceChildren();
   regions=documentParser.rects(tags);
   const parsed=documentParser.parse(tags);blocks=parsed.blocks;
@@ -741,7 +783,7 @@ function renderComparison(tags){
   activeLocation=null;leftDraw();leftPane.scrollTop=0;rightPane.scrollTop=0;
 }
 function resetComparison(){
-  regions=[];blocks=[];renderGood=false;activeLocation=null;
+  nativeParsed=null;nativeFormat=null;nativeHighlight=null;regions=[];blocks=[];renderGood=false;activeLocation=null;
   rendered.replaceChildren();
   const blank=document.createElement("div");blank.className="render-placeholder";
   blank.textContent="尚未运行推理。点击右上方“开始真正推理”后，这里才显示模型生成的标题、正文和表格。";
@@ -750,19 +792,15 @@ function resetComparison(){
   leftDraw();rightPane.scrollTop=0;
 }
 rendered.addEventListener("pointerover",event=>{
-  const node=event.target.closest(".render-block[data-block-index]");
-  if(!node||!rendered.contains(node))return;
-  const index=Number(node.dataset.blockIndex),block=blocks[index];if(!block?.loc)return;
-  activeLocation=block.loc;leftDraw(activeLocation);
-  const scroller=leftPane,center=block.loc[1]/500*scroller.scrollHeight - scroller.clientHeight*.32;
-  scroller.scrollTo({top:Math.max(0,center),behavior:"smooth"});
+  const node=event.target.closest(".render-block[data-block-index]");if(!node||!rendered.contains(node))return;
+  const index=Number(node.dataset.blockIndex);
+  if(nativeParsed){const block=nativeParsed.blocks[index];if(!block)return;nativeHighlight=index;leftDraw();const [,top]=nativeCore.toPixelBox(block,sourceImageWidth,sourceImageHeight);const center=top/Math.max(1,sourceImageHeight)*leftPane.scrollHeight-leftPane.clientHeight*.32;leftPane.scrollTo({top:Math.max(0,center),behavior:"smooth"});return;}
+  const block=blocks[index];if(!block?.loc)return;activeLocation=block.loc;leftDraw(activeLocation);
+  const center=block.loc[1]/500*leftPane.scrollHeight-leftPane.clientHeight*.32;leftPane.scrollTo({top:Math.max(0,center),behavior:"smooth"});
 });
-rendered.addEventListener("pointerleave",()=>{activeLocation=null;leftDraw()});
-rendered.addEventListener("focusin",event=>{
-  const node=event.target.closest(".render-block[data-block-index]");
-  const block=blocks[Number(node?.dataset.blockIndex)];if(block?.loc){activeLocation=block.loc;leftDraw(activeLocation);}
-});
-rendered.addEventListener("focusout",()=>{activeLocation=null;leftDraw()});
+rendered.addEventListener("pointerleave",()=>{activeLocation=null;nativeHighlight=null;leftDraw()});
+rendered.addEventListener("focusin",event=>{const node=event.target.closest(".render-block[data-block-index]");if(!node)return;const index=Number(node.dataset.blockIndex);if(nativeParsed){if(nativeParsed.blocks[index]){nativeHighlight=index;leftDraw();}return;}const block=blocks[index];if(block?.loc){activeLocation=block.loc;leftDraw(activeLocation);}});
+rendered.addEventListener("focusout",()=>{activeLocation=null;nativeHighlight=null;leftDraw()});
 $("bounds").onchange=()=>leftDraw(activeLocation);
 function syncScroll(from,to){
   if(!$("sync").checked||syncing)return;
@@ -1067,14 +1105,9 @@ async function loadLocalSample(kind,group="docling"){
     const blob=await fetchSampleBlob(sample.file);
     const bitmap=await createImageBitmap(blob);
     if(ticket!==sampleSelectionSerial){bitmap.close?.();return;}
-    try{
-      if(!bitmap.width||!bitmap.height)throw Error("图片尺寸无效");
-      const scale=Math.min(1,1500/Math.max(bitmap.width,bitmap.height));
-      src.width=Math.round(bitmap.width*scale);
-      src.height=Math.round(bitmap.height*scale);
-      c.drawImage(bitmap,0,0,src.width,src.height);
-    }finally{bitmap.close?.();}
-    sourceBlob=blob;
+    if(!bitmap.width||!bitmap.height){bitmap.close?.();throw Error("图片尺寸无效");}
+    const scale=Math.min(1,1500/Math.max(bitmap.width,bitmap.height));src.width=Math.round(bitmap.width*scale);src.height=Math.round(bitmap.height*scale);c.drawImage(bitmap,0,0,src.width,src.height);
+    sourceBitmap?.close?.();sourceBitmap=bitmap;sourceImageWidth=bitmap.width;sourceImageHeight=bitmap.height;sourceBlob=blob;
     inputRevision++;resetHistory();imageReady=true;name=(group==="challenge"?"mvaidoc-tags-challenge-":"ibm-demo-")+sample.id;
     $("file").value="";highlightSample(kind,group);
     clearResult();show();leftDraw();
@@ -1167,7 +1200,7 @@ function initSampleGallery(){
   });
   setInputSource("challenge");
 }
-function clearResult(){result="";$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveImg").disabled=true;$("timing").textContent="";clearRunMetrics();resetComparison();}
+function clearResult(){result="";nativeParsed=null;nativeFormat=null;nativeHighlight=null;$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveDT").textContent="下载 DocTags";$("saveImg").disabled=true;$("timing").textContent="";clearRunMetrics();resetComparison();}
 function status(text){$("status").textContent=text;}
 initSampleGallery();
 $("file").onchange=async event=>{
@@ -1178,8 +1211,8 @@ $("file").onchange=async event=>{
     const im=await createImageBitmap(file);
     if(ticket!==sampleSelectionSerial){im.close?.();return;}
     const scale=Math.min(1,1500/Math.max(im.width,im.height));
-    src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);im.close?.();
-    sourceBlob=file;
+    src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);
+    sourceBitmap?.close?.();sourceBitmap=im;sourceImageWidth=im.width;sourceImageHeight=im.height;sourceBlob=file;
     inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();highlightSample(null,null);setInputSource("upload");
     $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";refreshLoadButtons();
     status(loaded&&activeKey===selectedKey()?"本地图片已载入；可以开始推理。":"本地图片已载入；请先完成模型加载。");
@@ -1363,9 +1396,17 @@ $("load").onclick=async()=>{
  try{
    if(r3Adapter){await r3Adapter.dispose();r3Adapter=null;}
    if(wangAdapter){await wangAdapter.dispose();wangAdapter=null;}
+   if(ovisNativeAdapter){await ovisNativeAdapter.dispose();ovisNativeAdapter=null;}
+   if(paddleNativeAdapter){await paddleNativeAdapter.dispose();paddleNativeAdapter=null;}
    if(model){await model.dispose?.();model=null;}
    processor=null;loaded=false;activeKey=null;
-   if(entry.adapter==="r3-ovisocr3"){
+   if(entry.adapter==="ovisocr3-native"){
+     const {createAdapter}=await import("./adapters/ovisocr3-native/adapter.mjs");
+     ovisNativeAdapter=await createAdapter({modelId:entry.id,revision:entry.revision,onProgress});
+   }else if(entry.adapter==="paddleocr-vl-1.6"){
+     const {createAdapter}=await import("./adapters/paddleocr-vl-1.6/adapter.mjs");
+     paddleNativeAdapter=await createAdapter({onProgress});
+   }else if(entry.adapter==="r3-ovisocr3"){
      const {createAdapter}=await import("./adapters/r3-ovisocr3/adapter.mjs");
      r3Adapter=await createAdapter({modelId:entry.id,onProgress});
    }else if(entry.adapter==="wang-qwen35-2b"){
@@ -1382,12 +1423,14 @@ $("load").onclick=async()=>{
    loaded=true;activeKey=key;activeModelName=entry.name;loadPhase="ready";
    $("progress").value=100;
    hasLoadedSuccessfully=true;markSuccessfulLoad(key);
-   $("downloadStatus").textContent=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）· 当前 GPU 会话就绪":"模型已加载 · 可开始推理";
+   $("downloadStatus").textContent=entry.adapter==="ovisocr3-native"?"OvisOCR3 已加载 · WebGPU · Vision FP32 / Embedding + Decoder FP16":entry.adapter==="paddleocr-vl-1.6"?"PaddleOCR-VL-1.6 已加载 · PP-DocLayoutV3 + VLM · WebGPU FP16":["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）· 当前 GPU 会话就绪":"模型已加载 · 可开始推理";
  }catch(err){
    loadPhase="error";
    console.error("Model load failure",err);
    if(r3Adapter){try{await r3Adapter.dispose();}catch{} r3Adapter=null;}
    if(wangAdapter){try{await wangAdapter.dispose();}catch{} wangAdapter=null;}
+   if(ovisNativeAdapter){try{await ovisNativeAdapter.dispose();}catch{} ovisNativeAdapter=null;}
+   if(paddleNativeAdapter){try{await paddleNativeAdapter.dispose();}catch{} paddleNativeAdapter=null;}
    if(model){try{await model.dispose?.();}catch{} model=null;}
    loaded=false;activeKey=null;processor=null;
    const loadError=String(err?.message||err);
@@ -1410,13 +1453,25 @@ $("load").onclick=async()=>{
 $("run").onclick=async()=>{
   if(busy||!loaded||!imageReady||activeKey!==selectedKey())return;
   const entry=selectedModel();
-  const adapter=entry.adapter==="r3-ovisocr3"?r3Adapter:entry.adapter==="wang-qwen35-2b"?wangAdapter:null;
+  const adapter=entry.adapter==="r3-ovisocr3"?r3Adapter:entry.adapter==="wang-qwen35-2b"?wangAdapter:entry.adapter==="ovisocr3-native"?ovisNativeAdapter:entry.adapter==="paddleocr-vl-1.6"?paddleNativeAdapter:null;
   busy=true;inferenceRunning=true;stopRequested=false;
   activeStop=adapter?()=>adapter.stop():()=>graniteStopping.interrupt();
   refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
+  let nativeOutputFormat=entry.adapter==="ovisocr3-native"?"ovisocr3-native":entry.adapter==="paddleocr-vl-1.6"?"paddleocr-vl16-native":null;
+  let nativeParseValid=true,nativeRegionCount=0,nativeTotalRegions=0;
   try{
     let seconds=0,ended=true,generatedTokens=0,tokensPerSecond=0;
-    if(entry.adapter==="r3-ovisocr3"||entry.adapter==="wang-qwen35-2b"){
+    if(entry.adapter==="ovisocr3-native"){
+      if(!ovisNativeAdapter)throw Error("OvisOCR3 适配器尚未就绪，请重新加载模型。");
+      if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
+      const output=await ovisNativeAdapter.recognize(sourceBlob,{maxPixels:1024*1024,onTokens:n=>{$("downloadStatus").textContent="OvisOCR3 Structured 正在生成："+n+" tokens";}});
+      result=output.text;seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);ended=Boolean(output.ended);generatedTokens=Number(output.generatedTokens)||0;tokensPerSecond=Number(output.tokensPerSecond)||0;
+    }else if(entry.adapter==="paddleocr-vl-1.6"){
+      if(!paddleNativeAdapter)throw Error("PaddleOCR-VL-1.6 适配器尚未就绪，请重新加载模型。");
+      if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
+      const output=await paddleNativeAdapter.recognize(sourceBlob,{onProgress:event=>{$("downloadStatus").textContent="PaddleOCR-VL-1.6 · "+(event?.stage||event?.kind||"推理")+" · "+(event?.region?event.region+"/"+(event.totalRegions||"?"):"");}});
+      result=output.text;seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);ended=Boolean(output.ended);nativeRegionCount=Number(output.completedRegions)||0;nativeTotalRegions=Number(output.totalRegions)||0;
+    }else if(entry.adapter==="r3-ovisocr3"||entry.adapter==="wang-qwen35-2b"){
       if(!adapter)throw Error(entry.name+" 适配器尚未就绪，请重新加载模型。");
       if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
       const output=await adapter.recognize(sourceBlob,{
@@ -1449,17 +1504,22 @@ $("run").onclick=async()=>{
       return;
     }
     if(!result)throw Error("模型返回空结果");
-    $("tags").textContent=result;
-    const boxes=show(result);renderComparison(result);
+    $("tags").textContent=result;let boxes=0;
+    if(nativeOutputFormat){
+      $("saveDT").textContent="下载原生 JSON";
+      try{const parsed=parseNativeResult(result,nativeOutputFormat);boxes=showNative(parsed);renderNativeComparison(parsed,nativeOutputFormat);}
+      catch(parseError){nativeParseValid=false;nativeParsed=null;nativeFormat=nativeOutputFormat;show();rendered.replaceChildren();const warning=document.createElement("div");warning.className="render-placeholder";warning.textContent="原始输出已保留，但未通过原生结构化解析，不能安全绘制定位框："+(parseError?.message||String(parseError));rendered.appendChild(warning);leftDraw();$("compareStatus").textContent="原生结构校验失败；原始输出可在 04 区下载核对。";}
+    }else{boxes=show(result);renderComparison(result);$("saveDT").textContent="下载 DocTags";}
     $("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
     const adapterLabel=entry.adapter==="r3-ovisocr3"?"DJX-0.8B":entry.adapter==="wang-qwen35-2b"?"WC-2B":null;
-    $("timing").textContent=adapterLabel
-      ?adapterLabel+" WebGPU · "+generatedTokens+" 词元 · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" 词元/秒 · Transformers.js 4.4.0-next.0 / ORT Web 1.31.1 · 输入："+name+" · 带坐标标签 "+boxes+" 个"
+    $("timing").textContent=nativeOutputFormat==="ovisocr3-native"?"OvisOCR3 WebGPU · "+generatedTokens+" tokens · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" tokens/s · 原生 Structured JSON · 输入："+name+" · 有效定位 "+boxes+" 个"
+      :nativeOutputFormat==="paddleocr-vl16-native"?"PaddleOCR-VL-1.6 WebGPU FP16 · 完成区域 "+nativeRegionCount+"/"+nativeTotalRegions+" · "+seconds.toFixed(1)+" 秒 · 原生 parsing_res_list / OTSL · 输入："+name+" · 有效定位 "+boxes+" 个"
+      :adapterLabel?adapterLabel+" WebGPU · "+generatedTokens+" 词元 · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" 词元/秒 · Transformers.js 4.4.0-next.0 / ORT Web 1.31.1 · 输入："+name+" · 带坐标标签 "+boxes+" 个"
       :"GPU 推理约 "+seconds.toFixed(1)+" 秒 · 模型："+activeModelName+" · 输入："+name+" · 带坐标标签 "+boxes+" 个";
-    const completedNormally=ended&&!stopRequested;
+    const completedNormally=ended&&!stopRequested&&nativeParseValid;
     if(completedNormally){
-      const precisionLabel=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"视觉 FP32 / 文字 FP16":$("dtype").value==="quality"?"fp32":"q4";
-      updateHistory({key:activeKey,modelId:entry.id,documentRevision:inputRevision,tags:result,seconds:Number(seconds),label:activeModelName+" · "+precisionLabel});
+      const precisionLabel=nativeOutputFormat?"原生 WebGPU 固定配置":["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"视觉 FP32 / 文字 FP16":$("dtype").value==="quality"?"fp32":"q4";
+      updateHistory({key:activeKey,modelId:entry.id,documentRevision:inputRevision,tags:result,outputFormat:nativeOutputFormat||"doctags",seconds:Number(seconds),label:activeModelName+" · "+precisionLabel});
     }else if(stopRequested){
       $("compareDiagnostic").textContent="本次推理已由用户终止，以下为已生成的部分输出；结果不完整，未计入多模型结果对比。";
     }else{
@@ -1468,14 +1528,16 @@ $("run").onclick=async()=>{
     showRunMetrics(entry.id,seconds);
     status(stopRequested
       ?"已终止推理 · 当前输出不完整，未计入多模型对比；模型仍保持加载"
-      :ended?"推理完成 · 请查看下方对照结果":"生成未正常结束 · 当前输出可能不完整，请核对原始 DocTags");
+      :!nativeParseValid?"推理结束，但原生结构化输出校验未通过；原始输出已保留"
+      :ended?"推理完成 · 请查看下方对照结果":"生成未正常结束 · 当前输出可能不完整，请核对原始输出");
   }catch(e){
    if(stopRequested){
-     const partial=$("tags").textContent;
+     const partial=e?.partialText||$("tags").textContent;
      if(partial&&partial!=="等待新的推理输出。"){
-       result=partial;
-       $("saveDT").disabled=false;
-       try{const boxes=show(result);renderComparison(result);$("saveImg").disabled=boxes===0;}catch{$("saveImg").disabled=true;}
+       result=partial;$("tags").textContent=partial;$("saveDT").disabled=false;let boxes=0;
+       try{if(nativeOutputFormat){$("saveDT").textContent="下载原生 JSON";const parsed=parseNativeResult(partial,nativeOutputFormat);boxes=showNative(parsed);renderNativeComparison(parsed,nativeOutputFormat);}else{boxes=show(result);renderComparison(result);}}
+       catch{$("saveImg").disabled=true;nativeParsed=null;show();rendered.replaceChildren();const warning=document.createElement("div");warning.className="render-placeholder";warning.textContent="已保留部分原始输出，但无法解析为完整结构；不绘制定位框。";rendered.appendChild(warning);}
+       $("saveImg").disabled=boxes===0;
        $("compareDiagnostic").textContent="本次推理已由用户终止，以下为已生成的部分输出；结果不完整，未计入多模型结果对比。";
        $("timing").textContent="推理已中断 · 输入："+name+" · 已保留部分输出";
        showRunMetrics(entry.id,(performance.now()-start)/1000);
