@@ -2,14 +2,18 @@ name: Documentation quality
 
 on:
   pull_request:
+    branches: [dev, main]
     paths:
       - "docs/**"
+      - "hf-spaces/mvai-doctags-webgpu/**"
+      - "scripts/kaggle/*doctags*"
       - "mkdocs.yml"
       - "requirements-docs.txt"
       - ".github/workflows/docs-quality.yml"
+      - ".github/workflows/native-ocr-contracts.yml"
+      - ".github/workflows/publish-hf-doctags.yml"
   push:
-    branches:
-      - dev
+    branches: [dev, main]
 
 permissions:
   contents: read
@@ -19,12 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - name: Run DocTags parser regression tests
-        run: node scripts/kaggle/test_doctags_render_parser.cjs
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
@@ -32,6 +30,19 @@ jobs:
           cache-dependency-path: requirements-docs.txt
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
+      - name: Assemble DocTags challenge images
+        run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
+      - name: Stage hash-verified PP-DocLayoutV3 worker for browser inference validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node hf-spaces/mvai-doctags-webgpu/scripts/stage-ppdoclayout-worker.mjs
+          mkdir -p docs/assets/projects/doctags/browser-inference/vendor
+          cp -a hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3 docs/assets/projects/doctags/browser-inference/vendor/
+      - name: Validate Kaggle pilot notebook syntax and student links
+        run: python scripts/kaggle/validate_doctags_pilot.py
+      - name: Validate browser inference JavaScript and HF Space package
+        run: python scripts/kaggle/validate_browser_doctags_pilot.py
       - name: Validate navigation and internal links
         run: mkdocs build --strict
 

@@ -1,0 +1,119 @@
+{
+  "source_sha256": "89f23b4a9092976976af24f822bd77a235c70af81efdfed9d6af715ab2b6ee8e",
+  "vocab_size": 252480,
+  "original_assets_unchanged": {
+    "tokenizer.json": true,
+    "tokenizer_config.json": true,
+    "chat_template.jinja": true,
+    "processor_config.json": true,
+    "generation_config.json": true
+  },
+  "added_tokens_single_and_lossless": 4403,
+  "new_token_embedding_max_abs": 1.1920928955078125e-07,
+  "lm_head_matches_source": [
+    0,
+    248077,
+    248105,
+    248605,
+    252479
+  ],
+  "vision_against_native_checkpoint": [
+    {
+      "grid": [
+        1,
+        4,
+        4
+      ],
+      "shape": [
+        4,
+        1024
+      ],
+      "cosine": 0.9999999403953552,
+      "max_abs": 0.0001220703125,
+      "mean_abs": 1.233129296451807e-07
+    },
+    {
+      "grid": [
+        1,
+        6,
+        8
+      ],
+      "shape": [
+        12,
+        1024
+      ],
+      "cosine": 1.0,
+      "max_abs": 0.0001220703125,
+      "mean_abs": 2.1320495591226063e-07
+    },
+    {
+      "grid": [
+        1,
+        22,
+        34
+      ],
+      "shape": [
+        187,
+        1024
+      ],
+      "cosine": 0.9999988675117493,
+      "max_abs": 0.0009765625,
+      "mean_abs": 3.603985021527478e-07
+    }
+  ],
+  "artifacts": {
+    "tokenizer.json": {
+      "bytes": 20789535,
+      "sha256": "6b3a4a2d082ab8e3fc0ac04359cee8a6f697bc7e4cecbfe3a342ef695b72313a"
+    },
+    "tokenizer_config.json": {
+      "bytes": 1165,
+      "sha256": "792fa3f0cb88b111e54ef3134c873531008c4df471d108da17903426e308aa7b"
+    },
+    "chat_template.jinja": {
+      "bytes": 7755,
+      "sha256": "273d8e0e683b885071fb17e08d71e5f2a5ddfb5309756181681de4f5a1822d80"
+    },
+    "processor_config.json": {
+      "bytes": 1191,
+      "sha256": "d89ef49ce9cd37fbf510158e13c1ef063d9286411c1ec9049932dbe0487143b1"
+    },
+    "generation_config.json": {
+      "bytes": 214,
+      "sha256": "ae739e26f92bc546fb7ca3b5d76a415022ef9f6d195a78235c2713afe686d3b0"
+    },
+    "config.json": {
+      "bytes": 2775,
+      "sha256": "00d7c33ff384d18a5b8281b246d6d0879a1e14f528ffdfbf227f751364c34116"
+    },
+    "preprocessor_config.json": {
+      "bytes": 533,
+      "sha256": "947547770199834cb216f3ea8c8407742275a812e83f5b6eb71421d34e00e375"
+    },
+    "onnx/embed_tokens_fp16.onnx": {
+      "bytes": 383,
+      "sha256": "64deb3c294de964a3ceaadf438ca9e9b5efaeb2ebcfaf45e83e306b7afdeea85"
+    },
+    "onnx/embed_tokens_fp16.onnx_data": {
+      "bytes": 517079040,
+      "sha256": "c896810ded921b5b03d10993497befbc6d5ce91fca869540d6485e6e6c351364"
+    },
+    "onnx/vision_encoder.onnx": {
+      "bytes": 1938720,
+      "sha256": "ef4904ba6a25254d2f12e0b2caf95c409d89c36cc48e2d4a3d0fcdd1eba07c83"
+    },
+    "onnx/vision_encoder.onnx_data": {
+      "bytes": 402371584,
+      "sha256": "5eb070cfae2996a5824de1fbe88d1a1d2468466d64c88eb67fe4dce031f134c0"
+    },
+    "onnx/decoder_model_merged_fp16.onnx": {
+      "bytes": 276998,
+      "sha256": "c72102ef23b6c19f8a1a9e60ddff252985d58657157b3705b8f2944200a30f21"
+    },
+    "onnx/decoder_model_merged_fp16.onnx_data": {
+      "bytes": 1580636928,
+      "sha256": "6433052e27910f8e09e88802e9a31d136f1136d2e721eaca6d10bc5288143d60"
+    }
+  },
+  "success": true
+}

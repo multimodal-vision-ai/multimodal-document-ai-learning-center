@@ -1,0 +1,78 @@
+"use strict";
+const a=require("node:assert/strict");
+const model=require("../../docs/assets/projects/doctags/browser-inference/model-registry.js");
+let data={};
+const storage={getItem:key=>data[key]??null,setItem:(key,val)=>{data[key]=val;}};
+a.equal(model.getAll(storage).length,5);
+a.equal(model.BUILTIN.checked,true);
+a.equal(model.OVIS_NATIVE.id,"multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX");
+a.equal(model.OVIS_NATIVE.adapter,"ovisocr3-native");
+a.equal(model.OVIS_NATIVE.parameterCount,"0.8B 参数");
+a.equal(model.OVIS_NATIVE.revision,"de391cb93aa2ee1b67692bdba1b143bf8e4a9f98");
+a.equal(model.PADDLE_NATIVE.id,"glebkudr/PaddleOCR-VL-1.6-WebGPU");
+a.equal(model.PADDLE_NATIVE.adapter,"paddleocr-vl-1.6");
+a.equal(model.PADDLE_NATIVE.parameterCount,"0.9B 参数");
+a.equal(model.PADDLE_NATIVE.revision,"5219606297d00bbd23b2ec193271af0c0b427dfc");
+a.equal(model.R3.id,"multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX");
+a.equal(model.R3.name,"MVAI-DocTags-DJX-0.8B-v1.0 · 自研");
+a.equal(model.R3.adapter,"r3-ovisocr3");
+a.equal(model.R3.parameterCount,"0.8B 参数");
+a.equal(model.WANG_2B.id,"multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX");
+a.equal(model.WANG_2B.name,"MVAI-DocTags-WC-2B-v1.0 · 自研");
+a.equal(model.WANG_2B.adapter,"wang-qwen35-2b");
+a.equal(model.WANG_2B.parameterCount,"2.2B 参数");
+a.ok(model.validRepoId("multimodal-vision-ai/mvai-docling-onnx"));
+for(const bad of ["https://hf.co/model","../../private","org/../bad","foo","org/model/extra","org/with space"])a.equal(model.validRepoId(bad),false);
+const item=model.normalise({id:"multimodal-vision-ai/mvai-docling-onnx",name:"实验室自研（实验）"});
+model.save(storage,[item]);
+const restored=model.getAll(storage);
+a.equal(restored.length,6);
+a.deepEqual(restored.slice(0,5).map(item=>item.id),[
+  model.R3.id,
+  model.WANG_2B.id,
+  model.BUILTIN.id,
+  model.OVIS_NATIVE.id,
+  model.PADDLE_NATIVE.id
+]);
+a.equal(restored[5].checked,false);
+a.equal(restored[5].origin.includes("待兼容性验证"),true);
+a.throws(()=>model.normalise({id:model.BUILTIN.id,name:"duplicate"}));
+a.throws(()=>model.normalise({id:model.OVIS_NATIVE.id,name:"duplicate"}));
+a.throws(()=>model.normalise({id:model.PADDLE_NATIVE.id,name:"duplicate"}));
+a.throws(()=>model.normalise({id:model.R3.id,name:"duplicate"}));
+a.throws(()=>model.normalise({id:model.WANG_2B.id,name:"duplicate"}));
+a.equal(model.key(item.id,"compact"),"multimodal-vision-ai/mvai-docling-onnx::compact");
+a.equal(model.key(model.R3.id,"r3-fixed"),model.R3.id+"::r3-fixed");
+a.equal(model.key(model.WANG_2B.id,"r3-fixed"),model.WANG_2B.id+"::r3-fixed");
+a.equal(model.key(model.OVIS_NATIVE.id,"native-fixed"),model.OVIS_NATIVE.id+"::native-fixed");
+a.equal(model.key(model.PADDLE_NATIVE.id,"native-fixed"),model.PADDLE_NATIVE.id+"::native-fixed");
+const result={key:"m1::quality",modelId:model.BUILTIN.id,documentRevision:1,tags:"<text>A</text>"};
+a.equal(model.recordResult([],result).length,1);
+a.equal(model.recordResult([result],{...result,tags:"<text>B</text>"}).length,1);
+a.equal(model.recordResult([result],{...result,documentRevision:2}).length,1);
+const secondResult={key:model.key(model.R3.id,"r3-fixed"),modelId:model.R3.id,documentRevision:1,tags:"<text>R3</text>"};
+const thirdResult={key:model.key(model.WANG_2B.id,"r3-fixed"),modelId:model.WANG_2B.id,documentRevision:1,tags:"<text>WC-2B</text>"};
+const bothResults=model.recordResult([result],secondResult);
+const allResults=model.recordResult(bothResults,thirdResult);
+const fourthResult={key:model.key(model.OVIS_NATIVE.id,"native-fixed"),modelId:model.OVIS_NATIVE.id,documentRevision:1,tags:"[]",outputFormat:"ovisocr3-native"};
+const fifthResult={key:model.key(model.PADDLE_NATIVE.id,"native-fixed"),modelId:model.PADDLE_NATIVE.id,documentRevision:1,tags:"{}",outputFormat:"paddleocr-vl16-native"};
+const fourResults=model.recordResult(allResults,fourthResult);
+const fiveResults=model.recordResult(fourResults,fifthResult);
+a.equal(fiveResults.length,5,"All five built-in models on the same input must remain selectable");
+a.deepEqual(fiveResults.map(item=>item.modelId),[model.BUILTIN.id,model.R3.id,model.WANG_2B.id,model.OVIS_NATIVE.id,model.PADDLE_NATIVE.id]);
+a.equal(fiveResults[3].outputFormat,"ovisocr3-native");
+a.equal(fiveResults[4].outputFormat,"paddleocr-vl16-native");
+a.equal(model.recordResult([], {...result,documentRevision:0}).length,1,"First document revision 0 is valid");
+a.equal(model.modelSizeLabel(model.BUILTIN.id),"258M 参数");
+a.equal(model.modelSizeLabel(model.R3.id),"0.8B 参数");
+a.equal(model.modelSizeLabel(model.WANG_2B.id),"2.2B 参数");
+a.equal(model.modelSizeLabel(model.OVIS_NATIVE.id),"0.8B 参数");
+a.equal(model.modelSizeLabel(model.PADDLE_NATIVE.id),"0.9B 参数");
+a.equal(model.modelSizeLabel("multimodal-vision-ai/mvai-docling-onnx"),"未提供（自定义模型）");
+a.equal(model.proportionalPosition(150,800,200,1500,300),300);
+a.equal(model.proportionalPosition(0,800,200,1500,300),0);
+a.equal(model.proportionalPosition(600,800,200,1500,300),1200);
+a.equal(model.proportionalPosition(650,800,200,1500,300),1200);
+a.equal(model.proportionalPosition(200,200,200,1500,300),0);
+a.equal(model.proportionalPosition(200,800,200,200,200),0);
+console.log("Model registry tests: five built-in models, custom validation, persistence, parameter labels and five-model comparison history PASS");
