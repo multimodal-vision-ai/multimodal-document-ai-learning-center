@@ -1,4 +1,4 @@
-# Native OCR browser adapters — development status (2026-11-06)
+# Native OCR browser adapters — development status (2026-11-07)
 
 ## Approved constraints
 - Add only the official **ATH-MaaS/OvisOCR3 0.8B** and **PaddleOCR-VL-1.6 0.9B** models.
@@ -58,7 +58,10 @@
 - Added a regression test proving that the resolved PP-DocLayoutV3 worker URL has the same origin as the demo page and a CI-pinned worker staging check.
 - Ovis decoder packaging and validation now run `onnx.checker` after external-data packaging.
 
-## Not yet completed / not exposed
+## Historical pre-acceptance status (superseded 2026-11-07)
+
+> The following checklist records the state before the OvisOCR3 conversion and browser acceptance completed. The current status is summarized at the end of this document.
+
 - Official OvisOCR3 checkpoint has not yet been downloaded, exported, parity-validated, or uploaded to the MVAI HF model repository.
 - OvisOCR3 has not yet passed a real Chrome WebGPU document test.
 - The PP-DocLayoutV3 inference Worker is now staged as a same-origin static asset. The SDK browser-global bundle, Paddle VLM engine, and ONNX Runtime WASM files still use pinned external CDN URLs; self-hosting those remaining runtime components has not yet been prepared.
@@ -106,3 +109,41 @@ The official checkpoint has **not** yet been downloaded or converted. No ONNX co
 
 Next action: run the pinned conversion on the dedicated Linux/Python 3.11 environment, inspect the component validation report, then run the original BF16 reference and real Chrome WebGPU acceptance on the target RTX 3080. HF upload remains a separate explicit approval gate.
 
+
+## 2026-11-07 — Both native models accepted; production integration started
+
+### Model acceptance
+
+**OvisOCR3 0.8B**
+- The official ATH-MaaS/OvisOCR3 checkpoint was exported and component-validated on Kaggle Tesla T4.
+- The validated ONNX bundle was uploaded to multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX.
+- Immutable bundle commit: de391cb93aa2ee1b67692bdba1b143bf8e4a9f98.
+- Source revision remains 17f255e2c8ae6d18d5d5edb0a474bd4ed39aef90.
+- Real browser WebGPU inference and manual structured-output/layout acceptance passed on Chrome 155 / NVIDIA RTX 3080 10GB.
+- The accepted 1024² run produced 13 valid structure elements and 13 valid positions; one performance report recorded 1458 generated tokens, 34.61 seconds end-to-end, 42.82 tokens/s and complete generation.
+- Default production input pixel limit is 1024². The native Structured JSON array is preserved, including normalized bbox, category and content; no DocTags conversion is performed.
+
+**PaddleOCR-VL-1.6 0.9B**
+- Manual browser acceptance passed on Chrome 155 / NVIDIA RTX 3080 10GB; the user confirmed parsing and layout reconstruction were correct.
+- Browser model revision: 5219606297d00bbd23b2ec193271af0c0b427dfc.
+- PP-DocLayoutV3 FP16 + PaddleOCR-VL WebGPU FP16; same-origin worker assets are staged in the HF Space and DEV assets.
+- Native parsing_res_list, original-pixel boxes and OTSL content are preserved; no DocTags conversion is performed.
+
+### Production integration on the PR #74 feature branch
+
+- The model registry now contains five built-in choices: Granite Docling, OvisOCR3, PaddleOCR-VL-1.6, MVAI DJX-0.8B and MVAI WC-2B.
+- The production DocTags page loads the native JSON parser and safe renderer, routes each new model to its own adapter, draws native-coordinate boxes and renders the native reading view.
+- Ovis and Paddle results retain an explicit output-format tag in A/B history; the comparison panes render the appropriate native or DocTags format.
+- Native output downloads as JSON; existing DocTags downloads remain .dt.
+- Original Granite/DJX/WC adapters, model files and DocTags paths remain unchanged.
+- The two new native adapters and renderer assets are mirrored byte-for-byte between hf-spaces/mvai-doctags-webgpu and docs/assets/projects/doctags/browser-inference.
+- The integration uses fixed model revisions. Ovis defaults to the accepted 1024² setting. No additional Decoder optimization is planned for this release.
+
+### Release gates
+
+1. Complete static contract tests, Python validation, JavaScript syntax checks and DEV preview asset probes.
+2. Manually verify the integrated five-model selector, Ovis/Paddle load and inference, native output rendering, position overlay, A/B history, download format, model switching and regression of Granite/DJX/WC.
+3. After manual DEV acceptance, merge PR #74 into dev. The publish-hf-doctags.yml workflow then publishes the approved HF Static Space bundle if the repository HF_TOKEN secret is configured.
+4. After the DEV/HF Space version is accepted, promote the approved dev content to main for GitHub Pages production deployment.
+
+Current rule: do not merge to main before the integrated DEV page and HF Space have been manually accepted.
