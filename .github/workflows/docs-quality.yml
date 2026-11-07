@@ -28,6 +28,13 @@ jobs:
         run: pip install -r requirements-docs.txt
       - name: Assemble DocTags challenge images
         run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
+      - name: Stage hash-verified PP-DocLayoutV3 worker for browser inference validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node hf-spaces/mvai-doctags-webgpu/scripts/stage-ppdoclayout-worker.mjs
+          mkdir -p docs/assets/projects/doctags/browser-inference/vendor
+          cp -a hf-spaces/mvai-doctags-webgpu/vendor/ppdoclayoutv3 docs/assets/projects/doctags/browser-inference/vendor/
       - name: Validate Kaggle pilot notebook syntax and student links
         run: python scripts/kaggle/validate_doctags_pilot.py
       - name: Validate browser inference JavaScript and HF Space package
