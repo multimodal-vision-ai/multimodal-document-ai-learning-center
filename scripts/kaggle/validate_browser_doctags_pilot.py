@@ -86,6 +86,8 @@ assert "MVAI-DocTags-WC-2B-v1.0 · 自研" in REGISTRY_TEXT
 assert "2.2B 参数" in REGISTRY_TEXT
 assert 'src="./model-registry.js?v=mvai-order-20261107-2"' in data, "Cache-busted model registry must be loaded"
 assert "const BUILTINS=Object.freeze([R3,WANG_2B,BUILTIN,OVIS_NATIVE,PADDLE_NATIVE])" in REGISTRY_TEXT, "MVAI self-developed models must lead the built-in selector order"
+assert "select.value=allModels().some(m=>m.id===prefer)?prefer:registry.R3.id;" in data, "First MVAI model must be the selector fallback"
+assert "renderModelOptions(registry.R3.id);loadLocalSample" in data, "First MVAI model must be selected on initial page load"
 for control in ('modelSelect','newModelRepo','addModel','cacheCheck','cacheClear','cachePersist','compareA','compareB','compareBodyA','compareBodyB'):
     assert 'id="'+control+'"' in data, f"Missing V1.7 control {control}"
 assert "env.useBrowserCache = true" in data, "Granite browser cache not enabled"
