@@ -121,4 +121,23 @@ After conversion and parity checks:
 4. Run the browser test on Chrome + NVIDIA RTX 3080 10GB, including cold load, warm inference, stop, repeat inference, and bbox/render alignment.
 5. Only after the manual DEV review may the model be promoted.
 
-**Current status:** export code and validation tooling are prepared; the official checkpoint has not yet been exported, uploaded, or browser-validated. The model must remain absent from the active model list until those gates pass.
+**Current status (2026-11-07):** the pinned official checkpoint has been converted and validated on Kaggle T4, uploaded to the MVAI Hugging Face organization, and successfully loaded/inferred in Chrome WebGPU on an RTX 3080. Performance optimization is in progress on the isolated PR #74 branch; do not add the model to the active model list until the speed/quality and stability gates pass.
+
+
+## Browser performance profiling (2026-11-07)
+
+The OvisOCR3 DEV adapter now uses a token-only streamer for the normal inference path. The previous Transformers.js `TextStreamer` decoded and re-copied the growing token prefix at every generation step; this page only needs the final text, so incremental prefix decoding is skipped. The generated token sequence and final decoded text remain unchanged.
+
+The adapter also measures each ONNX session's `run()` wall time and separates:
+- image decoding and processor preprocessing;
+- Vision Encoder session time;
+- embedding session time;
+- first Decoder call (prefill);
+- subsequent Decoder calls (autoregressive decode);
+- generation time outside the measured ONNX sessions.
+
+Use 1024² as the default optimization baseline. Keep 1440² as the high-quality reference; 768² and 576² are diagnostic options only.
+
+For ONNX Runtime verbose logs and session profiling, add `?profile=1` to the standalone DEV page URL. Profiling mode adds overhead; do not compare its wall-clock speed directly with normal mode. Each run can export a JSON performance report that excludes recognized document text and token IDs.
+
+WASM thread selection is now adaptive: ORT uses automatic thread selection only when the page is cross-origin isolated and SharedArrayBuffer is available; otherwise it remains single-threaded. The adapter explicitly enables the generation KV cache.
