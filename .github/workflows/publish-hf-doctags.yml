@@ -28,7 +28,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for file in README.md index.html doctags-renderer.js model-registry.js; do
+          for file in README.md index.html doctags-renderer.js model-registry.js native-document-output.js native-result-renderer.js; do
+            test -s "hf-spaces/mvai-doctags-webgpu/$file"
+          done
+          for file in adapters/ovisocr3-native/adapter.mjs adapters/ovisocr3-native/contract.mjs adapters/ovisocr3-native/README.md adapters/paddleocr-vl-1.6/adapter.mjs adapters/paddleocr-vl-1.6/pipeline-contract.mjs vendor/ppdoclayoutv3/worker-base.js vendor/ppdoclayoutv3/inference.worker.js; do
             test -s "hf-spaces/mvai-doctags-webgpu/$file"
           done
           for file in new_arxiv.png image-2.jpg code.jpg lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg 87664.png 06236926002285.png ar_page_0.png japanse_4_ibm.png zh_page_0.png; do
