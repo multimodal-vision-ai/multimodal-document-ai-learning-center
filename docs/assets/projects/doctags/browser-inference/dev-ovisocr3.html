@@ -28,7 +28,7 @@ input[type=file]{max-width:320px}
 </head>
 <body>
 <h1>MVAI · OvisOCR3 0.8B 浏览器 WebGPU 独立验收</h1>
-<p class="small" style="margin-top:0">测试页面版本：2026-11-07-r2 · 已启用 think 前缀兼容与分辨率测试</p>
+<p class="small" style="margin-top:0">测试页面版本：2026-11-07-p1 · Decoder 性能优化与分阶段计时</p>
 <p>独立测试页，不修改正式页面。模型运行前必须先完成官方 BF16 权重转换、组件一致性验证，并将 ONNX bundle 上传至 MVAI Hugging Face 仓库。此页只加载经过验证的固定 commit，不接受 main 浮动版本。</p>
 <div class="toolbar">
   <label>ONNX bundle commit SHA：
@@ -41,8 +41,8 @@ input[type=file]{max-width:320px}
   <input id="file" type="file" accept="image/*">
   <label>图像最大像素：
     <select id="maxPixels">
-      <option value="2073600">1440²（默认）</option>
-      <option value="1048576">1024²</option>
+      <option value="1048576" selected>1024²（优化基准）</option>
+      <option value="2073600">1440²（高质量对照）</option>
       <option value="589824">768²</option>
       <option value="331776">576²</option>
     </select>
@@ -52,6 +52,7 @@ input[type=file]{max-width:320px}
 </div>
 <p class="small">性能测试建议先用 1440² 建立基线，再依次测试 1024²、768²、576²。降低像素上限可能加快视觉编码，但也可能损失小字、公式和表格细节；不要只按速度决定默认值。</p>
 <div class="status" id="status">等待 ONNX bundle 上传并填写固定 commit SHA。当前模型仓库：multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX</div>
+<p class="small" id="profileMode"></p>
 <div class="grid">
   <section class="panel">
     <h2>原图与 bbox 定位框</h2>
@@ -64,15 +65,32 @@ input[type=file]{max-width:320px}
   </section>
 </div>
 <section class="panel" style="margin-top:16px">
+  <h2>推理性能分解</h2>
+  <button id="downloadPerf" disabled>下载性能报告 JSON</button>
+  <pre id="perf">完成一次推理后显示阶段耗时、session 计时和输入网格信息。</pre>
+</section>
+<section class="panel" style="margin-top:16px">
   <h2>原始 JSON（不做 DocTags 转换）</h2>
   <pre id="raw"></pre>
 </section>
 <script src="./native-document-output.js?v=ovis-thinkfix-20261107-r2"></script>
 <script src="./native-result-renderer.js"></script>
 <script type="module">
-import {createAdapter} from "./adapters/ovisocr3-native/adapter.mjs";
+import {createAdapter} from "./adapters/ovisocr3-native/adapter.mjs?v=ovis-perf-20261107-p1";
 const $=id=>document.getElementById(id);
-let adapter=null,file=null,bitmap=null,running=false,tokenCount=0;
+const PROFILE_MODE=new URLSearchParams(location.search).get("profile")==="1";
+let adapter=null,file=null,bitmap=null,running=false,tokenCount=0,lastPerformanceReport=null;
+$("profileMode").textContent=PROFILE_MODE
+  ?"诊断模式已开启：ONNX verbose 日志与 session profiling 会增加少量开销；本次耗时不要与普通模式直接比较。"
+  :"普通性能模式：使用 token-only streamer 和 session wall-time 计时；需要 ONNX 详细日志时在网址末尾添加 ?profile=1。";
+$("downloadPerf").addEventListener("click",()=>{
+  if(!lastPerformanceReport)return;
+  const blob=new Blob([JSON.stringify(lastPerformanceReport,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download="ovisocr3-performance-"+Date.now()+".json";
+  link.click();URL.revokeObjectURL(url);
+});
 function status(message){$("status").textContent=message;}
 function validRevision(value){return /^[0-9a-f]{40}$/i.test(value.trim());}
 $("revision").addEventListener("input",()=>{
@@ -96,6 +114,7 @@ $("load").addEventListener("click",async()=>{
   try{
     adapter=await createAdapter({
       revision,
+      runtime:{diagnostics:PROFILE_MODE},
       onProgress:event=>{
         const stage=event.stage||"load";
         const fileName=event.file||event.name||event.fileName||"";
@@ -129,18 +148,35 @@ function renderResult(result){
     $("blocks").textContent="当前输出尚未形成完整 JSON，不能安全绘制定位框。原始生成文本已保留。\\n"+error.message;
   }
   const metric=(value,digits=2)=>Number.isFinite(value)?value.toFixed(digits):"n/a";
+  const phases=result.sessionMetrics?.phases||{};
   $("meta").textContent=[
     "结构元素："+(parsed?.total??"未完成"),
     "有效定位："+(parsed?.blocks.length??0),
     "生成 tokens："+result.generatedTokens,
     "总耗时："+metric(result.totalSeconds)+" s",
-    "端到端速度："+metric(result.tokensPerSecond)+" tokens/s",
-    "首 Token 延迟："+metric(result.firstTokenSeconds)+" s",
-    "纯解码速度："+metric(result.decodeTokensPerSecond)+" tokens/s",
-    "像素上限："+Number($("maxPixels").value).toLocaleString(),
-    "图像网格："+JSON.stringify(result.imageGrid||[]),
+    "生成速度："+metric(result.tokensPerSecond)+" tokens/s",
+    "首 Token："+metric(result.firstTokenSeconds)+" s",
+    "token 间隔速度："+metric(result.decodeTokensPerSecond)+" tokens/s",
+    "Vision："+metric(phases.visionEncoderMs)+" ms",
+    "Decoder Prefill："+metric(phases.decoderPrefillMs)+" ms",
+    "Decoder Decode 平均："+metric(phases.decoderDecodeAverageMs)+" ms/token",
     "完整结束："+(result.ended?"是":"否（可能达到 token 上限或被停止）")
   ].join("  ·  ");
+  lastPerformanceReport={
+    schema_version:1,
+    created_at:new Date().toISOString(),
+    model:{model_id:adapter?.modelId,commit:adapter?.revision,source_model_id:adapter?.sourceModelId,source_revision:adapter?.sourceRevision},
+    browser:{user_agent:navigator.userAgent,cross_origin_isolated:window.crossOriginIsolated===true,hardware_concurrency:navigator.hardwareConcurrency||null},
+    gpu:adapter?.gpu||null,
+    input:{file_name:file?.name||null,original_width:bitmap?.width||null,original_height:bitmap?.height||null,max_pixels:result.settings?.maxPixels,prompt_tokens:result.promptTokens,image_grid_thw:result.imageGrid,input_summary:result.inputSummary},
+    output:{generated_tokens:result.generatedTokens,ended:result.ended,streamer_token_count:result.streamerTokenCount},
+    timings:result.timings,
+    session_metrics:result.sessionMetrics,
+    runtime:result.runtimeDiagnostics,
+    streamer:result.streamerType
+  };
+  $("perf").textContent=JSON.stringify(lastPerformanceReport,null,2);
+  $("downloadPerf").disabled=false;
 }
 $("run").addEventListener("click",async()=>{
   if(!adapter||!file||running)return;
@@ -149,7 +185,6 @@ $("run").addEventListener("click",async()=>{
   try{
     const result=await adapter.recognize(file,{
       maxPixels:Number($("maxPixels").value),
-      onText:chunk=>{streamed+=chunk;},
       onTokens:n=>{tokenCount=n;status("OvisOCR3 Structured 生成中 · "+n+" tokens");}
     });
     renderResult(result);
@@ -157,8 +192,8 @@ $("run").addEventListener("click",async()=>{
       " characters\n生成 tokens："+result.generatedTokens+
       "\n结束标记："+(result.ended?"已结束":"未结束"));
   }catch(error){
-    status("推理失败：\n"+(error?.stack||error)+"\n已接收 tokens："+tokenCount);
-    $("raw").textContent=streamed;
+    status("推理失败：\n"+(error?.stack||error)+"\n已接收 tokens："+(error?.partialTokenCount??tokenCount));
+    $("raw").textContent=error?.partialText||"";
   }finally{running=false;$("run").disabled=!adapter||!file;$("stop").disabled=true;}
 });
 $("stop").addEventListener("click",()=>{
