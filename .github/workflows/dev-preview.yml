@@ -450,7 +450,8 @@ jobs:
             assets/projects/doctags/browser-inference/native-document-output.js \
             assets/projects/doctags/browser-inference/native-result-renderer.js \
             assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs \
-            assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/pipeline-contract.mjs; do
+            assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/pipeline-contract.mjs \
+            assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/progress.mjs; do
             curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 \
               "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
             test -s "$RUNNER_TEMP/$(basename "$asset")"
@@ -549,6 +550,7 @@ jobs:
             assets/projects/doctags/browser-inference/adapters/ovisocr3-native/contract.mjs \
             assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/adapter.mjs \
             assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/pipeline-contract.mjs \
+            assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/progress.mjs \
             assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/worker-base.js \
             assets/projects/doctags/browser-inference/vendor/ppdoclayoutv3/inference.worker.js; do
             curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$base/$asset?preview_build=${GITHUB_SHA}" -o "$RUNNER_TEMP/$(basename "$asset")"
