@@ -34,5 +34,5 @@ assert "mvai_doctags_kaggle_pilot.ipynb" in guide
 assert "doctags-kaggle/README.md" in home
 assert "interactive-demo/index.html" in home
 assert "shanshui_scene: 7" in home
-assert "视频行为识别模型" in home, "Video card accidentally removed"
+assert ("视频行为识别模型" in home or "视频行为识别与分析" in home), "Video card accidentally removed"
 print(f"Kaggle pilot static QA passed: {len(code)} syntax-checked code cells")
