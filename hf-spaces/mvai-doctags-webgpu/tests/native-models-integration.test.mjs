@@ -20,7 +20,7 @@ test("both accepted native models are registered with immutable model revisions"
 });
 
 test("HF Space and Learning Center production pages and model registries are byte-identical",async()=>{
-  const [spaceIndex,docsIndex,spaceRegistry,docsRegistry,spaceNative,docsNative,spaceRenderer,docsRenderer]=await Promise.all([
+  const [spaceIndex,docsIndex,spaceRegistry,docsRegistry,spaceNative,docsNative,spaceRenderer,docsRenderer,spaceProgress,docsProgress]=await Promise.all([
     read("../index.html"),
     read("../../../docs/assets/projects/doctags/browser-inference/index.html"),
     read("../model-registry.js"),
@@ -28,12 +28,15 @@ test("HF Space and Learning Center production pages and model registries are byt
     read("../native-document-output.js"),
     read("../../../docs/assets/projects/doctags/browser-inference/native-document-output.js"),
     read("../native-result-renderer.js"),
-    read("../../../docs/assets/projects/doctags/browser-inference/native-result-renderer.js")
+    read("../../../docs/assets/projects/doctags/browser-inference/native-result-renderer.js"),
+    read("../adapters/paddleocr-vl-1.6/progress.mjs"),
+    read("../../../docs/assets/projects/doctags/browser-inference/adapters/paddleocr-vl-1.6/progress.mjs")
   ]);
   assert.equal(spaceIndex,docsIndex);
   assert.equal(spaceRegistry,docsRegistry);
   assert.equal(spaceNative,docsNative);
   assert.equal(spaceRenderer,docsRenderer);
+  assert.equal(spaceProgress,docsProgress);
 });
 
 test("production UI loads native parsers and routes each model through its dedicated adapter",async()=>{
@@ -52,6 +55,16 @@ test("production UI loads native parsers and routes each model through its dedic
   assert.match(html,/下载原生 JSON/);
   assert.match(html,/sourceImageWidth=bitmap\.width/);
   assert.match(html,/sourceImageHeight=bitmap\.height/);
+});
+
+test("Paddle progress UI uses byte events and a separate region-based inference bar",async()=>{
+  const html=await read("../index.html");
+  assert.match(html,/id="inferenceProgressPanel"/);
+  assert.match(html,/id="inferenceProgress"/);
+  assert.match(html,/renderPaddleDownloadProgress\(d\)/);
+  assert.match(html,/onProgress:renderPaddleInferenceProgress/);
+  assert.match(html,/updatePaddleDownloadProgress\(paddleDownloadProgress,event\)/);
+  assert.match(html,/normalizePaddleInferenceProgress\(event\)/);
 });
 
 test("native adapter, contract and Paddle worker resources are mirrored to the public Space",async()=>{
