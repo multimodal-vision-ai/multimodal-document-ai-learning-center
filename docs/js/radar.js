@@ -35,6 +35,7 @@
 
   function setupArchiveSearch() {
     const search = document.getElementById("radar-archive-search");
+    const searchButton = document.getElementById("radar-archive-search-button");
     const type = document.getElementById("radar-archive-type");
     const year = document.getElementById("radar-archive-year");
     const period = document.getElementById("radar-archive-period");
@@ -58,6 +59,21 @@
 
     const count = document.getElementById("radar-archive-count");
     const noResults = document.getElementById("radar-archive-no-results");
+
+    function resizeArchiveSearch() {
+      // Keep the field within its grid cell; grow vertically and wrap long queries.
+      const maxHeight = 160;
+      search.style.height = "auto";
+      const contentHeight = search.scrollHeight;
+      search.style.height = Math.min(contentHeight, maxHeight) + "px";
+      search.style.overflowY = contentHeight > maxHeight ? "auto" : "hidden";
+    }
+
+    if (!search.dataset.radarAutoResizeAttached) {
+      search.addEventListener("input", resizeArchiveSearch);
+      search.dataset.radarAutoResizeAttached = "1";
+    }
+    resizeArchiveSearch();
 
     function updatePeriodOptions() {
       const oldValue = period.value;
@@ -94,6 +110,71 @@
       period.value = available.includes(oldValue) ? oldValue : "";
     }
 
+    function clearKeywordHighlights() {
+      items.forEach(item => {
+        item.querySelectorAll("mark.radar-search-hit").forEach(mark => {
+          mark.replaceWith(document.createTextNode(mark.textContent || ""));
+        });
+        item.normalize();
+      });
+    }
+
+    function highlightKeywordMatches() {
+      const keyword = search.value.trim();
+      if (!keyword) return 0;
+      const needle = keyword.toLocaleLowerCase();
+      const visibleItems = items.filter(item => !item.hidden);
+      let matchCount = 0;
+      let firstHit = null;
+
+      visibleItems.forEach(item => {
+        const walker = document.createTreeWalker(item, NodeFilter.SHOW_TEXT);
+        const textNodes = [];
+        while (walker.nextNode()) {
+          const node = walker.currentNode;
+          const parent = node.parentElement;
+          if (!node.nodeValue || !node.nodeValue.toLocaleLowerCase().includes(needle)) continue;
+          if (parent && parent.closest("script,style,textarea,select,button,mark")) continue;
+          textNodes.push(node);
+        }
+
+        textNodes.forEach(node => {
+          const original = node.nodeValue || "";
+          const lower = original.toLocaleLowerCase();
+          const fragment = document.createDocumentFragment();
+          let cursor = 0;
+          let index = lower.indexOf(needle, cursor);
+          while (index !== -1) {
+            if (index > cursor) fragment.appendChild(document.createTextNode(original.slice(cursor, index)));
+            const mark = document.createElement("mark");
+            mark.className = "radar-search-hit";
+            mark.textContent = original.slice(index, index + keyword.length);
+            fragment.appendChild(mark);
+            if (!firstHit) firstHit = mark;
+            matchCount += 1;
+            cursor = index + keyword.length;
+            index = lower.indexOf(needle, cursor);
+          }
+          if (cursor < original.length) fragment.appendChild(document.createTextNode(original.slice(cursor)));
+          if (node.parentNode) node.parentNode.replaceChild(fragment, node);
+        });
+      });
+
+      if (firstHit) {
+        firstHit.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      if (count && matchCount > 0) {
+        count.textContent += " · 已定位 " + matchCount + " 处关键词";
+      }
+      return matchCount;
+    }
+
+    function runKeywordSearch() {
+      clearKeywordHighlights();
+      refresh();
+      highlightKeywordMatches();
+    }
+
     function refresh() {
       const keyword = search.value.trim().toLowerCase();
       const typeValue = type.value;
@@ -103,6 +184,36 @@
 
       items.forEach(item => { item.hidden = true; });
       sections.forEach(section => { section.hidden = true; });
+
+      // A keyword can search the archive even before a specific period is selected.
+      // Any selected year/type narrows the search; a fully selected period uses the
+      // single-period behavior below.
+      if (keyword && !completeSelection) {
+        const matches = items.filter(item => {
+          if (yearValue && item.dataset.archiveYear !== yearValue) return false;
+          if (typeValue && item.dataset.archiveType !== typeValue) return false;
+          const searchable = (item.dataset.archiveText || item.textContent || "").toLowerCase();
+          return searchable.includes(keyword);
+        });
+        matches.forEach(item => {
+          item.hidden = false;
+          const section = sections.find(value => value.dataset.archiveSection === item.dataset.archiveType);
+          if (section) section.hidden = false;
+        });
+        if (count) {
+          const scope = yearValue || typeValue
+            ? "符合当前筛选条件的历史报告"
+            : "全部历史报告";
+          count.textContent = "关键词匹配 " + matches.length + " 期（" + scope + "）";
+        }
+        if (noResults) {
+          noResults.textContent = matches.length
+            ? "已显示匹配的历史报告；可继续选择年份、报告类型或期次缩小范围。"
+            : "没有找到匹配的历史报告，请尝试其他关键词或调整筛选条件。";
+          noResults.hidden = matches.length > 0;
+        }
+        return;
+      }
 
       if (!completeSelection) {
         let message;
@@ -174,8 +285,23 @@
       period.dataset.radarArchiveAttached = "1";
     }
     if (!search.dataset.radarArchiveAttached) {
-      search.addEventListener("input", refresh);
+      search.addEventListener("input", () => {
+        clearKeywordHighlights();
+        refresh();
+      });
+      // Enter runs the search instead of inserting an unintended newline.
+      // Shift+Enter remains available when a multiline query is deliberately needed.
+      search.addEventListener("keydown", event => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          runKeywordSearch();
+        }
+      });
       search.dataset.radarArchiveAttached = "1";
+    }
+    if (searchButton && !searchButton.dataset.radarArchiveAttached) {
+      searchButton.addEventListener("click", runKeywordSearch);
+      searchButton.dataset.radarArchiveAttached = "1";
     }
   }
 

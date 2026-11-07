@@ -712,7 +712,7 @@
 /* Searchable, expandable history for the saved weekly and monthly reports. */
 .radar-archive-toolbar{
   display:grid;
-  grid-template-columns:minmax(6.5rem,.7fr) minmax(7rem,.8fr) minmax(7rem,.8fr) minmax(12rem,1.45fr);
+  grid-template-columns:repeat(3,minmax(0,1fr));
   align-items:end;
   gap:.65rem;
   margin:.7rem 0 .55rem;
@@ -730,8 +730,15 @@
   font-size:.75rem;
   font-weight:700;
 }
+/* The keyword editor always gets its own full-width row, independent of viewport width. */
+.radar-archive-keyword{
+  grid-column:1/-1;
+  width:100%;
+  min-width:0;
+}
 .radar-archive-field input,
-.radar-archive-field select{
+.radar-archive-field select,
+.radar-archive-field textarea{
   box-sizing:border-box;
   width:100%;
   min-width:0;
@@ -743,6 +750,67 @@
   color:var(--md-default-fg-color);
   font:inherit;
   font-size:.82rem;
+}
+.radar-archive-search-row{
+  display:flex;
+  align-items:stretch;
+  gap:.5rem;
+  width:100%;
+  min-width:0;
+}
+.radar-archive-field .radar-archive-search-row textarea{
+  flex:1 1 auto;
+  width:100%;
+  min-width:0;
+}
+.radar-archive-search-button{
+  flex:0 0 auto;
+  align-self:stretch;
+  min-width:4.5rem;
+  padding:.45rem .9rem;
+  border:1px solid var(--md-primary-fg-color);
+  border-radius:.45rem;
+  background:var(--md-primary-fg-color);
+  color:var(--md-primary-bg-color);
+  font:inherit;
+  font-size:.82rem;
+  font-weight:700;
+  cursor:pointer;
+}
+.radar-archive-search-button:hover{
+  filter:brightness(.96);
+}
+.radar-archive-search-button:focus-visible{
+  outline:2px solid var(--md-accent-fg-color);
+  outline-offset:2px;
+}
+.radar-archive-search-hint{
+  font-size:.68rem;
+  font-weight:400;
+  color:var(--md-default-fg-color--light);
+}
+.radar-archive-field textarea{
+  display:block;
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  min-height:2.35rem;
+  max-height:10rem;
+  padding:.55rem .65rem;
+  border:1px solid var(--md-default-fg-color--lightest);
+  border-radius:.45rem;
+  background:var(--md-default-bg-color);
+  color:var(--md-default-fg-color);
+  font:inherit;
+  font-size:.82rem;
+  font-weight:400;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+  resize:none;
+  overflow-x:hidden;
+  overflow-y:hidden;
 }
 .radar-archive-field select:disabled{
   opacity:.65;
@@ -767,6 +835,17 @@
   grid-template-columns:minmax(0,1fr);
   gap:.55rem;
   margin:.55rem 0 .9rem;
+}
+.radar-archive-item mark.radar-search-hit{
+  padding:.02em .08em;
+  border-radius:.18em;
+  background:#ffe58a;
+  color:#242424;
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+}
+.radar-archive-item mark.radar-search-hit:target{
+  outline:2px solid var(--md-primary-fg-color);
 }
 .radar-archive-item{
   min-width:0;
@@ -865,7 +944,7 @@
   .md-content__inner:has(.radar-review-intro) .radar-review-card-head{align-items:flex-start}
   .md-content__inner:has(.radar-review-intro) .radar-review-score-item{padding:.45rem .5rem}
   .radar-archive-toolbar{grid-template-columns:minmax(0,1fr)}
-  .radar-archive-keyword{grid-column:auto}
+  .radar-archive-keyword{grid-column:1/-1}
   .radar-archive-countline{grid-column:auto}
 }
 
