@@ -14,15 +14,13 @@ shanshui_scene: 7
   <div class="mv-showcase-v18__stack">
     <article class="mv-showcase-v18__card mv-showcase-v18__card--doc" aria-labelledby="mv-showcase-doc-title">
       <figure class="mv-showcase-v18__cover">
-        <img src="../assets/projects/doctags/document-structure-demo-v13.webp" width="2048" height="990" loading="eager" decoding="async" style="display:block;width:100%;height:auto;aspect-ratio:3.7/1;object-fit:cover;object-position:center 72%;max-width:100%;max-height:none" alt="文档结构化解析三步展示：01 原始复杂文档；02 版面与元素定位；03 DocTags 结构化表达">
+        <img src="../assets/projects/doctags/doctags-song-painting-v2.svg" width="1800" height="900" loading="eager" decoding="async" alt="DocTags 三阶段示意：以柳宗元《江雪》为主题的原始文档、元素定位与 DocTags 结构化输出；包含水墨雪山、孤舟蓑笠翁、题诗、草书题款和印章。">
       </figure>
       <div class="mv-showcase-v18__body">
         <span class="mv-showcase-v18__kicker">文档理解 · DocTags</span>
-        <h2 id="mv-showcase-doc-title">文档结构化解析</h2>
-        <p class="mv-showcase-v18__description">文档版面、文本、表格与阅读顺序的结构化解析。</p>
-        <a class="mv-showcase-v18__primary" href="https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/" target="_blank" rel="noopener noreferrer">打开 HF 在线体验 <span aria-hidden="true">↗</span></a>
-        <a class="mv-showcase-v18__secondary" href="../assets/projects/doctags/interactive-demo/index.html">查看解析样例 <span aria-hidden="true">→</span></a>
-        <p class="mv-showcase-v18__disclaimer">在线演示内置 IBM Granite Docling 258M、OvisOCR3 0.8B、PaddleOCR-VL-1.6 0.9B，以及 MVAI-DocTags-DJX-0.8B-v1.0 和 MVAI-DocTags-WC-2B-v1.0 五款模型；OvisOCR3、PaddleOCR-VL-1.6 和两款自研模型需要支持 shader-f16 的 WebGPU 设备。</p>
+        <h2 id="mv-showcase-doc-title">复杂文档结构化解析</h2>
+        <p class="mv-showcase-v18__description">文档版面、文本、表格、印章、手写与阅读顺序等结构化解析。</p>
+        <a class="mv-showcase-v18__primary" href="https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/" target="_blank" rel="noopener noreferrer">在线体验 <span aria-hidden="true">↗</span></a>
       </div>
     </article>
 
@@ -40,7 +38,6 @@ shanshui_scene: 7
       </div>
     </article>
   </div>
-
 </section>
 
 ??? info "其他实验入口与技术说明"

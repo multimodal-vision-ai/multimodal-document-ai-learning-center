@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1800" height="900" viewBox="0 0 1800 900" role="img" aria-labelledby="title desc">
+  <title id="title">DocTags 复杂文档结构化解析三阶段示意</title>
+  <desc id="desc">以柳宗元《江雪》为主题的极简宋画风格文档，依次展示原始文档、元素定位和 DocTags 结构化输出。</desc>
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#fffdf7"/>
+      <stop offset="1" stop-color="#f8f4e9"/>
+    </linearGradient>
+    <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dce5eb" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#aebdc8" stop-opacity=".5"/>
+    </linearGradient>
+    <filter id="softShadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7"/>
+      <feOffset dy="4"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".10"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <g id="docArt">
+      <rect x="0" y="0" width="500" height="580" rx="17" fill="url(#paper)" stroke="#e4d8c2" stroke-width="2"/>
+      <path d="M22 22 H478 M22 558 H478" stroke="#e9dfce" stroke-width="1"/>
+      <!-- Minimal Song-style snowy mountains: a few restrained ink contours. -->
+      <path d="M28 365 C56 336 77 310 103 273 C124 243 143 214 165 184 C184 215 194 248 215 271 C239 300 258 330 283 365"
+            fill="url(#mist)" stroke="#8396a5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M82 365 C111 337 129 320 151 289 C169 265 186 239 204 219 C222 250 238 283 258 305 C275 325 289 345 305 365"
+            fill="none" stroke="#9aabb7" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M26 391 C76 371 110 372 151 384 C191 396 229 390 279 373"
+            fill="none" stroke="#aebbc4" stroke-width="1.5" opacity=".8"/>
+      <path d="M43 336 L73 315 L91 323 M125 278 L146 260 L159 267 M177 228 L190 211 L203 226 M228 300 L248 289 L262 306"
+            fill="none" stroke="#fdfdfb" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+      <path d="M20 414 C83 404 139 410 196 418 C235 423 268 416 300 407"
+            fill="none" stroke="#c4ced3" stroke-width="1.4"/>
+      <path d="M28 438 C90 430 142 438 201 445 C239 449 270 444 300 436"
+            fill="none" stroke="#d0d8dc" stroke-width="1.2"/>
+      <path d="M44 459 C98 453 150 461 205 466 C245 469 272 465 300 459"
+            fill="none" stroke="#d9dfe1" stroke-width="1"/>
+      <!-- Solitary boat and fisherman in a straw rain hat. -->
+      <path d="M104 445 Q146 457 191 445 Q181 468 146 470 Q115 465 104 445Z" fill="#485764"/>
+      <path d="M117 449 Q145 456 177 449" fill="none" stroke="#e9eceb" stroke-width="2"/>
+      <path d="M144 438 L145 414 L158 406 L170 418 L171 440Z" fill="#687984"/>
+      <path d="M137 414 Q153 398 171 414 Q155 419 137 414Z" fill="#354652"/>
+      <path d="M143 409 Q153 394 167 407" fill="none" stroke="#263947" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M172 432 L213 406" stroke="#566b78" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M213 406 L221 398" stroke="#566b78" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M133 470 Q154 479 181 470" fill="none" stroke="#b7c5cc" stroke-width="2" opacity=".8"/>
+      <!-- Poem in traditional vertical layout. -->
+      <text x="426" y="86" writing-mode="vertical-rl" text-orientation="upright"
+            font-family="STSong, 'Noto Serif CJK SC', 'AR PL SungtiL GB', serif"
+            font-size="34" letter-spacing="5" fill="#1c2934">千山鸟飞绝，</text>
+      <text x="365" y="86" writing-mode="vertical-rl" text-orientation="upright"
+            font-family="STSong, 'Noto Serif CJK SC', 'AR PL SungtiL GB', serif"
+            font-size="34" letter-spacing="5" fill="#1c2934">万径人踪灭。</text>
+      <!-- Expressive cursive-style signature. Local brush strokes reinforce the running-script feeling. -->
+      <g transform="rotate(-12 365 490)">
+        <text x="300" y="500" font-family="FZShuTi, '华文行草', 'STXingkai', '华文行楷', 'AR PL KaitiM GB', cursive"
+              font-size="61" font-style="italic" font-weight="700" letter-spacing="-10"
+              fill="#182b38" stroke="#182b38" stroke-width=".55" paint-order="stroke">柳宗元</text>
+        <path d="M296 512 C326 523 365 516 396 499 C407 493 417 489 426 492"
+              fill="none" stroke="#263a47" stroke-width="4.6" stroke-linecap="round" opacity=".88"/>
+        <path d="M315 518 C341 525 367 518 386 510" fill="none" stroke="#263a47" stroke-width="1.6" stroke-linecap="round"/>
+      </g>
+      <!-- Vermilion seal. -->
+      <g transform="translate(432 476)">
+        <rect width="48" height="48" rx="3" fill="#fffaf2" stroke="#c63d32" stroke-width="3"/>
+        <rect x="5" y="5" width="38" height="38" rx="1" fill="none" stroke="#c63d32" stroke-width="1.5"/>
+        <path d="M10 10 H38 M10 24 H38 M10 38 H38 M24 10 V38" stroke="#c63d32" stroke-width="1.3"/>
+        <text x="24" y="21" text-anchor="middle" font-family="STSong, 'Noto Serif CJK SC', serif" font-size="10" fill="#c63d32">柳</text>
+        <text x="24" y="35" text-anchor="middle" font-family="STSong, 'Noto Serif CJK SC', serif" font-size="10" fill="#c63d32">宗元</text>
+      </g>
+      <path d="M22 536 C76 530 104 533 138 538" fill="none" stroke="#e3d9c8" stroke-width="1"/>
+    </g>
+    <style>
+      .main-title{font:700 54px Georgia,"Noto Serif CJK SC",serif;fill:#173b68;letter-spacing:.4px}
+      .stage-title{font:700 31px "Noto Serif CJK SC",STSong,serif;fill:#183a63}
+      .small-label{font:700 20px Arial,sans-serif}
+      .code{font:18px ui-monospace,SFMono-Regular,Consolas,monospace}
+    </style>
+  </defs>
+
+  <rect width="1800" height="900" fill="#fff"/>
+  <!-- Restrained ink accents on the white canvas. -->
+  <path d="M34 145 C78 117 112 96 153 85 M60 126 C82 96 98 73 103 48 M98 105 C130 91 153 73 170 52"
+        fill="none" stroke="#748b9b" stroke-width="2" stroke-linecap="round"/>
+  <path d="M102 92 L85 72 M124 86 L121 62 M147 72 L146 51 M72 118 L54 104"
+        fill="none" stroke="#748b9b" stroke-width="1.7" stroke-linecap="round"/>
+  <path d="M1450 116 C1510 89 1565 95 1615 76 C1665 57 1710 67 1760 44"
+        fill="none" stroke="#d5dfe5" stroke-width="2"/>
+  <path d="M1510 116 L1560 79 L1590 101 L1630 56 L1670 99 L1710 71 L1750 112"
+        fill="none" stroke="#b8c7d1" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="900" y="94" text-anchor="middle" class="main-title">DocTags · 文档结构化解析</text>
+  <path d="M620 119 C735 127 847 123 952 118" fill="none" stroke="#b94b40" stroke-width="3.5" stroke-linecap="round" opacity=".8"/>
+
+  <!-- Stage labels. -->
+  <g filter="url(#softShadow)">
+    <rect x="70" y="160" width="500" height="62" rx="15" fill="#fffaf0" stroke="#e4c99c" stroke-width="2"/>
+    <rect x="650" y="160" width="500" height="62" rx="15" fill="#fffaf0" stroke="#e4c99c" stroke-width="2"/>
+    <rect x="1230" y="160" width="500" height="62" rx="15" fill="#fffaf0" stroke="#e4c99c" stroke-width="2"/>
+  </g>
+  <text x="320" y="202" text-anchor="middle" class="stage-title">01 · 原始文档</text>
+  <text x="900" y="202" text-anchor="middle" class="stage-title">02 · 元素定位</text>
+  <text x="1480" y="202" text-anchor="middle" class="stage-title">03 · DocTags 结构化输出</text>
+
+  <!-- Stage 1: original document. -->
+  <g transform="translate(70 240)" filter="url(#softShadow)">
+    <use xlink:href="#docArt"/>
+  </g>
+
+  <!-- Flow arrow 1. -->
+  <path d="M590 518 L612 540 L590 562 M608 518 L630 540 L608 562"
+        fill="none" stroke="#91a7b8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Stage 2: the same document with element boxes in their correct positions. -->
+  <g transform="translate(650 240)">
+    <use xlink:href="#docArt" filter="url(#softShadow)"/>
+    <rect x="18" y="82" width="278" height="340" rx="3" fill="none" stroke="#2874dc" stroke-width="4"/>
+    <rect x="18" y="52" width="112" height="34" rx="9" fill="#2874dc"/>
+    <text x="74" y="76" text-anchor="middle" class="small-label" fill="#fff">picture</text>
+
+    <rect x="350" y="72" width="128" height="350" rx="3" fill="none" stroke="#24a66a" stroke-width="4"/>
+    <rect x="350" y="42" width="88" height="34" rx="9" fill="#24a66a"/>
+    <text x="394" y="66" text-anchor="middle" class="small-label" fill="#fff">text</text>
+
+    <rect x="280" y="438" width="146" height="78" rx="3" fill="none" stroke="#8951d5" stroke-width="4"/>
+    <rect x="280" y="405" width="150" height="36" rx="9" fill="#8951d5"/>
+    <text x="355" y="430" text-anchor="middle" class="small-label" fill="#fff">handwritten</text>
+
+    <rect x="426" y="466" width="66" height="66" rx="3" fill="none" stroke="#d8493e" stroke-width="4"/>
+    <rect x="418" y="432" width="74" height="36" rx="9" fill="#d8493e"/>
+    <text x="455" y="457" text-anchor="middle" class="small-label" fill="#fff">seal</text>
+  </g>
+
+  <!-- Flow arrow 2. -->
+  <path d="M1170 518 L1192 540 L1170 562 M1188 518 L1210 540 L1188 562"
+        fill="none" stroke="#91a7b8" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Stage 3: concise, syntax-highlighted DocTags structure. -->
+  <g transform="translate(1230 240)" filter="url(#softShadow)">
+    <rect width="500" height="580" rx="17" fill="#f8fafc" stroke="#d8e1ea" stroke-width="2"/>
+    <rect x="20" y="20" width="460" height="540" rx="12" fill="#fff" stroke="#e6ebf0" stroke-width="1.2"/>
+    <circle cx="45" cy="47" r="5" fill="#8ba2b8"/>
+    <circle cx="64" cy="47" r="5" fill="#c5d0d9"/>
+    <circle cx="83" cy="47" r="5" fill="#d8e0e6"/>
+     <text x="38" y="92" class="code" fill="#2468b5">&lt;doctag&gt;</text>
+
+    <text x="48" y="123" class="code" fill="#2468b5">  &lt;picture&gt;&lt;loc_030&gt;</text>
+    <text x="48" y="154" class="code" fill="#c48726">    &lt;loc_090&gt;&lt;loc_290&gt;&lt;loc_430&gt;</text>
+    <text x="48" y="185" class="code" fill="#2468b5">  &lt;/picture&gt;</text>
+
+    <text x="48" y="216" class="code" fill="#15956c">  &lt;text&gt;&lt;loc_330&gt;&lt;loc_070&gt;</text>
+    <text x="48" y="247" class="code" fill="#c48726">    &lt;loc_470&gt;&lt;loc_400&gt;</text>
+    <text x="48" y="278" class="code" fill="#253647">    千山鸟飞绝，万径人踪灭。</text>
+    <text x="48" y="309" class="code" fill="#15956c">  &lt;/text&gt;</text>
+
+    <text x="48" y="340" class="code" fill="#8750c6">  &lt;handwritten&gt;&lt;loc_310&gt;</text>
+    <text x="48" y="371" class="code" fill="#c48726">    &lt;loc_450&gt;&lt;loc_420&gt;&lt;loc_520&gt;</text>
+    <text x="48" y="402" class="code" fill="#253647">    柳宗元</text>
+    <text x="48" y="433" class="code" fill="#8750c6">  &lt;/handwritten&gt;</text>
+
+    <text x="48" y="464" class="code" fill="#15956c">  &lt;text&gt;&lt;loc_430&gt;&lt;loc_470&gt;</text>
+    <text x="48" y="495" class="code" fill="#c48726">    &lt;loc_480&gt;&lt;loc_520&gt;印文&lt;/text&gt;</text>
+    <text x="38" y="526" class="code" fill="#2468b5">&lt;/doctag&gt;</text></g>
+</svg>
