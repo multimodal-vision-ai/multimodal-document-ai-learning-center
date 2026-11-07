@@ -1479,6 +1479,8 @@ $("load").onclick=async()=>{
  if(loaded&&activeKey===key){refreshLoadButtons();return;}
  busy=true;loadingModel=true;loadPhase="preparing";loadStartedAt=performance.now();lastLoadProgressAt=loadStartedAt;lastLoadFile="";
  clearRunMetrics();refreshLoadButtons();status("正在加载模型："+entry.name+"。下载完成后还需要初始化 WebGPU。");
+ $("inferenceProgressPanel").hidden=true;
+ paddleDownloadProgress=createPaddleDownloadProgress();
  $("downloadStatus").textContent="正在准备 WebGPU 运行环境与模型文件…";
  $("progress").value=0;
  if(loadWatchdog)clearInterval(loadWatchdog);
@@ -1498,15 +1500,17 @@ $("load").onclick=async()=>{
  const onProgress=d=>{
    lastLoadProgressAt=performance.now();
    if(d?.file)lastLoadFile=d.file;
-   if(d?.stage==="processor")loadPhase="processor";
-   else if(d?.stage==="model")loadPhase="weights";
+   else if(d?.asset)lastLoadFile=d.asset;
    refreshLoadButtons();
    if(entry.adapter==="paddleocr-vl-1.6"){
-     $("progress").removeAttribute("value");
-     const labels={"layout-sdk":"加载 PP-DocLayoutV3 SDK","layout-worker":"准备同源版面检测 Worker","layout-load":"加载 PP-DocLayoutV3 模型","vlm-engine":"加载 PaddleOCR-VL WebGPU 引擎","vlm-warmup":"下载并预热 PaddleOCR-VL 模型"};
-     $("downloadStatus").textContent=(labels[d?.stage]||"PaddleOCR-VL-1.6 初始化")+(d?.status?" · "+d.status:"");
+     if(d?.kind==="download"||d?.phase==="model")loadPhase="weights";
+     else if(d?.kind==="inference"||d?.stage==="vlm-engine"||d?.phase==="session")loadPhase="initializing";
+     else loadPhase="preparing";
+     renderPaddleDownloadProgress(d);
      return;
    }
+   if(d?.stage==="processor")loadPhase="processor";
+   else if(d?.stage==="model")loadPhase="weights";
    if(d.status==="progress_total"){
      const m=meter.update(d);
      if(!m)return;
@@ -1593,6 +1597,13 @@ $("run").onclick=async()=>{
   const adapter=entry.adapter==="r3-ovisocr3"?r3Adapter:entry.adapter==="wang-qwen35-2b"?wangAdapter:entry.adapter==="ovisocr3-native"?ovisNativeAdapter:entry.adapter==="paddleocr-vl-1.6"?paddleNativeAdapter:null;
   busy=true;inferenceRunning=true;stopRequested=false;
   activeStop=adapter?()=>adapter.stop():()=>graniteStopping.interrupt();
+  if(entry.adapter==="paddleocr-vl-1.6"){
+    $("inferenceProgressPanel").hidden=false;
+    $("inferenceProgress").removeAttribute("value");
+    $("inferenceProgressStatus").textContent="正在执行 PP-DocLayoutV3 版面分析…";
+  }else{
+    $("inferenceProgressPanel").hidden=true;
+  }
   refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
   let nativeOutputFormat=entry.adapter==="ovisocr3-native"?"ovisocr3-native":entry.adapter==="paddleocr-vl-1.6"?"paddleocr-vl16-native":null;
   let nativeParseValid=true,nativeRegionCount=0,nativeTotalRegions=0;
@@ -1606,7 +1617,7 @@ $("run").onclick=async()=>{
     }else if(entry.adapter==="paddleocr-vl-1.6"){
       if(!paddleNativeAdapter)throw Error("PaddleOCR-VL-1.6 适配器尚未就绪，请重新加载模型。");
       if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
-      const output=await paddleNativeAdapter.recognize(sourceBlob,{onProgress:event=>{$("downloadStatus").textContent="PaddleOCR-VL-1.6 · "+(event?.stage||event?.kind||"推理")+" · "+(event?.region?event.region+"/"+(event.totalRegions||"?"):"");}});
+      const output=await paddleNativeAdapter.recognize(sourceBlob,{onProgress:renderPaddleInferenceProgress});
       result=output.text;seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);ended=Boolean(output.ended);nativeRegionCount=Number(output.completedRegions)||0;nativeTotalRegions=Number(output.totalRegions)||0;
     }else if(entry.adapter==="r3-ovisocr3"||entry.adapter==="wang-qwen35-2b"){
       if(!adapter)throw Error(entry.name+" 适配器尚未就绪，请重新加载模型。");
@@ -1692,10 +1703,14 @@ $("run").onclick=async()=>{
        ?"请重新选择内置样例或上传本地图片后重试。"
        :"请检查输入图片和 WebGPU 设备状态；如持续失败，请提供浏览器控制台错误。";
      status("推理失败："+message+"。"+hint);
+     if(entry.adapter==="paddleocr-vl-1.6"){
+       $("inferenceProgressPanel").hidden=false;
+       $("inferenceProgressStatus").textContent="推理失败："+message;
+     }
      $("tags").textContent="本次没有可核验的完整模型输出。";
    }
   }finally{
-    if(stopRequested)$("downloadStatus").textContent=entry.name+" 已终止生成；模型仍保持加载。";
+    if(stopRequested&&entry.adapter!=="paddleocr-vl-1.6")$("downloadStatus").textContent=entry.name+" 已终止生成；模型仍保持加载。";
     busy=false;inferenceRunning=false;stopRequested=false;activeStop=null;
     refreshLoadButtons();
   }
