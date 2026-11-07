@@ -38,9 +38,18 @@ input[type=file]{max-width:320px}
 </div>
 <div class="toolbar">
   <input id="file" type="file" accept="image/*">
+  <label>图像最大像素：
+    <select id="maxPixels">
+      <option value="2073600">1440²（默认）</option>
+      <option value="1048576">1024²</option>
+      <option value="589824">768²</option>
+      <option value="331776">576²</option>
+    </select>
+  </label>
   <button id="run" disabled>运行 Structured 解析</button>
   <button id="stop" disabled>停止推理</button>
 </div>
+<p class="small">性能测试建议先用 1440² 建立基线，再依次测试 1024²、768²、576²。降低像素上限可能加快视觉编码，但也可能损失小字、公式和表格细节；不要只按速度决定默认值。</p>
 <div class="status" id="status">等待 ONNX bundle 上传并填写固定 commit SHA。当前模型仓库：multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX</div>
 <div class="grid">
   <section class="panel">
@@ -118,12 +127,17 @@ function renderResult(result){
   }catch(error){
     $("blocks").textContent="当前输出尚未形成完整 JSON，不能安全绘制定位框。原始生成文本已保留。\\n"+error.message;
   }
+  const metric=(value,digits=2)=>Number.isFinite(value)?value.toFixed(digits):"n/a";
   $("meta").textContent=[
     "结构元素："+(parsed?.total??"未完成"),
     "有效定位："+(parsed?.blocks.length??0),
     "生成 tokens："+result.generatedTokens,
-    "推理耗时："+result.totalSeconds.toFixed(2)+" s",
-    "生成速度："+result.tokensPerSecond.toFixed(2)+" tokens/s",
+    "总耗时："+metric(result.totalSeconds)+" s",
+    "端到端速度："+metric(result.tokensPerSecond)+" tokens/s",
+    "首 Token 延迟："+metric(result.firstTokenSeconds)+" s",
+    "纯解码速度："+metric(result.decodeTokensPerSecond)+" tokens/s",
+    "像素上限："+Number($("maxPixels").value).toLocaleString(),
+    "图像网格："+JSON.stringify(result.imageGrid||[]),
     "完整结束："+(result.ended?"是":"否（可能达到 token 上限或被停止）")
   ].join("  ·  ");
 }
@@ -133,6 +147,7 @@ $("run").addEventListener("click",async()=>{
   let streamed="";
   try{
     const result=await adapter.recognize(file,{
+      maxPixels:Number($("maxPixels").value),
       onText:chunk=>{streamed+=chunk;},
       onTokens:n=>{tokenCount=n;status("OvisOCR3 Structured 生成中 · "+n+" tokens");}
     });
