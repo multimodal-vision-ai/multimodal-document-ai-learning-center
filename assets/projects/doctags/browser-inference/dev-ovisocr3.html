@@ -28,6 +28,7 @@ input[type=file]{max-width:320px}
 </head>
 <body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
 <h1>MVAI · OvisOCR3 0.8B 浏览器 WebGPU 独立验收</h1>
+<p class="small" style="margin-top:0">测试页面版本：2026-11-07-r2 · 已启用 think 前缀兼容与分辨率测试</p>
 <p>独立测试页，不修改正式页面。模型运行前必须先完成官方 BF16 权重转换、组件一致性验证，并将 ONNX bundle 上传至 MVAI Hugging Face 仓库。此页只加载经过验证的固定 commit，不接受 main 浮动版本。</p>
 <div class="toolbar">
   <label>ONNX bundle commit SHA：
@@ -66,7 +67,7 @@ input[type=file]{max-width:320px}
   <h2>原始 JSON（不做 DocTags 转换）</h2>
   <pre id="raw"></pre>
 </section>
-<script src="./native-document-output.js"></script>
+<script src="./native-document-output.js?v=ovis-thinkfix-20261107-r2"></script>
 <script src="./native-result-renderer.js"></script>
 <script type="module">
 import {createAdapter} from "./adapters/ovisocr3-native/adapter.mjs";
