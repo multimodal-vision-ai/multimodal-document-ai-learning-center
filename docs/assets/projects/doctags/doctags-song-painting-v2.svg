@@ -140,26 +140,23 @@
     <circle cx="45" cy="47" r="5" fill="#8ba2b8"/>
     <circle cx="64" cy="47" r="5" fill="#c5d0d9"/>
     <circle cx="83" cy="47" r="5" fill="#d8e0e6"/>
-    <text x="38" y="96" class="code" fill="#2468b5">&lt;doctag&gt;</text>
+     <text x="38" y="92" class="code" fill="#2468b5">&lt;doctag&gt;</text>
 
-    <text x="48" y="139" class="code" fill="#2468b5">&lt;picture&gt;</text>
-    <text x="66" y="172" class="code" fill="#c48726">&lt;loc_030&gt;&lt;loc_090&gt;&lt;loc_290&gt;&lt;loc_430&gt;</text>
-    <text x="48" y="205" class="code" fill="#2468b5">&lt;/picture&gt;</text>
+    <text x="48" y="123" class="code" fill="#2468b5">  &lt;picture&gt;&lt;loc_030&gt;</text>
+    <text x="48" y="154" class="code" fill="#c48726">    &lt;loc_090&gt;&lt;loc_290&gt;&lt;loc_430&gt;</text>
+    <text x="48" y="185" class="code" fill="#2468b5">  &lt;/picture&gt;</text>
 
-    <text x="48" y="248" class="code" fill="#15956c">&lt;text&gt;</text>
-    <text x="66" y="281" class="code" fill="#c48726">&lt;loc_330&gt;&lt;loc_070&gt;&lt;loc_470&gt;&lt;loc_400&gt;</text>
-    <text x="66" y="314" class="code" fill="#253647">千山鸟飞绝，万径人踪灭。</text>
-    <text x="48" y="347" class="code" fill="#15956c">&lt;/text&gt;</text>
+    <text x="48" y="216" class="code" fill="#15956c">  &lt;text&gt;&lt;loc_330&gt;&lt;loc_070&gt;</text>
+    <text x="48" y="247" class="code" fill="#c48726">    &lt;loc_470&gt;&lt;loc_400&gt;</text>
+    <text x="48" y="278" class="code" fill="#253647">    千山鸟飞绝，万径人踪灭。</text>
+    <text x="48" y="309" class="code" fill="#15956c">  &lt;/text&gt;</text>
 
-    <text x="48" y="390" class="code" fill="#8750c6">&lt;handwritten&gt;</text>
-    <text x="66" y="423" class="code" fill="#c48726">&lt;loc_310&gt;&lt;loc_450&gt;&lt;loc_420&gt;&lt;loc_520&gt;</text>
-    <text x="66" y="456" class="code" fill="#253647">柳宗元</text>
-    <text x="48" y="489" class="code" fill="#8750c6">&lt;/handwritten&gt;</text>
+    <text x="48" y="340" class="code" fill="#8750c6">  &lt;handwritten&gt;&lt;loc_310&gt;</text>
+    <text x="48" y="371" class="code" fill="#c48726">    &lt;loc_450&gt;&lt;loc_420&gt;&lt;loc_520&gt;</text>
+    <text x="48" y="402" class="code" fill="#253647">    柳宗元</text>
+    <text x="48" y="433" class="code" fill="#8750c6">  &lt;/handwritten&gt;</text>
 
-    <text x="48" y="532" class="code" fill="#15956c">&lt;text&gt;</text>
-    <text x="66" y="565" class="code" fill="#c48726">&lt;loc_430&gt;&lt;loc_470&gt;&lt;loc_480&gt;&lt;loc_520&gt;</text>
-    <text x="66" y="598" class="code" fill="#253647">印文</text>
-    <text x="48" y="631" class="code" fill="#15956c">&lt;/text&gt;</text>
-    <text x="38" y="674" class="code" fill="#2468b5">&lt;/doctag&gt;</text>
-  </g>
+    <text x="48" y="464" class="code" fill="#15956c">  &lt;text&gt;&lt;loc_430&gt;&lt;loc_470&gt;</text>
+    <text x="48" y="495" class="code" fill="#c48726">    &lt;loc_480&gt;&lt;loc_520&gt;印文&lt;/text&gt;</text>
+    <text x="38" y="526" class="code" fill="#2468b5">&lt;/doctag&gt;</text></g>
 </svg>
