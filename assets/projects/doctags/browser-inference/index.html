@@ -1220,8 +1220,8 @@ $("file").onchange=async event=>{
 };
 $("clear").onclick=()=>{$("bounds").checked=false;show();leftDraw();};
 function download(blob,filename){const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
-$("saveImg").onclick=()=>{if(result)show(result);preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png")};
-$("saveDT").onclick=()=>{if(result)download(new Blob([result],{type:"text/plain;charset=utf-8"}),"mvai-doctags-result.dt")};
+$("saveImg").onclick=()=>{if(result){if(nativeFormat){if(nativeParsed)showNative(nativeParsed);else show();}else show(result);}preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png")};
+$("saveDT").onclick=()=>{if(result){const native=["ovisocr3-native","paddleocr-vl16-native","ovisocr3-native","paddleocr-vl-1.6"].includes(nativeFormat)||["ovisocr3-native","paddleocr-vl-1.6"].includes(selectedModel().adapter);download(new Blob([result],{type:native?"application/json;charset=utf-8":"text/plain;charset=utf-8"}),native?"mvai-native-ocr-result.json":"mvai-doctags-result.dt")}};
 
 $("modelSelect").addEventListener("change",()=>{
   syncModelConfiguration();clearRunMetrics();refreshLoadButtons();
@@ -1372,6 +1372,12 @@ $("load").onclick=async()=>{
    if(d?.stage==="processor")loadPhase="processor";
    else if(d?.stage==="model")loadPhase="weights";
    refreshLoadButtons();
+   if(entry.adapter==="paddleocr-vl-1.6"){
+     $("progress").removeAttribute("value");
+     const labels={"layout-sdk":"加载 PP-DocLayoutV3 SDK","layout-worker":"准备同源版面检测 Worker","layout-load":"加载 PP-DocLayoutV3 模型","vlm-engine":"加载 PaddleOCR-VL WebGPU 引擎","vlm-warmup":"下载并预热 PaddleOCR-VL 模型"};
+     $("downloadStatus").textContent=(labels[d?.stage]||"PaddleOCR-VL-1.6 初始化")+(d?.status?" · "+d.status:"");
+     return;
+   }
    if(d.status==="progress_total"){
      const m=meter.update(d);
      if(!m)return;
@@ -1423,7 +1429,9 @@ $("load").onclick=async()=>{
    loaded=true;activeKey=key;activeModelName=entry.name;loadPhase="ready";
    $("progress").value=100;
    hasLoadedSuccessfully=true;markSuccessfulLoad(key);
-   $("downloadStatus").textContent=entry.adapter==="ovisocr3-native"?"OvisOCR3 已加载 · WebGPU · Vision FP32 / Embedding + Decoder FP16":entry.adapter==="paddleocr-vl-1.6"?"PaddleOCR-VL-1.6 已加载 · PP-DocLayoutV3 + VLM · WebGPU FP16":["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）· 当前 GPU 会话就绪":"模型已加载 · 可开始推理";
+   $("downloadStatus").textContent=entry.adapter==="ovisocr3-native"?"OvisOCR3 已加载 · WebGPU · Vision FP32 / Embedding + Decoder FP16 · "+(ovisNativeAdapter.runtimeDiagnostics?.sessions?.decoder_model_merged?.device||"GPU"):
+     entry.adapter==="paddleocr-vl-1.6"?"PaddleOCR-VL-1.6 已加载 · PP-DocLayoutV3 + VLM · WebGPU FP16 · "+(paddleNativeAdapter.model?.gpuAdapter||"GPU"):
+     ["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）· 当前 GPU 会话就绪":"模型已加载 · 可开始推理";
  }catch(err){
    loadPhase="error";
    console.error("Model load failure",err);
@@ -1535,7 +1543,7 @@ $("run").onclick=async()=>{
      const partial=e?.partialText||$("tags").textContent;
      if(partial&&partial!=="等待新的推理输出。"){
        result=partial;$("tags").textContent=partial;$("saveDT").disabled=false;let boxes=0;
-       try{if(nativeOutputFormat){$("saveDT").textContent="下载原生 JSON";const parsed=parseNativeResult(partial,nativeOutputFormat);boxes=showNative(parsed);renderNativeComparison(parsed,nativeOutputFormat);}else{boxes=show(result);renderComparison(result);}}
+       try{if(nativeOutputFormat){nativeFormat=nativeOutputFormat;$("saveDT").textContent="下载原生 JSON";const parsed=parseNativeResult(partial,nativeOutputFormat);boxes=showNative(parsed);renderNativeComparison(parsed,nativeOutputFormat);}else{boxes=show(result);renderComparison(result);}}
        catch{$("saveImg").disabled=true;nativeParsed=null;show();rendered.replaceChildren();const warning=document.createElement("div");warning.className="render-placeholder";warning.textContent="已保留部分原始输出，但无法解析为完整结构；不绘制定位框。";rendered.appendChild(warning);}
        $("saveImg").disabled=boxes===0;
        $("compareDiagnostic").textContent="本次推理已由用户终止，以下为已生成的部分输出；结果不完整，未计入多模型结果对比。";
