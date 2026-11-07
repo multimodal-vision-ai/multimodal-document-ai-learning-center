@@ -541,7 +541,7 @@ function renderPaddleDownloadProgress(event) {
     "vlm-warmup":"预热 PaddleOCR-VL 模型"
   };
   const label=labels[event?.stage]||"PaddleOCR-VL-1.6 初始化";
-  const detail=event?.phase?" · "+event.phase:""+(event?.status?" · "+event.status:"");
+  const detail=(event?.phase?" · "+event.phase:"")+(event?.status?" · "+event.status:"");
   $("downloadStatus").textContent=label+detail+(summary.hasProgress?" · "+overall:"");
 }
 
