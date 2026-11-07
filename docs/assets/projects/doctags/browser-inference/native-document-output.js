@@ -22,6 +22,23 @@
     catch (error) { throw new Error("模型没有输出完整的有效 JSON："+error.message); }
     return {raw, value};
   }
+  // Ovis/Qwen may prepend a <think>...</think> wrapper before its official
+  // Structured JSON. Preserve the exact raw output, but ignore that wrapper
+  // only while parsing the native JSON array.
+  function decodeOvis(input) {
+    const raw = asRaw(input);
+    if (raw.length > MAX_RAW_CHARS) throw new Error("原始输出超过 10 MiB 限额，拒绝渲染。");
+    let payload = raw;
+    if (typeof input === "string") {
+      payload = raw.trimStart();
+      const thinkPrefix = payload.match(/^<think\b[^>]*>[\s\S]*?<\/think\s*>/i);
+      if (thinkPrefix) payload = payload.slice(thinkPrefix[0].length).trimStart();
+    }
+    let value;
+    try { value = typeof input === "string" ? JSON.parse(payload) : input; }
+    catch (error) { throw new Error("模型没有输出完整的有效 JSON："+error.message); }
+    return {raw, value};
+  }
   function isBox(box, maxX, maxY, integral) {
     return Array.isArray(box) && box.length === 4
       && box.every(v => typeof v === "number" && Number.isFinite(v) && v >= 0
@@ -36,7 +53,7 @@
     return {width, height};
   }
   function parseOvis(input) {
-    const {raw,value} = decode(input);
+    const {raw,value} = decodeOvis(input);
     if (!Array.isArray(value)) throw new Error("OvisOCR3 Structured 必须返回 JSON 数组。");
     const blocks = [], warnings = [];
     if (value.length > MAX_BLOCKS) warnings.push("元素超过 600 个，仅检查前 600 个。");
