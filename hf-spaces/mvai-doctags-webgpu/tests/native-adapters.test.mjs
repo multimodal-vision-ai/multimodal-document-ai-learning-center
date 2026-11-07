@@ -52,6 +52,9 @@ test("Paddle inference progress reflects completed regions, not elapsed time",()
   assert.equal(normalizePaddleInferenceProgress({
     status:"region-complete",completedRegions:9,totalRegions:4
   }).completedRegions,4);
+  assert.equal(normalizePaddleInferenceProgress({
+    stage:"layout",status:"complete",regions:6
+  }).totalRegions,6);
 });
 
 test("Paddle layout worker resolves to the demo page origin",()=>{
