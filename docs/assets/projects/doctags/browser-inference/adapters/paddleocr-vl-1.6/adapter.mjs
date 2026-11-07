@@ -130,6 +130,10 @@ async function createDefaultLayout(onProgress) {
     cache: true,
     onProgress: event => onProgress({stage: "layout-load", ...event})
   });
+  if (detector.runtime?.backend !== "webgpu" || detector.runtime?.precision !== "fp16") {
+    await detector.dispose();
+    throw new Error("PP-DocLayoutV3 未以 WebGPU FP16 运行；禁止回退到 WASM/CPU。");
+  }
   onProgress({
     stage: "layout-load",
     phase: "ready",
@@ -138,10 +142,6 @@ async function createDefaultLayout(onProgress) {
     totalBytes: LAYOUT_DOWNLOAD_BYTES,
     source: detector.loadTimings?.modelSource ?? "unknown"
   });
-  if (detector.runtime?.backend !== "webgpu" || detector.runtime?.precision !== "fp16") {
-    await detector.dispose();
-    throw new Error("PP-DocLayoutV3 未以 WebGPU FP16 运行；禁止回退到 WASM/CPU。");
-  }
   return detector;
 }
 
