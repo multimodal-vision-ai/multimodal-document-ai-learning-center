@@ -123,7 +123,7 @@
     <rect x="350" y="42" width="88" height="34" rx="9" fill="#24a66a"/>
     <text x="394" y="66" text-anchor="middle" class="small-label" fill="#fff">text</text>
 
-    <rect x="425" y="360" width="58" height="104" rx="3" fill="none" stroke="#8951d5" stroke-width="4"/>
+    <rect x="422" y="360" width="64" height="104" rx="3" fill="none" stroke="#8951d5" stroke-width="4"/>
     <rect x="350" y="329" width="140" height="34" rx="9" fill="#8951d5"/>
     <text x="420" y="353" text-anchor="middle" class="small-label" fill="#fff">handwritten</text>
 
@@ -154,7 +154,7 @@
     <text x="48" y="286" class="code" fill="#15956c">  &lt;/text&gt;</text>
 
     <text x="48" y="322" class="code" fill="#8750c6">  &lt;handwritten&gt;</text>
-    <text x="66" y="350" class="code" fill="#c48726">&lt;loc_842&gt;&lt;loc_595&gt;&lt;loc_966&gt;&lt;loc_800&gt;</text>
+    <text x="66" y="350" class="code" fill="#c48726">&lt;loc_844&gt;&lt;loc_595&gt;&lt;loc_972&gt;&lt;loc_800&gt;</text>
     <text x="66" y="378" class="code" fill="#253647">柳宗元</text>
     <text x="48" y="406" class="code" fill="#8750c6">  &lt;/handwritten&gt;</text>
 
