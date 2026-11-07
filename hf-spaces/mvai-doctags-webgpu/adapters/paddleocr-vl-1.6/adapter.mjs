@@ -368,6 +368,7 @@ export async function createAdapter({
           stage: "layout",
           status: "complete",
           regions: regions.length,
+          totalRegions: regions.length,
           seconds: detection.timings?.totalMs / 1000
         });
         const recognitionStarted = performance.now();
