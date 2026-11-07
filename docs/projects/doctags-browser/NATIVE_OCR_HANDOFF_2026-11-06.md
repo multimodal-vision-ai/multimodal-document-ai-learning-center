@@ -335,3 +335,38 @@ bash hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/run_conversion.sh
 
 成功后，使用相同文档图片运行 `test_reference.py`，保存原始 BF16 PyTorch 参考 JSON。然后由用户明确确认 HF 上传，再固定完整 HF commit SHA，进行 Chrome + RTX 3080 真实 WebGPU 验收。未完成这些步骤前，Ovis 不得加入 active model registry；PR #74 继续保持 Draft，不合并、不部署。
 
+
+
+---
+
+## 2026-11-07 更新：模型验收完成，转入统一平台集成
+
+本交接文档前半部分记录的是转换和独立验证阶段；以下状态为当前有效状态。
+
+### 已验收模型与固定版本
+
+| 模型 | 固定版本 | 浏览器验收 |
+|---|---|---|
+| OvisOCR3 0.8B | ONNX bundle commit de391cb93aa2ee1b67692bdba1b143bf8e4a9f98；源 revision 17f255e2c8ae6d18d5d5edb0a474bd4ed39aef90 | Chrome 155 / RTX 3080 10GB；1024²；13 个有效结构元素和 13 个定位；完整生成 |
+| PaddleOCR-VL-1.6 0.9B | browser model revision 5219606297d00bbd23b2ec193271af0c0b427dfc | Chrome 155 / RTX 3080 10GB；解析与版面还原人工验收通过 |
+
+OvisOCR3 一次性能记录：1458 tokens、34.61 秒、42.82 tokens/s。用户已确认当前演示效果足够，停止进一步 Decoder 优化。
+
+### 当前集成实现
+
+- PR #74 仍以 dev 为目标分支，所有集成改动在独立 feature branch。
+- 模型注册表新增 OvisOCR3 和 PaddleOCR-VL-1.6，保留 Granite、DJX-0.8B、WC-2B 原有模型。
+- 生产 DocTags 页面通过独立 adapter 调用两款原生模型。
+- 原生输出分别由 native-document-output.js 和 native-result-renderer.js 解析/渲染；不转换为 DocTags。
+- 左侧原图位置框、右侧结构化阅读视图、悬停/点击定位、A/B 历史和 JSON 下载已接入。
+- HF Space 与 docs 页面、registry、adapter 和 parser/render assets 必须保持逐字节一致。
+- PP-DocLayoutV3 Worker 不提交到仓库；由 stage-ppdoclayout-worker.mjs 从固定 URL 下载并校验字节数与 SHA-256，然后分别暂存到 HF Space 和 docs preview 目录。DEV、docs-quality、native contract 和 HF publish 工作流均需先执行 staging。
+
+### 发布顺序
+
+1. CI 完成：原生解析器测试、五模型 registry 测试、页面镜像检查、JS/Python 静态验证、Worker SHA 校验、DEV 预览资源探测。
+2. 用户在统一平台 DEV 页面人工检查五模型选择、模型加载、推理、原生输出、定位框、A/B、下载和旧模型回归。
+3. 用户确认后合并 PR #74 到 dev；dev 的 publish-hf-doctags.yml 会在 HF_TOKEN 配置时同步 Static Space。
+4. HF Space 验收通过后，再将 dev 中已批准内容提升至 main，正式发布 GitHub Pages。
+
+未经用户确认，不直接合并 main。
