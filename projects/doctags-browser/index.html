@@ -2410,6 +2410,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ovisocr3-paddleocr-vl-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      原生模型：OvisOCR3 与 PaddleOCR-VL-1.6
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
       使用流程
@@ -2482,12 +2491,42 @@
 
 
 <h1 id="-doctags">实时文档结构化解析-DocTags · 多模型技术预览<a class="headerlink" href="#-doctags" title="Permanent link">&para;</a></h1>
-<p>这是一个可扩展的文档结构化解析与多模型对比实验平台：可针对同一输入文档切换经过适配的兼容模型，查看 DocTags、版面位置及结构化渲染结果，进行 A/B 对比。当前内置 <strong>IBM Granite Docling 258M ONNX 公开基线</strong>、<strong>MVAI-DocTags-DJX-0.8B-v1.0 ONNX 自研模型（基于 OvisOCR3）</strong> 和 <strong>MVAI-DocTags-WC-2B-v1.0 ONNX 自研模型（基于 Qwen3.5）</strong>。三者使用统一模型选择界面；两款自研模型使用独立推理适配器，浏览器推理使用访问者本机 WebGPU，不需要实验室提供推理服务器；兼容性与解析准确率需按实际运行验证。</p>
+<p>这是一个可扩展的文档结构化解析与多模型对比实验平台：可针对同一输入文档切换经过适配的兼容模型，查看原生结构化输出、版面位置及阅读视图，进行 A/B 对比。当前内置 <strong>IBM Granite Docling 258M</strong>、<strong>OvisOCR3 0.8B</strong>、<strong>PaddleOCR-VL-1.6 0.9B</strong>、<strong>MVAI-DocTags-DJX-0.8B-v1.0</strong> 和 <strong>MVAI-DocTags-WC-2B-v1.0</strong> 五款模型。Granite/DJX/WC 使用 DocTags；OvisOCR3 和 PaddleOCR-VL-1.6 保留各自原生 JSON 格式，不强制转换为 DocTags。所有模型均在访问者本机浏览器使用 WebGPU 推理。</p>
 <p><a class="md-button md-button--primary" href="../../assets/projects/doctags/browser-inference/index.html">打开浏览器端推理实验</a></p>
 <h2 id="v17">V1.7 多模型使用与缓存说明<a class="headerlink" href="#v17" title="Permanent link">&para;</a></h2>
 <p><strong>一张文档、多模型顺序推理：</strong> 在“02 · WebGPU 推理”中选择模型，点击“加载所选模型”，然后运行。切换另一模型后继续使用相同输入；“05 · 多模型结果对比”会保存当前页面内同一图片的两次完整推理输出，选择 A/B 分别显示结构化重建结果。Granite 支持 fp32/q4 配置；R3 使用固定混合精度（视觉 FP32、文字 FP16），不提供 q4 切换。不同精度不等于不同模型。</p>
 <p><strong>DJX-0.8B 自研模型：</strong> 选择“MVAI-DocTags-DJX-0.8B-v1.0 · 自研”。模型约下载 2.52 GB，使用 Transformers.js 4.4.0-next.0 与 ONNX Runtime Web 1.31.1，需要支持 <code>shader-f16</code> 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试；其他设备仍需实测。模型仓库：<a href="https://huggingface.co/multimodal-vision-ai/R3-OvisOCR3-DocTags-0.8B-ONNX">DJX-0.8B ONNX</a>。</p>
 <p><strong>WC-2B 自研模型：</strong> 选择“MVAI-DocTags-WC-2B-v1.0 · 自研”。模型约下载 6.2 GB，使用独立 Qwen3.5 ONNX 适配器及相同版本的 Transformers.js / ONNX Runtime Web，固定混合精度为视觉 FP32、词嵌入与文字生成 FP16，同样需要支持 <code>shader-f16</code> 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试；当前测试仅证明短页浏览器推理链路可用，不代表复杂文档准确率或普通显卡兼容性已通过。模型仓库：<a href="https://huggingface.co/multimodal-vision-ai/Wang-Qwen3.5-2B-DocTags-ONNX">WC-2B ONNX</a>。</p>
+<h2 id="ovisocr3-paddleocr-vl-16">原生模型：OvisOCR3 与 PaddleOCR-VL-1.6<a class="headerlink" href="#ovisocr3-paddleocr-vl-16" title="Permanent link">&para;</a></h2>
+<p>两款原生模型已加入统一模型选择列表，选择后仍按原有的“加载模型 → 开始推理”流程操作。</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>固定配置</th>
+<th>原生输出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OvisOCR3 0.8B</td>
+<td>WebGPU；Vision FP32、Embedding/Decoder FP16；默认 1024²</td>
+<td>Structured JSON：bbox、category、content</td>
+</tr>
+<tr>
+<td>PaddleOCR-VL-1.6 0.9B</td>
+<td>PP-DocLayoutV3 + VLM；WebGPU FP16</td>
+<td>parsing_res_list、原图像素坐标、OTSL</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>OvisOCR3</strong>：浏览器模型仓库 multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX，固定 bundle commit de391cb93aa2ee1b67692bdba1b143bf8e4a9f98。模型在 RTX 3080 10GB 上完成实际浏览器推理验收；1024² 单次性能记录约 42.82 tokens/s。</li>
+<li><strong>PaddleOCR-VL-1.6</strong>：浏览器模型仓库 gle bkudr/PaddleOCR-VL-1.6-WebGPU，固定 revision 5219606297d00bbd23b2ec193271af0c0b427dfc。首次加载模型资源约 2.11 GB；PP-DocLayoutV3 Worker 使用本站同源静态资源。</li>
+<li><strong>结果展示</strong>：03 区显示原图定位框，右侧按模型原生格式重建阅读视图；悬停或点击结构块可定位原图区域。04 区保留原始 JSON，原生模型下载 .json，DocTags 模型仍下载 .dt。</li>
+<li><strong>A/B 对比</strong>：同一文档可将原生模型与 DocTags 模型的完整结果放入 A/B 对比。系统根据每条记录保存的输出格式选择对应渲染器，不把 Ovis/Paddle 的结果伪装成 DocTags。</li>
+<li><strong>设备要求</strong>：使用支持 shader-f16 的桌面 Chrome/Edge 和 WebGPU 设备。首次加载受网络与浏览器缓存影响；切换模型时会释放当前 GPU 实例，再加载目标模型。</li>
+</ul>
 <p><strong>接入未来自研模型：</strong> 点击“添加兼容模型”，输入公开的 Hugging Face 模型仓库 ID（如 <code>multimodal-vision-ai/model-onnx</code>）和显示名称。仅登记模型并不代表可以成功加载：必须提供与当前 Granite Docling processor、DocTags 提示词及 ONNX 加载器兼容的权重；其他模型架构需要单独开发适配层。不要输入私有仓库、访问令牌或身份凭证。</p>
 <p><strong>本地缓存有两种状态：</strong>
 - 模型权重由 Transformers.js 的 <strong>Cache Storage</strong> 保留于访问者当前浏览器；重新进入相同网站通常可复用缓存，不必每次重新下载，但配额不足、浏览器清理、无痕模式、更换域名或模型版本会导致重新下载。
@@ -2506,7 +2545,7 @@
 6. GPU 不支持、模型加载失败或中文内容解析不佳时，使用 <a href="../doctags-kaggle/index.html">Kaggle 个人 GPU 试点</a>，或者 <a href="../../assets/projects/doctags/interactive-demo/index.html">免登录查看已有解析样例</a>。</p>
 <div class="admonition warning">
 <p class="admonition-title">技术预览，不是完整模型评测</p>
-<p>页面内置 IBM 公开基线、DJX-0.8B 和 WC-2B 两款自研 ONNX 模型。两款自研模型均已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端推理测试，但尚未完成多种消费级 GPU、浏览器和移动设备的兼容性验证，也未完成完整 OCR benchmark、长页和复杂表格评测。不能将模型转换一致性或单张合成图片的成功结果当作完整准确率证明，也不能把页面出现和模型下载成功当作推理能力证明。</p>
+<p>页面内置 Granite、OvisOCR3、PaddleOCR-VL-1.6、DJX-0.8B 和 WC-2B 五款模型。OvisOCR3 与 PaddleOCR-VL-1.6 已在 Chrome 155 / NVIDIA RTX 3080 10GB 完成实际浏览器推理及人工结构化结果验收；DJX/WC 已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试。上述验收不等于完整 OCR benchmark，尚不能据此宣称跨设备准确率、长页或所有复杂表格均已验证。</p>
 </div>
 <h2 id="hf-organization">接入 HF Organization<a class="headerlink" href="#hf-organization" title="Permanent link">&para;</a></h2>
 <p>与此页面相同的可部署源码位于仓库的 hf-spaces/mvai-doctags-webgpu 目录。Organization 创建 <strong>Static Space</strong> 后，除 README.md、index.html、doctags-renderer.js、model-registry.js 外，还必须保留 <code>adapters/r3-ovisocr3/</code> 与 <code>adapters/wang-qwen35-2b/</code> 两个模型适配器目录及其文件。不需要 HF 付费 GPU。</p>
