@@ -49,6 +49,8 @@ test("HF Space and Learning Center production pages and model registries are byt
 test("production UI loads native parsers and routes each model through its dedicated adapter",async()=>{
   const html=await read("../index.html");
   assert.match(html,/model-registry\.js\?v=mvai-order-20261107-2/);
+  assert.match(html,/select\.value=allModels\(\)\.some\(m=>m\.id===prefer\)\?prefer:registry\.R3\.id/);
+  assert.match(html,/renderModelOptions\(registry\.R3\.id\);loadLocalSample/);
   assert.match(html,/native-document-output\.js\?v=native-ocr-/);
   assert.match(html,/native-result-renderer\.js\?v=native-ocr-/);
   assert.match(html,/import\("\.\/adapters\/ovisocr3-native\/adapter\.mjs"\)/);
