@@ -86,7 +86,7 @@ function summarizePaddleDownloadProgress(state) {
 }
 
 export function normalizePaddleInferenceProgress(event) {
-  const rawTotal = Number(event?.totalRegions);
+  const rawTotal = Number(event?.totalRegions ?? event?.regions);
   const rawCompleted = Number(event?.completedRegions);
   const totalRegions = Number.isFinite(rawTotal)
     ? Math.max(0, Math.floor(rawTotal))
