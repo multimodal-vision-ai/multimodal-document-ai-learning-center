@@ -14,7 +14,7 @@ shanshui_scene: 7
   <div class="mv-showcase-v18__stack">
     <article class="mv-showcase-v18__card mv-showcase-v18__card--doc" aria-labelledby="mv-showcase-doc-title">
       <figure class="mv-showcase-v18__cover">
-        <img src="../assets/projects/doctags/doctags-song-painting-v2.svg" width="1800" height="900" loading="eager" decoding="async" alt="DocTags 三阶段示意：以柳宗元《江雪》为主题的原始文档、元素定位与 DocTags 结构化输出；包含水墨雪山、孤舟蓑笠翁、题诗、草书题款和印章。">
+        <img src="../assets/projects/doctags/doctags-song-painting-v3-aligned.svg" width="1800" height="900" loading="eager" decoding="async" alt="DocTags 三阶段示意：以柳宗元《江雪》为主题的原始文档、元素定位与 DocTags 结构化输出；包含水墨雪山、孤舟蓑笠翁、题诗、草书题款和印章。">
       </figure>
       <div class="mv-showcase-v18__body">
         <span class="mv-showcase-v18__kicker">文档理解 · DocTags</span>
