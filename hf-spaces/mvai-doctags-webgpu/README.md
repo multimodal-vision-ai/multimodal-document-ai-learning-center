@@ -13,12 +13,12 @@ license: apache-2.0
 
 本 Space 定位为可扩展的文档结构化解析与多模型对比平台。当前内置五款模型：IBM Granite Docling 258M ONNX 公开基线、官方 OvisOCR3 0.8B 原生 Structured 模型、PaddleOCR-VL-1.6 0.9B 原生模型，以及 MVAI-DocTags-DJX-0.8B-v1.0 和 MVAI-DocTags-WC-2B-v1.0 两款自研 DocTags 模型。OvisOCR3 与 PaddleOCR-VL-1.6 使用独立适配器，保留各自原生 JSON 输出；Granite、DJX 和 WC 继续使用 DocTags 输出。所有模型均在访问者本机浏览器执行，不依赖 HF 托管 GPU。
 推理在访问者本机浏览器执行，不依赖 Hugging Face 托管 GPU，不需要用户登录。
-九类原始 PNG/JPEG 演示图片由 IBM Granite Docling 官方 DEMO 镜像至本站 `samples/` 目录；内置样例优先通过 CORS 请求读取为 Blob；raw.githack CDN 重定向失败时回退到 raw.githubusercontent.com，本地上传则直接保留原始 File，两款自研模型均从原始 Blob 解码，避免将跨域污染的 Canvas 导出为 PNG。Canvas 仅用于页面预览与标注显示。首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB。
-DJX-0.8B 首次下载约 2.52 GB，WC-2B 首次下载约 6.2 GB，均需要支持 `shader-f16` 的 WebGPU。两者已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端验证；其他设备尚需实测。尚未完成完整 OCR benchmark、长页和复杂表格评测，不能将单张合成图片结果视为完整准确率证明。
+九类原始 PNG/JPEG 演示图片由 IBM Granite Docling 官方 DEMO 镜像至本站 `samples/` 目录；内置样例优先通过 CORS 请求读取为 Blob；raw.githack CDN 重定向失败时回退到 raw.githubusercontent.com，本地上传则直接保留原始 File，两款自研模型均从原始 Blob 解码，避免将跨域污染的 Canvas 导出为 PNG。Canvas 仅用于页面预览与标注显示。首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB，PaddleOCR-VL-1.6 约下载 2.11 GB；OvisOCR3 需下载其固定 ONNX bundle。
+DJX-0.8B 和 WC-2B 已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端验证；OvisOCR3 和 PaddleOCR-VL-1.6 已在 Chrome 155 / NVIDIA RTX 3080 10GB 完成实际浏览器推理及人工结果验收。上述验收不等于完整 OCR benchmark、长页或复杂表格评测，不能将单次成功结果视为跨设备准确率证明。
 
 ## V1.6 结构化结果对照
 
-完成 WebGPU 推理后，新增原图与结构化阅读结果的并排展示。解析 DocTags 中的标题、段落与 OTSL 表格、对应位置框；原始标签置于折叠栏。内容并非像素级原稿复刻，复杂合并表格或截断输出需人工核对。
+完成 WebGPU 推理后，原图与结构化阅读结果并排展示。Granite/DJX/WC 根据 DocTags 中的标题、段落与 OTSL 表格重建阅读视图；OvisOCR3 和 PaddleOCR-VL-1.6 分别使用原生 Structured JSON 与 parsing_res_list/OTSL 渲染。原始标签/JSON 置于折叠栏。内容并非像素级原稿复刻，复杂合并表格或截断输出需人工核对。
 
 上传时必须将 `index.html` 和 `doctags-renderer.js` 放在 Space 仓库根目录，与 `README.md` 同级；仅上传 HTML 将无法渲染结果。
 
@@ -33,7 +33,7 @@ DJX-0.8B 首次下载约 2.52 GB，WC-2B 首次下载约 6.2 GB，均需要支�
 
 ## V1.7.2 体验改进
 
-推理完成后状态栏呈现模型参数规模（IBM 公开基线 258M 参数；DJX 自研模型 0.8B 参数；WC 自研模型 2.2B 参数）和本次推理时长。05 多模型结果对比支持可选的 A/B 双向按比例同步滚动，不代表语义段落精准对齐。
+推理完成后状态栏呈现模型参数规模（IBM 公开基线 258M；OvisOCR3 0.8B；PaddleOCR-VL-1.6 0.9B；DJX 0.8B；WC 2.2B）和本次推理时长。05 多模型结果对比支持可选的 A/B 双向按比例同步滚动，不代表语义段落精准对齐。
 
 ## V1.7.3 顶部信息结构
 
