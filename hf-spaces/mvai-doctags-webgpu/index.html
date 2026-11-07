@@ -675,7 +675,7 @@ function renderModelOptions(prefer){
     select.appendChild(option);
   }
   const opt=document.createElement("option");opt.disabled=true;opt.textContent="其他自研模型 · 待接入兼容适配";select.appendChild(opt);
-  select.value=allModels().some(m=>m.id===prefer)?prefer:registry.BUILTIN.id;
+  select.value=allModels().some(m=>m.id===prefer)?prefer:registry.R3.id;
   syncModelConfiguration();
   refreshLoadButtons();
 }
@@ -1723,7 +1723,7 @@ $("stop").onclick=()=>{
   try{activeStop?.();}catch(error){status("终止请求失败："+(error?.message||String(error)));}
 };
 
-renderModelOptions(registry.BUILTIN.id);loadLocalSample(challengeSamples[0].id,"challenge");detect();
+renderModelOptions(registry.R3.id);loadLocalSample(challengeSamples[0].id,"challenge");detect();
 </script>
 </body>
 </html>
