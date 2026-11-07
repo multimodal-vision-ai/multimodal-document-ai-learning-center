@@ -27,7 +27,7 @@ hide:
 | PaddleOCR-VL-1.6 0.9B | PP-DocLayoutV3 + VLM；WebGPU FP16 | parsing_res_list、原图像素坐标、OTSL |
 
 - **OvisOCR3**：浏览器模型仓库 multimodal-vision-ai/OvisOCR3-0.8B-WebGPU-ONNX，固定 bundle commit de391cb93aa2ee1b67692bdba1b143bf8e4a9f98。模型在 RTX 3080 10GB 上完成实际浏览器推理验收；1024² 单次性能记录约 42.82 tokens/s。
-- **PaddleOCR-VL-1.6**：浏览器模型仓库 gle bkudr/PaddleOCR-VL-1.6-WebGPU，固定 revision 5219606297d00bbd23b2ec193271af0c0b427dfc。首次加载模型资源约 2.11 GB；PP-DocLayoutV3 Worker 使用本站同源静态资源。
+- **PaddleOCR-VL-1.6**：浏览器模型仓库 glebkudr/PaddleOCR-VL-1.6-WebGPU，固定 revision 5219606297d00bbd23b2ec193271af0c0b427dfc。首次加载模型资源约 2.11 GB；PP-DocLayoutV3 Worker 使用本站同源静态资源。
 - **结果展示**：03 区显示原图定位框，右侧按模型原生格式重建阅读视图；悬停或点击结构块可定位原图区域。04 区保留原始 JSON，原生模型下载 .json，DocTags 模型仍下载 .dt。
 - **A/B 对比**：同一文档可将原生模型与 DocTags 模型的完整结果放入 A/B 对比。系统根据每条记录保存的输出格式选择对应渲染器，不把 Ovis/Paddle 的结果伪装成 DocTags。
 - **设备要求**：使用支持 shader-f16 的桌面 Chrome/Edge 和 WebGPU 设备。首次加载受网络与浏览器缓存影响；切换模型时会释放当前 GPU 实例，再加载目标模型。
