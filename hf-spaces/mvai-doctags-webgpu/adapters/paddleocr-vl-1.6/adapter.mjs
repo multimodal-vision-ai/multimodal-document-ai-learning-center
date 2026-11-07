@@ -389,7 +389,8 @@ export async function createAdapter({
               status: "region-complete",
               region: index + 1,
               totalRegions: regions.length,
-              completedRegions: recognitions.length
+              completedRegions: recognitions.length,
+              skipped: true
             });
             continue;
           }
