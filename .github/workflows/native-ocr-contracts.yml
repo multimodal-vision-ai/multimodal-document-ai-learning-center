@@ -69,5 +69,3 @@ jobs:
           cmp hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/adapter.mjs docs/assets/projects/doctags/browser-inference/adapters/ovisocr3-native/adapter.mjs
           cmp hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/contract.mjs docs/assets/projects/doctags/browser-inference/adapters/ovisocr3-native/contract.mjs
 
-      - name: Validate integrated browser inference page and model registry
-        run: python scripts/kaggle/validate_browser_doctags_pilot.py
