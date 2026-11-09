@@ -49,6 +49,8 @@ jobs:
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@v2
         with:
+          # Two NeurIPS proceedings URLs consistently time out at the upstream host;
+          # keep other external and internal links under strict validation.
           args: >-
             --no-progress
             --accept 200,204,206,429
@@ -56,5 +58,6 @@ jobs:
             --max-retries 2
             --exclude "^https://www[.]acm[.]org/publications/policies/artifact-review-and-badging-current$"
             --exclude "^https://www[.]sciencedirect[.]com/science/article/pii/S1566253525006955$"
+            --exclude "^https://papers[.]nips[.]cc(/paper/2025)?/?$"
             "docs/**/*.md"
           fail: true
