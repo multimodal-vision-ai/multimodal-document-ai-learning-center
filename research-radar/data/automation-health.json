@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-11-02T01:00:25.532Z",
-  "overall_status": "needs_attention",
+  "checked_at": "2026-11-09T01:01:20.165Z",
+  "overall_status": "watching",
   "watchdog": {
-    "last_run_at": "2026-11-02T01:00:25.532Z",
-    "status": "failed",
-    "message": "2026-W45 weekly trigger committed once on dev at 2026-11-02T00:56:34.817Z (30aa8209d0ef8050ba0bf7b509984f392f470a25). Source collection executed: 129 observed leads (arxiv 60, github 40, Hugging Face 28, OpenReview 1) and 16 candidates >=8.0 in the runner. The subsequent render failed because prior v2 reports were checked against the new rolling seven-day queue. Snapshot upload and radar-data persistence were skipped; the latest shared queue remains from 2026-10-26. No second collection was triggered and no new weekly report was written. A dev-only queue-rollover validation repair is being tested."
+    "last_run_at": "2026-11-09T01:01:20.165Z",
+    "status": "completed",
+    "message": "2026-W46 unique trigger 3e24cfe55235757688ac0faa373c1b806fd1d241 committed on dev; collection succeeded at 2026-11-09T00:59:18Z, 122 discovered leads (arxiv 60, github 38, huggingface 24, openreview 0), 16 first-stage >=8 candidates persisted to radar-data. One evidence-reviewed recommendation (TinyDoc-VLM, 8.36) written to latest-weekly.json at 2026-11-09T01:00:22Z. No second scan, main untouched. Documentation quality link job failed on three papers.nips.cc timeouts; build and Research Radar quality succeeded."
   },
   "publication": {
-    "status": "failed",
-    "checked_at": "2026-11-02T01:00:25.532Z",
-    "refresh_workflow_run_url": null,
-    "dev_preview_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/41369846143",
-    "home_content_verified": false,
-    "detail_content_verified": false,
-    "message": "Weekly 2026-W45 collection was not persisted; new 16-item queue unavailable on radar-data and new ChatGPT-reviewed weekly report not published. Failed original DEV workflow 41369846143. Existing previous-week website content is not proof of this week's synchronization."
+    "status": "success",
+    "checked_at": "2026-11-09T01:01:20.165Z",
+    "refresh_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/42543207155",
+    "dev_preview_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/42543086403",
+    "home_content_verified": true,
+    "detail_content_verified": true,
+    "message": "Refresh workflow succeeded including validated second-stage recommendation, public DEV snapshot endpoint verification and fixed CDN alias inspection. The dev-preview branch HTML home and radar page were read and confirmed to include DEV marker, 2026-W46, TinyDoc-VLM and score 8.36. Official main was not deployed."
   }
 }
