@@ -1,0 +1,87 @@
+{
+  "_screening_queue": {
+    "candidates": [
+      {
+        "abstract": "",
+        "category": "document",
+        "description": "256M-param document VLM: SigLIP + SmolLM2. LoRA fine-tuning, ONNX export, runs on CPU. Apache 2.0.",
+        "discovered_from": "github",
+        "event_at": "2026-11-08T09:00:00+00:00",
+        "event_label": "代码库近期提交",
+        "github_license": "Apache-2.0",
+        "github_stars": 10,
+        "github_url": "https://github.com/eulogik/TinyDoc-VLM",
+        "hf_downloads": null,
+        "huggingface_url": null,
+        "id": "github-1273114971",
+        "match_reasons": [
+          "来源：GitHub",
+          "主题：文档理解",
+          "主题：多模态小模型",
+          "方法关键词：高效化 / 压缩 / 低成本训练",
+          "社区信号：10 stars"
+        ],
+        "match_score": 8.7,
+        "paper_url": null,
+        "pdf_url": null,
+        "priority_tier": 2,
+        "published_at": "2026-06-18T08:13:04Z",
+        "source_url": "https://github.com/eulogik/TinyDoc-VLM",
+        "title": "eulogik/TinyDoc-VLM"
+      }
+    ]
+  },
+  "collection_generated_at": "2026-11-09T00:59:19+00:00",
+  "first_stage_threshold": 8,
+  "generated_at": "2026-11-09T01:00:22.278Z",
+  "items": [
+    {
+      "candidate_id": "github-1273114971",
+      "confidence": "high",
+      "data_open": null,
+      "evaluation_dimensions": {
+        "innovation": {
+          "rationale": "主要贡献是可检查OCR span、字段置信度、校验与人工审核的可信抽取闭环，而非新的视觉编码器或256M基础模型；作者公开承认256M模型OCRBench为0%，故方法创新分适度扣减。",
+          "score": 7.3
+        },
+        "open_source": {
+          "rationale": "官方仓库Apache-2.0，包含SDK、demo、测试、评测原始结果及重算脚本；依赖第三方Qwen开源基座，不把其权重冒充TinyDoc自研权重。数据使用须分别遵守SROIE及第三方许可。",
+          "score": 9.2
+        },
+        "reproducibility": {
+          "rationale": "README给出pip与Ollama运行命令、同一100张SROIE清洁集的配对比较和结果重算脚本；2B/3B可进行局部CPU/单卡推理，但RTX3080实测未进行，部分数据可能预训练污染且多页样本仅10份。",
+          "score": 8.6
+        },
+        "research_potential": {
+          "rationale": "可针对证据覆盖与正确性、字段置信度校准、中文跨页票据、异常检测、延迟成本建立清晰消融实验，具备文档理解与财务自动化场景价值；真实供应商数据尚需外部验证。",
+          "score": 8.6
+        }
+      },
+      "evidence_urls": [
+        "https://github.com/eulogik/TinyDoc-VLM",
+        "https://github.com/eulogik/TinyDoc-VLM/blob/main/README.md",
+        "https://github.com/eulogik/TinyDoc-VLM/blob/main/docs/BENCHMARKS.md",
+        "https://github.com/eulogik/TinyDoc-VLM/blob/main/LICENSE",
+        "https://github.com/eulogik/TinyDoc-VLM/blob/main/evaluation/phase0/recompute_scores.py"
+      ],
+      "gpu_requirement": "Ollama本地运行；仓库报告在Apple M4上完成2B/3B推理，NVIDIA RTX 3080 10GB的显存峰值与延迟未核实。",
+      "parameters": "当前有效推理基座为Qwen3-VL-2B-Instruct（2B）或Qwen2.5-VL-3B（3B），均非TinyDoc自研；已退役第一方256M checkpoint不作为有效性能模型。",
+      "research_opportunity": "以自有去重的中文票据和长文档为盲测集，研究字段级证据定位正确率、校准后置信度、错误拒答、跨页表格行项目幻觉与人机协同审核；对比OCR-only、2B VLM、OCR+VLM在质量/时延/显存上的帕累托边界，并与MVAI DocTags并行评测。",
+      "screened_at": "2026-11-09T01:00:22.278Z",
+      "selection_status": "recommended",
+      "summary": "TinyDoc当前是基于Ollama运行Qwen3-VL-2B-Instruct或Qwen2.5-VL-3B的本地票据结构化抽取SDK，结合RapidOCR证据片段/坐标、JSON schema校验与字段级置信度及人工复核。其自研256M checkpoint已因OCRBench严格得分0%退役，不能当作有效小模型成果。",
+      "title": "eulogik/TinyDoc-VLM",
+      "training_code_open": null,
+      "weights_open": true,
+      "why_selected": "官方Apache-2.0代码、SDK使用说明、测试、可重算的SROIE和发票评测记录齐全，并主动披露SROIE公开训练集污染、真实发票未测和多页幻觉问题；可用2B基座开展低成本、可证伪的证据可靠性研究，优于单纯展示未经验证的OCR准确率。"
+    }
+  ],
+  "report_title": "2026年第46周｜文档证据溯源与小模型科研周报",
+  "report_type": "weekly",
+  "schema_version": 1,
+  "screening_schema_version": 2,
+  "status": "completed",
+  "summary": "第46周唯一公开源采集于2026-11-09 00:59 UTC完成：本轮122条新线索，arXiv 60、GitHub 38、Hugging Face 24、OpenReview 0；没有报告源访问失败，但OpenReview零结果应视为覆盖不足。持久化队列16条match_score≥8.0候选。依据原始论文、仓库代码、许可、测试与评测记录二次核查，严格择优仅推荐TinyDoc-VLM的证据溯源式结构化抽取工程（不是其已失败并退役的256M模型）。V-LUMEN论文虽有创新但所指官方GitHub当前仅.gitignore，不能认定代码已开源；其他候选因原创性、数据/训练可核验性或资源成本不足暂不推荐。评分是研究优先级判断，未进行本地GPU实测。",
+  "window_end": "2026-11-09",
+  "window_start": "2026-11-02"
+}
