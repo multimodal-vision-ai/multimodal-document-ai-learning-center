@@ -301,3 +301,76 @@
   object-position: center 60%;
   transform: none;
 }
+
+
+/* DocTags Showcase V2 · compact Song-painting visual, scoped to the showcase page only. */
+.md-typeset .mv-showcase-v18 {
+  max-width: 64rem;
+}
+.md-typeset .mv-showcase-v18__card--doc {
+  grid-template-columns: minmax(0, 1.62fr) minmax(16rem, .84fr);
+  min-height: 18rem;
+}
+.md-typeset .mv-showcase-v18__cover {
+  justify-content: center;
+  padding: .35rem;
+  background: #fff;
+}
+.md-typeset .mv-showcase-v18__cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 18rem;
+  aspect-ratio: 2 / 1;
+  object-fit: contain;
+  object-position: center;
+}
+.md-typeset .mv-showcase-v18__card--doc .mv-showcase-v18__body {
+  padding: 1.25rem 1.35rem;
+}
+.md-typeset .mv-showcase-v18__card--doc .mv-showcase-v18__kicker {
+  font-size: .72rem;
+}
+.md-typeset .mv-showcase-v18__card--doc .mv-showcase-v18__body h2 {
+  margin: .38rem 0 .58rem !important;
+  font-size: 1.3rem !important;
+  line-height: 1.42;
+}
+.md-typeset .mv-showcase-v18__card--doc .mv-showcase-v18__description {
+  margin-bottom: 1rem;
+  font-size: .84rem;
+  line-height: 1.75;
+}
+.md-typeset .mv-showcase-v18__card--doc .mv-showcase-v18__primary {
+  padding: .72rem 1.05rem;
+  margin-top: .15rem;
+  border-radius: .55rem;
+  font-size: .88rem;
+}
+@media (max-width: 58rem) and (min-width: 47.01rem) {
+  .md-typeset .mv-showcase-v18__card--doc {
+    grid-template-columns: minmax(0, 1.45fr) minmax(15rem, .9fr);
+  }
+  .md-typeset .mv-showcase-v18__card--doc .mv-showcase-v18__body {
+    padding: 1rem;
+  }
+  .md-typeset .mv-showcase-v18__card--doc .mv-showcase-v18__body h2 {
+    font-size: 1.16rem !important;
+  }
+}
+@media (max-width: 47rem) {
+  .md-typeset .mv-showcase-v18__card--doc {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .md-typeset .mv-showcase-v18__cover {
+    padding: .35rem;
+  }
+  .md-typeset .mv-showcase-v18__cover img {
+    width: 100%;
+    max-height: none;
+    aspect-ratio: 2 / 1;
+  }
+  .md-typeset .mv-showcase-v18__card--doc .mv-showcase-v18__body {
+    padding: .95rem 1rem 1.05rem;
+  }
+}
