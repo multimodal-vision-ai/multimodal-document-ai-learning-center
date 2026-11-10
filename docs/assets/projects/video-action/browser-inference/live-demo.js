@@ -95,7 +95,7 @@ function loadDetector() {
   const worker = new Worker(new URL('./our-solution-live-worker.js', import.meta.url));
   detector = worker;
   detectorReady = new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(Error('模型加载超时')), 40000);
+    const timer = setTimeout(() => reject(Error('模型加载超时')), 90000);
     worker.onmessage = ({data}) => {
       if (data.type !== 'ready' && data.type !== 'error') return;
       clearTimeout(timer);
@@ -184,7 +184,7 @@ function selectVideo(key, file) {
 run.addEventListener('click', async () => {
   const id = ++runId;
   starting = true;
-  status('正在加载模型…');
+  status('正在加载模型，首次需要下载，请稍候…');
   try {
     await loadDetector().catch(error => {
       if (id !== runId) return;
