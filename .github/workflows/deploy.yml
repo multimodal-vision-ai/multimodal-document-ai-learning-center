@@ -52,6 +52,9 @@ jobs:
             git fetch origin radar-data
             git archive origin/radar-data research-radar/data | tar -xf -
           fi
+          # Link old completed reviews to their recorded first-stage evidence.
+          # This affects only the CI checkout; the radar-data branch stays untouched.
+          python scripts/radar/restore_historical_review_provenance.py
           python -m unittest discover -s tests/radar -v
           python scripts/radar/screening.py
           python scripts/radar/render.py
