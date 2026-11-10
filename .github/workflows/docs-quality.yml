@@ -10,6 +10,9 @@ on:
       - "mkdocs.yml"
       - "requirements-docs.txt"
       - ".github/workflows/docs-quality.yml"
+      - ".github/workflows/deploy.yml"
+      - "scripts/radar/restore_historical_review_provenance.py"
+      - "tests/radar/test_restore_historical_review_provenance.py"
       - ".github/workflows/native-ocr-contracts.yml"
       - ".github/workflows/publish-hf-doctags.yml"
   push:
@@ -43,6 +46,8 @@ jobs:
         run: python scripts/kaggle/validate_doctags_pilot.py
       - name: Validate browser inference JavaScript and HF Space package
         run: python scripts/kaggle/validate_browser_doctags_pilot.py
+      - name: Validate archived review provenance fail-closed tests
+        run: python -m unittest discover -s tests/radar -p test_restore_historical_review_provenance.py -v
       - name: Validate navigation and internal links
         run: mkdocs build --strict
 
