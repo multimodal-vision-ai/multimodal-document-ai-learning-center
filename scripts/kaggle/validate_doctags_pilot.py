@@ -37,5 +37,9 @@ assert ">在线体验" in home, "The single online-experience entry is missing"
 assert "查看解析样例" not in home, "The retired sample link should stay removed"
 assert "在线演示为 IBM Granite" not in home, "The retired baseline disclaimer should stay removed"
 assert "shanshui_scene: 7" in home
-assert "视频行为识别模型" in home, "Video card accidentally removed"
+assert "视频人员行为分析" in home, "Video analysis card accidentally removed"
+assert "chunshan-journey-final-approved.png" in home, "Approved static video cover is not referenced"
+cover = ROOT / "docs/assets/projects/video-action/showcase/chunshan-journey-final-approved.png"
+assert cover.is_file() and cover.stat().st_size > 100000, "Approved static video cover is missing"
+assert cover.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n", "Approved static cover must be PNG"
 print(f"Kaggle pilot static QA passed: {len(code)} syntax-checked code cells")
