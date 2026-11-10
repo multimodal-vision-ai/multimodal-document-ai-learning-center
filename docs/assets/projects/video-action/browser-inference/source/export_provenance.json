@@ -1,0 +1,24 @@
+{
+  "source": {
+    "url": "https://codeload.github.com/facebookresearch/pytorchvideo/zip/2ac6ed361309cb25144636ad82dd8bd6a4970e0c",
+    "bytes": 4111751,
+    "sha256": "841387bcf67d72a2e6ba89afa1d21a46b357e45c48aeaa9f2b7bf0a9d1d1e7d1",
+    "expected_hash_verified": false
+  },
+  "weights": {
+    "url": "https://dl.fbaipublicfiles.com/pytorchvideo/model_zoo/kinetics/X3D_S.pyth",
+    "bytes": 30779313,
+    "sha256": "26b95f1605d49650b54049db40ba3a56e023b86b58c3b3e0e10e0992a9c8682f",
+    "expected_hash_verified": false
+  },
+  "labels": {
+    "url": "https://dl.fbaipublicfiles.com/pyslowfast/dataset/class_names/kinetics_classnames.json",
+    "bytes": 10326,
+    "sha256": "00c6a6afcc5a121287419e8ae4075bd591b0bb816d04fb7720d526f04024e1a2",
+    "expected_hash_verified": false
+  },
+  "code_license": "Apache-2.0",
+  "weights_license": "No separately verified checkpoint license; no redistribution",
+  "parameters": 3794274,
+  "training": false
+}

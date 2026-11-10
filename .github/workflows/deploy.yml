@@ -33,6 +33,9 @@ jobs:
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
 
+      - name: Stage approved Our Solution browser assets
+        run: python scripts/video-action/stage_our_solution_release.py
+
       - name: Assemble DocTags challenge images
         run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
       - name: Stage hash-verified PP-DocLayoutV3 worker for GitHub Pages

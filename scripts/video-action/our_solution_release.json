@@ -1,0 +1,50 @@
+{
+  "url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/releases/download/our-solution-browser-b065f79433c4/our-solution-browser-b065f79433c4.zip",
+  "archive_sha256": "401f447980715e5167b55a105173207ea124bb5a1f66ee0dffcd64b86d8015b1",
+  "files": {
+    "our-solution-assets/x3d_s.onnx": {
+      "sha256": "0ef463401e1b8626dc9dadb77a4f5953361a6251c60a0c8a539d6cf62319874d",
+      "bytes": 15200083
+    },
+    "our-solution-assets/yolo26s.onnx": {
+      "sha256": "d27af94a3e1e7044bd014cad26757aa6eb81ea92f5af655ab1828b7ab8093032",
+      "bytes": 38443237
+    },
+    "our-solution-assets/class_names.json": {
+      "sha256": "c817e5c9480fb1c23366793472be6206d91c146ee6ad31a06aee0b315c142bf5",
+      "bytes": 10648
+    },
+    "our-solution-assets/source_LICENSE.txt": {
+      "sha256": "eb2e7c520ac305e46ca8345c4efa1f77669a77779fd6f53acd3a9616f2144518",
+      "bytes": 10242
+    },
+    "our-solution-assets/export_manifest.json": {
+      "sha256": "92e1579170f75d184487d648ac5cd7860fb0afa92cd6797e150fba9be21935ea",
+      "bytes": 1210
+    },
+    "our-solution-assets/derived_manifest.json": {
+      "sha256": "8b041e3e66a4c7de044ac40f9c15dab8ce6b5ca81de8a56442f6410df27b30cb",
+      "bytes": 17842
+    },
+    "our-solution-assets/videos/wave_fullbody_kth_person15.mp4": {
+      "sha256": "d1a049bda176fa836313bd728e3807f6db9ebbd41bb733067d021ed84214695c",
+      "bytes": 221994
+    },
+    "our-solution-assets/videos/phone_texting_4052869.mp4": {
+      "sha256": "32b68b34579794df5d813ab24cc4a5c3456a001f57f7902a22dfa06845c1d97b",
+      "bytes": 907324
+    },
+    "our-solution-assets/videos/eating_fork_9484894.mp4": {
+      "sha256": "ef037ea8e2dcea93563a420195dbae7357a92a66c854be8afd1b7f5c8838734e",
+      "bytes": 3020130
+    },
+    "our-solution-assets/videos/smoking_candidate_8090486.mp4": {
+      "sha256": "74f6e019ca2223e439b4612edbc03e11422c2c6d474908ec448fee99443d2b7c",
+      "bytes": 1580073
+    },
+    "our-solution-assets/videos/push_up_fullbody_4804794.mp4": {
+      "sha256": "a2835792a351f3a3f4e275826894ff26a265c8563b9429065c03deddc2f8117a",
+      "bytes": 2824688
+    }
+  }
+}

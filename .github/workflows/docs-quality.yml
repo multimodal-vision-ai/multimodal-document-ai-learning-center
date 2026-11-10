@@ -11,6 +11,8 @@ on:
       - "requirements-docs.txt"
       - ".github/workflows/docs-quality.yml"
       - ".github/workflows/deploy.yml"
+      - "scripts/video-action/stage_our_solution_release.py"
+      - "scripts/video-action/our_solution_release.json"
       - "scripts/radar/restore_historical_review_provenance.py"
       - "tests/radar/test_restore_historical_review_provenance.py"
       - ".github/workflows/native-ocr-contracts.yml"
@@ -33,6 +35,8 @@ jobs:
           cache-dependency-path: requirements-docs.txt
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
+      - name: Stage approved Our Solution browser assets
+        run: python scripts/video-action/stage_our_solution_release.py
       - name: Assemble DocTags challenge images
         run: python scripts/kaggle/assemble_doctags_challenge_archive.py --remove-parts
       - name: Stage hash-verified PP-DocLayoutV3 worker for browser inference validation
