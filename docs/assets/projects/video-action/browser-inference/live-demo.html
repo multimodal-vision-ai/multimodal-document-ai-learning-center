@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Our Solution · 实时动作识别</title>
+  <style>
+    :root { font-family: system-ui, "Microsoft YaHei", sans-serif; color: #193554; background: #f5f7fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1000px; margin: 0 auto; padding: 20px 16px 32px; }
+    header { color: white; background: #193d65; border-radius: 14px; padding: 18px 22px; }
+    header a { color: #dbeaff; font-size: .875rem; }
+    h1 { font-size: clamp(1.3rem, 4vw, 1.8rem); margin: .5em 0 .25em; }
+    header p { margin: 0; }
+    section { margin-top: 14px; padding: 16px; border: 1px solid #dde5f0; border-radius: 14px; background: white; }
+    .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+    button, input { font: inherit; }
+    input { max-width: 100%; }
+    button { border: 1px solid #bfd0e5; border-radius: 8px; background: white; color: #245385; padding: 8px 12px; cursor: pointer; }
+    button[aria-pressed="true"] { border-color: #2364bc; background: #edf4ff; }
+    #run { background: #2364bc; color: white; border-color: #2364bc; }
+    button:disabled { opacity: .5; cursor: default; }
+    #status { margin: 0 0 10px; min-height: 1.5em; }
+    #stage { position: relative; }
+    video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #101d2c; border-radius: 8px; }
+    #person-box { position: absolute; border: 3px solid #39e5ad; pointer-events: none; }
+    #action { position: absolute; left: -3px; top: 0; padding: 3px 8px; color: white; background: #092238; white-space: nowrap; }
+    #video-info { margin-top: 12px; font-size: .875rem; color: #345879; }
+    summary { cursor: pointer; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <a href="../../../../projects/">返回成果展厅</a>
+    <h1>Our Solution - 自研动作识别系统</h1>
+    <p>选择样例或本地视频，点击「开始识别」。</p>
+  </header>
+  <section aria-label="实时演示">
+    <div class="controls" role="group" aria-label="演示样例">
+      <button type="button" data-sample="phone" aria-pressed="false">用手机</button>
+      <button type="button" data-sample="fall" aria-pressed="false">摔倒</button>
+      <button type="button" data-sample="sleep" aria-pressed="false">睡觉姿态</button>
+    </div>
+    <div class="controls">
+      <label>本地视频 <input id="upload" type="file" accept="video/mp4,video/webm"></label>
+    </div>
+    <div class="controls">
+      <button type="button" id="run" disabled>开始识别</button>
+      <button type="button" id="cancel" disabled>停止</button>
+    </div>
+    <p id="status" role="status">请选择视频。</p>
+    <div id="stage">
+      <video id="video" controls muted playsinline preload="auto" aria-label="实时识别视频"></video>
+      <div id="person-box" hidden><span id="action" hidden></span></div>
+    </div>
+    <details id="video-info">
+      <summary>ⓘ 素材与演示说明</summary>
+      <p id="source"></p>
+      <p>本页用于非营利教学与科研交流。识别在浏览器中运行，本地视频只在设备上读取。</p>
+      <p>如对素材权利有疑问，请通过<a href="https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/issues">项目反馈入口</a>提供页面链接和相关说明。</p>
+    </details>
+  </section>
+</main>
+<script type="module" src="./live-demo.js"></script>
+</body>
+</html>
