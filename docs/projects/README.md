@@ -31,8 +31,9 @@ shanshui_scene: 7
       <div class="mv-showcase-v18__body">
         <span class="mv-showcase-v18__kicker">视觉理解 · 行为分析实验平台</span>
         <h2 id="mv-showcase-video-title">视频人员行为分析</h2>
-        <p class="mv-showcase-v18__description">面向真实视频中的主要人物，实现人员定位、连续行为识别与多模型结果对比。</p>
-        <a class="mv-showcase-v18__primary" href="https://multimodal-vision-ai.github.io/multimodal-document-ai-learning-center/assets/projects/video-action/browser-inference/index.html" target="_blank" rel="noopener noreferrer" title="打开已发布的视频行为分析实验平台（公开模型基线对比）">在线体验 <span aria-hidden="true">↗</span></a>
+        <p class="mv-showcase-v18__description">Our Solution 在浏览器里边播边识别。可体验用手机、摔倒和睡觉姿态三个样例。</p>
+        <a class="mv-showcase-v18__primary" href="../assets/projects/video-action/browser-inference/live-demo.html" target="_blank" rel="noopener noreferrer">在线体验 <span aria-hidden="true">↗</span></a>
+        <a class="mv-showcase-v18__secondary" href="../assets/projects/video-action/browser-inference/index.html" target="_blank" rel="noopener noreferrer">公开模型对比</a>
       </div>
     </article>
   </div>
