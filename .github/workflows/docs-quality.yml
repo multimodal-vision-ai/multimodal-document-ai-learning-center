@@ -10,6 +10,9 @@ on:
       - "mkdocs.yml"
       - "requirements-docs.txt"
       - ".github/workflows/docs-quality.yml"
+      - ".github/workflows/deploy.yml"
+      - "scripts/radar/restore_historical_review_provenance.py"
+      - "tests/radar/test_restore_historical_review_provenance.py"
       - ".github/workflows/native-ocr-contracts.yml"
       - ".github/workflows/publish-hf-doctags.yml"
   push:
@@ -43,8 +46,24 @@ jobs:
         run: python scripts/kaggle/validate_doctags_pilot.py
       - name: Validate browser inference JavaScript and HF Space package
         run: python scripts/kaggle/validate_browser_doctags_pilot.py
+      - name: Validate archived review provenance fail-closed tests
+        run: python -m unittest discover -s tests/radar -p test_restore_historical_review_provenance.py -v
       - name: Validate navigation and internal links
         run: mkdocs build --strict
+      - name: Simulate production Pages radar snapshot validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin radar-data >/dev/null 2>&1; then
+            git fetch origin radar-data
+            git archive origin/radar-data research-radar/data | tar -xf -
+          fi
+          python scripts/radar/restore_historical_review_provenance.py
+          python scripts/radar/screening.py
+          python scripts/radar/render.py
+          mkdocs build --strict
+          python scripts/radar/verify_publication.py --site-dir site --data-dir research-radar/data
+
 
   links:
     runs-on: ubuntu-latest
