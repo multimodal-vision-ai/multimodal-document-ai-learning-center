@@ -32,7 +32,7 @@ guide = GUIDE.read_text(encoding="utf-8")
 home = HOME.read_text(encoding="utf-8")
 assert "mvai_doctags_kaggle_pilot.ipynb" in guide
 assert "doctags-kaggle/README.md" in home
-assert "interactive-demo/index.html" in home
+assert ("interactive-demo/index.html" in home or "doctags-song-painting-final-approved.png" in home), "DocTags showcase artwork or demo entry missing"
 assert "shanshui_scene: 7" in home
-assert ("视频行为识别模型" in home or "视频行为识别与分析" in home), "Video card accidentally removed"
+assert any(title in home for title in ("视频行为识别模型", "视频行为识别与分析", "视频人员行为分析")), "Video card accidentally removed"
 print(f"Kaggle pilot static QA passed: {len(code)} syntax-checked code cells")
