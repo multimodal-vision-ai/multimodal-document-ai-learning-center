@@ -14,35 +14,28 @@ shanshui_scene: 7
   <div class="mv-showcase-v18__stack">
     <article class="mv-showcase-v18__card mv-showcase-v18__card--doc" aria-labelledby="mv-showcase-doc-title">
       <figure class="mv-showcase-v18__cover">
-        <img src="../assets/projects/doctags/document-structure-demo-v13.webp" width="2048" height="990" loading="eager" decoding="async" style="display:block;width:100%;height:auto;aspect-ratio:3.7/1;object-fit:cover;object-position:center 72%;max-width:100%;max-height:none" alt="文档结构化解析三步展示：01 原始复杂文档；02 版面与元素定位；03 DocTags 结构化表达">
+        <img src="../assets/projects/doctags/doctags-song-painting-final-approved.png" width="1774" height="887" loading="eager" decoding="async" alt="DocTags 三阶段示意：以柳宗元《江雪》为主题的原始文档、元素定位与 DocTags 结构化输出；包含水墨雪山、孤舟蓑笠翁、题诗、草书题款和印章。">
       </figure>
       <div class="mv-showcase-v18__body">
         <span class="mv-showcase-v18__kicker">文档理解 · DocTags</span>
-        <h2 id="mv-showcase-doc-title">文档结构化解析</h2>
-        <p class="mv-showcase-v18__description">文档版面、文本、表格与阅读顺序的结构化解析。</p>
-        <a class="mv-showcase-v18__primary" href="https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/" target="_blank" rel="noopener noreferrer">打开 HF 在线体验 <span aria-hidden="true">↗</span></a>
-        <a class="mv-showcase-v18__secondary" href="../assets/projects/doctags/interactive-demo/index.html">查看解析样例 <span aria-hidden="true">→</span></a>
-        <p class="mv-showcase-v18__disclaimer">在线演示内置 IBM Granite Docling 258M、OvisOCR3 0.8B、PaddleOCR-VL-1.6 0.9B，以及 MVAI-DocTags-DJX-0.8B-v1.0 和 MVAI-DocTags-WC-2B-v1.0 五款模型；OvisOCR3、PaddleOCR-VL-1.6 和两款自研模型需要支持 shader-f16 的 WebGPU 设备。</p>
+        <h2 id="mv-showcase-doc-title">复杂文档结构化解析</h2>
+        <p class="mv-showcase-v18__description">文档版面、文本、表格、印章、手写与阅读顺序等结构化解析。</p>
+        <a class="mv-showcase-v18__primary" href="https://multimodal-vision-ai-mvai-doctags-webgpu.static.hf.space/" target="_blank" rel="noopener noreferrer">在线体验 <span aria-hidden="true">↗</span></a>
       </div>
     </article>
 
     <article class="mv-showcase-v18__card mv-showcase-v18__card--video" aria-labelledby="mv-showcase-video-title">
-      <div class="mv-showcase-v18__video-visual" role="img" aria-label="视频行为识别与分析实验平台：挥手、用手机、摔倒、吃东西、睡觉、抽烟">
-        <span class="mv-showcase-v18__play" aria-hidden="true">▶</span>
-        <span class="mv-showcase-v18__visual-caption">视频行为理解</span>
-        <span class="mv-showcase-v18__visual-tags">挥手 · 用手机 · 摔倒 · 抽烟</span>
-      </div>
+      <figure class="mv-showcase-v18__cover mv-showcase-v18__cover--video">
+        <img src="../assets/projects/video-action/showcase/chunshan-journey-final-approved.png" width="2172" height="724" loading="eager" decoding="async" alt="《春山行旅图》宋风青绿山水长卷：四位人物分别进行挥手、慢跑、吃东西和跳舞，并叠加行为识别示意框与标签。">
+      </figure>
       <div class="mv-showcase-v18__body">
-        <span class="mv-showcase-v18__kicker">视觉理解 · 研究方向</span>
-        <h2 id="mv-showcase-video-title">视频行为识别与分析</h2>
-        <p class="mv-showcase-v18__description">浏览器端实拍视频分析、主要人物定位与多模型行为识别对比。</p>
-        <a class="mv-showcase-v18__primary" href="../assets/projects/video-action/browser-inference/index.html" target="_blank" rel="noopener noreferrer">打开浏览器端实验平台 <span aria-hidden="true">↗</span></a>
-        <a class="mv-showcase-v18__secondary" href="vision-ai/">查看研究方向与技术说明 <span aria-hidden="true">→</span></a>
-        <p class="mv-showcase-v18__disclaimer">当前为公开模型基线的浏览器端实验与对比平台；自研视频行为识别方案将独立研发，不将第三方模型标注为自研成果。</p>
+        <span class="mv-showcase-v18__kicker">视觉理解 · 行为分析实验平台</span>
+        <h2 id="mv-showcase-video-title">视频人员行为分析</h2>
+        <p class="mv-showcase-v18__description">面向真实视频中的主要人物，实现人员定位、连续行为识别与多模型结果对比。</p>
+        <a class="mv-showcase-v18__primary" href="https://multimodal-vision-ai.github.io/multimodal-document-ai-learning-center/assets/projects/video-action/browser-inference/index.html" target="_blank" rel="noopener noreferrer" title="打开已发布的视频行为分析实验平台（公开模型基线对比）">在线体验 <span aria-hidden="true">↗</span></a>
       </div>
     </article>
   </div>
-
 </section>
 
 ??? info "其他实验入口与技术说明"
