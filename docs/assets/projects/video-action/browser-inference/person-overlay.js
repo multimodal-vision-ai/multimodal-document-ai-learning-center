@@ -40,11 +40,11 @@ export function top1At(timeline,time,limit){
   for(const point of timeline){if(point.t<=time+.001)item=point;else break}
   return item;
 }
-export async function createPersonDetector(){
+export async function createPersonDetector({scoreThreshold=.22}={}){
   const {FilesetResolver,ObjectDetector}=await import(PERSON_LIB);
   const fileset=await FilesetResolver.forVisionTasks(PERSON_WASM);
   return ObjectDetector.createFromOptions(fileset,{
     baseOptions:{modelAssetPath:PERSON_MODEL,delegate:'CPU'},
-    runningMode:'IMAGE',categoryAllowlist:['person'],scoreThreshold:.22,maxResults:6
+    runningMode:'IMAGE',categoryAllowlist:['person'],scoreThreshold,maxResults:6
   });
 }

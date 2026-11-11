@@ -1,0 +1,38 @@
+# 应用许可与第三方来源
+
+本目录提供可独立运行的视频行为识别网页应用。该应用作为整体按 GNU Affero General Public License v3.0（AGPL-3.0）分发。许可全文见同目录的 `LICENSE-AGPL-3.0.txt`。修改和发布记录保存在 Git 历史中，应用按许可条款提供，不附带担保。
+
+本应用先前按 Apache-2.0 提供的源码保留原有版权与许可声明。Apache 许可全文见 `LICENSE-APACHE-2.0.txt`。学习中心其他独立文档和应用继续适用各自的许可。视频、图片和独立第三方资源适用下面列出的来源条款。
+
+应用的完整 HTML、JavaScript、配置、规则和修改记录可从公开源码取得。GitHub Release 的完整可运行 ZIP 同时提供模型来源、文件摘要、导出脚本和环境信息，以便核验和修改相应程序。相关内容及对应源码说明见包内 `source/README.md`。[应用源码](https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/tree/release/our-solution-approved-platform/docs/assets/projects/video-action/browser-inference)
+
+## 模型与运行库
+
+| 组件 | 来源及许可依据 |
+|---|---|
+| Ultralytics YOLO26s | 官方 `v8.4.0` 的预训练 `yolo26s.pt`，使用 `ultralytics==8.4.202` 转为 ONNX，输入为 960×960，opset 17，固定形状，未简化模型。没有进行训练或微调。转换产物按 AGPL-3.0 提供，上游源码、权重来源与许可链接列于下文。 |
+| PyTorchVideo X3D-S | 来自 PyTorchVideo 官方模型库，转换为 ONNX 以供浏览器推理。发布依据是 PyTorchVideo 项目公布的 Apache-2.0 许可，并在复核的上游资料中未发现针对该检查点另列的排除条款。这是维护者对项目级许可范围的判断，上游未向本项目出具单独的权重授权。原许可文本随包保留。 |
+| ONNX Runtime Web | Microsoft ONNX Runtime，MIT 许可。浏览器加载的包保留其上游声明。 |
+| MediaPipe Tasks、LiteRT.js、Transformers.js | 从各上游公开软件包加载，保留其 Apache-2.0 许可和版权声明。Google 托管的 MediaPipe 模型由浏览器从官方地址读取，模型卡及来源说明由上游提供。 |
+| 其他可选模型 | MoViNet、Qualcomm VideoMAE 和 Apple MobileCLIP 保留各模型发布者的条款。模型选项中的原名称和来源不变。 |
+
+YOLO26s 的首选修改形式、转换过程和依赖来源包括官方 PyTorch 权重、对应 Ultralytics 源码，以及发布包内的转换脚本。分发应用和转换产物时，应一并保持对应源码、许可和来源可免费读取。[官方预训练权重](https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26s.pt) · [Ultralytics 8.4.202 源码](https://github.com/ultralytics/ultralytics/tree/v8.4.202) · [版本许可全文](https://github.com/ultralytics/ultralytics/blob/v8.4.202/LICENSE) · [资产许可](https://github.com/ultralytics/assets/blob/main/LICENSE)
+
+X3D-S 的代码来源固定为 PyTorchVideo 提交 `2ac6ed361309cb25144636ad82dd8bd6a4970e0c`，原检查点为官方 `X3D_S.pyth`。发布包保留这些来源及转换后文件的 SHA256。[PyTorchVideo 源码](https://github.com/facebookresearch/pytorchvideo/tree/2ac6ed361309cb25144636ad82dd8bd6a4970e0c) · [项目许可说明](https://github.com/facebookresearch/pytorchvideo#license) · [官方 X3D-S 检查点](https://dl.fbaipublicfiles.com/pytorchvideo/model_zoo/kinetics/X3D_S.pyth)
+
+[ONNX Runtime 许可](https://github.com/microsoft/onnxruntime/blob/main/LICENSE) · [MediaPipe 许可](https://github.com/google-ai-edge/mediapipe/blob/master/LICENSE) · [LiteRT.js 来源](https://github.com/google-ai-edge/LiteRT.js) · [Transformers.js 许可](https://github.com/huggingface/transformers.js/blob/main/LICENSE)
+
+## 示例视频
+
+KTH 挥手示例来自 Schuldt、Laptev、Caputo 的 KTH Action Database，使用 `person15_handwaving_d1` 前 7.8 秒，保留原 160×120 灰度分辨率并转为 H.264。上游允许非商业使用，本页面用于非营利教学和科研演示。引用为 Christian Schuldt、Ivan Laptev、Barbara Caputo，*Recognizing Human Actions: A Local SVM Approach*，ICPR 2004。[KTH 官方来源与使用说明](https://www.csc.kth.se/cvap/actions/)
+
+| Pexels 示例 | 作者 | 原始页面 |
+|---|---|---|
+| 用手机 4052869 | KATRIN BOLOVTSOVA | [原片](https://www.pexels.com/video/a-man-texting-using-his-smartphone-4052869/) |
+| 吃东西 9484894 | Timur Weber | [原片](https://www.pexels.com/video/a-man-eating-food-at-a-table-with-a-fork-9484894/) |
+| 抽烟 8090486 | Yaroslav Shuraev | [原片](https://www.pexels.com/video/young-man-smoking-cigarette-8090486/) |
+| 俯卧撑 4804794 | Ketut Subiyanto | [原片](https://www.pexels.com/video/man-doing-push-ups-4804794/) |
+
+以上 Pexels 示例使用选定片段，进行缩放、H.264 转码和去音轨，抽烟片段取自原片第 14 秒起。片段随可运行、可叠加人物框与识别结果的教学应用一同提供，用于应用内互动演示。素材继续适用 Pexels 许可，作者和画面人物与本项目的关系以来源页为准。其他示例的作者、许可和原片入口保存在其目录记录中。[Pexels 许可](https://www.pexels.com/license/)
+
+应用的 AGPL-3.0 许可适用于相应程序。KTH、Pexels 视频与其他独立素材保留各自的使用条件，随应用提供不会改变这些条件。
