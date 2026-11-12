@@ -1,0 +1,24 @@
+/* Optional HF-Mirror links beside original model/dataset links. */
+.md-typeset .mv-hf-mirror-extra {
+  display: inline-block;
+  vertical-align: baseline;
+  margin-inline-start: .38em;
+  white-space: nowrap;
+  font-size: .78em;
+  line-height: 1.5;
+}
+.md-typeset a.mv-hf-mirror-link {
+  display: inline-block;
+  padding: .04em .48em;
+  border: 1px solid var(--md-default-fg-color--lighter, #a6adba);
+  border-radius: .35em;
+  color: var(--md-accent-fg-color, #5266ad);
+  background: var(--md-default-bg-color, #fff);
+  font-weight: 600;
+  text-decoration: none;
+}
+.md-typeset a.mv-hf-mirror-link:hover,
+.md-typeset a.mv-hf-mirror-link:focus-visible {
+  border-color: currentColor;
+  text-decoration: underline;
+}
