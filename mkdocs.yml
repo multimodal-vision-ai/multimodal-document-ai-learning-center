@@ -68,6 +68,7 @@ extra_css:
   - stylesheets/model-playground-quota-v1.css
   - stylesheets/model-demo-sidebar-native-v2.css
   - stylesheets/showcase-v1-3.css
+  - stylesheets/hf-mirror-links.css
 
 extra_javascript:
   - js/visitor.js
@@ -75,6 +76,7 @@ extra_javascript:
   - js/radar.js
   - js/model-playground.js
   - js/vision-demo-v1.js
+  - js/hf-mirror-links.js
 
 nav:
   - 学习首页:
