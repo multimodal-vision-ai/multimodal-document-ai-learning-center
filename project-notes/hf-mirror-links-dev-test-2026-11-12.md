@@ -5,7 +5,7 @@
 - 范围：MkDocs 正文中的公开 Hugging Face 模型仓库与数据集首页；视觉感知三款 Space 的模型资源镜像入口
 - 实现：在原模型/数据集链接后，增添小型「国内镜像」链接；原官方链接不变
 - 镜像： https://hf-mirror.com （第三方公益服务；可用性不受本项目保证）
-- 三款视觉演示新增外链：YOLO26 → Ultralytics/YOLO26；D-FINE → ustc-community/dfine-nano-coco；SAM 2 → facebook/sam2.1-hiera-small。均为 HF-Mirror 模型仓库地址，**只供模型资料/文件访问，不提供第三方 Gradio 在线推理**。并非逐项完整复刻原 Space 提供的全部模型选项。
+- 三款视觉演示新增国内资源外链（经 2026-11-13 人工验收反馈后调整）：YOLO26 → HF-Mirror Ultralytics/YOLO26（用户确认可访问）；D-FINE → AI快站上的 ustc-community 组织模型列表（需进入后选择 dfine-nano-coco）；SAM 2 → ModelScope 魔搭的 AI-ModelScope/sam2-hiera-small-hf（**SAM 2 原版 Small，不是 SAM 2.1 Small；仅作为相关模型资源入口**）。**以上均不提供原 Gradio Space 在线推理。**
 - 不涉及：Hugging Face Spaces 的运行地址与内嵌 iframe、static.hf.space、WebGPU 运行时、模型分片下载、CDN、视频分析逻辑
 - 回退：移除 extra_javascript、extra_css 新增的两个条目以及对应两个静态文件
 
@@ -25,3 +25,7 @@
 运行：node tests/hf-mirror-links.test.cjs
 
 包含视觉感知三款模型资源 URL 的静态合约检查，但不代表中国大陆网络连通性、对应仓库内容或 Gradio 在线服务已实测通过。
+
+## 2026-11-13 D-FINE / SAM 2 链接修订
+
+用户报告原 HF-Mirror 两个具体模型页无法打开。HF-Mirror 会根据访问者 IP 地域跳转，单靠链接路径正确不能保证能访问。原两个链接更换为搜索引擎已收录的国内站点资源页；D-FINE 为组织列表而非直接模型详情；SAM 2 为旧版权重，不能作为 2.1 checkpoint 的等价镜像。本轮自动 CI 只保证网站构建和静态 URL 配置，必须由国内网络人工确认目标链接实际可达。原 Hugging Face Space 与 iframe 均不受影响。
