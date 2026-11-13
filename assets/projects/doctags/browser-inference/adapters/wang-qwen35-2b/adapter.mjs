@@ -58,14 +58,8 @@ export async function createAdapter({modelId = MODEL_ID, revision = MODEL_REVISI
     lib.env.allowRemoteModels = true;
     lib.env.allowLocalModels = false;
     lib.env.remoteHost = runtime.modelHost;
-    lib.env.remotePathTemplate = runtime.modelPathTemplate || '{model}/';
+    lib.env.remotePathTemplate = '{model}/';
     // Keep the browser cache enabled when a model mirror is configured.
-  } else if (runtime.modelSource === "official") {
-    // A previous model may have loaded with a different origin in this session.
-    lib.env.remoteHost = "https://huggingface.co/";
-    lib.env.remotePathTemplate = "{model}/resolve/{revision}/";
-    lib.env.allowRemoteModels = true;
-    lib.env.allowLocalModels = false;
   }
   // The embedding tensor is a single ~971 MiB ONNX external-data file.
   // Fetch it through verified HTTP Range requests; all other model files use
@@ -74,8 +68,6 @@ export async function createAdapter({modelId = MODEL_ID, revision = MODEL_REVISI
   const rangeFetch = createRangeFetch({
     modelId,
     revision,
-    // Keep the proven official Range cache untouched; mirror chunks must never mix.
-    cacheName: runtime.modelSource === "mirror" ? "mvai-wc2b-range-v1-" + revision + "-mirror" : undefined,
     onEvent(event) {
       if (event.type === "range-retry") {
         onProgress({
@@ -98,7 +90,7 @@ export async function createAdapter({modelId = MODEL_ID, revision = MODEL_REVISI
       revision, progress_callback: info => onProgress({...info, stage: "processor"}),
     });
     const templateUrl = runtime.modelHost
-      ? `${runtime.modelHost}${modelId}/${runtime.modelPathTemplate === "{model}/resolve/{revision}/" ? "resolve/" + encodeURIComponent(revision) + "/" : ""}chat_template.jinja`
+      ? `${runtime.modelHost}${modelId}/chat_template.jinja`
       : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
     const template = await fetch(templateUrl);
     if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
