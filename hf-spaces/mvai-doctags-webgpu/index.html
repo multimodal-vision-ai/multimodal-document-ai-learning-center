@@ -230,14 +230,6 @@ main{max-width:1260px}
 @media(max-width:760px){.input-source-tabs{grid-template-columns:1fr 1.25fr 1fr;gap:5px}.source-tab{font-size:11px;padding:8px 4px}.sample-gallery{grid-template-columns:25px minmax(0,1fr) 25px;gap:4px}.sample-tile{flex-basis:94px}.sample-scroll{width:25px}}
 .sample-tile:focus-visible,.sample-scroll:focus-visible{outline:2px solid #3277e8;outline-offset:2px}
 @media(max-width:760px){.sample-gallery{grid-template-columns:25px minmax(0,1fr) 25px;gap:4px}.sample-tile{flex-basis:94px}.sample-scroll{width:25px}}
-/* DEV-only model download source toggle: small addition below existing model selector. */
-.model-download-source{margin:9px 0 7px}
-.model-download-source .source-title{display:block;font-size:12px;font-weight:700;color:#315780;margin-bottom:5px}
-.model-download-source .source-options{display:flex;align-items:center;gap:7px 16px;flex-wrap:wrap}
-.model-download-source label{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#284969;cursor:pointer}
-.model-download-source label input{margin:0;accent-color:#2467c4}
-.model-download-source label:has(input:disabled){opacity:.62;cursor:not-allowed}
-.model-download-source #modelSourceInfo{display:block;margin:5px 0 0;line-height:1.5;color:#6d7f96;font-size:11px}
 </style>
 </head>
 <body>
@@ -311,14 +303,6 @@ main{max-width:1260px}
         <details class="info-tip"><summary aria-label="模型选择说明">ⓘ</summary><div class="tip-pop" id="modelHelp">内置 IBM Granite Docling 258M 公开基线、MVAI-DocTags-DJX-0.8B-v1.0 · 自研和 MVAI-DocTags-WC-2B-v1.0 · 自研。两款自研模型使用独立 ONNX/WebGPU 适配器，需支持 shader-f16；其他公开 ONNX 模型仍须单独验证兼容性。</div></details>
       </div>
       <select id="modelSelect" aria-label="选择推理模型"></select>
-      <div class="model-download-source" role="group" aria-labelledby="modelSourceTitle">
-        <span class="source-title" id="modelSourceTitle">模型下载源</span>
-        <div class="source-options">
-          <label><input id="modelSourceOfficial" name="modelDownloadSource" type="radio" value="official" checked> Hugging Face 官方（默认）</label>
-          <label><input id="modelSourceMirror" name="modelDownloadSource" type="radio" value="mirror" disabled> 国内镜像（暂未开放浏览器下载）</label>
-        </div>
-        <small id="modelSourceInfo" role="status" aria-live="polite">HF-Mirror 已限制第三方网页跨域读取模型文件；当前国内镜像试验暂停，原官方源及 WebGPU 推理不变。</small>
-      </div>
       <div class="field-heading">
         <label for="dtype">模型配置</label>
         <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">Granite 的 fp32/q4 用于切换同一模型的精度；DJX-0.8B 和 WC-2B 使用固定混合精度（视觉 FP32、文字 FP16）；OvisOCR3 与 PaddleOCR-VL-1.6 使用各自已验证的固定 WebGPU 配置，不提供 q4 切换。</div></details>
@@ -461,7 +445,6 @@ if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) 
 import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,InterruptableStoppingCriteria,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
 import {createDownloadMeter,formatBytes,formatRate,formatEta} from "./adapters/r3-ovisocr3/download-metrics.mjs";
 import {createPaddleDownloadProgress,updatePaddleDownloadProgress,normalizePaddleInferenceProgress,PADDLE_LAYOUT_DOWNLOAD_BYTES} from "./adapters/paddleocr-vl-1.6/progress.mjs";
-import {OFFICIAL,MIRROR,OFFICIAL_HOST,MIRROR_HOST,REMOTE_PATH,mirrorPolicy,modelRevision,runtimeSource,probeMirror} from "./model-download-source.mjs";
 env.useBrowserCache = true; // Cache Storage; browser may evict under quota pressure
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
@@ -474,18 +457,6 @@ let loadingModel=false,loadPhase="idle",loadStartedAt=0,lastLoadProgressAt=0,las
 let sourceBlob=null; // Original File/Blob for direct self-built-model decoding; no Canvas export.
 let paddleDownloadProgress=createPaddleDownloadProgress();
 const registry=globalThis.MVAIModelRegistry;
-let activeDownloadSource=OFFICIAL;
-function requestedDownloadSource(){return $("modelSourceMirror").checked?MIRROR:OFFICIAL;}
-function syncDownloadSourceControls(){
-  const model=selectedModel(),policy=mirrorPolicy(model);
-  if(!policy.allowed && $("modelSourceMirror").checked)$("modelSourceOfficial").checked=true;
-  $("modelSourceMirror").disabled=busy||!policy.allowed;
-  $("modelSourceOfficial").disabled=busy;
-  $("modelSourceInfo").textContent=!policy.allowed?policy.reason
-    :requestedDownloadSource()===MIRROR
-      ?"国内镜像仅用于 DEV 测试；加载前检查配置文件跨域访问。WC-2B 还检查 HTTP Range。失败后请切回官方源。"
-      :"保持原版 Hugging Face 下载及浏览器缓存；切换下载源只在下次加载模型时生效。";
-}
 let gpuDetected=false,activeKey=null,activeModelName="",inputRevision=0,runHistory=[];
 let customModels=registry.restore(localStorage);
 const LAST_KEY="mvai-doctags-successful-loads-v1"; // only model keys, no documents
@@ -651,13 +622,11 @@ function refreshInferenceControls(){
   button.textContent=stopRequested?"正在终止…":"终止推理";
 }
 function refreshLoadButtons(){
-  syncDownloadSourceControls();
   const already=loaded&&activeKey===selectedKey();
-  const sourceMatches=activeDownloadSource===requestedDownloadSource();
-  $("load").disabled=busy||!gpuDetected||(already&&sourceMatches);
+  $("load").disabled=busy||!gpuDetected||already;
   $("load").textContent=loadingModel
     ?(loadPhase==="initializing"?"正在初始化 WebGPU…":"正在加载模型…")
-    :already?(sourceMatches?"已加载":"按新下载源重新加载"):"加载所选模型";
+    :already?"已加载":"加载所选模型";
   const runReason=busy
     ?(loadingModel?"模型仍在加载或初始化；完成后才能推理。":"模型正在推理，请等待完成或终止。")
     :!already?"当前选择的模型尚未在本次页面会话中完成加载，请先加载模型。"
@@ -1383,14 +1352,6 @@ function download(blob,filename){const u=URL.createObjectURL(blob),a=document.cr
 $("saveImg").onclick=()=>{if(result){if(nativeFormat){if(nativeParsed)showNative(nativeParsed);else show();}else show(result);}preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png")};
 $("saveDT").onclick=()=>{if(result){const native=["ovisocr3-native","paddleocr-vl16-native"].includes(nativeFormat)||["ovisocr3-native","paddleocr-vl-1.6"].includes(selectedModel().adapter);download(new Blob([result],{type:native?"application/json;charset=utf-8":"text/plain;charset=utf-8"}),native?"mvai-native-ocr-result.json":"mvai-doctags-result.dt")}};
 
-for(const id of ["modelSourceOfficial","modelSourceMirror"]){
-  $(id).addEventListener("change",()=>{
-    if(busy)return;
-    refreshLoadButtons();
-    const different=loaded&&activeKey===selectedKey()&&activeDownloadSource!==requestedDownloadSource();
-    if(different)status("当前已加载模型仍可正常推理；若要切换下载源，请点击「按新下载源重新加载」。");
-  });
-}
 $("modelSelect").addEventListener("change",()=>{
   syncModelConfiguration();clearRunMetrics();refreshLoadButtons();
   if(loaded&&activeKey===selectedKey()){
@@ -1441,12 +1402,7 @@ $("cacheCheck").addEventListener("click",async()=>{
         if(keys.includes(RANGE_CACHE_NAME)){
           const partial=await (await caches.open(RANGE_CACHE_NAME)).keys();
           parts.push("WC-2B 分段下载缓存："+partial.length+" 个已完成分片；网络中断后可复用。");
-        }else parts.push("WC-2B 官方分段下载缓存：当前没有未完成分片。");
-        const mirrorRange=RANGE_CACHE_NAME+"-mirror";
-        if(keys.includes(mirrorRange)){
-          const partial=await (await caches.open(mirrorRange)).keys();
-          parts.push("WC-2B 国内镜像试验分段缓存："+partial.length+" 个分片（独立于官方源）。");
-        }
+        }else parts.push("WC-2B 分段下载缓存：当前没有未完成分片。");
       }
     }else parts.push("当前浏览器未提供 Cache API。");
     if(navigator.storage?.estimate){
@@ -1474,9 +1430,7 @@ $("cacheClear").addEventListener("click",async()=>{
     let rangeDeleted=false;
     if(selectedModel().adapter==="wang-qwen35-2b"){
       const {clearRangeCache}=await import("./adapters/wang-qwen35-2b/range-download.mjs");
-      const officialDeleted=await clearRangeCache();
-      const mirrorDeleted=await clearRangeCache({cacheName:"mvai-wc2b-range-v1-"+modelRevision(selectedModel())+"-mirror"});
-      rangeDeleted=officialDeleted||mirrorDeleted;
+      rangeDeleted=await clearRangeCache();
     }
     $("cacheInfo").textContent="已清理当前模型在本站点的 "+deleted+" 个缓存文件"+(rangeDeleted?"，并清理 WC-2B 分段下载缓存":"")+"。请重新加载模型；其他模型缓存未修改。";
   }catch(err){$("cacheInfo").textContent="缓存清理失败："+err.message;}
@@ -1522,8 +1476,7 @@ catch(e){$("device").textContent="WebGPU 初始化失败："+e.message}}
 $("load").onclick=async()=>{
  if(busy||!gpuDetected)return;
  const entry=selectedModel(),key=selectedKey(),precision=$("dtype").value;
- const sourceChoice=requestedDownloadSource();
- if(loaded&&activeKey===key&&activeDownloadSource===sourceChoice){refreshLoadButtons();return;}
+ if(loaded&&activeKey===key){refreshLoadButtons();return;}
  busy=true;loadingModel=true;loadPhase="preparing";loadStartedAt=performance.now();lastLoadProgressAt=loadStartedAt;lastLoadFile="";
  clearRunMetrics();refreshLoadButtons();status("正在加载模型："+entry.name+"。下载完成后还需要初始化 WebGPU。");
  $("inferenceProgressPanel").hidden=true;
@@ -1579,21 +1532,6 @@ $("load").onclick=async()=>{
      $("downloadStatus").textContent=entry.name+"："+d.file+"…";
    }
  };
- if(sourceChoice===MIRROR){
-   try{
-     $("downloadStatus").textContent="正在预检国内镜像：模型配置文件跨域访问"+(entry.adapter==="wang-qwen35-2b"?"及 HTTP 206 分段下载":"")+"…";
-     await probeMirror(entry);
-   }catch(error){
-     busy=false;loadingModel=false;loadPhase="error";
-     if(loadWatchdog){clearInterval(loadWatchdog);loadWatchdog=null;}
-     refreshLoadButtons();
-     const message=String(error?.message||error);
-     $("downloadStatus").textContent="国内镜像预检失败："+message+" 未开始下载或清理当前 GPU 模型；请切换到 Hugging Face 官方下载源。";
-     status("国内镜像不可用；原有模型加载功能未改变。");
-     return;
-   }
- }
- const sourceRuntime=runtimeSource(sourceChoice,entry);
  try{
    if(r3Adapter){await r3Adapter.dispose();r3Adapter=null;}
    if(wangAdapter){await wangAdapter.dispose();wangAdapter=null;}
@@ -1603,21 +1541,17 @@ $("load").onclick=async()=>{
    processor=null;loaded=false;activeKey=null;
    if(entry.adapter==="ovisocr3-native"){
      const {createAdapter}=await import("./adapters/ovisocr3-native/adapter.mjs");
-     ovisNativeAdapter=await createAdapter({modelId:entry.id,revision:entry.revision,onProgress,runtime:sourceRuntime});
+     ovisNativeAdapter=await createAdapter({modelId:entry.id,revision:entry.revision,onProgress});
    }else if(entry.adapter==="paddleocr-vl-1.6"){
      const {createAdapter}=await import("./adapters/paddleocr-vl-1.6/adapter.mjs");
      paddleNativeAdapter=await createAdapter({onProgress});
    }else if(entry.adapter==="r3-ovisocr3"){
      const {createAdapter}=await import("./adapters/r3-ovisocr3/adapter.mjs");
-     r3Adapter=await createAdapter({modelId:entry.id,onProgress,runtime:sourceRuntime});
+     r3Adapter=await createAdapter({modelId:entry.id,onProgress});
    }else if(entry.adapter==="wang-qwen35-2b"){
      const {createAdapter}=await import("./adapters/wang-qwen35-2b/adapter.mjs");
-     wangAdapter=await createAdapter({modelId:entry.id,onProgress,runtime:sourceRuntime});
+     wangAdapter=await createAdapter({modelId:entry.id,onProgress});
    }else{
-     // This legacy Transformers.js 3.7.5 pathway is only used by Granite/custom.
-     // Always reset the origin when switching back to the known-good official source.
-     env.remoteHost=sourceChoice===MIRROR?MIRROR_HOST:OFFICIAL_HOST;
-     env.remotePathTemplate=REMOTE_PATH;
      processor=await AutoProcessor.from_pretrained(entry.id);
      model=await AutoModelForVision2Seq.from_pretrained(entry.id,{
        device:"webgpu",
@@ -1625,7 +1559,7 @@ $("load").onclick=async()=>{
        progress_callback:onProgress
      });
    }
-   loaded=true;activeKey=key;activeModelName=entry.name;activeDownloadSource=sourceChoice;loadPhase="ready";
+   loaded=true;activeKey=key;activeModelName=entry.name;loadPhase="ready";
    $("progress").value=100;
    hasLoadedSuccessfully=true;markSuccessfulLoad(key);
    $("downloadStatus").textContent=entry.adapter==="ovisocr3-native"?"OvisOCR3 已加载 · WebGPU · Vision FP32 / Embedding + Decoder FP16 · "+(ovisNativeAdapter.runtimeDiagnostics?.sessions?.decoder_model_merged?.device||"GPU"):
@@ -1648,7 +1582,7 @@ $("load").onclick=async()=>{
      :runtimeNetworkFailure
        ?"浏览器未能下载 ONNX Runtime / Transformers.js 运行时。程序已自动尝试多个 CDN 镜像；请检查网络或代理后重试。此次失败发生在模型权重加载前。"
        :"请核对模型 ONNX 文件、外部数据分片、Transformers.js/ONNX Runtime 版本及 WebGPU shader-f16 支持。";
-   $("downloadStatus").textContent="模型加载失败："+loadError+"。"+(sourceChoice===MIRROR?"国内镜像实验性下载未成功；请选择 Hugging Face 官方源重试。":"")+loadDiagnosis+"旧 GPU 模型已释放；可以重新选择其他模型。";
+   $("downloadStatus").textContent="模型加载失败："+loadError+"。"+loadDiagnosis+"旧 GPU 模型已释放；可以重新选择其他模型。";
  }finally{
    busy=false;loadingModel=false;
    if(loadWatchdog){clearInterval(loadWatchdog);loadWatchdog=null;}
