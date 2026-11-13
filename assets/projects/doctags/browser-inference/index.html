@@ -1,0 +1,1795 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MVAI · 实时文档结构化解析-DocTags</title>
+<style>
+:root{font-family:system-ui,"Microsoft YaHei",sans-serif;color:#193251;background:#f4f7fc}*{box-sizing:border-box}
+body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+#runAvailability{display:block;margin:-5px 0 9px;color:#607995;font-size:11px;line-height:1.55}
+main{max-width:1200px;margin:auto;padding:20px}
+header{background:linear-gradient(115deg,#152e54,#305c9d);border-radius:16px;padding:23px 25px;color:white}
+header h1{font-size:clamp(22px,3vw,30px);margin:5px 0}
+header p{color:#deebfe;line-height:1.65;font-size:13px;max-width:760px}
+.label{font-size:11px;letter-spacing:.08em;color:#b7d3ff;text-transform:uppercase}
+.note{border:1px solid #dfebfa;background:white;color:#5c708a;border-radius:11px;padding:12px;margin:15px 0;line-height:1.7;font-size:12px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:15px;align-items:start}
+.card{background:white;border-radius:14px;padding:18px;border:1px solid #e1e7f3;min-width:0}
+.card h2{margin:0 0 5px;font-size:16px}
+.muted{font-size:12px;color:#61768e;line-height:1.6}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:13px 0}
+button,.file{border:1px solid #c9d8ed;background:white;color:#225182;font-weight:650;padding:9px 12px;border-radius:9px;font-size:12px}
+.primary{background:#255fc0;color:white;border-color:#255fc0}
+.stop-action{background:#fff3f1;color:#ad3838;border-color:#e7b7b1}
+.stop-action:hover:not(:disabled){background:#ffe8e5}
+#stop[hidden]{display:none}
+.file{position:relative;display:inline-flex;overflow:hidden;cursor:pointer}
+.file input{position:absolute;inset:0;opacity:0;cursor:pointer}
+#view{height:510px;max-height:65vh;border:1px solid #d9e4f1;background:#f5f8fc;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#preview{max-width:100%;max-height:100%;object-fit:contain}
+small{color:#68809a;font-size:11px;line-height:1.5}
+section+section{border-top:1px solid #e1e7f1;margin-top:16px;padding-top:15px}
+.status{background:#f1f5fb;border-radius:9px;padding:10px;color:#3a5880;font-size:12px;white-space:pre-wrap;line-height:1.6}
+select{max-width:100%;padding:8px;border:1px solid #ccdaec;border-radius:8px;background:white;font-size:12px}
+progress{width:100%;height:8px;margin:10px 0 2px;accent-color:#326bc6}
+.load-metrics[hidden]{display:none!important}
+.inference-progress{margin-top:7px}
+#tags{height:260px;overflow:auto;background:#0e1930;color:#caf7de;border-radius:9px;padding:13px;font:11px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.links{background:#f6f9fc;border-radius:9px;padding:11px 14px;line-height:1.8;font-size:12px;color:#62738a}
+a{color:#1762bf}
+@media(max-width:760px){.cols{grid-template-columns:1fr}main{padding:10px}#view{height:390px}.card{padding:14px}}
+
+/* V1.6 · side-by-side original vs reconstructed document */
+#view{height:245px;max-height:34vh}
+.comparison{margin-top:18px;padding:20px}
+.compare-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.compare-top h2{font-size:18px;margin:0}
+.compare-controls{display:flex;gap:13px;align-items:center;flex-wrap:wrap}
+.compare-controls label{font-size:12px;color:#475f81;display:flex;gap:6px;align-items:center;cursor:pointer}
+.compare-controls input{accent-color:#255fc0}
+.compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.compare-col{min-width:0;border:1px solid #dbe5f2;background:#f7f9fd;border-radius:11px;overflow:hidden}
+.compare-col-header{display:flex;justify-content:space-between;align-items:center;gap:7px;min-height:46px;background:#edf3fb;border-bottom:1px solid #dce6f3;padding:10px 14px}
+.compare-col-header strong{font-size:13px;color:#16335b}
+.compare-col-header small{white-space:nowrap}
+.compare-scroll{height:min(66vh,660px);min-height:330px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;background:#edf1f8}
+.compare-scroll canvas{display:block;width:100%;height:auto;box-shadow:0 4px 18px #213e6110;background:white}
+.rendered-document{margin:0;min-height:100%;background:white;padding:28px 30px 60px;overflow-wrap:anywhere;font-size:14px;line-height:1.75;color:#23354e}
+.rendered-document h1{font-size:25px;line-height:1.35;color:#122e50;margin:0 0 22px}
+.rendered-document h2{font-size:20px;color:#183b63;margin:22px 0 10px}
+.rendered-document h3{font-size:17px;margin:18px 0 9px;color:#213956}
+.rendered-document h4,.rendered-document h5{font-size:15px;margin:14px 0 8px}
+.rendered-document p{margin:8px 0 14px}
+.rendered-document .render-block{border-left:3px solid transparent;border-radius:4px;transition:background-color .12s;scroll-margin:22px;white-space:pre-wrap}
+.rendered-document .render-block:hover,.rendered-document .render-block:focus-visible{border-left-color:#3e6fdb;background:#eaf1ff;outline:none}
+.rendered-document .render-handwritten{border-left-color:#c5d4e7;padding-left:9px;color:#304866}
+.rendered-document .render-page-number{text-align:center;color:#566c89;font-size:11px;margin:20px 0 0}
+.rendered-document .render-placeholder{padding:18px;margin:10px 0;border:1px dashed #b9cbe5;border-radius:10px;color:#637995;background:#f5f8fc;font-size:12px}
+.rendered-document .render-tbl{margin:18px 0;max-width:100%;overflow:auto;white-space:normal}
+.rendered-document table{border-collapse:collapse;table-layout:auto;width:100%;font-size:12px}
+.rendered-document th,.rendered-document td{border:1px solid #bdcee3;padding:7px 9px;vertical-align:top;white-space:pre-wrap;min-width:45px}
+.rendered-document th{background:#eaf1fa;font-weight:700}
+.rendered-document tbody tr:nth-child(even){background:#f7f9fd}
+.rendered-document ul,.rendered-document ol{padding-left:22px}
+.rendered-document pre{white-space:pre-wrap}
+.rendered-document .unknown-region{font-size:12px;background:#f2f6fb;border:1px dashed #c9d8e9;padding:14px;border-radius:8px;color:#667a92}
+#compareStatus{margin:12px 0 2px;font-size:12px;color:#566c89;line-height:1.6}
+#rawDetails{margin-top:16px;border:1px solid #dfebf8;border-radius:12px;background:#fff;overflow:hidden}
+#rawDetails summary{cursor:pointer;font-weight:700;color:#244a78;font-size:13px;padding:13px 16px;user-select:none}
+#rawDetails .raw-interior{border-top:1px solid #e4ebf5;padding:12px 16px}
+#rawDetails #tags{height:auto;min-height:140px;max-height:400px}
+@media(max-width:820px){.compare-grid{grid-template-columns:1fr}.comparison{padding:13px}.compare-scroll{height:450px;min-height:240px}.rendered-document{padding:21px}.compare-col-header{min-height:41px}}
+
+/* V1.7 · browser-cached multi-model selection and same-input model comparison */
+.model-chooser{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:end;margin:12px 0 6px}
+.model-chooser label{display:block;font-size:12px;font-weight:700;color:#24446d;margin-bottom:6px}
+.model-chooser select{width:100%;min-height:39px}
+.model-manage{border:1px solid #d7e5f5;border-radius:9px;padding:10px 12px;margin:10px 0;background:#f9fbff}
+.model-manage summary{font-size:12px;color:#31578a;font-weight:700;cursor:pointer}
+.model-manage p{margin:8px 0;font-size:11px;color:#67809a;line-height:1.6}
+.model-inputs{display:flex;flex-wrap:wrap;gap:8px}
+.model-inputs input{min-width:0;flex:1 1 170px;border:1px solid #cad9eb;border-radius:8px;padding:8px;font-size:12px}
+.cache-explain{background:#f4f7fc;border-radius:9px;padding:10px;font-size:11px;line-height:1.65;color:#526e91;margin-top:10px}
+.cache-actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+#cacheInfo{font-size:11px;line-height:1.6;color:#536e8b;white-space:pre-wrap}
+.session-compare{margin-top:18px;padding:18px}
+.session-compare .compare-top{margin-bottom:8px}
+.session-compare .selector-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.session-compare .selector-grid label{display:block;font-size:11px;font-weight:700;color:#567191;margin-bottom:6px}
+.session-compare select{width:100%}
+.session-compare .run-columns{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.session-compare .run-column{min-width:0;border:1px solid #dce5f3;border-radius:10px;overflow:hidden;background:#fff}
+.session-compare .run-head{padding:12px;background:#edf4ff;color:#28476f;font-weight:700;font-size:12px}
+.session-compare .run-body{height:430px;overflow:auto}
+.session-compare .run-body .rendered-document{padding:18px;min-height:100%}
+.session-compare .compare-diagnostic{font-size:11px;color:#657b94;margin-top:9px;line-height:1.7}
+@media(max-width:760px){.model-chooser{grid-template-columns:1fr}.session-compare .run-columns{grid-template-columns:1fr}.session-compare .run-body{height:330px}.session-compare{padding:14px}}
+
+
+
+/* V1.7.1 · clean, balanced workspace and accessible inline help */
+main{max-width:1260px}
+.cols.workspace{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:18px}
+.workspace>.card{display:flex;flex-direction:column;min-width:0;min-height:570px;padding:21px}
+.workspace>.card h2{font-size:19px;letter-spacing:0;line-height:1.3;margin:0}
+.panel-heading{display:flex;gap:8px;align-items:center;min-height:34px;margin:0 0 14px}
+.info-tip{position:relative;display:inline-block;vertical-align:middle;flex:0 0 auto;z-index:2}
+.info-tip summary{list-style:none;display:inline-grid;place-items:center;width:18px;height:18px;border:1px solid #b5c9e4;border-radius:50%;font-size:12px;font-weight:700;color:#4c6e9b;background:#f2f6fc;cursor:help;line-height:1}
+.info-tip summary::-webkit-details-marker{display:none}
+.info-tip summary:focus-visible{outline:2px solid #3476e7;outline-offset:3px}
+.tip-pop{display:none;position:absolute;z-index:50;top:calc(100% + 8px);left:0;width:min(310px,calc(100vw - 65px));padding:12px 14px;border:1px solid #cad9ed;border-radius:10px;box-shadow:0 12px 26px #24467120;background:#fff;color:#395574;font-size:12px;line-height:1.65;font-weight:400;text-align:left;letter-spacing:normal}
+.info-tip:hover>.tip-pop,.info-tip:focus-within>.tip-pop,.info-tip[open]>.tip-pop{display:block}
+.field-heading .info-tip .tip-pop{left:0}
+.compact-notice .tip-pop{left:0}
+.compact-notice{display:flex;gap:7px;align-items:center;font-size:12px;padding:9px 13px;line-height:1.45}
+.compact-notice strong{white-space:nowrap;color:#24558e}
+.workspace .row{margin:0;gap:9px}
+.input-panel .input-actions{margin:1px 0 14px}
+.input-panel #view{flex:1 1 auto;height:auto;min-height:315px;max-height:none;background:#f6f8fc}
+.input-panel #preview{display:block;width:auto;height:auto;max-width:100%;max-height:100%}
+.input-footer{margin-top:auto;padding-top:13px}
+.input-footer>small{display:block;line-height:1.4;margin-bottom:12px}
+.input-secondary{margin:0}
+.workspace button,.workspace .file{min-height:38px;padding:9px 14px}
+.workspace select{min-height:38px}
+.workspace .status{padding:10px 12px;font-size:12px;line-height:1.45}
+.device-status{margin-bottom:16px;min-height:38px}
+.inference-panel .control-fields{display:flex;flex-direction:column;gap:0;flex:1 1 auto}
+.inference-panel .control-fields>select{width:100%}
+.field-heading{display:flex;align-items:center;gap:7px;margin:0 0 7px}
+.field-heading label{font-size:12px;font-weight:700;color:#24446d}
+.inference-panel #modelSelect{margin-bottom:18px}
+.config-row{display:flex;gap:10px;margin:0 0 10px!important}
+.config-row select{flex:1 1 0;min-width:0}
+.config-row button{flex:0 0 auto}
+.load-metrics{margin:3px 0 20px}
+.load-metrics progress{display:block;margin:0 0 7px}
+.load-metrics small{display:block;min-height:15px}
+.run-actions{margin:0 0 11px!important}
+.inference-status{margin:0 0 10px}
+.inference-panel .support{margin-top:auto;border-top:1px solid #e6edf6;padding-top:6px}
+.compact-details{margin:0;border:0;border-bottom:1px solid #e8eef7;background:transparent;border-radius:0}
+.compact-details:last-child{border-bottom:0}
+.compact-details>summary{display:flex;align-items:center;gap:9px;padding:10px 3px;cursor:pointer;font-size:12px;font-weight:700;color:#285583}
+.compact-details>summary span{font-size:11px;color:#8493a8;font-weight:400}
+.compact-details[open]>summary{color:#173f78}
+.compact-details .details-inner{padding:3px 2px 13px;font-size:12px;color:#62768e}
+.compact-details .details-inner p{margin:5px 0 12px;line-height:1.6;font-size:12px}
+.model-manage{margin:0;border-radius:0;padding:0;background:transparent}
+.model-manage summary{font-size:12px}
+.model-inputs{gap:8px}
+.model-inputs input{padding:9px}
+.cache-manager .cache-actions{margin:6px 0}
+.cache-manager #cacheInfo:empty{display:none}
+.help-links .links{padding:8px 0 2px;background:transparent}
+.help-links a{display:block;margin:3px 0}
+.comparison .compare-top{margin-bottom:12px}
+.comparison .compare-top .inline-info{margin-left:2px}
+#compareStatus{font-size:12px;margin-top:12px}
+.advanced-collapsed{display:block;margin-top:18px;border:1px solid #dee8f5;border-radius:12px;padding:0;background:white;overflow:visible}
+.advanced-collapsed>summary{display:flex;align-items:center;gap:9px;padding:16px 18px;font-weight:700;color:#244d7f;cursor:pointer;list-style:none;font-size:14px}
+.advanced-collapsed>summary::-webkit-details-marker{display:none}
+.advanced-collapsed>summary::before{content:"▸";color:#7a9bbf}
+.advanced-collapsed[open]>summary::before{content:"▾"}
+.advanced-collapsed>summary .compact-count{margin-left:auto;font-size:11px;color:#7a8da8;font-weight:400}
+.advanced-collapsed .collapsed-content{border-top:1px solid #e6eef8;padding:14px 18px 18px}
+.advanced-collapsed .collapsed-content .session-compare{margin-top:0;border:0;padding:0}
+.advanced-collapsed .collapsed-content .session-compare .compare-top{display:none}
+.advanced-collapsed #historyCount{font-size:11px;color:#6884a3}
+@media(max-width:820px){
+ .cols.workspace{grid-template-columns:minmax(0,1fr);gap:12px}
+ .workspace>.card{min-height:0;padding:16px}
+ .input-panel #view{height:380px;min-height:275px;flex:none}
+ .workspace>.card h2{font-size:18px}
+ .tip-pop{left:0;width:min(290px,calc(100vw - 65px))}
+ .compact-notice{flex-wrap:wrap}
+}
+
+
+/* V1.7.2 · concise inference metrics and proportional two-model scroll */
+.run-metrics{display:flex;gap:8px 18px;align-items:center;flex-wrap:wrap;margin:7px 0 8px;padding:8px 12px;border:1px solid #dce8f7;border-radius:8px;background:#f5f9ff;color:#2e507e;font-size:12px;line-height:1.5}
+.run-metrics[hidden]{display:none!important}
+.run-metrics>span{font-variant-numeric:tabular-nums}
+.history-tools{display:flex;align-items:center;gap:8px;justify-content:flex-start;margin:10px 0 13px}
+.history-sync-toggle{display:inline-flex;align-items:center;gap:7px;cursor:pointer;color:#34527c;font-size:12px;font-weight:600;white-space:nowrap}
+.history-sync-toggle input{accent-color:#255fc0;width:15px;height:15px;cursor:pointer}
+.history-tools .tip-pop{left:0}
+
+/* V1.7.3 · model-extensible platform header: contextual, accessible help */
+.hero-heading{display:flex;align-items:center;gap:11px;flex-wrap:wrap;min-height:48px}
+.hero-heading h1{margin:3px 0 2px;min-width:0}
+.hero-heading .hero-help{z-index:60}
+.hero-heading .hero-help summary{width:21px;height:21px;cursor:pointer;font-size:13px;border-color:#b5d0f9;background:#ffffff1c;color:#eff6ff}
+.hero-heading .hero-help .tip-pop{left:auto;right:0;top:calc(100% + 12px);width:min(410px,calc(100vw - 48px));box-shadow:0 16px 35px #081f4666;color:#294764;background:white;line-height:1.8}
+@media(max-width:700px){.hero-heading{gap:8px}.hero-heading h1{font-size:clamp(21px,5vw,28px)}}
+
+/* V1.9 · compact official document sample gallery */
+.input-panel .input-actions{justify-content:space-between;gap:8px;margin:0 0 8px}
+.sample-label{font-size:12px;font-weight:750;color:#274d7e}
+.sample-gallery{display:grid;grid-template-columns:29px minmax(0,1fr) 29px;align-items:center;gap:6px;margin:0 0 5px;min-width:0}
+.sample-strip{display:flex;gap:9px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#b4c7e2 transparent;padding:4px 2px 8px;min-width:0}
+.sample-tile{flex:0 0 102px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 5px 7px;border:2px solid #dbe5f2;border-radius:10px;background:#fff;color:#365777;scroll-snap-align:start;transition:border-color .12s,background-color .12s,box-shadow .12s}
+.sample-tile:hover{border-color:#7fa8e9;background:#f5f9ff}
+.sample-tile[aria-pressed="true"]{border-color:#326be8;background:#edf4ff;box-shadow:0 0 0 2px #326be81b;color:#184eae}
+.sample-tile canvas,.sample-tile img{display:block;width:75px;height:92px;border:1px solid #e1e7f0;border-radius:3px;background:#fff;object-fit:contain}
+.sample-tile span{font-size:11px;font-weight:700;line-height:1.35;white-space:nowrap}
+.sample-tile img[hidden]{display:none!important}
+.sample-scroll{display:inline-grid;place-items:center;width:29px;min-height:42px;padding:0;border:1px solid #d8e4f2;border-radius:8px;background:#f4f8ff;color:#376aa9;font-size:21px}
+.sample-scroll:hover{background:#e8f1ff}
+.sample-scroll:disabled{opacity:.35}
+.sample-source{display:block;margin:0 0 11px;font-size:11px;line-height:1.5;color:#6d7f96}
+.sample-source a{color:#225fc1}
+.input-source-tabs{display:grid;grid-template-columns:1fr 1.28fr 1fr;gap:8px;margin:0 0 8px;min-width:0}
+.source-tab{min-width:0;min-height:40px;padding:8px 7px;border:1px solid #dbe5f2;border-radius:9px;background:#fff;color:#365777;font-size:12px;font-weight:750;white-space:nowrap;transition:border-color .12s,background-color .12s,box-shadow .12s}
+.source-tab:hover{border-color:#7fa8e9;background:#f5f9ff}
+.source-tab[aria-pressed="true"]{border-color:#326be8;background:#edf4ff;box-shadow:0 0 0 2px #326be81b;color:#184eae}
+.source-tab:disabled{opacity:.45;cursor:not-allowed}
+.sample-gallery[hidden],.sample-source[hidden]{display:none!important}
+.sample-tile[data-thumbnail-error="true"] img{display:none}
+.sample-tile[data-thumbnail-error="true"]::before{content:"文档";display:grid;place-items:center;width:75px;height:92px;border:1px solid #e1e7f0;border-radius:3px;background:linear-gradient(180deg,#fff 0%,#f5f7fa 100%);color:#9aa9bb;font-size:13px}
+@media(max-width:760px){.input-source-tabs{grid-template-columns:1fr 1.25fr 1fr;gap:5px}.source-tab{font-size:11px;padding:8px 4px}.sample-gallery{grid-template-columns:25px minmax(0,1fr) 25px;gap:4px}.sample-tile{flex-basis:94px}.sample-scroll{width:25px}}
+.sample-tile:focus-visible,.sample-scroll:focus-visible{outline:2px solid #3277e8;outline-offset:2px}
+@media(max-width:760px){.sample-gallery{grid-template-columns:25px minmax(0,1fr) 25px;gap:4px}.sample-tile{flex-basis:94px}.sample-scroll{width:25px}}
+/* DEV-only model download source toggle: small addition below existing model selector. */
+.model-download-source{margin:9px 0 7px}
+.model-download-source .source-title{display:block;font-size:12px;font-weight:700;color:#315780;margin-bottom:5px}
+.model-download-source .source-options{display:flex;align-items:center;gap:7px 16px;flex-wrap:wrap}
+.model-download-source label{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#284969;cursor:pointer}
+.model-download-source label input{margin:0;accent-color:#2467c4}
+.model-download-source label:has(input:disabled){opacity:.62;cursor:not-allowed}
+.model-download-source #modelSourceInfo{display:block;margin:5px 0 0;line-height:1.5;color:#6d7f96;font-size:11px}
+</style>
+</head>
+<body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+<main>
+<header>
+<div class="label">MVAI LEARNING CENTER · DOCUMENT AI · MULTI-MODEL LAB</div>
+<div class="hero-heading">
+  <h1>实时文档结构化解析-DocTags</h1>
+  <details class="info-tip hero-help">
+    <summary aria-label="查看平台功能及多模型扩展说明" title="平台说明">ⓘ</summary>
+    <div class="tip-pop" role="note">
+      本平台面向文档结构化解析与多模型能力对比：对同一文档选择兼容模型，查看 DocTags、版面定位及结构化渲染结果，并比较不同模型的解析效果。
+      当前内置 IBM Granite Docling 258M 公开基线、OvisOCR3 0.8B、PaddleOCR-VL-1.6 0.9B，以及 MVAI-DocTags-DJX-0.8B-v1.0 · 自研和 MVAI-DocTags-WC-2B-v1.0 · 自研模型。OvisOCR3 与 PaddleOCR-VL-1.6 保留各自原生 Structured JSON / parsing_res_list 输出，不转换成 DocTags；均使用浏览器本机 WebGPU。
+      支持的模型在访问者浏览器中使用 WebGPU 推理，当前仍属实验功能。模型兼容性和解析准确率须按实际结果核验。
+    </div>
+  </details>
+</div>
+</header>
+<div class="notice compact-notice"><strong>技术预览</strong> · 首次加载 DJX-0.8B 约下载 2.52 GB，WC-2B 约下载 6.2 GB；OvisOCR3 与 PaddleOCR-VL-1.6 还需下载各自的模型资源。<details class="info-tip"><summary aria-label="查看下载、兼容性与隐私提醒">ⓘ</summary><div class="tip-pop">建议使用支持 WebGPU 的桌面浏览器和稳定网络。模型下载后可复用浏览器缓存，但显存实例仍需初始化。请勿上传含敏感个人信息或未经授权的文档；模型兼容性与解析准确率尚待系统验收。</div></details></div>
+<div class="cols workspace">
+  <div class="card input-panel">
+    <div class="panel-heading">
+      <h2>01 · 文档输入</h2>
+      <details class="info-tip"><summary aria-label="文档格式及隐私说明">ⓘ</summary><div class="tip-pop">可在示例文档、Docling 官方文档与本地图片之间切换；官方样例源自 IBM Granite Docling DEMO，文件已在本站本地托管。可上传已授权、已脱敏的 PNG、JPG、WebP 单页图片，最大 12 MB。用户上传文件在本机浏览器处理，不会自动发送到实验室服务器。所有示例图片从本站资源目录加载，无需访问外部图片服务。</div></details>
+    </div>
+    <div class="input-source-tabs" role="group" aria-label="选择文档来源">
+      <button id="sourceChallenge" class="source-tab" type="button" aria-pressed="false">选择示例文档</button>
+      <button id="sourceDocling" class="source-tab" type="button" aria-pressed="true">选择 Docling 官方文档</button>
+      <button id="sourceUpload" class="source-tab" type="button" aria-pressed="false">上传本地图片</button>
+      <input id="file" type="file" accept="image/png,image/jpeg,image/webp" aria-label="上传本地文档图片" hidden>
+    </div>
+    <div id="challengeGallery" class="sample-gallery" aria-label="选择示例文档" hidden>
+      <button id="challengePrev" class="sample-scroll" type="button" aria-label="向左浏览示例文档">‹</button>
+      <div id="challengeStrip" class="sample-strip" role="group" aria-label="选择示例文档"></div>
+      <button id="challengeNext" class="sample-scroll" type="button" aria-label="向右浏览示例文档">›</button>
+    </div>
+    <div id="doclingGallery" class="sample-gallery" aria-label="Docling 官方文档">
+      <button id="samplePrev" class="sample-scroll" type="button" aria-label="向左浏览官方文档">‹</button>
+      <div id="sampleStrip" class="sample-strip" role="group" aria-label="选择 Docling 官方文档">
+        <button id="sample" class="sample-tile" type="button" data-group="docling" data-sample="doc" aria-pressed="true"><img alt="" loading="eager" decoding="async"><span>整页文档</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="table" aria-pressed="false"><img alt="" loading="eager" decoding="async"><span>表格识别</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="code" aria-pressed="false"><img alt="" loading="eager" decoding="async"><span>代码识别</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="image" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>图片理解</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="formula" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>公式识别</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="chart" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>图表提取</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="arabic" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>阿拉伯语</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="japanese" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>日语</span></button>
+        <button class="sample-tile" type="button" data-group="docling" data-sample="chinese" aria-pressed="false"><img alt="" loading="lazy" decoding="async"><span>中文文档</span></button>
+      </div>
+      <button id="sampleNext" class="sample-scroll" type="button" aria-label="向右浏览官方文档">›</button>
+    </div>
+    <small id="sampleSource" class="sample-source">样例来源：<a href="https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo" target="_blank" rel="noopener noreferrer">IBM Granite Docling 官方 DEMO</a></small>
+    <div id="view"><canvas id="preview" aria-label="文档输入与解析标注预览" role="img"></canvas></div>
+    <div class="input-footer">
+      <small id="fileName">正在载入示例文档…</small>
+      <div class="row input-secondary">
+        <button id="clear" type="button">只显示原图</button>
+        <button id="saveImg" type="button" disabled>保存标注图 PNG</button>
+      </div>
+    </div>
+  </div>
+  <div class="card inference-panel">
+    <div class="panel-heading">
+      <h2>02 · WebGPU 推理</h2>
+      <details class="info-tip"><summary aria-label="WebGPU 推理与数据说明">ⓘ</summary><div class="tip-pop">模型在访问者本机使用 WebGPU 计算，不需要实验室 GPU。浏览器可能因显存、驱动或算子兼容性导致运行失败。这里展示 IBM 公开基线模型，不是实验室自研权重。</div></details>
+    </div>
+    <div class="status device-status" id="device" role="status" aria-live="polite">正在检测 WebGPU…</div>
+    <div class="control-fields">
+      <div class="field-heading">
+        <label for="modelSelect">选择推理模型</label>
+        <details class="info-tip"><summary aria-label="模型选择说明">ⓘ</summary><div class="tip-pop" id="modelHelp">内置 IBM Granite Docling 258M 公开基线、MVAI-DocTags-DJX-0.8B-v1.0 · 自研和 MVAI-DocTags-WC-2B-v1.0 · 自研。两款自研模型使用独立 ONNX/WebGPU 适配器，需支持 shader-f16；其他公开 ONNX 模型仍须单独验证兼容性。</div></details>
+      </div>
+      <select id="modelSelect" aria-label="选择推理模型"></select>
+      <div class="model-download-source" role="group" aria-labelledby="modelSourceTitle">
+        <span class="source-title" id="modelSourceTitle">模型下载源</span>
+        <div class="source-options">
+          <label><input id="modelSourceOfficial" name="modelDownloadSource" type="radio" value="official" checked> Hugging Face 官方（默认）</label>
+          <label><input id="modelSourceMirror" name="modelDownloadSource" type="radio" value="mirror"> 国内镜像（实验性加速）</label>
+        </div>
+        <small id="modelSourceInfo" role="status" aria-live="polite">官方源保持已验收的原始下载方式；国内镜像只在当前 DEV 中进行兼容性测试。</small>
+      </div>
+      <div class="field-heading">
+        <label for="dtype">模型配置</label>
+        <details class="info-tip"><summary aria-label="模型精度说明">ⓘ</summary><div class="tip-pop">Granite 的 fp32/q4 用于切换同一模型的精度；DJX-0.8B 和 WC-2B 使用固定混合精度（视觉 FP32、文字 FP16）；OvisOCR3 与 PaddleOCR-VL-1.6 使用各自已验证的固定 WebGPU 配置，不提供 q4 切换。</div></details>
+      </div>
+      <div class="row config-row">
+        <select id="dtype" aria-label="选择模型推理精度"><option value="quality">稳定优先 · fp32</option><option value="compact">省显存 · q4</option><option value="r3-fixed" hidden disabled>固定混合精度 · 视觉 FP32 / 文字 FP16</option><option value="native-fixed" hidden disabled>固定配置 · 原生 WebGPU</option></select>
+        <button class="primary" id="load" type="button" disabled>加载模型</button>
+      </div>
+      <div class="load-metrics">
+        <progress id="progress" value="0" max="100" aria-label="模型加载进度"></progress>
+        <small id="downloadStatus" aria-live="polite">尚未加载模型</small>
+      </div>
+      <div class="row run-actions">
+        <button class="primary" id="run" type="button" disabled>开始推理</button>
+        <button class="stop-action" id="stop" type="button" hidden disabled>终止推理</button>
+        <button id="saveDT" type="button" disabled>下载 DocTags</button>
+      </div>
+      <small id="runAvailability" role="status" aria-live="polite">等待模型和文档就绪。</small>
+      <div class="status inference-status" id="status" role="status" aria-live="polite">等待推理</div>
+      <div id="inferenceProgressPanel" class="load-metrics inference-progress" hidden>
+        <progress id="inferenceProgress" max="100" aria-label="PaddleOCR-VL 推理进度"></progress>
+        <small id="inferenceProgressStatus" aria-live="polite"></small>
+      </div>
+      <div id="runMetrics" class="run-metrics" role="status" aria-live="polite" hidden>
+        <span id="runModelSize"></span><span id="runDuration"></span>
+      </div>
+    </div>
+    <div class="support">
+      <details class="compact-details model-manage" id="modelManage">
+        <summary>模型管理 <span>添加 / 移除兼容 ONNX 模型</span></summary>
+        <div class="details-inner">
+          <p>仅接受公开且与当前 DocTags processor、提示词和输入输出接口兼容的 ONNX 仓库。登记不代表兼容或下载成功。不要填写访问令牌。</p>
+          <div class="model-inputs">
+            <input id="newModelName" type="text" maxlength="70" placeholder="显示名称" aria-label="自定义模型名称">
+            <input id="newModelRepo" type="text" maxlength="120" placeholder="org/compatible-docling-onnx" aria-label="公开 Hugging Face 模型仓库 ID">
+            <button id="addModel" type="button">添加</button>
+            <button id="removeModel" type="button" disabled>移除选中模型</button>
+          </div>
+          <p id="registryState" role="status"></p>
+        </div>
+      </details>
+      <details class="compact-details cache-manager" id="cacheManager">
+        <summary>本地缓存 <span>查看 / 保留模型文件</span></summary>
+        <div class="details-inner">
+          <p>权重文件通常可通过浏览器 Cache Storage 复用，但重开页面后仍需重新初始化 GPU 实例；浏览器可自动清理缓存，不同站点域名不能共享缓存。</p>
+          <div class="cache-actions">
+            <button id="cacheCheck" type="button">查看模型缓存信息</button>
+            <button id="cacheClear" type="button">清理当前模型缓存</button>
+            <button id="cachePersist" type="button">请求保留站点存储</button>
+          </div>
+          <div id="cacheInfo" role="status" aria-live="polite"></div>
+        </div>
+      </details>
+      <details class="compact-details help-links">
+        <summary>帮助与备用体验</summary>
+        <div class="details-inner links">
+          <a href="../interactive-demo/index.html" target="_blank" rel="noopener">免登录查看已有解析样例</a>
+          <a href="../../../../projects/doctags-kaggle/index.html" target="_blank" rel="noopener">使用个人 Kaggle GPU 推理</a>
+          <a href="https://huggingface.co/onnx-community/granite-docling-258M-ONNX" target="_blank" rel="noopener">IBM 公开基线模型说明</a>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<section class="card comparison" aria-label="推理结果对照">
+  <div class="compare-top">
+    <div>
+      <h2>03 · 推理结果对照</h2>
+      <details class="info-tip inline-info"><summary aria-label="结果对照说明">ⓘ</summary><div class="tip-pop">左侧为原图和真实位置框；右侧按所选模型的原生输出重建阅读结果。Granite/DJX/WC 使用 DocTags，OvisOCR3 保留 Structured JSON，PaddleOCR-VL-1.6 保留 parsing_res_list 与 OTSL。不同格式不会相互转换。</div></details>
+    </div>
+    <div class="compare-controls">
+      <label><input id="bounds" type="checkbox" checked> 显示位置框</label>
+      <label title="两侧按滚动比例同步，仅用于辅助浏览；并不代表内容逐行匹配"><input id="sync" type="checkbox"> 比例同步滚动</label>
+    </div>
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <div class="compare-col-header"><strong>原始文档</strong><small>图像及定位标注</small></div>
+      <div class="compare-scroll" id="originalScroll"><canvas id="compareCanvas" role="img" aria-label="用于对照的原始文档和位置框"></canvas></div>
+    </div>
+    <div class="compare-col">
+      <div class="compare-col-header"><strong>推理后结构化结果</strong><small>按模型输出重建</small></div>
+      <div class="compare-scroll" id="renderScroll"><article id="rendered" class="rendered-document" aria-live="polite"><div class="render-placeholder">尚未运行推理。点击右上方“开始真正推理”后，这里才显示模型生成的标题、段落和表格。</div></article></div>
+    </div>
+  </div>
+  <div id="compareStatus" role="status">对照区已准备就绪。右侧不会显示事先制作的推理结果。</div>
+  
+</section>
+<details id="rawDetails" class="advanced-collapsed">
+  <summary>04 · 模型原始输出与技术诊断</summary>
+  <div class="raw-interior">
+    
+    <pre id="tags">模型生成的标签将出现在这里。</pre>
+    <p><small id="timing"></small></p>
+  </div>
+</details>
+
+
+<details class="advanced-collapsed" id="compareDetails">
+ <summary>05 · 多模型结果对比 <small id="historyCount" class="compact-count" role="status">暂无推理记录</small></summary>
+ <div class="collapsed-content">
+ <section class="card session-compare" aria-label="多模型相同输入结果对比">
+ <div class="selector-grid">
+  <div><label for="compareA">结果 A</label><select id="compareA" disabled><option>等待推理结果</option></select></div>
+  <div><label for="compareB">结果 B</label><select id="compareB" disabled><option>等待推理结果</option></select></div>
+ </div>
+ <div class="history-tools">
+   <label class="history-sync-toggle"><input id="historySync" type="checkbox"> 按比例同步滚动</label>
+   <details class="info-tip"><summary aria-label="多模型同步滚动说明">ⓘ</summary><div class="tip-pop">两份解析结果按各自滚动范围的相同比例同步，方便比较长文档。不同模型的段落数量和阅读顺序可能不同，因此不表示精确内容匹配。</div></details>
+ </div>
+ <div class="run-columns">
+  <div class="run-column"><div class="run-head" id="compareNameA">模型 A</div><div class="run-body" id="compareBodyA"><article class="rendered-document"><div class="render-placeholder">请先完成一次真实推理。</div></article></div></div>
+  <div class="run-column"><div class="run-head" id="compareNameB">模型 B</div><div class="run-body" id="compareBodyB"><article class="rendered-document"><div class="render-placeholder">请再运行一个模型，或切换另一种精度配置。</div></article></div></div>
+ </div>
+ <p class="compare-diagnostic" id="compareDiagnostic">这里只保存当前页面内同一输入图片的推理结果；更换图片或刷新页面会清空对比历史，不会将私人文档文本写入浏览器持久存储。不同模型的结构块数量不能直接代表准确率。</p>
+</section>
+ </div>
+</details>
+
+<p style="text-align:center"><small>MVAI Learning Center · Browser WebGPU technical preview · 未经实际 GPU 推理验收不得标记为正式可用</small></p>
+</main>
+<script>
+/* HF Static Space fallback links: keep Kaggle and the existing sample reachable
+   before the new demo has been merged into Learning Center main. */
+if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) {
+  const base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/dev-preview-showcase-v1-7-model-manager-20261031";
+  const sample=document.querySelector('a[href="../interactive-demo/index.html"]');
+  const kaggle=document.querySelector('a[href="../../../../projects/doctags-kaggle/index.html"]');
+  if(sample)sample.href=base+"/assets/projects/doctags/interactive-demo/index.html";
+  if(kaggle)kaggle.href=base+"/projects/doctags-kaggle/index.html";
+}
+</script>
+<canvas id="source" hidden></canvas>
+<script src="./doctags-renderer.js?v=1.6.1"></script>
+<script src="./model-registry.js?v=mvai-order-20261107-2"></script>
+<script src="./native-document-output.js?v=native-ocr-20261107"></script>
+<script src="./native-result-renderer.js?v=native-ocr-20261107"></script>
+<script type="module">
+import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,InterruptableStoppingCriteria,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
+import {createDownloadMeter,formatBytes,formatRate,formatEta} from "./adapters/r3-ovisocr3/download-metrics.mjs";
+import {createPaddleDownloadProgress,updatePaddleDownloadProgress,normalizePaddleInferenceProgress,PADDLE_LAYOUT_DOWNLOAD_BYTES} from "./adapters/paddleocr-vl-1.6/progress.mjs";
+import {OFFICIAL,MIRROR,OFFICIAL_HOST,MIRROR_HOST,REMOTE_PATH,mirrorPolicy,modelRevision,runtimeSource,probeMirror} from "./model-download-source.mjs";
+env.useBrowserCache = true; // Cache Storage; browser may evict under quota pressure
+const $=id=>document.getElementById(id);
+const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
+const graniteStopping=new InterruptableStoppingCriteria();
+let model,processor,r3Adapter=null,wangAdapter=null,ovisNativeAdapter=null,paddleNativeAdapter=null,loaded=false,busy=false,imageReady=false,result="",name="";
+let nativeParsed=null,nativeFormat=null,nativeHighlight=null,sourceBitmap=null,sourceImageWidth=0,sourceImageHeight=0;
+window.addEventListener("pagehide",()=>{sourceBitmap?.close?.();sourceBitmap=null;});
+let inferenceRunning=false,stopRequested=false,activeStop=null;
+let loadingModel=false,loadPhase="idle",loadStartedAt=0,lastLoadProgressAt=0,lastLoadFile="",loadWatchdog=null;
+let sourceBlob=null; // Original File/Blob for direct self-built-model decoding; no Canvas export.
+let paddleDownloadProgress=createPaddleDownloadProgress();
+const registry=globalThis.MVAIModelRegistry;
+let activeDownloadSource=OFFICIAL;
+function requestedDownloadSource(){return $("modelSourceMirror").checked?MIRROR:OFFICIAL;}
+function syncDownloadSourceControls(){
+  const model=selectedModel(),policy=mirrorPolicy(model);
+  if(!policy.allowed && $("modelSourceMirror").checked)$("modelSourceOfficial").checked=true;
+  $("modelSourceMirror").disabled=busy||!policy.allowed;
+  $("modelSourceOfficial").disabled=busy;
+  $("modelSourceInfo").textContent=!policy.allowed?policy.reason
+    :requestedDownloadSource()===MIRROR
+      ?"国内镜像仅用于 DEV 测试；加载前检查配置文件跨域访问。WC-2B 还检查 HTTP Range。失败后请切回官方源。"
+      :"保持原版 Hugging Face 下载及浏览器缓存；切换下载源只在下次加载模型时生效。";
+}
+let gpuDetected=false,activeKey=null,activeModelName="",inputRevision=0,runHistory=[];
+let customModels=registry.restore(localStorage);
+const LAST_KEY="mvai-doctags-successful-loads-v1"; // only model keys, no documents
+function readLoadKeys(){try{return JSON.parse(localStorage.getItem(LAST_KEY)||"[]").filter(s=>typeof s==="string").slice(-30)}catch{return []}}
+let hasLoadedSuccessfully=readLoadKeys().length>0,pendingAutoLoad=false;
+function markSuccessfulLoad(key){try{localStorage.setItem(LAST_KEY,JSON.stringify([...new Set([...readLoadKeys(),key])].slice(-30)))}catch{}}
+function allModels(){return [...registry.BUILTINS,...customModels];}
+function selectedModel(){return allModels().find(m=>m.id===$("modelSelect").value)||registry.BUILTIN;}
+function selectedKey(){
+  const entry=selectedModel();
+  const legacyFixed=["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter);
+  const nativeFixed=["ovisocr3-native","paddleocr-vl-1.6"].includes(entry.adapter);
+  return registry.key(entry.id,legacyFixed?"r3-fixed":nativeFixed?"native-fixed":$("dtype").value);
+}
+function syncModelConfiguration(){
+  const adapter=selectedModel().adapter;
+  const legacyFixed=["r3-ovisocr3","wang-qwen35-2b"].includes(adapter);
+  const nativeFixed=["ovisocr3-native","paddleocr-vl-1.6"].includes(adapter);
+  const fixed=legacyFixed||nativeFixed;
+  const fixedOption=$("dtype").querySelector('option[value="r3-fixed"]');
+  fixedOption.hidden=!legacyFixed;fixedOption.disabled=!legacyFixed;
+  const nativeFixedOption=$("dtype").querySelector('option[value="native-fixed"]');
+  nativeFixedOption.hidden=!nativeFixed;nativeFixedOption.disabled=!nativeFixed;
+  if(legacyFixed)$("dtype").value="r3-fixed";
+  else if(nativeFixed)$("dtype").value="native-fixed";
+  else if(["r3-fixed","native-fixed"].includes($("dtype").value))$("dtype").value="quality";
+  $("dtype").disabled=busy||fixed;
+}
+function renderPaddleDownloadProgress(event) {
+  const summary=updatePaddleDownloadProgress(paddleDownloadProgress,event);
+  const layoutBytes=event?.stage==="layout-load"&&event?.phase==="model"&&event?.status==="progress";
+  const vlmBytes=event?.kind==="download";
+  const ready=event?.phase==="ready"||(event?.stage==="vlm-warmup"&&event?.kind==="ready");
+  if(summary.hasProgress||ready)$("progress").value=summary.progress;
+  else $("progress").removeAttribute("value");
+
+  const overall="整体文件准备 "+formatBytes(summary.loadedBytes)+" / "+formatBytes(summary.totalBytes)+" · "+summary.progress.toFixed(1)+"%";
+  if(vlmBytes){
+    const loaded=Number(event.assetLoadedBytes),total=Number(event.assetTotalBytes);
+    const perAsset=Number.isFinite(loaded)
+      ?" · 当前资源 "+formatBytes(loaded)+(Number.isFinite(total)&&total>0?" / "+formatBytes(total):"")
+      :"";
+    const source=event.fromPersistentCache?"读取浏览器缓存":"网络下载";
+    $("downloadStatus").textContent="PaddleOCR-VL-1.6 · "+source+"："+(event.asset||"模型权重")+perAsset+" · "+overall;
+    return;
+  }
+  if(layoutBytes){
+    const loaded=Number(event.loadedBytes)||summary.layoutLoadedBytes;
+    const total=Number(event.totalBytes)||PADDLE_LAYOUT_DOWNLOAD_BYTES;
+    $("downloadStatus").textContent="PP-DocLayoutV3 · 下载版面模型 "+formatBytes(loaded)+" / "+formatBytes(total)+" · "+overall;
+    return;
+  }
+  if(event?.stage==="layout-load"&&event?.phase==="ready"){
+    const sources={network:"网络下载",cache:"浏览器缓存",memory:"内存复用",custom:"自定义模型"};
+    const source=sources[event.source]||"已就绪";
+    $("downloadStatus").textContent="PP-DocLayoutV3 · 版面模型已就绪（"+source+"） · "+overall;
+    return;
+  }
+  if(event?.stage==="vlm-warmup"&&event?.kind==="ready"){
+    $("downloadStatus").textContent="PaddleOCR-VL-1.6 · 模型权重已就绪，WebGPU 预热完成 · "+overall;
+    return;
+  }
+  if(event?.kind==="inference"){
+    const stages={
+      preprocess:"图像预处理",
+      patch_embedding:"视觉特征提取",
+      vision_encoder:"视觉编码",
+      projector:"视觉特征投影",
+      prompt:"构建识别提示",
+      decoder_prefill:"Decoder 预填充",
+      generation:"首次生成预热"
+    };
+    const stage=stages[event.stage]||event.stage||"模型预热";
+    $("downloadStatus").textContent="PaddleOCR-VL-1.6 · 模型预热："+stage+(event.detail?" · "+event.detail:"")+" · "+overall;
+    return;
+  }
+  const labels={
+    "layout-sdk":"加载 PP-DocLayoutV3 SDK",
+    "layout-worker":"准备同源版面检测 Worker",
+    "layout-load":"加载 PP-DocLayoutV3 模型",
+    "vlm-engine":"加载 PaddleOCR-VL WebGPU 引擎",
+    "vlm-warmup":"预热 PaddleOCR-VL 模型"
+  };
+  const label=labels[event?.stage]||"PaddleOCR-VL-1.6 初始化";
+  const detail=(event?.phase?" · "+event.phase:"")+(event?.status?" · "+event.status:"");
+  $("downloadStatus").textContent=label+detail+(summary.hasProgress?" · "+overall:"");
+}
+
+function renderPaddleInferenceProgress(event) {
+  const panel=$("inferenceProgressPanel"),bar=$("inferenceProgress"),label=$("inferenceProgressStatus");
+  panel.hidden=false;
+  const info=normalizePaddleInferenceProgress(event);
+  if(event?.stage==="layout"&&event?.status==="start"){
+    bar.removeAttribute("value");
+    label.textContent="正在执行 PP-DocLayoutV3 版面分析…";
+    return;
+  }
+  if(event?.stage==="layout"&&event?.status==="stopped"){
+    bar.value=0;
+    label.textContent="版面分析已停止，尚未完成区域识别。";
+    return;
+  }
+  if(event?.stage==="layout"&&event?.status==="complete"){
+    if(info.totalRegions===0){
+      bar.value=100;
+      label.textContent="版面分析完成，没有检测到需要识别的区域。";
+    }else{
+      bar.value=0;
+      label.textContent="版面分析完成 · 检测到 "+info.totalRegions+" 个区域，准备逐区域识别。";
+    }
+    return;
+  }
+  if(event?.stage!=="recognition")return;
+  bar.value=info.progress;
+  const region=Number(event.region)||0,total=info.totalRegions,completed=info.completedRegions;
+  if(event.status==="region-start"){
+    label.textContent="区域处理 "+completed+" / "+total+" · 正在处理第 "+region+" 个区域。";
+    return;
+  }
+  if(event.status==="region-complete"){
+    label.textContent="区域处理 "+completed+" / "+total+(event.skipped?" · 非文字图像区域，按规则跳过 OCR。":" · 当前区域已完成。");
+    return;
+  }
+  if(event.status==="complete"){
+    label.textContent="推理完成 · 已处理全部 "+completed+" / "+total+" 个版面区域。";
+    return;
+  }
+  if(event.status==="stopped"){
+    label.textContent="推理已停止 · 已完成 "+completed+" / "+total+" 个版面区域。";
+    return;
+  }
+  if(event.kind==="download"){
+    label.textContent="区域 "+region+" / "+total+" · 正在补充读取模型资源："+(event.asset||"模型文件");
+    return;
+  }
+  const stages={
+    preprocess:"图像预处理",
+    patch_embedding:"视觉特征提取",
+    vision_encoder:"视觉编码",
+    projector:"视觉特征投影",
+    prompt:"构建识别提示",
+    decoder_prefill:"Decoder 预填充",
+    generation:"文本生成"
+  };
+  const stage=stages[event.substage]||event.substage||"GPU 推理";
+  label.textContent="区域处理 "+completed+" / "+total+" · 第 "+region+" 个区域 · "+stage+(event.detail?" · "+event.detail:"");
+}
+
+function clearRunMetrics(){
+  $("runMetrics").hidden=true;
+  $("runModelSize").textContent="";
+  $("runDuration").textContent="";
+}
+function showRunMetrics(modelId,seconds){
+  $("runModelSize").textContent="模型大小（参数量）："+registry.modelSizeLabel(modelId);
+  $("runDuration").textContent="推理时长："+Number(seconds).toFixed(1)+" 秒";
+  $("runMetrics").hidden=false;
+}
+function refreshInferenceControls(){
+  const button=$("stop");
+  button.hidden=!inferenceRunning;
+  button.disabled=!inferenceRunning||stopRequested;
+  button.textContent=stopRequested?"正在终止…":"终止推理";
+}
+function refreshLoadButtons(){
+  syncDownloadSourceControls();
+  const already=loaded&&activeKey===selectedKey();
+  const sourceMatches=activeDownloadSource===requestedDownloadSource();
+  $("load").disabled=busy||!gpuDetected||(already&&sourceMatches);
+  $("load").textContent=loadingModel
+    ?(loadPhase==="initializing"?"正在初始化 WebGPU…":"正在加载模型…")
+    :already?(sourceMatches?"已加载":"按新下载源重新加载"):"加载所选模型";
+  const runReason=busy
+    ?(loadingModel?"模型仍在加载或初始化；完成后才能推理。":"模型正在推理，请等待完成或终止。")
+    :!already?"当前选择的模型尚未在本次页面会话中完成加载，请先加载模型。"
+    :!imageReady?"模型已就绪；请先选择示例文档或上传本地图片。"
+    :"模型与文档均已就绪，可以开始推理。";
+  $("run").disabled=busy||!imageReady||!already;
+  $("run").title=runReason;
+  $("runAvailability").textContent=runReason;
+  ["sourceChallenge","sourceDocling","sourceUpload"].forEach(id=>$(id).disabled=busy);
+  $("modelSelect").disabled=busy;
+  $("dtype").disabled=busy||["r3-ovisocr3","wang-qwen35-2b","ovisocr3-native","paddleocr-vl-1.6"].includes(selectedModel().adapter);
+  $("addModel").disabled=busy;
+  $("removeModel").disabled=busy||selectedModel().builtIn;
+  const entry=selectedModel();
+  $("modelHelp").textContent=already
+    ?"所选模型已在当前 GPU 会话中就绪；直接点击开始真正推理。"
+    :entry.adapter==="ovisocr3-native"
+      ?"OvisOCR3 0.8B 原生 Structured 模型。固定 ONNX bundle commit："+entry.revision+"；Vision FP32、Embedding/Decoder FP16，浏览器本机 WebGPU 推理；原始输出为 bbox/category/content JSON，不转换为 DocTags。已在 Chrome 155 / RTX 3080 10GB 完成 1024² 实际推理验收。"
+      :entry.adapter==="paddleocr-vl-1.6"
+        ?"PaddleOCR-VL-1.6 0.9B 原生模型。PP-DocLayoutV3 + VLM 两阶段 WebGPU FP16；浏览器模型包 revision："+entry.revision+"；首次下载约 2.11 GB。输出保留 parsing_res_list / OTSL，不转换为 DocTags；已在 Chrome 155 / RTX 3080 10GB 完成解析与版面还原验收。"
+        :entry.adapter==="r3-ovisocr3"
+          ?"MVAI-DocTags-DJX-0.8B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 2.52 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成短页端到端测试，其他设备仍需实测。"
+          :entry.adapter==="wang-qwen35-2b"
+            ?"MVAI-DocTags-WC-2B-v1.0 · 自研模型。独立运行时：Transformers.js 4.4.0-next.0 / ONNX Runtime Web 1.31.1；首次下载约 6.2 GB；需要支持 shader-f16 的 WebGPU。已在 Chrome 157 / NVIDIA A800 80GB 完成合成短页端到端测试，其他设备仍需实测。"
+            :"模型："+entry.name+"。首次加载需要手动启动；成功后切换模型或精度将自动加载。"+(entry.checked?"公开基线已有相关示例；仍需设备验收。":"用户登记的公开 ONNX 仓库，尚未验证与 DocTags 接口兼容。")+" 磁盘缓存与 GPU 加载状态不同.";
+  refreshInferenceControls();
+}
+function maybeAutoLoadSelectedModel(){
+  if(!hasLoadedSuccessfully||busy)return;
+  if(loaded&&activeKey===selectedKey()){pendingAutoLoad=false;return;}
+  pendingAutoLoad=true;
+  if(!gpuDetected)return;
+  refreshLoadButtons();
+  if(!$("load").disabled){
+    pendingAutoLoad=false;
+    $("downloadStatus").textContent="已成功加载过模型，正在自动切换并加载："+selectedModel().name+"…";
+    $("load").click();
+  }
+}
+function renderModelOptions(prefer){
+  const select=$("modelSelect");select.replaceChildren();
+  const loadedBefore=readLoadKeys();
+  for(const m of allModels()){
+    const option=document.createElement("option");option.value=m.id;
+    option.textContent=m.name+(loadedBefore.some(k=>k.startsWith(m.id+"::"))?" · 历史曾加载":"")+(m.checked?"":" · 待验证");
+    select.appendChild(option);
+  }
+  const opt=document.createElement("option");opt.disabled=true;opt.textContent="其他自研模型 · 待接入兼容适配";select.appendChild(opt);
+  select.value=allModels().some(m=>m.id===prefer)?prefer:registry.R3.id;
+  syncModelConfiguration();
+  refreshLoadButtons();
+}
+function resetHistory(){
+  runHistory=[];
+  refreshHistorySelectors();
+}
+function updateHistory(record){
+  const revision=Number(record?.documentRevision);
+  if(!record?.key||!record?.modelId||!record?.tags||!Number.isInteger(revision)||revision!==inputRevision){
+    $("compareDiagnostic").textContent="本次结果未能加入对比记录：输入版本或模型输出信息不完整。";
+    return;
+  }
+  const normalized={...record,documentRevision:revision};
+  const accepted=registry.recordResult(runHistory,normalized);
+  const acceptedCurrent=accepted.some(item=>item.key===normalized.key&&Number(item.documentRevision)===revision&&item.modelId===normalized.modelId&&item.tags===normalized.tags&&Number(item.seconds)===Number(normalized.seconds));
+  runHistory=acceptedCurrent
+    ?accepted
+    :[...runHistory.filter(item=>item.documentRevision===revision&&item.key!==normalized.key),normalized].slice(-12);
+  refreshHistorySelectors();
+}
+function refreshHistorySelectors(){
+  const list=runHistory.filter(item=>item.documentRevision===inputRevision);
+  $("historyCount").textContent=list.length+" 组真实推理记录（当前输入）";
+  for(const id of ["compareA","compareB"]){
+    const sel=$(id),before=sel.value;sel.replaceChildren();
+    if(!list.length){sel.add(new Option("等待推理结果",""));sel.disabled=true;continue;}
+    for(const item of list)sel.add(new Option(item.label+" · "+item.seconds+"s",item.key));
+    sel.disabled=false;
+    if(list.some(i=>i.key===before))sel.value=before;
+  }
+  if(list.length){
+    if(!$("compareA").value)$("compareA").value=list[0].key;
+    if(!$("compareB").value)$("compareB").value=list.at(-1).key;
+    // When a second model arrives, automatically compare the first against the newest.
+    if(list.length>1&&$("compareA").value===$("compareB").value){
+      $("compareA").value=list[0].key;$("compareB").value=list.at(-1).key;
+    }
+  }
+  displayHistoryComparison();
+}
+function compareRecord(which){
+  const sel=$("compare"+which),pane=$("compareBody"+which),heading=$("compareName"+which);
+  const value=runHistory.find(r=>r.key===sel.value&&r.documentRevision===inputRevision);
+  pane.replaceChildren();pane.scrollTop=0;
+  if(!value){heading.textContent="模型 "+which;const holder=document.createElement("article");holder.className="rendered-document";
+    const tip=document.createElement("div");tip.className="render-placeholder";tip.textContent="等待该模型完成一次推理。";holder.appendChild(tip);pane.appendChild(holder);return null;}
+  heading.textContent=value.label+" · "+value.seconds+" 秒";
+  const article=document.createElement("article");article.className="rendered-document";
+  let parsed,counts;
+  if(value.outputFormat==="ovisocr3-native"||value.outputFormat==="paddleocr-vl16-native"){
+    parsed=parseNativeResult(value.tags,value.outputFormat);
+    const stats=nativeRenderer.renderBlocks(parsed,article,sourceBitmap);counts={blocks:stats.blocks,tables:stats.tables};
+  }else{
+    parsed=documentParser.parse(value.tags);
+    if(parsed.blocks.length)parsed.blocks.forEach((block,i)=>article.appendChild(addBlock(block,i)));
+    else {const tip=document.createElement("div");tip.className="render-placeholder";tip.textContent="DocTags 无可重建结构，可下载原始输出核对。";article.appendChild(tip);}
+    counts={blocks:parsed.blocks.length,tables:parsed.blocks.filter(b=>["otsl","table"].includes(b.type)).length};
+  }
+  pane.appendChild(article);return {value,counts};
+}
+function displayHistoryComparison(){
+  const a=compareRecord("A"),b=compareRecord("B");
+  if(a&&b)$("compareDiagnostic").textContent="A：结构块 "+a.counts.blocks+"、表格 "+a.counts.tables+"；B：结构块 "+b.counts.blocks+"、表格 "+b.counts.tables+"。结果仅来自同一输入图片的实际模型输出，块数不是准确率。刷新或换图会清除对比记录。";
+  else $("compareDiagnostic").textContent="顺序运行第二个兼容模型或同一模型的其他精度配置，即可对比。仅保存当前页面内的结果，不持久保存文档内容。";
+  expectedMirrorTop.clear();
+  if($("historySync").checked)syncHistoryScroll($("compareBodyA"),$("compareBodyB"));
+}
+
+const palette={title:"#2c62d0",text:"#159b72",table:"#c08423",otsl:"#c08423",seal:"#cd4762"};
+
+/* V1.6 visual reconstruction: never render model text as trusted HTML. */
+const compare=$("compareCanvas"),comp=compare.getContext("2d");
+const leftPane=$("originalScroll"),rightPane=$("renderScroll"),rendered=$("rendered");
+const documentParser=globalThis.MVAIDocTags;
+const nativeCore=globalThis.MVAINativeOCR;
+const nativeRenderer=globalThis.MVAINativeOCRRenderer;
+let regions=[],blocks=[],activeLocation=null,syncing=false,renderGood=false;
+const BOXC={title:"#2563bf",section_header_level_1:"#835cda",text:"#10a377",handwritten:"#9b6b38",page_number:"#566c89",otsl:"#c78b31",table:"#c78b31",seal:"#d74b73"};
+function drawRegionLabel(block,scaleX,scaleY) {
+  const label=block.type;
+  const cssWidth=Math.max(1,compare.clientWidth||compare.width);
+  const fontSize=Math.max(1,8*compare.width/cssWidth);
+  const padX=Math.ceil(fontSize*.3),padY=Math.ceil(fontSize*.12);
+  comp.font=`600 ${fontSize}px Arial,sans-serif`;
+  const labelWidth=Math.ceil(comp.measureText(label).width+padX*2);
+  const labelHeight=Math.ceil(fontSize+padY*2);
+  const x=block.loc[0]*scaleX,y=block.loc[1]*scaleY;
+  const labelX=Math.max(0,Math.min(compare.width-labelWidth,x));
+  const labelY=y>=labelHeight?y-labelHeight:Math.min(compare.height-labelHeight,y+1);
+  comp.fillStyle=BOXC[block.type]||"#4f77ae";
+  comp.fillRect(labelX,labelY,labelWidth,labelHeight);
+  comp.fillStyle="#fff";
+  comp.textBaseline="middle";
+  comp.fillText(label,labelX+padX,labelY+labelHeight/2);
+}
+function leftDraw(loc=null) {
+  compare.width=src.width;compare.height=src.height;
+  comp.drawImage(src,0,0);if(!src.width || !src.height)return;
+  if(nativeParsed){if($("bounds").checked){const sx=src.width/(sourceImageWidth||src.width),sy=src.height/(sourceImageHeight||src.height);comp.save();comp.setTransform(sx,0,0,sy,0,0);nativeRenderer.renderBoxes(comp,nativeParsed,sourceImageWidth||src.width,sourceImageHeight||src.height,{highlight:nativeHighlight});comp.restore();}return;}
+  const scaleX=src.width/500,scaleY=src.height/500;
+  if ($("bounds").checked && result) {
+    const visibleRegions=regions.slice(0,280);
+    for (const block of visibleRegions) {
+      const [x1,y1,x2,y2]=block.loc;
+      comp.strokeStyle=BOXC[block.type]||"#4f77ae";
+      comp.lineWidth=Math.max(2,src.width/480);
+      comp.strokeRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
+    }
+    // Draw labels in a second pass so later bounding boxes cannot cover earlier labels.
+    for (const block of visibleRegions) drawRegionLabel(block,scaleX,scaleY);
+  }
+  if (loc) {
+    const [x1,y1,x2,y2]=loc;
+    comp.fillStyle="rgba(55,112,230,.15)";
+    comp.fillRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
+    comp.strokeStyle="#e06422";comp.lineWidth=Math.max(3,src.width/220);
+    comp.strokeRect(x1*scaleX,y1*scaleY,(x2-x1)*scaleX,(y2-y1)*scaleY);
+  }
+}
+function renderTable(table) {
+  if (!table?.rows?.length) return null;
+  const wrap=document.createElement("div");wrap.className="render-tbl";
+  const t=document.createElement("table"),tbody=document.createElement("tbody");
+  const owners=table.rows.map(()=>[]),expanded=new Set();
+  for(let r=0;r<table.rows.length;r++){
+    const tr=document.createElement("tr");
+    for(let col=0;col<table.rows[r].length;col++){
+      const cell=table.rows[r][col],type=cell.type;
+      if(type==="lcel"||type==="ucel"||type==="xcel"){
+        const left=owners[r][col-1]||null,above=r>0?owners[r-1][col]:null;
+        let parent=null;
+        if(type==="lcel") parent=left?.row===r?left:null;
+        else if(type==="ucel") parent=above;
+        else parent=above||left;
+        if(parent){
+          owners[r][col]=parent;
+          if(type==="lcel"&&parent.row===r)parent.node.colSpan++;
+          if((type==="ucel"||type==="xcel")&&parent.row<r&&!expanded.has(r+":"+parent.key)){
+            parent.node.rowSpan++;expanded.add(r+":"+parent.key);
+          }
+          continue;
+        }
+      }
+      const head=["ched","rhed","srow"].includes(type);
+      const td=document.createElement(head?"th":"td");
+      if(head)td.scope=type==="rhed"?"row":"col";
+      td.textContent=cell.text||"";
+      tr.appendChild(td);
+      owners[r][col]={node:td,row:r,key:r+":"+col};
+    }
+    tbody.appendChild(tr);
+  }
+  t.appendChild(tbody);wrap.appendChild(t);
+  return wrap;
+}
+function addBlock(block,index) {
+  const kind=block.type;
+  let element;
+  if(kind==="otsl"||kind==="table") {
+    element=renderTable(block.table);
+    if(!element) {
+      element=document.createElement("div");element.className="unknown-region";
+      element.textContent="模型返回了表格标签，但本预览未能可靠重建表格；请查看下方原始 DocTags。";
+    }
+  }else if(kind==="title") element=document.createElement("h1");
+  else if(kind.startsWith("section_header_level_")) {
+    const level=Math.min(5,Number(kind.slice(-1))+1);
+    element=document.createElement("h"+level);
+  }else if(kind==="text"||kind==="handwritten"||kind==="caption"||kind==="footnote"||kind==="page_header"||kind==="page_footer")element=document.createElement("p");
+  else if(kind==="page_number")element=document.createElement("p");
+  else if(kind==="list_item")element=document.createElement("li");
+  else if(kind==="code")element=document.createElement("pre");
+  else if(kind==="ordered_list"||kind==="unordered_list"){
+    element=document.createElement(kind==="ordered_list"?"ol":"ul");
+    const items=[...block.text.matchAll(/<list_item>([\s\S]*?)<\/list_item>/gi)];
+    if(items.length){for(const item of items){const li=document.createElement("li");li.textContent=documentParser.clean(item[1]);element.appendChild(li);}}
+    else{const li=document.createElement("li");li.textContent=block.text;element.appendChild(li);}
+  }else if(["picture","figure"].includes(kind)){
+    element=document.createElement("div");element.className="unknown-region";
+    element.textContent="图像区域（模型已标出，但本页面不虚构重建图片）";
+  }else if(kind==="checkbox_selected"||kind==="checkbox_unselected"){
+    element=document.createElement("p");element.textContent=(kind==="checkbox_selected"?"☑ ":"☐ ")+block.text;
+  }else{
+    element=document.createElement("p");
+  }
+  if(!["otsl","table","ordered_list","unordered_list","picture","figure","checkbox_selected","checkbox_unselected"].includes(kind)){
+    element.textContent=block.text;
+  }
+  element.classList.add("render-block");
+  if(kind==="handwritten")element.classList.add("render-handwritten");
+  if(kind==="page_number")element.classList.add("render-page-number");
+  element.tabIndex=0;
+  element.dataset.blockIndex=String(index);
+  element.title=block.loc?"悬停定位至原文位置":"模型未给出该元素的有效位置框";
+  return element;
+}
+function parseNativeResult(raw,format){
+  if(format==="ovisocr3-native")return nativeCore.parseOvis(raw);
+  if(format==="paddleocr-vl16-native")return nativeCore.parsePaddle(raw,{width:sourceImageWidth,height:sourceImageHeight});
+  throw new Error("未知的原生 OCR 输出格式："+format);
+}
+function showNative(parsed){
+  preview.width=src.width;preview.height=src.height;v.drawImage(src,0,0);
+  const width=sourceImageWidth||src.width,height=sourceImageHeight||src.height,sx=src.width/width,sy=src.height/height;
+  v.save();v.setTransform(sx,0,0,sy,0,0);const count=nativeRenderer.renderBoxes(v,parsed,width,height);v.restore();return count;
+}
+function renderNativeComparison(parsed,format){
+  nativeParsed=parsed;nativeFormat=format;nativeHighlight=null;regions=[];blocks=[];activeLocation=null;rendered.replaceChildren();
+  const stats=nativeRenderer.renderBlocks(parsed,rendered,sourceBitmap,{onSelect:index=>{nativeHighlight=index;leftDraw();}});
+  const label=format==="ovisocr3-native"?"OvisOCR3 Structured JSON":"PaddleOCR-VL-1.6 parsing_res_list / OTSL";
+  const warnings=parsed.warnings?.length?"；提示："+parsed.warnings.join("；"):"";
+  $("compareStatus").textContent=label+" · 原生结构块："+stats.blocks+" · 表格："+stats.tables+" · 有效定位："+parsed.blocks.length+warnings;
+  leftDraw();leftPane.scrollTop=0;rightPane.scrollTop=0;return stats.blocks;
+}
+function renderComparison(tags){
+  nativeParsed=null;nativeFormat=null;nativeHighlight=null;
+  rendered.replaceChildren();
+  regions=documentParser.rects(tags);
+  const parsed=documentParser.parse(tags);blocks=parsed.blocks;
+  if(!blocks.length){
+    const placeholder=document.createElement("div");placeholder.className="render-placeholder";
+    placeholder.textContent="模型输出尚不包含可重建的结构块；请展开下方原始 DocTags 核对内容。";
+    rendered.appendChild(placeholder);renderGood=false;
+    $("compareStatus").textContent="未识别到可渲染结构；原始 DocTags 已保留。";
+  }else{
+    blocks.forEach((block,i)=>rendered.appendChild(addBlock(block,i)));
+    renderGood=true;
+    const tables=blocks.filter(x=>x.type==="otsl"||x.type==="table");
+    const uncertain=tables.some(x=>x.table?.hasMerges||x.table?.truncated);
+    $("compareStatus").textContent="已按模型结果重建："+blocks.length+" 个结构块（含 "+tables.length+
+      " 个表格）；识别位置框："+regions.length+" 个。"+(uncertain?" 检测到复杂合并单元格，表格跨度仅作尽力预览，请以原图和原始输出核对。":"");
+  }
+  activeLocation=null;leftDraw();leftPane.scrollTop=0;rightPane.scrollTop=0;
+}
+function resetComparison(){
+  nativeParsed=null;nativeFormat=null;nativeHighlight=null;regions=[];blocks=[];renderGood=false;activeLocation=null;
+  rendered.replaceChildren();
+  const blank=document.createElement("div");blank.className="render-placeholder";
+  blank.textContent="尚未运行推理。点击右上方“开始真正推理”后，这里才显示模型生成的标题、正文和表格。";
+  rendered.appendChild(blank);
+  $("compareStatus").textContent="等待模型真实输出；不会显示预制的重建结果。";
+  leftDraw();rightPane.scrollTop=0;
+}
+rendered.addEventListener("pointerover",event=>{
+  const node=event.target.closest(".render-block[data-block-index]");if(!node||!rendered.contains(node))return;
+  const index=Number(node.dataset.blockIndex);
+  if(nativeParsed){const block=nativeParsed.blocks[index];if(!block)return;nativeHighlight=index;leftDraw();const [,top]=nativeCore.toPixelBox(block,sourceImageWidth,sourceImageHeight);const center=top/Math.max(1,sourceImageHeight)*leftPane.scrollHeight-leftPane.clientHeight*.32;leftPane.scrollTo({top:Math.max(0,center),behavior:"smooth"});return;}
+  const block=blocks[index];if(!block?.loc)return;activeLocation=block.loc;leftDraw(activeLocation);
+  const center=block.loc[1]/500*leftPane.scrollHeight-leftPane.clientHeight*.32;leftPane.scrollTo({top:Math.max(0,center),behavior:"smooth"});
+});
+rendered.addEventListener("pointerleave",()=>{activeLocation=null;nativeHighlight=null;leftDraw()});
+rendered.addEventListener("focusin",event=>{const node=event.target.closest(".render-block[data-block-index]");if(!node)return;const index=Number(node.dataset.blockIndex);if(nativeParsed){if(nativeParsed.blocks[index]){nativeHighlight=index;leftDraw();}return;}const block=blocks[index];if(block?.loc){activeLocation=block.loc;leftDraw(activeLocation);}});
+rendered.addEventListener("focusout",()=>{activeLocation=null;nativeHighlight=null;leftDraw()});
+$("bounds").onchange=()=>leftDraw(activeLocation);
+function syncScroll(from,to){
+  if(!$("sync").checked||syncing)return;
+  syncing=true;
+  const maxFrom=Math.max(1,from.scrollHeight-from.clientHeight);
+  const maxTo=Math.max(0,to.scrollHeight-to.clientHeight);
+  to.scrollTop=(from.scrollTop/maxFrom)*maxTo;
+  queueMicrotask(()=>{syncing=false});
+}
+leftPane.addEventListener("scroll",()=>syncScroll(leftPane,rightPane));
+rightPane.addEventListener("scroll",()=>syncScroll(rightPane,leftPane));
+
+function show(tags=""){
+  preview.width=src.width;preview.height=src.height;v.drawImage(src,0,0);let count=0;
+  const regex=/<([A-Za-z][\w-]*)><loc_(\d+)><loc_(\d+)><loc_(\d+)><loc_(\d+)>/g;let m;
+  while((m=regex.exec(tags))!==null){
+    const [l,t,r,b]=m.slice(2).map(Number);if([l,t,r,b].some(n=>n>500)||r<=l||b<=t)continue;
+    const x=l*src.width/500,y=t*src.height/500,w=(r-l)*src.width/500,h=(b-t)*src.height/500;
+    v.lineWidth=Math.max(2,src.width/360);v.strokeStyle=palette[m[1]]||"#7658c5";v.strokeRect(x,y,w,h);
+    if(count<120){v.font="bold "+Math.max(13,src.width/70)+"px sans-serif";const label=m[1];const ty=Math.max(18,y);
+      v.fillStyle=v.strokeStyle;v.fillRect(x,ty-17,v.measureText(label).width+13,18);v.fillStyle="white";v.fillText(label,x+5,ty-4);}
+    count++;
+  }
+  return count;
+}
+// Official IBM Space demo samples mirrored as PNG/JPEG files in this project's static assets.
+const sampleBase="./samples/";
+const localSamples=[
+  {id:"doc",file:"new_arxiv.png",label:"整页文档"},
+  {id:"table",file:"image-2.jpg",label:"表格识别"},
+  {id:"code",file:"code.jpg",label:"代码识别"},
+  {id:"image",file:"lake-zurich-switzerland-view-nature-landscapes-7bbda4-1024.jpg",label:"图片理解"},
+  {id:"formula",file:"87664.png",label:"公式识别"},
+  {id:"chart",file:"06236926002285.png",label:"图表提取"},
+  {id:"arabic",file:"ar_page_0.png",label:"阿拉伯语"},
+  {id:"japanese",file:"japanse_4_ibm.png",label:"日语"},
+  {id:"chinese",file:"zh_page_0.png",label:"中文文档"}
+];
+// The 28 challenge documents are served from the local static samples directory.
+const challengeSamples=[
+  {
+    "id": "original_095_chinese_two_column",
+    "file": "challenges/original_095_chinese_two_column.webp",
+    "label": "中文双栏文档",
+    "source": "原始扫描",
+    "note": "双栏中文正文与蓝色标注"
+  },
+  {
+    "id": "original_096_english_article_table",
+    "file": "challenges/original_096_english_article_table.webp",
+    "label": "中文声明文档",
+    "source": "原始扫描",
+    "note": "英文正文与嵌入表格"
+  },
+  {
+    "id": "original_097_multicolumn_illustration",
+    "file": "challenges/original_097_multicolumn_illustration.webp",
+    "label": "多栏图文文档",
+    "source": "原始扫描",
+    "note": "多栏文字、图片与标注"
+  },
+  {
+    "id": "original_098_old_english_scan",
+    "file": "challenges/original_098_old_english_scan.webp",
+    "label": "英文旧版扫描件",
+    "source": "原始扫描",
+    "note": "英文多栏与纸张干扰"
+  },
+  {
+    "id": "original_099_dense_chinese_table",
+    "file": "challenges/original_099_dense_chinese_table.webp",
+    "label": "中文复杂表格",
+    "source": "原始扫描",
+    "note": "复杂中文表头与单元格"
+  },
+  {
+    "id": "original_100_english_data_table",
+    "file": "challenges/original_100_english_data_table.webp",
+    "label": "英文数据表",
+    "source": "原始扫描",
+    "note": "英文数据表与正文"
+  },
+  {
+    "id": "original_101_english_long_table",
+    "file": "challenges/original_101_english_long_table.webp",
+    "label": "英文长表格",
+    "source": "原始扫描",
+    "note": "连续长表格与数值"
+  },
+  {
+    "id": "original_102_table_and_text",
+    "file": "challenges/original_102_table_and_text.webp",
+    "label": "表格与正文混排",
+    "source": "原始扫描",
+    "note": "表格与双栏正文混排"
+  },
+  {
+    "id": "original_103_english_newspaper",
+    "file": "challenges/original_103_english_newspaper.webp",
+    "label": "英文报纸版面",
+    "source": "原始扫描",
+    "note": "新闻多栏、标题与人物图片"
+  },
+  {
+    "id": "original_104_multicolumn_paper",
+    "file": "challenges/original_104_multicolumn_paper.webp",
+    "label": "多栏学术论文",
+    "source": "原始扫描",
+    "note": "学术论文多栏版面"
+  },
+  {
+    "id": "original_109_chinese_clauses",
+    "file": "challenges/original_109_chinese_clauses.webp",
+    "label": "中文条款文档",
+    "source": "原始扫描",
+    "note": "章节编号与条款层级"
+  },
+  {
+    "id": "original_110_watermark_fingerprint",
+    "file": "challenges/original_110_watermark_fingerprint.webp",
+    "label": "水印与指纹干扰",
+    "source": "原始扫描",
+    "note": "斜向水印与指纹图案干扰"
+  },
+  {
+    "id": "original_111_handwritten_lines",
+    "file": "challenges/original_111_handwritten_lines.webp",
+    "label": "英文词汇笔记",
+    "source": "原始扫描",
+    "note": "横线纸上的手写内容"
+  },
+  {
+    "id": "original_112_handwritten_lines",
+    "file": "challenges/original_112_handwritten_lines.webp",
+    "label": "英文短语笔记",
+    "source": "原始扫描",
+    "note": "横线纸上的手写内容"
+  },
+  {
+    "id": "original_113_handwritten_notes",
+    "file": "challenges/original_113_handwritten_notes.webp",
+    "label": "中文手写笔记",
+    "source": "原始扫描",
+    "note": "中文手写条目与荧光标记"
+  },
+  {
+    "id": "original_114_mixed_language_notes",
+    "file": "challenges/original_114_mixed_language_notes.webp",
+    "label": "中英混合手写记录",
+    "source": "原始扫描",
+    "note": "中英混合手写与荧光标记"
+  },
+  {
+    "id": "original_115_stamp_fragment",
+    "file": "challenges/original_115_stamp_fragment.webp",
+    "label": "公章残缺页面",
+    "source": "原始扫描",
+    "note": "页面截断与红色公章"
+  },
+  {
+    "id": "original_116_stamp_page",
+    "file": "challenges/original_116_stamp_page.webp",
+    "label": "印章文档页面",
+    "source": "原始扫描",
+    "note": "印章与少量页面文字"
+  },
+  {
+    "id": "synthetic_01_bank_transactions",
+    "file": "challenges/synthetic_01_bank_transactions.webp",
+    "label": "银行交易明细",
+    "source": "脱敏模拟",
+    "note": "交易表格、账户摘要与旧纸纹理"
+  },
+  {
+    "id": "synthetic_02_court_notice",
+    "file": "challenges/synthetic_02_court_notice.webp",
+    "label": "法院告知书",
+    "source": "脱敏模拟",
+    "note": "公文层级、正文与回执表格"
+  },
+  {
+    "id": "synthetic_03_engineering_price_table",
+    "file": "challenges/synthetic_03_engineering_price_table.webp",
+    "label": "工程单价表",
+    "source": "脱敏模拟",
+    "note": "工程计价表格与淡化墨迹"
+  },
+  {
+    "id": "synthetic_04_english_paper_tables",
+    "file": "challenges/synthetic_04_english_paper_tables.webp",
+    "label": "英文论文表格",
+    "source": "脱敏模拟",
+    "note": "英文论文连续多表格"
+  },
+  {
+    "id": "synthetic_05_linear_algebra_formulas",
+    "file": "challenges/synthetic_05_linear_algebra_formulas.webp",
+    "label": "线性代数公式教材",
+    "source": "脱敏模拟",
+    "note": "矩阵、公式与正文混排"
+  },
+  {
+    "id": "synthetic_06_e_payment_voucher",
+    "file": "challenges/synthetic_06_e_payment_voucher.webp",
+    "label": "电子支付凭证",
+    "source": "脱敏模拟",
+    "note": "凭证字段、长交易表格与印章"
+  },
+  {
+    "id": "synthetic_07_chinese_newspaper",
+    "file": "challenges/synthetic_07_chinese_newspaper.webp",
+    "label": "中文旧报纸",
+    "source": "脱敏模拟",
+    "note": "中文多栏、标题与插图"
+  },
+  {
+    "id": "synthetic_08_material_receipt",
+    "file": "challenges/synthetic_08_material_receipt.webp",
+    "label": "材料入库验收单",
+    "source": "脱敏模拟",
+    "note": "入库验收表单与打孔旧纸"
+  },
+  {
+    "id": "synthetic_09_experiment_record",
+    "file": "challenges/synthetic_09_experiment_record.webp",
+    "label": "手写实验记录",
+    "source": "脱敏模拟",
+    "note": "实验字段与数据混排；并非真实手写"
+  },
+  {
+    "id": "synthetic_10_material_test_report",
+    "file": "challenges/synthetic_10_material_test_report.webp",
+    "label": "材料检测报告",
+    "source": "脱敏模拟",
+    "note": "检测项目、表格与文字混排"
+  }
+];
+let sampleSelectionSerial=0;
+async function fetchSampleBlob(filename){
+  const primary=new URL(sampleBase+filename,document.baseURI);
+  const candidates=[primary];
+  // raw.githack may redirect to a CDN hostname. A same-origin-only fetch blocks
+  // that redirect; try CORS, then fall back to GitHub's CORS-enabled raw host.
+  if(["raw.githack.com","rawcdn.githack.com"].includes(location.hostname)){
+    const parts=primary.pathname.split("/").filter(Boolean);
+    if(parts[0]==="multimodal-vision-ai"&&parts[1]==="multimodal-document-ai-learning-center"&&parts.length>=5){
+      const fallback=new URL(primary.href);
+      fallback.hostname="raw.githubusercontent.com";
+      candidates.push(fallback);
+    }
+  }
+  let lastError=null;
+  for(const url of candidates){
+    try{
+      const response=await fetch(url.href,{mode:"cors",credentials:"omit",cache:"force-cache"});
+      if(!response.ok)throw new Error("HTTP "+response.status);
+      const blob=await response.blob();
+      if(!blob.type.startsWith("image/"))throw new Error("响应不是图片文件（"+(blob.type||"未知类型")+"）");
+      return blob;
+    }catch(error){lastError=error;}
+  }
+  throw new Error("图片请求失败："+(lastError?.message||String(lastError)));
+}
+async function loadSampleThumbnail(btn,item){
+  const img=btn.querySelector("img");
+  try{
+    // Use the same CORS-aware Blob loader as the large preview. Direct <img src>
+    // requests cannot use the raw.githack -> raw.githubusercontent fallback.
+    const blob=await fetchSampleBlob(item.file);
+    const objectUrl=URL.createObjectURL(blob);
+    if(!btn.isConnected){URL.revokeObjectURL(objectUrl);return;}
+    const previous=img.dataset.objectUrl;
+    if(previous)URL.revokeObjectURL(previous);
+    img.dataset.objectUrl=objectUrl;
+    img.hidden=false;
+    img.src=objectUrl;
+    delete btn.dataset.thumbnailError;
+  }catch(error){
+    img.removeAttribute("src");
+    img.hidden=true;
+    btn.dataset.thumbnailError="true";
+    console.warn("Sample thumbnail unavailable:",item.file,error);
+  }
+}
+function highlightSample(kind,group){
+  document.querySelectorAll(".sample-tile").forEach(btn=>{
+    const active=Boolean(kind&&group&&btn.dataset.sample===kind&&btn.dataset.group===group);
+    btn.setAttribute("aria-pressed",String(active));
+  });
+}
+async function loadLocalSample(kind,group="docling"){
+  if(busy){status("推理进行中，请完成后再切换文档。");return;}
+  const collection=group==="challenge"?challengeSamples:localSamples;
+  const sample=collection.find(x=>x.id===kind);if(!sample)return;
+  setInputSource(group);
+  const ticket=++sampleSelectionSerial;
+  $("run").disabled=true;
+  status("正在打开内置示例："+sample.label+"…");
+  try{
+    // Read the sample as a Blob. CORS + raw.githubusercontent.com fallback handles
+    // preview-CDN redirects while preserving the original bytes for R3 inference.
+    const blob=await fetchSampleBlob(sample.file);
+    const bitmap=await createImageBitmap(blob);
+    if(ticket!==sampleSelectionSerial){bitmap.close?.();return;}
+    if(!bitmap.width||!bitmap.height){bitmap.close?.();throw Error("图片尺寸无效");}
+    const scale=Math.min(1,1500/Math.max(bitmap.width,bitmap.height));src.width=Math.round(bitmap.width*scale);src.height=Math.round(bitmap.height*scale);c.drawImage(bitmap,0,0,src.width,src.height);
+    sourceBitmap?.close?.();sourceBitmap=bitmap;sourceImageWidth=bitmap.width;sourceImageHeight=bitmap.height;sourceBlob=blob;
+    inputRevision++;resetHistory();imageReady=true;name=(group==="challenge"?"mvaidoc-tags-challenge-":"ibm-demo-")+sample.id;
+    $("file").value="";highlightSample(kind,group);
+    clearResult();show();leftDraw();
+    $("fileName").textContent=(group==="challenge"?"示例文档":"Docling 官方文档")+" · "+sample.label+" · "+src.width+"×"+src.height;
+    refreshLoadButtons();
+    status("已载入："+sample.label+"；"+(loaded&&activeKey===selectedKey()?"模型已就绪，可以推理。":"请先完成当前模型加载。"));
+  }catch(error){
+    if(ticket!==sampleSelectionSerial)return;
+    refreshLoadButtons();
+    status("内置样例载入失败："+error.message+"。请尝试刷新页面或上传本地图片。");
+  }
+}
+const sampleGalleryControllers={};
+function renderChallengeTiles(){
+  const strip=$("challengeStrip");
+  const fragment=document.createDocumentFragment();
+  for(const item of challengeSamples){
+    const button=document.createElement("button");
+    button.type="button";button.className="sample-tile";
+    button.dataset.group="challenge";button.dataset.sample=item.id;
+    button.setAttribute("aria-pressed","false");
+    button.title=item.source+" · "+item.note;
+    const img=document.createElement("img");
+    img.alt="";img.loading="lazy";img.decoding="async";
+    const label=document.createElement("span");
+    label.textContent=item.label;
+    button.append(img,label);fragment.append(button);
+  }
+  strip.replaceChildren(fragment);
+}
+function bindSampleGallery({group,stripId,prevId,nextId,items,lazy=false}){
+  const strip=$(stripId),buttons=[...strip.querySelectorAll(".sample-tile")];
+  const itemById=new Map(items.map(item=>[item.id,item]));
+  const loadButton=btn=>{
+    if(btn.dataset.thumbnailRequested==="true")return;
+    const item=itemById.get(btn.dataset.sample);if(!item)return;
+    btn.dataset.thumbnailRequested="true";
+    void loadSampleThumbnail(btn,item);
+  };
+  let observer=null;
+  if(lazy&&"IntersectionObserver" in window){
+    observer=new IntersectionObserver(entries=>{
+      for(const entry of entries){if(entry.isIntersecting){loadButton(entry.target);observer.unobserve(entry.target);}}
+    },{root:strip,rootMargin:"0px 220px"});
+    buttons.forEach(btn=>observer.observe(btn));
+  }else{
+    buttons.forEach(loadButton);
+  }
+  buttons.forEach(btn=>{
+    const item=itemById.get(btn.dataset.sample);if(!item)return;
+    btn.addEventListener("click",()=>loadLocalSample(item.id,group));
+  });
+  function updateArrows(){
+    const max=strip.scrollWidth-strip.clientWidth;
+    $(prevId).disabled=strip.scrollLeft<2;
+    $(nextId).disabled=max<=2||strip.scrollLeft>=max-2;
+  }
+  $(prevId).addEventListener("click",()=>strip.scrollBy({left:-240,behavior:"smooth"}));
+  $(nextId).addEventListener("click",()=>strip.scrollBy({left:240,behavior:"smooth"}));
+  strip.addEventListener("scroll",updateArrows,{passive:true});
+  sampleGalleryControllers[group]={updateArrows,loadVisible:()=>{
+    if(observer){for(const btn of buttons){const r=btn.getBoundingClientRect(),s=strip.getBoundingClientRect();if(r.right>=s.left-220&&r.left<=s.right+220)loadButton(btn);}}
+    else buttons.forEach(loadButton);
+    requestAnimationFrame(updateArrows);
+  }};
+  window.addEventListener("resize",updateArrows);
+  requestAnimationFrame(updateArrows);
+}
+function setInputSource(source){
+  const active={challenge:"sourceChallenge",docling:"sourceDocling",upload:"sourceUpload"};
+  for(const [key,id] of Object.entries(active))$(id).setAttribute("aria-pressed",String(key===source));
+  $("challengeGallery").hidden=source!=="challenge";
+  $("doclingGallery").hidden=source!=="docling";
+  $("sampleSource").hidden=source!=="docling";
+  if(source==="challenge")sampleGalleryControllers.challenge?.loadVisible();
+  if(source==="docling")sampleGalleryControllers.docling?.updateArrows();
+  if(source==="challenge")status("请选择一份示例文档。");
+  else if(source==="docling")status("请选择一份 Docling 官方文档。");
+  else status("请选择本地图片。");
+}
+function initSampleGallery(){
+  renderChallengeTiles();
+  bindSampleGallery({group:"docling",stripId:"sampleStrip",prevId:"samplePrev",nextId:"sampleNext",items:localSamples});
+  bindSampleGallery({group:"challenge",stripId:"challengeStrip",prevId:"challengePrev",nextId:"challengeNext",items:challengeSamples,lazy:true});
+  $("sourceChallenge").addEventListener("click",()=>{if(!busy)setInputSource("challenge");else status("推理进行中，请完成后再切换文档。");});
+  $("sourceDocling").addEventListener("click",()=>{if(!busy)setInputSource("docling");else status("推理进行中，请完成后再切换文档。");});
+  $("sourceUpload").addEventListener("click",()=>{
+    if(busy){status("推理进行中，请完成后再上传图片。");return;}
+    setInputSource("upload");$("file").click();
+  });
+  setInputSource("challenge");
+}
+function clearResult(){result="";nativeParsed=null;nativeFormat=null;nativeHighlight=null;$("tags").textContent="等待新的推理输出。";$("saveDT").disabled=true;$("saveDT").textContent="下载 DocTags";$("saveImg").disabled=true;$("timing").textContent="";clearRunMetrics();resetComparison();}
+function status(text){$("status").textContent=text;}
+initSampleGallery();
+$("file").onchange=async event=>{
+  try{const file=event.target.files[0];if(!file)return;
+    if(busy){status("正在推理，请完成后上传。");return;}
+    const ticket=++sampleSelectionSerial;
+    if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>12*1024*1024)throw Error("仅允许 12 MB 以内的 PNG、JPG、WebP");
+    const im=await createImageBitmap(file);
+    if(ticket!==sampleSelectionSerial){im.close?.();return;}
+    const scale=Math.min(1,1500/Math.max(im.width,im.height));
+    src.width=Math.round(im.width*scale);src.height=Math.round(im.height*scale);c.drawImage(im,0,0,src.width,src.height);
+    sourceBitmap?.close?.();sourceBitmap=im;sourceImageWidth=im.width;sourceImageHeight=im.height;sourceBlob=file;
+    inputRevision++;resetHistory();name=file.name;imageReady=true;clearResult();show();leftDraw();highlightSample(null,null);setInputSource("upload");
+    $("fileName").textContent=name+" · "+src.width+"×"+src.height+"（本地）";refreshLoadButtons();
+    status(loaded&&activeKey===selectedKey()?"本地图片已载入；可以开始推理。":"本地图片已载入；请先完成模型加载。");
+  }catch(e){status("读取失败："+e.message)}
+};
+$("clear").onclick=()=>{$("bounds").checked=false;show();leftDraw();};
+function download(blob,filename){const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+$("saveImg").onclick=()=>{if(result){if(nativeFormat){if(nativeParsed)showNative(nativeParsed);else show();}else show(result);}preview.toBlob(blob=>{if(blob)download(blob,"mvai-doctags-overlay.png")},"image/png")};
+$("saveDT").onclick=()=>{if(result){const native=["ovisocr3-native","paddleocr-vl16-native"].includes(nativeFormat)||["ovisocr3-native","paddleocr-vl-1.6"].includes(selectedModel().adapter);download(new Blob([result],{type:native?"application/json;charset=utf-8":"text/plain;charset=utf-8"}),native?"mvai-native-ocr-result.json":"mvai-doctags-result.dt")}};
+
+for(const id of ["modelSourceOfficial","modelSourceMirror"]){
+  $(id).addEventListener("change",()=>{
+    if(busy)return;
+    refreshLoadButtons();
+    const different=loaded&&activeKey===selectedKey()&&activeDownloadSource!==requestedDownloadSource();
+    if(different)status("当前已加载模型仍可正常推理；若要切换下载源，请点击「按新下载源重新加载」。");
+  });
+}
+$("modelSelect").addEventListener("change",()=>{
+  syncModelConfiguration();clearRunMetrics();refreshLoadButtons();
+  if(loaded&&activeKey===selectedKey()){
+    $("downloadStatus").textContent="当前模型已在本次 GPU 会话中就绪。";
+    status("模型已就绪；可使用当前文档开始推理。");
+  }else{
+    status("已切换模型；当前选择尚未在本次页面会话中完成加载。");
+    $("downloadStatus").textContent=hasLoadedSuccessfully
+      ?"历史加载记录仅表示曾经成功加载；当前页面会话仍需完成模型加载。"
+      :"当前模型尚未加载；请点击“加载所选模型”。";
+  }
+  if(hasLoadedSuccessfully){maybeAutoLoadSelectedModel();return;}
+});
+$("dtype").addEventListener("change",()=>{
+  clearRunMetrics();refreshLoadButtons();
+  if(hasLoadedSuccessfully)maybeAutoLoadSelectedModel();
+});
+$("addModel").addEventListener("click",()=>{
+  const status=$("registryState");
+  try{
+    const entry=registry.normalise({id:$("newModelRepo").value.trim(),name:$("newModelName").value.trim()});
+    customModels=registry.save(localStorage,[...customModels,entry]);
+    renderModelOptions(entry.id);
+    status.textContent="已登记 "+entry.name+"。请先验证其 DocTags 接口与 ONNX 权重兼容；仅登记并不代表已下载。";
+    $("newModelName").value="";$("newModelRepo").value="";
+  }catch(err){status.textContent="登记失败："+err.message;}
+});
+$("removeModel").addEventListener("click",()=>{
+  const entry=selectedModel();if(entry.builtIn)return;
+  try{customModels=registry.save(localStorage,customModels.filter(m=>m.id!==entry.id));renderModelOptions(registry.BUILTIN.id);
+    $("registryState").textContent="已移除模型登记；浏览器磁盘缓存没有被删除。";}catch(err){$("registryState").textContent=err.message;}
+});
+$("cacheCheck").addEventListener("click",async()=>{
+  let parts=[];
+  try{
+    if("caches" in window){
+      const keys=await caches.keys();const key=env.cacheKey||"transformers-cache";
+      const candidates=keys.filter(k=>k===key||k.startsWith(key+"-"));
+      let totalFiles=0,modelFiles=0;
+      for(const candidate of candidates){
+        const entries=await (await caches.open(candidate)).keys();
+        totalFiles+=entries.length;
+        modelFiles+=entries.filter(req=>decodeURIComponent(req.url).includes(selectedModel().id)).length;
+      }
+      parts.push("Cache Storage："+(candidates.length?"检测到缓存目录":"未检测到对应缓存目录")+"；文件条目 "+totalFiles+"；所选仓库相关条目 "+modelFiles+"（不保证文件齐全）。");
+      if(selectedModel().adapter==="wang-qwen35-2b"){
+        const {RANGE_CACHE_NAME}=await import("./adapters/wang-qwen35-2b/range-download.mjs");
+        if(keys.includes(RANGE_CACHE_NAME)){
+          const partial=await (await caches.open(RANGE_CACHE_NAME)).keys();
+          parts.push("WC-2B 分段下载缓存："+partial.length+" 个已完成分片；网络中断后可复用。");
+        }else parts.push("WC-2B 官方分段下载缓存：当前没有未完成分片。");
+        const mirrorRange=RANGE_CACHE_NAME+"-mirror";
+        if(keys.includes(mirrorRange)){
+          const partial=await (await caches.open(mirrorRange)).keys();
+          parts.push("WC-2B 国内镜像试验分段缓存："+partial.length+" 个分片（独立于官方源）。");
+        }
+      }
+    }else parts.push("当前浏览器未提供 Cache API。");
+    if(navigator.storage?.estimate){
+      const est=await navigator.storage.estimate(),mb=n=>Math.round((n||0)/1048576);
+      parts.push("本站点所有存储（估算）：已用 "+mb(est.usage)+" MB / 配额 "+mb(est.quota)+" MB；包含其他内容，并非模型独占。");
+    }
+  }catch(err){parts.push("缓存检查失败："+err.message)}
+  $("cacheInfo").textContent=parts.join("\n");
+});
+$("cacheClear").addEventListener("click",async()=>{
+  const modelId=selectedModel().id;
+  try{
+    if(!("caches" in window))throw Error("当前浏览器未提供 Cache API");
+    const key=env.cacheKey||"transformers-cache";
+    const candidates=(await caches.keys()).filter(k=>k===key||k.startsWith(key+"-"));
+    let deleted=0;
+    for(const candidate of candidates){
+      const cache=await caches.open(candidate);
+      for(const request of await cache.keys()){
+        if(decodeURIComponent(request.url).includes(modelId)){
+          if(await cache.delete(request))deleted++;
+        }
+      }
+    }
+    let rangeDeleted=false;
+    if(selectedModel().adapter==="wang-qwen35-2b"){
+      const {clearRangeCache}=await import("./adapters/wang-qwen35-2b/range-download.mjs");
+      const officialDeleted=await clearRangeCache();
+      const mirrorDeleted=await clearRangeCache({cacheName:"mvai-wc2b-range-v1-"+modelRevision(selectedModel())+"-mirror"});
+      rangeDeleted=officialDeleted||mirrorDeleted;
+    }
+    $("cacheInfo").textContent="已清理当前模型在本站点的 "+deleted+" 个缓存文件"+(rangeDeleted?"，并清理 WC-2B 分段下载缓存":"")+"。请重新加载模型；其他模型缓存未修改。";
+  }catch(err){$("cacheInfo").textContent="缓存清理失败："+err.message;}
+});
+$("cachePersist").addEventListener("click",async()=>{
+  try{
+    if(!navigator.storage?.persist)throw Error("当前浏览器不支持持久存储请求");
+    const granted=await navigator.storage.persist();
+    $("cacheInfo").textContent=granted?"浏览器已授予本站点持久存储权限；仍不保证跨域共享或完全离线可用。":"浏览器未授予持久存储；仍可使用默认 Cache API，但可能自动清理。";
+  }catch(err){$("cacheInfo").textContent="存储请求失败："+err.message;}
+});
+$("compareA").addEventListener("change",displayHistoryComparison);
+$("compareB").addEventListener("change",displayHistoryComparison);
+
+/* Two-way proportional scrolling with suppression of mirrored scroll events. */
+const historyPaneA=$("compareBodyA"), historyPaneB=$("compareBodyB");
+const expectedMirrorTop=new Map();
+function syncHistoryScroll(source,target){
+  if(!$("historySync").checked)return;
+  const expected=expectedMirrorTop.get(source);
+  if(expected!==undefined){
+    expectedMirrorTop.delete(source);
+    if(Math.abs(source.scrollTop-expected)<2)return;
+  }
+  const next=registry.proportionalPosition(source.scrollTop,source.scrollHeight,source.clientHeight,target.scrollHeight,target.clientHeight);
+  if(Math.abs(target.scrollTop-next)<1)return;
+  expectedMirrorTop.set(target,next);
+  target.scrollTop=next;
+}
+historyPaneA.addEventListener("scroll",()=>syncHistoryScroll(historyPaneA,historyPaneB),{passive:true});
+historyPaneB.addEventListener("scroll",()=>syncHistoryScroll(historyPaneB,historyPaneA),{passive:true});
+$("historySync").addEventListener("change",()=>{
+  expectedMirrorTop.clear();
+  if($("historySync").checked)syncHistoryScroll(historyPaneA,historyPaneB);
+});
+
+
+async function detect(){if(!window.isSecureContext||!navigator.gpu){$("device").textContent="当前设备不支持 WebGPU 或不在安全页面。可使用 Kaggle。";return}
+try{const adapter=await navigator.gpu.requestAdapter({powerPreference:"high-performance"});
+if(adapter){$("device").textContent="WebGPU 已就绪";gpuDetected=true;refreshLoadButtons();if(pendingAutoLoad)maybeAutoLoadSelectedModel()}
+else $("device").textContent="未找到可用 GPU 适配器；请使用 Kaggle。"}
+catch(e){$("device").textContent="WebGPU 初始化失败："+e.message}}
+$("load").onclick=async()=>{
+ if(busy||!gpuDetected)return;
+ const entry=selectedModel(),key=selectedKey(),precision=$("dtype").value;
+ const sourceChoice=requestedDownloadSource();
+ if(loaded&&activeKey===key&&activeDownloadSource===sourceChoice){refreshLoadButtons();return;}
+ busy=true;loadingModel=true;loadPhase="preparing";loadStartedAt=performance.now();lastLoadProgressAt=loadStartedAt;lastLoadFile="";
+ clearRunMetrics();refreshLoadButtons();status("正在加载模型："+entry.name+"。下载完成后还需要初始化 WebGPU。");
+ $("inferenceProgressPanel").hidden=true;
+ paddleDownloadProgress=createPaddleDownloadProgress();
+ $("downloadStatus").textContent="正在准备 WebGPU 运行环境与模型文件…";
+ $("progress").value=0;
+ if(loadWatchdog)clearInterval(loadWatchdog);
+ loadWatchdog=setInterval(()=>{
+   if(!loadingModel)return;
+   const now=performance.now(),elapsed=Math.round((now-loadStartedAt)/1000),silent=Math.round((now-lastLoadProgressAt)/1000);
+   if(silent>=45){
+     const detail=lastLoadFile?" 当前文件："+lastLoadFile+"。":"";
+     $("downloadStatus").textContent=loadPhase==="initializing"
+       ?"模型文件下载接近完成，浏览器仍在初始化 WebGPU。已等待 "+elapsed+" 秒；这一步没有新的文件下载进度。"
+       :"模型加载已等待 "+elapsed+" 秒，连续 "+silent+" 秒没有新的下载进度。"+detail+"请检查网络连接；若长时间不变，需查看浏览器控制台错误。";
+   }else if(loadPhase==="initializing"){
+     $("downloadStatus").textContent="模型权重文件下载接近完成，正在初始化 WebGPU；已等待 "+elapsed+" 秒。";
+   }
+ },5000);
+ const meter=createDownloadMeter();
+ const onProgress=d=>{
+   lastLoadProgressAt=performance.now();
+   if(d?.file)lastLoadFile=d.file;
+   else if(d?.asset)lastLoadFile=d.asset;
+   refreshLoadButtons();
+   if(entry.adapter==="paddleocr-vl-1.6"){
+     if(d?.kind==="download"||d?.phase==="model")loadPhase="weights";
+     else if(d?.kind==="inference"||d?.stage==="vlm-engine"||d?.phase==="session")loadPhase="initializing";
+     else loadPhase="preparing";
+     renderPaddleDownloadProgress(d);
+     return;
+   }
+   if(d?.stage==="processor")loadPhase="processor";
+   else if(d?.stage==="model")loadPhase="weights";
+   if(d.status==="progress_total"){
+     const m=meter.update(d);
+     if(!m)return;
+     const stageLabel=m.stage==="processor"?"处理器文件":"模型权重";
+     const overall=m.stage==="processor"?m.progress*0.05:5+m.progress*0.95;
+     if(m.stage==="model"&&m.progress>=99.5)loadPhase="initializing";
+     $("progress").value=Math.min(95,Math.max($("progress").value,overall));
+     const eta=m.etaSeconds===null?"剩余时间计算中":"预计剩余 "+formatEta(m.etaSeconds);
+     $("downloadStatus").textContent=loadPhase==="initializing"
+       ?entry.name+" · 权重文件下载接近完成（"+m.progress.toFixed(1)+"%），正在初始化 WebGPU…"
+       :entry.name+" · "+stageLabel+" "+m.progress.toFixed(1)+"% · "+formatBytes(m.loaded)+" / "+formatBytes(m.total)+" · "+formatRate(m.bytesPerSecond)+" · "+eta;
+   }else if(d.status==="range-retry"){
+     $("downloadStatus").textContent=entry.name+" · 网络波动，正在重试分片 "+(Number(d.index)+1)+"（第 "+d.attempt+" 次）";
+   }else if(d.status==="progress"&&d.file){
+     const stageLabel=d.stage==="processor"?"处理器":"模型权重";
+     const percent=Number.isFinite(Number(d.progress))?" "+Number(d.progress).toFixed(1)+"%":"";
+     $("downloadStatus").textContent=entry.name+" · "+stageLabel+" · "+d.file+percent;
+   }else if(d.file){
+     $("downloadStatus").textContent=entry.name+"："+d.file+"…";
+   }
+ };
+ if(sourceChoice===MIRROR){
+   try{
+     $("downloadStatus").textContent="正在预检国内镜像：模型配置文件跨域访问"+(entry.adapter==="wang-qwen35-2b"?"及 HTTP 206 分段下载":"")+"…";
+     await probeMirror(entry);
+   }catch(error){
+     busy=false;loadingModel=false;loadPhase="error";
+     if(loadWatchdog){clearInterval(loadWatchdog);loadWatchdog=null;}
+     refreshLoadButtons();
+     const message=String(error?.message||error);
+     $("downloadStatus").textContent="国内镜像预检失败："+message+" 未开始下载或清理当前 GPU 模型；请切换到 Hugging Face 官方下载源。";
+     status("国内镜像不可用；原有模型加载功能未改变。");
+     return;
+   }
+ }
+ const sourceRuntime=runtimeSource(sourceChoice,entry);
+ try{
+   if(r3Adapter){await r3Adapter.dispose();r3Adapter=null;}
+   if(wangAdapter){await wangAdapter.dispose();wangAdapter=null;}
+   if(ovisNativeAdapter){await ovisNativeAdapter.dispose();ovisNativeAdapter=null;}
+   if(paddleNativeAdapter){await paddleNativeAdapter.dispose();paddleNativeAdapter=null;}
+   if(model){await model.dispose?.();model=null;}
+   processor=null;loaded=false;activeKey=null;
+   if(entry.adapter==="ovisocr3-native"){
+     const {createAdapter}=await import("./adapters/ovisocr3-native/adapter.mjs");
+     ovisNativeAdapter=await createAdapter({modelId:entry.id,revision:entry.revision,onProgress,runtime:sourceRuntime});
+   }else if(entry.adapter==="paddleocr-vl-1.6"){
+     const {createAdapter}=await import("./adapters/paddleocr-vl-1.6/adapter.mjs");
+     paddleNativeAdapter=await createAdapter({onProgress});
+   }else if(entry.adapter==="r3-ovisocr3"){
+     const {createAdapter}=await import("./adapters/r3-ovisocr3/adapter.mjs");
+     r3Adapter=await createAdapter({modelId:entry.id,onProgress,runtime:sourceRuntime});
+   }else if(entry.adapter==="wang-qwen35-2b"){
+     const {createAdapter}=await import("./adapters/wang-qwen35-2b/adapter.mjs");
+     wangAdapter=await createAdapter({modelId:entry.id,onProgress,runtime:sourceRuntime});
+   }else{
+     // This legacy Transformers.js 3.7.5 pathway is only used by Granite/custom.
+     // Always reset the origin when switching back to the known-good official source.
+     env.remoteHost=sourceChoice===MIRROR?MIRROR_HOST:OFFICIAL_HOST;
+     env.remotePathTemplate=REMOTE_PATH;
+     processor=await AutoProcessor.from_pretrained(entry.id);
+     model=await AutoModelForVision2Seq.from_pretrained(entry.id,{
+       device:"webgpu",
+       dtype:{embed_tokens:"fp16",vision_encoder:"fp32",decoder_model_merged:precision==="compact"?"q4":"fp32"},
+       progress_callback:onProgress
+     });
+   }
+   loaded=true;activeKey=key;activeModelName=entry.name;activeDownloadSource=sourceChoice;loadPhase="ready";
+   $("progress").value=100;
+   hasLoadedSuccessfully=true;markSuccessfulLoad(key);
+   $("downloadStatus").textContent=entry.adapter==="ovisocr3-native"?"OvisOCR3 已加载 · WebGPU · Vision FP32 / Embedding + Decoder FP16 · "+(ovisNativeAdapter.runtimeDiagnostics?.sessions?.decoder_model_merged?.device||"GPU"):
+     entry.adapter==="paddleocr-vl-1.6"?"PaddleOCR-VL-1.6 已加载 · PP-DocLayoutV3 + VLM · WebGPU FP16 · "+(paddleNativeAdapter.model?.gpuAdapter||"GPU"):
+     ["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"模型已加载 · 固定混合精度（视觉 FP32 / 文字 FP16）· 当前 GPU 会话就绪":"模型已加载 · 可开始推理";
+ }catch(err){
+   loadPhase="error";
+   console.error("Model load failure",err);
+   if(r3Adapter){try{await r3Adapter.dispose();}catch{} r3Adapter=null;}
+   if(wangAdapter){try{await wangAdapter.dispose();}catch{} wangAdapter=null;}
+   if(ovisNativeAdapter){try{await ovisNativeAdapter.dispose();}catch{} ovisNativeAdapter=null;}
+   if(paddleNativeAdapter){try{await paddleNativeAdapter.dispose();}catch{} paddleNativeAdapter=null;}
+   if(model){try{await model.dispose?.();}catch{} model=null;}
+   loaded=false;activeKey=null;processor=null;
+   const loadError=String(err?.message||err);
+   const allocationFailure=/Array buffer allocation failed|ArrayBuffer allocation|allocate.*buffer/i.test(loadError);
+   const runtimeNetworkFailure=/CDN 加载失败/.test(loadError);
+   const loadDiagnosis=allocationFailure
+     ?"浏览器无法分配 ONNX 权重缓冲区。WC-2B 的解码器外部权重必须拆分为多个不超过 1.5 GB 的分片，并在模型 config.json 中声明准确分片数量；若已完成分片，仍可能是本机可用内存不足。这不是 shader-f16 检测失败。"
+     :runtimeNetworkFailure
+       ?"浏览器未能下载 ONNX Runtime / Transformers.js 运行时。程序已自动尝试多个 CDN 镜像；请检查网络或代理后重试。此次失败发生在模型权重加载前。"
+       :"请核对模型 ONNX 文件、外部数据分片、Transformers.js/ONNX Runtime 版本及 WebGPU shader-f16 支持。";
+   $("downloadStatus").textContent="模型加载失败："+loadError+"。"+(sourceChoice===MIRROR?"国内镜像实验性下载未成功；请选择 Hugging Face 官方源重试。":"")+loadDiagnosis+"旧 GPU 模型已释放；可以重新选择其他模型。";
+ }finally{
+   busy=false;loadingModel=false;
+   if(loadWatchdog){clearInterval(loadWatchdog);loadWatchdog=null;}
+   renderModelOptions(entry.id);
+   refreshLoadButtons();
+   status(loaded&&activeKey===selectedKey()?"模型已在当前 GPU 会话中就绪；可以开始推理。":"模型未能完成加载；请查看上方加载状态与错误信息。");
+ }
+};
+$("run").onclick=async()=>{
+  if(busy||!loaded||!imageReady||activeKey!==selectedKey())return;
+  const entry=selectedModel();
+  const adapter=entry.adapter==="r3-ovisocr3"?r3Adapter:entry.adapter==="wang-qwen35-2b"?wangAdapter:entry.adapter==="ovisocr3-native"?ovisNativeAdapter:entry.adapter==="paddleocr-vl-1.6"?paddleNativeAdapter:null;
+  busy=true;inferenceRunning=true;stopRequested=false;
+  activeStop=adapter?()=>adapter.stop():()=>graniteStopping.interrupt();
+  if(entry.adapter==="paddleocr-vl-1.6"){
+    $("inferenceProgressPanel").hidden=false;
+    $("inferenceProgress").removeAttribute("value");
+    $("inferenceProgressStatus").textContent="正在执行 PP-DocLayoutV3 版面分析…";
+  }else{
+    $("inferenceProgressPanel").hidden=true;
+  }
+  refreshLoadButtons();clearResult();status("正在推理…");const start=performance.now();
+  let nativeOutputFormat=entry.adapter==="ovisocr3-native"?"ovisocr3-native":entry.adapter==="paddleocr-vl-1.6"?"paddleocr-vl16-native":null;
+  let nativeParseValid=true,nativeRegionCount=0,nativeTotalRegions=0;
+  try{
+    let seconds=0,ended=true,generatedTokens=0,tokensPerSecond=0;
+    if(entry.adapter==="ovisocr3-native"){
+      if(!ovisNativeAdapter)throw Error("OvisOCR3 适配器尚未就绪，请重新加载模型。");
+      if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
+      const output=await ovisNativeAdapter.recognize(sourceBlob,{maxPixels:1024*1024,onTokens:n=>{$("downloadStatus").textContent="OvisOCR3 Structured 正在生成："+n+" tokens";}});
+      result=output.text;seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);ended=Boolean(output.ended);generatedTokens=Number(output.generatedTokens)||0;tokensPerSecond=Number(output.tokensPerSecond)||0;
+    }else if(entry.adapter==="paddleocr-vl-1.6"){
+      if(!paddleNativeAdapter)throw Error("PaddleOCR-VL-1.6 适配器尚未就绪，请重新加载模型。");
+      if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
+      const output=await paddleNativeAdapter.recognize(sourceBlob,{onProgress:renderPaddleInferenceProgress});
+      result=output.text;seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);ended=Boolean(output.ended);nativeRegionCount=Number(output.completedRegions)||0;nativeTotalRegions=Number(output.totalRegions)||0;
+    }else if(entry.adapter==="r3-ovisocr3"||entry.adapter==="wang-qwen35-2b"){
+      if(!adapter)throw Error(entry.name+" 适配器尚未就绪，请重新加载模型。");
+      if(!(sourceBlob instanceof Blob))throw Error("没有可读取的原始图片文件，请重新选择内置样例或上传本地图片。");
+      const output=await adapter.recognize(sourceBlob,{
+        onText(chunk){$("tags").textContent=($("tags").textContent==="等待新的推理输出。"?"":$("tags").textContent)+chunk;},
+        onTokens(n){$("downloadStatus").textContent=entry.name+" 正在生成："+n+" 个词元";}
+      });
+      result=output.text;
+      seconds=Number(output.totalSeconds)||((performance.now()-start)/1000);
+      ended=Boolean(output.ended);
+      generatedTokens=Number(output.generatedTokens)||0;
+      tokensPerSecond=Number(output.tokensPerSecond)||0;
+      if(stopRequested&&generatedTokens===0)result="";
+    }else{
+      graniteStopping.reset();
+      const raw=RawImage.fromCanvas(src),messages=[{role:"user",content:[{type:"image"},{type:"text",text:"Convert this page to docling."}]}];
+      const prompt=processor.apply_chat_template(messages,{add_generation_prompt:true});
+      const inputs=await processor(prompt,[raw],{do_image_splitting:true});let streamed="";
+      const generated=await model.generate({
+        ...inputs,max_new_tokens:2048,do_sample:false,stopping_criteria:graniteStopping,
+        streamer:new TextStreamer(processor.tokenizer,{skip_prompt:true,skip_special_tokens:false,callback_function:chunk=>{streamed+=chunk;$("tags").textContent=streamed}})
+      });
+      const tokens=generated.slice(null,[inputs.input_ids.dims.at(-1),null]);
+      result=(processor.batch_decode(tokens,{skip_special_tokens:false})[0]||streamed).replace(/<\|end_of_text\|>$/,"").trim();
+      seconds=(performance.now()-start)/1000;
+    }
+    if(!result&&stopRequested){
+      $("tags").textContent="已终止推理，尚未生成可用输出。";
+      $("compareDiagnostic").textContent="本次推理已由用户终止；没有生成可核验的 DocTags 输出，未计入 A/B 对比历史。";
+      status("已终止推理 · 模型仍保持加载，可重新运行。");
+      return;
+    }
+    if(!result)throw Error("模型返回空结果");
+    $("tags").textContent=result;let boxes=0;
+    if(nativeOutputFormat){
+      $("saveDT").textContent="下载原生 JSON";
+      try{const parsed=parseNativeResult(result,nativeOutputFormat);boxes=showNative(parsed);renderNativeComparison(parsed,nativeOutputFormat);}
+      catch(parseError){nativeParseValid=false;nativeParsed=null;nativeFormat=nativeOutputFormat;show();rendered.replaceChildren();const warning=document.createElement("div");warning.className="render-placeholder";warning.textContent="原始输出已保留，但未通过原生结构化解析，不能安全绘制定位框："+(parseError?.message||String(parseError));rendered.appendChild(warning);leftDraw();$("compareStatus").textContent="原生结构校验失败；原始输出可在 04 区下载核对。";}
+    }else{boxes=show(result);renderComparison(result);$("saveDT").textContent="下载 DocTags";}
+    $("saveDT").disabled=false;$("saveImg").disabled=boxes===0;
+    const adapterLabel=entry.adapter==="r3-ovisocr3"?"DJX-0.8B":entry.adapter==="wang-qwen35-2b"?"WC-2B":null;
+    $("timing").textContent=nativeOutputFormat==="ovisocr3-native"?"OvisOCR3 WebGPU · "+generatedTokens+" tokens · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" tokens/s · 原生 Structured JSON · 输入："+name+" · 有效定位 "+boxes+" 个"
+      :nativeOutputFormat==="paddleocr-vl16-native"?"PaddleOCR-VL-1.6 WebGPU FP16 · 完成区域 "+nativeRegionCount+"/"+nativeTotalRegions+" · "+seconds.toFixed(1)+" 秒 · 原生 parsing_res_list / OTSL · 输入："+name+" · 有效定位 "+boxes+" 个"
+      :adapterLabel?adapterLabel+" WebGPU · "+generatedTokens+" 词元 · "+seconds.toFixed(1)+" 秒 · "+tokensPerSecond.toFixed(2)+" 词元/秒 · Transformers.js 4.4.0-next.0 / ORT Web 1.31.1 · 输入："+name+" · 带坐标标签 "+boxes+" 个"
+      :"GPU 推理约 "+seconds.toFixed(1)+" 秒 · 模型："+activeModelName+" · 输入："+name+" · 带坐标标签 "+boxes+" 个";
+    const completedNormally=ended&&!stopRequested&&nativeParseValid;
+    if(completedNormally){
+      const precisionLabel=nativeOutputFormat?"原生 WebGPU 固定配置":["r3-ovisocr3","wang-qwen35-2b"].includes(entry.adapter)?"视觉 FP32 / 文字 FP16":$("dtype").value==="quality"?"fp32":"q4";
+      updateHistory({key:activeKey,modelId:entry.id,documentRevision:inputRevision,tags:result,outputFormat:nativeOutputFormat||"doctags",seconds:Number(seconds),label:activeModelName+" · "+precisionLabel});
+    }else if(stopRequested){
+      $("compareDiagnostic").textContent="本次推理已由用户终止，以下为已生成的部分输出；结果不完整，未计入多模型结果对比。";
+    }else{
+      $("compareDiagnostic").textContent="本次生成未出现正常结束标记，输出可能不完整；未将其加入多模型结果对比。可下载原始输出并核对。";
+    }
+    showRunMetrics(entry.id,seconds);
+    status(stopRequested
+      ?"已终止推理 · 当前输出不完整，未计入多模型对比；模型仍保持加载"
+      :!nativeParseValid?"推理结束，但原生结构化输出校验未通过；原始输出已保留"
+      :ended?"推理完成 · 请查看下方对照结果":"生成未正常结束 · 当前输出可能不完整，请核对原始输出");
+  }catch(e){
+   if(stopRequested){
+     const partial=e?.partialText||$("tags").textContent;
+     if(partial&&partial!=="等待新的推理输出。"){
+       result=partial;$("tags").textContent=partial;$("saveDT").disabled=false;let boxes=0;
+       try{if(nativeOutputFormat){nativeFormat=nativeOutputFormat;$("saveDT").textContent="下载原生 JSON";const parsed=parseNativeResult(partial,nativeOutputFormat);boxes=showNative(parsed);renderNativeComparison(parsed,nativeOutputFormat);}else{boxes=show(result);renderComparison(result);}}
+       catch{$("saveImg").disabled=true;nativeParsed=null;show();rendered.replaceChildren();const warning=document.createElement("div");warning.className="render-placeholder";warning.textContent="已保留部分原始输出，但无法解析为完整结构；不绘制定位框。";rendered.appendChild(warning);}
+       $("saveImg").disabled=boxes===0;
+       $("compareDiagnostic").textContent="本次推理已由用户终止，以下为已生成的部分输出；结果不完整，未计入多模型结果对比。";
+       $("timing").textContent="推理已中断 · 输入："+name+" · 已保留部分输出";
+       showRunMetrics(entry.id,(performance.now()-start)/1000);
+     }else{
+       $("tags").textContent="已终止推理，尚未生成可用输出。";
+       $("compareDiagnostic").textContent="本次推理已由用户终止；没有生成可核验的 DocTags 输出，未计入 A/B 对比历史。";
+       clearRunMetrics();
+     }
+     status("已终止推理 · 模型仍保持加载，可重新运行。");
+   }else{
+     console.error("Inference failure",e);
+     const message=e?.message||String(e);
+     const inputFailure=e?.name==="SecurityError"||/tainted|toBlob|cross-origin/i.test(message);
+     const hint=inputFailure
+       ?"请重新选择内置样例或上传本地图片后重试。"
+       :"请检查输入图片和 WebGPU 设备状态；如持续失败，请提供浏览器控制台错误。";
+     status("推理失败："+message+"。"+hint);
+     if(entry.adapter==="paddleocr-vl-1.6"){
+       $("inferenceProgressPanel").hidden=false;
+       $("inferenceProgressStatus").textContent="推理失败："+message;
+     }
+     $("tags").textContent="本次没有可核验的完整模型输出。";
+   }
+  }finally{
+    if(stopRequested&&entry.adapter!=="paddleocr-vl-1.6")$("downloadStatus").textContent=entry.name+" 已终止生成；模型仍保持加载。";
+    busy=false;inferenceRunning=false;stopRequested=false;activeStop=null;
+    refreshLoadButtons();
+  }
+};
+$("stop").onclick=()=>{
+  if(!inferenceRunning||stopRequested)return;
+  stopRequested=true;
+  refreshInferenceControls();
+  status("正在请求终止…当前 WebGPU 运算结束后将停止生成。");
+  try{activeStop?.();}catch(error){status("终止请求失败："+(error?.message||String(error)));}
+};
+
+renderModelOptions(registry.R3.id);loadLocalSample(challengeSamples[0].id,"challenge");detect();
+</script>
+</body>
+</html>
