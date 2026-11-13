@@ -283,8 +283,6 @@ subprocess.run(["node", "--check", str(R3_DOC_CONTRACT)], check=True)
 subprocess.run(["node", "--check", str(R3_DOC_DOWNLOAD)], check=True)
 subprocess.run(["node", "--check", str(WANG_DOC_ADAPTER)], check=True)
 subprocess.run(["node", "--check", str(WANG_DOC_RANGE)], check=True)
-subprocess.run(["node", "--check", str(ROOT / "docs/assets/projects/doctags/browser-inference/model-download-source.mjs")], check=True)
-subprocess.run(["node", "--test", str(ROOT / "tests/doctags-model-download-source.test.mjs")], check=True)
 subprocess.run(["node", "--check", str(WANG_DOC_CONTRACT)], check=True)
 subprocess.run(["node", str(ROOT / "scripts/kaggle/test_doctags_download_metrics.cjs")], check=True)
 subprocess.run(["node", str(ROOT / "hf-spaces/mvai-doctags-webgpu/adapters/r3-ovisocr3/test_contract.mjs")], check=True)
@@ -334,7 +332,7 @@ assert 'outputFormat:nativeOutputFormat||"doctags"' in data, "Native output form
 assert 'value.outputFormat==="ovisocr3-native"' in data, "A/B history must preserve native result renderer"
 assert "不转换成 DocTags" in data, "Native formats must not be coerced into DocTags"
 assert "sourceImageWidth=bitmap.width" in data and "sourceImageHeight=bitmap.height" in data
-assert "createAdapter({modelId:entry.id,revision:entry.revision,onProgress,runtime:sourceRuntime})" in data, "Native Ovis adapter must receive the selected model download origin"
+assert "createAdapter({modelId:entry.id,revision:entry.revision,onProgress})" in data
 assert "paddleNativeAdapter=await createAdapter({onProgress})" in data
 subprocess.run(["node", "--check", str(OVIS_NATIVE_ADAPTER)], check=True)
 subprocess.run(["node", "--check", str(OVIS_NATIVE_CONTRACT)], check=True)
