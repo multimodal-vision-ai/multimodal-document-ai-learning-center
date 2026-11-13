@@ -96,8 +96,15 @@ async function readRangeProbe(fetcher, entry, signal) {
   return url;
 }
 
-export async function probeMirror(entry, {fetcher = globalThis.fetch, timeoutMs = 15000} = {}) {
-  if (!mirrorPolicy(entry).allowed) throw new Error(mirrorPolicy(entry).reason);
+export async function probeMirror(entry, options = {}) {
+  const policy = mirrorPolicy(entry);
+  if (!policy.allowed) throw new Error(policy.reason);
+  return probeMirrorTransport(entry, options);
+}
+
+// Testable transport validation. Production must enter via the policy-gated
+// probeMirror(). Do not call this function to bypass disabled origin policies.
+export async function probeMirrorTransport(entry, {fetcher = globalThis.fetch, timeoutMs = 15000} = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
