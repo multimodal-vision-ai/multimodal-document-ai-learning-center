@@ -1516,7 +1516,7 @@ $("load").onclick=async()=>{
  if(busy||!gpuDetected)return;
  const entry=selectedModel(),key=selectedKey(),precision=$("dtype").value;
  const sourceChoice=requestedDownloadSource();
- if(loaded&&activeKey===key){refreshLoadButtons();return;}
+ if(loaded&&activeKey===key&&activeDownloadSource===sourceChoice){refreshLoadButtons();return;}
  busy=true;loadingModel=true;loadPhase="preparing";loadStartedAt=performance.now();lastLoadProgressAt=loadStartedAt;lastLoadFile="";
  clearRunMetrics();refreshLoadButtons();status("正在加载模型："+entry.name+"。下载完成后还需要初始化 WebGPU。");
  $("inferenceProgressPanel").hidden=true;
