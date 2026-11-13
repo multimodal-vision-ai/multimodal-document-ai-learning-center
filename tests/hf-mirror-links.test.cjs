@@ -63,7 +63,7 @@ const docVideoCases = [
    "https://www.modelscope.cn/models/PaddlePaddle/PaddleOCR-VL-1.6"],
   ["https://huggingface.co/spaces/echarlaix/vision-langage-openvino",
    "https://echarlaix-vision-langage-openvino.hf.space",
-   "https://hf-mirror.com/HuggingFaceTB/SmolVLM2-256M-Video-Instruct"]
+   "https://www.modelscope.cn/models/HuggingFaceTB/SmolVLM2-256M-Video-Instruct"]
 ];
 for (const [official, embed, mirror] of docVideoCases) {
   assert.ok(playgroundScript.includes('url: "' + official + '"'), official + " must remain unchanged");
