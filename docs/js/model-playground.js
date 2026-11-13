@@ -6,6 +6,8 @@
       {
         name: "Granite Docling", scale: "258M",
         url: "https://huggingface.co/spaces/ibm-granite/granite-docling-258m-demo",
+        mirror: "https://aifasthub.com/ibm-granite/granite-docling-258M",
+        mirrorModel: "Granite Docling 258M 模型资源（AI快站）",
         embed: "https://ibm-granite-granite-docling-258m-demo.hf.space",
         intro: "原演示包含可点击的公开文档样例。直接选取示例图片并提交解析任务。",
         examples: ["文档图片", "论文页面", "表格", "公式"],
@@ -16,6 +18,8 @@
       {
         name: "PaddleOCR-VL 1.6", scale: "0.9B",
         url: "https://huggingface.co/spaces/PaddlePaddle/PaddleOCR-VL-1.6_Online_Demo",
+        mirror: "https://www.modelscope.cn/models/PaddlePaddle/PaddleOCR-VL-1.6",
+        mirrorModel: "PaddleOCR-VL 1.6 模型资源（魔搭）",
         embed: "https://paddlepaddle-paddleocr-vl-1-6-online-demo.hf.space",
         intro: "原演示提供文档解析和元素级识别的公开示例图库。",
         examples: ["复杂版面", "文字", "表格", "公式"],
@@ -28,6 +32,8 @@
       {
         name: "SmolVLM2 OpenVINO", scale: "256M",
         url: "https://huggingface.co/spaces/echarlaix/vision-langage-openvino",
+        mirror: "https://www.modelscope.cn/models/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+        mirrorModel: "SmolVLM2 256M 模型资源（魔搭 ModelScope；原始权重，非 OpenVINO 转换格式）",
         embed: "https://echarlaix-vision-langage-openvino.hf.space",
         intro: "第三方演示自带的公开示例目前主要是图片与问答；视频任务需要上传自有短视频。",
         examples: ["蜜蜂图片", "小狗图片", "食物图片", "图像问答"],
@@ -71,6 +77,12 @@
       find("title").textContent = m.name;
       find("scale").textContent = m.scale + " 参数";
       find("external").href = m.url;
+      const mirror = find("mirror");
+      if (mirror) {
+        mirror.href = m.mirror;
+        mirror.title = m.mirrorModel + "；第三方国内镜像仅提供模型资源，不是在线演示";
+        mirror.setAttribute("aria-label", "国内镜像：" + m.mirrorModel + "，不提供在线演示");
+      }
       find("example-intro").textContent = m.intro;
       find("example-howto").textContent = m.howto;
       find("advisory").textContent = m.advisory;
