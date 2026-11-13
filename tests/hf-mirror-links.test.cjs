@@ -27,3 +27,23 @@ const excluded = [
 ];
 for (const input of excluded) assert.equal(toMirrorUrl(input), null, input);
 console.log("HF-Mirror URL contract: " + (positive.size + excluded.length) + " cases passed.");
+
+
+const fs = require("node:fs");
+const path = require("node:path");
+const visionScript = fs.readFileSync(path.join(__dirname, "../docs/js/vision-demo-v1.js"), "utf8");
+const visionPage = fs.readFileSync(path.join(__dirname, "../docs/model-demos/vision.md"), "utf8");
+const visionCases = [
+  ["https://huggingface.co/spaces/Ultralytics/YOLO26", "https://hf-mirror.com/Ultralytics/YOLO26"],
+  ["https://huggingface.co/spaces/ustc-community/d-fine-object-detection", "https://hf-mirror.com/ustc-community/dfine-nano-coco"],
+  ["https://huggingface.co/spaces/yonigozlan/Segment-Anything-2-video-tracking", "https://hf-mirror.com/facebook/sam2.1-hiera-small"]
+];
+for (const [original, mirror] of visionCases) {
+  assert.ok(visionScript.includes('url: "' + original + '"'), original + " must remain unchanged");
+  assert.ok(visionScript.includes('mirror: "' + mirror + '"'), mirror + " must use a model resource, not Space proxy");
+}
+assert.ok(visionPage.includes('data-vis="mirror"'));
+assert.ok(visionPage.includes('data-vis="external"'));
+assert.ok(visionScript.includes('get("external").href = model.url'));
+assert.ok(visionScript.includes('frame.src = model.embed'));
+console.log("Vision demo contracts: original Space links and iframe unchanged; 3 model resource mirrors registered.");
