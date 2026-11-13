@@ -6,6 +6,8 @@ on:
       - 'hf-spaces/mvai-doctags-webgpu/native-*.js'
       - 'hf-spaces/mvai-doctags-webgpu/index.html'
       - 'hf-spaces/mvai-doctags-webgpu/model-registry.js'
+      - 'hf-spaces/mvai-doctags-webgpu/model-download-source.mjs'
+      - 'tests/doctags-model-download-source.test.mjs'
       - 'hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/**'
       - 'hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/**'
       - 'hf-spaces/mvai-doctags-webgpu/tests/native-*'
@@ -15,6 +17,7 @@ on:
       - 'hf-spaces/mvai-doctags-webgpu/scripts/**'
       - 'docs/assets/projects/doctags/browser-inference/index.html'
       - 'docs/assets/projects/doctags/browser-inference/model-registry.js'
+      - 'docs/assets/projects/doctags/browser-inference/model-download-source.mjs'
       - 'docs/assets/projects/doctags/browser-inference/native-document-output.js'
       - 'docs/assets/projects/doctags/browser-inference/native-result-renderer.js'
       - 'docs/assets/projects/doctags/browser-inference/dev-paddleocr-vl16.html'
@@ -50,6 +53,11 @@ jobs:
         run: node --test hf-spaces/mvai-doctags-webgpu/tests/native-document-output.test.cjs hf-spaces/mvai-doctags-webgpu/tests/native-adapters.test.mjs hf-spaces/mvai-doctags-webgpu/tests/ovisocr3-contract.test.mjs hf-spaces/mvai-doctags-webgpu/tests/native-models-integration.test.mjs && node scripts/kaggle/test_doctags_model_registry.cjs
       - name: Check browser adapter and pinned asset staging script syntax
         run: node --check hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/adapter.mjs && node --check hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/adapter.mjs && node --check hf-spaces/mvai-doctags-webgpu/adapters/paddleocr-vl-1.6/pipeline-contract.mjs && node --check hf-spaces/mvai-doctags-webgpu/scripts/stage-ppdoclayout-worker.mjs && node --check hf-spaces/mvai-doctags-webgpu/native-document-output.js && node --check hf-spaces/mvai-doctags-webgpu/native-result-renderer.js
+      - name: Validate experimental model download origins and fallback safety
+        run: |
+          node --check hf-spaces/mvai-doctags-webgpu/model-download-source.mjs
+          node --check docs/assets/projects/doctags/browser-inference/model-download-source.mjs
+          node --test tests/doctags-model-download-source.test.mjs
       - name: Check Ovis exporter Python syntax and IO contract
         run: |
           python -m py_compile hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/export_onnx.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/validate_bundle.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/test_reference.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/prepare_upload.py hf-spaces/mvai-doctags-webgpu/adapters/ovisocr3-native/test_export_contract.py
@@ -59,6 +67,7 @@ jobs:
       - name: Verify DEV preview mirrors match the Space source
         run: |
           cmp hf-spaces/mvai-doctags-webgpu/index.html docs/assets/projects/doctags/browser-inference/index.html
+          cmp hf-spaces/mvai-doctags-webgpu/model-download-source.mjs docs/assets/projects/doctags/browser-inference/model-download-source.mjs
           cmp hf-spaces/mvai-doctags-webgpu/model-registry.js docs/assets/projects/doctags/browser-inference/model-registry.js
           cmp hf-spaces/mvai-doctags-webgpu/native-document-output.js docs/assets/projects/doctags/browser-inference/native-document-output.js
           cmp hf-spaces/mvai-doctags-webgpu/native-result-renderer.js docs/assets/projects/doctags/browser-inference/native-result-renderer.js
