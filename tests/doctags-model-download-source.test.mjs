@@ -5,7 +5,7 @@ import {fileURLToPath} from "node:url";
 import {dirname,join} from "node:path";
 import {
   OFFICIAL,MIRROR,OFFICIAL_HOST,MIRROR_HOST,REMOTE_PATH,
-  mirrorPolicy,modelRevision,runtimeSource,probeMirror
+  mirrorPolicy,modelRevision,runtimeSource,probeMirror,probeMirrorTransport
 } from "../docs/assets/projects/doctags/browser-inference/model-download-source.mjs";
 import {MODEL_REVISION as WC_REVISION} from "../docs/assets/projects/doctags/browser-inference/adapters/wang-qwen35-2b/contract.mjs";
 
@@ -20,14 +20,13 @@ const models=[
 ];
 
 test("five models appear in the selector policy; Paddle stays on the approved WebGPU pack",()=>{
- assert.deepEqual(models.map(model=>mirrorPolicy(model).allowed),[true,true,true,true,false]);
+ assert.deepEqual(models.map(model=>mirrorPolicy(model).allowed),[false,false,false,false,false]);
  assert.equal(mirrorPolicy({id:"another/org",builtIn:false}).allowed,false);
  assert.deepEqual(runtimeSource(OFFICIAL,models[4]),{modelSource:OFFICIAL});
  assert.throws(()=>runtimeSource(MIRROR,models[4]),/不支持/);
  assert.throws(()=>runtimeSource("untrusted",models[0]),/不支持/);
- assert.deepEqual(runtimeSource(MIRROR,models[0]),{
-   modelSource:MIRROR,modelHost:MIRROR_HOST,modelPathTemplate:REMOTE_PATH
- });
+ assert.throws(()=>runtimeSource(MIRROR,models[0]),/不支持/);
+ assert.match(mirrorPolicy(models[0]).reason,/HF-Mirror.*跨域/);
  assert.equal(OFFICIAL_HOST,"https://huggingface.co/");
  assert.equal(modelRevision(models[1]),WC_REVISION);
  assert.equal(modelRevision(models[0]),"main");
@@ -35,7 +34,7 @@ test("five models appear in the selector policy; Paddle stays on the approved We
 
 test("valid mirror CORS config preflight reads only a small JSON file",async()=>{
  const seen=[];
- const report=await probeMirror(models[0],{
+ const report=await probeMirrorTransport(models[0],{
   fetcher:async (url,init)=>{
    seen.push([url,init]);
    return new Response(JSON.stringify({model_type:"qwen3_5"}),{
@@ -53,7 +52,7 @@ test("valid mirror CORS config preflight reads only a small JSON file",async()=>
 
 test("WC-2B must expose real HTTP 206 Content-Range, not a 200 full weight",async()=>{
  const paths=[];
- const ok=await probeMirror(models[1],{
+ const ok=await probeMirrorTransport(models[1],{
    fetcher:async(url,init)=>{
      paths.push(url);
      if(url.endsWith("/config.json"))return new Response(JSON.stringify({model_type:"qwen3_5"}));
@@ -68,7 +67,7 @@ test("WC-2B must expose real HTTP 206 Content-Range, not a 200 full weight",asyn
  assert.ok(paths[1].endsWith("/onnx/embed_tokens_fp16.onnx_data"));
  assert.ok(ok.rangeUrl);
  await assert.rejects(
-  ()=>probeMirror(models[1],{fetcher:async(url)=>
+  ()=>probeMirrorTransport(models[1],{fetcher:async(url)=>
     url.endsWith("config.json")
       ?new Response(JSON.stringify({model_type:"qwen3_5"}))
       :new Response("unsafe full response",{status:200})
@@ -78,13 +77,13 @@ test("WC-2B must expose real HTTP 206 Content-Range, not a 200 full weight",asyn
 });
 
 test("fail closed on HTML, missing model config and redirected official origin",async()=>{
- await assert.rejects(()=>probeMirror(models[0],{
+ await assert.rejects(()=>probeMirrorTransport(models[0],{
   fetcher:async()=>new Response("<html>mirror down</html>")
  }),/JSON/);
- await assert.rejects(()=>probeMirror(models[0],{
+ await assert.rejects(()=>probeMirrorTransport(models[0],{
   fetcher:async()=>new Response(JSON.stringify({unrelated:true}))
  }),/架构/);
- await assert.rejects(()=>probeMirror(models[0],{
+ await assert.rejects(()=>probeMirrorTransport(models[0],{
   fetcher:async()=>({
     status:200,ok:true,
     url:"https://huggingface.co/org/model/resolve/main/config.json",
@@ -93,13 +92,16 @@ test("fail closed on HTML, missing model config and redirected official origin",
   })
  }),/跳转/);
  await assert.rejects(()=>probeMirror(models[4],{fetcher:async()=>new Response("{}")}),/WebGPU/);
+ let attempted=false;
+ await assert.rejects(()=>probeMirror(models[0],{fetcher:async()=>{attempted=true;return new Response("{}");}}),/限制第三方网页跨域下载/);
+ assert.equal(attempted,false,"Disabled mirror must never issue a network request");
 });
 
 test("DEV page adds a selector without rewriting the five model inference branches",()=>{
  const html=readFileSync(join(root,"index.html"),"utf8");
  const required=[
   'id="modelSourceOfficial"','id="modelSourceMirror"',
-  'import {OFFICIAL,MIRROR,OFFICIAL_HOST,MIRROR_HOST,REMOTE_PATH,mirrorPolicy,modelRevision,runtimeSource,probeMirror}',
+  'import {OFFICIAL,MIRROR,OFFICIAL_HOST,MIRROR_HOST,REMOTE_PATH,mirrorPolicy,modelRevision,runtimeSource,probeMirror,probeMirrorTransport}',
   'await probeMirror(entry);','runtime:sourceRuntime',
   'paddleNativeAdapter=await createAdapter({onProgress});',
   'AutoModelForVision2Seq.from_pretrained(entry.id',
