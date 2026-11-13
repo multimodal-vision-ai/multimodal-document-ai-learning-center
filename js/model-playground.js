@@ -32,8 +32,8 @@
       {
         name: "SmolVLM2 OpenVINO", scale: "256M",
         url: "https://huggingface.co/spaces/echarlaix/vision-langage-openvino",
-        mirror: "https://hf-mirror.com/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
-        mirrorModel: "SmolVLM2 256M 模型资源（HF-Mirror；原始权重，非 OpenVINO 转换格式）",
+        mirror: "https://www.modelscope.cn/models/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+        mirrorModel: "SmolVLM2 256M 模型资源（魔搭 ModelScope；原始权重，非 OpenVINO 转换格式）",
         embed: "https://echarlaix-vision-langage-openvino.hf.space",
         intro: "第三方演示自带的公开示例目前主要是图片与问答；视频任务需要上传自有短视频。",
         examples: ["蜜蜂图片", "小狗图片", "食物图片", "图像问答"],
