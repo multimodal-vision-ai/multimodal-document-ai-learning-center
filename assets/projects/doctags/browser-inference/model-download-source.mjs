@@ -17,7 +17,12 @@ export function mirrorPolicy(entry) {
   if (entry.adapter === "r3-ovisocr3" || entry.adapter === "wang-qwen35-2b" ||
       entry.adapter === "ovisocr3-native" ||
       entry.id === "onnx-community/granite-docling-258M-ONNX") {
-    return {allowed: true, reason: "仅供 DEV 试验；需预检跨域与文件路径，下载后仍须人工验证推理一致性。"};
+    // HF-Mirror operator explicitly disabled cross-site hotlinking; see
+    // https://github.com/padeoe/hf-mirror-site/issues/23
+    // A successful model-card navigation does not grant browser fetch access.
+    // Do NOT bypass third-party host controls with no-cors, URL tricks or
+    // an unapproved relay. Preserve source adapters for an authorized CDN.
+    return {allowed: false, reason: "HF-Mirror 已限制第三方网页跨域下载，当前不能直接加载 ONNX 权重。实验源已暂停；请使用 Hugging Face 官方源。需更换明确允许跨域访问的国内模型存储服务后再开放。"};
   }
   return {allowed: false, reason: "尚未验证该模型的国内 WebGPU ONNX 文件，默认使用官方源。"};
 }
