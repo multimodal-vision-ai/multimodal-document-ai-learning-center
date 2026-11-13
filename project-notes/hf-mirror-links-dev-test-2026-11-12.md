@@ -29,3 +29,25 @@
 ## 2026-11-13 D-FINE / SAM 2 链接修订
 
 用户报告原 HF-Mirror 两个具体模型页无法打开。HF-Mirror 会根据访问者 IP 地域跳转，单靠链接路径正确不能保证能访问。原两个链接更换为搜索引擎已收录的国内站点资源页；D-FINE 为组织列表而非直接模型详情；SAM 2 为旧版权重，不能作为 2.1 checkpoint 的等价镜像。本轮自动 CI 只保证网站构建和静态 URL 配置，必须由国内网络人工确认目标链接实际可达。原 Hugging Face Space 与 iframe 均不受影响。
+
+
+## 2026-11-13 新增文档理解与视频理解入口
+
+依据视觉感知模块的人工确认，将国内镜像资源链接拓展到两个未覆盖模块，样式沿用已有的「国内镜像 ↗」纯文字链接。
+
+| 模块 | 模型选择 | 国内资源入口 | 注意 |
+| --- | --- | --- | --- |
+| 文档理解 | Granite Docling 258M | https://aifasthub.com/ibm-granite/granite-docling-258M | AI快站的模型页，非原 IBM 在线演示 |
+| 文档理解 | PaddleOCR-VL 1.6 | https://www.modelscope.cn/models/PaddlePaddle/PaddleOCR-VL-1.6 | 魔搭同名同版本资源 |
+| 视频理解 | SmolVLM2 OpenVINO 256M | https://hf-mirror.com/HuggingFaceTB/SmolVLM2-256M-Video-Instruct | 原始 SmolVLM2 256M 权重仓库；不是 OpenVINO 格式模型/推理演示 |
+
+### 新增人工验收
+
+1. 文档理解页：选择 Granite Docling，查看「在新标签页打开」后「国内镜像」文字链接，点击后应打开 AI快站对应模型页。
+2. 切换 PaddleOCR-VL 1.6：镜像应变成魔搭相同版本模型页；原官方 Space 仍可点击并按既有流程运行。
+3. 视频理解页：SmolVLM2 的国内镜像应进入 HF-Mirror 模型页；此模型镜像地址是否能从中国大陆打开**必须人工确认**。
+4. 原「加载真实演示 / 收起内嵌演示 / 在新标签页打开」功能、顺序、界面布局、操作指南、ZeroGPU 提示均不变。
+5. 两页切换及 MkDocs instant navigation 无镜像标签重复、无白屏。
+6. 由于 raw.githack 分支路径可能长期缓存，优先使用完成构建后生成的不可变 SHA 预览 URL。
+
+边界：HF 镜像、AI快站、魔搭都只是公开模型资源页，不保证提供原 Space 的在线 Gradio 推理。国内地址的实际连通性只能由目标地区用户验收；不能以静态 CI 通过代替网络验证。
