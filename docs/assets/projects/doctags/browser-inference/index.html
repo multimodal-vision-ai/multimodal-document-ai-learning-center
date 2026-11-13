@@ -315,9 +315,9 @@ main{max-width:1260px}
         <span class="source-title" id="modelSourceTitle">模型下载源</span>
         <div class="source-options">
           <label><input id="modelSourceOfficial" name="modelDownloadSource" type="radio" value="official" checked> Hugging Face 官方（默认）</label>
-          <label><input id="modelSourceMirror" name="modelDownloadSource" type="radio" value="mirror"> 国内镜像（实验性加速）</label>
+          <label><input id="modelSourceMirror" name="modelDownloadSource" type="radio" value="mirror" disabled> 国内镜像（暂未开放浏览器下载）</label>
         </div>
-        <small id="modelSourceInfo" role="status" aria-live="polite">官方源保持已验收的原始下载方式；国内镜像只在当前 DEV 中进行兼容性测试。</small>
+        <small id="modelSourceInfo" role="status" aria-live="polite">HF-Mirror 已限制第三方网页跨域读取模型文件；当前国内镜像试验暂停，原官方源及 WebGPU 推理不变。</small>
       </div>
       <div class="field-heading">
         <label for="dtype">模型配置</label>
