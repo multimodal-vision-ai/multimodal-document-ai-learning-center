@@ -58,14 +58,20 @@ export async function createAdapter({modelId = MODEL_ID, revision = 'main', onPr
     lib.env.allowRemoteModels = true;
     lib.env.allowLocalModels = false;
     lib.env.remoteHost = runtime.modelHost;
-    lib.env.remotePathTemplate = '{model}/';
+    lib.env.remotePathTemplate = runtime.modelPathTemplate || '{model}/';
     // A configured mirror must use the same browser cache.
+  } else if (runtime.modelSource === "official") {
+    // A previous model may have loaded with a different origin in this session.
+    lib.env.remoteHost = "https://huggingface.co/";
+    lib.env.remotePathTemplate = "{model}/resolve/{revision}/";
+    lib.env.allowRemoteModels = true;
+    lib.env.allowLocalModels = false;
   }
   const processor = await lib.AutoProcessor.from_pretrained(modelId, {
     revision, progress_callback: info => onProgress({...info, stage: 'processor'}),
   });
   const templateUrl = runtime.modelHost
-    ? `${runtime.modelHost}${modelId}/chat_template.jinja`
+    ? `${runtime.modelHost}${modelId}/${runtime.modelPathTemplate === "{model}/resolve/{revision}/" ? "resolve/" + encodeURIComponent(revision) + "/" : ""}chat_template.jinja`
     : `https://huggingface.co/${modelId}/resolve/${encodeURIComponent(revision)}/chat_template.jinja`;
   const template = await fetch(templateUrl);
   if (!template.ok) throw new Error(`加载对话模板失败：HTTP ${template.status}`);
