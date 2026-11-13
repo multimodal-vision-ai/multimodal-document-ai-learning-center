@@ -1441,7 +1441,12 @@ $("cacheCheck").addEventListener("click",async()=>{
         if(keys.includes(RANGE_CACHE_NAME)){
           const partial=await (await caches.open(RANGE_CACHE_NAME)).keys();
           parts.push("WC-2B 分段下载缓存："+partial.length+" 个已完成分片；网络中断后可复用。");
-        }else parts.push("WC-2B 分段下载缓存：当前没有未完成分片。");
+        }else parts.push("WC-2B 官方分段下载缓存：当前没有未完成分片。");
+        const mirrorRange=RANGE_CACHE_NAME+"-mirror";
+        if(keys.includes(mirrorRange)){
+          const partial=await (await caches.open(mirrorRange)).keys();
+          parts.push("WC-2B 国内镜像试验分段缓存："+partial.length+" 个分片（独立于官方源）。");
+        }
       }
     }else parts.push("当前浏览器未提供 Cache API。");
     if(navigator.storage?.estimate){
@@ -1469,7 +1474,9 @@ $("cacheClear").addEventListener("click",async()=>{
     let rangeDeleted=false;
     if(selectedModel().adapter==="wang-qwen35-2b"){
       const {clearRangeCache}=await import("./adapters/wang-qwen35-2b/range-download.mjs");
-      rangeDeleted=await clearRangeCache();
+      const officialDeleted=await clearRangeCache();
+      const mirrorDeleted=await clearRangeCache({cacheName:"mvai-wc2b-range-v1-09f034d04e5a26620124e4b80923ffc2ec5899c7-mirror"});
+      rangeDeleted=officialDeleted||mirrorDeleted;
     }
     $("cacheInfo").textContent="已清理当前模型在本站点的 "+deleted+" 个缓存文件"+(rangeDeleted?"，并清理 WC-2B 分段下载缓存":"")+"。请重新加载模型；其他模型缓存未修改。";
   }catch(err){$("cacheInfo").textContent="缓存清理失败："+err.message;}
@@ -1641,7 +1648,7 @@ $("load").onclick=async()=>{
      :runtimeNetworkFailure
        ?"浏览器未能下载 ONNX Runtime / Transformers.js 运行时。程序已自动尝试多个 CDN 镜像；请检查网络或代理后重试。此次失败发生在模型权重加载前。"
        :"请核对模型 ONNX 文件、外部数据分片、Transformers.js/ONNX Runtime 版本及 WebGPU shader-f16 支持。";
-   $("downloadStatus").textContent="模型加载失败："+loadError+"。"+loadDiagnosis+"旧 GPU 模型已释放；可以重新选择其他模型。";
+   $("downloadStatus").textContent="模型加载失败："+loadError+"。"+(sourceChoice===MIRROR?"国内镜像实验性下载未成功；请选择 Hugging Face 官方源重试。":"")+loadDiagnosis+"旧 GPU 模型已释放；可以重新选择其他模型。";
  }finally{
    busy=false;loadingModel=false;
    if(loadWatchdog){clearInterval(loadWatchdog);loadWatchdog=null;}
