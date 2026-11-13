@@ -39,7 +39,7 @@
 | --- | --- | --- | --- |
 | 文档理解 | Granite Docling 258M | https://aifasthub.com/ibm-granite/granite-docling-258M | AI快站的模型页，非原 IBM 在线演示 |
 | 文档理解 | PaddleOCR-VL 1.6 | https://www.modelscope.cn/models/PaddlePaddle/PaddleOCR-VL-1.6 | 魔搭同名同版本资源 |
-| 视频理解 | SmolVLM2 OpenVINO 256M | https://hf-mirror.com/HuggingFaceTB/SmolVLM2-256M-Video-Instruct | 原始 SmolVLM2 256M 权重仓库；不是 OpenVINO 格式模型/推理演示 |
+| 视频理解 | SmolVLM2 OpenVINO 256M | https://www.modelscope.cn/models/HuggingFaceTB/SmolVLM2-256M-Video-Instruct | 原始 SmolVLM2 256M 权重仓库；不是 OpenVINO 格式模型/推理演示 |
 
 ### 新增人工验收
 
@@ -51,3 +51,7 @@
 6. 由于 raw.githack 分支路径可能长期缓存，优先使用完成构建后生成的不可变 SHA 预览 URL。
 
 边界：HF 镜像、AI快站、魔搭都只是公开模型资源页，不保证提供原 Space 的在线 Gradio 推理。国内地址的实际连通性只能由目标地区用户验收；不能以静态 CI 通过代替网络验证。
+
+## 2026-11-13 SmolVLM2 国内链接单项修复
+
+大陆用户反馈 HF-Mirror SmolVLM2 256M 无法访问，其他两项已验收通过。仅将视频理解中该模型的镜像改成魔搭的同名模型页 `https://www.modelscope.cn/models/HuggingFaceTB/SmolVLM2-256M-Video-Instruct`。模型权重非 OpenVINO 转换格式，不能代替原第三方 Space 的在线演示。此链接需再次由用户人工验收，中国大陆可访问性尚未宣称成功。其余模型的国内链接和原版 Space/iframe 维持不变。
