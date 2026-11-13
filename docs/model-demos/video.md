@@ -45,6 +45,7 @@ hide:
       <button type="button" class="mpg-primary" data-mpg="start">加载真实演示</button>
       <button type="button" class="mpg-secondary" data-mpg="stop" disabled>收起内嵌演示</button>
       <a data-mpg="external" href="https://huggingface.co/spaces/echarlaix/vision-langage-openvino" target="_blank" rel="noopener noreferrer">在新标签页打开 ↗</a>
+      <a data-mpg="mirror" href="https://hf-mirror.com/HuggingFaceTB/SmolVLM2-256M-Video-Instruct" target="_blank" rel="noopener noreferrer" title="第三方国内镜像仅提供模型资源，不提供在线演示">国内镜像 ↗</a>
     </div>
     <div class="mpg-viewer" data-mpg="viewer">
       <div class="mpg-empty" data-mpg="empty">
