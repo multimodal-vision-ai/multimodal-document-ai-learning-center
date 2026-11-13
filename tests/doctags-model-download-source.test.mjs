@@ -99,7 +99,7 @@ test("DEV page adds a selector without rewriting the five model inference branch
  const html=readFileSync(join(root,"index.html"),"utf8");
  const required=[
   'id="modelSourceOfficial"','id="modelSourceMirror"',
-  'import {OFFICIAL,MIRROR,OFFICIAL_HOST,MIRROR_HOST,REMOTE_PATH,mirrorPolicy,runtimeSource,probeMirror}',
+  'import {OFFICIAL,MIRROR,OFFICIAL_HOST,MIRROR_HOST,REMOTE_PATH,mirrorPolicy,modelRevision,runtimeSource,probeMirror}',
   'await probeMirror(entry);','runtime:sourceRuntime',
   'paddleNativeAdapter=await createAdapter({onProgress});',
   'AutoModelForVision2Seq.from_pretrained(entry.id',
