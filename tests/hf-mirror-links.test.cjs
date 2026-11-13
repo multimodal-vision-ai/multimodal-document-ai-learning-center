@@ -35,8 +35,8 @@ const visionScript = fs.readFileSync(path.join(__dirname, "../docs/js/vision-dem
 const visionPage = fs.readFileSync(path.join(__dirname, "../docs/model-demos/vision.md"), "utf8");
 const visionCases = [
   ["https://huggingface.co/spaces/Ultralytics/YOLO26", "https://hf-mirror.com/Ultralytics/YOLO26"],
-  ["https://huggingface.co/spaces/ustc-community/d-fine-object-detection", "https://hf-mirror.com/ustc-community/dfine-nano-coco"],
-  ["https://huggingface.co/spaces/yonigozlan/Segment-Anything-2-video-tracking", "https://hf-mirror.com/facebook/sam2.1-hiera-small"]
+  ["https://huggingface.co/spaces/ustc-community/d-fine-object-detection", "https://aifasthub.com/ustc-community"],
+  ["https://huggingface.co/spaces/yonigozlan/Segment-Anything-2-video-tracking", "https://www.modelscope.cn/models/AI-ModelScope/sam2-hiera-small-hf"]
 ];
 for (const [original, mirror] of visionCases) {
   assert.ok(visionScript.includes('url: "' + original + '"'), original + " must remain unchanged");
@@ -46,4 +46,6 @@ assert.ok(visionPage.includes('data-vis="mirror"'));
 assert.ok(visionPage.includes('data-vis="external"'));
 assert.ok(visionScript.includes('get("external").href = model.url'));
 assert.ok(visionScript.includes('frame.src = model.embed'));
+assert.ok(visionScript.includes("进入后选择 dfine-nano-coco"));
+assert.ok(visionScript.includes("非 SAM 2.1 权重"));
 console.log("Vision demo contracts: original Space links and iframe unchanged; 3 model resource mirrors registered.");
