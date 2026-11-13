@@ -9,6 +9,8 @@
       button: "YOLO26 · 多任务视觉",
       scale: "Nano 检测版约 2.4M 参数（界面可选择其他型号）",
       url: "https://huggingface.co/spaces/Ultralytics/YOLO26",
+      mirror: "https://hf-mirror.com/Ultralytics/YOLO26",
+      mirrorModel: "YOLO26 模型资源",
       embed: "https://ultralytics-yolo26.hf.space",
       focus: "检测框与类别 · 实例分割 · 人体姿态 · 旋转目标框",
       intro: "原演示的 Image 标签提供官方公开照片样例，适合先确认服务是否正常；视频标签可上传个人短视频。",
@@ -29,6 +31,8 @@
       button: "D-FINE · 多目标跟踪",
       scale: "检测模型 + 可选 ByteTrack / DeepSORT / SORT",
       url: "https://huggingface.co/spaces/ustc-community/d-fine-object-detection",
+      mirror: "https://hf-mirror.com/ustc-community/dfine-nano-coco",
+      mirrorModel: "D-FINE Nano 模型资源",
       embed: "https://ustc-community-d-fine-object-detection.hf.space",
       focus: "视频目标检测 · 目标 ID · 移动轨迹",
       intro: "原演示提供动物、交通与舞蹈等公开视频样例，也可以在 Video 标签中上传个人视频。",
@@ -49,6 +53,8 @@
       button: "SAM 2 · 交互式分割",
       scale: "SAM 2.1：Tiny / Small / Base+ / Large 可选",
       url: "https://huggingface.co/spaces/yonigozlan/Segment-Anything-2-video-tracking",
+      mirror: "https://hf-mirror.com/facebook/sam2.1-hiera-small",
+      mirrorModel: "SAM 2.1 Small 模型资源",
       embed: "https://yonigozlan-segment-anything-2-video-tracking.hf.space",
       focus: "点击指定目标 · 像素级掩码 · 视频掩码传播",
       intro: "原演示自带公开视频示例，学生可以先用示例学习点击选择目标，再测试自己的视频。",
@@ -98,6 +104,12 @@
       get("scale").textContent = model.scale;
       get("focus").textContent = model.focus;
       get("external").href = model.url;
+      const mirror = get("mirror");
+      if (mirror) {
+        mirror.href = model.mirror;
+        mirror.title = model.mirrorModel + "；第三方镜像只提供模型资源，不是在线演示";
+        mirror.setAttribute("aria-label", "国内镜像：" + model.mirrorModel + "，不提供在线演示");
+      }
       get("example-intro").textContent = model.intro;
       get("example-steps").textContent = model.howto;
       get("advisory").textContent = model.advisory;
