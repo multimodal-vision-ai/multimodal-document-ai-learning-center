@@ -461,7 +461,7 @@ if (!location.pathname.includes("/assets/projects/doctags/browser-inference/")) 
 import {AutoProcessor,AutoModelForVision2Seq,RawImage,TextStreamer,InterruptableStoppingCriteria,env} from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5";
 import {createDownloadMeter,formatBytes,formatRate,formatEta} from "./adapters/r3-ovisocr3/download-metrics.mjs";
 import {createPaddleDownloadProgress,updatePaddleDownloadProgress,normalizePaddleInferenceProgress,PADDLE_LAYOUT_DOWNLOAD_BYTES} from "./adapters/paddleocr-vl-1.6/progress.mjs";
-import {OFFICIAL,MIRROR,OFFICIAL_HOST,MIRROR_HOST,REMOTE_PATH,mirrorPolicy,runtimeSource,probeMirror} from "./model-download-source.mjs";
+import {OFFICIAL,MIRROR,OFFICIAL_HOST,MIRROR_HOST,REMOTE_PATH,mirrorPolicy,modelRevision,runtimeSource,probeMirror} from "./model-download-source.mjs";
 env.useBrowserCache = true; // Cache Storage; browser may evict under quota pressure
 const $=id=>document.getElementById(id);
 const src=$("source"),c=src.getContext("2d"),preview=$("preview"),v=preview.getContext("2d");
@@ -1475,7 +1475,7 @@ $("cacheClear").addEventListener("click",async()=>{
     if(selectedModel().adapter==="wang-qwen35-2b"){
       const {clearRangeCache}=await import("./adapters/wang-qwen35-2b/range-download.mjs");
       const officialDeleted=await clearRangeCache();
-      const mirrorDeleted=await clearRangeCache({cacheName:"mvai-wc2b-range-v1-09f034d04e5a26620124e4b80923ffc2ec5899c7-mirror"});
+      const mirrorDeleted=await clearRangeCache({cacheName:"mvai-wc2b-range-v1-"+modelRevision(selectedModel())+"-mirror"});
       rangeDeleted=officialDeleted||mirrorDeleted;
     }
     $("cacheInfo").textContent="已清理当前模型在本站点的 "+deleted+" 个缓存文件"+(rangeDeleted?"，并清理 WC-2B 分段下载缓存":"")+"。请重新加载模型；其他模型缓存未修改。";
