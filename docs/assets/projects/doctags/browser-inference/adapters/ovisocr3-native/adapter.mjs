@@ -200,8 +200,14 @@ export async function createAdapter({modelId = ONNX_MODEL_ID, revision, onProgre
     lib.env.allowRemoteModels = true;
     lib.env.allowLocalModels = false;
     lib.env.remoteHost = runtime.modelHost;
-    lib.env.remotePathTemplate = '{model}/';
+    lib.env.remotePathTemplate = runtime.modelPathTemplate || '{model}/';
     // A configured mirror must use the same browser cache.
+  } else if (runtime.modelSource === "official") {
+    // A previous model may have loaded with a different origin in this session.
+    lib.env.remoteHost = "https://huggingface.co/";
+    lib.env.remotePathTemplate = "{model}/resolve/{revision}/";
+    lib.env.allowRemoteModels = true;
+    lib.env.allowLocalModels = false;
   }
   // Validate the immutable ONNX commit and its provenance before any model
   // asset download; "main" and the official BF16 source repo are not accepted.
