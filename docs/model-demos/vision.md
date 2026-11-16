@@ -53,6 +53,7 @@ hide:
       <button type="button" class="mpg-primary" data-vis="start">加载真实演示</button>
       <button type="button" class="mpg-secondary" data-vis="stop" disabled>收起内嵌演示</button>
       <a data-vis="external" href="https://huggingface.co/spaces/Ultralytics/YOLO26" target="_blank" rel="noopener noreferrer">在新标签页打开 ↗</a>
+      <a data-vis="mirror" href="https://hf-mirror.com/Ultralytics/YOLO26" target="_blank" rel="noopener noreferrer" title="第三方国内镜像仅提供模型资源，不提供在线演示">国内镜像 ↗</a>
     </div>
 
     <div class="mpg-viewer" data-vis="viewer">
