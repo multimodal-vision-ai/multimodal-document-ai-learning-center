@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "checked_at": "2026-11-09T01:01:20.165Z",
+  "checked_at": "2026-11-16T01:05:30.200Z",
   "overall_status": "watching",
   "watchdog": {
-    "last_run_at": "2026-11-09T01:01:20.165Z",
+    "last_run_at": "2026-11-16T01:05:30.200Z",
     "status": "completed",
-    "message": "2026-W46 unique trigger 3e24cfe55235757688ac0faa373c1b806fd1d241 committed on dev; collection succeeded at 2026-11-09T00:59:18Z, 122 discovered leads (arxiv 60, github 38, huggingface 24, openreview 0), 16 first-stage >=8 candidates persisted to radar-data. One evidence-reviewed recommendation (TinyDoc-VLM, 8.36) written to latest-weekly.json at 2026-11-09T01:00:22Z. No second scan, main untouched. Documentation quality link job failed on three papers.nips.cc timeouts; build and Research Radar quality succeeded."
+    "message": "2026-W47 unique trigger ff0c5264a8255bec209570cc0d4b0108f30024f0 committed on dev; one collection finished 2026-11-16T01:02:46Z: 65 leads (github 35, huggingface 23, openreview 7), arxiv API HTTP 429 on both hosts. 8 >=8 candidates persisted. One reviewed NanoVDR recommendation (8.73) committed 4a9f507cbb72d53b31698ac5e1145ced6d3224e2 to radar-data; refresh workflow 43784058083 succeeded. DEV preview branch radar/index.html includes W47, NanoVDR and 8.73. Documentation quality link check failed; Research Radar quality and DEV builds succeeded. No duplicate scan; main untouched."
   },
   "publication": {
-    "status": "success",
-    "checked_at": "2026-11-09T01:01:20.165Z",
-    "refresh_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/42543207155",
-    "dev_preview_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/42543086403",
-    "home_content_verified": true,
-    "detail_content_verified": true,
-    "message": "Refresh workflow succeeded including validated second-stage recommendation, public DEV snapshot endpoint verification and fixed CDN alias inspection. The dev-preview branch HTML home and radar page were read and confirmed to include DEV marker, 2026-W46, TinyDoc-VLM and score 8.36. Official main was not deployed."
+    "status": "unknown",
+    "checked_at": "2026-11-16T01:05:30.200Z",
+    "refresh_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/43784058083",
+    "dev_preview_workflow_run_url": "https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/actions/runs/43783833517",
+    "home_content_verified": false,
+    "detail_content_verified": false,
+    "message": "GitHub refresh workflow succeeded and dev-preview branch radar/index.html verified to contain 2026-W47 and NanoVDR 8.73. Public raw.githack fetch returned a stale cached page, so fresh public home/detail content verification was not possible; publication success is not asserted. Official main unchanged."
   }
 }
