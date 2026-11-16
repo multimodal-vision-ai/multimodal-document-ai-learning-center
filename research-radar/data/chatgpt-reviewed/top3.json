@@ -44,6 +44,51 @@
       "why_selected": "论文、官方MIT评测代码、带uv.lock的模型复现脚本及CC-BY-4.0视频数据均可交叉核验；均衡计数实验能够形成低门槛、可证伪的研究生实验，并可用流式下载避免一次性获取139GB。"
     },
     {
+      "_report_generated": "2026-11-09T01:00:22.278Z",
+      "_report_type": "weekly",
+      "_scoring_source": "ChatGPT 四维科研价值评价",
+      "candidate_id": "github-1273114971",
+      "confidence": "high",
+      "data_open": null,
+      "evaluation_dimensions": {
+        "innovation": {
+          "rationale": "主要贡献是可检查OCR span、字段置信度、校验与人工审核的可信抽取闭环，而非新的视觉编码器或256M基础模型；作者公开承认256M模型OCRBench为0%，故方法创新分适度扣减。",
+          "score": 7.3
+        },
+        "open_source": {
+          "rationale": "官方仓库Apache-2.0，包含SDK、demo、测试、评测原始结果及重算脚本；依赖第三方Qwen开源基座，不把其权重冒充TinyDoc自研权重。数据使用须分别遵守SROIE及第三方许可。",
+          "score": 9.2
+        },
+        "reproducibility": {
+          "rationale": "README给出pip与Ollama运行命令、同一100张SROIE清洁集的配对比较和结果重算脚本；2B/3B可进行局部CPU/单卡推理，但RTX3080实测未进行，部分数据可能预训练污染且多页样本仅10份。",
+          "score": 8.6
+        },
+        "research_potential": {
+          "rationale": "可针对证据覆盖与正确性、字段置信度校准、中文跨页票据、异常检测、延迟成本建立清晰消融实验，具备文档理解与财务自动化场景价值；真实供应商数据尚需外部验证。",
+          "score": 8.6
+        }
+      },
+      "evidence_urls": [
+        "https://github.com/eulogik/TinyDoc-VLM",
+        "https://github.com/eulogik/TinyDoc-VLM/blob/main/README.md",
+        "https://github.com/eulogik/TinyDoc-VLM/blob/main/docs/BENCHMARKS.md",
+        "https://github.com/eulogik/TinyDoc-VLM/blob/main/LICENSE",
+        "https://github.com/eulogik/TinyDoc-VLM/blob/main/evaluation/phase0/recompute_scores.py"
+      ],
+      "gpu_requirement": "Ollama本地运行；仓库报告在Apple M4上完成2B/3B推理，NVIDIA RTX 3080 10GB的显存峰值与延迟未核实。",
+      "parameters": "当前有效推理基座为Qwen3-VL-2B-Instruct（2B）或Qwen2.5-VL-3B（3B），均非TinyDoc自研；已退役第一方256M checkpoint不作为有效性能模型。",
+      "research_opportunity": "以自有去重的中文票据和长文档为盲测集，研究字段级证据定位正确率、校准后置信度、错误拒答、跨页表格行项目幻觉与人机协同审核；对比OCR-only、2B VLM、OCR+VLM在质量/时延/显存上的帕累托边界，并与MVAI DocTags并行评测。",
+      "screened_at": "2026-11-09T01:00:22.278Z",
+      "selection_status": "recommended",
+      "summary": "TinyDoc当前是基于Ollama运行Qwen3-VL-2B-Instruct或Qwen2.5-VL-3B的本地票据结构化抽取SDK，结合RapidOCR证据片段/坐标、JSON schema校验与字段级置信度及人工复核。其自研256M checkpoint已因OCRBench严格得分0%退役，不能当作有效小模型成果。",
+      "title": "eulogik/TinyDoc-VLM",
+      "top3_selected_at": "2026-11-09T01:00:22.278Z",
+      "training_code_open": null,
+      "value_score": 8.36,
+      "weights_open": true,
+      "why_selected": "官方Apache-2.0代码、SDK使用说明、测试、可重算的SROIE和发票评测记录齐全，并主动披露SROIE公开训练集污染、真实发票未测和多页幻觉问题；可用2B基座开展低成本、可证伪的证据可靠性研究，优于单纯展示未经验证的OCR准确率。"
+    },
+    {
       "_report_generated": "2026-10-26T01:05:33.980Z",
       "_report_type": "weekly",
       "_scoring_source": "四维科研价值评价",
@@ -85,55 +130,10 @@
       "value_score": 8.33,
       "weights_open": null,
       "why_selected": "论文、官方评测代码和HF数据集均已核实，页面图像、OCR和证据页标注可用于可重复的跨页RAG研究；研究价值集中在多模态证据定位，而不是单纯扩展上下文窗口。"
-    },
-    {
-      "_report_generated": "2026-10-26T01:05:33.980Z",
-      "_report_type": "weekly",
-      "_scoring_source": "四维科研价值评价",
-      "candidate_id": "arxiv-2602-22779",
-      "confidence": "medium",
-      "data_open": null,
-      "evaluation_dimensions": {
-        "innovation": {
-          "rationale": "论文提出与下游目标联合训练的时空轨迹聚合，绕开外部显式分割跟踪流水线，并允许动态token粒度，兼具方法新意与长视频可扩展性。",
-          "score": 8.8
-        },
-        "open_source": {
-          "rationale": "官方GitHub以Apache-2.0发布分割器、TrajViT-v2和TrajVLM训练/评测代码；HF有前两者权重，但TrajVLM README明确称完整checkpoint仍待发布，混合训练语料并非全部可核验。",
-          "score": 8
-        },
-        "reproducibility": {
-          "rationale": "分割器和小规模TrajViT-v2可做局部推理/评测；官方模型卡记录分割器预训练2节点×8 H100、TrajVLM预训练同级资源，完整训练不适合单卡高校复现。",
-          "score": 6.2
-        },
-        "research_potential": {
-          "rationale": "轨迹token与低成本VLM结合可形成跨帧一致性、对象粒度自适应、视频时序定位和计算预算控制等多个可证伪研究课题。",
-          "score": 9
-        }
-      },
-      "evidence_urls": [
-        "https://arxiv.org/abs/2602.22779v4",
-        "https://github.com/hellomuffin/trajtok",
-        "https://github.com/hellomuffin/trajtok/blob/main/trajvlm/README.md",
-        "https://huggingface.co/michaelzch001/trajtok-segmenter",
-        "https://huggingface.co/michaelzch001/trajtok-trajvitv2"
-      ],
-      "gpu_requirement": "官方分割器预训练为2节点×8 H100 80GB；TrajVLM预训练亦为2节点×8 H100。单GPU推理的显存下限尚未实测。",
-      "parameters": null,
-      "research_opportunity": "以已发布约59M参数分割器为起点，比较固定patch、均匀帧采样和轨迹token在短视频问答及目标持续跟踪中的准确率、token数、峰值显存与端到端延迟；优先做冻结骨干/轻量连接器而非16张H100级全量预训练。",
-      "screened_at": "2026-10-26T01:02:44.619Z",
-      "selection_status": "recommended",
-      "summary": "TrajTok以可学习的时空轨迹token替代密集patch token，发布分割器、TrajViT-v2实验权重及TrajVLM训练代码，探索长视频中语义结构与token预算的联合优化；原始论文早于本周，本周队列因版本更新再次纳入。",
-      "title": "TrajTok: Learning Trajectory Tokens enables better Video Understanding",
-      "top3_selected_at": "2026-10-26T01:05:33.980Z",
-      "training_code_open": true,
-      "value_score": 7.99,
-      "weights_open": true,
-      "why_selected": "官方Apache-2.0代码和HF分割器、TrajViT-v2模型卡提供可核对的结构、训练配置与局部权重；其轨迹token思想与0.5B–4B视频理解研究方向高度吻合，但完整TrajVLM权重尚未发布，不能宣称全流程低成本复现。"
     }
   ],
-  "last_evaluated_report_at": "2026-10-26T01:05:33.980Z",
+  "last_evaluated_report_at": "2026-11-09T01:00:22.278Z",
   "policy": "replace-only-if-strictly-higher",
   "schema_version": 1,
-  "updated_at": "2026-11-01T02:56:00+00:00"
+  "updated_at": "2026-11-16T01:02:47+00:00"
 }
