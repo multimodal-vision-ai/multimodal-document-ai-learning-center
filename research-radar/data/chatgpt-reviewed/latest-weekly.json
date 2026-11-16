@@ -2,53 +2,54 @@
   "schema_version": 1,
   "screening_schema_version": 2,
   "report_type": "weekly",
-  "report_title": "2026年第46周｜文档证据溯源与小模型科研周报",
+  "report_title": "2026年第47周｜小型视觉文档检索与低成本蒸馏科研周报",
   "first_stage_threshold": 8,
   "status": "completed",
-  "generated_at": "2026-11-09T01:00:22.278Z",
-  "window_start": "2026-11-02",
-  "window_end": "2026-11-09",
-  "collection_generated_at": "2026-11-09T00:59:19+00:00",
-  "summary": "第46周唯一公开源采集于2026-11-09 00:59 UTC完成：本轮122条新线索，arXiv 60、GitHub 38、Hugging Face 24、OpenReview 0；没有报告源访问失败，但OpenReview零结果应视为覆盖不足。持久化队列16条match_score≥8.0候选。依据原始论文、仓库代码、许可、测试与评测记录二次核查，严格择优仅推荐TinyDoc-VLM的证据溯源式结构化抽取工程（不是其已失败并退役的256M模型）。V-LUMEN论文虽有创新但所指官方GitHub当前仅.gitignore，不能认定代码已开源；其他候选因原创性、数据/训练可核验性或资源成本不足暂不推荐。评分是研究优先级判断，未进行本地GPU实测。",
+  "generated_at": "2026-11-16T01:04:15.471Z",
+  "window_start": "2026-11-09",
+  "window_end": "2026-11-16",
+  "collection_generated_at": "2026-11-16T01:02:46+00:00",
+  "summary": "2026年第47周唯一公开源采集于11月16日01:02:46 UTC完成：本次65条线索（GitHub 35、Hugging Face 23、OpenReview 7），arXiv双域名HTTP 429导致该来源本轮缺失；去重后持久化8条match_score≥8候选。逐项核查官方仓库和核心方法证据，仅推荐NanoVDR的69M非对称视觉文档检索蒸馏方案；其论文发表于2026年3月、8月更新，本周为代码库近期活动，绝非本周新发表论文。已推荐的TinyDoc本周重复入队，不作为新发现；NVIDIA VSS是硬件要求较高的系统参考，SpectraRAG公开承认其检索基线只是启发式和旧评测不可复现；其他项目在科研创新、复现成本或证据完整性方面不满足推荐标准。评分为研究优先级判断，尚未在本地RTX3080复测。由于arXiv来源失败，本周不代表完整论文覆盖。",
   "items": [
     {
-      "candidate_id": "github-1273114971",
-      "title": "eulogik/TinyDoc-VLM",
+      "candidate_id": "github-1330645936",
+      "title": "Ryenhails/NanoVDR",
       "selection_status": "recommended",
-      "screened_at": "2026-11-09T01:00:22.278Z",
-      "summary": "TinyDoc当前是基于Ollama运行Qwen3-VL-2B-Instruct或Qwen2.5-VL-3B的本地票据结构化抽取SDK，结合RapidOCR证据片段/坐标、JSON schema校验与字段级置信度及人工复核。其自研256M checkpoint已因OCRBench严格得分0%退役，不能当作有效小模型成果。",
-      "why_selected": "官方Apache-2.0代码、SDK使用说明、测试、可重算的SROIE和发票评测记录齐全，并主动披露SROIE公开训练集污染、真实发票未测和多页幻觉问题；可用2B基座开展低成本、可证伪的证据可靠性研究，优于单纯展示未经验证的OCR准确率。",
-      "research_opportunity": "以自有去重的中文票据和长文档为盲测集，研究字段级证据定位正确率、校准后置信度、错误拒答、跨页表格行项目幻觉与人机协同审核；对比OCR-only、2B VLM、OCR+VLM在质量/时延/显存上的帕累托边界，并与MVAI DocTags并行评测。",
+      "screened_at": "2026-11-16T01:04:15.471Z",
+      "summary": "NanoVDR以冻结的Qwen3-VL-Embedding-2B离线索引文档图像，用69M DistilBERT文本学生在同一2048维嵌入空间编码查询；通过教师查询向量余弦蒸馏，无需文档标注或负样本挖掘。论文在22个ViDoRe子数据集上报告95.1%教师质量保留和单线程CPU查询51毫秒，属作者评测结果，尚未独立复现。",
+      "why_selected": "官方EMNLP 2026论文、MIT仓库、Apache-2.0模型卡、训练脚本和配置、ViDoRe评测驱动与发布权重可交叉核查。对高校特别适合用少量PDF页构建教师离线索引，再用69M学生做CPU在线查询，量化准确率、速度、索引存储与跨语言迁移。相比同批其他候选，方法创新和可检验性更强。",
+      "research_opportunity": "基于DocTags解析页面及中文扫描件，验证中文查询迁移、版面复杂度与OCR错误对视觉检索的影响；比较BM25、OCR文本嵌入、Qwen3-VL-Embedding-2B教师和NanoVDR学生的NDCG@5、Recall@5、查询延迟及建库显存，设计少样本中文查询蒸馏和不确定性拒答实验。必须保持教师/学生向量空间与维度一致，控制页面切分和训练集泄漏。",
       "evaluation_dimensions": {
         "innovation": {
-          "score": 7.3,
-          "rationale": "主要贡献是可检查OCR span、字段置信度、校验与人工审核的可信抽取闭环，而非新的视觉编码器或256M基础模型；作者公开承认256M模型OCRBench为0%，故方法创新分适度扣减。"
+          "score": 8.6,
+          "rationale": "论文揭示文档图像离线编码与短文本在线查询的非对称性，利用仅查询侧的点对点余弦嵌入蒸馏替代对比式负采样；论文比较六种目标、三种骨干与22个ViDoRe数据集，方法明确且有消融。不是本周新论文，亦不应将教师2B参数冒充学生规模。"
         },
         "open_source": {
-          "score": 9.2,
-          "rationale": "官方仓库Apache-2.0，包含SDK、demo、测试、评测原始结果及重算脚本；依赖第三方Qwen开源基座，不把其权重冒充TinyDoc自研权重。数据使用须分别遵守SROIE及第三方许可。"
+          "score": 9.1,
+          "rationale": "官方GitHub仓库MIT许可证，提供nanovdr/训练与评测代码、配置和测试；HF发布69M权重且模型卡标明Apache-2.0。README链接公开训练数据集，但本轮未能独立打开数据仓库，数据实际可下载性仍待确认；教师Qwen模型有独立使用条款。"
         },
         "reproducibility": {
-          "score": 8.6,
-          "rationale": "README给出pip与Ollama运行命令、同一100张SROIE清洁集的配对比较和结果重算脚本；2B/3B可进行局部CPU/单卡推理，但RTX3080实测未进行，部分数据可能预训练污染且多页样本仅10份。"
+          "score": 8.3,
+          "rationale": "发布SentenceTransformer即用权重、精确模型命名/维度配对规则、评测驱动和训练命令。69M查询侧可CPU运行，但必须先由2B教师GPU离线编码文档；论文报告学生训练低于13 GPU小时，模型卡列1张H200约10小时训练与1小时缓存，不等于RTX3080可完整复训。小样本推理与消融可行，未实际本机跑分。"
         },
         "research_potential": {
-          "score": 8.6,
-          "rationale": "可针对证据覆盖与正确性、字段置信度校准、中文跨页票据、异常检测、延迟成本建立清晰消融实验，具备文档理解与财务自动化场景价值；真实供应商数据尚需外部验证。"
+          "score": 9,
+          "rationale": "中文及非拉丁文字不在官方六语言验证范围，适合研究跨语言蒸馏、复杂版面检索、页面分块、证据定位与轻量视觉索引；可与现有DocTags、文档RAG系统构成可量化研究闭环。潜在应用包括企业合同、票据、档案和知识库检索，但需中文真实数据盲测。"
         }
       },
       "confidence": "high",
       "evidence_urls": [
-        "https://github.com/eulogik/TinyDoc-VLM",
-        "https://github.com/eulogik/TinyDoc-VLM/blob/main/README.md",
-        "https://github.com/eulogik/TinyDoc-VLM/blob/main/docs/BENCHMARKS.md",
-        "https://github.com/eulogik/TinyDoc-VLM/blob/main/LICENSE",
-        "https://github.com/eulogik/TinyDoc-VLM/blob/main/evaluation/phase0/recompute_scores.py"
+        "https://github.com/Ryenhails/NanoVDR",
+        "https://arxiv.org/abs/2603.12824",
+        "https://github.com/Ryenhails/NanoVDR/blob/main/docs/nanovdr-q.md",
+        "https://huggingface.co/nanovdr/NanoVDR-Q-DistilBERT-Qwen3VL2B-2048-ML",
+        "https://github.com/Ryenhails/NanoVDR/blob/main/LICENSE",
+        "https://github.com/Ryenhails/NanoVDR/blob/main/configs/query/distilbert_8b.yaml"
       ],
-      "parameters": "当前有效推理基座为Qwen3-VL-2B-Instruct（2B）或Qwen2.5-VL-3B（3B），均非TinyDoc自研；已退役第一方256M checkpoint不作为有效性能模型。",
-      "gpu_requirement": "Ollama本地运行；仓库报告在Apple M4上完成2B/3B推理，NVIDIA RTX 3080 10GB的显存峰值与延迟未核实。",
+      "parameters": "69M查询编码学生；文档离线索引教师Qwen3-VL-Embedding-2B（2B），不能混为同一个模型。",
+      "gpu_requirement": "已发布69M学生CPU查询，官方报告单线程51ms；文档图像离线索引需要GPU运行2B教师；完整学生训练官方使用1×H200约10 GPU小时加缓存约1小时，RTX3080显存与速度未实测。",
       "weights_open": true,
-      "training_code_open": null,
+      "training_code_open": true,
       "data_open": null
     }
   ]
