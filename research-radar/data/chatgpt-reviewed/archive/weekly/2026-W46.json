@@ -1,0 +1,88 @@
+{
+  "_screening_queue": {
+    "candidates": [
+      {
+        "abstract": "",
+        "category": "document",
+        "description": "Efficient visual document retrieval: NanoVDR, DistilVDR and ColNanoVDR. Small query and document encoders distilled from frozen VLM retrievers.",
+        "discovered_from": "github",
+        "event_at": "2026-11-09T15:12:12+00:00",
+        "event_label": "代码库近期提交",
+        "github_license": "MIT",
+        "github_stars": 9,
+        "github_url": "https://github.com/Ryenhails/NanoVDR",
+        "hf_downloads": null,
+        "huggingface_url": null,
+        "id": "github-1330645936",
+        "match_reasons": [
+          "来源：GitHub",
+          "主题：文档理解",
+          "主题：多模态小模型",
+          "方法关键词：高效化 / 压缩 / 低成本训练",
+          "仓库提供许可证元数据"
+        ],
+        "match_score": 8.0,
+        "paper_url": null,
+        "pdf_url": null,
+        "priority_tier": 3,
+        "published_at": "2026-08-11T07:53:23Z",
+        "source_url": "https://github.com/Ryenhails/NanoVDR",
+        "title": "Ryenhails/NanoVDR"
+      }
+    ]
+  },
+  "collection_generated_at": "2026-11-16T01:02:46+00:00",
+  "first_stage_threshold": 8,
+  "generated_at": "2026-11-16T01:04:15.471Z",
+  "items": [
+    {
+      "candidate_id": "github-1330645936",
+      "confidence": "high",
+      "data_open": null,
+      "evaluation_dimensions": {
+        "innovation": {
+          "rationale": "论文揭示文档图像离线编码与短文本在线查询的非对称性，利用仅查询侧的点对点余弦嵌入蒸馏替代对比式负采样；论文比较六种目标、三种骨干与22个ViDoRe数据集，方法明确且有消融。不是本周新论文，亦不应将教师2B参数冒充学生规模。",
+          "score": 8.6
+        },
+        "open_source": {
+          "rationale": "官方GitHub仓库MIT许可证，提供nanovdr/训练与评测代码、配置和测试；HF发布69M权重且模型卡标明Apache-2.0。README链接公开训练数据集，但本轮未能独立打开数据仓库，数据实际可下载性仍待确认；教师Qwen模型有独立使用条款。",
+          "score": 9.1
+        },
+        "reproducibility": {
+          "rationale": "发布SentenceTransformer即用权重、精确模型命名/维度配对规则、评测驱动和训练命令。69M查询侧可CPU运行，但必须先由2B教师GPU离线编码文档；论文报告学生训练低于13 GPU小时，模型卡列1张H200约10小时训练与1小时缓存，不等于RTX3080可完整复训。小样本推理与消融可行，未实际本机跑分。",
+          "score": 8.3
+        },
+        "research_potential": {
+          "rationale": "中文及非拉丁文字不在官方六语言验证范围，适合研究跨语言蒸馏、复杂版面检索、页面分块、证据定位与轻量视觉索引；可与现有DocTags、文档RAG系统构成可量化研究闭环。潜在应用包括企业合同、票据、档案和知识库检索，但需中文真实数据盲测。",
+          "score": 9
+        }
+      },
+      "evidence_urls": [
+        "https://github.com/Ryenhails/NanoVDR",
+        "https://arxiv.org/abs/2603.12824",
+        "https://github.com/Ryenhails/NanoVDR/blob/main/docs/nanovdr-q.md",
+        "https://huggingface.co/nanovdr/NanoVDR-Q-DistilBERT-Qwen3VL2B-2048-ML",
+        "https://github.com/Ryenhails/NanoVDR/blob/main/LICENSE",
+        "https://github.com/Ryenhails/NanoVDR/blob/main/configs/query/distilbert_8b.yaml"
+      ],
+      "gpu_requirement": "已发布69M学生CPU查询，官方报告单线程51ms；文档图像离线索引需要GPU运行2B教师；完整学生训练官方使用1×H200约10 GPU小时加缓存约1小时，RTX3080显存与速度未实测。",
+      "parameters": "69M查询编码学生；文档离线索引教师Qwen3-VL-Embedding-2B（2B），不能混为同一个模型。",
+      "research_opportunity": "基于DocTags解析页面及中文扫描件，验证中文查询迁移、版面复杂度与OCR错误对视觉检索的影响；比较BM25、OCR文本嵌入、Qwen3-VL-Embedding-2B教师和NanoVDR学生的NDCG@5、Recall@5、查询延迟及建库显存，设计少样本中文查询蒸馏和不确定性拒答实验。必须保持教师/学生向量空间与维度一致，控制页面切分和训练集泄漏。",
+      "screened_at": "2026-11-16T01:04:15.471Z",
+      "selection_status": "recommended",
+      "summary": "NanoVDR以冻结的Qwen3-VL-Embedding-2B离线索引文档图像，用69M DistilBERT文本学生在同一2048维嵌入空间编码查询；通过教师查询向量余弦蒸馏，无需文档标注或负样本挖掘。论文在22个ViDoRe子数据集上报告95.1%教师质量保留和单线程CPU查询51毫秒，属作者评测结果，尚未独立复现。",
+      "title": "Ryenhails/NanoVDR",
+      "training_code_open": true,
+      "weights_open": true,
+      "why_selected": "官方EMNLP 2026论文、MIT仓库、Apache-2.0模型卡、训练脚本和配置、ViDoRe评测驱动与发布权重可交叉核查。对高校特别适合用少量PDF页构建教师离线索引，再用69M学生做CPU在线查询，量化准确率、速度、索引存储与跨语言迁移。相比同批其他候选，方法创新和可检验性更强。"
+    }
+  ],
+  "report_title": "2026年第47周｜小型视觉文档检索与低成本蒸馏科研周报",
+  "report_type": "weekly",
+  "schema_version": 1,
+  "screening_schema_version": 2,
+  "status": "completed",
+  "summary": "2026年第47周唯一公开源采集于11月16日01:02:46 UTC完成：本次65条线索（GitHub 35、Hugging Face 23、OpenReview 7），arXiv双域名HTTP 429导致该来源本轮缺失；去重后持久化8条match_score≥8候选。逐项核查官方仓库和核心方法证据，仅推荐NanoVDR的69M非对称视觉文档检索蒸馏方案；其论文发表于2026年3月、8月更新，本周为代码库近期活动，绝非本周新发表论文。已推荐的TinyDoc本周重复入队，不作为新发现；NVIDIA VSS是硬件要求较高的系统参考，SpectraRAG公开承认其检索基线只是启发式和旧评测不可复现；其他项目在科研创新、复现成本或证据完整性方面不满足推荐标准。评分为研究优先级判断，尚未在本地RTX3080复测。由于arXiv来源失败，本周不代表完整论文覆盖。",
+  "window_end": "2026-11-16",
+  "window_start": "2026-11-09"
+}
