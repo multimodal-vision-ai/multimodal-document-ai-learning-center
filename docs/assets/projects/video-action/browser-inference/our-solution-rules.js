@@ -1,7 +1,7 @@
 // Prototype rules consume actual observations only, never clip names/reference labels.
 export const ACTION_LABELS={
  'Using Phone':'用手机','Smoking':'抽烟','Eating':'吃东西','Hula Hooping':'呼啦圈',
- 'Waving Hand':'挥手','Falling Down':'摔倒','Sleeping Posture':'睡觉姿态',
+ 'Waving Hand':'挥手','Falling Down':'摔倒','Sleeping Posture':'睡觉',
  'Jogging':'慢跑','Yoga':'瑜伽','Push Up':'俯卧撑','Situp':'仰卧起坐','Dancing Ballet':'芭蕾舞'
 };
 export const CLASS_MAP={'smoking':'Smoking','tasting food':'Eating','hula hooping':'Hula Hooping',

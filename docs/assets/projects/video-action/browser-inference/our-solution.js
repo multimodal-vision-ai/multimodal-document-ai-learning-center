@@ -1,6 +1,8 @@
 import {seekVideo} from './continuous-movinet.js';
 import {ACTION_LABELS,CLASS_MAP,softmax,clipDecision,spatialDecision} from './our-solution-rules.js';
 import {recheckSeconds,heldPoint,createSceneProbe} from './our-solution-cadence.js';
+import {scanSurveillance} from './our-solution-realtime.js';
+import {mergeSurveillanceTimeline} from './our-solution-surveillance.js';
 const ORT='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.24.3/dist/ort.wasm.min.mjs';
 const VISION='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.0/vision_bundle.mjs';
 const WASM='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.0/wasm';
@@ -70,6 +72,15 @@ function decodeDetections(data,dims,scale,ox,oy,width,height){
  const p=people[0];
  return {personBox:p?{originX:p.x,originY:p.y,width:p.width,height:p.height}:null,phones:candidates.filter(x=>x.kind==='phone')};
 }
+function readDetectionPixels(ctx,input){
+ const data=ctx.getImageData(0,0,960,960).data,plane=960*960;
+ for(let i=0,pixel=0;i<plane;i++,pixel+=4){
+  input[i]=data[pixel]/255;
+  input[plane+i]=data[pixel+1]/255;
+  input[2*plane+i]=data[pixel+2]/255;
+ }
+}
+
 async function analyzeGeometry(video,entry,signal,onProgress,adaptive,stats){
  const setupStarted=performance.now();
  const g=await loadGeometry(entry,signal,onProgress),canvas=document.createElement('canvas');canvas.width=canvas.height=960;
@@ -79,6 +90,7 @@ async function analyzeGeometry(video,entry,signal,onProgress,adaptive,stats){
  handTask=await g.HandLandmarker.createFromOptions(g.fileset,{baseOptions:{modelAssetPath:HAND,delegate:'CPU'},runningMode:'VIDEO',numHands:2});
  stats.geometrySetupMs=Math.round(performance.now()-setupStarted);
  const ctx=canvas.getContext('2d',{willReadFrequently:true}),rows=[],holds=[],w=video.videoWidth,h=video.videoHeight;
+ const input=new Float32Array(3*960*960);
  const probe=createSceneProbe(video,seekVideo,signal,stats);let skipObjectsUntil=-Infinity;
  const scale=960/Math.max(w,h),nw=Math.round(w*scale),nh=Math.round(h*scale),ox=Math.floor((960-nw)/2),oy=Math.floor((960-nh)/2);
  const map=p=>({x:(p.x*960-ox)/scale,y:(p.y*960-oy)/scale,visibility:p.visibility??1});
@@ -91,8 +103,7 @@ async function analyzeGeometry(video,entry,signal,onProgress,adaptive,stats){
   let det={personBox:null,phones:[]},phoneDetectionSource='skipped';
   const skipObjects=adaptive&&t<skipObjectsUntil;
   if(!skipObjects){
-   const rgba=ctx.getImageData(0,0,960,960).data,input=new Float32Array(3*960*960);
-   for(let i=0;i<960*960;i++)for(let c=0;c<3;c++)input[c*960*960+i]=rgba[i*4+c]/255;
+   readDetectionPixels(ctx,input);
    const output=await g.yolo.run({[g.yolo.inputNames[0]]:new entry.ort.Tensor('float32',input,[1,3,960,960])});abort(signal);stats.objectRuns++;
    const tensor=output[g.yolo.outputNames[0]];det=decodeDetections(tensor.data,tensor.dims,scale,ox,oy,w,h);
    phoneDetectionSource=det.phones.length?'full_frame':'missing';
@@ -108,9 +119,8 @@ async function analyzeGeometry(video,entry,signal,onProgress,adaptive,stats){
      const rw=Math.min(w,Math.ceil(Math.max(...xs)+margin))-rx,rh=Math.min(h,Math.ceil(Math.max(...ys)+margin))-ry;
      const rs=960/Math.max(rw,rh),cw=Math.round(rw*rs),ch=Math.round(rh*rs),px=Math.floor((960-cw)/2),py=Math.floor((960-ch)/2);
      ctx.fillRect(0,0,960,960);ctx.drawImage(video,rx,ry,rw,rh,px,py,cw,ch);
-     const crop=ctx.getImageData(0,0,960,960).data,cropInput=new Float32Array(3*960*960);
-     for(let i=0;i<960*960;i++)for(let c=0;c<3;c++)cropInput[c*960*960+i]=crop[i*4+c]/255;
-     const extra=await g.yolo.run({[g.yolo.inputNames[0]]:new entry.ort.Tensor('float32',cropInput,[1,3,960,960])});abort(signal);stats.objectRuns++;stats.phoneRoiRuns++;
+     readDetectionPixels(ctx,input);
+     const extra=await g.yolo.run({[g.yolo.inputNames[0]]:new entry.ort.Tensor('float32',input,[1,3,960,960])});abort(signal);stats.objectRuns++;stats.phoneRoiRuns++;
      const data=extra[g.yolo.outputNames[0]],found=decodeDetections(data.data,data.dims,rs,px,py,rw,rh);
      det.phones=found.phones.map(p=>({...p,x:p.x+rx,y:p.y+ry}));
      if(det.phones.length)phoneDetectionSource='hand_roi';
@@ -138,7 +148,7 @@ async function analyzeGeometry(video,entry,signal,onProgress,adaptive,stats){
  return {rows,holds};
  }finally{poseTask.close();handTask?.close()}
 }
-export async function analyzeOurSolution({video,signal,onProgress=()=>{},adaptive=true}){
+export async function analyzeOurSolution({video,signal,onProgress=()=>{},adaptive=true,surveillance=false}){
  if(!(video.duration>0&&video.videoWidth>0))throw Error('请先加载可解码视频');
  const began=performance.now(),entry=await loadOurSolution({signal,onProgress}),modelSetupMs=Math.round(performance.now()-began);
  const canvas=document.createElement('canvas');canvas.width=canvas.height=182;const ctx=canvas.getContext('2d',{willReadFrequently:true});
@@ -172,9 +182,33 @@ export async function analyzeOurSolution({video,signal,onProgress=()=>{},adaptiv
  const points=decision.method==='x3d_clip_vote'?windows.map(w=>({t:w.t,windowEnd:w.windowEnd,label:w.action||'未识别',score:w.action?w.score:null,rule:false})):
  observations.map(o=>({t:o.t,windowEnd:Math.min(o.t+.5,video.duration),label:decision.times.some(t=>Math.abs(t-o.t)<.01)?action:'未识别',score:null,rule:!!action,personBox:o.personBox}));
  points.push(...holds);points.sort((a,b)=>a.t-b.t);
+ let surveillancePoints=[],surveillanceTrack=null,armSupport=[],surveillanceError=null;
+ if(surveillance){
+  try{
+   const scan=await scanSurveillance(video,{signal,onProgress});
+   surveillancePoints=scan.points;surveillanceTrack=scan.actorTrack;armSupport=scan.armSupport;
+  }
+  catch(error){abort(signal);surveillanceError=error.message}
+ }
+ // Wide-frame legacy detections can confuse background objects with a
+ // hand-held phone or a normal change of posture with a fall.
+ const verifiedActions=['Using Phone','Falling Down'];
+ const basePoints=surveillanceTrack?points.map(point=>verifiedActions.includes(point.label)?
+  {...point,label:'未识别',rule:false,score:null}:point):points;
+ const timeline=mergeSurveillanceTimeline(basePoints,surveillancePoints,armSupport);
+ if(surveillanceTrack&&(!action||!timeline.some(point=>point.label===action))){
+  const durationByAction=new Map();
+  for(const point of timeline)if(ACTION_LABELS[point.label]){
+   durationByAction.set(point.label,(durationByAction.get(point.label)||0)+point.windowEnd-point.t);
+  }
+  action=[...durationByAction].sort((a,b)=>b[1]-a[1])[0]?.[0]??null;
+  decision={method:'surveillance_timeline',evidence:timeline.filter(point=>point.label===action)};
+ }
  return {action,label:ACTION_LABELS[action]||'未识别',method:decision.method,evidence:decision.evidence||windows,
-  frameTop1:points,duration:video.duration,windows,observations,
-  actorTrack:observations.map(o=>({t:o.t,box:o.personBox})),needsPlaybackTracking:holds.length>0||observations.some(o=>o.objectsSkipped),
+  frameTop1:timeline,duration:video.duration,windows,observations,
+  surveillancePoints,surveillanceError,
+  actorTrack:surveillanceTrack??observations.map(o=>({t:o.t,box:o.personBox})),
+  needsPlaybackTracking:!surveillanceTrack&&(holds.length>0||observations.some(o=>o.objectsSkipped)||!observations.some(o=>o.personBox)),
   holds,performance:stats,
   buildId:OUR_SOLUTION_BUILD,modelSha256:entry.manifest.files['x3d_s.onnx'].sha256,framesProcessed:windows.length*13+observations.length,
   clipInferenceMs:Math.round(inferenceMs),totalMs:Math.round(performance.now()-began),runtime:'browser-wasm',sampleAnswerLookup:false};

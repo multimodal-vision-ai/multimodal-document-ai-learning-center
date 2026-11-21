@@ -1,4 +1,6 @@
 // Latest-frame scheduling: no decoded-video scan, seek loop, or inference backlog.
+import {seekVideo} from './continuous-movinet.js';
+import {isSurveillanceAction} from './our-solution-surveillance.js';
 let engine=null,loading=null;
 const CLIP_WINDOW_SECONDS=2.6;
 const SLEEP_DISPLAY_SECONDS=1.05;
@@ -7,21 +9,25 @@ const percentile=(a,p)=>a.length?[...a].sort((x,y)=>x-y)[Math.min(a.length-1,Mat
 export function resolveLivePoint(observation,windows,lastWaveAt,duration){
  const {t,assumed,observedAt,fallDisplayUntil}=observation;
  const native=windows.at(-1),previous=windows.at(-2);
- const spatial=observation.action==='Sleeping Posture'&&!native?null:observation.action;
+ const enhanced=observation.enhancedAction===observation.action&&
+  (observation.action==='Push Up'||isSurveillanceAction(observation.action));
+ const spatial=observation.action==='Sleeping Posture'&&!native&&!enhanced?null:observation.action;
  // A single ballet prediction can mistake raised arms for dance. Overlapping wave
  // evidence requires corroboration from the preceding dance window.
  const repeatedBallet=previous?.action==='Dancing Ballet'&&previous.score>=.65&&
    native?.score>=.65&&native.t-previous.t<=CLIP_WINDOW_SECONDS;
  const ambiguousBallet=native?.action==='Dancing Ballet'&&!repeatedBallet&&
    (native.score<.8||lastWaveAt>=native.t-CLIP_WINDOW_SECONDS);
- const temporal=spatial!=='Falling Down'&&native?.action&&!ambiguousBallet&&
-   t>=native.t&&t-native.t<=CLIP_WINDOW_SECONDS&&(native.score>=.65||spatial!=='Using Phone')?native:null;
+ const temporal=spatial!=='Falling Down'&&!(enhanced&&spatial==='Push Up'&&native?.action!=='Push Up')&&native?.action&&!ambiguousBallet&&
+   t>=native.t&&t-native.t<=CLIP_WINDOW_SECONDS&&(native.score>=.65||spatial!=='Using Phone')&&
+   !(enhanced&&isSurveillanceAction(native.action)&&native.action!==spatial)?native:null;
  const action=temporal?.action||spatial||null;
  // A stable posture may remain visible while waiting for the next observation.
  // A newer observation always supersedes this window, including an unknown label.
- const displaySeconds=action==='Sleeping Posture'?SLEEP_DISPLAY_SECONDS:temporal?1:.45;
+ const displaySeconds=action==='Sleeping Posture'?SLEEP_DISPLAY_SECONDS:temporal||enhanced?1:.45;
  const windowEnd=Math.min(duration,Math.max(t+displaySeconds,fallDisplayUntil??0));
- const heldDetail=action==='Falling Down'?'摔倒后持续观察':'短时沿用 · 上次手机检测 '+observedAt.toFixed(1)+'秒';
+ const heldDetail=action==='Falling Down'?'摔倒后持续观察':action==='Push Up'?'短时沿用 · 支撑姿态持续':
+  '短时沿用 · 上次手机检测 '+observedAt.toFixed(1)+'秒';
  return {t,windowEnd,label:action||'未识别',score:temporal?.score??null,
    rule:!temporal&&!!spatial&&!assumed,assumed:!temporal&&!!spatial&&!!assumed,observedAt,
    liveDetail:temporal?'近2.6秒片段 · 模型分数 '+(temporal.score*100).toFixed(1)+'%':assumed?heldDetail:'当前画面 · 轻量空间/姿态检测'};
@@ -60,7 +66,7 @@ export async function loadRealtime({onProgress=()=>{}}={}){
  try{return await loading}finally{loading=null}
 }
 
-export async function playRealtime({video,signal,onFrame=()=>{},onProgress=()=>{}}){
+export async function playRealtime({video,signal,onFrame=()=>{},onProgress=()=>{},surveillance=false}){
  const setup=performance.now(),e=await loadRealtime({onProgress});
  if(signal?.aborted)throw Error('用户取消');
  if(e.clipError)throw Error(e.clipError);
@@ -72,8 +78,8 @@ export async function playRealtime({video,signal,onFrame=()=>{},onProgress=()=>{
  const started=performance.now(),source=video.currentSrc;
  let resolveEnd,rejectEnd;const done=new Promise((resolve,reject)=>{resolveEnd=resolve;rejectEnd=reject});
  const reset=()=>{generation=++e.generation;frames=[];busy=false;clipBusy=false;firstHitMs=null;lastFrame=-1;lastClip=-1;lastRequest=lastWaveAt=-Infinity;
-  observations.length=0;nativeWindows.length=0;track.length=0;points.length=0;e.perception.postMessage({type:'reset',generation});onFrame({reset:true});};
- e.perception.postMessage({type:'reset',generation});
+  observations.length=0;nativeWindows.length=0;track.length=0;points.length=0;e.perception.postMessage({type:'reset',generation,surveillance});onFrame({reset:true});};
+ e.perception.postMessage({type:'reset',generation,surveillance});
  e.listener=(kind,m)=>{
   if(stopped)return;
   if(m.type==='error'){if(m.generation===undefined||m.generation===generation)rejectEnd(Error(m.message));return}
@@ -140,4 +146,59 @@ export async function playRealtime({video,signal,onFrame=()=>{},onProgress=()=>{
   if(video.cancelVideoFrameCallback)video.cancelVideoFrameCallback(token);else cancelAnimationFrame(token);
   video.removeEventListener('ended',ended);video.removeEventListener('seeking',reset);signal?.removeEventListener('abort',abort);
  }
+}
+
+export async function scanSurveillance(video,{signal,onProgress}){
+ const worker=new Worker(new URL('./our-solution-live-worker.js',import.meta.url));
+ const request=(message,expected,transfer=[])=>new Promise((resolve,reject)=>{
+  const finish=(callback,value)=>{
+   clearTimeout(timeout);signal?.removeEventListener('abort',cancel);
+   worker.onmessage=worker.onerror=null;callback(value);
+  };
+  const cancel=()=>finish(reject,Error('用户取消'));
+  const timeout=setTimeout(()=>finish(reject,Error('监控行为检测超时')),60000);
+  signal?.addEventListener('abort',cancel,{once:true});
+  if(signal?.aborted){cancel();return}
+  worker.onmessage=({data})=>{
+   if(data.type===expected)finish(resolve,data);
+   else if(data.type==='error')finish(reject,Error(data.message));
+  };
+  worker.onerror=e=>finish(reject,Error(e.message));
+  try{worker.postMessage(message,transfer)}catch(error){finish(reject,error)}
+ });
+ const points=[],actorTrack=[],armSupport=[];
+ let step=.5,retriedWeakPose=false;
+ const capture=document.createElement('canvas');
+ const factor=Math.min(1,640/video.videoWidth);
+ capture.width=Math.round(video.videoWidth*factor);
+ capture.height=Math.round(video.videoHeight*factor);
+ const ctx=capture.getContext('2d');
+ try{
+  await request({type:'init'},'ready');
+  worker.postMessage({type:'reset',generation:1,surveillance:true});
+  for(let t=0;t<video.duration-.025;t+=step){
+   onProgress('正在检测监控行为…',{current:t,total:video.duration});
+   await seekVideo(video,t,()=>signal?.aborted);
+   ctx.drawImage(video,0,0,capture.width,capture.height);
+   const bitmap=await createImageBitmap(capture);
+   let frame;
+   try{
+    frame=await request({type:'frame',generation:1,t,bitmap,width:video.videoWidth,height:video.videoHeight},'frame',[bitmap]);
+   }finally{bitmap.close()}
+   // Recheck weak pose evidence once between regular samples. Keep the
+   // tighter interval only while the worker is tracking the lower edge.
+   if(frame.personBox)retriedWeakPose=false;
+   const retry=frame.rawPoseLandmarks>0&&!frame.personBox&&!retriedWeakPose;
+   if(retry)retriedWeakPose=true;
+   step=frame.edgeRecovery||retry ? .25 : .5;
+   actorTrack.push({t,box:frame.personBox,source:frame.boxSource});
+   if(frame.armSupported)armSupport.push({t,windowEnd:Math.min(video.duration,t+step)});
+   if(frame.enhancedAction){
+    const assumed=frame.assumed&&frame.action===frame.enhancedAction;
+    points.push({t,windowEnd:Math.min(video.duration,t+step),label:frame.enhancedAction,score:null,
+     rule:!assumed,assumed,observedAt:assumed?frame.observedAt:t});
+   }
+  }
+  return {points,actorTrack,armSupport};
+ }finally{worker.terminate()}
 }
