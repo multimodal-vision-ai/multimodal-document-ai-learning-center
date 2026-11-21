@@ -21,6 +21,50 @@ export function boxIoU(a,b){
  const intersection=Math.max(0,right-x)*Math.max(0,bottom-y);
  return intersection/(a.width*a.height+b.width*b.height-intersection||1);
 }
+
+export function createSurveillancePersonGate(){
+ const width=96,height=54;
+ const canvas=new OffscreenCanvas(width,height);
+ const ctx=canvas.getContext('2d',{willReadFrequently:true});
+ let reference=null,referenceAt=-Infinity,lastBox=null,lastAcceptedAt=-Infinity,lastPoseAt=-Infinity;
+ let movingBox=null,movingAt=-Infinity;
+ return (bitmap,candidate,{t,poseBox,people=[]})=>{
+  ctx.drawImage(bitmap,0,0,width,height);
+  const pixels=ctx.getImageData(0,0,width,height).data;
+  const previous=t-referenceAt<=1.5?reference:null;
+  if(!previous||t-referenceAt>=.25){
+   reference=pixels;referenceAt=t;
+  }
+  const box=clampPersonBox(candidate,bitmap.width,bitmap.height);
+  if(!box)return false;
+  const corroborated=!!poseBox&&people.some(({box:detected,score})=>
+   score>=.5&&boxIoU(poseBox,detected)>=.25);
+  const tracked=boxIoU(lastBox,box)>=.22&&t-lastAcceptedAt<=1.5&&
+   (!!poseBox||t-lastPoseAt<=.8);
+  let moving=false;
+  if(previous){
+   const left=Math.floor(box.originX*width/bitmap.width),top=Math.floor(box.originY*height/bitmap.height);
+   const right=Math.ceil((box.originX+box.width)*width/bitmap.width);
+   const bottom=Math.ceil((box.originY+box.height)*height/bitmap.height);
+   let changed=0;
+   for(let y=top;y<bottom;y++)for(let x=left;x<right;x++){
+    const i=4*(y*width+x);
+    if(Math.max(Math.abs(pixels[i]-previous[i]),Math.abs(pixels[i+1]-previous[i+1]),
+     Math.abs(pixels[i+2]-previous[i+2]))>=18)changed++;
+   }
+   moving=changed>=Math.max(5,(right-left)*(bottom-top)*.07);
+  }
+  const sustainedMotion=moving&&t-movingAt<=1&&boxIoU(movingBox,box)>=.2;
+  if(moving){movingBox=box;movingAt=t}
+  // Detector-only boxes need repeated motion before starting a track.
+  // A continuous pose track can remain visible while the person stays still.
+  if(!(moving&&poseBox)&&!sustainedMotion&&!corroborated&&!tracked)return false;
+  lastBox=box;lastAcceptedAt=t;
+  if(poseBox)lastPoseAt=t;
+  return true;
+ };
+}
+
 export function chooseTrackedPerson(detections,w,h,lastBox){
  if(!lastBox){
    const x=choosePrimaryPerson(detections,w,h);

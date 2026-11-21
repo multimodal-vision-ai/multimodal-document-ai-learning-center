@@ -689,7 +689,7 @@ async function runOurLive(){
   $('evaluation').textContent='';personStatus('');
   $('results').textContent='等待当前动作…';$('metrics').replaceChildren();
   const setupMs=performance.now()-setupStarted;
-  const output=await playRealtime({video:dest,signal,onProgress:say,onFrame:frame=>{
+  const output=await playRealtime({video:dest,signal,onProgress:say,surveillance:!state.clip,onFrame:frame=>{
    if(signal.aborted)return;
    if(frame.reset){state.top1Timeline=[];state.actorTrack=[];$('results').textContent='等待当前动作…';clearPersonOverlay();return}
    state.top1Timeline.push(frame.point);state.actorTrack=frame.track;
@@ -714,10 +714,10 @@ async function runOur(){
  try{
   $('analysis-progress').hidden=false;
   $('analysis-progress').value=0;
-  const output=await analyzeOurSolution({video:$('video'),signal:state.activeController.signal,onProgress:(message,p)=>{say(message);if(p)$('analysis-progress').value=100*p.current/p.total}});
+  const output=await analyzeOurSolution({video:$('video'),signal:state.activeController.signal,surveillance:!state.clip,onProgress:(message,p)=>{say(message);if(p)$('analysis-progress').value=100*p.current/p.total}});
   if(state.cancelled)throw Error('用户取消');
   const trackingStarted=performance.now();
-  if(output.needsPlaybackTracking||!output.actorTrack.some(p=>p.box))output.actorTrack=await scanOurPlaybackActor($('video'),{anchorTrack:output.actorTrack,signal:state.activeController.signal,onProgress:(message,p)=>{say(message);if(p)$('analysis-progress').value=100*p.current/p.total}});
+  if(output.needsPlaybackTracking||!output.actorTrack.length)output.actorTrack=await scanOurPlaybackActor($('video'),{anchorTrack:output.actorTrack,signal:state.activeController.signal,onProgress:(message,p)=>{say(message);if(p)$('analysis-progress').value=100*p.current/p.total}});
   output.playbackTrackingMs=Math.round(performance.now()-trackingStarted);output.totalMs+=output.playbackTrackingMs;
   if(state.cancelled)throw Error('用户取消');
   state.actorTrack=output.actorTrack.length?output.actorTrack:null;
@@ -736,7 +736,7 @@ async function runOur(){
   saveOurComparison(output,runVideoKey);
   say('真实推理已返回：Our Solution · '+output.label+'。');
   return {ok:true,variant:'our_solution'};
- }catch(e){hideAnnotated();$('results').textContent='没有可展示的有效推理结果';say('真实推理未完成：'+e.message);record('inference_error',{variant:'our_solution',message:e.message});return {ok:false,error:e.message}}
+ }catch(e){const message=state.cancelled?'用户取消':e.message;hideAnnotated();$('results').textContent='没有可展示的有效推理结果';say('真实推理未完成：'+message);record('inference_error',{variant:'our_solution',message});return {ok:false,error:message}}
  finally{state.activeController=null;$('analysis-progress').hidden=true;setBusy(false)}
 }
 async function run(){if(state.selectedModel==='our_solution')return runOur();if(state.busy)return {ok:false,error:'已有推理正在进行'};const runVideoKey=state.videoKey;hideAnnotated();state.activeController=new AbortController();setBusy(true);const began=performance.now();let isContinuous=false,isWindowed=false;
