@@ -49,31 +49,40 @@ try:
    print("Browser exercises passed:",lab)
    if errors:raise AssertionError("JavaScript runtime errors: "+repr(errors))
   for lab in ("e01","e02"):
-   page.goto(f"{base}/notebook-student-v2.html?lab={lab}",wait_until="domcontentloaded",timeout=30000)
-   page.wait_for_function(
-     'document.querySelectorAll(".nb-figure img").length>=4',
-     timeout=35000
-   )
+   page.goto(f"{base}/{lab}-notebook.html",wait_until="domcontentloaded",timeout=30000)
+   page.wait_for_function('document.querySelectorAll(".nb-figure img").length>=9',timeout=65000)
    page.wait_for_function(
      'Array.from(document.querySelectorAll(".nb-figure img")).every(i=>i.complete&&i.naturalWidth>100)',
-     timeout=35000
+     timeout=65000
    )
    count=page.locator(".nb-figure img").count()
-   assert page.locator(".chapter").count()>=5, "Expected original-style notebook chapters"
+   assert page.locator(".chapter").count()>=6, "Missing exploration chapters"
+   task_count=sum(x.count("探索任务") for x in page.locator(".chapter").all_inner_texts())
+   assert task_count>=5,(lab,"missing exploratory Cells",task_count)
    collapsed=page.locator("details.code-cell")
-   assert collapsed.count()>=5, "Python code units should exist"
-   assert page.locator("details.code-cell[open]").count()==0, "Python source must be collapsed by default"
-   assert page.locator(".hero-img").is_visible(), "Missing approved Notebook hero photo"
+   assert collapsed.count()>=10,"Missing exploration Python code Cells"
+   assert page.locator("details.code-cell[open]").count()==0,"Python must be collapsed by default"
+   assert page.locator(".hero-img").is_visible(),"Course cover image missing"
    page.locator("details.code-cell summary").first.click()
-   assert page.locator("details.code-cell[open]").count()==1, "Click did not expand source"
+   assert page.locator("details.code-cell[open]").count()==1,"Source expand failed"
    page.locator("details.code-cell summary").first.click()
-   assert page.locator("details.code-cell[open]").count()==0, "Click did not re-collapse source"
+   assert page.locator("details.code-cell[open]").count()==0,"Source collapse failed"
    page.locator("#toggle-codes").click()
-   assert page.locator("details.code-cell[open]").count()==collapsed.count(), "Expand all did not expand all code"
+   assert page.locator("details.code-cell[open]").count()==collapsed.count(),"Expand all failed"
    page.locator("#toggle-codes").click()
-   assert page.locator("details.code-cell[open]").count()==0, "Collapse all did not collapse code"
-   page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/f"notebook-student-v2-{lab}.png"),full_page=True)
-   print("Approved-layout Notebook: ",lab,count,"rendered images; all code collapsed by default")
+   assert page.locator("details.code-cell[open]").count()==0,"Collapse all failed"
+   assert page.locator("#mode-study").is_visible(),"Notebook mode must be default"
+   page.locator("#downloadTab").click()
+   assert page.locator("#mode-practice").is_visible(),"03 local/Kaggle mode missing"
+   assert page.get_by_text("方式 A · 本地 Python / VS Code").is_visible()
+   assert page.get_by_text("方式 B · 在 Kaggle 运行").is_visible()
+   assert page.locator(f'#mode-practice a[href="downloads/MVAI_{lab.upper()}_Lab.zip"]').count()==2
+   assert page.locator(f'#mode-practice a[href="downloads/{"E01_Image_Processing_V2.0.ipynb" if lab=="e01" else "E02_Lane_Detection_V2.0.ipynb"}"]').count()==1
+   page.locator("#interactTab").click()
+   assert page.locator("#mode-interactive").is_visible(),"Embedded interactive mode missing"
+   assert page.locator("#lab-frame").get_attribute("data-lab")==lab,"Mixed E01/E02 resources"
+   page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/f"{lab}-three-modes.png"))
+   print("Independent approved notebook:",lab,"real plots",count,"exploratory Cells",task_count,"03 local/Kaggle OK")
   if errors: raise AssertionError("Page errors: "+repr(errors))
   browser.close()
 finally:
