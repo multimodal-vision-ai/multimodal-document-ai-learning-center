@@ -49,17 +49,31 @@ try:
    print("Browser exercises passed:",lab)
    if errors:raise AssertionError("JavaScript runtime errors: "+repr(errors))
   for lab in ("e01","e02"):
-   page.goto(f"{base}/notebook.html?lab={lab}",wait_until="domcontentloaded")
+   page.goto(f"{base}/notebook-student-v2.html?lab={lab}",wait_until="domcontentloaded",timeout=30000)
    page.wait_for_function(
-     'document.querySelectorAll(".results img").length>=4',
+     'document.querySelectorAll(".nb-figure img").length>=4',
      timeout=35000
    )
    page.wait_for_function(
-     'Array.from(document.querySelectorAll(".results img")).every(i=>i.complete&&i.naturalWidth>100)',
+     'Array.from(document.querySelectorAll(".nb-figure img")).every(i=>i.complete&&i.naturalWidth>100)',
      timeout=35000
    )
-   count=page.locator(".results img").count()
-   print("Notebook executed figure previews:",lab,count)
+   count=page.locator(".nb-figure img").count()
+   assert page.locator(".chapter").count()>=5, "Expected original-style notebook chapters"
+   collapsed=page.locator("details.code-cell")
+   assert collapsed.count()>=5, "Python code units should exist"
+   assert page.locator("details.code-cell[open]").count()==0, "Python source must be collapsed by default"
+   assert page.locator(".hero-img").is_visible(), "Missing approved Notebook hero photo"
+   page.locator("details.code-cell summary").first.click()
+   assert page.locator("details.code-cell[open]").count()==1, "Click did not expand source"
+   page.locator("details.code-cell summary").first.click()
+   assert page.locator("details.code-cell[open]").count()==0, "Click did not re-collapse source"
+   page.locator("#toggle-codes").click()
+   assert page.locator("details.code-cell[open]").count()==collapsed.count(), "Expand all did not expand all code"
+   page.locator("#toggle-codes").click()
+   assert page.locator("details.code-cell[open]").count()==0, "Collapse all did not collapse code"
+   page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/f"notebook-student-v2-{lab}.png"),full_page=True)
+   print("Approved-layout Notebook: ",lab,count,"rendered images; all code collapsed by default")
   if errors: raise AssertionError("Page errors: "+repr(errors))
   browser.close()
 finally:
