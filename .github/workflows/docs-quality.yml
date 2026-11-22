@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "docs/**"
+      - "scripts/course_labs/**"
       - "mkdocs.yml"
       - "requirements-docs.txt"
       - ".github/workflows/docs-quality.yml"
@@ -39,6 +40,10 @@ jobs:
         run: python scripts/kaggle/validate_doctags_pilot.py
       - name: Validate browser inference JavaScript and HF Space package
         run: python scripts/kaggle/validate_browser_doctags_pilot.py
+      - name: Stage E01/E02 public student learning assets
+        run: |
+          python scripts/course_labs/stage_resources.py
+          python scripts/course_labs/check_student.py
       - name: Validate navigation and internal links
         run: mkdocs build --strict
 
@@ -46,6 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Stage E01/E02 downloadable assets for link checks
+        run: python scripts/course_labs/stage_resources.py
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@v2
         with:
