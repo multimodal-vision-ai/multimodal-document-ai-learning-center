@@ -18,6 +18,18 @@ pre{margin:0;padding:20px;overflow:auto;background:#fbfcfe;font-size:12px;line-h
 .bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:18px 0}
 .button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:8px;background:var(--blue);color:#fff;font-size:13px;font-weight:750;padding:11px 16px}
 .button.light{background:#fff;border:1px solid #d8e2ee;color:#375d90}
+.hero{background:linear-gradient(115deg,#edf5fd,#fafcff);padding:27px max(18px,calc((100% - 1160px)/2));border-bottom:1px solid var(--line)}
+.hero h1{font-size:28px;margin:5px 0 8px}.hero .eyebrow{letter-spacing:1.7px;font-size:10px;color:#1769ae;font-weight:900}
+.hero p{font-size:13px;line-height:1.8;color:#5f778e}
+.tabs{background:white;border-bottom:1px solid var(--line);padding:0 max(18px,calc((100% - 1160px)/2));display:flex;gap:8px;flex-wrap:wrap}
+.tabs a{text-decoration:none;color:#59728b;font-size:13px;font-weight:800;padding:16px 14px;border-bottom:3px solid transparent}
+.tabs a.active{color:#1769ae;border-color:#1769ae}
+.book-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:18px;align-items:start}
+.book-toc{background:#fff;border:1px solid var(--line);padding:17px;border-radius:12px;position:sticky;top:15px;max-height:calc(100vh - 30px);overflow:auto}
+.book-toc h3{font-size:12px;color:#63829e;letter-spacing:.8px}
+.book-toc a{display:block;padding:9px 2px;border-bottom:1px solid #f0f4f8;font-size:12px;line-height:1.55;color:#486780;text-decoration:none}
+.book-toc a:hover{color:#1867af}
+@media(max-width:850px){.book-layout{grid-template-columns:1fr}.book-toc{position:static;max-height:220px}}
 .source{margin:0;background:#f7f9fc;border-bottom:1px solid var(--line)}.source summary{cursor:pointer;font-size:13px;color:#47647f;font-weight:700;padding:13px 18px;list-style:revert}.source pre{max-height:620px;background:#fbfcff}
 .results{padding:18px;background:white}.results h3{font-size:13px;font-weight:800;color:#326b9c;margin:0 0 12px}
 .results img{max-width:100%;width:auto;height:auto;display:block;border:1px solid #e7edf3;border-radius:7px;margin:0 auto 18px}
@@ -28,12 +40,13 @@ pre{margin:0;padding:20px;overflow:auto;background:#fbfcfe;font-size:12px;line-h
 </style></head>
 <body>
 <header><strong>MVAI Learning Center / 智能感知与自动驾驶技术</strong><a href="./index.html">返回课程首页</a></header>
-<main>
-<h1 id="title">Notebook 在线阅读</h1>
-<div class="intro">本页直接呈现 Notebook 的教学说明、Python 源码和真实执行结果。可以展开各段源码，再对照下方图像观察算法；如需修改 Python 代码，可下载 Notebook 在本地或 Kaggle 运行。</div>
-<div class="bar"><span id="status">读取 Notebook 中…</span><div><a class="button light" id="interact" href="interactive/index.html?lab=e02">浏览器交互实验</a> <a class="button" id="download" href="downloads/E02_Lane_Detection_V2.0.ipynb" download>下载 .ipynb</a></div></div>
-<section id="cells"></section>
-<footer>学生学习资料 · 教师备课与参考答案不在本网站公开</footer>
+<section class="hero"><div class="eyebrow">ONE NOTEBOOK · THREE LEARNING WAYS</div><h1 id="title">Notebook 在线学习</h1><p>阅读实验讲解、Python 源码和真实运行结果；修改参数时可使用浏览器演示，也可下载同一份 Notebook 在本地或 Kaggle 运行。</p></section>
+<nav class="tabs" aria-label="三种学习方式"><a class="active" href="#notebook">01 · 在线学习 Notebook</a><a id="interactTab" href="interactive/index.html?lab=e02">02 · 浏览器交互实验</a><a id="downloadTab" href="downloads/MVAI_E01_E02_Labs.zip">03 · 本地 / Kaggle 运行</a></nav>
+<main id="notebook">
+<div class="bar"><span id="status">读取 Notebook 中…</span><div><a class="button light" id="interact" href="interactive/index.html?lab=e02">在线交互</a> <a class="button" id="download" href="downloads/E02_Lane_Detection_V2.0.ipynb" download>下载 .ipynb</a></div></div>
+<div class="intro">以下图像由对应 Python/OpenCV Notebook 的代码真实执行后生成；本页不执行 Python。单击代码单元可展开源码，对照运行结果学习。</div>
+<div class="book-layout"><aside class="book-toc"><h3>NOTEBOOK 章节</h3><div id="toc"></div></aside><section id="cells"></section></div>
+<footer>MVAI Learning Center · 智能感知与自动驾驶技术 · 学生学习资源</footer>
 </main>
 <script>
 (function(){
@@ -43,6 +56,8 @@ const title=lab==="e01"?"E01 · 道路图像处理":"E02 · 传统车道线检�
 document.getElementById("title").textContent=title+" · 标准 Notebook";
 document.getElementById("download").href="downloads/"+name;
 document.getElementById("interact").href="interactive/index.html?lab="+lab;
+document.getElementById("interactTab").href="interactive/index.html?lab="+lab;
+document.getElementById("downloadTab").href="downloads/MVAI_E01_E02_Labs.zip";
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function markdown(s){
  return s.split(/\r?\n/).map(line=>{
@@ -92,6 +107,9 @@ fetch("downloads/"+name).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);ret
    if(hasOutput)box.append(rendered);
   }else{
    box.className="cell markdown";box.innerHTML=markdown(source);mdNumber++;
+   const m=source.match(/^##\s+([^\n]+)/m);
+   if(m){const id="chapter-"+mdNumber;box.id=id;
+    const a=document.createElement("a");a.href="#"+id;a.textContent=m[1].replace(/\*\*/g,"");document.getElementById("toc").append(a);}
   }
   target.appendChild(box);
  });
