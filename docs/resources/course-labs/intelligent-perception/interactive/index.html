@@ -151,7 +151,7 @@ function calc(data,kind,v){
  }
  return "";
 }
-function load(){let idx=Number(byId("scene").value),filename=FILES[idx][0];let im=new Image();im.onload=()=>{image=rgbToImage(im);schedule()};im.onerror=()=>byId("metrics").textContent="图片加载失败："+filename;im.src="../images/"+filename}
+function load(){let idx=Number(byId("scene").value),filename=FILES[idx][0];byId("metrics").textContent="正在加载真实道路图片："+filename;let im=new Image();im.onload=()=>{image=rgbToImage(im);schedule()};im.onerror=()=>{byId("metrics").textContent="图片加载失败："+filename+"。请刷新页面，或检查资源文件。";console.error("Cannot load road image:",filename,im.src)};im.src=(window.MVAI_INLINE_IMAGES&&window.MVAI_INLINE_IMAGES[filename])||"../images/"+filename}
 function spec(){return SPEC[lab].find(x=>x.id===exp)||SPEC[lab][0]}
 function schedule(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{if(!image)return;try{latestValues=[...byId("params").querySelectorAll("input")].map(x=>Number(x.value));byId("metrics").textContent=calc(image,exp,latestValues)}catch(e){byId("metrics").textContent="实验计算失败："+e.message;console.error(e)}})}
 function configure(defaultScene=true){
