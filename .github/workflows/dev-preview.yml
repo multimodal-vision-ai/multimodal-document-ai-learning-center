@@ -110,6 +110,8 @@ jobs:
           path.write_text(new, encoding="utf-8")
           PY
 
+      - name: Install student video frame tool
+        run: python -m pip install imageio-ffmpeg==0.6.0
       - name: Stage E01/E02 public student learning assets
         run: |
           python scripts/course_labs/stage_resources.py
