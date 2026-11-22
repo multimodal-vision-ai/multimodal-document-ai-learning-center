@@ -46,7 +46,7 @@
 | --- | --- | --- |
 | **在线阅读 Notebook** | 查看实验说明、Python 源码与算法结果说明 | 浏览器 |
 | **在线交互实验** | 修改参数，比较原图与输出；图像在学生浏览器本地处理 | 浏览器，不需要 Python |
-| **下载独立运行** | 下载 \`.ipynb\` 与配套图片，使用本地 Jupyter / VS Code / Kaggle 重新运行 Python | 有 Python 或 Kaggle 运行环境 |
+| **下载独立运行** | 下载 `.ipynb` 与配套图片，使用本地 Jupyter / VS Code / Kaggle 重新运行 Python | 有 Python 或 Kaggle 运行环境 |
 
 !!! info "教学范围与算法边界"
     浏览器版与 Python Notebook 采用相同的经典视觉教学路线，但浏览器实现不保证与 OpenCV 逐像素完全一致；左右车道线拟合为演示性候选结果，不是 Ground Truth，也不应将候选线条数当作准确率。
