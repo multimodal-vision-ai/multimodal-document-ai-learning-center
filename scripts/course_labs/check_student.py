@@ -12,14 +12,14 @@ ROOT=Path(__file__).resolve().parents[2]
 BASE=ROOT/"docs/resources/course-labs/intelligent-perception"
 FILES=[
  BASE/"index.md",BASE/"e01.md",BASE/"e02.md",
- BASE/"interactive/index.html",BASE/"notebook.html",
+ BASE/"interactive/index.html",BASE/"notebook.html",BASE/"notebook-student-v2.html",
  BASE/"downloads/E01_Image_Processing_V2.0.ipynb",
  BASE/"downloads/E02_Lane_Detection_V2.0.ipynb",
  BASE/"downloads/MVAI_E01_E02_Labs.zip",
  BASE/"downloads/solidWhiteRight_8s.mp4"
 ]
 FILES += sorted((BASE/"images").glob("*.jpg"))
-if len(FILES)!=18: raise SystemExit("Expected 9 images and 9 main files, got "+str(len(FILES)))
+if len(FILES)!=19: raise SystemExit("Expected 9 images and 10 main files, got "+str(len(FILES)))
 for path in FILES:
  if not path.is_file() or not path.stat().st_size:
   raise SystemExit("Missing / empty student asset: "+str(path))
@@ -36,7 +36,7 @@ with ZipFile(BASE/"downloads/MVAI_E01_E02_Labs.zip") as z:
  assert "E01_Image_Processing_V2.0.ipynb" in names
  assert "E02_Lane_Detection_V2.0.ipynb" in names
  assert "videos/solidWhiteRight_8s.mp4" in names
-for html_path in (BASE/"interactive/index.html",BASE/"notebook.html"):
+for html_path in (BASE/"interactive/index.html",BASE/"notebook.html",BASE/"notebook-student-v2.html"):
  content=html_path.read_text(encoding="utf-8")
  for marker in ("TEACHER QUICK START","教师授课安排","教师教学引导手册","教师备课参考"):
   assert marker not in content,(str(html_path),marker)
