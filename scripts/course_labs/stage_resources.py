@@ -131,7 +131,7 @@ view([('Original',img),('30 / 90',cv2.Canny(blur,30,90)),
     roi=cv2.bitwise_and(edges,mask)
     result=img.copy()
     lines=cv2.HoughLinesP(roi,1,np.pi/180,threshold=votes,minLineLength=length,maxLineGap=gap)
-    found=[] if lines is None else [line[0].tolist() for line in lines]
+    found=[] if lines is None else np.asarray(lines).reshape(-1,4).tolist()
     for x1,y1,x2,y2 in found:
         cv2.line(result,(x1,y1),(x2,y2),(30,220,30),2)
     return edges,roi,result,found
