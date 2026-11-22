@@ -122,6 +122,12 @@ jobs:
           mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
           python scripts/radar/verify_publication.py --site-dir "$RUNNER_TEMP/dev-site"
 
+      - name: Verify real student pages in Chromium
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install chromium
+          python scripts/course_labs/smoke_browser.py
+
       - name: Add visible DEV environment marking
         run: |
           python - <<'PY'
