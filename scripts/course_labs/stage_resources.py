@@ -172,6 +172,33 @@ def build_notebook(title,parts):
   cells.append(d)
  return {"nbformat":4,"nbformat_minor":5,"metadata":{"kernelspec":{"display_name":"Python 3","language":"python","name":"python3"},"language_info":{"name":"python"}},"cells":cells}
 
+def execute_notebook(path):
+ """Execute the same student Python cells and retain real output figures."""
+ import nbformat
+ from nbclient import NotebookClient
+ nb=nbformat.read(str(path),as_version=4)
+ client=NotebookClient(nb,timeout=240,kernel_name="python3",resources={"metadata":{"path":str(DOWNLOADS)}})
+ client.execute()
+ figures=sum(sum("image/png" in output.get("data",{}) for output in c.get("outputs",[])) for c in nb.cells if c.cell_type=="code")
+ if figures<4:raise RuntimeError(f"Expected at least four rendered plots in {path}: {figures}")
+ nbformat.write(nb,str(path))
+ print("Executed",path.name,"image outputs:",figures)
+
+
+def embed_student_images():
+ """Use inline images to avoid browser cache/origin restrictions in preview."""
+ import base64
+ page=BASE/"interactive/index.html"
+ if not page.exists():raise RuntimeError("Interactive HTML missing")
+ text=page.read_text(encoding="utf-8")
+ images={p.name:"data:image/jpeg;base64,"+base64.b64encode(p.read_bytes()).decode("ascii") for p in sorted(IMAGES.glob("*.jpg"))}
+ if len(images)!=9:raise RuntimeError("Need exactly nine embedded images")
+ tag="<script>window.MVAI_INLINE_IMAGES="+json.dumps(images,separators=(",",":"))+";</script>"
+ text=text.replace("</head>",tag+"</head>",1)
+ page.write_text(text,encoding="utf-8")
+ print("Embedded nine self-contained preview images")
+
+
 def main():
  global FFMPEG
  FFMPEG=shutil.which("ffmpeg")
@@ -194,6 +221,10 @@ def main():
   ("# E02 · 车道线检测 V2.0",E02,"E02_Lane_Detection_V2.0.ipynb")
  ]:
   (DOWNLOADS/name).write_text(json.dumps(build_notebook(title,units),ensure_ascii=False,indent=2),encoding="utf-8")
+ # Notebook outputs are computed with the same Python/OpenCV code students download.
+ execute_notebook(DOWNLOADS/"E01_Image_Processing_V2.0.ipynb")
+ execute_notebook(DOWNLOADS/"E02_Lane_Detection_V2.0.ipynb")
+ embed_student_images()
  (DOWNLOADS/"README.md").write_text(
   "E01/E02 探索式教学素材\n\n将完整 ZIP 解压。使用 Python+OpenCV+NumPy+Matplotlib 的 Jupyter/VS Code 打开 Notebook。Kaggle 请将 ZIP 解压后添加为 Dataset。\n"
   "视频为可选素材，不需要下载完整五段源视频。网页版 JavaScript 计算与 OpenCV 不保证逐像素一致。\n",encoding="utf-8")
