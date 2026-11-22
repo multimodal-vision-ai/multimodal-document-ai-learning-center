@@ -46,6 +46,11 @@ jobs:
           python scripts/radar/screening.py
           python scripts/radar/render.py
 
+      - name: Stage E01/E02 public student learning assets
+        run: |
+          python scripts/course_labs/stage_resources.py
+          python scripts/course_labs/check_student.py
+
       - name: Build site (strict)
         run: mkdocs build --strict
 
