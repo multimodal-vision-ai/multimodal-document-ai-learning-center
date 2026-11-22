@@ -1,0 +1,42 @@
+/* Visual perception playground: add only page-scoped refinements to the existing model demo UI. */
+.mpg-vision-page .mpg-intro { margin-bottom: 1.3rem; }
+.mpg-vision-page .mpg-intro-tag { background: #f0f6ff; border-color: #dbe7f7; color: #315d96; }
+.mpg-vision .mpg-models { gap: .55rem; margin-bottom: .84rem; }
+.mpg-vision .mpg-models button { white-space: normal; line-height: 1.45; text-align: left; }
+.mpg-vision .mpg-models button[aria-pressed="true"] { background: #edf5ff; border-color: #83ace1; color: #1b5498; }
+.mpg-vision .mpg-model-heading { flex-wrap: wrap; gap: .2rem .8rem; margin-bottom: .35rem; }
+.mpg-vision .mpg-model-heading > span { font-size: .65rem; }
+.mpg-vision .vis-model-focus { margin: 0 0 .9rem; font-size: .68rem; line-height: 1.6; color: #63738b; }
+.mpg-vision .mpg-primary { background: #285fa6; border-color: #285fa6; }
+.mpg-vision .mpg-viewer.mpg-loaded { height: min(80vh, 820px); min-height: 620px; }
+.mpg-vision .mpg-compare { margin-top: 1rem; }
+.mpg-vision .mpg-help { margin-top: 0; }
+.mpg-vision .mpg-actions > a { display: inline-flex; align-items: center; min-height: 1.9rem; }
+@media (max-width: 750px) {
+  .mpg-vision .mpg-viewer.mpg-loaded { height: 710px; min-height: 0; }
+  .mpg-vision .mpg-models button { flex: 1 1 100%; }
+  .mpg-vision .mpg-model-heading > span { flex-basis: 100%; }
+}
+
+/* Compact quota troubleshooting: a one-line disclosure, not a permanent warning card. */
+.mpg-vision .vis-quota-help { margin: .45rem 0 .88rem; }
+.mpg-vision .vis-quota-help > summary { font-size: .66rem; }
+.mpg-vision .vis-quota-help > summary > strong { font-weight: 600; font-size: .66rem; }
+.mpg-vision .vis-quota-help > summary > .mpg-help-caption { font-size: .62rem; }
+.mpg-vision .vis-quota-content {
+  padding: .75rem .9rem;
+  margin: .38rem 0 .55rem;
+  border: 1px solid #e1e8f1;
+  border-radius: 8px;
+  background: #fafbfd;
+  color: #46536a;
+  font-size: .67rem;
+  line-height: 1.7;
+}
+.mpg-vision .vis-quota-content p { margin: 0 0 .55rem; }
+.mpg-vision .vis-quota-content ol { padding-left: 1.25rem; margin: 0 0 .55rem; list-style: decimal; }
+.mpg-vision .vis-quota-content li { margin-bottom: .36rem; }
+.mpg-vision .vis-quota-content a { color: var(--md-accent-fg-color); text-decoration: underline; }
+.mpg-vision .vis-quota-content code { white-space: normal; overflow-wrap: anywhere; }
+.mpg-vision .vis-quota-content .vis-quota-security { color: #59667b; }
+.mpg-vision .vis-quota-content .vis-quota-source { margin: .3rem 0 0; font-size: .62rem; }
