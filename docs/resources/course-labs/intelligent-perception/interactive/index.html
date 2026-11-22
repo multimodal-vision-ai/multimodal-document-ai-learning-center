@@ -11,7 +11,16 @@ main{max-width:1450px;margin:auto;padding:24px 20px 70px}
 .toolbar{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
 .tabs{display:flex;gap:8px}.tab,.btn{font-family:inherit;border:1px solid #cfdcec;background:#fff;color:#36577e;border-radius:9px;font-size:13px;cursor:pointer;padding:10px 15px;font-weight:700}
 .tab.active,.btn.primary{background:var(--main);border-color:var(--main);color:#fff}
-.layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:20px}
+.layout{display:grid;grid-template-columns:205px minmax(0,1fr) 278px;gap:18px;align-items:start}
+.hero{background:linear-gradient(110deg,#edf4ff,#f9fbff);border:1px solid var(--line);border-radius:12px;margin:8px 0 18px;padding:18px 25px}
+.hero small{display:block;color:#286caa;letter-spacing:1.4px;font-size:10px;font-weight:900}
+.hero h2{font-size:24px;margin:8px 0 4px}.hero p{font-size:13px;color:var(--sub);margin:0;line-height:1.8}
+.catalog{grid-column:1;grid-row:1;background:white;border:1px solid var(--line);border-radius:13px;padding:18px;position:sticky;top:18px}
+.catalog h2{font-size:14px}.lesson{width:100%;border:0;border-radius:9px;background:white;text-align:left;padding:13px 10px;color:#48647d;font-size:12px;font-weight:750;cursor:pointer;margin:2px 0}
+.lesson.active{background:#eaf3ff;color:#1b63b0;border:1px solid #c7def5}
+.layout aside{grid-column:3;grid-row:1}.layout .panel{grid-column:2;grid-row:1}
+#sceneThumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:10px}
+#expTitle{font-size:19px;margin:0 0 12px;color:var(--ink)}
 aside,.panel{background:white;border:1px solid var(--line);border-radius:13px;padding:20px}
 aside{position:sticky;top:18px;align-self:start;max-height:calc(100vh - 30px);overflow-y:auto}
 label{display:block;font-size:12px;font-weight:750;color:#425d76;margin:16px 0 6px}
@@ -26,7 +35,7 @@ input[type=range]{width:100%;accent-color:var(--main)}.help{font-size:12px;color
 #generalization figure{margin:0}#generalization img{width:100%;display:block;border:1px solid var(--line);border-radius:7px}
 #generalization figcaption{font-size:10px;color:var(--sub);padding:5px}
 footer{font-size:11px;color:#788ca0;text-align:center;margin-top:40px}
-@media(max-width:920px){.layout{grid-template-columns:1fr}aside{position:static;max-height:none}}
+@media(max-width:1080px){.layout{grid-template-columns:200px minmax(0,1fr)}.layout aside{grid-column:1;grid-row:2;position:static}.layout .panel{grid-column:2;grid-row:1/3}.catalog{position:static}}@media(max-width:720px){.layout{display:flex;flex-direction:column}.catalog,.layout aside,.layout .panel{width:100%;position:static}}
 @media(max-width:600px){.grid{grid-template-columns:1fr}#generalization{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:12px}}
 </style></head>
 <body>
@@ -34,9 +43,11 @@ footer{font-size:11px;color:#788ca0;text-align:center;margin-top:40px}
 <main>
 <div class="toolbar"><div class="tabs"><button type="button" id="tab-e01" class="tab">E01 · 图像处理</button><button type="button" id="tab-e02" class="tab">E02 · 车道线检测</button></div>
 <div><button class="btn" id="reset">恢复默认参数</button> <button class="btn" id="save">保存结果 PNG</button> <button class="btn" id="full">全屏</button></div></div>
+<div class="hero"><small>EXPLORATORY COMPUTER VISION LAB</small><h2>看得见的视觉算法</h2><p>9 张真实道路视频截图 · 10 项探索任务 · 原图与算法输出同步对比</p></div>
 <div class="layout">
-<aside><h2 id="lessonTitle">探索实验</h2><label for="experiment">探索任务</label><select id="experiment"></select><label for="scene">真实道路场景</label><select id="scene"></select><div id="params"></div><p class="help">只修改一个参数，观察图像与线段数量如何变化。参数重置后可恢复默认设置。</p></aside>
-<section class="panel">
+<nav class="catalog" aria-label="探索实验目录"><h2>探索目录</h2><div id="lessonButtons"></div><p class="help">选择一个任务，改变一个参数，观察结果并解释现象。</p></nav>
+<aside><h2 id="lessonTitle">实验操作台</h2><label for="experiment">探索任务</label><select id="experiment"></select><label for="scene">真实道路场景</label><select id="scene"></select><img id="sceneThumb" alt="当前真实道路素材预览"><div id="params"></div><p class="help">修改参数后自动重新计算。您可以随时恢复默认值。</p></aside>
+<section class="panel"><h2 id="expTitle">探索实验</h2>
 <div id="prompt" class="note"></div>
 <div class="grid">
 <figure class="figure"><canvas id="original" width="640" height="360"></canvas><figcaption id="title0">原图</figcaption></figure>
@@ -151,11 +162,11 @@ function calc(data,kind,v){
  }
  return "";
 }
-function load(){let idx=Number(byId("scene").value),filename=FILES[idx][0];byId("metrics").textContent="正在加载真实道路图片："+filename;let im=new Image();im.onload=()=>{image=rgbToImage(im);schedule()};im.onerror=()=>{byId("metrics").textContent="图片加载失败："+filename+"。请刷新页面，或检查资源文件。";console.error("Cannot load road image:",filename,im.src)};im.src=(window.MVAI_INLINE_IMAGES&&window.MVAI_INLINE_IMAGES[filename])||"../images/"+filename}
+function load(){let idx=Number(byId("scene").value),filename=FILES[idx][0];byId("metrics").textContent="正在加载真实道路图片："+filename;let im=new Image();im.onload=()=>{image=rgbToImage(im);schedule()};im.onerror=()=>{byId("metrics").textContent="图片加载失败："+filename+"。请刷新页面，或检查资源文件。";console.error("Cannot load road image:",filename,im.src)};const src=(window.MVAI_INLINE_IMAGES&&window.MVAI_INLINE_IMAGES[filename])||"../images/"+filename;byId("sceneThumb").src=src;im.src=src}
 function spec(){return SPEC[lab].find(x=>x.id===exp)||SPEC[lab][0]}
 function schedule(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{if(!image)return;try{latestValues=[...byId("params").querySelectorAll("input")].map(x=>Number(x.value));byId("metrics").textContent=calc(image,exp,latestValues)}catch(e){byId("metrics").textContent="实验计算失败："+e.message;console.error(e)}})}
 function configure(defaultScene=true){
-let s=spec();byId("prompt").textContent=s.prompt;byId("lessonTitle").textContent=lab==="e01"?"E01 · 道路图像处理":"E02 · 车道线检测";
+let s=spec();byId("prompt").textContent=s.prompt;byId("lessonTitle").textContent="实验操作台";byId("expTitle").textContent=s.name;byId("lessonButtons").querySelectorAll(".lesson").forEach(b=>b.classList.toggle("active",b.dataset.exp===exp));
 byId("params").replaceChildren();s.p.forEach((p,i)=>{const d=document.createElement("div");d.className="control";
 const l=document.createElement("label");l.textContent=p[0];const o=document.createElement("output");o.textContent=p[4];l.append(o);
 const inp=document.createElement("input");inp.type="range";inp.min=p[1];inp.max=p[2];inp.step=p[3];inp.value=p[4];inp.addEventListener("input",()=>{o.textContent=inp.value;schedule()});
@@ -167,7 +178,9 @@ load();
 function setupLab(next,selected){
 lab=next;byId("tab-e01").classList.toggle("active",lab==="e01");byId("tab-e02").classList.toggle("active",lab==="e02");
 const sel=byId("experiment");sel.replaceChildren();SPEC[lab].forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=s.name;sel.appendChild(o)});
-exp=SPEC[lab].some(x=>x.id===selected)?selected:SPEC[lab][0].id;sel.value=exp;configure()}
+exp=SPEC[lab].some(x=>x.id===selected)?selected:SPEC[lab][0].id;sel.value=exp;
+const nav=byId("lessonButtons");nav.replaceChildren();SPEC[lab].forEach((it,i)=>{const b=document.createElement("button");b.className="lesson";b.type="button";b.dataset.exp=it.id;b.textContent=String(i+1).padStart(2,"0")+" · "+it.name.split(" · ").slice(1).join(" · ");b.onclick=()=>{exp=it.id;sel.value=exp;configure()};nav.append(b)});
+configure()}
 FILES.forEach(([name,title],i)=>{const o=document.createElement("option");o.value=i;o.textContent=String(i+1).padStart(2,"0")+" · "+title;byId("scene").append(o)});
 byId("scene").addEventListener("change",load);
 byId("experiment").addEventListener("change",()=>{exp=byId("experiment").value;configure()});
