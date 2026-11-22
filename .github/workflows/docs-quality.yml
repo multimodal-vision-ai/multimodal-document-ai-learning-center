@@ -41,7 +41,7 @@ jobs:
       - name: Validate browser inference JavaScript and HF Space package
         run: python scripts/kaggle/validate_browser_doctags_pilot.py
       - name: Install student video frame tool
-        run: python -m pip install imageio-ffmpeg==0.6.0
+        run: python -m pip install imageio-ffmpeg==0.6.0 nbclient==0.10.2 nbformat==5.10.4 ipykernel matplotlib opencv-python-headless
       - name: Stage E01/E02 public student learning assets
         run: |
           python scripts/course_labs/stage_resources.py
@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install student video frame tool
-        run: python -m pip install imageio-ffmpeg==0.6.0
+        run: python -m pip install imageio-ffmpeg==0.6.0 nbclient==0.10.2 nbformat==5.10.4 ipykernel matplotlib opencv-python-headless
       - name: Stage E01/E02 downloadable assets for link checks
         run: python scripts/course_labs/stage_resources.py
       - name: Check Markdown links
