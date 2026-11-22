@@ -9,6 +9,7 @@ on:
     paths:
       - ".github/workflows/dev-preview.yml"
       - "docs/**"
+      - "scripts/course_labs/**"
       - "mkdocs.yml"
       - "requirements-docs.txt"
       - "scripts/radar/**"
@@ -108,6 +109,11 @@ jobs:
               raise SystemExit("Could not locate exactly one MkDocs site_url")
           path.write_text(new, encoding="utf-8")
           PY
+
+      - name: Stage E01/E02 public student learning assets
+        run: |
+          python scripts/course_labs/stage_resources.py
+          python scripts/course_labs/check_student.py
 
       - name: Strict build with explicit HTML links
         run: |
