@@ -26,7 +26,7 @@
 
     ![E01 黄白标线](images/02_solidYellowLeft_yellow_white.jpg)
 
-    [进入 E01 实验](e01.md){ .md-button .md-button--primary }
+    [进入 E01 完整实验](e01-notebook.html){ .md-button .md-button--primary }
 
 -   **E02 · 传统车道线检测**
 
@@ -34,7 +34,7 @@
 
     ![E02 道路车道线](images/01_solidWhiteRight_straight_white.jpg)
 
-    [进入 E02 实验](e02.md){ .md-button .md-button--primary }
+    [进入 E02 完整实验](e02-notebook.html){ .md-button .md-button--primary }
 
 </div>
 
