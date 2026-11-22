@@ -33,6 +33,7 @@ FRAMES=[
  ("09_harder_curve_shadow.jpg","harder_challenge_video",43.16)
 ]
 def command(*args):
+ if args and args[0]=="ffmpeg": args=(FFMPEG,*args[1:])
  subprocess.run(args,check=True,stdout=subprocess.DEVNULL)
 
 def download(name,tmp):
@@ -172,7 +173,12 @@ def build_notebook(title,parts):
  return {"nbformat":4,"nbformat_minor":5,"metadata":{"kernelspec":{"display_name":"Python 3","language":"python","name":"python3"},"language_info":{"name":"python"}},"cells":cells}
 
 def main():
- if not shutil.which("ffmpeg"):raise RuntimeError("GitHub Actions runner lacks ffmpeg")
+ global FFMPEG
+ FFMPEG=shutil.which("ffmpeg")
+ if not FFMPEG:
+  import imageio_ffmpeg
+  FFMPEG=imageio_ffmpeg.get_ffmpeg_exe()
+ print("Using FFmpeg:",FFMPEG)
  IMAGES.mkdir(parents=True,exist_ok=True);DOWNLOADS.mkdir(parents=True,exist_ok=True)
  with tempfile.TemporaryDirectory() as td:
   tmp=Path(td)
