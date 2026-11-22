@@ -165,6 +165,147 @@ plt.tight_layout();plt.show()"""),
 ("md","## 05 · 视频延伸\nZIP 内视频 videos/solidWhiteRight_8s.mp4 可作为逐帧独立检测案例；本基线尚未实现时序跟踪。")
 ]
 
+
+# Each core experiment includes an explicit exploratory markdown Cell and
+# a runnable parameter comparison Cell, with plots retained after execution.
+def add_student_exploration_cells():
+    e01={
+    "## 01":("""
+### 探索任务 1 · HSV 阈值实验 Cell
+先预测：调整黄色 H 范围时，车道线与背景会怎样变化？
+1. 仅修改黄色色调下限 5、15、25。
+2. 对比误检、漏检，记录颜色阈值的适用条件。
+3. 思考白色天空为何可能被当成白线。""","""img=read('02_solidYellowLeft_yellow_white.jpg')
+hsv=cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
+view([('Original',img)]+[(f'Yellow H from {lo}',cv2.inRange(hsv,(lo,70,70),(40,255,255))) for lo in (5,15,25)])"""),
+    "## 02":("""
+### 探索任务 2 · 阈值实验 Cell
+先预测：全局阈值增大，车道标线是否一定更准确？
+1. 固定素材，比较阈值 100、150、200。
+2. 找到误检增加和细节丢失的位置。
+3. 讨论阴影图像为何适用不同设置。""","""img=read('06_challenge_bright_pavement.jpg')
+g=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+view([('Original',img)]+[(f'Global {t}',cv2.threshold(g,t,255,cv2.THRESH_BINARY)[1]) for t in (100,150,200)])"""),
+    "## 03":("""
+### 探索任务 3 · 滤波实验 Cell
+先预测：核越大，噪声减少的同时会发生什么？
+1. 比较 Gaussian 核 3、5、9。
+2. 观察标线边缘、道路纹理。
+3. 解释过度平滑与边缘保留的矛盾。""","""img=read('08_harder_shadow_glare.jpg')
+view([('Original',img)]+[(f'Gaussian {k}',cv2.GaussianBlur(img,(k,k),0)) for k in (3,5,9)])"""),
+    "## 04":("""
+### 探索任务 4 · 形态学实验 Cell
+先预测：闭运算的核是否越大越好？
+1. 比较 3×3、5×5、9×9。
+2. 观察断裂是否连接、不同标线是否误合并。
+3. 区分开运算和闭运算。""","""img=read('02_solidYellowLeft_yellow_white.jpg')
+m=cv2.inRange(cv2.cvtColor(img,cv2.COLOR_BGR2HSV),(15,70,70),(40,255,255))
+view([('Mask',m)]+[(f'Closing {k}',cv2.morphologyEx(m,cv2.MORPH_CLOSE,cv2.getStructuringElement(cv2.MORPH_RECT,(k,k)))) for k in (3,5,9)])"""),
+    "## 05":("""
+### 探索任务 5 · 透视变换实验 Cell
+先预测：梯形顶边上移或下移，鸟瞰结果会怎样改变？
+1. 修改顶部位置 0.50、0.56、0.62。
+2. 比较畸变程度与视觉车道宽度。
+3. 说明相机标定为何必要。""","""img=read('01_solidWhiteRight_straight_white.jpg')
+h,w=img.shape[:2]
+results=[('Original',img)]
+for top in (.50,.56,.62):
+    src=np.float32([[.39*w,top*h],[.61*w,top*h],[.96*w,.97*h],[.04*w,.97*h]])
+    dst=np.float32([[.25*w,0],[.75*w,0],[.75*w,h-1],[.25*w,h-1]])
+    results.append((f'Top {top}',cv2.warpPerspective(img,cv2.getPerspectiveTransform(src,dst),(w,h))))
+view(results)""")
+    }
+    e02={
+    "## 01":("""
+### 探索任务 1 · Canny 参数实验 Cell
+先预测：低阈值是不是越低越好？
+1. 只改变阈值，比较道路内外边缘。
+2. 观察标线断裂与车辆边缘。
+3. 判断为何不能用边缘总数评价准确率。""","""img=read('01_solidWhiteRight_straight_white.jpg')
+g=cv2.GaussianBlur(cv2.cvtColor(img,cv2.COLOR_BGR2GRAY),(5,5),1.2)
+view([('Original',img)]+[(f'Canny {lo}/{hi}',cv2.Canny(g,lo,hi)) for lo,hi in ((30,90),(50,150),(100,200))])"""),
+    "## 02":("""
+### 探索任务 2 · ROI 感兴趣区域实验 Cell
+先预测：ROI 变小会不会删除真正的远处标线？
+1. 比较顶部比例 0.45、0.55、0.65。
+2. 在弯道场景重复参数比较。
+3. 解释固定 ROI 的视角限制。""","""img=read('01_solidWhiteRight_straight_white.jpg')
+panels=[('Original',img)]
+for top in (.45,.55,.65):
+    _,roi,_,_=pipeline(img,top=top)
+    panels.append((f'ROI {top}',roi))
+view(panels)"""),
+    "## 03":("""
+### 探索任务 4 · 左右线段筛选实验 Cell
+先预测：车辆干扰时，几何筛选是否可靠？
+1. 比较直道和车辆干扰场景。
+2. 记录错误候选与缺失边界。
+3. 解释几何证据与真实道路标注的区别。""","""for title,name in [('Straight','01_solidWhiteRight_straight_white.jpg'),('Traffic','04_project_curve_traffic.jpg')]:
+    img=read(name)
+    _,_,overlay,lines=pipeline(img)
+    print(title,'candidate segments:',len(lines))
+    view([('Original',img),('Candidates',overlay)])"""),
+    "## 04":("""
+### 探索任务 5 · 九图参数泛化实验 Cell
+先预测：固定参数能否同时适应直道、弯道和阴影？
+1. 不改参数，找出两种失败场景。
+2. 只修改 ROI 位置，观察一处改善、一处变差。
+3. 讨论光照、曲率、遮挡对传统检测的影响。""","""for name in ('01_solidWhiteRight_straight_white.jpg','03_project_curve_intro.jpg','05_challenge_shadow_traffic.jpg'):
+    img=read(name)
+    panels=[('Original',img)]
+    for top in (.45,.55,.65):
+        _,_,overlay,lines=pipeline(img,top=top)
+        panels.append((f'ROI {top}: {len(lines)}',overlay))
+    view(panels)""")
+    }
+    names1={"## 01":"## 01 · 探索实验一：RGB / HSV 颜色空间",
+            "## 02":"## 02 · 探索实验二：阈值方法",
+            "## 03":"## 03 · 探索实验三：滤波与 CLAHE",
+            "## 04":"## 04 · 探索实验四：形态学",
+            "## 05":"## 05 · 探索实验五：透视变换"}
+    names2={"## 01":"## 01 · 探索实验一：Canny 阈值",
+            "## 02":"## 02 · 探索实验二：ROI 感兴趣区域",
+            "## 03":"## 04 · 探索实验四：左右候选线筛选",
+            "## 04":"## 05 · 探索实验五：固定参数九图泛化",
+            "## 05":"## 06 · 连续视频（拓展）"}
+    def augment(parts, tasks, rename, roi=False):
+        result=[]
+        pending=None
+        for kind,body in parts:
+            if kind=="md":
+                key=next((k for k in rename if body.startswith(k)),None)
+                if key:
+                    body=rename[key]+(body[body.find("\n"):] if "\n" in body else "")
+                pending=key if key in tasks else None
+            result.append((kind,body))
+            if kind=="code" and pending:
+                prompt,code=tasks[pending]
+                result.extend([("md",prompt),("code",code)])
+                if roi and pending=="## 02":
+                    result.extend([
+                       ("md","## 03 · 探索实验三：Hough 变换\n先预测：线段候选数量越多，检测结果是否更好？"),
+                       ("code","""img=read('01_solidWhiteRight_straight_white.jpg')
+panels=[('Original',img)]
+for votes in (15,25,45):
+    _,_,overlay,lines=pipeline(img,votes=votes)
+    panels.append((f'Hough votes {votes}: {len(lines)}',overlay))
+view(panels)"""),
+                       ("md","### 探索任务 3 · Hough 参数实验 Cell\n1. 比较投票阈值 15、25、45。\n2. 再修改最小线段长度和最大间隙。\n3. 找一个非车道线的候选，并解释原因。"),
+                       ("code","""img=read('03_project_curve_intro.jpg')
+panels=[('Original',img)]
+for length,gap in ((20,30),(35,70),(70,100)):
+    _,_,overlay,_=pipeline(img,length=length,gap=gap)
+    panels.append((f'Length={length}, gap={gap}',overlay))
+view(panels)""")
+                    ])
+                pending=None
+        result.append(("md","## 总结与进一步探索\n1. 哪种参数变化产生了你未预期的输出？\n2. 哪些结论只在当前素材成立？\n3. 选择一个失败案例并说明可能的算法改进方向。"))
+        return result
+    E01[:]=augment(E01,e01,names1)
+    E02[:]=augment(E02,e02,names2,roi=True)
+
+add_student_exploration_cells()
+
 def build_notebook(title,parts):
  cells=[{"cell_type":"markdown","metadata":{},"source":[title]}]
  for kind,source in parts:
@@ -236,6 +377,17 @@ def main():
    z.write(p,p.name)
   for p in sorted(IMAGES.glob("*.jpg")):z.write(p,"images/"+p.name)
   z.write(clip,"videos/"+clip.name)
- print("Verified",len(list(IMAGES.glob("*.jpg"))),"frames and created two student notebooks and ZIP")
+ for label,filename in (
+  ("E01","E01_Image_Processing_V2.0.ipynb"),
+  ("E02","E02_Lane_Detection_V2.0.ipynb")
+ ):
+  archive=DOWNLOADS/f"MVAI_{label}_Lab.zip"
+  with ZipFile(archive,"w",ZIP_DEFLATED,compresslevel=6) as z:
+   z.write(DOWNLOADS/filename,filename)
+   for doc in ("README.md","ASSET_LICENSE.txt"):z.write(DOWNLOADS/doc,doc)
+   for frame in sorted(IMAGES.glob("*.jpg")):z.write(frame,"images/"+frame.name)
+   if label=="E02":z.write(clip,"videos/"+clip.name)
+  print("Standalone",label,archive.stat().st_size)
+ print("Verified",len(list(IMAGES.glob("*.jpg"))),"frames, explicit exploration cells and individual E01/E02 ZIPs")
 
 if __name__=="__main__":main()
