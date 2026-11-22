@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notebook 在线阅读 · 智能感知与自动驾驶 | MVAI</title>
+<style>
+:root{--blue:#506cfa;--ink:#20354b;--sub:#687d92;--line:#e4eaf1}
+*{box-sizing:border-box}body{margin:0;background:#f5f7fa;color:var(--ink);font-family:system-ui,-apple-system,"Microsoft Yahei",sans-serif}
+header{padding:16px 4vw;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+a{color:#4264dd}header a{text-decoration:none;font-size:13px;font-weight:700}
+main{max-width:1030px;margin:25px auto;padding:0 16px 70px}
+h1{font-size:28px}h2{font-size:20px}h3{font-size:16px}
+.intro{background:#eef3ff;padding:14px 18px;border-radius:9px;color:#44617f;font-size:13px;line-height:1.9;margin-bottom:20px}
+.cell{background:white;border:1px solid var(--line);border-radius:12px;margin:16px 0;overflow:hidden}
+.cell.markdown{padding:24px 28px;line-height:1.85}
+.cell.markdown p{margin:12px 0}.cell.markdown ul{padding-left:25px}.cell.markdown li{margin:5px 0}
+.cell.code .cap{background:#eef2f8;color:#597187;font-size:12px;font-weight:700;padding:10px 17px;border-bottom:1px solid var(--line)}
+pre{margin:0;padding:20px;overflow:auto;background:#fbfcfe;font-size:12px;line-height:1.7;tab-size:4}
+.bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:18px 0}
+.button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:8px;background:var(--blue);color:#fff;font-size:13px;font-weight:750;padding:11px 16px}
+.button.light{background:#fff;border:1px solid #d8e2ee;color:#375d90}
+#status{font-size:12px;color:var(--sub)}footer{font-size:12px;color:#7a8da0;text-align:center;margin-top:45px}
+@media(max-width:620px){.cell.markdown{padding:16px}pre{padding:12px}}
+</style></head>
+<body>
+<header><strong>MVAI Learning Center / 智能感知与自动驾驶技术</strong><a href="./index.html">返回课程首页</a></header>
+<main>
+<h1 id="title">Notebook 在线阅读</h1>
+<div class="intro">这里展示真实的 Python Notebook 文本：实验说明、探索问题和完整代码单元。为了安全与兼容性，本页不执行 Python；需要计算时可进入浏览器交互实验，或下载 Notebook 用 Jupyter / Kaggle 执行。</div>
+<div class="bar"><span id="status">读取 Notebook 中…</span><div><a class="button light" id="interact" href="interactive/index.html?lab=e02">浏览器交互实验</a> <a class="button" id="download" href="downloads/E02_Lane_Detection_V2.0.ipynb" download>下载 .ipynb</a></div></div>
+<section id="cells"></section>
+<footer>学生学习资料 · 教师备课与参考答案不在本网站公开</footer>
+</main>
+<script>
+(function(){
+const lab=new URLSearchParams(location.search).get("lab")==="e01"?"e01":"e02";
+const name=lab==="e01"?"E01_Image_Processing_V2.0.ipynb":"E02_Lane_Detection_V2.0.ipynb";
+const title=lab==="e01"?"E01 · 道路图像处理":"E02 · 传统车道线检测";
+document.getElementById("title").textContent=title+" · 标准 Notebook";
+document.getElementById("download").href="downloads/"+name;
+document.getElementById("interact").href="interactive/index.html?lab="+lab;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function markdown(s){
+ return s.split(/\r?\n/).map(line=>{
+   if(/^### /.test(line))return"<h3>"+esc(line.slice(4))+"</h3>";
+   if(/^## /.test(line))return"<h2>"+esc(line.slice(3))+"</h2>";
+   if(/^# /.test(line))return"<h1>"+esc(line.slice(2))+"</h1>";
+   if(/^[-*] /.test(line))return"<p>• "+esc(line.slice(2))+"</p>";
+   if(/^\d+\. /.test(line))return"<p>"+esc(line)+"</p>";
+   if(!line.trim())return"";
+   return"<p>"+esc(line)+"</p>";
+ }).join("\n").replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+}
+fetch("downloads/"+name).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(nb=>{
+ const target=document.getElementById("cells");
+ let codeNumber=0,mdNumber=0;
+ nb.cells.forEach(cell=>{
+  const s=(Array.isArray(cell.source)?cell.source.join(""):cell.source)||"";
+  const box=document.createElement("article");
+  if(cell.cell_type==="code"){
+   box.className="cell code";
+   const cap=document.createElement("div");cap.className="cap";cap.textContent="Python · 代码单元 "+(++codeNumber);
+   const pre=document.createElement("pre");pre.textContent=s;box.append(cap,pre);
+  }else{
+   box.className="cell markdown";box.innerHTML=markdown(s);mdNumber++;
+  }
+  target.appendChild(box);
+ });
+ document.getElementById("status").textContent=mdNumber+" 节讲解 · "+codeNumber+" 个 Python 代码单元 · 读取完成";
+}).catch(e=>{document.getElementById("status").textContent="Notebook 暂时无法加载："+e.message;});
+})();
+</script></body></html>
