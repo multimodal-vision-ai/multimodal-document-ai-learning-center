@@ -28,6 +28,8 @@ for name in ("E01_Image_Processing_V2.0.ipynb","E02_Lane_Detection_V2.0.ipynb"):
  assert nb["nbformat"]==4 and len(nb["cells"])>=8,name
  for cell in nb["cells"]:
   if cell["cell_type"]=="code":ast.parse("".join(cell["source"]))
+ plots=sum(sum("image/png" in output.get("data",{}) for output in cell.get("outputs",[])) for cell in nb["cells"] if cell["cell_type"]=="code")
+ assert plots>=4,(name,"missing actual rendered notebook figures",plots)
 with ZipFile(BASE/"downloads/MVAI_E01_E02_Labs.zip") as z:
  names=set(z.namelist())
  assert len([x for x in names if x.startswith("images/") and x.endswith(".jpg")])==9
@@ -45,4 +47,4 @@ for html_path in (BASE/"interactive/index.html",BASE/"notebook.html"):
    p=Path(td)/f"inline-{i}.js"
    p.write_text(js,encoding="utf-8")
    subprocess.run(["node","--check",str(p)],check=True)
-print("Student course assets OK: 9 frames, 2 runnable notebooks, ZIP, video, two browser pages")
+print("Student course assets OK: 9 frames, 2 executed notebooks with real image output, ZIP, video, browser pages")
