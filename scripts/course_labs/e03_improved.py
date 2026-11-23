@@ -119,16 +119,18 @@ def _prior_search(binary, prior, margin=58):
 
 def ransac_polynomial(points, degree=3, threshold=15.0, iterations=70,
                       min_inliers=65, seed=17):
-    """Fit x(y) robustly; return coefficients, inlier mask and ratio."""
-    pts = np.asarray(points, dtype=np.float64).reshape(-1, 2)
-    if pts.shape[0] < max(min_inliers, degree+1):
+    """Fit x(y) robustly; return coefficients, full-size inlier mask and ratio."""
+    all_points = np.asarray(points, dtype=np.float64).reshape(-1, 2)
+    if all_points.shape[0] < max(min_inliers, degree+1):
         return None, None, 0.0
-    if pts.shape[0] > 1800:
-        rng = np.random.default_rng(seed)
-        pts = pts[rng.choice(pts.shape[0], 1800, replace=False)]
-    x = pts[:, 0]
-    y = pts[:, 1] / max(1.0, float(np.max(pts[:, 1]) + 1))
     rng = np.random.default_rng(seed)
+    if all_points.shape[0] > 1800:
+        sample_ids = rng.choice(all_points.shape[0], 1800, replace=False)
+        pts = all_points[sample_ids]
+    else:
+        pts = all_points
+    x = pts[:, 0]
+    y = pts[:, 1] / max(1.0, float(np.max(all_points[:, 1]) + 1))
     best = None
     best_count = 0
     best_error = float("inf")
@@ -152,11 +154,15 @@ def ransac_polynomial(points, degree=3, threshold=15.0, iterations=70,
     if best is None:
         return None, None, 0.0
     try:
-        coeff = np.polyfit(y[best], x[best], degree)
+        provisional = np.polyfit(y[best], x[best], degree)
+        full_y = all_points[:, 1] / max(1.0, float(np.max(all_points[:, 1]) + 1))
+        full_inliers = np.abs(all_points[:, 0] - np.polyval(provisional, full_y)) <= threshold
+        if np.count_nonzero(full_inliers) < min_inliers:
+            return None, None, 0.0
+        coeff = np.polyfit(full_y[full_inliers], all_points[full_inliers, 0], degree)
     except (ValueError, np.linalg.LinAlgError, FloatingPointError):
         return None, None, 0.0
-    return coeff, best, float(best_count / len(pts))
-
+    return coeff, full_inliers, float(np.count_nonzero(full_inliers) / len(all_points))
 
 def natural_spline_fit(points, bins=12):
     """Build a natural cubic spline from median x in occupied y-bins."""
