@@ -27,6 +27,29 @@ try:
         page.locator('button[data-tab="interact"]').click()
         frame=page.frame_locator('iframe')
         frame.locator('#status').wait_for()
+        # Exercise every real JPEG used by the teaching selector. The source
+        # must be a data URL and Canvas must allow getImageData without CORS.
+        image_files=(
+            '01_solidWhiteRight_straight_white.jpg',
+            '03_project_curve_intro.jpg',
+            '07_harder_curve_motorcycle.jpg',
+            '08_harder_shadow_glare.jpg',
+            '09_harder_curve_shadow.jpg',
+        )
+        for filename in image_files:
+            frame.locator('#scene').select_option(filename)
+            page.wait_for_function("""(file)=>{
+                const w=document.querySelector('iframe')?.contentWindow;
+                return w?.__e03Debug?.getLoadedImageName()===file;
+            }""",arg=filename,timeout=30000)
+            source=frame.locator('body').evaluate("()=>window.__e03Debug.getImageSource()")
+            assert source.startswith('data:image/jpeg;base64,'),f'{filename}: image was not loaded from embedded data'
+            readable=frame.locator('body').evaluate("()=>window.__e03Debug.readOriginalPixels()")
+            assert readable,f'{filename}: original Canvas getImageData failed or returned empty pixels'
+            for canvas_id in ('original','a','b','c'):
+                populated=frame.locator(f'canvas#{canvas_id}').evaluate(
+                    '(c)=>{const d=c.getContext("2d").getImageData(0,0,c.width,c.height).data;return d.some((v,i)=>i%4===3&&v>0)}')
+                assert populated,f'{filename}: canvas {canvas_id} is blank'
         for kind in ('warp','curve','light'):
             frame.locator(f'button[data-exp="{kind}"]').click()
             frame.locator('#original').wait_for()
