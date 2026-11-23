@@ -115,6 +115,9 @@ jobs:
 
       - name: Install student video frame tool
         run: python -m pip install imageio-ffmpeg==0.6.0 nbclient==0.10.2 nbformat==5.10.4 ipykernel matplotlib opencv-python-headless
+      - name: Unit test E03 V1.1 CPU lane algorithms
+        run: python scripts/course_labs/test_e03_improved.py
+
       - name: Stage E01/E02 public student learning assets
         run: |
           python scripts/course_labs/stage_resources.py
