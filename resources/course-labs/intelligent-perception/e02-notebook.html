@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notebook 在线阅读 · 智能感知与自动驾驶 | MVAI</title>
+<style>
+:root{--blue:#506cfa;--ink:#20354b;--sub:#687d92;--line:#e4eaf1}
+*{box-sizing:border-box}body{margin:0;background:#f5f7fa;color:var(--ink);font-family:system-ui,-apple-system,"Microsoft Yahei",sans-serif}
+header{padding:16px 4vw;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+a{color:#4264dd}header a{text-decoration:none;font-size:13px;font-weight:700}
+main{max-width:1030px;margin:25px auto;padding:0 16px 70px}
+h1{font-size:28px}h2{font-size:20px}h3{font-size:16px}
+.intro{background:#eef3ff;padding:14px 18px;border-radius:9px;color:#44617f;font-size:13px;line-height:1.9;margin-bottom:20px}
+.cell{background:white;border:1px solid var(--line);border-radius:12px;margin:16px 0;overflow:hidden}
+.cell.markdown{padding:24px 28px;line-height:1.85}
+.cell.markdown p{margin:12px 0}.cell.markdown ul{padding-left:25px}.cell.markdown li{margin:5px 0}
+.cell.code .cap{background:#eef2f8;color:#597187;font-size:12px;font-weight:700;padding:10px 17px;border-bottom:1px solid var(--line)}
+pre{margin:0;padding:20px;overflow:auto;background:#fbfcfe;font-size:12px;line-height:1.7;tab-size:4}
+.bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:18px 0}
+.button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:8px;background:var(--blue);color:#fff;font-size:13px;font-weight:750;padding:11px 16px}
+.button.light{background:#fff;border:1px solid #d8e2ee;color:#375d90}
+.hero{background:linear-gradient(115deg,#edf5fd,#fafcff);padding:27px max(18px,calc((100% - 1160px)/2));border-bottom:1px solid var(--line)}
+.hero h1{font-size:28px;margin:5px 0 8px}.hero .eyebrow{letter-spacing:1.7px;font-size:10px;color:#1769ae;font-weight:900}
+.hero p{font-size:13px;line-height:1.8;color:#5f778e}
+.tabs{background:white;border-bottom:1px solid var(--line);padding:0 max(18px,calc((100% - 1160px)/2));display:flex;gap:8px;flex-wrap:wrap}
+.tabs a{text-decoration:none;color:#59728b;font-size:13px;font-weight:800;padding:16px 14px;border-bottom:3px solid transparent}
+.tabs a.active{color:#1769ae;border-color:#1769ae}
+.book-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:18px;align-items:start}
+.book-toc{background:#fff;border:1px solid var(--line);padding:17px;border-radius:12px;position:sticky;top:15px;max-height:calc(100vh - 30px);overflow:auto}
+.book-toc h3{font-size:12px;color:#63829e;letter-spacing:.8px}
+.book-toc a{display:block;padding:9px 2px;border-bottom:1px solid #f0f4f8;font-size:12px;line-height:1.55;color:#486780;text-decoration:none}
+.book-toc a:hover{color:#1867af}
+@media(max-width:850px){.book-layout{grid-template-columns:1fr}.book-toc{position:static;max-height:220px}}
+.source{margin:0;background:#f7f9fc;border-bottom:1px solid var(--line)}.source summary{cursor:pointer;font-size:13px;color:#47647f;font-weight:700;padding:13px 18px;list-style:revert}.source pre{max-height:620px;background:#fbfcff}
+.results{padding:18px;background:white}.results h3{font-size:13px;font-weight:800;color:#326b9c;margin:0 0 12px}
+.results img{max-width:100%;width:auto;height:auto;display:block;border:1px solid #e7edf3;border-radius:7px;margin:0 auto 18px}
+.results .stream{font-size:12px;line-height:1.7;background:#f5f8fa;padding:10px;border-radius:6px;white-space:pre-wrap}
+.tip{font-size:13px;background:#eef5fc;border-left:3px solid #5474ec;border-radius:5px;padding:12px 16px;line-height:1.8}
+#status{font-size:12px;color:var(--sub)}footer{font-size:12px;color:#7a8da0;text-align:center;margin-top:45px}
+@media(max-width:620px){.cell.markdown{padding:16px}pre{padding:12px}}
+
+/* V2 student notebook reader: closely follows the teacher-approved sample. */
+:root{--blue:#1767ac;--ink:#1c3043;--sub:#667b8f;--line:#e0e7ed}
+html{scroll-behavior:smooth}body{background:#f4f6f8}
+header{min-height:66px;position:sticky;top:0;z-index:80;padding:12px clamp(18px,4vw,64px)}
+.hero{background:linear-gradient(112deg,#eef5fb 0%,#fbfcfd 85%);padding:33px clamp(18px,4vw,64px) 31px}
+.hero-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:35px;align-items:center}
+.hero h1{font-size:clamp(25px,3vw,35px);letter-spacing:-.8px;margin:9px 0 13px}.hero .eyebrow{font-size:10px;letter-spacing:1.6px}
+.hero p{font-size:13px;max-width:760px;margin:0;line-height:1.9}
+.hero-img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid #dce5ee;border-radius:12px;box-shadow:0 6px 15px #233e5b13}
+.pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}.pill{background:#fff;color:#4d6c86;border:1px solid #dbe7ef;font-size:11px;font-weight:700;padding:6px 10px;border-radius:7px}
+.tabs{padding:0 max(18px,calc((100% - 1280px)/2));gap:6px}.tabs a{font-size:13px;padding:19px 20px}
+main{max-width:1380px;margin:0 auto;padding:26px clamp(18px,3vw,46px) 65px}
+.book-layout{grid-template-columns:205px minmax(0,1fr);gap:20px}
+.book-toc{top:93px;border-radius:13px;padding:17px 12px;max-height:calc(100vh - 115px)}
+.book-toc h3{font-size:11px;letter-spacing:.8px;padding:0 10px}.book-toc a{border:0;padding:10px 9px;border-radius:8px;font-weight:700}
+.book-toc a:hover{background:#eff5fb}
+.chapter{background:#fff;border:1px solid #e0e7ed;border-radius:13px;padding:24px clamp(18px,2.5vw,42px) 30px;margin-bottom:17px;scroll-margin-top:98px}
+.md{font-size:13px;line-height:1.95;color:#314d64}.md h1{font-size:23px}.md h2{font-size:18px}.md h3{font-size:14px}.md p{margin:8px 0 13px}.md code{font-size:12px;background:#edf3f7;padding:2px 4px;border-radius:4px}
+.code-cell{margin:17px 0;border:1px solid #dbe3eb;border-radius:9px;overflow:hidden}
+.code-cell summary{list-style:none;display:flex;align-items:center;gap:8px;padding:11px 15px;background:#f4f7fa;color:#355b78;font-size:12px;font-weight:750;cursor:pointer}
+.code-cell summary::-webkit-details-marker{display:none}
+.code-cell summary:after{content:"展开源码";margin-left:auto;color:#66849d;font-size:11px}
+.code-cell[open] summary:after{content:"收起源码"}
+.code-cell .dot{width:9px;height:9px;border-radius:50%;background:#4e9a7a;flex-shrink:0}
+.code-cell pre{padding:18px 19px;background:#fbfcfe;max-height:640px;overflow:auto;font-size:12px;line-height:1.75}
+.nb-figure{border:1px solid #dce5ed;border-radius:10px;padding:10px;background:#fff;margin:12px 0 19px}
+.nb-figure img{max-width:100%;height:auto;display:block;margin:auto}
+.nb-figure figcaption{font-size:10px;color:#8295a5;margin:9px 4px 2px}
+.terminal-text{background:#f3f6f9;color:#425c70;border:1px solid #e2e9ef;border-radius:8px;padding:13px 16px;white-space:pre-wrap;font-size:12px}
+#status{font-size:11px;font-weight:700;color:#64809a}.intro{background:#f0f6fa;border:1px solid #dce9f2;border-radius:10px;color:#45657e;font-size:12px}
+.button{font-size:12px;border:1px solid #cadce9;border-radius:9px;background:#fff;color:#285f89}
+.button.primary{background:#1767ac;color:#fff;border-color:#1767ac}
+.status-error{background:#fff1f0;border:1px solid #ffc6c0;color:#942929;padding:18px;border-radius:10px}
+@media(max-width:1050px){.hero-inner{grid-template-columns:1fr}.hero-img{max-width:560px}}
+@media(max-width:850px){.book-layout{grid-template-columns:1fr}.book-toc{position:static;max-height:none}}
+@media(max-width:620px){.hero{padding:23px 18px}.tabs{padding:0 10px;overflow:auto}.tabs a{padding:16px 11px;white-space:nowrap}main{padding:18px 12px}.chapter{padding:18px 14px}}
+
+/* One comprehensive teaching page per Notebook: three real in-page modes. */
+.tabs a{transition:background .16s ease}
+.tabs a.active{background:#f6fafe}
+.mode-section{display:none}.mode-section.active{display:block}
+.way-head{font-size:25px;margin:12px 0 17px}
+.way-sub{color:#688097;font-size:12px;font-weight:700;letter-spacing:.2px}
+.number-tags{display:flex;gap:11px;flex-wrap:wrap;margin:0 0 22px}
+.number-tags span{border:1px solid #dce6ef;background:#f7fafc;border-radius:9px;padding:11px 16px;color:#395c79;font-size:12px;font-weight:750}
+.waycards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.way{background:white;border:1px solid #dce6ef;border-radius:16px;padding:28px 30px;min-width:0}
+.way h2{font-size:20px;margin:0 0 19px}
+.way h3{font-size:14px;margin:24px 0 15px}
+.way p,.way li{font-size:13px;color:#57748e;line-height:1.85}
+.way p{margin:0 0 15px}
+.way ol{padding-left:25px}
+.way pre{background:#f3f6f9;border:1px solid #e1e9f0;border-radius:10px;padding:17px;font-size:12px;line-height:1.8;white-space:pre-wrap;overflow:auto;color:#264d70}
+.way .actions{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0}
+.way a.button{background:white;color:#175f9e;border-color:#d0deea}
+.way a.button.primary{background:#1767ac;color:white}
+.way-note{background:#eff6fa;border:1px solid #d9eaf5;border-radius:11px;margin:20px 0;padding:18px 20px;font-size:13px;color:#4d6980;line-height:1.8}
+.lab-frame{display:block;width:100%;height:1100px;max-width:100%;border:1px solid #dce6ef;border-radius:13px;background:white}
+.lab-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}
+.lab-actions h2{margin:0;font-size:19px}.lab-actions p{font-size:12px;color:#688097;margin:6px 0 0}
+@media(max-width:900px){.waycards{grid-template-columns:1fr}}@media(max-width:600px){.way{padding:18px 14px}.lab-frame{height:780px}}
+
+/* Optional technical metadata: a single small information control. */
+.meta-info{position:relative;flex:0 0 auto}
+.meta-btn{border:1px solid #d4e0e9;border-radius:50%;width:29px;height:29px;
+ display:grid;place-items:center;background:#fff;color:#557a9b;font-size:14px;
+ font-weight:800;cursor:pointer;line-height:1}
+.meta-btn:hover,.meta-btn:focus-visible{background:#edf5fc;border-color:#9fbfda;color:#195d91}
+.meta-pop{position:absolute;left:0;top:35px;z-index:70;width:min(440px,80vw);padding:16px 18px;
+ background:#fff;border:1px solid #d8e5ed;border-radius:10px;
+ box-shadow:0 14px 35px rgba(22,52,81,.12);font-size:12px;color:#55738b;line-height:1.8}
+.meta-pop[hidden]{display:none}
+.meta-pop p{margin:0 0 8px}.meta-pop p:last-child{margin-bottom:0}
+.meta-pop .small-title{font-weight:800;color:#234e72}
+.bar{align-items:center}
+.hero .pillrow{display:none}
+.video-result{margin:18px 0 5px;background:#f8fbfd;border:1px solid #d9e6ee;border-radius:11px;padding:18px}
+.video-result h3{font-size:15px;color:#2d536f;margin:0 0 8px}
+.video-result p{font-size:12px;color:#658098;line-height:1.7}
+.video-result video{display:block;width:100%;max-width:1040px;aspect-ratio:32/9;border-radius:8px;background:#111}
+.video-result a{font-size:12px;font-weight:700}
+@media(max-width:600px){.meta-pop{width:min(350px,84vw)}}
+</style></head>
+<body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+<header><strong>MVAI Learning Center / 智能感知与自动驾驶技术</strong><a href="./index.html">返回课程首页</a></header>
+<section class="hero"><div class="hero-inner"><div><div class="eyebrow">ONE NOTEBOOK · THREE LEARNING WAYS</div><h1 id="title">Notebook 在线学习</h1><p id="hero-desc">阅读实验讲解、Python 源码和真实运行结果；修改参数时可使用浏览器演示，也可下载同一份 Notebook 在本地或 Kaggle 运行。</p></div><img class="hero-img" id="hero-img" src="images/01_solidWhiteRight_straight_white.jpg" alt="真实道路视频截图"></div></section>
+<nav class="tabs" aria-label="三种学习方式"><a class="active" href="#notebook">01 · 在线学习 Notebook</a><a id="interactTab" href="interactive/index.html?lab=e02&amp;single=1">02 · 浏览器交互实验</a><a id="downloadTab" href="downloads/MVAI_E01_E02_Labs.zip">03 · 本地 / Kaggle 运行</a></nav>
+<main id="notebook">
+<section class="mode-section active" id="mode-study">
+<div class="bar">
+<div class="meta-info" id="meta-info">
+  <button type="button" class="meta-btn" id="meta-toggle" aria-label="查看 Notebook 信息" aria-haspopup="true" aria-expanded="false" title="查看实验说明与运行统计">i</button>
+  <div class="meta-pop" id="meta-pop" hidden role="tooltip">
+    <p class="small-title">Notebook 运行信息</p>
+    <p id="status">读取 Notebook 中…</p>
+    <p>图像由 Python/OpenCV Notebook 实际执行后生成。本网页用于阅读和观看结果，不在浏览器执行 Python；点击代码标题可展开源码。</p>
+    <p>5 项探索实验 · 9 张道路图片 · 可下载至本地或 Kaggle 运行。</p>
+  </div>
+</div><div><button type="button" class="button light" id="toggle-codes">展开全部代码</button> <a class="button light" id="interact" href="interactive/index.html?lab=e02&amp;single=1">在线交互</a> <a class="button" id="download" href="downloads/E02_Lane_Detection_V2.0.ipynb" download>下载 .ipynb</a></div></div>
+
+<div class="book-layout"><aside class="book-toc"><h3>NOTEBOOK 章节</h3><div id="toc"></div></aside><div id="cells"></div></div>
+</section>
+<section class="mode-section" id="mode-interactive">
+<div class="lab-actions"><div><h2>E02 · 传统车道线检测 · 浏览器交互实验</h2><p>修改参数后直接观察道路图像与中间结果，无需安装 Python。</p></div><a class="button" href="interactive/index.html?lab=e02&amp;single=1" target="_blank" rel="noopener">新窗口打开交互实验</a></div>
+<iframe class="lab-frame" id="lab-frame" data-lab="e02" title="E02 · 传统车道线检测 参数交互实验" loading="lazy" src="interactive/index.html?lab=e02&amp;single=1&amp;embed=1"></iframe>
+</section>
+<section class="mode-section" id="mode-practice">
+<div class="way-sub">下载标准 Notebook · 本地与云端使用同一份文件</div>
+<h2 class="way-head">本地运行或 Kaggle 云端运行</h2>
+<div class="number-tags"><span>1 份 E02 标准 Notebook</span><span>9 张 JPEG 截图</span><span>1 段行车视频</span><span>不依赖 GPU</span></div>
+<div class="waycards">
+<article class="way"><h2>方式 A · 本地 Python / VS Code</h2>
+<p>下载 E02 教学包并解压，在已有 Python 环境中使用 JupyterLab 或 VS Code 打开 Notebook。图片与 Notebook 保持在同一个实验目录下。</p>
+<div class="actions"><a class="button primary" href="downloads/E02_Lane_Detection_V2.0.ipynb" download>下载标准 Notebook</a><a class="button" href="downloads/MVAI_E02_Lab.zip" download>下载本地素材包</a></div>
+<h3>本地 WSL 示例</h3>
+<pre>cd ~/projects/metadrive/notebooks/E01_E02
+# 将 MVAI_E02_Lab.zip 复制到当前目录后执行
+unzip -o MVAI_E02_Lab.zip -d E02
+cd E02
+jupyter lab</pre>
+<p>已经配置好的 metadrive Python 环境无需重复安装；其他电脑需预先具备 Python、OpenCV、NumPy、Matplotlib 与 Jupyter。Notebook 中的图片路径自动寻找 images 文件夹。</p>
+</article>
+<article class="way"><h2>方式 B · 在 Kaggle 运行</h2>
+<p>登录 Kaggle，新建 Notebook，导入同一份 .ipynb。将本实验素材包建立为 Kaggle Dataset 并添加到右侧 Input；Notebook 会自动寻找其中的 images 目录。</p>
+<div class="actions"><a class="button primary" href="downloads/MVAI_E02_Lab.zip" download>下载 Kaggle 素材包</a><a class="button" href="https://www.kaggle.com/code" target="_blank" rel="noopener">打开 Kaggle</a></div>
+<h3>操作步骤</h3><ol>
+<li>下载本页的标准 Notebook 和 MVAI_E02_Lab.zip。</li>
+<li>在 Kaggle 创建 Dataset，上传并保留素材的 images/ 目录。</li>
+<li>新建 Code Notebook，导入 E02_Lane_Detection_V2.0.ipynb。</li>
+<li>添加数据集，然后点击 Run All，修改实验参数后再次运行。</li>
+</ol><p>这是手动导入流程；目前尚未发布可直接运行的 Kaggle 公共 Notebook，因此不提供虚假的一键运行链接。</p>
+</article></div>
+<div class="way-note"><strong>实验边界：</strong>浏览器交互实验与 Python Notebook 采用同样的传统视觉教学思路，但不能保证数值逐像素一致。Hough 候选线不是车道线 Ground Truth，不作为检测准确率。</div>
+</section>
+<footer>MVAI Learning Center · 智能感知与自动驾驶技术 · 学生学习资源</footer>
+</main>
+<script>
+(function(){
+const lab="e02";
+const name=lab==="e01"?"E01_Image_Processing_V2.0.ipynb":"E02_Lane_Detection_V2.0.ipynb";
+const title=lab==="e01"?"E01 · 道路图像处理":"E02 · 传统车道线检测";
+document.getElementById("title").textContent=lab==="e01"?"道路图像处理 · 一份 Notebook，三种学习方式":"传统车道线检测 · 一份 Notebook，三种学习方式";
+document.getElementById("hero-img").src=lab==="e01"?"images/02_solidYellowLeft_yellow_white.jpg":"images/01_solidWhiteRight_straight_white.jpg";
+document.getElementById("hero-desc").textContent=lab==="e01"?"通过真实道路素材学习颜色空间、阈值、滤波、形态学和透视变换。先读 Python 代码，再观察真实输出。":"从真实行车视频出发，逐步理解 Canny、ROI、Hough、线段筛选及复杂道路泛化。";
+document.getElementById("download").href="downloads/"+name;
+document.getElementById("interact").href="interactive/index.html?lab="+lab+"&single=1";
+document.getElementById("interactTab").href="interactive/index.html?lab="+lab+"&single=1";
+document.getElementById("downloadTab").href="#practice";
+document.getElementById("interactTab").href="#interactive";
+const embeddedLessonFrame=document.getElementById("lab-frame");
+embeddedLessonFrame.addEventListener("load",()=>{
+  try{
+    const doc=embeddedLessonFrame.contentDocument;
+    const resize=()=>{if(doc&&doc.body){const height=Math.max(660,doc.body.scrollHeight+12);if(Math.abs(embeddedLessonFrame.clientHeight-height)>16)embeddedLessonFrame.style.height=height+"px";}};
+    resize();
+    if(typeof ResizeObserver!=="undefined")new ResizeObserver(resize).observe(doc.body);
+  }catch(e){console.warn("Embedded lab autosize unavailable",e);}
+});
+const tabStudy=document.querySelector(".tabs a.active");
+const modes={study:"mode-study",interactive:"mode-interactive",practice:"mode-practice"};
+function selectMode(mode){
+ for(const [key,id] of Object.entries(modes))document.getElementById(id).classList.toggle("active",key===mode);
+ for(const [key,node] of Object.entries({study:tabStudy,interactive:document.getElementById("interactTab"),practice:document.getElementById("downloadTab")}))node.classList.toggle("active",key===mode);
+}
+for(const [node,mode] of [[tabStudy,"study"],[document.getElementById("interactTab"),"interactive"],[document.getElementById("downloadTab"),"practice"]])node.addEventListener("click",e=>{e.preventDefault();selectMode(mode);});
+if(location.hash==="#practice")selectMode("practice");else if(location.hash==="#interactive")selectMode("interactive");
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function markdown(s){
+ return s.split(/\r?\n/).map(line=>{
+   if(/^### /.test(line))return"<h3>"+esc(line.slice(4))+"</h3>";
+   if(/^## /.test(line))return"<h2>"+esc(line.slice(3))+"</h2>";
+   if(/^# /.test(line))return"<h1>"+esc(line.slice(2))+"</h1>";
+   if(/^[-*] /.test(line))return"<p>• "+esc(line.slice(2))+"</p>";
+   if(/^\d+\. /.test(line))return"<p>"+esc(line)+"</p>";
+   if(!line.trim())return"";
+   return"<p>"+esc(line)+"</p>";
+ }).join("\n").replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+}
+
+let codeCount=0,imageCount=0,chapterCount=0,current=null,chapterName="导读";
+const target=document.getElementById("cells"),toc=document.getElementById("toc");
+
+const infoBtn=document.getElementById("meta-toggle");
+const infoPop=document.getElementById("meta-pop");
+const infoBox=document.getElementById("meta-info");
+let metaPinned=false;
+function displayMeta(show){infoPop.hidden=!show;infoBtn.setAttribute("aria-expanded",String(show))}
+infoBtn.addEventListener("click",()=>{metaPinned=!metaPinned;displayMeta(metaPinned)});
+infoBox.addEventListener("mouseenter",()=>displayMeta(true));
+infoBox.addEventListener("mouseleave",()=>{if(!metaPinned)displayMeta(false)});
+infoBox.addEventListener("focusout",()=>{if(!metaPinned)setTimeout(()=>{if(!infoBox.contains(document.activeElement))displayMeta(false)},0)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){metaPinned=false;displayMeta(false)}});
+document.addEventListener("click",e=>{if(!infoBox.contains(e.target)){metaPinned=false;displayMeta(false)}});
+
+function createChapter(source,label){
+  chapterName=label;const a=document.createElement("article");a.className="chapter";a.id="chapter-"+(++chapterCount);
+  const md=document.createElement("div");md.className="md";md.innerHTML=markdown(source);a.append(md);target.append(a);
+  const link=document.createElement("a");link.href="#"+a.id;link.textContent=label;toc.append(link);current=a;
+}
+function renderCell(cell){
+  const source=Array.isArray(cell.source)?cell.source.join(""):(cell.source||"");
+  if(cell.cell_type==="markdown"){
+    const m=source.match(/(?:^|\n)#{1,2}\s+([^\n]+)/);
+    if(!current||m)createChapter(source,m?m[1].trim():"导读");
+    else{const d=document.createElement("div");d.className="md";d.innerHTML=markdown(source);current.append(d)}
+    return;
+  }
+  if(cell.cell_type!=="code")return;
+  if(!current)createChapter("# 导读","导读");
+  const number=++codeCount;
+  const details=document.createElement("details");details.className="code-cell";
+  const summary=document.createElement("summary"),dot=document.createElement("span");dot.className="dot";summary.append(dot,document.createTextNode("Python 代码单元 "+number));
+  const pre=document.createElement("pre");pre.textContent=source;details.append(summary,pre);current.append(details);
+  // Keep executed outputs outside the collapsible code container.
+  for(const output of cell.outputs||[]){
+    const data=output.data||{},payload=data["image/png"]||data["image/jpeg"];
+    if(payload){
+      const fig=document.createElement("figure");fig.className="nb-figure";
+      const img=document.createElement("img");img.alt="真实执行结果 · "+chapterName;
+      const mime=data["image/png"]?"image/png":"image/jpeg";
+      img.src="data:"+mime+";base64,"+(Array.isArray(payload)?payload.join(""):payload).replace(/\s/g,"");
+      const cap=document.createElement("figcaption");cap.textContent="Python 实际运行结果 · "+chapterName;
+      fig.append(img,cap);current.append(fig);imageCount++;
+    }
+    const value=output.text||(data["text/plain"]&&!payload?data["text/plain"]:null);
+    if(value){const str=Array.isArray(value)?value.join(""):value;if(str.trim()){const preout=document.createElement("pre");preout.className="terminal-text";preout.textContent=str;current.append(preout)}}
+  }
+}
+function reportFailure(message){
+  document.getElementById("status").textContent="Notebook 结果加载失败";
+  const box=document.createElement("div");box.className="status-error";box.textContent="未能加载真实运行结果："+message;target.prepend(box);
+}
+document.getElementById("toggle-codes").onclick=function(){
+  const list=[...document.querySelectorAll("details.code-cell")],expand=list.some(d=>!d.open);
+  list.forEach(d=>d.open=expand);this.textContent=expand?"收起全部代码":"展开全部代码";
+};
+
+function appendVideoOutput(){
+  const chapter=[...document.querySelectorAll(".chapter")].find(el=>{
+    const title=el.querySelector(".md h2");
+    return title && title.textContent.trim().startsWith("06 · 连续视频");
+  });
+  if(!chapter)throw Error("缺少 E02 连续视频章节");
+  const section=document.createElement("section");
+  section.className="video-result";
+  const title=document.createElement("h3");
+  title.textContent="连续视频 · 实际检测效果";
+  const description=document.createElement("p");
+  description.textContent="左侧是原视频，右侧是逐帧 Canny / ROI / Hough 候选结果。点击播放，观察车辆移动时检测结果的变化。";
+  const video=document.createElement("video");
+  video.setAttribute("controls","");
+  video.setAttribute("playsinline","");
+  video.preload="metadata";
+  video.poster="images/01_solidWhiteRight_straight_white.jpg";
+  video.src="downloads/E02_lane_video_processed.mp4";
+  video.id="video-processed";
+  const download=document.createElement("a");
+  download.href=video.src;download.download="E02_lane_video_processed.mp4";
+  download.textContent="下载检测结果视频 MP4";
+  const warning=document.createElement("p");
+  warning.id="video-error";warning.hidden=true;
+  video.addEventListener("error",()=>{
+    warning.hidden=false;
+    warning.textContent="视频暂时无法播放，可下载 MP4 文件在本地查看。";
+  });
+  section.append(title,description,video,download,warning);
+  chapter.append(section);
+}
+
+fetch("downloads/"+name+"?online_reader=v2-20261122",{cache:"no-store"})
+.then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()})
+
+.then(nb=>{
+  if(!Array.isArray(nb.cells))throw Error("Notebook 文件格式不正确");
+  const num=nb.cells.reduce((total,c)=>total+(c.outputs||[]).reduce((n,o)=>n+(o.data&&(o.data["image/png"]||o.data["image/jpeg"])?1:0),0),0);
+  if(num<4)throw Error("当前数据缺少实际运行图像，请刷新到新版本");
+  nb.cells.forEach(renderCell);
+  appendVideoOutput();
+  document.getElementById("status").textContent="真实执行后的 Notebook 教学内容 · "+chapterCount+" 章节 · "+codeCount+" 个 Python 代码单元 · "+imageCount+" 组运行图像";
+}).catch(e=>reportFailure(e.message));
+
+})();
+</script></body></html>

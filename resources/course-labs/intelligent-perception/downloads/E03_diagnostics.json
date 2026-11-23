@@ -1,0 +1,3074 @@
+{
+  "straight": [
+    {
+      "time": 0.0,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 323.7156217923337
+    },
+    {
+      "time": 0.083,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 323.6949494175627
+    },
+    {
+      "time": 0.167,
+      "e02_candidates": 11,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.7024435572531
+    },
+    {
+      "time": 0.25,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.3374839182174
+    },
+    {
+      "time": 0.333,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 323.20171888934743
+    },
+    {
+      "time": 0.417,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.458180000427
+    },
+    {
+      "time": 0.5,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.0426617557668
+    },
+    {
+      "time": 0.583,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.60418436053897
+    },
+    {
+      "time": 0.667,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.0728158155099
+    },
+    {
+      "time": 0.75,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.81006804471787
+    },
+    {
+      "time": 0.833,
+      "e02_candidates": 11,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.98120966110264
+    },
+    {
+      "time": 0.917,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.90030026167983
+    },
+    {
+      "time": 1.0,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.3567360426647
+    },
+    {
+      "time": 1.083,
+      "e02_candidates": 10,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.2793274855451
+    },
+    {
+      "time": 1.167,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.1785757748316
+    },
+    {
+      "time": 1.25,
+      "e02_candidates": 11,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.00762557133095
+    },
+    {
+      "time": 1.333,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.58401587478045
+    },
+    {
+      "time": 1.417,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.0378919533658
+    },
+    {
+      "time": 1.5,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.05465952359197
+    },
+    {
+      "time": 1.583,
+      "e02_candidates": 16,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.69378368435
+    },
+    {
+      "time": 1.667,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.25426590050904
+    },
+    {
+      "time": 1.75,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.58469949462506
+    },
+    {
+      "time": 1.833,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.2517269464612
+    },
+    {
+      "time": 1.917,
+      "e02_candidates": 16,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.27364683289704
+    },
+    {
+      "time": 2.0,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 318.53899156669195
+    },
+    {
+      "time": 2.083,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 318.875110322906
+    },
+    {
+      "time": 2.167,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 318.3555546057687
+    },
+    {
+      "time": 2.25,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 317.1155651578681
+    },
+    {
+      "time": 2.333,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 316.1761648682512
+    },
+    {
+      "time": 2.417,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.5879369229877
+    },
+    {
+      "time": 2.5,
+      "e02_candidates": 16,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.40077274504824
+    },
+    {
+      "time": 2.583,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.90160879925793
+    },
+    {
+      "time": 2.667,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 314.733521919169
+    },
+    {
+      "time": 2.75,
+      "e02_candidates": 10,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 314.00232680837894
+    },
+    {
+      "time": 2.833,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 313.5972418976364
+    },
+    {
+      "time": 2.917,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 313.2869805521816
+    },
+    {
+      "time": 3.0,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 312.37011701680257
+    },
+    {
+      "time": 3.083,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 312.8480145460567
+    },
+    {
+      "time": 3.167,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 311.28796946343937
+    },
+    {
+      "time": 3.25,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 310.3378848118448
+    },
+    {
+      "time": 3.333,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 309.92470135341614
+    },
+    {
+      "time": 3.417,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 309.94159339375597
+    },
+    {
+      "time": 3.5,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 309.80522405085907
+    },
+    {
+      "time": 3.583,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 309.71437505890606
+    },
+    {
+      "time": 3.667,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 309.81785545783504
+    },
+    {
+      "time": 3.75,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 310.1276864572017
+    },
+    {
+      "time": 3.833,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 310.6491139725726
+    },
+    {
+      "time": 3.917,
+      "e02_candidates": 16,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 310.9548798162964
+    },
+    {
+      "time": 4.0,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 312.9906902593753
+    },
+    {
+      "time": 4.083,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 314.13808780978553
+    },
+    {
+      "time": 4.167,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 314.61454783380753
+    },
+    {
+      "time": 4.25,
+      "e02_candidates": 16,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 314.73536243082674
+    },
+    {
+      "time": 4.333,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 314.81785858139085
+    },
+    {
+      "time": 4.417,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.06679909690604
+    },
+    {
+      "time": 4.5,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.97816932631076
+    },
+    {
+      "time": 4.583,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.8423677295227
+    },
+    {
+      "time": 4.667,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.72227430018654
+    },
+    {
+      "time": 4.75,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.97012040397016
+    },
+    {
+      "time": 4.833,
+      "e02_candidates": 17,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 316.7815005336734
+    },
+    {
+      "time": 4.917,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 317.4504693100906
+    },
+    {
+      "time": 5.0,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.4210068274696
+    },
+    {
+      "time": 5.083,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.5353509660076
+    },
+    {
+      "time": 5.167,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.1883560794321
+    },
+    {
+      "time": 5.25,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.48812255565787
+    },
+    {
+      "time": 5.333,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.5124405971335
+    },
+    {
+      "time": 5.417,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.6666776137833
+    },
+    {
+      "time": 5.5,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.2177801501492
+    },
+    {
+      "time": 5.583,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.0932125714422
+    },
+    {
+      "time": 5.667,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.30635686833693
+    },
+    {
+      "time": 5.75,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.7994234169027
+    },
+    {
+      "time": 5.833,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 323.3528483186969
+    },
+    {
+      "time": 5.917,
+      "e02_candidates": 17,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.2672835162273
+    },
+    {
+      "time": 6.0,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.86124093685845
+    },
+    {
+      "time": 6.083,
+      "e02_candidates": 11,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 325.1873701003534
+    },
+    {
+      "time": 6.167,
+      "e02_candidates": 16,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 325.67778303604894
+    },
+    {
+      "time": 6.25,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.54357362541253
+    },
+    {
+      "time": 6.333,
+      "e02_candidates": 16,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 327.8761252757152
+    },
+    {
+      "time": 6.417,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 329.77344377104004
+    },
+    {
+      "time": 6.5,
+      "e02_candidates": 11,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 331.1962923946874
+    },
+    {
+      "time": 6.583,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.1191851187547
+    },
+    {
+      "time": 6.667,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.32661374458
+    },
+    {
+      "time": 6.75,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.00315668282997
+    },
+    {
+      "time": 6.833,
+      "e02_candidates": 16,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 331.9341389668079
+    },
+    {
+      "time": 6.917,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.3068640877872
+    },
+    {
+      "time": 7.0,
+      "e02_candidates": 15,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.9343875843655
+    },
+    {
+      "time": 7.083,
+      "e02_candidates": 11,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.2612229108438
+    },
+    {
+      "time": 7.167,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.5630514527407
+    },
+    {
+      "time": 7.25,
+      "e02_candidates": 17,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.69007248265507
+    },
+    {
+      "time": 7.333,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.66427804251
+    },
+    {
+      "time": 7.417,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 334.0302249800269
+    },
+    {
+      "time": 7.5,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 334.45016957008363
+    },
+    {
+      "time": 7.583,
+      "e02_candidates": 11,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.3165857311999
+    },
+    {
+      "time": 7.667,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.42478213445446
+    },
+    {
+      "time": 7.75,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 334.50220824478214
+    },
+    {
+      "time": 7.833,
+      "e02_candidates": 11,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 334.27971382930787
+    },
+    {
+      "time": 7.917,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.24674945767003
+    },
+    {
+      "time": 8.0,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.84749984820814
+    },
+    {
+      "time": 8.083,
+      "e02_candidates": 13,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.8137631260005
+    },
+    {
+      "time": 8.167,
+      "e02_candidates": 17,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.63239559294857
+    },
+    {
+      "time": 8.25,
+      "e02_candidates": 12,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.6856184518214
+    },
+    {
+      "time": 8.333,
+      "e02_candidates": 10,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 337.18595260951327
+    },
+    {
+      "time": 8.417,
+      "e02_candidates": 11,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.89876317576693
+    }
+  ],
+  "curve": [
+    {
+      "time": 0.0,
+      "e02_candidates": 18,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 316.60783564485985
+    },
+    {
+      "time": 0.083,
+      "e02_candidates": 14,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 311.8541437620836
+    },
+    {
+      "time": 0.167,
+      "e02_candidates": 18,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.54746949677286
+    },
+    {
+      "time": 0.25,
+      "e02_candidates": 19,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 316.2965688121176
+    },
+    {
+      "time": 0.333,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 316.20616942180664
+    },
+    {
+      "time": 0.417,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 318.9602978848629
+    },
+    {
+      "time": 0.5,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.452179742922
+    },
+    {
+      "time": 0.583,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.34823324600814
+    },
+    {
+      "time": 0.667,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 318.83501215238914
+    },
+    {
+      "time": 0.75,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.1576819683273
+    },
+    {
+      "time": 0.833,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.3688097943958
+    },
+    {
+      "time": 0.917,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.2844611105555
+    },
+    {
+      "time": 1.0,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.3665641197256
+    },
+    {
+      "time": 1.083,
+      "e02_candidates": 19,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 317.85127120062407
+    },
+    {
+      "time": 1.167,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 316.4924423306891
+    },
+    {
+      "time": 1.25,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.0041932415195
+    },
+    {
+      "time": 1.333,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.52417190370164
+    },
+    {
+      "time": 1.417,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 325.510533014173
+    },
+    {
+      "time": 1.5,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 327.3570771521637
+    },
+    {
+      "time": 1.583,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 327.5545324836488
+    },
+    {
+      "time": 1.667,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.68107720505003
+    },
+    {
+      "time": 1.75,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.5907910164447
+    },
+    {
+      "time": 1.833,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 323.1157006994388
+    },
+    {
+      "time": 1.917,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.2731260245813
+    },
+    {
+      "time": 2.0,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 385.54056879849117
+    },
+    {
+      "time": 2.083,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 399.3522065851141
+    },
+    {
+      "time": 2.167,
+      "e02_candidates": 19,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 352.88032770872985
+    },
+    {
+      "time": 2.25,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.7207174987717
+    },
+    {
+      "time": 2.333,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.65208079894353
+    },
+    {
+      "time": 2.417,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 373.5182871660886
+    },
+    {
+      "time": 2.5,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 388.57475175615116
+    },
+    {
+      "time": 2.583,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 351.82695678894635
+    },
+    {
+      "time": 2.667,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.15013703000454
+    },
+    {
+      "time": 2.75,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 327.8294525138035
+    },
+    {
+      "time": 2.833,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.2924008743238
+    },
+    {
+      "time": 2.917,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 362.76288883894676
+    },
+    {
+      "time": 3.0,
+      "e02_candidates": 31,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 342.3085138649608
+    },
+    {
+      "time": 3.083,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.80655809586506
+    },
+    {
+      "time": 3.167,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.77311440433783
+    },
+    {
+      "time": 3.25,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.2111890848565
+    },
+    {
+      "time": 3.333,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 363.8757985899598
+    },
+    {
+      "time": 3.417,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 380.6287860379646
+    },
+    {
+      "time": 3.5,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 388.01196124507317
+    },
+    {
+      "time": 3.583,
+      "e02_candidates": 17,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 341.83933047118103
+    },
+    {
+      "time": 3.667,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.64843050406404
+    },
+    {
+      "time": 3.75,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.31585521912825
+    },
+    {
+      "time": 3.833,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.6236509103127
+    },
+    {
+      "time": 3.917,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 328.16745774771334
+    },
+    {
+      "time": 4.0,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 334.41701194238897
+    },
+    {
+      "time": 4.083,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.68808195376516
+    },
+    {
+      "time": 4.167,
+      "e02_candidates": 19,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.056353817104
+    },
+    {
+      "time": 4.25,
+      "e02_candidates": 18,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 328.6418511659746
+    },
+    {
+      "time": 4.333,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 331.838352264842
+    },
+    {
+      "time": 4.417,
+      "e02_candidates": 19,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.63898471715595
+    },
+    {
+      "time": 4.5,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 340.13702373110857
+    },
+    {
+      "time": 4.583,
+      "e02_candidates": 19,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 343.56641846150853
+    },
+    {
+      "time": 4.667,
+      "e02_candidates": 19,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.647637040189
+    },
+    {
+      "time": 4.75,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 334.16647289756224
+    },
+    {
+      "time": 4.833,
+      "e02_candidates": 18,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.09701858103716
+    },
+    {
+      "time": 4.917,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.864066012379
+    },
+    {
+      "time": 5.0,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.259775328783
+    },
+    {
+      "time": 5.083,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 331.48329037963174
+    },
+    {
+      "time": 5.167,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.5882772764272
+    },
+    {
+      "time": 5.25,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 338.4952158831623
+    },
+    {
+      "time": 5.333,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 340.1456908105086
+    },
+    {
+      "time": 5.417,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 345.7269756699143
+    },
+    {
+      "time": 5.5,
+      "e02_candidates": 19,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 339.4610476192256
+    },
+    {
+      "time": 5.583,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.8686798025819
+    },
+    {
+      "time": 5.667,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 338.30992080023896
+    },
+    {
+      "time": 5.75,
+      "e02_candidates": 18,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 341.06901391504135
+    },
+    {
+      "time": 5.833,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 343.7761749948081
+    },
+    {
+      "time": 5.917,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 350.0037961405479
+    },
+    {
+      "time": 6.0,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 346.1378561129151
+    },
+    {
+      "time": 6.083,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 342.1968487776745
+    },
+    {
+      "time": 6.167,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.8292809309943
+    },
+    {
+      "time": 6.25,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.9871859299696
+    },
+    {
+      "time": 6.333,
+      "e02_candidates": 17,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 343.91197806230923
+    },
+    {
+      "time": 6.417,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 346.3442094403304
+    },
+    {
+      "time": 6.5,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 345.23584990206683
+    },
+    {
+      "time": 6.583,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 343.3206513393659
+    },
+    {
+      "time": 6.667,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.5596185148522
+    },
+    {
+      "time": 6.75,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.61988723566105
+    },
+    {
+      "time": 6.833,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 343.46207965920433
+    },
+    {
+      "time": 6.917,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 346.5685890703205
+    },
+    {
+      "time": 7.0,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 344.9172853263567
+    },
+    {
+      "time": 7.083,
+      "e02_candidates": 19,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.3127093426608
+    },
+    {
+      "time": 7.167,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 338.52134687086607
+    },
+    {
+      "time": 7.25,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 342.6625168495893
+    },
+    {
+      "time": 7.333,
+      "e02_candidates": 28,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 345.31235522903893
+    },
+    {
+      "time": 7.417,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 346.72887697024305
+    },
+    {
+      "time": 7.5,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 347.71517627676224
+    },
+    {
+      "time": 7.583,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 317.51882702762373
+    },
+    {
+      "time": 7.667,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.72070654706977
+    },
+    {
+      "time": 7.75,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 331.96000667851695
+    },
+    {
+      "time": 7.833,
+      "e02_candidates": 29,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 337.3612308891715
+    },
+    {
+      "time": 7.917,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.5943026303015
+    },
+    {
+      "time": 8.0,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.8638308953176
+    },
+    {
+      "time": 8.083,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.44437721684034
+    },
+    {
+      "time": 8.167,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.46540813165393
+    },
+    {
+      "time": 8.25,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 331.25802728190985
+    },
+    {
+      "time": 8.333,
+      "e02_candidates": 18,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.57575938829575
+    },
+    {
+      "time": 8.417,
+      "e02_candidates": 17,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 308.7233410149797
+    },
+    {
+      "time": 8.5,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 313.77989639365217
+    },
+    {
+      "time": 8.583,
+      "e02_candidates": 17,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 304.84733732808616
+    },
+    {
+      "time": 8.667,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 317.2712830016197
+    },
+    {
+      "time": 8.75,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 323.3973885367956
+    },
+    {
+      "time": 8.833,
+      "e02_candidates": 18,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 306.7717786312011
+    },
+    {
+      "time": 8.917,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 298.88324601869033
+    },
+    {
+      "time": 9.0,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 295.4878555270878
+    },
+    {
+      "time": 9.083,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 313.0256332543717
+    },
+    {
+      "time": 9.167,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.2096984728868
+    },
+    {
+      "time": 9.25,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.24364051240764
+    },
+    {
+      "time": 9.333,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 311.2192587018353
+    },
+    {
+      "time": 9.417,
+      "e02_candidates": 28,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 313.72355620803796
+    },
+    {
+      "time": 9.5,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 307.4451461107918
+    },
+    {
+      "time": 9.583,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 314.67858504719754
+    },
+    {
+      "time": 9.667,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.9258727664784
+    },
+    {
+      "time": 9.75,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.60562186707057
+    },
+    {
+      "time": 9.833,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 306.93126664057286
+    },
+    {
+      "time": 9.917,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 311.83299290914414
+    },
+    {
+      "time": 10.0,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.41998439090105
+    },
+    {
+      "time": 10.083,
+      "e02_candidates": 28,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.73733831214645
+    },
+    {
+      "time": 10.167,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.90706774635095
+    },
+    {
+      "time": 10.25,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 314.258568367057
+    },
+    {
+      "time": 10.333,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 313.1548399796154
+    },
+    {
+      "time": 10.417,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 303.493657482451
+    },
+    {
+      "time": 10.5,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 310.7257324205318
+    },
+    {
+      "time": 10.583,
+      "e02_candidates": 27,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.15450745489073
+    },
+    {
+      "time": 10.667,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 321.742102794397
+    },
+    {
+      "time": 10.75,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 310.6182777468624
+    },
+    {
+      "time": 10.833,
+      "e02_candidates": 20,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 308.37750731208547
+    },
+    {
+      "time": 10.917,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 302.52800843592024
+    },
+    {
+      "time": 11.0,
+      "e02_candidates": 23,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 317.22568854335003
+    },
+    {
+      "time": 11.083,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.7658686672787
+    },
+    {
+      "time": 11.167,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 313.63404702653725
+    },
+    {
+      "time": 11.25,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 303.0381237688306
+    },
+    {
+      "time": 11.333,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 298.12763398980667
+    },
+    {
+      "time": 11.417,
+      "e02_candidates": 28,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 315.5582848498024
+    },
+    {
+      "time": 11.5,
+      "e02_candidates": 27,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.30972718170824
+    },
+    {
+      "time": 11.583,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 325.6956671469324
+    },
+    {
+      "time": 11.667,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 317.59266619167687
+    },
+    {
+      "time": 11.75,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 306.77457657809157
+    },
+    {
+      "time": 11.833,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 305.07400270551403
+    },
+    {
+      "time": 11.917,
+      "e02_candidates": 27,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 311.2915399131492
+    },
+    {
+      "time": 12.0,
+      "e02_candidates": 27,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.4011911141939
+    },
+    {
+      "time": 12.083,
+      "e02_candidates": 27,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.2083926194255
+    },
+    {
+      "time": 12.167,
+      "e02_candidates": 29,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 304.9764471656371
+    },
+    {
+      "time": 12.25,
+      "e02_candidates": 27,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 309.25789829819496
+    },
+    {
+      "time": 12.333,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 310.8182217989857
+    },
+    {
+      "time": 12.417,
+      "e02_candidates": 30,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 319.2904412478326
+    },
+    {
+      "time": 12.5,
+      "e02_candidates": 28,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.4786928636487
+    },
+    {
+      "time": 12.583,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 300.49651338350316
+    },
+    {
+      "time": 12.667,
+      "e02_candidates": 28,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 301.54753388526353
+    },
+    {
+      "time": 12.75,
+      "e02_candidates": 28,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 310.79310194058496
+    },
+    {
+      "time": 12.833,
+      "e02_candidates": 27,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 313.11079721822273
+    },
+    {
+      "time": 12.917,
+      "e02_candidates": 27,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.4367793246814
+    }
+  ],
+  "complex": [
+    {
+      "time": 0.0,
+      "e02_candidates": 55,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 337.40289307945955
+    },
+    {
+      "time": 0.083,
+      "e02_candidates": 44,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.6102213560208
+    },
+    {
+      "time": 0.167,
+      "e02_candidates": 44,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.84455645408394
+    },
+    {
+      "time": 0.25,
+      "e02_candidates": 46,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.3646738996413
+    },
+    {
+      "time": 0.333,
+      "e02_candidates": 43,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 329.3735113186795
+    },
+    {
+      "time": 0.417,
+      "e02_candidates": 41,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 331.7829157424392
+    },
+    {
+      "time": 0.5,
+      "e02_candidates": 41,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 328.9701939582551
+    },
+    {
+      "time": 0.583,
+      "e02_candidates": 38,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.3584187600528
+    },
+    {
+      "time": 0.667,
+      "e02_candidates": 44,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 324.6370177077484
+    },
+    {
+      "time": 0.75,
+      "e02_candidates": 49,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 323.45584192659686
+    },
+    {
+      "time": 0.833,
+      "e02_candidates": 49,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.58464142170806
+    },
+    {
+      "time": 0.917,
+      "e02_candidates": 54,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.61998014427115
+    },
+    {
+      "time": 1.0,
+      "e02_candidates": 51,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.14222288919666
+    },
+    {
+      "time": 1.083,
+      "e02_candidates": 53,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.09609538322843
+    },
+    {
+      "time": 1.167,
+      "e02_candidates": 51,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.98187543865686
+    },
+    {
+      "time": 1.25,
+      "e02_candidates": 42,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 340.2242539276023
+    },
+    {
+      "time": 1.333,
+      "e02_candidates": 42,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 344.91283038605286
+    },
+    {
+      "time": 1.417,
+      "e02_candidates": 26,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 354.0902965901528
+    },
+    {
+      "time": 1.5,
+      "e02_candidates": 36,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 337.80824399016217
+    },
+    {
+      "time": 1.583,
+      "e02_candidates": 36,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.922075273303
+    },
+    {
+      "time": 1.667,
+      "e02_candidates": 40,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 350.7338867119616
+    },
+    {
+      "time": 1.75,
+      "e02_candidates": 33,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 344.00151729925807
+    },
+    {
+      "time": 1.833,
+      "e02_candidates": 33,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 363.1680225777542
+    },
+    {
+      "time": 1.917,
+      "e02_candidates": 44,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 347.60255455945094
+    },
+    {
+      "time": 2.0,
+      "e02_candidates": 45,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 344.4892634578161
+    },
+    {
+      "time": 2.083,
+      "e02_candidates": 41,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 345.6934558389951
+    },
+    {
+      "time": 2.167,
+      "e02_candidates": 41,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 350.05729838074984
+    },
+    {
+      "time": 2.25,
+      "e02_candidates": 52,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 346.82605272412104
+    },
+    {
+      "time": 2.333,
+      "e02_candidates": 54,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 349.31070676003225
+    },
+    {
+      "time": 2.417,
+      "e02_candidates": 48,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 352.75108864711507
+    },
+    {
+      "time": 2.5,
+      "e02_candidates": 47,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 353.2511230470268
+    },
+    {
+      "time": 2.583,
+      "e02_candidates": 44,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 350.03549889640533
+    },
+    {
+      "time": 2.667,
+      "e02_candidates": 47,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 348.80264846872404
+    },
+    {
+      "time": 2.75,
+      "e02_candidates": 44,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 348.58194748517656
+    },
+    {
+      "time": 2.833,
+      "e02_candidates": 46,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 359.6160221631927
+    },
+    {
+      "time": 2.917,
+      "e02_candidates": 33,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 357.79735672423044
+    },
+    {
+      "time": 3.0,
+      "e02_candidates": 46,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 365.5658315144834
+    },
+    {
+      "time": 3.083,
+      "e02_candidates": 47,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 360.74939163141164
+    },
+    {
+      "time": 3.167,
+      "e02_candidates": 46,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 362.43197209140317
+    },
+    {
+      "time": 3.25,
+      "e02_candidates": 39,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 365.549669243866
+    },
+    {
+      "time": 3.333,
+      "e02_candidates": 36,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 359.85741787579286
+    },
+    {
+      "time": 3.417,
+      "e02_candidates": 37,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 361.405942665193
+    },
+    {
+      "time": 3.5,
+      "e02_candidates": 32,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 366.58815962067155
+    },
+    {
+      "time": 3.583,
+      "e02_candidates": 35,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 369.83848579333596
+    },
+    {
+      "time": 3.667,
+      "e02_candidates": 39,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 371.23376702732605
+    },
+    {
+      "time": 3.75,
+      "e02_candidates": 38,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 374.8369029640569
+    },
+    {
+      "time": 3.833,
+      "e02_candidates": 36,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 347.8723467074529
+    },
+    {
+      "time": 3.917,
+      "e02_candidates": 39,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 337.6485606215453
+    },
+    {
+      "time": 4.0,
+      "e02_candidates": 38,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.9099800911196
+    },
+    {
+      "time": 4.083,
+      "e02_candidates": 40,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.8687434927158
+    },
+    {
+      "time": 4.167,
+      "e02_candidates": 39,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 327.16014707208944
+    },
+    {
+      "time": 4.25,
+      "e02_candidates": 49,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 327.7354297719141
+    },
+    {
+      "time": 4.333,
+      "e02_candidates": 45,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 328.1825994417993
+    },
+    {
+      "time": 4.417,
+      "e02_candidates": 50,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.76411301627604
+    },
+    {
+      "time": 4.5,
+      "e02_candidates": 50,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.4399605767993
+    },
+    {
+      "time": 4.583,
+      "e02_candidates": 47,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 338.4515837916559
+    },
+    {
+      "time": 4.667,
+      "e02_candidates": 37,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 345.5572178920999
+    },
+    {
+      "time": 4.75,
+      "e02_candidates": 34,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 350.6995288920025
+    },
+    {
+      "time": 4.833,
+      "e02_candidates": 34,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 342.1929545316303
+    },
+    {
+      "time": 4.917,
+      "e02_candidates": 37,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.1437159873004
+    },
+    {
+      "time": 5.0,
+      "e02_candidates": 41,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.5924954231698
+    },
+    {
+      "time": 5.083,
+      "e02_candidates": 36,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 337.0319684567695
+    },
+    {
+      "time": 5.167,
+      "e02_candidates": 34,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.5565919844453
+    },
+    {
+      "time": 5.25,
+      "e02_candidates": 36,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.6909396188057
+    },
+    {
+      "time": 5.333,
+      "e02_candidates": 36,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 331.67947528635267
+    },
+    {
+      "time": 5.417,
+      "e02_candidates": 34,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.19219878332126
+    },
+    {
+      "time": 5.5,
+      "e02_candidates": 33,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.24662565118706
+    },
+    {
+      "time": 5.583,
+      "e02_candidates": 29,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.37550406518125
+    },
+    {
+      "time": 5.667,
+      "e02_candidates": 29,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 346.45051873560874
+    },
+    {
+      "time": 5.75,
+      "e02_candidates": 31,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 360.7882662244843
+    },
+    {
+      "time": 5.833,
+      "e02_candidates": 29,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 371.3554157815358
+    },
+    {
+      "time": 5.917,
+      "e02_candidates": 29,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 375.51047010107885
+    },
+    {
+      "time": 6.0,
+      "e02_candidates": 27,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 376.7393239904425
+    },
+    {
+      "time": 6.083,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 374.1917747263111
+    },
+    {
+      "time": 6.167,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 373.66171590205255
+    },
+    {
+      "time": 6.25,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 375.4806315728102
+    },
+    {
+      "time": 6.333,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 372.12992771260485
+    },
+    {
+      "time": 6.417,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 365.9377409538752
+    },
+    {
+      "time": 6.5,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 361.52621079626505
+    },
+    {
+      "time": 6.583,
+      "e02_candidates": 24,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 362.2180384506835
+    },
+    {
+      "time": 6.667,
+      "e02_candidates": 21,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 359.9621888214766
+    },
+    {
+      "time": 6.75,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 358.18189501037
+    },
+    {
+      "time": 6.833,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 360.49749959421763
+    },
+    {
+      "time": 6.917,
+      "e02_candidates": 28,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 360.9135519532273
+    },
+    {
+      "time": 7.0,
+      "e02_candidates": 17,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 363.89247755514054
+    },
+    {
+      "time": 7.083,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 368.6638725053985
+    },
+    {
+      "time": 7.167,
+      "e02_candidates": 28,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 371.0467698177338
+    },
+    {
+      "time": 7.25,
+      "e02_candidates": 22,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 378.9001572404628
+    },
+    {
+      "time": 7.333,
+      "e02_candidates": 25,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 371.81237829732305
+    },
+    {
+      "time": 7.417,
+      "e02_candidates": 31,
+      "valid": false,
+      "status": "HISTORY (unverified)",
+      "x": 371.81237829732305
+    },
+    {
+      "time": 7.5,
+      "e02_candidates": 29,
+      "valid": false,
+      "status": "HISTORY (unverified)",
+      "x": 371.81237829732305
+    },
+    {
+      "time": 7.583,
+      "e02_candidates": 35,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.26789708505083
+    },
+    {
+      "time": 7.667,
+      "e02_candidates": 31,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 318.98349428965184
+    },
+    {
+      "time": 7.75,
+      "e02_candidates": 34,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 313.917256262316
+    },
+    {
+      "time": 7.833,
+      "e02_candidates": 33,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 372.82729162571144
+    },
+    {
+      "time": 7.917,
+      "e02_candidates": 39,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 415.214083202683
+    },
+    {
+      "time": 8.0,
+      "e02_candidates": 43,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 404.8258150108571
+    },
+    {
+      "time": 8.083,
+      "e02_candidates": 54,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 397.7923136752206
+    },
+    {
+      "time": 8.167,
+      "e02_candidates": 57,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 383.59749410769746
+    },
+    {
+      "time": 8.25,
+      "e02_candidates": 51,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 378.4722454920171
+    },
+    {
+      "time": 8.333,
+      "e02_candidates": 65,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 364.06155674941874
+    },
+    {
+      "time": 8.417,
+      "e02_candidates": 57,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 363.67095205284613
+    },
+    {
+      "time": 8.5,
+      "e02_candidates": 62,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 369.10567610801957
+    },
+    {
+      "time": 8.583,
+      "e02_candidates": 58,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 365.7703012322743
+    },
+    {
+      "time": 8.667,
+      "e02_candidates": 67,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 371.9642612599928
+    },
+    {
+      "time": 8.75,
+      "e02_candidates": 67,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 343.4428123451894
+    },
+    {
+      "time": 8.833,
+      "e02_candidates": 73,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.3637180131125
+    },
+    {
+      "time": 8.917,
+      "e02_candidates": 72,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.62206904928655
+    },
+    {
+      "time": 9.0,
+      "e02_candidates": 79,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 329.71169918876376
+    },
+    {
+      "time": 9.083,
+      "e02_candidates": 90,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 338.81372669463065
+    },
+    {
+      "time": 9.167,
+      "e02_candidates": 76,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 343.7840938179694
+    },
+    {
+      "time": 9.25,
+      "e02_candidates": 76,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 346.1392417150811
+    },
+    {
+      "time": 9.333,
+      "e02_candidates": 68,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 349.11509911002776
+    },
+    {
+      "time": 9.417,
+      "e02_candidates": 63,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 353.77505277552893
+    },
+    {
+      "time": 9.5,
+      "e02_candidates": 63,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 356.0516582686272
+    },
+    {
+      "time": 9.583,
+      "e02_candidates": 62,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 357.702663718096
+    },
+    {
+      "time": 9.667,
+      "e02_candidates": 60,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 341.9604132550685
+    },
+    {
+      "time": 9.75,
+      "e02_candidates": 56,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 338.31276395658256
+    },
+    {
+      "time": 9.833,
+      "e02_candidates": 53,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.6347400285217
+    },
+    {
+      "time": 9.917,
+      "e02_candidates": 56,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.76966248917074
+    },
+    {
+      "time": 10.0,
+      "e02_candidates": 53,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 338.2121829620754
+    },
+    {
+      "time": 10.083,
+      "e02_candidates": 49,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.5960739006495
+    },
+    {
+      "time": 10.167,
+      "e02_candidates": 50,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 334.2267573809285
+    },
+    {
+      "time": 10.25,
+      "e02_candidates": 64,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.6330698466714
+    },
+    {
+      "time": 10.333,
+      "e02_candidates": 55,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.25492232129614
+    },
+    {
+      "time": 10.417,
+      "e02_candidates": 59,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 334.41210278907806
+    },
+    {
+      "time": 10.5,
+      "e02_candidates": 57,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 333.1352549104215
+    },
+    {
+      "time": 10.583,
+      "e02_candidates": 61,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 334.6216410236102
+    },
+    {
+      "time": 10.667,
+      "e02_candidates": 50,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.65979741001365
+    },
+    {
+      "time": 10.75,
+      "e02_candidates": 58,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 336.18941632768485
+    },
+    {
+      "time": 10.833,
+      "e02_candidates": 64,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.8824969572421
+    },
+    {
+      "time": 10.917,
+      "e02_candidates": 67,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 342.35848019000537
+    },
+    {
+      "time": 11.0,
+      "e02_candidates": 57,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 330.0399298937591
+    },
+    {
+      "time": 11.083,
+      "e02_candidates": 51,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 358.9277308007328
+    },
+    {
+      "time": 11.167,
+      "e02_candidates": 52,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 325.915434976259
+    },
+    {
+      "time": 11.25,
+      "e02_candidates": 54,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 311.5475486743702
+    },
+    {
+      "time": 11.333,
+      "e02_candidates": 54,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 311.23709930476394
+    },
+    {
+      "time": 11.417,
+      "e02_candidates": 60,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 320.3671157850266
+    },
+    {
+      "time": 11.5,
+      "e02_candidates": 81,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 329.58051901620274
+    },
+    {
+      "time": 11.583,
+      "e02_candidates": 82,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 335.97065417349415
+    },
+    {
+      "time": 11.667,
+      "e02_candidates": 75,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 340.7144353890584
+    },
+    {
+      "time": 11.75,
+      "e02_candidates": 62,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 345.865034553584
+    },
+    {
+      "time": 11.833,
+      "e02_candidates": 66,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 353.66375862071607
+    },
+    {
+      "time": 11.917,
+      "e02_candidates": 66,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 353.6115178916434
+    },
+    {
+      "time": 12.0,
+      "e02_candidates": 72,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 360.81975138176205
+    },
+    {
+      "time": 12.083,
+      "e02_candidates": 51,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 359.9625649135651
+    },
+    {
+      "time": 12.167,
+      "e02_candidates": 52,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 368.4937031610432
+    },
+    {
+      "time": 12.25,
+      "e02_candidates": 42,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 342.46199896699557
+    },
+    {
+      "time": 12.333,
+      "e02_candidates": 48,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 332.8214445406568
+    },
+    {
+      "time": 12.417,
+      "e02_candidates": 44,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 328.425222451977
+    },
+    {
+      "time": 12.5,
+      "e02_candidates": 43,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 316.1226542387129
+    },
+    {
+      "time": 12.583,
+      "e02_candidates": 45,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 314.4588613247438
+    },
+    {
+      "time": 12.667,
+      "e02_candidates": 33,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 282.67120201418845
+    },
+    {
+      "time": 12.75,
+      "e02_candidates": 36,
+      "valid": false,
+      "status": "HISTORY (unverified)",
+      "x": 282.67120201418845
+    },
+    {
+      "time": 12.833,
+      "e02_candidates": 39,
+      "valid": false,
+      "status": "HISTORY (unverified)",
+      "x": 282.67120201418845
+    },
+    {
+      "time": 12.917,
+      "e02_candidates": 45,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 309.1444400094736
+    },
+    {
+      "time": 13.0,
+      "e02_candidates": 39,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 322.45170954873595
+    },
+    {
+      "time": 13.083,
+      "e02_candidates": 45,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.44649102198787
+    },
+    {
+      "time": 13.167,
+      "e02_candidates": 39,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 327.34058989057485
+    },
+    {
+      "time": 13.25,
+      "e02_candidates": 41,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 326.7336646628945
+    },
+    {
+      "time": 13.333,
+      "e02_candidates": 50,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 327.8346652453164
+    },
+    {
+      "time": 13.417,
+      "e02_candidates": 35,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 327.9967905490156
+    },
+    {
+      "time": 13.5,
+      "e02_candidates": 38,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 416.1116559729412
+    },
+    {
+      "time": 13.583,
+      "e02_candidates": 43,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 396.1139240857109
+    },
+    {
+      "time": 13.667,
+      "e02_candidates": 45,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 396.62838753277316
+    },
+    {
+      "time": 13.75,
+      "e02_candidates": 49,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 380.8263855718738
+    },
+    {
+      "time": 13.833,
+      "e02_candidates": 43,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 371.5786472817225
+    },
+    {
+      "time": 13.917,
+      "e02_candidates": 51,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 381.2417532019826
+    },
+    {
+      "time": 14.0,
+      "e02_candidates": 54,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 394.2613092849823
+    },
+    {
+      "time": 14.083,
+      "e02_candidates": 60,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 386.92224273395897
+    },
+    {
+      "time": 14.167,
+      "e02_candidates": 59,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 383.4958324146752
+    },
+    {
+      "time": 14.25,
+      "e02_candidates": 53,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 378.1042579509565
+    },
+    {
+      "time": 14.333,
+      "e02_candidates": 55,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 375.7359412854282
+    },
+    {
+      "time": 14.417,
+      "e02_candidates": 52,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 370.17870338176317
+    },
+    {
+      "time": 14.5,
+      "e02_candidates": 45,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 354.8663233763605
+    },
+    {
+      "time": 14.583,
+      "e02_candidates": 47,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 351.6888108817765
+    },
+    {
+      "time": 14.667,
+      "e02_candidates": 50,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 352.29237497557955
+    },
+    {
+      "time": 14.75,
+      "e02_candidates": 51,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 384.8875716093539
+    },
+    {
+      "time": 14.833,
+      "e02_candidates": 58,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 393.98451656039435
+    },
+    {
+      "time": 14.917,
+      "e02_candidates": 70,
+      "valid": true,
+      "status": "DETECTED",
+      "x": 401.9786776385792
+    }
+  ]
+}

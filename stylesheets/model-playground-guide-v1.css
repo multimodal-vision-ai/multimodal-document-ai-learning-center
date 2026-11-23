@@ -1,0 +1,51 @@
+/* Collapsible teaching help — V1. The demo controls remain immediately visible. */
+.mpg .mpg-help {
+  margin: -.18rem 0 1.05rem;
+  border: 0;
+  background: transparent;
+}
+.mpg .mpg-help > summary {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: 0;
+  padding: .25rem 0;
+  color: var(--md-accent-fg-color, #5965e8);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: .68rem;
+  font-weight: 650;
+  line-height: 1.55;
+  list-style: none;
+}
+.mpg .mpg-help > summary::-webkit-details-marker { display: none; }
+.mpg .mpg-help > summary::before {
+  content: "▸";
+  display: inline-block;
+  width: .72rem;
+  font-size: .76rem;
+  color: var(--md-accent-fg-color, #5965e8);
+  transition: transform .14s ease;
+}
+.mpg .mpg-help[open] > summary::before { transform: rotate(90deg); }
+.mpg .mpg-help > summary span {
+  color: var(--md-default-fg-color--light, #687383);
+  font-size: .64rem;
+  font-weight: 400;
+}
+.mpg .mpg-help > summary:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color, #5965e8);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.mpg .mpg-help-content {
+  margin: .7rem 0 .2rem;
+}
+.mpg .mpg-help-content .mpg-test-row {
+  margin-bottom: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mpg .mpg-help > summary::before { transition: none; }
+}

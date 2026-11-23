@@ -1,0 +1,3 @@
+Udacity CarND-LaneLines-P1 and CarND-Advanced-Lane-Lines, MIT license; source SHA256 in stage_e03.py.
+https://github.com/udacity/CarND-LaneLines-P1
+https://github.com/udacity/CarND-Advanced-Lane-Lines
