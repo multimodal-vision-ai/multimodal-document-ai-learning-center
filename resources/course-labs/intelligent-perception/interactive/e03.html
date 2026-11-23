@@ -94,6 +94,7 @@ header a{color:#3b5fc4;text-decoration:none}
 </section>
 </div>
 </main>
+<script src="e03-image-assets.js"></script>
 <script>
 const P=new URLSearchParams(location.search);
 if(P.get('embed')==='1')document.body.classList.add('embed');
@@ -104,7 +105,7 @@ const specs={
  light:{name:'03 · 光照与标线',question:'降低白线阈值可以找回阴影中的标线，但会产生什么新问题？',scene:'08_harder_shadow_glare.jpg',params:[['白线亮度下限',120,245,5,190],['黄线饱和度下限',35,180,5,90]]},
  time:{name:'04 · 连续视频',question:'较强平滑为什么可能使转弯响应滞后？',params:[['轨迹平滑系数 α',10,100,5,60]]}
 };
-let exp='warp',img=null,clip='curve',trackData=null,smoothed=[],alpha=.60,animationStarted=false;
+let exp='warp',img=null,loadedImageName=null,clip='curve',trackData=null,smoothed=[],alpha=.60,animationStarted=false;
 const el=id=>document.getElementById(id);
 function value(id){return Number(document.getElementById('p'+id)?.value||0)}
 function paint(id,data){const canvas=el(id),ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.putImageData(data,0,0)}
@@ -138,7 +139,37 @@ else if(exp==='light'){const masks=computeMask(orig,value(0),value(1));paint('a'
 else if(exp==='curve'){const warp=perspective(orig,61,23),mask=computeMask(warp.result,value(2),90)[2];for(let y=0;y<Math.floor(H*.52);y++)for(let x=0;x<W;x++)mask[y*W+x]=0;paint('a',maskImageData(mask));const found=searchWindows(mask,value(0),value(1));paint('b',warp.result);const bctx=el('b').getContext('2d');bctx.save();bctx.lineWidth=2;for(const [x0,y0,x1,y1,side] of found.boxes){bctx.strokeStyle=side?'#1b9dda':'#ef8c21';bctx.strokeRect(x0,y0,x1-x0,y1-y0)}for(let side=0;side<2;side++){bctx.fillStyle=side?'#1b9dda':'#ef8c21';for(const [x,y] of found.points[side]){bctx.fillRect(x,y,2,2)}}bctx.restore();const lc=fitQuadratic(found.points[0]),rc=fitQuadratic(found.points[1]);paint('c',orig);const cctx=el('c').getContext('2d');const ok=lc&&rc?drawFit(cctx,warp.inverse,lc,rc):false;if(!ok){cctx.fillStyle='#c2410c';cctx.font='16px system-ui';cctx.fillText('当前参数下未得到可靠的双侧曲线候选',12,28)}titleA='鸟瞰标线掩膜';titleB='滑动窗口搜索';titleC='映射回原图的曲线候选';info='左右候选像素：'+found.points[0].length+' / '+found.points[1].length+'；拟合 '+(ok?'成功':'不足或不稳定')+'。护栏、路肩和邻道可能被误选。'}
 el('a-title').textContent=titleA;el('b-title').textContent=titleB;el('c-title').textContent=titleC;el('status').textContent=info;
 }catch(err){el('status').textContent='图像处理失败：'+(err?.message||String(err));console.error('E03 image processing error',err);for(const id of ['a','b','c'])drawPlaceholder(id,'处理失败，请调整参数或更换素材')}}
-function load(){const file=el('scene').value,im=new Image();el('status').textContent='正在读取 '+file;img=null;im.onload=()=>{img=im;calc()};im.onerror=()=>{img=null;el('status').textContent='图片无法加载：'+file;for(const id of ['original','a','b','c'])drawPlaceholder(id,'图片加载失败')};im.src='../images/'+file}
+function load(){
+const file=el('scene').value,im=new Image();
+el('status').textContent='正在读取 '+file;img=null;loadedImageName=null;
+im.onload=()=>{
+  try{
+    // Fail early with a clear diagnostic instead of allowing a tainted image
+    // to poison the visible result canvases.
+    const probe=document.createElement('canvas');probe.width=1;probe.height=1;
+    const pctx=probe.getContext('2d',{willReadFrequently:true});
+    pctx.drawImage(im,0,0,1,1);pctx.getImageData(0,0,1,1);
+    img=im;loadedImageName=file;calc();
+  }catch(err){
+    img=null;loadedImageName=null;
+    el('status').textContent='图像像素不可读取：'+(err?.message||String(err));
+    for(const id of ['a','b','c'])drawPlaceholder(id,'图像来源不可读取，请检查资源包');
+    console.error('E03 image origin-clean check failed',err);
+  }
+};
+im.onerror=()=>{
+  img=null;loadedImageName=null;
+  el('status').textContent='图片无法加载：'+file+'（请检查 e03-image-assets.js）';
+  for(const id of ['original','a','b','c'])drawPlaceholder(id,'图片加载失败');
+};
+const embedded=window.E03_IMAGE_DATA?.[file];
+if(embedded){im.src=embedded;}
+else{
+  // Fallback for direct source-tree preview; set CORS mode before src.
+  im.crossOrigin='anonymous';
+  im.src=new URL('../images/'+encodeURIComponent(file),document.baseURI).href;
+}
+}
 function setAlpha(next){alpha=next;const range=el('p0');if(range){range.value=Math.round(alpha*100);el('value0').textContent=alpha.toFixed(2)}computeSmoothed();renderVideoFrame();renderChart();el('status').textContent='α='+alpha.toFixed(2)+'；E03 车道曲线已按当前参数重新平滑并绘制。'}
 function setup(next){exp=next;const spec=specs[exp];document.querySelectorAll('[data-exp]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.exp===exp)));el('exp-title').textContent=spec.name;el('question').textContent=spec.question;el('timing').hidden=exp!=='time';el('images').hidden=exp==='time';el('scene-picker').hidden=exp==='time';el('controls').innerHTML='';
 spec.params.forEach(([name,min,max,step,initial],i)=>{const label=document.createElement('label');label.innerHTML='<span>'+name+'</span><span class="value" id="value'+i+'">'+(exp==='time'?(initial/100).toFixed(2):initial)+'</span>';const range=document.createElement('input');range.type='range';range.min=min;range.max=max;range.step=step;range.value=initial;range.id='p'+i;range.oninput=()=>{el('value'+i).textContent=exp==='time'?(Number(range.value)/100).toFixed(2):range.value;if(exp==='time'){alpha=Number(range.value)/100;computeSmoothed();renderVideoFrame();renderChart();el('status').textContent='α='+alpha.toFixed(2)+'；E03 视频叠加结果已更新。'}else calc()};label.append(range);el('controls').append(label)});
@@ -164,7 +195,7 @@ el('rawVideo').addEventListener('loadedmetadata',()=>{syncE02(true);renderVideoF
 el('e02Video').addEventListener('loadedmetadata',()=>{syncE02(true);if(!el('rawVideo').paused)el('e02Video').play().catch(()=>{})});
 function renderChart(){const scene=currentScene();if(!scene)return;const data=scene.frames,c=el('chart'),cx=c.getContext('2d');cx.clearRect(0,0,c.width,c.height);cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);const raw=data.map(f=>f.valid&&f.left_x&&f.right_x?(f.left_x[2]+f.right_x[2])/2:null),smooth=smoothed.map(s=>s.xy?(s.xy[0][2]+s.xy[1][2])/2:null),all=raw.concat(smooth).filter(v=>v!==null&&Number.isFinite(v));if(all.length<2){el('video-note').textContent='当前场景没有足够的有效候选轨迹';return}let lo=Math.min(...all)-12,hi=Math.max(...all)+12;if(hi-lo<1)hi=lo+1;const xAt=i=>32+i/(data.length-1)*(c.width-48),yAt=v=>c.height-22-(v-lo)/(hi-lo)*(c.height-40);cx.strokeStyle='#dce2ed';for(let i=0;i<4;i++){const y=12+i*(c.height-34)/3;cx.beginPath();cx.moveTo(30,y);cx.lineTo(c.width-12,y);cx.stroke()}for(const [values,color] of [[raw,'#9bb0c6'],[smooth,'#4167d9']]){cx.strokeStyle=color;cx.lineWidth=2;cx.beginPath();let started=false;values.forEach((v,i)=>{if(v===null||!Number.isFinite(v)){started=false;return}if(!started){cx.moveTo(xAt(i),yAt(v));started=true}else cx.lineTo(xAt(i),yAt(v))});cx.stroke()}cx.fillStyle='#64748b';cx.font='12px system-ui';cx.fillText('灰色：未平滑候选',34,15);cx.fillStyle='#4167d9';cx.fillText('蓝色：当前 α 的 EMA',190,15)}
 el('chart').onclick=e=>{const scene=currentScene();if(!scene)return;const rect=el('chart').getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,idx=Math.max(0,Math.min(scene.frames.length-1,Math.round((x-.035)*scene.frames.length))),v=el('rawVideo');v.currentTime=scene.frames[idx].time};
-window.__e03Debug={getAlpha:()=>alpha,getClip:()=>clip,getTracks:()=>trackData,getSmoothed:()=>smoothed,getCurrentIndex:()=>{const s=currentScene();return s?Math.round(el('rawVideo').currentTime*s.fps):0}};
+window.__e03Debug={getAlpha:()=>alpha,getClip:()=>clip,getTracks:()=>trackData,getSmoothed:()=>smoothed,getLoadedImageName:()=>loadedImageName,getImageSource:()=>img?.src||'',readOriginalPixels:()=>{const d=el('original').getContext('2d').getImageData(0,0,W,H).data;return d.length===W*H*4&&d.some((v,i)=>i%4===3&&v>0)},getCurrentIndex:()=>{const s=currentScene();return s?Math.round(el('rawVideo').currentTime*s.fps):0}};
 document.querySelectorAll('[data-clip]').forEach(b=>{if(b.dataset.clip==='curve')b.classList.add('active')});
 setup('warp');
 </script>
