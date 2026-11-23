@@ -130,7 +130,8 @@ def ransac_polynomial(points, degree=3, threshold=15.0, iterations=70,
     else:
         pts = all_points
     x = pts[:, 0]
-    y = pts[:, 1] / max(1.0, float(np.max(all_points[:, 1]) + 1))
+    y_scale = max(1.0, float(np.max(all_points[:, 1]) + 1))
+    y = pts[:, 1] / y_scale
     best = None
     best_count = 0
     best_error = float("inf")
