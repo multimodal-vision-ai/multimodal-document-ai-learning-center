@@ -36,9 +36,17 @@
 
     [进入 E02 完整实验](e02-notebook.html){ .md-button .md-button--primary }
 
+-   **E03 · 复杂道路车道检测（DEV 待验收）**
+
+    探索透视与鸟瞰、滑动窗口与曲线拟合、复杂光照标线提取、连续视频稳定性；三段真实道路视频同步比较原图 / E02 / E03。
+
+    ![E03 连续复杂弯道](images/07_harder_curve_motorcycle.jpg)
+
+    [进入 E03 隔离 DEV 教学页](e03-notebook.html){ .md-button .md-button--primary }
+
 </div>
 
-后续 E03—E08、A01—A02、P01 仍按课程研发路线逐步建设。本页仅开放已经完成教学审核的 E01 和 E02。
+后续 E04—E08、A01—A02、P01 仍按课程研发路线逐步建设。E03 仅在隔离 DEV 提供审核预览，未正式发布。
 
 ## 一份标准 Notebook，三种学习方式
 
