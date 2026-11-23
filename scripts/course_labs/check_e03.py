@@ -45,6 +45,12 @@ for cell in nb.cells:
         raw=output.get('text','')
         if isinstance(raw,list):raw=''.join(raw)
         assert 'UserWarning: Glyph ' not in raw, 'Missing CJK font in saved Notebook output'
+for cell in nb11.cells:
+    if cell.cell_type!='code':continue
+    for output in cell.outputs:
+        raw=output.get('text','')
+        if isinstance(raw,list):raw=''.join(raw)
+        assert 'UserWarning: Glyph ' not in raw, 'Missing CJK font in V1.1 Notebook output'
 
 assert any('E03_' in source and 'compare.mp4' in source for source in cell_sources)
 with ZipFile(DOWN/'MVAI_E03_Lab.zip') as z:
