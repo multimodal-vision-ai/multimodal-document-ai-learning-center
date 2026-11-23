@@ -84,7 +84,7 @@ header a{color:#3b5fc4;text-decoration:none}
 <figure><canvas id="c" width="480" height="270"></canvas><figcaption id="c-title">输出</figcaption></figure>
 </div>
 <div id="timing" hidden>
-<p class="muted">四列画面来自同一段真实视频和相同源帧：原始视频、E02 Canny/Hough、V1.0 Baseline（二次曲线 + EMA）、V1.1 Improved（RANSAC + 自然样条 + 动态搜索 + Kalman）。V1.1 逐帧结果由 Python/OpenCV 预先计算；左侧 α 只控制 V1.0，V1.1 使用 Kalman 跟踪结果。</p>
+<p class="muted">四列画面来自同一段真实视频和相同源帧：原始视频、E02 Canny/Hough、V1.0 Baseline（二次曲线 + EMA）、V1.1 Improved（自适应候选 + 鲁棒样条 + 动态搜索 + Kalman）。V1.1 逐帧结果由 Python/OpenCV 预先计算；左侧 α 只控制 V1.0，V1.1 使用 Kalman 跟踪结果。</p>
 <div class="scene">
 <button data-clip="straight">直道</button>
 <button data-clip="curve" class="active">普通弯道</button>
@@ -94,7 +94,7 @@ header a{color:#3b5fc4;text-decoration:none}
 <figure><video id="rawVideo" controls playsinline preload="metadata" muted></video><figcaption>原始道路视频</figcaption></figure>
 <figure><video id="e02Video" playsinline preload="metadata" muted></video><figcaption>E02 · Canny + Hough</figcaption></figure>
 <figure><canvas id="e03Canvas" width="640" height="360"></canvas><figcaption>V1.0 · 二次曲线 + EMA</figcaption></figure>
-<figure><canvas id="e03ImprovedCanvas" width="640" height="360"></canvas><figcaption>V1.1 · 样条 + Kalman</figcaption></figure>
+<figure><canvas id="e03ImprovedCanvas" width="640" height="360"></canvas><figcaption>V1.1 · 鲁棒样条 + Kalman</figcaption></figure>
 </div>
 <p class="alpha-note">左侧 α 只调整 V1.0 Baseline 的 EMA。V1.1 Improved 使用 Kalman 位置/速度状态；检测失败时最多短暂预测，之后明确报告失效，不无限沿用历史曲线。</p>
 <p class="muted" id="video-note" aria-live="polite">正在准备逐帧轨迹数据…</p>
