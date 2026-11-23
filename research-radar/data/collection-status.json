@@ -1,14 +1,14 @@
 {
-  "candidate_records": 494,
-  "current_run_discovered": 65,
-  "last_successful_run_utc": "2026-11-16T01:02:46+00:00",
+  "candidate_records": 548,
+  "current_run_discovered": 86,
+  "last_successful_run_utc": "2026-11-23T01:01:17+00:00",
   "review_policy": "all automated leads pending",
   "source_counts": {
     "github": 35,
-    "huggingface": 23,
-    "openreview": 7
+    "huggingface": 33,
+    "openreview": 18
   },
   "source_failures": [
-    "arxiv: RuntimeError: arXiv API unavailable on both hosts: https://export.arxiv.org: HTTPError: HTTP Error 429: Unknown Error; https://arxiv.org: HTTPError: HTTP Error 429: Unknown Error"
+    "arxiv: RuntimeError: arXiv API unavailable on both hosts: https://export.arxiv.org: HTTPError: HTTP Error 429: Unknown Error; https://arxiv.org: TimeoutError: The read operation timed out"
   ]
 }
