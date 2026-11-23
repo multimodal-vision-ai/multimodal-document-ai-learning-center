@@ -62,11 +62,10 @@ class ImprovedLaneTests(unittest.TestCase):
         for y, lx, rx in zip(ys, left, right):
             cv2.line(mask, (int(lx), int(y)), (int(lx), int(y)), 255, 5)
             cv2.line(mask, (int(rx), int(y)), (int(rx), int(y)), 255, 5)
-        prior = {
-            "curve_y": CURVE_Y,
-            "left_x": np.interp(CURVE_Y, ys/360, left),
-            "right_x": np.interp(CURVE_Y, ys/360, right),
-        }
+        prior = np.stack([
+            np.interp(CURVE_Y, ys/360, left),
+            np.interp(CURVE_Y, ys/360, right),
+        ])
         fit = fit_mask(mask, model="spline", prior=prior)
         self.assertTrue(fit["valid"], fit)
         self.assertEqual(fit["search_mode"], "prior")
