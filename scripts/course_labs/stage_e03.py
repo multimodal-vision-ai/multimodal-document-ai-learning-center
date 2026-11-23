@@ -233,6 +233,7 @@ if not ffmpeg:
     import imageio_ffmpeg
     ffmpeg=imageio_ffmpeg.get_ffmpeg_exe()
 summary={}
+tracks={'scenes':{}}
 for scene,label in [('straight','直道'),('curve','普通弯道'),('complex','复杂连续弯道')]:
     cap=cv2.VideoCapture(str(DATA/'videos'/f'E03_{scene}_input.mp4'))
     if not cap.isOpened():raise RuntimeError(f'无法读取 {scene}')
@@ -246,10 +247,12 @@ for scene,label in [('straight','直道'),('curve','普通弯道'),('complex','�
     cap.set(cv2.CAP_PROP_POS_FRAMES,0)
     track=LaneTracker(alpha=.6,max_missing=3)
     stats=[];saved=[]
+    track_scene={'fps':float(fps),'width':int(w),'height':int(h),'Minv':None,'probes':[.38,.62,.91],'frames':[]}
     while True:
         ok,frame=cap.read()
         if not ok:break
-        raw=resized(frame); old,n,_=e02_hough(raw); new,info,_=e03_detect(raw,scene,tracker=track)
+        raw=resized(frame); old,n,_=e02_hough(raw); new,info,steps=e03_detect(raw,scene,tracker=track)
+        track_scene['Minv']=steps['Minv'];track_scene['probes']=steps['probes']
         pieces=[]
         for picture,name in [(raw,'Raw input'),(old,'E02 Canny + Hough'),(new,'E03 curve + EMA')]:
             panel=cv2.resize(picture,(480,270),interpolation=cv2.INTER_AREA)
@@ -257,8 +260,13 @@ for scene,label in [('straight','直道'),('curve','普通弯道'),('complex','�
             cv2.putText(panel,name,(10,19),cv2.FONT_HERSHEY_SIMPLEX,.55,(255,255,255),1,cv2.LINE_AA)
             pieces.append(panel)
         writer.write(np.hstack(pieces))
-        stats.append({'time':round(len(stats)/fps,3),'e02_candidates':n,'valid':bool(info['valid']),
+        frame_time=round(len(stats)/fps,3)
+        stats.append({'time':frame_time,'e02_candidates':n,'valid':bool(info['valid']),
                      'status':info['status'],'x':info['bottom_x']})
+        track_scene['frames'].append({'time':frame_time,'valid':bool(info['valid']),'status':info['status'],
+            'left_x':np.asarray(info['left_x'],dtype=float).tolist() if info['valid'] else None,
+            'right_x':np.asarray(info['right_x'],dtype=float).tolist() if info['valid'] else None,
+            'bottom_x':info['bottom_x']})
         if len(stats) in (1,round(fps*3),round(fps*7)):
             saved.append((f'{label} t={len(stats)/fps:.1f}s {info["status"]}',new.copy()))
     cap.release();writer.release()
@@ -266,11 +274,12 @@ for scene,label in [('straight','直道'),('curve','普通弯道'),('complex','�
     subprocess.run([ffmpeg,'-y','-hide_banner','-loglevel','error','-i',str(rawpath),'-an','-c:v','libx264',
                     '-pix_fmt','yuv420p','-preset','veryfast','-crf','27','-movflags','+faststart',str(filename)],check=True)
     rawpath.unlink()
-    summary[scene]=stats
+    summary[scene]=stats;tracks['scenes'][scene]=track_scene
     print(f'{label}: {len(stats)} frames; valid {sum(s["valid"] for s in stats)}/{len(stats)}; video {filename.name}')
     panels(saved,cols=3)
     display(Video(filename=str(filename),embed=False,width=720))
-(OUTPUT/'E03_diagnostics.json').write_text(__import__('json').dumps(summary,ensure_ascii=False,indent=2),encoding='utf-8')'''),
+(OUTPUT/'E03_diagnostics.json').write_text(__import__('json').dumps(summary,ensure_ascii=False,indent=2),encoding='utf-8')
+(OUTPUT/'E03_tracks.json').write_text(__import__('json').dumps(tracks,ensure_ascii=False,separators=(',',':')),encoding='utf-8')'''),
            m('''## 06 · 综合观察与思考
 - 哪个场景中 E02 与 E03 的区别最明显？有没有 E03 比 E02 更差的帧？
 - 有效帧比例和时序平滑程度，为什么不等于人工 Ground Truth 准确率？
@@ -291,6 +300,9 @@ def execute_notebook():
     if images<8:raise RuntimeError(f'E03 only generated {images} image outputs')
     out_dir=DOWN/'e03_outputs'
     data=json.loads((out_dir/'E03_diagnostics.json').read_text(encoding='utf-8'))
+    track_data=json.loads((out_dir/'E03_tracks.json').read_text(encoding='utf-8'))
+    if set(track_data.get('scenes',{}))!=set(CLIPS):raise RuntimeError('E03 per-frame geometry is incomplete')
+    shutil.copy2(out_dir/'E03_tracks.json',DOWN/'E03_tracks.json')
     for scene in CLIPS:
         source=out_dir/f'E03_{scene}_compare.mp4'
         target=DOWN/f'E03_{scene}_compare.mp4'
@@ -298,6 +310,12 @@ def execute_notebook():
         shutil.copy2(source,target)
         execute([FFMPEG,'-hide_banner','-loglevel','error','-i',target,'-f','null','-'])
         print('Verified E03 video',target.name,target.stat().st_size)
+        e02_target=DOWN/f'E03_{scene}_e02.mp4'
+        execute([FFMPEG,'-hide_banner','-loglevel','error','-y','-i',target,'-vf','crop=480:270:480:0',
+                 '-an','-c:v','libx264','-pix_fmt','yuv420p','-preset','veryfast','-crf','27',
+                 '-movflags','+faststart',e02_target])
+        execute([FFMPEG,'-hide_banner','-loglevel','error','-i',e02_target,'-f','null','-'])
+        print('Verified E02 reference clip',e02_target.name,e02_target.stat().st_size)
     (DOWN/'E03_diagnostics.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
     print('Notebook real PNG outputs:',images)
 
@@ -319,6 +337,8 @@ def package():
             z.write(VIDEOS/f'E03_{scene}_input.mp4',f'videos/E03_{scene}_input.mp4')
             z.write(DOWN/f'E03_{scene}_compare.mp4',f'outputs/E03_{scene}_compare.mp4')
         z.write(DOWN/'E03_diagnostics.json','outputs/E03_diagnostics.json')
+        z.write(DOWN/'E03_tracks.json','outputs/E03_tracks.json')
+        for scene in CLIPS:z.write(DOWN/f'E03_{scene}_e02.mp4',f'outputs/E03_{scene}_e02.mp4')
     print('E03 ZIP:',target.stat().st_size)
 
 if __name__=='__main__':
