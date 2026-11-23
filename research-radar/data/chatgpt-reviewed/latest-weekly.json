@@ -2,53 +2,91 @@
   "schema_version": 1,
   "screening_schema_version": 2,
   "report_type": "weekly",
-  "report_title": "2026年第47周｜小型视觉文档检索与低成本蒸馏科研周报",
+  "report_title": "2026年第48周｜视觉文档检索压缩与视频证据因果忠实度科研周报",
   "first_stage_threshold": 8,
   "status": "completed",
-  "generated_at": "2026-11-16T01:04:15.471Z",
-  "window_start": "2026-11-09",
-  "window_end": "2026-11-16",
-  "collection_generated_at": "2026-11-16T01:02:46+00:00",
-  "summary": "2026年第47周唯一公开源采集于11月16日01:02:46 UTC完成：本次65条线索（GitHub 35、Hugging Face 23、OpenReview 7），arXiv双域名HTTP 429导致该来源本轮缺失；去重后持久化8条match_score≥8候选。逐项核查官方仓库和核心方法证据，仅推荐NanoVDR的69M非对称视觉文档检索蒸馏方案；其论文发表于2026年3月、8月更新，本周为代码库近期活动，绝非本周新发表论文。已推荐的TinyDoc本周重复入队，不作为新发现；NVIDIA VSS是硬件要求较高的系统参考，SpectraRAG公开承认其检索基线只是启发式和旧评测不可复现；其他项目在科研创新、复现成本或证据完整性方面不满足推荐标准。评分为研究优先级判断，尚未在本地RTX3080复测。由于arXiv来源失败，本周不代表完整论文覆盖。",
+  "generated_at": "2026-11-23T01:03:09Z",
+  "window_start": "2026-11-16",
+  "window_end": "2026-11-23",
+  "collection_generated_at": "2026-11-23T01:01:17+00:00",
+  "summary": "2026年第48周唯一公开源采集于2026-11-23 01:01:17 UTC完成，86条线索（GitHub 35、Hugging Face 33、OpenReview 18），arXiv API两域名分别HTTP 429与超时，论文覆盖不完整。持久化9条主题匹配≥8候选；依据官方README、许可证、实验记录及代码结构二次评价，推荐OptiVision RAG的质量约束多向量索引压缩及CausalSight的视频证据反事实忠实度测试。两项均为仓库近期活动，不等同于本周首次发表论文。其结果均为作者报告，尚未在本地独立复现。OmniEyes公开纠正了历史视频错配问题但新方法优势未显著优于简单采帧，故不推荐；重复TinyDoc及其他工程项目不凑数。",
   "items": [
     {
-      "candidate_id": "github-1330645936",
-      "title": "Ryenhails/NanoVDR",
+      "candidate_id": "github-1337450667",
+      "title": "Daemon-VI/optivision-rag",
       "selection_status": "recommended",
-      "screened_at": "2026-11-16T01:04:15.471Z",
-      "summary": "NanoVDR以冻结的Qwen3-VL-Embedding-2B离线索引文档图像，用69M DistilBERT文本学生在同一2048维嵌入空间编码查询；通过教师查询向量余弦蒸馏，无需文档标注或负样本挖掘。论文在22个ViDoRe子数据集上报告95.1%教师质量保留和单线程CPU查询51毫秒，属作者评测结果，尚未独立复现。",
-      "why_selected": "官方EMNLP 2026论文、MIT仓库、Apache-2.0模型卡、训练脚本和配置、ViDoRe评测驱动与发布权重可交叉核查。对高校特别适合用少量PDF页构建教师离线索引，再用69M学生做CPU在线查询，量化准确率、速度、索引存储与跨语言迁移。相比同批其他候选，方法创新和可检验性更强。",
-      "research_opportunity": "基于DocTags解析页面及中文扫描件，验证中文查询迁移、版面复杂度与OCR错误对视觉检索的影响；比较BM25、OCR文本嵌入、Qwen3-VL-Embedding-2B教师和NanoVDR学生的NDCG@5、Recall@5、查询延迟及建库显存，设计少样本中文查询蒸馏和不确定性拒答实验。必须保持教师/学生向量空间与维度一致，控制页面切分和训练集泄漏。",
+      "screened_at": "2026-11-23T01:03:09Z",
+      "summary": "OptiVision RAG针对ColPali/ColQwen等多向量文档检索索引，组合Token合并、量化与可选维度压缩，以独立留出查询检验检索质量保留率；官方给出真实编码器的多组复测、代码、评测数据与局限说明。它优化的是索引而非训练新的视觉模型。",
+      "why_selected": "MIT代码仓库包含完整压缩实现、单元测试、可运行命令、ViDoRe及SciFact实测表和明确的校准/留出拆分；相比只展示单一高压缩倍率的项目，它区分样本内最优与留出性能，适合高校开展低成本且可证伪的检索质量—存储—时延实验。",
+      "research_opportunity": "以DocTags中文复杂页面与公开ViDoRe构建ColSmol/ColPali多向量索引，比较int8、int4、二值量化与Token合并在NDCG@5、Recall@5、索引RAM/磁盘、查询延迟和数据分布变化下的表现；严格采用互不重叠的调参与测试查询，检验压缩质量保证的失效边界。",
       "evaluation_dimensions": {
         "innovation": {
-          "score": 8.6,
-          "rationale": "论文揭示文档图像离线编码与短文本在线查询的非对称性，利用仅查询侧的点对点余弦嵌入蒸馏替代对比式负采样；论文比较六种目标、三种骨干与22个ViDoRe数据集，方法明确且有消融。不是本周新论文，亦不应将教师2B参数冒充学生规模。"
+          "score": 8.4,
+          "rationale": "提出针对多向量MaxSim检索的目标约束压缩选择与可验证产物，将Token合并、量化、维度处理纳入统一候选搜索；方法组件并非全新，但对选择偏差和留出检验的系统处理有实际方法价值。"
         },
         "open_source": {
-          "score": 9.1,
-          "rationale": "官方GitHub仓库MIT许可证，提供nanovdr/训练与评测代码、配置和测试；HF发布69M权重且模型卡标明Apache-2.0。README链接公开训练数据集，但本轮未能独立打开数据仓库，数据实际可下载性仍待确认；教师Qwen模型有独立使用条款。"
+          "score": 9,
+          "rationale": "MIT许可；README、src、tests、notebooks、reports、UNIVERSAL实验记录和CLI齐全；公开ViDoRe、SciFact来源及可重算流程，但部分外部模型权重需遵守各自许可，Nemotron 4B示例为非商业许可。"
         },
         "reproducibility": {
           "score": 8.3,
-          "rationale": "发布SentenceTransformer即用权重、精确模型命名/维度配对规则、评测驱动和训练命令。69M查询侧可CPU运行，但必须先由2B教师GPU离线编码文档；论文报告学生训练低于13 GPU小时，模型卡列1张H200约10小时训练与1小时缓存，不等于RTX3080可完整复训。小样本推理与消融可行，未实际本机跑分。"
+          "rationale": "已有向量可直接在CPU复现压缩、评分和留出检验；官方报告ColPali DocVQA/InfoVQA各500页及SciFact 5183文档等实验，20次拆分；生成视觉向量仍依赖外部模型与GPU，不能把报告的压缩率泛化到所有编码器。"
         },
         "research_potential": {
           "score": 9,
-          "rationale": "中文及非拉丁文字不在官方六语言验证范围，适合研究跨语言蒸馏、复杂版面检索、页面分块、证据定位与轻量视觉索引；可与现有DocTags、文档RAG系统构成可量化研究闭环。潜在应用包括企业合同、票据、档案和知识库检索，但需中文真实数据盲测。"
+          "rationale": "适合研究中文复杂版面、索引规模扩张、检索质量的统计不确定性、分布漂移及动态增量文档；可与DocTags和DocRAG连接，构建可量化的索引优化与证据可靠性课题。"
         }
       },
       "confidence": "high",
       "evidence_urls": [
-        "https://github.com/Ryenhails/NanoVDR",
-        "https://arxiv.org/abs/2603.12824",
-        "https://github.com/Ryenhails/NanoVDR/blob/main/docs/nanovdr-q.md",
-        "https://huggingface.co/nanovdr/NanoVDR-Q-DistilBERT-Qwen3VL2B-2048-ML",
-        "https://github.com/Ryenhails/NanoVDR/blob/main/LICENSE",
-        "https://github.com/Ryenhails/NanoVDR/blob/main/configs/query/distilbert_8b.yaml"
+        "https://github.com/Daemon-VI/optivision-rag",
+        "https://github.com/Daemon-VI/optivision-rag/blob/main/docs/UNIVERSAL.md",
+        "https://github.com/Daemon-VI/optivision-rag/blob/main/LICENSE",
+        "https://github.com/Daemon-VI/optivision-rag/blob/main/docs/RELEASE-AUDIT-2026-09-27.md"
       ],
-      "parameters": "69M查询编码学生；文档离线索引教师Qwen3-VL-Embedding-2B（2B），不能混为同一个模型。",
-      "gpu_requirement": "已发布69M学生CPU查询，官方报告单线程51ms；文档图像离线索引需要GPU运行2B教师；完整学生训练官方使用1×H200约10 GPU小时加缓存约1小时，RTX3080显存与速度未实测。",
-      "weights_open": true,
+      "parameters": null,
+      "gpu_requirement": null,
+      "weights_open": null,
+      "training_code_open": null,
+      "data_open": true
+    },
+    {
+      "candidate_id": "github-1365034826",
+      "title": "JugalGajjar/CausalSight",
+      "selection_status": "recommended",
+      "screened_at": "2026-11-23T01:03:09Z",
+      "summary": "CausalSight用反事实遮挡测试小型视频语言模型的引用证据是否真正影响答案，将模型自己引用的框与同尺寸随机框遮挡作配对比较。仓库报告CLEVRER引用差距约0.053，而NExT-QA约0.003，提示可定位的证据不必然具有因果贡献；这些均为作者结果。",
+      "why_selected": "MIT仓库公开干预评测、统计脚本、SFT/GRPO训练配置、CLEVRER和NExT-QA处理流程与审核表，且明确披露未公开训练权重及逐样本推理结果。问题具有明确可检验性，适合研究视频行为分析的解释忠实度而非仅展示注意力热图。",
+      "research_opportunity": "在视频行为识别平台中针对挥手、用手机、摔倒和躺椅睡觉构造时间窗和人物/物体遮挡干预，对比遮挡目标与等面积随机区域导致的Top1类别翻转率、置信度变化及误报；进一步区分遮挡导致的画质破坏和真正因果依赖，研究跨视角稳定性与可信告警。",
+      "evaluation_dimensions": {
+        "innovation": {
+          "score": 8.5,
+          "rationale": "把视频模型给出的时空证据从位置一致性推进到反事实因果依赖，使用配对尺寸控制和置信区间；其核心干预思想可溯源于解释性评测，但针对视频时序引用及实体轨迹的扩展有研究意义。"
+        },
+        "open_source": {
+          "score": 7.7,
+          "rationale": "MIT许可、完整src/tests、训练配置和评测汇总开放；README明确尚未公开训练后权重、逐条输出及帧包，原始视频需按CLEVRER/NExT-QA许可另行获取，限制精确结果复现。"
+        },
+        "reproducibility": {
+          "score": 7.3,
+          "rationale": "CPU可运行统计与遮挡测试的单元测试；原实验使用单张A100 80GB和2B/3B模型，训练模型权重未发布，完整论文结果难以低成本复刻；可从已开放基座和小样本视频开展干预评测，不应宣称已复现作者结果。"
+        },
+        "research_potential": {
+          "score": 8.8,
+          "rationale": "可验证视频行为模型对人物、手机和时序证据的真实依赖，研究解释忠实度、跨镜头稳定性与告警可信度；能够形成研究生可控实验和监控系统的安全评估方法。"
+        }
+      },
+      "confidence": "medium",
+      "evidence_urls": [
+        "https://github.com/JugalGajjar/CausalSight",
+        "https://github.com/JugalGajjar/CausalSight/blob/main/LICENSE",
+        "https://arxiv.org/abs/2611.21940",
+        "https://github.com/JugalGajjar/CausalSight/tree/main/results",
+        "https://github.com/JugalGajjar/CausalSight/tree/main/tests"
+      ],
+      "parameters": "基座模型Qwen2.5-VL-3B及InternVL3-2B；作者训练后的模型权重未发布。",
+      "gpu_requirement": "原实验作者使用单张A100 80GB；CPU可执行统计与测试，完整训练成本较高。",
+      "weights_open": false,
       "training_code_open": true,
       "data_open": null
     }
