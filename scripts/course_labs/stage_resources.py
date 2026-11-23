@@ -428,6 +428,9 @@ def main():
          "-movflags","+faststart",str(processed_video))
  if not processed_video.is_file() or processed_video.stat().st_size<10000:
   raise RuntimeError("E02 browser video H264 conversion failed")
+ # Verify the full generated video stream can be decoded.
+ command("ffmpeg","-hide_banner","-loglevel","error","-i",str(processed_video),
+         "-f","null","-")
  raw_video.unlink()
  print("E02 verified H264 processed video:",processed_video.stat().st_size)
  embed_student_images()
