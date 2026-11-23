@@ -19,13 +19,16 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: dev-preview
-  cancel-in-progress: false
+  # Isolate each PR preview from dev pushes and other PRs; newer commits
+  # supersede stale builds for the same PR instead of waiting behind them.
+  group: ${{ github.event_name == 'pull_request' && format('dev-preview-pr-{0}', github.event.pull_request.number) || 'dev-preview' }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: Build isolated DEV website
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     env:
       PREVIEW_BRANCH: ${{ github.event_name == 'pull_request' && format('dev-preview-pr-{0}', github.event.pull_request.number) || 'dev-preview' }}
     permissions:
@@ -112,10 +115,22 @@ jobs:
 
       - name: Install student video frame tool
         run: python -m pip install imageio-ffmpeg==0.6.0 nbclient==0.10.2 nbformat==5.10.4 ipykernel matplotlib opencv-python-headless
+      - name: Unit test E03 V1.1 CPU lane algorithms
+        run: python scripts/course_labs/test_e03_improved.py
+
       - name: Stage E01/E02 public student learning assets
         run: |
           python scripts/course_labs/stage_resources.py
           python scripts/course_labs/check_student.py
+
+      - name: Stage and validate E03 only (isolated DEV)
+        run: |
+          # Font is required for Matplotlib plot titles, not for E01/E02.
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          fc-cache -f
+          python scripts/course_labs/stage_e03.py
+          python scripts/course_labs/check_e03.py
 
       - name: Strict build with explicit HTML links
         run: |
@@ -127,6 +142,7 @@ jobs:
           python -m pip install playwright==1.56.0
           python -m playwright install chromium
           python scripts/course_labs/smoke_browser.py
+          python scripts/course_labs/smoke_e03.py
 
       - name: Add visible DEV environment marking
         run: |
@@ -571,3 +587,41 @@ jobs:
             test -s "$RUNNER_TEMP/$(basename "$asset")"
           done
           echo "Integrated DocTags page, native model registry, both adapters and same-origin layout worker assets are publicly reachable."
+      - name: Verify E03 origin-clean image bundle is publicly reachable
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview_sha="$(git rev-parse HEAD)"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$preview_sha"
+          page="$base/resources/course-labs/intelligent-perception/interactive/e03.html"
+          bundle="$base/resources/course-labs/intelligent-perception/interactive/e03-image-assets.js"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$page" -o "$RUNNER_TEMP/e03-preview.html"
+          grep -q '<script src="e03-image-assets.js"></script>' "$RUNNER_TEMP/e03-preview.html"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$bundle" -o "$RUNNER_TEMP/e03-image-assets.js"
+          python - "$RUNNER_TEMP/e03-image-assets.js" <<'PY'
+          import base64, json, re, sys
+          from pathlib import Path
+          source = Path(sys.argv[1]).read_text(encoding="utf-8")
+          match = re.fullmatch(r'window\.E03_IMAGE_DATA = Object\.freeze\((.*)\);\s*', source, re.S)
+          if not match:
+              raise SystemExit("Published E03 image bundle has an invalid JavaScript wrapper")
+          assets = json.loads(match.group(1))
+          expected = {
+              "01_solidWhiteRight_straight_white.jpg",
+              "03_project_curve_intro.jpg",
+              "07_harder_curve_motorcycle.jpg",
+              "08_harder_shadow_glare.jpg",
+              "09_harder_curve_shadow.jpg",
+          }
+          if set(assets) != expected:
+              raise SystemExit(f"Published E03 image bundle is incomplete: {sorted(assets)}")
+          for name, data_url in assets.items():
+              if not data_url.startswith("data:image/jpeg;base64,"):
+                  raise SystemExit(f"Invalid embedded JPEG data URL: {name}")
+              raw = base64.b64decode(data_url.split(",", 1)[1], validate=True)
+              if len(raw) < 3000 or list(raw[:2]) != [255, 216]:
+                  raise SystemExit(f"Invalid embedded JPEG bytes: {name}")
+          print(f"Published E03 bundle verified: {len(assets)} origin-clean images, {Path(sys.argv[1]).stat().st_size} bytes")
+          PY
+          echo "E03 browser page and embedded image bundle are publicly reachable at the pinned DEV preview SHA."
+
