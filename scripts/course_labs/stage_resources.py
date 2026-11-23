@@ -306,6 +306,60 @@ view(panels)""")
 
 add_student_exploration_cells()
 
+# E02 video extension: execute the same per-frame classical pipeline.
+VIDEO_CELL = r"""
+from pathlib import Path
+def find_video():
+    options=[IMAGES.parent/"videos"/"solidWhiteRight_8s.mp4",
+             IMAGES.parent/"downloads"/"solidWhiteRight_8s.mp4",
+             Path.cwd()/"videos"/"solidWhiteRight_8s.mp4"]
+    for p in options:
+        if p.is_file(): return p
+    kaggle=Path("/kaggle/input")
+    if kaggle.exists():
+        for p in kaggle.glob("**/solidWhiteRight_8s.mp4"): return p
+    raise FileNotFoundError("未找到 E02 的 8 秒视频：请使用完整实验包")
+cap=cv2.VideoCapture(str(find_video()))
+if not cap.isOpened(): raise RuntimeError("无法读取教学视频")
+fps=cap.get(cv2.CAP_PROP_FPS)
+fps=fps if fps>1 else 25.0
+path=Path.cwd()/"E02_lane_video_cv2.mp4"
+w,h=640,360
+out=cv2.VideoWriter(str(path),cv2.VideoWriter_fourcc(*"mp4v"),fps,(2*w,h))
+if not out.isOpened():
+    cap.release()
+    raise RuntimeError("OpenCV 当前环境不支持 mp4v 编码")
+examples=[]
+count=0
+while True:
+    ok,frame=cap.read()
+    if not ok:break
+    original=cv2.resize(frame,(w,h))
+    _,_,overlay,lines=pipeline(original)
+    cv2.putText(overlay,f"Hough candidates: {len(lines)}",(12,26),
+                cv2.FONT_HERSHEY_SIMPLEX,.65,(255,255,255),2)
+    out.write(np.hstack((original,overlay)))
+    if count%max(1,round(fps*2))==0 and len(examples)<4:
+        examples.append((f"{count/fps:.1f} seconds",overlay.copy()))
+    count+=1
+cap.release()
+out.release()
+if count<2 or not path.is_file() or path.stat().st_size<10000:
+    raise RuntimeError("没有生成有效的连续视频结果")
+print(f"逐帧处理 {count} 帧，时长 {count/fps:.1f} 秒，视频文件：{path.name}")
+view(examples)
+"""
+for idx,(kind,body) in enumerate(E02):
+    if kind=="md" and body.startswith("## 06 · 连续视频"):
+        E02[idx]=("md","## 06 · 连续视频（拓展）\n"
+                 "将相同的 Canny、ROI、Hough 参数应用于整段视频，观察候选线变化与抖动。"
+                 "本方法不包含时序跟踪。\n"
+                 "**探索：** 哪些时间点的检测突然变化？可以怎样减少跨帧抖动？")
+        E02.insert(idx+1,("code",VIDEO_CELL))
+        break
+else:
+    raise RuntimeError("E02 06 章节缺失")
+
 def build_notebook(title,parts):
  cells=[{"cell_type":"markdown","metadata":{},"source":[title]}]
  for kind,source in parts:
