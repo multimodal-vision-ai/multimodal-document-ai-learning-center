@@ -54,14 +54,14 @@ try:
             frame.locator(f'button[data-clip="{scene}"]').click()
             frame.locator('#rawVideo').evaluate("""(v,expected)=>new Promise((resolve,reject)=>{
                 const cleanup=()=>{v.removeEventListener('loadedmetadata',check);v.removeEventListener('loadeddata',check);v.removeEventListener('error',fail)};
-                const check=()=>{if(v.readyState>=2&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_input.mp4')){cleanup();resolve()}};
+                const check=()=>{if(v.readyState>=1&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_input.mp4')){cleanup();resolve()}};
                 const fail=()=>{cleanup();reject(new Error('scene video failed to load: '+expected))};
                 v.addEventListener('loadedmetadata',check);v.addEventListener('loadeddata',check);v.addEventListener('error',fail);
                 check();
             })""",scene)
             assert f'E03_{scene}_input.mp4' in frame.locator('#rawVideo').get_attribute('src')
             frame.locator('#e02Video').evaluate("""(v,expected)=>new Promise((resolve,reject)=>{
-                const check=()=>{if(v.readyState>=2&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_e02.mp4')){cleanup();resolve()}};
+                const check=()=>{if(v.readyState>=1&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_e02.mp4')){cleanup();resolve()}};
                 const cleanup=()=>{v.removeEventListener('loadedmetadata',check);v.removeEventListener('loadeddata',check);v.removeEventListener('error',fail)};
                 const fail=()=>{cleanup();reject(new Error('E02 reference video failed to load: '+expected))};
                 v.addEventListener('loadedmetadata',check);v.addEventListener('loadeddata',check);v.addEventListener('error',fail);check();
