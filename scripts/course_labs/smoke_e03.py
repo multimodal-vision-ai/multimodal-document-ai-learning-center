@@ -73,7 +73,7 @@ try:
         fps=debug['data']['fps']
         frame.locator('#rawVideo').evaluate('(v,t)=>{v.pause();v.currentTime=t}',best_index/fps)
         frame.locator('#rawVideo').evaluate("""v=>new Promise(resolve=>{
-            if(Math.abs(v.currentTime)>0&&v.readyState>=2)return requestAnimationFrame(()=>resolve());
+            if(!v.seeking&&v.readyState>=2)return requestAnimationFrame(()=>resolve());
             v.addEventListener('seeked',()=>requestAnimationFrame(()=>resolve()),{once:true});
         })""")
         frame.locator('input[type="range"]').first.evaluate(
@@ -83,7 +83,6 @@ try:
             '(e)=>{e.value="90";e.dispatchEvent(new Event("input",{bubbles:true}))}')
         high=frame.locator('#e03Canvas').evaluate('(c)=>c.toDataURL()')
         assert low!=high,'Changing alpha did not change the actual E03 video overlay pixels'
-        assert frame.locator('#video-note').inner_text().contains('α=') if False else True
         page.locator('button[data-tab="download"]').click()
         assert page.locator('a[href$="MVAI_E03_Lab.zip"]').count()>=1
         if errors:raise RuntimeError('JS page errors: '+str(errors))
