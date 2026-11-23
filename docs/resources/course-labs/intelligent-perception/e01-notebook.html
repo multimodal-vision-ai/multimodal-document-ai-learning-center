@@ -161,9 +161,9 @@ const embeddedLessonFrame=document.getElementById("lab-frame");
 embeddedLessonFrame.addEventListener("load",()=>{
   try{
     const doc=embeddedLessonFrame.contentDocument;
-    const resize=()=>{if(doc&&doc.documentElement){embeddedLessonFrame.style.height=Math.max(660,doc.documentElement.scrollHeight+12)+"px";}};
+    const resize=()=>{if(doc&&doc.body){const height=Math.max(660,doc.body.scrollHeight+12);if(Math.abs(embeddedLessonFrame.clientHeight-height)>16)embeddedLessonFrame.style.height=height+"px";}};
     resize();
-    if(typeof ResizeObserver!=="undefined")new ResizeObserver(resize).observe(doc.documentElement);
+    if(typeof ResizeObserver!=="undefined")new ResizeObserver(resize).observe(doc.body);
   }catch(e){console.warn("Embedded lab autosize unavailable",e);}
 });
 const tabStudy=document.querySelector(".tabs a.active");
