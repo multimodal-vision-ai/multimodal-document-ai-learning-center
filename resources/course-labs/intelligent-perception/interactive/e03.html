@@ -1,38 +1,172 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>E03 浏览器交互实验</title>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E03 浏览器交互实验</title>
 <style>
-:root{--ink:#213852;--muted:#687b92;--line:#dde6ef;--blue:#4067db}*{box-sizing:border-box}body{background:#f7f9fc;color:var(--ink);margin:0;font:14px/1.7 system-ui,"Microsoft YaHei",sans-serif}main{max-width:1060px;margin:auto;padding:15px}.tabs{display:flex;flex-wrap:wrap;gap:7px}.tabs button,.scene button{padding:8px 13px;background:#fff;border:1px solid #d6e0ed;border-radius:8px;color:#45607d;cursor:pointer;font-weight:650}.tabs button[aria-selected=true],.scene button.active{background:#eaf0ff;color:#244cc1;border-color:#6f8de0}.grid{display:grid;grid-template-columns:260px 1fr;gap:12px;margin:15px 0}.panel{background:white;border:1px solid var(--line);border-radius:11px;padding:16px}h2{font-size:18px;margin:0 0 8px}p{margin:8px 0}.muted{color:var(--muted);font-size:12px}label{display:block;font-size:12px;font-weight:650;margin:12px 0}select{width:100%;padding:9px;border:1px solid var(--line);border-radius:7px;background:white}input[type=range]{width:100%}label .value{float:right;color:#3662c3}.pictures{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pictures figure{margin:0}.pictures canvas{width:100%;height:auto;background:#f1f4f7;border-radius:7px}.pictures figcaption{color:#506986;text-align:center;font-size:12px;font-weight:650}.messages{color:#58708b;border-top:1px solid var(--line);margin-top:14px;padding-top:8px}.video{width:100%;background:#162337;display:block}.scene{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0}#chart{border:1px solid var(--line);border-radius:7px;cursor:crosshair;max-height:160px;width:100%}#images[hidden],#timing[hidden]{display:none!important}body.embed header{display:none}header{padding:12px 18px;background:white}header a{color:#3b5fc4;text-decoration:none}@media(max-width:760px){.grid{grid-template-columns:1fr}.pictures{grid-template-columns:1fr}.panel{padding:12px}}
-</style></head><body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div><header><a href="../e03-notebook.html">返回 E03 Notebook</a></header><main><nav class="tabs" aria-label="四项探索"><button data-exp="warp" aria-selected="true">01 透视与鸟瞰</button><button data-exp="curve" aria-selected="false">02 曲线拟合</button><button data-exp="light" aria-selected="false">03 光照与标线</button><button data-exp="time" aria-selected="false">04 连续视频</button></nav><div class="grid"><aside class="panel"><h2 id="exp-title">01 · 透视与鸟瞰</h2><p id="question" class="muted">控制点为什么会改变鸟瞰结果？</p><div id="scene-picker"><label>真实素材<select id="scene"><option value="01_solidWhiteRight_straight_white.jpg">直道</option><option value="03_project_curve_intro.jpg">普通弯道</option><option value="07_harder_curve_motorcycle.jpg">复杂弯道</option><option value="08_harder_shadow_glare.jpg">强光/阴影</option><option value="09_harder_curve_shadow.jpg">树影弯道</option></select></label></div><div id="controls"></div><p class="messages" id="status" aria-live="polite">准备加载真实道路图片…</p><p class="muted">本页面采用 JavaScript/Canvas 教学实现，演示数学思想，与 Python OpenCV 不保证逐像素一致。无 Ground Truth，勿把像素数当准确率。</p></aside><section class="panel"><div id="images" class="pictures"><figure><canvas id="original" width="480" height="270"></canvas><figcaption id="original-title">原始道路图</figcaption></figure><figure><canvas id="a" width="480" height="270"></canvas><figcaption id="a-title">中间结果 A</figcaption></figure><figure><canvas id="b" width="480" height="270"></canvas><figcaption id="b-title">中间结果 B</figcaption></figure><figure><canvas id="c" width="480" height="270"></canvas><figcaption id="c-title">输出</figcaption></figure></div><div id="timing" hidden><p class="muted">视频为已使用 Python/OpenCV 在相同源帧实际处理生成的固定 α=0.6 同步对比。下方 α 滑块只对已记录的轨迹进行二次平滑演示，不会修改视频像素或重新运行 Python。</p><div class="scene"><button data-clip="straight" class="active">直道</button><button data-clip="curve">普通弯道</button><button data-clip="complex">复杂弯道</button></div><video class="video" id="video" controls playsinline preload="metadata" src="../downloads/E03_straight_compare.mp4"></video><p class="muted" id="video-note"></p><canvas width="900" height="175" id="chart" title="点击曲线定位视频时间"></canvas><p class="muted">图中轨迹是未标定像素坐标；平滑仅演示波动与延迟，并非检测准确率。</p></div></section></div></main>
+:root{--ink:#213852;--muted:#687b92;--line:#dde6ef;--blue:#4067db;--green:#16865b}
+*{box-sizing:border-box}
+body{background:#f7f9fc;color:var(--ink);margin:0;font:14px/1.7 system-ui,"Microsoft YaHei",sans-serif}
+main{max-width:1160px;margin:auto;padding:15px}
+.tabs,.scene{display:flex;flex-wrap:wrap;gap:7px}
+.tabs button,.scene button{padding:8px 13px;background:#fff;border:1px solid #d6e0ed;border-radius:8px;color:#45607d;cursor:pointer;font-weight:650}
+.tabs button[aria-selected=true],.scene button.active{background:#eaf0ff;color:#244cc1;border-color:#6f8de0}
+.grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:12px;margin:15px 0}
+.panel{background:white;border:1px solid var(--line);border-radius:11px;padding:16px;min-width:0}
+h2{font-size:18px;margin:0 0 8px}
+p{margin:8px 0}
+.muted{color:var(--muted);font-size:12px}
+label{display:block;font-size:12px;font-weight:650;margin:12px 0}
+select{width:100%;padding:9px;border:1px solid var(--line);border-radius:7px;background:white}
+input[type=range]{width:100%;accent-color:#1677ed}
+label .value{float:right;color:#3662c3;font-variant-numeric:tabular-nums}
+.pictures{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pictures figure{margin:0;min-width:0}
+.pictures canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#f1f4f7;border-radius:7px}
+.pictures figcaption{color:#506986;text-align:center;font-size:12px;font-weight:650;padding-top:5px}
+.messages{color:#58708b;border-top:1px solid var(--line);margin-top:14px;padding-top:8px;min-height:42px}
+.video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.video-grid figure{margin:0;min-width:0}
+.video-grid video,.video-grid canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#152438;border-radius:7px}
+.video-grid figcaption{text-align:center;color:#506986;font-size:12px;font-weight:700;padding-top:5px}
+#chart{border:1px solid var(--line);border-radius:7px;width:100%;height:auto;max-height:180px}
+#images[hidden],#timing[hidden]{display:none!important}
+body.embed header{display:none}
+header{padding:12px 18px;background:white}
+header a{color:#3b5fc4;text-decoration:none}
+.alpha-note{background:#f2f6ff;border:1px solid #dce6fb;border-radius:8px;padding:9px 11px;margin:10px 0;color:#385579;font-size:12px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.video-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.pictures,.video-grid{grid-template-columns:1fr}.panel{padding:12px}}
+</style>
+</head>
+<body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
+<header><a href="../e03-notebook.html">返回 E03 Notebook</a></header>
+<main>
+<nav class="tabs" aria-label="四项探索">
+<button data-exp="warp" aria-selected="true">01 透视与鸟瞰</button>
+<button data-exp="curve" aria-selected="false">02 曲线拟合</button>
+<button data-exp="light" aria-selected="false">03 光照与标线</button>
+<button data-exp="time" aria-selected="false">04 连续视频</button>
+</nav>
+<div class="grid">
+<aside class="panel">
+<h2 id="exp-title">01 · 透视与鸟瞰</h2>
+<p id="question" class="muted">透视梯形顶部位置改变，哪一部分的道路会被裁剪？</p>
+<div id="scene-picker">
+<label>真实素材
+<select id="scene">
+<option value="01_solidWhiteRight_straight_white.jpg">直道</option>
+<option value="03_project_curve_intro.jpg">普通弯道</option>
+<option value="07_harder_curve_motorcycle.jpg">复杂弯道</option>
+<option value="08_harder_shadow_glare.jpg">强光/阴影</option>
+<option value="09_harder_curve_shadow.jpg">树影弯道</option>
+</select>
+</label>
+</div>
+<div id="controls"></div>
+<p class="messages" id="status" aria-live="polite">准备加载真实道路图片…</p>
+<p class="muted">本页面采用 JavaScript/Canvas 教学实现，与 Python/OpenCV 不保证逐像素一致。无 Ground Truth，勿把像素数当准确率。</p>
+</aside>
+<section class="panel">
+<div id="images" class="pictures">
+<figure><canvas id="original" width="480" height="270"></canvas><figcaption id="original-title">原始道路图</figcaption></figure>
+<figure><canvas id="a" width="480" height="270"></canvas><figcaption id="a-title">中间结果 A</figcaption></figure>
+<figure><canvas id="b" width="480" height="270"></canvas><figcaption id="b-title">中间结果 B</figcaption></figure>
+<figure><canvas id="c" width="480" height="270"></canvas><figcaption id="c-title">输出</figcaption></figure>
+</div>
+<div id="timing" hidden>
+<p class="muted">三列画面来自同一段真实视频：原始视频、E02 Canny/Hough 参考结果、E03 动态车道曲线。E03 的逐帧候选曲线由 Python/OpenCV 预先计算；调整 α 时，浏览器会对这些真实逐帧结果重新执行 EMA，并重新绘制右侧车道区域。原始帧和 E02 参考保持不变。</p>
+<div class="scene">
+<button data-clip="straight">直道</button>
+<button data-clip="curve" class="active">普通弯道</button>
+<button data-clip="complex">复杂弯道</button>
+</div>
+<div class="video-grid">
+<figure><video id="rawVideo" controls playsinline preload="metadata" muted></video><figcaption>原始道路视频</figcaption></figure>
+<figure><video id="e02Video" playsinline preload="metadata" muted></video><figcaption>E02 · Canny + Hough（参考）</figcaption></figure>
+<figure><canvas id="e03Canvas" width="640" height="360"></canvas><figcaption>E03 · 曲线拟合 + 当前 α</figcaption></figure>
+</div>
+<p class="alpha-note">调整左侧 α，右侧 E03 画面中的车道线与填充区域会随之变化。α 越小，平滑越强，但转弯响应可能越慢。</p>
+<p class="muted" id="video-note" aria-live="polite">正在准备逐帧轨迹数据…</p>
+<canvas width="900" height="175" id="chart" title="点击曲线定位视频时间"></canvas>
+<p class="muted">下方曲线为未标定的图像横坐标；用于观察平滑与滞后，不代表检测准确率。</p>
+</div>
+</section>
+</div>
+</main>
 <script>
-const P=new URLSearchParams(location.search);if(P.get('embed')==='1')document.body.classList.add('embed');
-const W=480,H=270;
-const specs={warp:{name:'01 · 透视与鸟瞰',question:'透视梯形顶部位置改变，哪一部分的道路会被裁剪？',scene:'03_project_curve_intro.jpg',params:[['顶边高度 (%)',45,70,1,61],['顶边宽度 (%)',13,35,1,23]]},curve:{name:'02 · 曲线拟合',question:'滑动窗口更宽，候选像素增加是否意味着检测更正确？',scene:'03_project_curve_intro.jpg',params:[['窗口数量',5,13,1,9],['窗口半宽 (px)',18,85,1,48],['白线亮度下限',150,245,5,190]]},light:{name:'03 · 光照与标线',question:'降低白线阈值可以找回阴影中的标线，但会产生什么新问题？',scene:'08_harder_shadow_glare.jpg',params:[['白线亮度下限',120,245,5,190],['黄线饱和度下限',35,180,5,90]]},time:{name:'04 · 连续视频',question:'较强平滑为什么可能使转弯响应滞后？',params:[['轨迹二次平滑 α',10,100,5,60]]}};
-let exp='warp',img=null,params=[],clip='straight',series=null;const el=id=>document.getElementById(id);
+const P=new URLSearchParams(location.search);
+if(P.get('embed')==='1')document.body.classList.add('embed');
+const W=480,H=270,VIDEO_W=640,VIDEO_H=360;
+const specs={
+ warp:{name:'01 · 透视与鸟瞰',question:'透视梯形顶部位置改变，哪一部分的道路会被裁剪？',scene:'03_project_curve_intro.jpg',params:[['顶边高度 (%)',45,70,1,61],['顶边宽度 (%)',13,35,1,23]]},
+ curve:{name:'02 · 曲线拟合',question:'滑动窗口更宽，候选像素增加是否意味着检测更正确？',scene:'03_project_curve_intro.jpg',params:[['窗口数量',5,13,1,9],['窗口半宽 (px)',18,85,1,48],['白线亮度下限',150,245,5,190]]},
+ light:{name:'03 · 光照与标线',question:'降低白线阈值可以找回阴影中的标线，但会产生什么新问题？',scene:'08_harder_shadow_glare.jpg',params:[['白线亮度下限',120,245,5,190],['黄线饱和度下限',35,180,5,90]]},
+ time:{name:'04 · 连续视频',question:'较强平滑为什么可能使转弯响应滞后？',params:[['轨迹平滑系数 α',10,100,5,60]]}
+};
+let exp='warp',img=null,clip='curve',trackData=null,smoothed=[],alpha=.60,animationStarted=false;
+const el=id=>document.getElementById(id);
 function value(id){return Number(document.getElementById('p'+id)?.value||0)}
-function rgbImage(canvas,source){let ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.drawImage(source,0,0,W,H);return ctx.getImageData(0,0,W,H)}
-function paint(id,data){let c=el(id);c.getContext('2d').putImageData(data,0,0)}
-function rgbaFromMask(mask){let out=new ImageData(W,H);for(let i=0;i<mask.length;i++){let j=i*4;out.data[j]=out.data[j+1]=out.data[j+2]=mask[i];out.data[j+3]=255}return out}
-function newImageData(){let o=new ImageData(W,H);for(let i=3;i<o.data.length;i+=4)o.data[i]=255;return o}
-function computeMask(image,lmin=190,smin=90){let raw=image.data,white=new Uint8Array(W*H),yellow=new Uint8Array(W*H),combined=new Uint8Array(W*H);
-for(let i=0;i<W*H;i++){let a=i*4,r=raw[a],g=raw[a+1],b=raw[a+2],light=Math.round((Math.max(r,g,b)+Math.min(r,g,b))/2);let yellowish=r>g*.99&&g>b*1.20&&r>b*1.55&&g>65;let brightness=light>=lmin&&Math.max(r,g,b)-Math.min(r,g,b)<100;white[i]=brightness?255:0;yellow[i]=yellowish&&r-g<160&&r-b>=smin?255:0;combined[i]=(brightness||yellow[i])?255:0}
+function paint(id,data){const canvas=el(id),ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.putImageData(data,0,0)}
+function newImageData(){const o=new ImageData(W,H);for(let i=3;i<o.data.length;i+=4)o.data[i]=255;return o}
+function rgbImage(canvas,source){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.drawImage(source,0,0,W,H);return ctx.getImageData(0,0,W,H)}
+function maskImageData(mask){const out=newImageData();for(let i=0;i<mask.length;i++){const j=i*4,v=mask[i];out.data[j]=v;out.data[j+1]=v;out.data[j+2]=v}return out}
+function maskOverlay(base,mask){const out=new ImageData(new Uint8ClampedArray(base.data),W,H);for(let i=0;i<mask.length;i++)if(mask[i]){const j=i*4;out.data[j]=Math.round(out.data[j]*.52+35*.48);out.data[j+1]=Math.round(out.data[j+1]*.52+210*.48);out.data[j+2]=Math.round(out.data[j+2]*.52+90*.48)}return out}
+function computeMask(image,lmin=190,smin=90){const raw=image.data,white=new Uint8Array(W*H),yellow=new Uint8Array(W*H),combined=new Uint8Array(W*H);
+for(let i=0;i<W*H;i++){const a=i*4,r=raw[a],g=raw[a+1],b=raw[a+2],light=Math.round((Math.max(r,g,b)+Math.min(r,g,b))/2);const yellowish=r>g*.99&&g>b*1.20&&r>b*1.55&&g>65;const brightness=light>=lmin&&Math.max(r,g,b)-Math.min(r,g,b)<100;white[i]=brightness?255:0;yellow[i]=yellowish&&r-g<160&&r-b>=smin?255:0;combined[i]=(brightness||yellow[i])?255:0}
 return [white,yellow,combined]}
-function solve(A,b){let n=b.length;for(let k=0;k<n;k++){let pivot=k;for(let i=k+1;i<n;i++)if(Math.abs(A[i][k])>Math.abs(A[pivot][k]))pivot=i;if(Math.abs(A[pivot][k])<1e-8)return null;[A[k],A[pivot]]=[A[pivot],A[k]];[b[k],b[pivot]]=[b[pivot],b[k]];let q=A[k][k];for(let j=k;j<n;j++)A[k][j]/=q;b[k]/=q;for(let i=0;i<n;i++)if(i!==k){let t=A[i][k];for(let j=k;j<n;j++)A[i][j]-=t*A[k][j];b[i]-=t*b[k]}}return b}
-function homography(src,dst){let A=[],b=[];for(let i=0;i<4;i++){let [x,y]=src[i],[X,Y]=dst[i];A.push([x,y,1,0,0,0,-x*X,-y*X]);b.push(X);A.push([0,0,0,x,y,1,-x*Y,-y*Y]);b.push(Y)}let h=solve(A,b);return h&&[...h,1]}
-function perspective(source,top,width){let y0=top/100*H,x1=W*(.5-width/200),x2=W*(.5+width/200);let src=[[x1,y0],[x2,y0],[W*.96,H*.98],[W*.05,H*.98]],dst=[[W*.24,0],[W*.76,0],[W*.76,H-1],[W*.24,H-1]],inv=homography(dst,src);let result=newImageData();if(inv)for(let y=0;y<H;y++)for(let x=0;x<W;x++){let d=inv[6]*x+inv[7]*y+1,sx=Math.round((inv[0]*x+inv[1]*y+inv[2])/d),sy=Math.round((inv[3]*x+inv[4]*y+inv[5])/d);if(sx>=0&&sx<W&&sy>=0&&sy<H){let p=4*(sy*W+sx),z=4*(y*W+x);result.data.set(source.data.slice(p,p+3),z)}}return {result,src}}
-function quadratic(pts){if(pts.length<7)return null;let A=[[0,0,0],[0,0,0],[0,0,0]],b=[0,0,0];for(let [x,y] of pts){let t=y/H,v=[t*t,t,1];for(let i=0;i<3;i++){b[i]+=v[i]*x;for(let j=0;j<3;j++)A[i][j]+=v[i]*v[j]}}return solve(A,b)}
-function calc(){if(exp==='time'){renderChart();return}if(!img)return;const orig=rgbImage(el('original'),img);let a=orig,b=orig,c=orig,info='';let title=['原始道路','中间结果 A','中间结果 B','最终结果'];
-if(exp==='warp'){let x=perspective(orig,value(0),value(1));let ctx=el('a').getContext('2d');paint('a',orig);ctx.strokeStyle='#ff6b36';ctx.lineWidth=4;ctx.beginPath();x.src.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.stroke();paint('b',x.result);paint('c',x.result);title=['原始道路','透视四边形','近似鸟瞰图','对照鸟瞰图'];info='只改变一个控制参数；这不是经过相机标定的米制鸟瞰图';}
-else if(exp==='light'){let masks=computeMask(orig,value(0),value(1));paint('a',rgbaFromMask(masks[0]));paint('b',rgbaFromMask(masks[1]));paint('c',rgbaFromMask(masks[2]));title=['真实道路','白线亮度候选','黄色标线候选','组合二值掩膜'];info='白线像素 '+masks[0].filter(Boolean).length+'；黄线像素 '+masks[1].filter(Boolean).length+'（均不是准确率）';}
-else if(exp==='curve'){let mask=computeMask(orig,value(2),90)[2];for(let y=0;y<H*.52;y++)for(let x=0;x<W;x++)mask[y*W+x]=0;paint('a',rgbaFromMask(mask));let nw=value(0),margin=value(1),pts=[[],[]],centers=[Math.floor(W*.27),Math.floor(W*.75)];let out=orig;paint('b',out);let ctx=el('b').getContext('2d');let step=Math.ceil(H*.48/nw);ctx.lineWidth=2;
-for(let k=0;k<nw;k++){let y1=H-k*step,y0=Math.max(Math.floor(H*.52),y1-step);for(let side=0;side<2;side++){let xx=centers[side],pixels=[];for(let y=y0;y<y1;y+=2)for(let x=Math.max(0,xx-margin);x<Math.min(W,xx+margin);x+=2)if(mask[y*W+x])pixels.push([x,y]);pts[side].push(...pixels);ctx.strokeStyle=side?'#1b9dda':'#ef8c21';ctx.strokeRect(xx-margin,y0,2*margin,y1-y0);if(pixels.length>12)centers[side]=Math.round(pixels.reduce((z,p)=>z+p[0],0)/pixels.length)}}
-paint('c',orig);let cc=el('c').getContext('2d');cc.lineWidth=4;let valid=0;for(let side=0;side<2;side++){let coeff=quadratic(pts[side]);if(!coeff)continue;cc.strokeStyle=side?'#17bfea':'#ffb328';cc.beginPath();for(let y=H*.52;y<H;y+=3){let yy=y/H,x=coeff[0]*yy*yy+coeff[1]*yy+coeff[2];if(y===H*.52)cc.moveTo(x,y);else cc.lineTo(x,y)}cc.stroke();valid++}
- title=['真实道路','标线候选掩膜','滑动窗口搜索','二次曲线候选'];info='本图为浏览器近似曲线搜索，找到 '+valid+'/2 条候选边界；可能误选护栏、路肩或邻道';}
-for(let i=0;i<4;i++)el(['original-title','a-title','b-title','c-title'][i]).textContent=title[i];el('status').textContent=info;}
-function load(){let file=el('scene').value;let im=new Image();el('status').textContent='正在读取 '+file;im.onload=()=>{img=im;calc()};im.onerror=()=>{el('status').textContent='图片无法加载：'+file};im.src='../images/'+file;}
-function setup(next){exp=next;let spec=specs[exp];document.querySelectorAll('[data-exp]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.exp===exp)));el('exp-title').textContent=spec.name;el('question').textContent=spec.question;el('timing').hidden=exp!=='time';el('images').hidden=exp==='time';el('scene-picker').hidden=exp==='time';el('controls').innerHTML='';spec.params.forEach(([name,min,max,step,initial],i)=>{let label=document.createElement('label');label.innerHTML='<span>'+name+'</span><span class="value" id="value'+i+'">'+(exp==='time'?(initial/100).toFixed(2):initial)+'</span>';let range=document.createElement('input');range.type='range';range.min=min;range.max=max;range.step=step;range.value=initial;range.id='p'+i;range.oninput=()=>{el('value'+i).textContent=exp==='time'?(Number(range.value)/100).toFixed(2):range.value;calc()};label.append(range);el('controls').append(label)});if(exp==='time'){el('status').textContent='选择视频，观察真实逐帧检测及位置波动；参数仅更新下方二次平滑曲线';loadDiagnostics()}else{el('scene').value=spec.scene;load()}}
+function solve(A,b){A=A.map(row=>row.slice());b=b.slice();const n=b.length;for(let k=0;k<n;k++){let pivot=k;for(let i=k+1;i<n;i++)if(Math.abs(A[i][k])>Math.abs(A[pivot][k]))pivot=i;if(Math.abs(A[pivot][k])<1e-8)return null;[A[k],A[pivot]]=[A[pivot],A[k]];[b[k],b[pivot]]=[b[pivot],b[k]];const q=A[k][k];for(let j=k;j<n;j++)A[k][j]/=q;b[k]/=q;for(let i=0;i<n;i++)if(i!==k){const t=A[i][k];for(let j=k;j<n;j++)A[i][j]-=t*A[k][j];b[i]-=t*b[k]}}return b}
+function homography(src,dst){const A=[],b=[];for(let i=0;i<4;i++){const [x,y]=src[i],[X,Y]=dst[i];A.push([x,y,1,0,0,0,-x*X,-y*X]);b.push(X);A.push([0,0,0,x,y,1,-x*Y,-y*Y]);b.push(Y)}const h=solve(A,b);return h&&[...h,1]}
+function mapPoint(M,x,y){const d=M[6]*x+M[7]*y+M[8];if(Math.abs(d)<1e-8)return null;return [(M[0]*x+M[1]*y+M[2])/d,(M[3]*x+M[4]*y+M[5])/d]}
+function perspective(source,top,width){const y0=top/100*H,x1=W*(.5-width/200),x2=W*(.5+width/200),src=[[x1,y0],[x2,y0],[W*.96,H*.98],[W*.05,H*.98]],dst=[[W*.24,0],[W*.76,0],[W*.76,H-1],[W*.24,H-1]],forward=homography(src,dst),inverse=homography(dst,src),result=newImageData();
+if(inverse)for(let y=0;y<H;y++)for(let x=0;x<W;x++){const p=mapPoint(inverse,x,y);if(!p)continue;const sx=Math.round(p[0]),sy=Math.round(p[1]);if(sx>=0&&sx<W&&sy>=0&&sy<H){const from=4*(sy*W+sx),to=4*(y*W+x);result.data[to]=source.data[from];result.data[to+1]=source.data[from+1];result.data[to+2]=source.data[from+2]}}
+return {result,src,forward,inverse}}
+function fitQuadratic(points){if(points.length<7)return null;const A=[[0,0,0],[0,0,0],[0,0,0]],b=[0,0,0];for(const [x,y] of points){const t=y/H,v=[t*t,t,1];for(let i=0;i<3;i++){b[i]+=v[i]*x;for(let j=0;j<3;j++)A[i][j]+=v[i]*v[j]}}return solve(A,b)}
+function fitSamples(yValues,xValues){const A=yValues.map(y=>[y*y,y,1]);return solve(A,xValues)}
+function drawFit(ctx,inverse,leftCoeff,rightCoeff,height=H,width=W){const left=[],right=[];for(let i=0;i<50;i++){const t=.32+i/49*.66,y=t*height,lx=leftCoeff[0]*t*t+leftCoeff[1]*t+leftCoeff[2],rx=rightCoeff[0]*t*t+rightCoeff[1]*t+rightCoeff[2],lp=mapPoint(inverse,lx,y),rp=mapPoint(inverse,rx,y);if(lp&&rp){left.push(lp);right.push(rp)}}if(left.length<2||right.length<2)return false;
+ctx.save();ctx.beginPath();left.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));right.slice().reverse().forEach(p=>ctx.lineTo(p[0],p[1]));ctx.closePath();ctx.fillStyle='rgba(42,180,91,.22)';ctx.fill();ctx.lineWidth=4;ctx.lineJoin='round';ctx.strokeStyle='#ffb32c';ctx.beginPath();left.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.strokeStyle='#20b9e8';ctx.beginPath();right.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore();return true}
+function searchWindows(mask,nwindows,margin){const histogram=new Int32Array(W);for(let y=Math.floor(H*.5);y<H;y++)for(let x=0;x<W;x++)if(mask[y*W+x])histogram[x]++;
+let leftBase=0,rightBase=Math.floor(W*.5),leftMax=-1,rightMax=-1;for(let x=Math.floor(W*.05);x<W*.5;x++)if(histogram[x]>leftMax){leftMax=histogram[x];leftBase=x}for(let x=Math.floor(W*.5);x<W*.95;x++)if(histogram[x]>rightMax){rightMax=histogram[x];rightBase=x}
+let centers=[leftBase,rightBase],points=[[],[]],boxes=[];const step=Math.ceil(H*.48/nwindows);
+for(let k=0;k<nwindows;k++){const y1=H-k*step,y0=Math.max(Math.floor(H*.52),y1-step);for(let side=0;side<2;side++){const cx=centers[side],x0=Math.max(0,cx-margin),x1=Math.min(W,cx+margin);let sx=0,count=0;boxes.push([x0,y0,x1,y1,side]);for(let y=y0;y<y1;y+=2)for(let x=x0;x<x1;x+=2)if(mask[y*W+x]){points[side].push([x,y]);sx+=x;count++}if(count>12)centers[side]=Math.round(sx/count)}}
+return {points,boxes}}
+function drawPlaceholder(id,text){const c=el(id),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#eef2f6';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle='#64748b';ctx.font='16px system-ui';ctx.textAlign='center';ctx.fillText(text,c.width/2,c.height/2)}
+function calc(){if(exp==='time'){renderVideoFrame();renderChart();return}if(!img||!img.complete)return;
+try{const orig=rgbImage(el('original'),img);let titleA='中间结果 A',titleB='中间结果 B',titleC='输出',info='';
+if(exp==='warp'){const result=perspective(orig,value(0),value(1));paint('a',orig);const ctx=el('a').getContext('2d');ctx.save();ctx.strokeStyle='#ff6b36';ctx.lineWidth=4;ctx.beginPath();result.src.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.stroke();ctx.restore();paint('b',result.result);const mask=computeMask(result.result,190,90)[2];paint('c',maskOverlay(result.result,mask));titleA='透视区域标记';titleB='鸟瞰变换结果';titleC='鸟瞰图 + 标线候选';info='已完成透视映射；最终图中的绿色区域是简单颜色候选，不是准确率。'}
+else if(exp==='light'){const masks=computeMask(orig,value(0),value(1));paint('a',maskImageData(masks[0]));paint('b',maskImageData(masks[1]));paint('c',maskOverlay(orig,masks[2]));titleA='白色标线候选';titleB='黄色标线候选';titleC='原图 + 组合候选';info='白线候选 '+masks[0].reduce((n,v)=>n+(v?1:0),0)+' 像素；黄线候选 '+masks[1].reduce((n,v)=>n+(v?1:0),0)+' 像素（不是检测准确率）。'}
+else if(exp==='curve'){const warp=perspective(orig,61,23),mask=computeMask(warp.result,value(2),90)[2];for(let y=0;y<Math.floor(H*.52);y++)for(let x=0;x<W;x++)mask[y*W+x]=0;paint('a',maskImageData(mask));const found=searchWindows(mask,value(0),value(1));paint('b',warp.result);const bctx=el('b').getContext('2d');bctx.save();bctx.lineWidth=2;for(const [x0,y0,x1,y1,side] of found.boxes){bctx.strokeStyle=side?'#1b9dda':'#ef8c21';bctx.strokeRect(x0,y0,x1-x0,y1-y0)}for(let side=0;side<2;side++){bctx.fillStyle=side?'#1b9dda':'#ef8c21';for(const [x,y] of found.points[side]){bctx.fillRect(x,y,2,2)}}bctx.restore();const lc=fitQuadratic(found.points[0]),rc=fitQuadratic(found.points[1]);paint('c',orig);const cctx=el('c').getContext('2d');const ok=lc&&rc?drawFit(cctx,warp.inverse,lc,rc):false;if(!ok){cctx.fillStyle='#c2410c';cctx.font='16px system-ui';cctx.fillText('当前参数下未得到可靠的双侧曲线候选',12,28)}titleA='鸟瞰标线掩膜';titleB='滑动窗口搜索';titleC='映射回原图的曲线候选';info='左右候选像素：'+found.points[0].length+' / '+found.points[1].length+'；拟合 '+(ok?'成功':'不足或不稳定')+'。护栏、路肩和邻道可能被误选。'}
+el('a-title').textContent=titleA;el('b-title').textContent=titleB;el('c-title').textContent=titleC;el('status').textContent=info;
+}catch(err){el('status').textContent='图像处理失败：'+(err?.message||String(err));console.error('E03 image processing error',err);for(const id of ['a','b','c'])drawPlaceholder(id,'处理失败，请调整参数或更换素材')}}
+function load(){const file=el('scene').value,im=new Image();el('status').textContent='正在读取 '+file;img=null;im.onload=()=>{img=im;calc()};im.onerror=()=>{img=null;el('status').textContent='图片无法加载：'+file;for(const id of ['original','a','b','c'])drawPlaceholder(id,'图片加载失败')};im.src='../images/'+file}
+function setAlpha(next){alpha=next;const range=el('p0');if(range){range.value=Math.round(alpha*100);el('value0').textContent=alpha.toFixed(2)}computeSmoothed();renderVideoFrame();renderChart();el('status').textContent='α='+alpha.toFixed(2)+'；E03 车道曲线已按当前参数重新平滑并绘制。'}
+function setup(next){exp=next;const spec=specs[exp];document.querySelectorAll('[data-exp]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.exp===exp)));el('exp-title').textContent=spec.name;el('question').textContent=spec.question;el('timing').hidden=exp!=='time';el('images').hidden=exp==='time';el('scene-picker').hidden=exp==='time';el('controls').innerHTML='';
+spec.params.forEach(([name,min,max,step,initial],i)=>{const label=document.createElement('label');label.innerHTML='<span>'+name+'</span><span class="value" id="value'+i+'">'+(exp==='time'?(initial/100).toFixed(2):initial)+'</span>';const range=document.createElement('input');range.type='range';range.min=min;range.max=max;range.step=step;range.value=initial;range.id='p'+i;range.oninput=()=>{el('value'+i).textContent=exp==='time'?(Number(range.value)/100).toFixed(2):range.value;if(exp==='time'){alpha=Number(range.value)/100;computeSmoothed();renderVideoFrame();renderChart();el('status').textContent='α='+alpha.toFixed(2)+'；E03 视频叠加结果已更新。'}else calc()};label.append(range);el('controls').append(label)});
+if(exp==='time'){alpha=Number(el('p0').value)/100;el('status').textContent='加载 Python/OpenCV 逐帧候选轨迹…';loadTracks();setClip(clip);if(!animationStarted){animationStarted=true;requestAnimationFrame(animationLoop)}}else{el('scene').value=spec.scene;load()}}
 document.querySelectorAll('[data-exp]').forEach(b=>b.onclick=()=>setup(b.dataset.exp));el('scene').onchange=load;
-document.querySelectorAll('[data-clip]').forEach(b=>b.onclick=()=>{clip=b.dataset.clip;document.querySelectorAll('[data-clip]').forEach(x=>x.classList.toggle('active',x===b));let v=el('video');v.pause();v.src='../downloads/E03_'+clip+'_compare.mp4';v.load();renderChart()});
-async function loadDiagnostics(){if(series){renderChart();return}try{let r=await fetch('../downloads/E03_diagnostics.json');if(!r.ok)throw Error('HTTP '+r.status);series=await r.json();renderChart()}catch(err){el('video-note').textContent='轨迹数据读取失败：'+err.message}}
-function renderChart(){if(!series)return;let data=series[clip];if(!data?.length)return;let alpha=value(0)/100,raw=data.map(x=>x.x),smoothed=[],last=null;for(let x of raw){if(x===null){smoothed.push(last);continue}last=last===null?x:alpha*x+(1-alpha)*last;smoothed.push(last)}let c=el('chart'),cx=c.getContext('2d');cx.clearRect(0,0,c.width,c.height);cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);let clean=raw.filter(x=>x!==null);if(clean.length<2){el('video-note').textContent='无足够连续轨迹';return}let yMin=Math.min(...clean)-20,yMax=Math.max(...clean)+20,xAt=i=>30+i/(raw.length-1)*(c.width-47),yAt=v=>c.height-22-(v-yMin)/(yMax-yMin)*(c.height-40);cx.strokeStyle='#dce2ed';for(let i=0;i<4;i++){let y=12+i*(c.height-34)/3;cx.beginPath();cx.moveTo(30,y);cx.lineTo(c.width-12,y);cx.stroke()};for(let [values,color] of [[raw,'#9bb0c6'],[smoothed,'#4167d9']]){cx.strokeStyle=color;cx.lineWidth=2;cx.beginPath();values.forEach((v,i)=>{if(v===null)return;if(i===0)cx.moveTo(xAt(i),yAt(v));else cx.lineTo(xAt(i),yAt(v))});cx.stroke()}let valid=data.filter(x=>x.valid).length;el('video-note').textContent='真实视频总帧数 '+data.length+'；内部拟合有效 '+valid+' 帧；展示 α='+alpha.toFixed(2)+' 的记录轨迹二次平滑；不是检测准确率';}
-el('chart').onclick=e=>{if(!series)return;let rect=el('chart').getBoundingClientRect();let x=(e.clientX-rect.left)/rect.width,idx=Math.max(0,Math.min(series[clip].length-1,Math.round((x-.033)*series[clip].length)));let v=el('video');v.currentTime=series[clip][idx].time};
+function currentScene(){return trackData?.scenes?.[clip]||null}
+async function loadTracks(){if(trackData){computeSmoothed();renderVideoFrame();renderChart();return}try{const r=await fetch('../downloads/E03_tracks.json',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);trackData=await r.json();if(!trackData.scenes||!trackData.scenes.curve)throw Error('轨迹文件结构不完整');computeSmoothed();renderVideoFrame();renderChart();el('video-note').textContent='逐帧轨迹已加载。改变 α 会重新计算 '+Object.keys(trackData.scenes).length+' 个场景的 EMA，不会重新运行 Python。'}catch(err){el('video-note').textContent='轨迹数据读取失败：'+err.message;el('status').textContent='视频交互暂不可用：逐帧轨迹数据未加载。';console.error(err)}}
+function computeSmoothed(){const scene=currentScene();if(!scene){smoothed=[];return}let last=null,missing=0;smoothed=scene.frames.map(frame=>{if(frame.valid&&Array.isArray(frame.left_x)&&Array.isArray(frame.right_x)){let xy=[frame.left_x.slice(),frame.right_x.slice()];if(last&&missing<=3)xy=xy.map((line,s)=>line.map((v,i)=>alpha*v+(1-alpha)*last[s][i]));last=xy.map(line=>line.slice());missing=0;return {xy,status:'DETECTED'}}missing++;if(last&&missing<=3)return {xy:last.map(line=>line.slice()),status:'HISTORY (unverified)'};last=null;return {xy:null,status:'NO RELIABLE LANE'}})}
+function renderTrack(ctx,index){const scene=currentScene(),state=smoothed[index];if(!scene||!state||!state.xy){ctx.fillStyle='#ffe6e6';ctx.font='bold 15px system-ui';ctx.fillText('NO RELIABLE LANE',14,27);return}
+const probes=scene.probes||[.38,.62,.91],left=fitSamples(probes,state.xy[0]),right=fitSamples(probes,state.xy[1]);if(!left||!right){ctx.fillStyle='#ffe6e6';ctx.fillText('CURVE FIT UNAVAILABLE',14,27);return}
+const inverse=Array.isArray(scene.Minv[0])?scene.Minv.flat():scene.Minv;drawFit(ctx,inverse,left,right,VIDEO_H,VIDEO_W);ctx.fillStyle='rgba(13,28,44,.78)';ctx.fillRect(8,8,210,26);ctx.fillStyle='#fff';ctx.font='bold 14px system-ui';ctx.fillText(state.status+' · α='+alpha.toFixed(2),15,27)}
+function renderVideoFrame(){if(exp!=='time')return;const video=el('rawVideo'),canvas=el('e03Canvas'),ctx=canvas.getContext('2d');if(video.readyState>=2){ctx.drawImage(video,0,0,VIDEO_W,VIDEO_H);const scene=currentScene();if(scene&&smoothed.length){const idx=Math.max(0,Math.min(smoothed.length-1,Math.round(video.currentTime*scene.fps)));renderTrack(ctx,idx);el('video-note').textContent='场景：'+clip+' · 帧 '+(idx+1)+' / '+smoothed.length+' · α='+alpha.toFixed(2)+' · 轨迹由真实逐帧检测结果生成'}else{ctx.fillStyle='#fff';ctx.font='16px system-ui';ctx.fillText('等待轨迹数据…',16,28)}}else{ctx.fillStyle='#eef2f6';ctx.fillRect(0,0,VIDEO_W,VIDEO_H);ctx.fillStyle='#64748b';ctx.font='16px system-ui';ctx.fillText('等待视频载入…',16,28)}}
+function animationLoop(){if(exp==='time')renderVideoFrame();requestAnimationFrame(animationLoop)}
+function syncE02(force=false){const raw=el('rawVideo'),ref=el('e02Video');if(ref.readyState>=1&&raw.readyState>=1&&(force||Math.abs(ref.currentTime-raw.currentTime)>.12)){try{ref.currentTime=Math.min(raw.currentTime,Math.max(0,(ref.duration||raw.duration||raw.currentTime)-.01))}catch(_){}}}
+function setClip(next){clip=next;document.querySelectorAll('[data-clip]').forEach(b=>b.classList.toggle('active',b.dataset.clip===clip));const raw=el('rawVideo'),ref=el('e02Video');raw.pause();ref.pause();raw.src='../videos/E03_'+clip+'_input.webm';ref.src='../downloads/E03_'+clip+'_e02.webm';raw.load();ref.load();computeSmoothed();renderChart();renderVideoFrame();el('video-note').textContent='正在加载 '+clip+' 视频与逐帧轨迹…';}
+document.querySelectorAll('[data-clip]').forEach(b=>b.onclick=()=>setClip(b.dataset.clip));
+el('rawVideo').addEventListener('play',()=>{syncE02(true);el('e02Video').play().catch(()=>{})});
+el('rawVideo').addEventListener('pause',()=>el('e02Video').pause());
+el('rawVideo').addEventListener('seeking',()=>syncE02(true));
+el('rawVideo').addEventListener('seeked',()=>{syncE02(true);renderVideoFrame()});
+el('rawVideo').addEventListener('timeupdate',()=>syncE02());
+el('rawVideo').addEventListener('loadedmetadata',()=>{syncE02(true);renderVideoFrame()});
+el('e02Video').addEventListener('loadedmetadata',()=>{syncE02(true);if(!el('rawVideo').paused)el('e02Video').play().catch(()=>{})});
+function renderChart(){const scene=currentScene();if(!scene)return;const data=scene.frames,c=el('chart'),cx=c.getContext('2d');cx.clearRect(0,0,c.width,c.height);cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);const raw=data.map(f=>f.valid&&f.left_x&&f.right_x?(f.left_x[2]+f.right_x[2])/2:null),smooth=smoothed.map(s=>s.xy?(s.xy[0][2]+s.xy[1][2])/2:null),all=raw.concat(smooth).filter(v=>v!==null&&Number.isFinite(v));if(all.length<2){el('video-note').textContent='当前场景没有足够的有效候选轨迹';return}let lo=Math.min(...all)-12,hi=Math.max(...all)+12;if(hi-lo<1)hi=lo+1;const xAt=i=>32+i/(data.length-1)*(c.width-48),yAt=v=>c.height-22-(v-lo)/(hi-lo)*(c.height-40);cx.strokeStyle='#dce2ed';for(let i=0;i<4;i++){const y=12+i*(c.height-34)/3;cx.beginPath();cx.moveTo(30,y);cx.lineTo(c.width-12,y);cx.stroke()}for(const [values,color] of [[raw,'#9bb0c6'],[smooth,'#4167d9']]){cx.strokeStyle=color;cx.lineWidth=2;cx.beginPath();let started=false;values.forEach((v,i)=>{if(v===null||!Number.isFinite(v)){started=false;return}if(!started){cx.moveTo(xAt(i),yAt(v));started=true}else cx.lineTo(xAt(i),yAt(v))});cx.stroke()}cx.fillStyle='#64748b';cx.font='12px system-ui';cx.fillText('灰色：未平滑候选',34,15);cx.fillStyle='#4167d9';cx.fillText('蓝色：当前 α 的 EMA',190,15)}
+el('chart').onclick=e=>{const scene=currentScene();if(!scene)return;const rect=el('chart').getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,idx=Math.max(0,Math.min(scene.frames.length-1,Math.round((x-.035)*scene.frames.length))),v=el('rawVideo');v.currentTime=scene.frames[idx].time};
+window.__e03Debug={getAlpha:()=>alpha,getClip:()=>clip,getTracks:()=>trackData,getSmoothed:()=>smoothed,getCurrentIndex:()=>{const s=currentScene();return s?Math.round(el('rawVideo').currentTime*s.fps):0}};
+document.querySelectorAll('[data-clip]').forEach(b=>{if(b.dataset.clip==='curve')b.classList.add('active')});
 setup('warp');
-</script></body></html>
+</script>
+</body>
+</html>
