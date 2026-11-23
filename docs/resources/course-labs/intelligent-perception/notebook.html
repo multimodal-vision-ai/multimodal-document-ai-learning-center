@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notebook 在线阅读 · 智能感知与自动驾驶 | MVAI</title>
+<style>
+:root{--blue:#506cfa;--ink:#20354b;--sub:#687d92;--line:#e4eaf1}
+*{box-sizing:border-box}body{margin:0;background:#f5f7fa;color:var(--ink);font-family:system-ui,-apple-system,"Microsoft Yahei",sans-serif}
+header{padding:16px 4vw;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+a{color:#4264dd}header a{text-decoration:none;font-size:13px;font-weight:700}
+main{max-width:1030px;margin:25px auto;padding:0 16px 70px}
+h1{font-size:28px}h2{font-size:20px}h3{font-size:16px}
+.intro{background:#eef3ff;padding:14px 18px;border-radius:9px;color:#44617f;font-size:13px;line-height:1.9;margin-bottom:20px}
+.cell{background:white;border:1px solid var(--line);border-radius:12px;margin:16px 0;overflow:hidden}
+.cell.markdown{padding:24px 28px;line-height:1.85}
+.cell.markdown p{margin:12px 0}.cell.markdown ul{padding-left:25px}.cell.markdown li{margin:5px 0}
+.cell.code .cap{background:#eef2f8;color:#597187;font-size:12px;font-weight:700;padding:10px 17px;border-bottom:1px solid var(--line)}
+pre{margin:0;padding:20px;overflow:auto;background:#fbfcfe;font-size:12px;line-height:1.7;tab-size:4}
+.bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:18px 0}
+.button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:8px;background:var(--blue);color:#fff;font-size:13px;font-weight:750;padding:11px 16px}
+.button.light{background:#fff;border:1px solid #d8e2ee;color:#375d90}
+.hero{background:linear-gradient(115deg,#edf5fd,#fafcff);padding:27px max(18px,calc((100% - 1160px)/2));border-bottom:1px solid var(--line)}
+.hero h1{font-size:28px;margin:5px 0 8px}.hero .eyebrow{letter-spacing:1.7px;font-size:10px;color:#1769ae;font-weight:900}
+.hero p{font-size:13px;line-height:1.8;color:#5f778e}
+.tabs{background:white;border-bottom:1px solid var(--line);padding:0 max(18px,calc((100% - 1160px)/2));display:flex;gap:8px;flex-wrap:wrap}
+.tabs a{text-decoration:none;color:#59728b;font-size:13px;font-weight:800;padding:16px 14px;border-bottom:3px solid transparent}
+.tabs a.active{color:#1769ae;border-color:#1769ae}
+.book-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:18px;align-items:start}
+.book-toc{background:#fff;border:1px solid var(--line);padding:17px;border-radius:12px;position:sticky;top:15px;max-height:calc(100vh - 30px);overflow:auto}
+.book-toc h3{font-size:12px;color:#63829e;letter-spacing:.8px}
+.book-toc a{display:block;padding:9px 2px;border-bottom:1px solid #f0f4f8;font-size:12px;line-height:1.55;color:#486780;text-decoration:none}
+.book-toc a:hover{color:#1867af}
+@media(max-width:850px){.book-layout{grid-template-columns:1fr}.book-toc{position:static;max-height:220px}}
+.source{margin:0;background:#f7f9fc;border-bottom:1px solid var(--line)}.source summary{cursor:pointer;font-size:13px;color:#47647f;font-weight:700;padding:13px 18px;list-style:revert}.source pre{max-height:620px;background:#fbfcff}
+.results{padding:18px;background:white}.results h3{font-size:13px;font-weight:800;color:#326b9c;margin:0 0 12px}
+.results img{max-width:100%;width:auto;height:auto;display:block;border:1px solid #e7edf3;border-radius:7px;margin:0 auto 18px}
+.results .stream{font-size:12px;line-height:1.7;background:#f5f8fa;padding:10px;border-radius:6px;white-space:pre-wrap}
+.tip{font-size:13px;background:#eef5fc;border-left:3px solid #5474ec;border-radius:5px;padding:12px 16px;line-height:1.8}
+#status{font-size:12px;color:var(--sub)}footer{font-size:12px;color:#7a8da0;text-align:center;margin-top:45px}
+@media(max-width:620px){.cell.markdown{padding:16px}pre{padding:12px}}
+</style></head>
+<body>
+<header><strong>MVAI Learning Center / 智能感知与自动驾驶技术</strong><a href="./index.html">返回课程首页</a></header>
+<section class="hero"><div class="eyebrow">ONE NOTEBOOK · THREE LEARNING WAYS</div><h1 id="title">Notebook 在线学习</h1><p>阅读实验讲解、Python 源码和真实运行结果；修改参数时可使用浏览器演示，也可下载同一份 Notebook 在本地或 Kaggle 运行。</p></section>
+<nav class="tabs" aria-label="三种学习方式"><a class="active" href="#notebook">01 · 在线学习 Notebook</a><a id="interactTab" href="interactive/index.html?lab=e02">02 · 浏览器交互实验</a><a id="downloadTab" href="downloads/MVAI_E01_E02_Labs.zip">03 · 本地 / Kaggle 运行</a></nav>
+<main id="notebook">
+<div class="bar"><span id="status">读取 Notebook 中…</span><div><a class="button light" id="interact" href="interactive/index.html?lab=e02">在线交互</a> <a class="button" id="download" href="downloads/E02_Lane_Detection_V2.0.ipynb" download>下载 .ipynb</a></div></div>
+<div class="intro">以下图像由对应 Python/OpenCV Notebook 的代码真实执行后生成；本页不执行 Python。单击代码单元可展开源码，对照运行结果学习。</div>
+<div class="book-layout"><aside class="book-toc"><h3>NOTEBOOK 章节</h3><div id="toc"></div></aside><section id="cells"></section></div>
+<footer>MVAI Learning Center · 智能感知与自动驾驶技术 · 学生学习资源</footer>
+</main>
+<script>
+(function(){
+const lab=new URLSearchParams(location.search).get("lab")==="e01"?"e01":"e02";
+const name=lab==="e01"?"E01_Image_Processing_V2.0.ipynb":"E02_Lane_Detection_V2.0.ipynb";
+const title=lab==="e01"?"E01 · 道路图像处理":"E02 · 传统车道线检测";
+document.getElementById("title").textContent=title+" · 标准 Notebook";
+document.getElementById("download").href="downloads/"+name;
+document.getElementById("interact").href="interactive/index.html?lab="+lab;
+document.getElementById("interactTab").href="interactive/index.html?lab="+lab;
+document.getElementById("downloadTab").href="downloads/MVAI_E01_E02_Labs.zip";
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function markdown(s){
+ return s.split(/\r?\n/).map(line=>{
+   if(/^### /.test(line))return"<h3>"+esc(line.slice(4))+"</h3>";
+   if(/^## /.test(line))return"<h2>"+esc(line.slice(3))+"</h2>";
+   if(/^# /.test(line))return"<h1>"+esc(line.slice(2))+"</h1>";
+   if(/^[-*] /.test(line))return"<p>• "+esc(line.slice(2))+"</p>";
+   if(/^\d+\. /.test(line))return"<p>"+esc(line)+"</p>";
+   if(!line.trim())return"";
+   return"<p>"+esc(line)+"</p>";
+ }).join("\n").replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+}
+fetch("downloads/"+name).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(nb=>{
+ const target=document.getElementById("cells");
+ let codeNumber=0,mdNumber=0,plotNumber=0;
+ nb.cells.forEach(cell=>{
+  const source=(Array.isArray(cell.source)?cell.source.join(""):cell.source)||"";
+  const box=document.createElement("article");
+  if(cell.cell_type==="code"){
+   codeNumber++;box.className="cell code";
+   const details=document.createElement("details");details.className="source";
+   const summary=document.createElement("summary");summary.textContent="Python 代码单元 "+codeNumber+" · 点击展开源码";
+   const pre=document.createElement("pre");pre.textContent=source;details.append(summary,pre);box.append(details);
+   const outputs=cell.outputs||[];
+   const rendered=document.createElement("section");rendered.className="results";
+   let hasOutput=false;
+   for(const output of outputs){
+    const data=output.data||{};
+    if(data["image/png"]||data["image/jpeg"]){
+     const type=data["image/png"]?"image/png":"image/jpeg";
+     const payload=data[type];
+     const img=document.createElement("img");img.alt="Notebook 第 "+codeNumber+" 单元的真实运行图像";
+     img.src="data:"+type+";base64,"+(Array.isArray(payload)?payload.join(""):payload).replace(/\s/g,"");
+     if(!hasOutput){const heading=document.createElement("h3");heading.textContent="实际运行结果";rendered.append(heading)}
+     rendered.append(img);plotNumber++;hasOutput=true;
+    }
+    const stream=output.text||(data["text/plain"]&&!data["image/png"]&&!data["image/jpeg"]?data["text/plain"]:null);
+    if(stream){
+     const textContent=Array.isArray(stream)?stream.join(""):stream;
+     if(textContent.trim()){
+      const preText=document.createElement("div");preText.className="stream";preText.textContent=textContent;
+      if(!hasOutput){const heading=document.createElement("h3");heading.textContent="实际运行输出";rendered.append(heading)}
+      rendered.append(preText);hasOutput=true;
+     }
+    }
+   }
+   if(hasOutput)box.append(rendered);
+  }else{
+   box.className="cell markdown";box.innerHTML=markdown(source);mdNumber++;
+   const m=source.match(/^##\s+([^\n]+)/m);
+   if(m){const id="chapter-"+mdNumber;box.id=id;
+    const a=document.createElement("a");a.href="#"+id;a.textContent=m[1].replace(/\*\*/g,"");document.getElementById("toc").append(a);}
+  }
+  target.appendChild(box);
+ });
+ document.getElementById("status").textContent=mdNumber+" 节讲解 · "+codeNumber+" 个 Python 代码单元 · "+plotNumber+" 组实际运行图像";
+}).catch(e=>{document.getElementById("status").textContent="Notebook 暂时无法加载："+e.message;});
+})();
+</script></body></html>

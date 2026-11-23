@@ -9,6 +9,7 @@ on:
       - "docs/radar/**"
       - ".github/workflows/radar-*.yml"
       - ".github/workflows/deploy.yml"
+      - "scripts/course_labs/**"
       - "docs/index.md"
       - "mkdocs.yml"
   push:
@@ -45,6 +46,10 @@ jobs:
       - name: Build MkDocs strictly
         run: |
           pip install -r requirements-docs.txt
+          # Course JPEG/ZIP/IPYNB files are generated during CI, not tracked.
+          python -m pip install imageio-ffmpeg==0.6.0 nbclient==0.10.2 nbformat==5.10.4 ipykernel matplotlib opencv-python-headless
+          python scripts/course_labs/stage_resources.py
+          python scripts/course_labs/check_student.py
           python -m unittest discover -s tests/radar -p 'test_publication*.py' -v
           mkdocs build --strict
           python scripts/radar/verify_publication.py --site-dir site

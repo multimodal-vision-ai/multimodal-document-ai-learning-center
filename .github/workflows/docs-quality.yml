@@ -11,6 +11,7 @@ on:
       - "requirements-docs.txt"
       - ".github/workflows/docs-quality.yml"
       - ".github/workflows/deploy.yml"
+      - "scripts/course_labs/**"
       - "scripts/video-action/stage_our_solution_release.py"
       - "scripts/video-action/our_solution_release.json"
       - "scripts/radar/restore_historical_review_provenance.py"
@@ -52,6 +53,14 @@ jobs:
         run: python scripts/kaggle/validate_browser_doctags_pilot.py
       - name: Validate archived review provenance fail-closed tests
         run: python -m unittest discover -s tests/radar -p test_restore_historical_review_provenance.py -v
+      - name: Install E01/E02 Notebook teaching dependencies
+        run: python -m pip install imageio-ffmpeg==0.6.0 nbclient==0.10.2 nbformat==5.10.4 ipykernel matplotlib opencv-python-headless
+
+      - name: Generate approved E01/E02 teaching resources and validate outputs
+        run: |
+          python scripts/course_labs/stage_resources.py
+          python scripts/course_labs/check_student.py
+
       - name: Validate navigation and internal links
         run: mkdocs build --strict
       - name: Simulate production Pages radar snapshot validation
@@ -73,6 +82,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # E01/E02 images and downloads exist only after generated-asset staging.
+      # They are strictly verified by check_student.py in the build job.
       - name: Check Markdown links
         uses: lycheeverse/lychee-action@v2
         with:
@@ -83,5 +94,6 @@ jobs:
             --max-retries 2
             --exclude "^https://www[.]acm[.]org/publications/policies/artifact-review-and-badging-current$"
             --exclude "^https://www[.]sciencedirect[.]com/science/article/pii/S1566253525006955$"
+            --exclude "^file:///.*?/docs/resources/course-labs/intelligent-perception/(images|downloads)/"
             "docs/**/*.md"
           fail: true

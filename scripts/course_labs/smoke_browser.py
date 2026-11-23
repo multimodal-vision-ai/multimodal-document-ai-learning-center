@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+"""Headless browser verification for approved student learning layouts.
+
+Runs against the generated MkDocs site, with its real image/video/notebook
+assets, not mocked placeholders. A blank canvas is a test failure.
+"""
+from __future__ import annotations
+import os
+import sys
+import subprocess
+import time
+from pathlib import Path
+from playwright.sync_api import sync_playwright
+
+site=Path(os.environ.get("RUNNER_TEMP","/tmp"))/"dev-site"
+if not (site/"resources/course-labs/intelligent-perception/interactive/index.html").exists():
+ raise SystemExit("Missing built interactive page")
+port=18794
+server=subprocess.Popen([sys.executable,"-m","http.server",str(port),"--bind","127.0.0.1","--directory",str(site)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+base=f"http://127.0.0.1:{port}/resources/course-labs/intelligent-perception"
+try:
+ time.sleep(1)
+ with sync_playwright() as p:
+  browser=p.chromium.launch(headless=True,args=["--no-sandbox"])
+  page=browser.new_page(viewport={"width":1440,"height":1000})
+  errors=[]
+  page.on("pageerror",lambda exc:errors.append(str(exc)))
+  for lab in ("e01","e02"):
+   page.goto(f"{base}/interactive/index.html?lab={lab}",wait_until="domcontentloaded",timeout=30000)
+   page.wait_for_function('document.getElementById("title1").textContent!=="中间结果 A"',timeout=40000)
+   page.wait_for_function(
+      """() => {
+       const c=document.getElementById("original");
+       const a=c.getContext("2d").getImageData(0,0,c.width,c.height).data;
+       let n=0;
+       for(let i=0;i<a.length;i+=160)if(a[i]!==0||a[i+1]!==0||a[i+2]!==0)n++;
+       return n>500;
+      }""",
+      timeout=40000
+   )
+   page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/f"student-{lab}.png"))
+   for exp in (["color","threshold","filter","morph","perspective"] if lab=="e01" else ["canny","roi","hough","fit","generalization"]):
+    page.select_option("#experiment",exp)
+    page.wait_for_function('document.getElementById("title1").textContent!=="中间结果 A"',timeout=50000)
+    page.wait_for_timeout(450)
+    metric=page.locator("#metrics").inner_text()
+    if "失败" in metric or "错误" in metric or "加载" in metric:
+     raise AssertionError((lab,exp,metric))
+   print("Browser exercises passed:",lab)
+   if errors:raise AssertionError("JavaScript runtime errors: "+repr(errors))
+  for lab in ("e01","e02"):
+   page.goto(f"{base}/{lab}-notebook.html",wait_until="domcontentloaded",timeout=30000)
+   page.wait_for_function('document.querySelectorAll(".nb-figure img").length>=9',timeout=65000)
+   page.wait_for_function(
+     'Array.from(document.querySelectorAll(".nb-figure img")).every(i=>i.complete&&i.naturalWidth>100)',
+     timeout=65000
+   )
+   count=page.locator(".nb-figure img").count()
+   assert page.locator(".chapter").count()>=6, "Missing exploration chapters"
+   task_count=sum(x.count("探索任务") for x in page.locator(".chapter").all_inner_texts())
+   assert task_count>=5,(lab,"missing exploratory Cells",task_count)
+   collapsed=page.locator("details.code-cell")
+   assert collapsed.count()>=10,"Missing exploration Python code Cells"
+   assert page.locator("details.code-cell[open]").count()==0,"Python must be collapsed by default"
+   assert page.locator(".hero-img").is_visible(),"Course cover image missing"
+   page.locator("details.code-cell summary").first.click()
+   assert page.locator("details.code-cell[open]").count()==1,"Source expand failed"
+   page.locator("details.code-cell summary").first.click()
+   assert page.locator("details.code-cell[open]").count()==0,"Source collapse failed"
+   page.locator("#toggle-codes").click()
+   assert page.locator("details.code-cell[open]").count()==collapsed.count(),"Expand all failed"
+   page.locator("#toggle-codes").click()
+   assert page.locator("details.code-cell[open]").count()==0,"Collapse all failed"
+   assert page.locator("#meta-toggle").is_visible(),"Notebook information icon missing"
+   assert not page.locator("#meta-pop").is_visible(),"Run statistics are exposed by default"
+   assert page.locator(".intro").count()==0,"Technical explanation still displayed"
+   page.locator("#meta-toggle").hover()
+   assert page.locator("#meta-pop").is_visible(),"Information popover does not open on hover"
+   assert page.locator("#status").is_visible(),"Run counts are missing from information popover"
+   page.locator("#meta-toggle").click()
+   page.mouse.move(800,350)
+   assert page.locator("#meta-pop").is_visible(),"Information popover pin/click failed"
+   page.locator("#meta-toggle").click()
+   assert not page.locator("#meta-pop").is_visible(),"Information popover does not close"
+   if lab=="e02":
+    assert page.locator("#video-processed").count()==1,"E02 chapter 06 lacks processed video"
+    assert page.locator("#video-processed").is_visible(),"E02 video player is hidden"
+    assert page.locator(".video-result").count()==1,"E02 video output section is missing"
+    assert page.locator("#video-processed").get_attribute("src")=="downloads/E02_lane_video_processed.mp4"
+    video_file=page.locator("#video-processed").evaluate("""async (v) => {
+      const response=await fetch(v.src,{cache:"no-store"});
+      if(!response.ok)return {ok:false,status:response.status};
+      const bytes=new Uint8Array(await response.arrayBuffer());
+      const signature=String.fromCharCode(...bytes.slice(4,8));
+      return {ok:true,size:bytes.length,signature};
+    }""")
+    assert video_file.get("ok") and video_file.get("size",0)>10000 and video_file.get("signature")=="ftyp",("Video URL or MP4 content invalid",video_file)
+    # Chromium Headless Shell may lack the proprietary H264 decoder.
+    # FFmpeg already decodes every frame during the asset-build stage.
+    print("E02 browser MP4 source verified:",video_file.get("size"),"bytes")
+   else:
+    assert page.locator("#video-processed").count()==0,"E01 incorrectly includes E02 video"
+   print("Metadata info hidden and E02 video verified:",lab)
+   assert page.locator("#mode-study").is_visible(),"Notebook mode must be default"
+   page.locator("#downloadTab").click()
+   assert page.locator("#mode-practice").is_visible(),"03 local/Kaggle mode missing"
+   assert page.get_by_text("方式 A · 本地 Python / VS Code").is_visible()
+   assert page.get_by_text("方式 B · 在 Kaggle 运行").is_visible()
+   assert page.locator(f'#mode-practice a[href="downloads/MVAI_{lab.upper()}_Lab.zip"]').count()==2
+   assert page.locator(f'#mode-practice a[href="downloads/{"E01_Image_Processing_V2.0.ipynb" if lab=="e01" else "E02_Lane_Detection_V2.0.ipynb"}"]').count()==1
+   page.locator("#interactTab").click()
+   assert page.locator("#mode-interactive").is_visible(),"Embedded interactive mode missing"
+   assert page.locator("#lab-frame").get_attribute("data-lab")==lab,"Mixed E01/E02 resources"
+   # The nested teaching app must not repeat a full site header, another
+   # E01/E02 switcher, a duplicate experiment selector or the DEV banner.
+   frame=page.frame_locator("#lab-frame")
+   frame.locator("#original").wait_for(state="visible",timeout=40000)
+   frame.locator("#sceneThumb").wait_for(state="visible",timeout=40000)
+   assert frame.locator("#tab-e01").count()==0 and frame.locator("#tab-e02").count()==0, "Cross-lesson navigation still embedded"
+   assert not frame.locator("header").is_visible(), "Repeated site header inside course page"
+   assert not frame.locator(".hero").is_visible(), "Repeated course hero inside course page"
+   assert not frame.locator(".experiment-select-duplicate").is_visible(), "Duplicate experiment selector still visible"
+   assert frame.locator("#lessonButtons .lesson").count()==5, "Wrong lesson catalog inside iframe"
+   assert frame.locator(".lesson.active").count()==1, "No active experiment"
+   selected=frame.locator("#experiment").input_value()
+   expected=("color" if lab=="e01" else "canny")
+   assert selected==expected,(lab,"Wrong experiment loaded",selected)
+   assert frame.locator("#sceneThumb").evaluate("(im)=>im.complete && im.naturalWidth>100"), "Road image missing"
+   assert frame.locator("#original").evaluate(
+      "(c)=>{const a=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<a.length;i+=160)if(a[i]||a[i+1]||a[i+2])n++;return n>500}"
+   ), "Embedded road image canvas is empty"
+   other=("E02 · 车道线检测" if lab=="e01" else "E01 · 图像处理")
+   assert other not in frame.locator("body").inner_text(), "Other Notebook's experiment appeared inside this page"
+   assert page.locator('#mode-interactive a[href*="single=1"]').count()==1, "Standalone single-lesson link missing"
+   print("Single-lesson embedded lab passed:",lab,"no mixed E01/E02 controls")
+
+   page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/f"{lab}-three-modes.png"))
+   print("Independent approved notebook:",lab,"real plots",count,"exploratory Cells",task_count,"03 local/Kaggle OK")
+  if errors: raise AssertionError("Page errors: "+repr(errors))
+  browser.close()
+finally:
+ server.terminate()
+ server.wait(timeout=15)
+print("REAL BROWSER STUDENT QA PASS")

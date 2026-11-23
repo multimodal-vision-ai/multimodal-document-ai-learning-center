@@ -133,7 +133,9 @@ nav:
   - 学习资源:
       - 按问题找资源: resources/README.md
       - 官方文档与平台: resources/official-sources.md
-      - 推荐课程: resources/courses.md
+      - 推荐课程:
+          - 课程推荐总览: resources/courses.md
+          - 智能感知与自动驾驶: resources/course-labs/intelligent-perception/index.md
       - 论文索引: resources/papers.md
       - 数据集索引: resources/datasets.md
       - 工具清单: resources/tools.md
