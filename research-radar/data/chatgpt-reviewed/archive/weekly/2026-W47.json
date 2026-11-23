@@ -1,0 +1,154 @@
+{
+  "_screening_queue": {
+    "candidates": [
+      {
+        "abstract": "",
+        "category": "video",
+        "description": "Counterfactual tests of grounded reasoning chains in small video-language models: mask what a model cites and measure how much its answer depends on it.",
+        "discovered_from": "github",
+        "event_at": "2026-11-21T16:02:55+00:00",
+        "event_label": "代码库近期提交",
+        "github_license": "MIT",
+        "github_stars": 0,
+        "github_url": "https://github.com/JugalGajjar/CausalSight",
+        "hf_downloads": null,
+        "huggingface_url": null,
+        "id": "github-1365034826",
+        "match_reasons": [
+          "来源：GitHub",
+          "主题：视频理解",
+          "主题：多模态小模型",
+          "方法关键词：高效化 / 压缩 / 低成本训练",
+          "成果类型：Benchmark / 数据集 / 评测"
+        ],
+        "match_score": 8.4,
+        "paper_url": null,
+        "pdf_url": null,
+        "priority_tier": 3,
+        "published_at": "2026-09-10T23:01:03Z",
+        "source_url": "https://github.com/JugalGajjar/CausalSight",
+        "title": "JugalGajjar/CausalSight"
+      },
+      {
+        "abstract": "",
+        "category": "document",
+        "description": "Visual-token compression for VLM document retrieval: 448 KB to 3.95 KB per page (113.5x) at 86.7% of baseline nDCG@5. ColPali/ColSmol, PyTorch, Qdrant.",
+        "discovered_from": "github",
+        "event_at": "2026-11-21T05:55:56+00:00",
+        "event_label": "代码库近期提交",
+        "github_license": "MIT",
+        "github_stars": 2,
+        "github_url": "https://github.com/Daemon-VI/optivision-rag",
+        "hf_downloads": null,
+        "huggingface_url": null,
+        "id": "github-1337450667",
+        "match_reasons": [
+          "来源：GitHub",
+          "主题：文档理解",
+          "主题：多模态小模型",
+          "方法关键词：高效化 / 压缩 / 低成本训练",
+          "仓库提供许可证元数据"
+        ],
+        "match_score": 8.0,
+        "paper_url": null,
+        "pdf_url": null,
+        "priority_tier": 3,
+        "published_at": "2026-08-17T17:28:24Z",
+        "source_url": "https://github.com/Daemon-VI/optivision-rag",
+        "title": "Daemon-VI/optivision-rag"
+      }
+    ]
+  },
+  "collection_generated_at": "2026-11-23T01:01:17+00:00",
+  "first_stage_threshold": 8,
+  "generated_at": "2026-11-23T01:03:09Z",
+  "items": [
+    {
+      "candidate_id": "github-1337450667",
+      "confidence": "high",
+      "data_open": true,
+      "evaluation_dimensions": {
+        "innovation": {
+          "rationale": "提出针对多向量MaxSim检索的目标约束压缩选择与可验证产物，将Token合并、量化、维度处理纳入统一候选搜索；方法组件并非全新，但对选择偏差和留出检验的系统处理有实际方法价值。",
+          "score": 8.4
+        },
+        "open_source": {
+          "rationale": "MIT许可；README、src、tests、notebooks、reports、UNIVERSAL实验记录和CLI齐全；公开ViDoRe、SciFact来源及可重算流程，但部分外部模型权重需遵守各自许可，Nemotron 4B示例为非商业许可。",
+          "score": 9
+        },
+        "reproducibility": {
+          "rationale": "已有向量可直接在CPU复现压缩、评分和留出检验；官方报告ColPali DocVQA/InfoVQA各500页及SciFact 5183文档等实验，20次拆分；生成视觉向量仍依赖外部模型与GPU，不能把报告的压缩率泛化到所有编码器。",
+          "score": 8.3
+        },
+        "research_potential": {
+          "rationale": "适合研究中文复杂版面、索引规模扩张、检索质量的统计不确定性、分布漂移及动态增量文档；可与DocTags和DocRAG连接，构建可量化的索引优化与证据可靠性课题。",
+          "score": 9
+        }
+      },
+      "evidence_urls": [
+        "https://github.com/Daemon-VI/optivision-rag",
+        "https://github.com/Daemon-VI/optivision-rag/blob/main/docs/UNIVERSAL.md",
+        "https://github.com/Daemon-VI/optivision-rag/blob/main/LICENSE",
+        "https://github.com/Daemon-VI/optivision-rag/blob/main/docs/RELEASE-AUDIT-2026-09-27.md"
+      ],
+      "gpu_requirement": null,
+      "parameters": null,
+      "research_opportunity": "以DocTags中文复杂页面与公开ViDoRe构建ColSmol/ColPali多向量索引，比较int8、int4、二值量化与Token合并在NDCG@5、Recall@5、索引RAM/磁盘、查询延迟和数据分布变化下的表现；严格采用互不重叠的调参与测试查询，检验压缩质量保证的失效边界。",
+      "screened_at": "2026-11-23T01:03:09Z",
+      "selection_status": "recommended",
+      "summary": "OptiVision RAG针对ColPali/ColQwen等多向量文档检索索引，组合Token合并、量化与可选维度压缩，以独立留出查询检验检索质量保留率；官方给出真实编码器的多组复测、代码、评测数据与局限说明。它优化的是索引而非训练新的视觉模型。",
+      "title": "Daemon-VI/optivision-rag",
+      "training_code_open": null,
+      "weights_open": null,
+      "why_selected": "MIT代码仓库包含完整压缩实现、单元测试、可运行命令、ViDoRe及SciFact实测表和明确的校准/留出拆分；相比只展示单一高压缩倍率的项目，它区分样本内最优与留出性能，适合高校开展低成本且可证伪的检索质量—存储—时延实验。"
+    },
+    {
+      "candidate_id": "github-1365034826",
+      "confidence": "medium",
+      "data_open": null,
+      "evaluation_dimensions": {
+        "innovation": {
+          "rationale": "把视频模型给出的时空证据从位置一致性推进到反事实因果依赖，使用配对尺寸控制和置信区间；其核心干预思想可溯源于解释性评测，但针对视频时序引用及实体轨迹的扩展有研究意义。",
+          "score": 8.5
+        },
+        "open_source": {
+          "rationale": "MIT许可、完整src/tests、训练配置和评测汇总开放；README明确尚未公开训练后权重、逐条输出及帧包，原始视频需按CLEVRER/NExT-QA许可另行获取，限制精确结果复现。",
+          "score": 7.7
+        },
+        "reproducibility": {
+          "rationale": "CPU可运行统计与遮挡测试的单元测试；原实验使用单张A100 80GB和2B/3B模型，训练模型权重未发布，完整论文结果难以低成本复刻；可从已开放基座和小样本视频开展干预评测，不应宣称已复现作者结果。",
+          "score": 7.3
+        },
+        "research_potential": {
+          "rationale": "可验证视频行为模型对人物、手机和时序证据的真实依赖，研究解释忠实度、跨镜头稳定性与告警可信度；能够形成研究生可控实验和监控系统的安全评估方法。",
+          "score": 8.8
+        }
+      },
+      "evidence_urls": [
+        "https://github.com/JugalGajjar/CausalSight",
+        "https://github.com/JugalGajjar/CausalSight/blob/main/LICENSE",
+        "https://arxiv.org/abs/2611.21940",
+        "https://github.com/JugalGajjar/CausalSight/tree/main/results",
+        "https://github.com/JugalGajjar/CausalSight/tree/main/tests"
+      ],
+      "gpu_requirement": "原实验作者使用单张A100 80GB；CPU可执行统计与测试，完整训练成本较高。",
+      "parameters": "基座模型Qwen2.5-VL-3B及InternVL3-2B；作者训练后的模型权重未发布。",
+      "research_opportunity": "在视频行为识别平台中针对挥手、用手机、摔倒和躺椅睡觉构造时间窗和人物/物体遮挡干预，对比遮挡目标与等面积随机区域导致的Top1类别翻转率、置信度变化及误报；进一步区分遮挡导致的画质破坏和真正因果依赖，研究跨视角稳定性与可信告警。",
+      "screened_at": "2026-11-23T01:03:09Z",
+      "selection_status": "recommended",
+      "summary": "CausalSight用反事实遮挡测试小型视频语言模型的引用证据是否真正影响答案，将模型自己引用的框与同尺寸随机框遮挡作配对比较。仓库报告CLEVRER引用差距约0.053，而NExT-QA约0.003，提示可定位的证据不必然具有因果贡献；这些均为作者结果。",
+      "title": "JugalGajjar/CausalSight",
+      "training_code_open": true,
+      "weights_open": false,
+      "why_selected": "MIT仓库公开干预评测、统计脚本、SFT/GRPO训练配置、CLEVRER和NExT-QA处理流程与审核表，且明确披露未公开训练权重及逐样本推理结果。问题具有明确可检验性，适合研究视频行为分析的解释忠实度而非仅展示注意力热图。"
+    }
+  ],
+  "report_title": "2026年第48周｜视觉文档检索压缩与视频证据因果忠实度科研周报",
+  "report_type": "weekly",
+  "schema_version": 1,
+  "screening_schema_version": 2,
+  "status": "completed",
+  "summary": "2026年第48周唯一公开源采集于2026-11-23 01:01:17 UTC完成，86条线索（GitHub 35、Hugging Face 33、OpenReview 18），arXiv API两域名分别HTTP 429与超时，论文覆盖不完整。持久化9条主题匹配≥8候选；依据官方README、许可证、实验记录及代码结构二次评价，推荐OptiVision RAG的质量约束多向量索引压缩及CausalSight的视频证据反事实忠实度测试。两项均为仓库近期活动，不等同于本周首次发表论文。其结果均为作者报告，尚未在本地独立复现。OmniEyes公开纠正了历史视频错配问题但新方法优势未显著优于简单采帧，故不推荐；重复TinyDoc及其他工程项目不凑数。",
+  "window_end": "2026-11-23",
+  "window_start": "2026-11-16"
+}
