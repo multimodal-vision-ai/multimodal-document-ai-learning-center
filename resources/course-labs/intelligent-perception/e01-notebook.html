@@ -106,13 +106,13 @@ main{max-width:1380px;margin:0 auto;padding:26px clamp(18px,3vw,46px) 65px}
 <nav class="tabs" aria-label="三种学习方式"><a class="active" href="#notebook">01 · 在线学习 Notebook</a><a id="interactTab" href="interactive/index.html?lab=e02">02 · 浏览器交互实验</a><a id="downloadTab" href="downloads/MVAI_E01_E02_Labs.zip">03 · 本地 / Kaggle 运行</a></nav>
 <main id="notebook">
 <section class="mode-section active" id="mode-study">
-<div class="bar"><span id="status">读取 Notebook 中…</span><div><button type="button" class="button light" id="toggle-codes">展开全部代码</button> <a class="button light" id="interact" href="interactive/index.html?lab=e02">在线交互</a> <a class="button" id="download" href="downloads/E02_Lane_Detection_V2.0.ipynb" download>下载 .ipynb</a></div></div>
+<div class="bar"><span id="status">读取 Notebook 中…</span><div><button type="button" class="button light" id="toggle-codes">展开全部代码</button> <a class="button light" id="interact" href="interactive/index.html?lab=e02">在线交互</a> <a class="button" id="download" href="downloads/E01_Image_Processing_V2.0.ipynb" download>下载 .ipynb</a></div></div>
 <div class="intro">以下图像由对应 Python/OpenCV Notebook 的代码真实执行后生成；本页不执行 Python。单击代码单元可展开源码，对照运行结果学习。</div>
 <div class="book-layout"><aside class="book-toc"><h3>NOTEBOOK 章节</h3><div id="toc"></div></aside><div id="cells"></div></div>
 </section>
 <section class="mode-section" id="mode-interactive">
-<div class="lab-actions"><div><h2>E01 · 道路图像处理 · 浏览器交互实验</h2><p>修改参数后直接观察道路图像与中间结果，无需安装 Python。</p></div><a class="button" href="interactive/index.html?lab=e01" target="_blank" rel="noopener">新窗口打开交互实验</a></div>
-<iframe class="lab-frame" id="lab-frame" data-lab="e01" title="E01 · 道路图像处理 参数交互实验" loading="lazy" src="interactive/index.html?lab=e01"></iframe>
+<div class="lab-actions"><div><h2>E01 · 道路图像处理 · 浏览器交互实验</h2><p>修改参数后直接观察道路图像与中间结果，无需安装 Python。</p></div><a class="button" href="interactive/index.html?lab=e01&amp;single=1" target="_blank" rel="noopener">新窗口打开交互实验</a></div>
+<iframe class="lab-frame" id="lab-frame" data-lab="e01" title="E01 · 道路图像处理 参数交互实验" loading="lazy" src="interactive/index.html?lab=e01&amp;single=1&amp;embed=1"></iframe>
 </section>
 <section class="mode-section" id="mode-practice">
 <div class="way-sub">下载标准 Notebook · 本地与云端使用同一份文件</div>
@@ -153,10 +153,19 @@ document.getElementById("title").textContent=lab==="e01"?"道路图像处理 · 
 document.getElementById("hero-img").src=lab==="e01"?"images/02_solidYellowLeft_yellow_white.jpg":"images/01_solidWhiteRight_straight_white.jpg";
 document.getElementById("hero-desc").textContent=lab==="e01"?"通过真实道路素材学习颜色空间、阈值、滤波、形态学和透视变换。先读 Python 代码，再观察真实输出。":"从真实行车视频出发，逐步理解 Canny、ROI、Hough、线段筛选及复杂道路泛化。";
 document.getElementById("download").href="downloads/"+name;
-document.getElementById("interact").href="interactive/index.html?lab="+lab;
-document.getElementById("interactTab").href="interactive/index.html?lab="+lab;
+document.getElementById("interact").href="interactive/index.html?lab="+lab+"&single=1";
+document.getElementById("interactTab").href="interactive/index.html?lab="+lab+"&single=1";
 document.getElementById("downloadTab").href="#practice";
 document.getElementById("interactTab").href="#interactive";
+const embeddedLessonFrame=document.getElementById("lab-frame");
+embeddedLessonFrame.addEventListener("load",()=>{
+  try{
+    const doc=embeddedLessonFrame.contentDocument;
+    const resize=()=>{if(doc&&doc.body){const height=Math.max(660,doc.body.scrollHeight+12);if(Math.abs(embeddedLessonFrame.clientHeight-height)>16)embeddedLessonFrame.style.height=height+"px";}};
+    resize();
+    if(typeof ResizeObserver!=="undefined")new ResizeObserver(resize).observe(doc.body);
+  }catch(e){console.warn("Embedded lab autosize unavailable",e);}
+});
 const tabStudy=document.querySelector(".tabs a.active");
 const modes={study:"mode-study",interactive:"mode-interactive",practice:"mode-practice"};
 function selectMode(mode){
