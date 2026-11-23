@@ -2464,6 +2464,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      两个版本
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      教学资源
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -2489,13 +2515,21 @@
 
 <h1 id="e03">E03 · 复杂道路车道检测<a class="headerlink" href="#e03" title="Permanent link">&para;</a></h1>
 <p><a class="md-button md-button--primary" href="e03-notebook.html">E03 独立综合教学页面</a></p>
-<p>在 E02 已发布的 Canny、ROI、Hough 基础上，学习透视、滑动窗口曲线拟合、复杂光照标线提取与连续帧时序平滑。四项核心探索，最终使用真实直道、普通弯道和复杂连续弯道视频进行原始画面/E02/E03 三路同步对比。</p>
+<p>本实验保留 V1.0 作为传统算法 Baseline，并新增 V1.1 改进方案。使用真实直道、普通弯道和复杂连续弯道视频，研究透视变换、标线提取、曲线拟合、动态搜索和时序跟踪。</p>
+<h2 id="_1">两个版本<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="e03-notebook.html">在线阅读真实运行 Notebook</a></li>
-<li><a href="interactive/e03.html">进入 E03 浏览器交互实验</a></li>
-<li><a href="downloads/MVAI_E03_Lab.zip">下载 E03 独立 ZIP</a></li>
+<li><strong>V1.0 Baseline：</strong> 原始 HLS/Sobel 候选、滑动窗口、二次曲线拟合和 EMA。</li>
+<li><strong>V1.1 Improved：</strong> 自适应标线候选、RANSAC 二次/三次曲线、分段主像素簇与自然三次样条、基于历史曲线的动态搜索、Kalman 跟踪与有限失效恢复。</li>
 </ul>
-<p><strong>说明：</strong> 候选拟合曲线不等于人工标注的真实车道线；视频稳定性和有效帧比例不代表准确率。此实验先在隔离 DEV 环境审核。</p>
+<h2 id="_2">教学资源<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="e03-notebook.html">在线学习 Notebook（默认展示 V1.1，可切换 V1.0）</a></li>
+<li><a href="interactive/e03.html">进入浏览器交互实验</a></li>
+<li><a href="downloads/E03_Complex_Lane_Detection_V1.1.ipynb">下载 V1.1 改进版 Notebook</a></li>
+<li><a href="downloads/E03_Complex_Lane_Detection_V1.0.ipynb">下载 V1.0 Baseline Notebook</a></li>
+<li><a href="downloads/MVAI_E03_Lab.zip">下载包含两版 Notebook、素材和对比结果的独立 ZIP</a></li>
+</ul>
+<p><strong>说明：</strong> 全部算法在 CPU/OpenCV 上运行，不训练模型。V1.1 不是对所有道路都保证成功的方案；遮挡、缺失标线、错误候选和历史误跟踪仍可能造成失败。有效帧比例、内点比例和时序平滑度都不能代替人工 Ground Truth 准确率。</p>
 
 
 

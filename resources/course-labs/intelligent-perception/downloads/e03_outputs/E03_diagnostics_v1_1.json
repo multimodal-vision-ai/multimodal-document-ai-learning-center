@@ -1,0 +1,26 @@
+{
+  "straight": {
+    "frames": 102,
+    "baseline_valid": 102,
+    "improved_valid": 102,
+    "improved_display": 102,
+    "prior_search_frames": 101,
+    "median_inlier_ratio": 0.9322739845849379
+  },
+  "curve": {
+    "frames": 156,
+    "baseline_valid": 156,
+    "improved_valid": 156,
+    "improved_display": 156,
+    "prior_search_frames": 155,
+    "median_inlier_ratio": 0.7794887122671275
+  },
+  "complex": {
+    "frames": 180,
+    "baseline_valid": 176,
+    "improved_valid": 144,
+    "improved_display": 174,
+    "prior_search_frames": 173,
+    "median_inlier_ratio": 0.41615084064224594
+  }
+}
