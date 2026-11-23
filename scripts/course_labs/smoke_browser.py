@@ -81,6 +81,29 @@ try:
    page.locator("#interactTab").click()
    assert page.locator("#mode-interactive").is_visible(),"Embedded interactive mode missing"
    assert page.locator("#lab-frame").get_attribute("data-lab")==lab,"Mixed E01/E02 resources"
+   # The nested teaching app must not repeat a full site header, another
+   # E01/E02 switcher, a duplicate experiment selector or the DEV banner.
+   frame=page.frame_locator("#lab-frame")
+   frame.locator("#original").wait_for(state="visible",timeout=40000)
+   frame.locator("#sceneThumb").wait_for(state="visible",timeout=40000)
+   assert frame.locator("#tab-e01").count()==0 and frame.locator("#tab-e02").count()==0, "Cross-lesson navigation still embedded"
+   assert not frame.locator("header").is_visible(), "Repeated site header inside course page"
+   assert not frame.locator(".hero").is_visible(), "Repeated course hero inside course page"
+   assert not frame.locator(".experiment-select-duplicate").is_visible(), "Duplicate experiment selector still visible"
+   assert frame.locator("#lessonButtons .lesson").count()==5, "Wrong lesson catalog inside iframe"
+   assert frame.locator(".lesson.active").count()==1, "No active experiment"
+   selected=frame.locator("#experiment").input_value()
+   expected=("color" if lab=="e01" else "canny")
+   assert selected==expected,(lab,"Wrong experiment loaded",selected)
+   assert frame.locator("#sceneThumb").evaluate("(im)=>im.complete && im.naturalWidth>100"), "Road image missing"
+   assert frame.locator("#original").evaluate(
+      "(c)=>{const a=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<a.length;i+=160)if(a[i]||a[i+1]||a[i+2])n++;return n>500}"
+   ), "Embedded road image canvas is empty"
+   other=("E02 · 车道线检测" if lab=="e01" else "E01 · 图像处理")
+   assert other not in frame.locator("body").inner_text(), "Other Notebook's experiment appeared inside this page"
+   assert page.locator('#mode-interactive a[href*="single=1"]').count()==1, "Standalone single-lesson link missing"
+   print("Single-lesson embedded lab passed:",lab,"no mixed E01/E02 controls")
+
    page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/f"{lab}-three-modes.png"))
    print("Independent approved notebook:",lab,"real plots",count,"exploratory Cells",task_count,"03 local/Kaggle OK")
   if errors: raise AssertionError("Page errors: "+repr(errors))
