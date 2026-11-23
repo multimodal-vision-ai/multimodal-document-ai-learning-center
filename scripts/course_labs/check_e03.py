@@ -21,6 +21,14 @@ for cell in nb.cells:
     ast.parse(cell.source)
     count+=sum('image/png' in out.get('data',{}) for out in cell.outputs)
 assert count>=8, 'E03 must retain genuinely executed PNG output figures'
+# A generated student Notebook should not contain missing Chinese glyph warnings.
+for cell in nb.cells:
+    if cell.cell_type!='code':continue
+    for output in cell.outputs:
+        raw=output.get('text','')
+        if isinstance(raw,list):raw=''.join(raw)
+        assert 'UserWarning: Glyph ' not in raw, 'Missing CJK font in saved Notebook output'
+
 assert any('E03_' in source and 'compare.mp4' in source for source in cell_sources)
 with ZipFile(DOWN/'MVAI_E03_Lab.zip') as z:
     names=set(z.namelist())
