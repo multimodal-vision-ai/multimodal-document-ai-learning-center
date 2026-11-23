@@ -584,3 +584,41 @@ jobs:
             test -s "$RUNNER_TEMP/$(basename "$asset")"
           done
           echo "Integrated DocTags page, native model registry, both adapters and same-origin layout worker assets are publicly reachable."
+      - name: Verify E03 origin-clean image bundle is publicly reachable
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview_sha="$(git rev-parse HEAD)"
+          base="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$preview_sha"
+          page="$base/resources/course-labs/intelligent-perception/interactive/e03.html"
+          bundle="$base/resources/course-labs/intelligent-perception/interactive/e03-image-assets.js"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$page" -o "$RUNNER_TEMP/e03-preview.html"
+          grep -q '<script src="e03-image-assets.js"></script>' "$RUNNER_TEMP/e03-preview.html"
+          curl --fail --location --silent --show-error --connect-timeout 15 --max-time 30 "$bundle" -o "$RUNNER_TEMP/e03-image-assets.js"
+          python - "$RUNNER_TEMP/e03-image-assets.js" <<'PY'
+          import base64, json, re, sys
+          from pathlib import Path
+          source = Path(sys.argv[1]).read_text(encoding="utf-8")
+          match = re.fullmatch(r'window\.E03_IMAGE_DATA = Object\.freeze\((.*)\);\s*', source, re.S)
+          if not match:
+              raise SystemExit("Published E03 image bundle has an invalid JavaScript wrapper")
+          assets = json.loads(match.group(1))
+          expected = {
+              "01_solidWhiteRight_straight_white.jpg",
+              "03_project_curve_intro.jpg",
+              "07_harder_curve_motorcycle.jpg",
+              "08_harder_shadow_glare.jpg",
+              "09_harder_curve_shadow.jpg",
+          }
+          if set(assets) != expected:
+              raise SystemExit(f"Published E03 image bundle is incomplete: {sorted(assets)}")
+          for name, data_url in assets.items():
+              if not data_url.startswith("data:image/jpeg;base64,"):
+                  raise SystemExit(f"Invalid embedded JPEG data URL: {name}")
+              raw = base64.b64decode(data_url.split(",", 1)[1], validate=True)
+              if len(raw) < 3000 or raw[:2] != b"\\xff\\xd8":
+                  raise SystemExit(f"Invalid embedded JPEG bytes: {name}")
+          print(f"Published E03 bundle verified: {len(assets)} origin-clean images, {Path(sys.argv[1]).stat().st_size} bytes")
+          PY
+          echo "E03 browser page and embedded image bundle are publicly reachable at the pinned DEV preview SHA."
+
