@@ -8,8 +8,9 @@ ROOT=Path(__file__).resolve().parents[2]
 BASE=ROOT/'docs/resources/course-labs/intelligent-perception'
 DOWN=BASE/'downloads'
 files=[BASE/'e03-notebook.html',BASE/'e03.md',BASE/'interactive/e03.html',
-       DOWN/'E03_Complex_Lane_Detection_V1.0.ipynb',DOWN/'MVAI_E03_Lab.zip',DOWN/'E03_diagnostics.json',
-       *(DOWN/f'E03_{s}_compare.mp4' for s in ('straight','curve','complex'))]
+       DOWN/'E03_Complex_Lane_Detection_V1.0.ipynb',DOWN/'MVAI_E03_Lab.zip',DOWN/'E03_diagnostics.json',DOWN/'E03_tracks.json',
+       *(DOWN/f'E03_{s}_compare.mp4' for s in ('straight','curve','complex')),
+       *(DOWN/f'E03_{s}_e02.mp4' for s in ('straight','curve','complex'))]
 for path in files:
     if not path.is_file() or path.stat().st_size<300:raise AssertionError(f'E03 asset missing/empty: {path}')
 nb=nbformat.read(DOWN/'E03_Complex_Lane_Detection_V1.0.ipynb',as_version=4)
@@ -36,6 +37,8 @@ with ZipFile(DOWN/'MVAI_E03_Lab.zip') as z:
     assert len([n for n in names if n.startswith('images/') and n.endswith('.jpg')])==5
     assert len([n for n in names if n.startswith('videos/') and n.endswith('input.mp4')])==3
     assert len([n for n in names if n.startswith('outputs/') and n.endswith('_compare.mp4')])==3
+    assert len([n for n in names if n.startswith('outputs/') and n.endswith('_e02.mp4')])==3
+    assert 'outputs/E03_tracks.json' in names
 for p in (BASE/'e03-notebook.html',BASE/'interactive/e03.html'):
     src=p.read_text(encoding='utf-8')
     script=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',src,flags=re.S)
@@ -45,7 +48,11 @@ for p in (BASE/'e03-notebook.html',BASE/'interactive/e03.html'):
             tmp.write(code);tmp.flush()
             subprocess.run(['node','--check',tmp.name],check=True)
 data=json.loads((DOWN/'E03_diagnostics.json').read_text(encoding='utf-8'))
+tracks=json.loads((DOWN/'E03_tracks.json').read_text(encoding='utf-8'))
 for scene in ('straight','curve','complex'):
     assert len(data[scene])>=50
     assert all('status' in v and 'valid' in v for v in data[scene])
+    record=tracks['scenes'][scene]
+    assert record['fps']>0 and len(record['Minv'])==3 and len(record['frames'])==len(data[scene])
+    assert any(f['valid'] and len(f['left_x'])==3 and len(f['right_x'])==3 for f in record['frames'])
 print(f'E03 student assets OK: 4 experiments, {count} real PNG outputs, 3 scene videos, independent ZIP')
