@@ -71,6 +71,30 @@ try:
    assert page.locator("details.code-cell[open]").count()==collapsed.count(),"Expand all failed"
    page.locator("#toggle-codes").click()
    assert page.locator("details.code-cell[open]").count()==0,"Collapse all failed"
+   assert page.locator("#meta-toggle").is_visible(),"Notebook information icon missing"
+   assert not page.locator("#meta-pop").is_visible(),"Run statistics are exposed by default"
+   assert page.locator(".intro").count()==0,"Technical explanation still displayed"
+   page.locator("#meta-toggle").hover()
+   assert page.locator("#meta-pop").is_visible(),"Information popover does not open on hover"
+   assert page.locator("#status").is_visible(),"Run counts are missing from information popover"
+   page.locator("#meta-toggle").click()
+   page.mouse.move(800,350)
+   assert page.locator("#meta-pop").is_visible(),"Information popover pin/click failed"
+   page.locator("#meta-toggle").click()
+   assert not page.locator("#meta-pop").is_visible(),"Information popover does not close"
+   if lab=="e02":
+    assert page.locator("#video-processed").count()==1,"E02 chapter 06 lacks processed video"
+    assert page.locator("#video-processed").is_visible(),"E02 video player is hidden"
+    assert page.locator(".video-result").count()==1,"E02 video output section is missing"
+    page.wait_for_function(
+      'document.getElementById("video-processed").videoWidth > 100',
+      timeout=40000
+    )
+    assert page.locator("#video-processed").evaluate("(v)=>v.videoHeight>=150"),"Video metadata invalid"
+    assert page.locator("#video-processed").get_attribute("src")=="downloads/E02_lane_video_processed.mp4"
+   else:
+    assert page.locator("#video-processed").count()==0,"E01 incorrectly includes E02 video"
+   print("Metadata info hidden and E02 video verified:",lab)
    assert page.locator("#mode-study").is_visible(),"Notebook mode must be default"
    page.locator("#downloadTab").click()
    assert page.locator("#mode-practice").is_visible(),"03 local/Kaggle mode missing"
