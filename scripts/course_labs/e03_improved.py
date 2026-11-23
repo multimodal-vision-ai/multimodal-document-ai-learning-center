@@ -52,8 +52,8 @@ def adaptive_lane_mask(bgr, clahe=True):
     h, w = mask.shape
     road_roi = np.zeros_like(mask)
     polygon = np.array([[
-        (int(.04*w), int(.98*h)), (int(.30*w), int(.05*h)),
-        (int(.70*w), int(.05*h)), (int(.96*w), int(.98*h))
+        (int(.02*w), int(.98*h)), (int(.12*w), int(.05*h)),
+        (int(.88*w), int(.05*h)), (int(.98*w), int(.98*h))
     ]], dtype=np.int32)
     cv2.fillPoly(road_roi, polygon, 255)
     mask = cv2.bitwise_and(mask, road_roi)
