@@ -47,7 +47,7 @@ with ZipFile(DOWN/'MVAI_E03_Lab.zip') as z:
 interactive=(BASE/'interactive/e03.html').read_text(encoding='utf-8')
 assert '<script src="e03-image-assets.js"></script>' in interactive
 bundle=(BASE/'interactive/e03-image-assets.js').read_text(encoding='utf-8')
-match=re.fullmatch(r'window\\.E03_IMAGE_DATA = Object\\.freeze\\((.*)\\);\\s*',bundle,re.S)
+match=re.fullmatch(r'window\.E03_IMAGE_DATA = Object\.freeze\((.*)\);\s*',bundle,re.S)
 assert match, 'E03 embedded image bundle has an invalid wrapper'
 image_assets=json.loads(match.group(1))
 expected_images={
