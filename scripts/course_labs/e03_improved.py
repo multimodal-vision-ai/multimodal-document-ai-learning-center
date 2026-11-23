@@ -100,9 +100,16 @@ def _prior_search(binary, prior, margin=58):
     ys, xs = np.nonzero(binary)
     if prior is None or ys.size == 0:
         return None
-    curve_y = np.asarray(prior.get("curve_y", CURVE_Y), dtype=np.float64)
-    left_x = np.asarray(prior.get("left_x", []), dtype=np.float64)
-    right_x = np.asarray(prior.get("right_x", []), dtype=np.float64)
+    if isinstance(prior, dict):
+        curve_y = np.asarray(prior.get("curve_y", CURVE_Y), dtype=np.float64)
+        left_x = np.asarray(prior.get("left_x", []), dtype=np.float64)
+        right_x = np.asarray(prior.get("right_x", []), dtype=np.float64)
+    else:
+        samples = np.asarray(prior, dtype=np.float64)
+        if samples.ndim != 2 or samples.shape[0] != 2:
+            return None
+        curve_y = CURVE_Y
+        left_x, right_x = samples[0], samples[1]
     if left_x.size != curve_y.size or right_x.size != curve_y.size:
         return None
     y_norm = ys / float(h)
