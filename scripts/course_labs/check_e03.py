@@ -10,7 +10,9 @@ DOWN=BASE/'downloads'
 files=[BASE/'e03-notebook.html',BASE/'e03.md',BASE/'interactive/e03.html',
        DOWN/'E03_Complex_Lane_Detection_V1.0.ipynb',DOWN/'MVAI_E03_Lab.zip',DOWN/'E03_diagnostics.json',DOWN/'E03_tracks.json',
        *(DOWN/f'E03_{s}_compare.mp4' for s in ('straight','curve','complex')),
-       *(DOWN/f'E03_{s}_e02.mp4' for s in ('straight','curve','complex'))]
+       *(DOWN/f'E03_{s}_e02.mp4' for s in ('straight','curve','complex')),
+       *(BASE/'videos'/f'E03_{s}_input.webm' for s in ('straight','curve','complex')),
+       *(DOWN/f'E03_{s}_e02.webm' for s in ('straight','curve','complex'))]
 for path in files:
     if not path.is_file() or path.stat().st_size<300:raise AssertionError(f'E03 asset missing/empty: {path}')
 nb=nbformat.read(DOWN/'E03_Complex_Lane_Detection_V1.0.ipynb',as_version=4)
@@ -38,6 +40,8 @@ with ZipFile(DOWN/'MVAI_E03_Lab.zip') as z:
     assert len([n for n in names if n.startswith('videos/') and n.endswith('input.mp4')])==3
     assert len([n for n in names if n.startswith('outputs/') and n.endswith('_compare.mp4')])==3
     assert len([n for n in names if n.startswith('outputs/') and n.endswith('_e02.mp4')])==3
+    assert len([n for n in names if n.startswith('videos/') and n.endswith('input.webm')])==3
+    assert len([n for n in names if n.startswith('outputs/') and n.endswith('_e02.webm')])==3
     assert 'outputs/E03_tracks.json' in names
 for p in (BASE/'e03-notebook.html',BASE/'interactive/e03.html'):
     src=p.read_text(encoding='utf-8')
