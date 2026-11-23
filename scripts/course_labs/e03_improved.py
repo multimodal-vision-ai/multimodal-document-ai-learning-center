@@ -59,7 +59,7 @@ def adaptive_lane_mask(bgr, clahe=True):
     mask = cv2.bitwise_and(mask, road_roi)
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-    count, labels, stats, _ = cv2.connectedComponentsWithStats(mask, 8)
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
     clean = np.zeros_like(mask)
     for i in range(1, count):
         if stats[i, cv2.CC_STAT_AREA] >= 7:
@@ -226,6 +226,7 @@ def natural_spline_fit(points, bins=14):
 def evaluate_spline(model, query):
     q = np.asarray(query, dtype=np.float64)
     y, x, second = model["y"], model["x"], model["second"]
+    q = np.clip(q, y[0], y[-1])
     idx = np.clip(np.searchsorted(y, q, side="right")-1, 0, len(y)-2)
     width = y[idx+1]-y[idx]
     a = (y[idx+1]-q)/width
