@@ -425,7 +425,7 @@ print('曲线用于比较响应、抖动和失效区间；不是人工标注误�
     video_md_index=next(i for i,cell in enumerate(nb.cells)
                         if cell.cell_type=='markdown' and cell.source.startswith('## 05 · 三场景综合展示'))
     nb.cells[video_md_index].source='''## 09 · 三场景综合挑战：V1.0 Baseline × V1.1 Improved
-每段视频同步生成四列：**原始画面 / E02 Canny-Hough / V1.0 二次曲线+EMA / V1.1 RANSAC+自然样条+动态搜索+Kalman**。  
+每段视频同步生成四列：**原始画面 / E02 Canny-Hough / V1.0 二次曲线+EMA / V1.1 鲁棒样条+动态搜索+Kalman**。  
 同一源帧、同一场景参数，便于观察改进与退化。直道用于检查是否损害原有能力；普通弯道检查跟随能力；复杂弯道重点观察 S 形变化、阴影、遮挡、错误延续和重新捕获。  
 V1.1 输出的逐帧轨迹另存为 E03_tracks_v1_1.json，浏览器实验会同时展示两个版本。'''
     video_code_index=video_md_index+1
@@ -457,7 +457,7 @@ for scene,label in [('straight','直道'),('curve','普通弯道'),('complex','�
     track_scene={'fps':float(fps),'width':int(w),'height':int(h),
                  'Minv':None,'probes':PROBE_Y.tolist(),'curve_y':CURVE_Y.tolist(),
                  'frames':baseline_frames,'improved_frames':improved_frames,
-                 'improved_model':'RANSAC + natural spline + prior search + Kalman'}
+                 'improved_model':'adaptive mask + dominant-cluster spline + prior search + Kalman'}
     while True:
         ok,frame=cap.read()
         if not ok:break
@@ -473,7 +473,7 @@ for scene,label in [('straight','直道'),('curve','普通弯道'),('complex','�
             (raw,'Raw input'),
             (old,'E02 Canny + Hough'),
             (baseline,'V1.0 quadratic + EMA'),
-            (improved,'V1.1 RANSAC + spline + Kalman')
+            (improved,'V1.1 robust spline + prior + Kalman')
         ]:
             panel=cv2.resize(picture,(480,270),interpolation=cv2.INTER_AREA)
             cv2.rectangle(panel,(0,0),(480,26),(18,34,48),-1)
