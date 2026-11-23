@@ -616,7 +616,7 @@ jobs:
               if not data_url.startswith("data:image/jpeg;base64,"):
                   raise SystemExit(f"Invalid embedded JPEG data URL: {name}")
               raw = base64.b64decode(data_url.split(",", 1)[1], validate=True)
-              if len(raw) < 3000 or raw[:2] != b"\\xff\\xd8":
+              if len(raw) < 3000 or list(raw[:2]) != [255, 216]:
                   raise SystemExit(f"Invalid embedded JPEG bytes: {name}")
           print(f"Published E03 bundle verified: {len(assets)} origin-clean images, {Path(sys.argv[1]).stat().st_size} bytes")
           PY
