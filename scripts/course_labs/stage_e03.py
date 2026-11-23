@@ -95,7 +95,7 @@ def build_browser_image_bundle():
     target=BASE/'interactive'/'e03-image-assets.js'
     target.parent.mkdir(parents=True,exist_ok=True)
     target.write_text(
-        'window.E03_IMAGE_DATA = Object.freeze('+json.dumps(assets,separators=(',',':'))+');\\n',
+        'window.E03_IMAGE_DATA = Object.freeze('+json.dumps(assets,separators=(',',':'))+');\n',
         encoding='utf-8'
     )
     print(f'E03 browser image bundle: {len(assets)} origin-clean JPEGs, {target.stat().st_size} bytes')
