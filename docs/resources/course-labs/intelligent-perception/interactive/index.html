@@ -2,6 +2,19 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>道路视觉探索实验 · MVAI Learning Center</title>
 <style>
+/* Single-course mode: one embedded teaching unit, no secondary E01/E02 navigation. */
+body.single-lab .tabs{display:none}
+body.single-lab .toolbar{justify-content:flex-end;margin-bottom:12px}
+body.single-lab .hero small{display:none}
+body.single-lab .hero h2{font-size:18px}
+body.single-lab .hero p{font-size:12px}
+body.single-lab .experiment-select-duplicate{display:none}
+body.embedded-lab{background:#fff}
+body.embedded-lab header,body.embedded-lab .hero,body.embedded-lab footer{display:none}
+body.embedded-lab main{padding:0 5px 12px;max-width:none}
+body.embedded-lab .toolbar{margin:0 0 8px;padding:0 4px}
+body.embedded-lab aside,.embedded-lab .panel,.embedded-lab .catalog{box-shadow:none}
+body.embedded-lab .catalog,body.embedded-lab aside{top:6px}
 :root{--main:#536eff;--ink:#1c304b;--sub:#637b92;--line:#dfe7f0;--background:#f6f8fb}
 *{box-sizing:border-box}body{margin:0;background:var(--background);font-family:system-ui,"Microsoft YaHei",sans-serif;color:var(--ink)}
 header{background:white;border-bottom:1px solid var(--line);padding:17px 3vw;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
@@ -43,10 +56,10 @@ footer{font-size:11px;color:#788ca0;text-align:center;margin-top:40px}
 <main>
 <div class="toolbar"><div class="tabs"><button type="button" id="tab-e01" class="tab">E01 · 图像处理</button><button type="button" id="tab-e02" class="tab">E02 · 车道线检测</button></div>
 <div><button class="btn" id="reset">恢复默认参数</button> <button class="btn" id="save">保存结果 PNG</button> <button class="btn" id="full">全屏</button></div></div>
-<div class="hero"><small>EXPLORATORY COMPUTER VISION LAB</small><h2>看得见的视觉算法</h2><p>9 张真实道路视频截图 · 10 项探索任务 · 原图与算法输出同步对比</p></div>
+<div class="hero"><small>EXPLORATORY COMPUTER VISION LAB</small><h2 id="lab-heading">看得见的视觉算法</h2><p id="lab-description">9 张真实道路视频截图 · 10 项探索任务 · 原图与算法输出同步对比</p></div>
 <div class="layout">
 <nav class="catalog" aria-label="探索实验目录"><h2>探索目录</h2><div id="lessonButtons"></div><p class="help">选择一个任务，改变一个参数，观察结果并解释现象。</p></nav>
-<aside><h2 id="lessonTitle">实验操作台</h2><label for="experiment">探索任务</label><select id="experiment"></select><label for="scene">真实道路场景</label><select id="scene"></select><img id="sceneThumb" alt="当前真实道路素材预览"><div id="params"></div><p class="help">修改参数后自动重新计算。您可以随时恢复默认值。</p></aside>
+<aside><h2 id="lessonTitle">实验操作台</h2><div class="experiment-select-duplicate"><label for="experiment">探索任务</label><select id="experiment"></select></div><label for="scene">真实道路场景</label><select id="scene"></select><img id="sceneThumb" alt="当前真实道路素材预览"><div id="params"></div><p class="help">修改参数后自动重新计算。您可以随时恢复默认值。</p></aside>
 <section class="panel"><h2 id="expTitle">探索实验</h2>
 <div id="prompt" class="note"></div>
 <div class="grid">
@@ -57,14 +70,19 @@ footer{font-size:11px;color:#788ca0;text-align:center;margin-top:40px}
 </div>
 <div class="note" id="metrics">选择实验，开始计算。</div>
 <div id="more" hidden><h2>九图泛化比较</h2><button class="btn primary" id="runNine">生成九张场景对比</button><div id="generalization"></div></div>
-<h2 style="margin-top:26px">视频观察</h2><p class="muted">以下片段来自原始道路视频。浏览器参数不会修改预录片段，视频用于连续道路场景观察。</p>
-<video class="video" controls preload="metadata" playsinline src="../downloads/solidWhiteRight_8s.mp4"></video>
+<div id="video-info"><h2 style="margin-top:26px">视频观察</h2><p class="muted">以下片段来自原始道路视频。浏览器参数不会修改预录片段，视频用于连续道路场景观察。</p>
+<video class="video" controls preload="metadata" playsinline src="../downloads/solidWhiteRight_8s.mp4"></video></div>
 </section></div>
 <footer>学生实验 · 原始图像出自 Udacity CarND 视频（MIT）· 浏览器使用 JavaScript/Canvas，数值不保证与 Python OpenCV 完全一致</footer>
 </main>
 <script>
 "use strict";
 const q=new URLSearchParams(location.search);
+const singleLab=q.get("single")==="1"||q.get("embed")==="1";
+const embeddedLab=q.get("embed")==="1";
+document.body.classList.toggle("single-lab",singleLab);
+document.body.classList.toggle("embedded-lab",embeddedLab);
+
 const FILES=[
 ["01_solidWhiteRight_straight_white.jpg","直道 / 白线"],
 ["02_solidYellowLeft_yellow_white.jpg","黄白车道线"],
@@ -176,7 +194,7 @@ if(defaultScene)byId("scene").value=String(s.scene);
 load();
 }
 function setupLab(next,selected){
-lab=next;byId("tab-e01").classList.toggle("active",lab==="e01");byId("tab-e02").classList.toggle("active",lab==="e02");
+lab=next;byId("tab-e01")?.classList.toggle("active",lab==="e01");byId("tab-e02")?.classList.toggle("active",lab==="e02");
 const sel=byId("experiment");sel.replaceChildren();SPEC[lab].forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=s.name;sel.appendChild(o)});
 exp=SPEC[lab].some(x=>x.id===selected)?selected:SPEC[lab][0].id;sel.value=exp;
 const nav=byId("lessonButtons");nav.replaceChildren();SPEC[lab].forEach((it,i)=>{const b=document.createElement("button");b.className="lesson";b.type="button";b.dataset.exp=it.id;b.textContent=String(i+1).padStart(2,"0")+" · "+it.name.split(" · ").slice(1).join(" · ");b.onclick=()=>{exp=it.id;sel.value=exp;configure()};nav.append(b)});
@@ -184,8 +202,16 @@ configure()}
 FILES.forEach(([name,title],i)=>{const o=document.createElement("option");o.value=i;o.textContent=String(i+1).padStart(2,"0")+" · "+title;byId("scene").append(o)});
 byId("scene").addEventListener("change",load);
 byId("experiment").addEventListener("change",()=>{exp=byId("experiment").value;configure()});
-byId("tab-e01").onclick=()=>setupLab("e01");
-byId("tab-e02").onclick=()=>setupLab("e02");
+if(!singleLab){
+  byId("tab-e01").onclick=()=>setupLab("e01");
+  byId("tab-e02").onclick=()=>setupLab("e02");
+}else{
+  document.querySelector(".tabs").remove();
+  const chosen=q.get("lab")==="e01"?"e01":"e02";
+  document.title=(chosen==="e01"?"E01 · 道路图像处理":"E02 · 传统车道线检测")+" · 课堂交互";
+  byId("lab-heading").textContent=chosen==="e01"?"E01 · 道路图像处理":"E02 · 传统车道线检测";
+  byId("lab-description").textContent="5 项探索实验 · 真实道路素材 · 原图与算法结果同步对照";
+}
 byId("reset").onclick=()=>configure(false);
 byId("full").onclick=()=>{const p=document.querySelector(".panel");p.requestFullscreen?.()};
 byId("save").onclick=()=>{const c=document.createElement("canvas");c.width=2*W;c.height=2*H;let ctx=c.getContext("2d");["original","stage1","stage2","stage3"].forEach((id,i)=>ctx.drawImage(byId(id),(i%2)*W,Math.floor(i/2)*H));let a=document.createElement("a");a.download=lab+"-"+exp+".png";a.href=c.toDataURL("image/png");a.click()};
@@ -205,4 +231,5 @@ byId("runNine").onclick=async()=>{
  button.disabled=false;
 };
 setupLab(lab,q.get("exp"));
+if(singleLab&&lab==="e01")byId("video-info").hidden=true;
 </script></body></html>
