@@ -155,7 +155,7 @@ def ransac_polynomial(points, degree=3, threshold=15.0, iterations=70,
         return None, None, 0.0
     try:
         provisional = np.polyfit(y[best], x[best], degree)
-        full_y = all_points[:, 1] / max(1.0, float(np.max(all_points[:, 1]) + 1))
+        full_y = all_points[:, 1] / y_scale
         full_inliers = np.abs(all_points[:, 0] - np.polyval(provisional, full_y)) <= threshold
         if np.count_nonzero(full_inliers) < min_inliers:
             return None, None, 0.0
