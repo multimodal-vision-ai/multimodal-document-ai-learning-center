@@ -76,11 +76,21 @@ jobs:
       - name: Verify current publication content and four-dimensional gate
         run: python scripts/radar/verify_publication.py --site-dir site --data-dir research-radar/data
 
+      # Unique per run and attempt: retries must not encounter two same-name
+      # artifacts in one workflow run.
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: site
+
+      # GitHub Actions artifact metadata may take a few seconds to become
+      # visible to deploy-pages after the upload endpoint returns success.
+      - name: Wait for artifact metadata
+        run: sleep 20
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
