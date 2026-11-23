@@ -117,7 +117,12 @@ jobs:
           python scripts/course_labs/stage_resources.py
           python scripts/course_labs/check_student.py
 
-      - name: Stage and validate E03 only (isolated DEV)\n        run: |\n          python scripts/course_labs/stage_e03.py\n          python scripts/course_labs/check_e03.py\n\n      - name: Strict build with explicit HTML links
+      - name: Stage and validate E03 only (isolated DEV)
+        run: |
+          python scripts/course_labs/stage_e03.py
+          python scripts/course_labs/check_e03.py
+
+      - name: Strict build with explicit HTML links
         run: |
           mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
           python scripts/radar/verify_publication.py --site-dir "$RUNNER_TEMP/dev-site"
