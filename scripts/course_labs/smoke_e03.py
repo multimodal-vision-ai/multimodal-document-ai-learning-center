@@ -17,6 +17,7 @@ try:
     with sync_playwright() as p:
         browser=p.chromium.launch(headless=True)
         page=browser.new_page(viewport={'width':1440,'height':1000})
+        page.set_default_timeout(30000)
         errors=[]
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(url,wait_until='domcontentloaded')
@@ -44,9 +45,11 @@ try:
         frame.locator('#rawVideo').wait_for()
         frame.locator('#video-note').wait_for()
         frame.locator('#rawVideo').evaluate("""v=>new Promise((resolve,reject)=>{
-            if(v.readyState>=1)return resolve();
-            v.addEventListener('loadedmetadata',resolve,{once:true});
-            v.addEventListener('error',()=>reject(new Error('raw video failed to load')),{once:true});
+            const timer=setTimeout(()=>reject(new Error('raw video metadata timeout; src='+v.currentSrc)),20000);
+            const done=()=>{clearTimeout(timer);resolve()};
+            if(v.readyState>=1){done();return}
+            v.addEventListener('loadedmetadata',done,{once:true});
+            v.addEventListener('error',()=>{clearTimeout(timer);reject(new Error('raw video failed to load: '+v.currentSrc))},{once:true});
         })""")
         frame.locator('#video-note').wait_for()
         page.wait_for_function("""()=>!!document.querySelector('iframe')?.contentWindow?.__e03Debug?.getTracks()?.scenes?.curve?.frames?.length""",timeout=60000)
@@ -61,8 +64,9 @@ try:
             })""",scene)
             assert f'E03_{scene}_input.mp4' in frame.locator('#rawVideo').get_attribute('src')
             frame.locator('#e02Video').evaluate("""(v,expected)=>new Promise((resolve,reject)=>{
+                const timer=setTimeout(()=>{cleanup();reject(new Error('E02 reference metadata timeout: '+expected+' src='+v.currentSrc))},20000);
                 const check=()=>{if(v.readyState>=1&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_e02.mp4')){cleanup();resolve()}};
-                const cleanup=()=>{v.removeEventListener('loadedmetadata',check);v.removeEventListener('loadeddata',check);v.removeEventListener('error',fail)};
+                const cleanup=()=>{clearTimeout(timer);v.removeEventListener('loadedmetadata',check);v.removeEventListener('loadeddata',check);v.removeEventListener('error',fail)};
                 const fail=()=>{cleanup();reject(new Error('E02 reference video failed to load: '+expected))};
                 v.addEventListener('loadedmetadata',check);v.addEventListener('loadeddata',check);v.addEventListener('error',fail);check();
             })""",scene)
@@ -80,9 +84,10 @@ try:
                 if delta>best_delta:best_index,best_delta=i,delta
         assert best_index>=1 and best_delta>1.5,'No changing valid curve pair available to test EMA effect'
         fps=debug['data']['fps']
-        frame.locator('#rawVideo').evaluate("""(v,t)=>new Promise(resolve=>{
+        frame.locator('#rawVideo').evaluate("""(v,t)=>new Promise((resolve,reject)=>{
             v.pause();
-            const done=()=>requestAnimationFrame(()=>resolve());
+            const timer=setTimeout(()=>reject(new Error('raw video seek timeout at '+t)),15000);
+            const done=()=>{clearTimeout(timer);requestAnimationFrame(()=>resolve())};
             if(!v.seeking&&Math.abs(v.currentTime-t)<.02&&v.readyState>=2)return done();
             v.addEventListener('seeked',done,{once:true});
             v.currentTime=t;
