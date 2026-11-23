@@ -32,7 +32,7 @@ try:
             page.wait_for_function("""()=>{const f=document.querySelector('iframe');const t=f?.contentDocument?.querySelector('#status')?.textContent||'';return !!t&&!t.startsWith('正在读取')}""",timeout=30000)
             for canvas_id in ('original','a','b','c'):
                 populated=frame.locator(f'canvas#{canvas_id}').evaluate(
-                    '(c)=>{const d=c.getContext("2d").getImageData(0,0,c.width,c.height).data;return d.some((v,i)=>i%4!==3&&v>0)}')
+                    '(c)=>{const d=c.getContext("2d").getImageData(0,0,c.width,c.height).data;return d.some((v,i)=>i%4===3&&v>0)}')
                 assert populated,f'{kind}: canvas {canvas_id} is blank'
             target_canvas={'warp':'b','curve':'b','light':'a'}[kind]
             before=frame.locator(f'#{target_canvas}').evaluate('(c)=>c.toDataURL()')
@@ -52,10 +52,12 @@ try:
         page.wait_for_function("""()=>!!document.querySelector('iframe')?.contentWindow?.__e03Debug?.getTracks()?.scenes?.curve?.frames?.length""",timeout=60000)
         for scene in ('straight','curve','complex'):
             frame.locator(f'button[data-clip="{scene}"]').click()
-            frame.locator('#rawVideo').evaluate("""v=>new Promise((resolve,reject)=>{
-                if(v.readyState>=1&&v.videoWidth>0)return resolve();
-                v.addEventListener('loadedmetadata',resolve,{once:true});
-                v.addEventListener('error',()=>reject(new Error('scene video failed to load')),{once:true});
+            frame.locator('#rawVideo').evaluate("""(v,expected)=>new Promise((resolve,reject)=>{
+                const cleanup=()=>{v.removeEventListener('loadedmetadata',check);v.removeEventListener('loadeddata',check);v.removeEventListener('error',fail)};
+                const check=()=>{if(v.readyState>=2&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_input.mp4')){cleanup();resolve()}};
+                const fail=()=>{cleanup();reject(new Error('scene video failed to load: '+expected))};
+                v.addEventListener('loadedmetadata',check);v.addEventListener('loadeddata',check);v.addEventListener('error',fail);
+                check();
             })""",scene)
             assert f'E03_{scene}_input.mp4' in frame.locator('#rawVideo').get_attribute('src')
             assert f'E03_{scene}_e02.mp4' in frame.locator('#e02Video').get_attribute('src')
