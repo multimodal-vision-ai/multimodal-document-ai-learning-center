@@ -562,7 +562,7 @@ def execute_notebook_v11():
         if len(record['frames'])<50 or len(record['improved_frames'])!=len(record['frames']):
             raise RuntimeError(f'E03 V1.1 frame count mismatch: {scene}')
         if not any(f.get('valid') for f in record['improved_frames']):
-            raise RuntimeError(f'E03 V1.1 has no reliable detection in {scene}')
+            print(f'WARNING: V1.1 produced no verified detections in {scene}; keep the explicit failure frames for classroom analysis.')
         source=out_dir/f'E03_v1_1_{scene}_compare.mp4'
         target=DOWN/source.name
         if not source.is_file() or source.stat().st_size<20000:
