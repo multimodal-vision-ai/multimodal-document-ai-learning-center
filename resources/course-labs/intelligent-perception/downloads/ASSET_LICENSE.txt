@@ -1,0 +1,3 @@
+Teaching images from Udacity CarND-LaneLines-P1 and CarND-Advanced-Lane-Lines (MIT License, copyright Udacity Inc.).
+https://github.com/udacity/CarND-LaneLines-P1
+https://github.com/udacity/CarND-Advanced-Lane-Lines
