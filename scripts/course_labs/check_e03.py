@@ -59,7 +59,7 @@ with ZipFile(DOWN/'MVAI_E03_Lab.zip') as z:
     assert 'E03_Complex_Lane_Detection_V1.1.ipynb' in names
     assert len([n for n in names if n.startswith('images/') and n.endswith('.jpg')])==5
     assert len([n for n in names if n.startswith('videos/') and n.endswith('input.mp4')])==3
-    assert len([n for n in names if n.startswith('outputs/') and n.endswith('_compare.mp4')])==3
+    assert len([n for n in names if n.startswith('outputs/') and 'v1_1_' not in n and n.endswith('_compare.mp4')])==3
     assert len([n for n in names if n.startswith('outputs/') and n.endswith('_e02.mp4')])==3
     assert len([n for n in names if n.startswith('videos/') and n.endswith('input.webm')])==3
     assert len([n for n in names if n.startswith('outputs/') and n.endswith('_e02.webm')])==3
