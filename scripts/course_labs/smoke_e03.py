@@ -60,8 +60,13 @@ try:
                 check();
             })""",scene)
             assert f'E03_{scene}_input.mp4' in frame.locator('#rawVideo').get_attribute('src')
+            frame.locator('#e02Video').evaluate("""(v,expected)=>new Promise((resolve,reject)=>{
+                const check=()=>{if(v.readyState>=2&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_e02.mp4')){cleanup();resolve()}};
+                const cleanup=()=>{v.removeEventListener('loadedmetadata',check);v.removeEventListener('loadeddata',check);v.removeEventListener('error',fail)};
+                const fail=()=>{cleanup();reject(new Error('E02 reference video failed to load: '+expected))};
+                v.addEventListener('loadedmetadata',check);v.addEventListener('loadeddata',check);v.addEventListener('error',fail);check();
+            })""",scene)
             assert f'E03_{scene}_e02.mp4' in frame.locator('#e02Video').get_attribute('src')
-        frame.locator('button[data-clip="complex"]').click()
         debug=frame.locator('body').evaluate("""()=>({
             data:window.__e03Debug.getTracks().scenes.complex,
             alpha:window.__e03Debug.getAlpha()
@@ -89,6 +94,8 @@ try:
             '(e)=>{e.value="90";e.dispatchEvent(new Event("input",{bubbles:true}))}')
         high=frame.locator('#e03Canvas').evaluate('(c)=>c.toDataURL()')
         assert low!=high,'Changing alpha did not change the actual E03 video overlay pixels'
+        synced=frame.locator('body').evaluate("""()=>Math.abs(document.getElementById('rawVideo').currentTime-document.getElementById('e02Video').currentTime)""")
+        assert synced<.20,f'E02 reference video lost synchronization: {synced:.3f}s'
         page.locator('button[data-tab="download"]').click()
         assert page.locator('a[href$="MVAI_E03_Lab.zip"]').count()>=1
         if errors:raise RuntimeError('JS page errors: '+str(errors))
