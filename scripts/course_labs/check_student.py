@@ -18,10 +18,11 @@ FILES=[
  BASE/"downloads/E02_Lane_Detection_V2.0.ipynb",
  BASE/"downloads/MVAI_E01_E02_Labs.zip",
  BASE/"downloads/MVAI_E01_Lab.zip",BASE/"downloads/MVAI_E02_Lab.zip",
- BASE/"downloads/solidWhiteRight_8s.mp4"
+ BASE/"downloads/solidWhiteRight_8s.mp4",
+ BASE/"downloads/E02_lane_video_processed.mp4"
 ]
 FILES += sorted((BASE/"images").glob("*.jpg"))
-if len(FILES)!=23: raise SystemExit("Expected 9 images and 14 main files, got "+str(len(FILES)))
+if len(FILES)!=24: raise SystemExit("Expected 9 images and 15 main files, got "+str(len(FILES)))
 for path in FILES:
  if not path.is_file() or not path.stat().st_size:
   raise SystemExit("Missing / empty student asset: "+str(path))
@@ -35,12 +36,18 @@ for name in ("E01_Image_Processing_V2.0.ipynb","E02_Lane_Detection_V2.0.ipynb"):
  prompts=sum("探索任务" in "".join(c["source"]) for c in nb["cells"] if c["cell_type"]=="markdown")
  assert prompts>=5,(name,"missing five exploration prompt Cells",prompts)
  assert sum(c["cell_type"]=="code" for c in nb["cells"])>=10,(name,"missing executable experimental Cells")
+ if name.startswith("E02_"):
+  video_cells=[c for c in nb["cells"] if c["cell_type"]=="code" and "E02_lane_video_cv2.mp4" in "".join(c["source"])]
+  assert len(video_cells)==1,"E02 needs a runnable continuous-video code Cell"
+  assert sum("image/png" in o.get("data",{}) for o in video_cells[0].get("outputs",[]))>=1,"E02 video Cell lacks real image output"
+
 with ZipFile(BASE/"downloads/MVAI_E01_E02_Labs.zip") as z:
  names=set(z.namelist())
  assert len([x for x in names if x.startswith("images/") and x.endswith(".jpg")])==9
  assert "E01_Image_Processing_V2.0.ipynb" in names
  assert "E02_Lane_Detection_V2.0.ipynb" in names
  assert "videos/solidWhiteRight_8s.mp4" in names
+ assert "videos/E02_lane_video_processed.mp4" in names
 for code,filename in (("E01","E01_Image_Processing_V2.0.ipynb"),("E02","E02_Lane_Detection_V2.0.ipynb")):
  with ZipFile(BASE/"downloads"/f"MVAI_{code}_Lab.zip") as archive:
   names=set(archive.namelist())
@@ -48,6 +55,7 @@ for code,filename in (("E01","E01_Image_Processing_V2.0.ipynb"),("E02","E02_Lane
   assert len([n for n in names if n.endswith(".ipynb")])==1,(code,"contains another notebook")
   assert len([n for n in names if n.startswith("images/") and n.endswith(".jpg")])==9
   assert ("videos/solidWhiteRight_8s.mp4" in names)==(code=="E02")
+  assert ("videos/E02_lane_video_processed.mp4" in names)==(code=="E02")
 for html_path in (BASE/"interactive/index.html",BASE/"notebook.html",BASE/"notebook-student-v2.html",BASE/"e01-notebook.html",BASE/"e02-notebook.html"):
  content=html_path.read_text(encoding="utf-8")
  for marker in ("TEACHER QUICK START","教师授课安排","教师教学引导手册","教师备课参考"):
