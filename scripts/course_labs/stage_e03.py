@@ -73,6 +73,13 @@ def capture_clips():
             frames=int(cap.get(cv2.CAP_PROP_FRAME_COUNT));cap.release()
             if frames<30:raise RuntimeError('E03 clip too short: '+scene)
             print(f'E03 {scene}: {frames} frames at 640x360')
+            # Chromium's bundled test build may not include H.264 codecs.
+            # Keep MP4 for Notebook/offline use; publish VP8/WebM for browser playback.
+            browser_video=VIDEOS/f'E03_{scene}_input.webm'
+            execute([FFMPEG,'-hide_banner','-loglevel','error','-y','-i',output,'-an',
+                     '-c:v','libvpx','-pix_fmt','yuv420p','-b:v','450k',
+                     '-deadline','realtime','-cpu-used','5','-auto-alt-ref','0',browser_video])
+            if browser_video.stat().st_size<5000:raise RuntimeError('E03 browser WebM is empty: '+scene)
 
 def m(txt):return nbformat.v4.new_markdown_cell(txt)
 def c(code):return nbformat.v4.new_code_cell(code)
@@ -316,6 +323,12 @@ def execute_notebook():
                  '-movflags','+faststart',e02_target])
         execute([FFMPEG,'-hide_banner','-loglevel','error','-i',e02_target,'-f','null','-'])
         print('Verified E02 reference clip',e02_target.name,e02_target.stat().st_size)
+        e02_webm=DOWN/f'E03_{scene}_e02.webm'
+        execute([FFMPEG,'-hide_banner','-loglevel','error','-y','-i',e02_target,'-an',
+                 '-c:v','libvpx','-pix_fmt','yuv420p','-b:v','450k',
+                 '-deadline','realtime','-cpu-used','5','-auto-alt-ref','0',e02_webm])
+        if e02_webm.stat().st_size<5000:raise RuntimeError('E03 E02 browser WebM is empty: '+scene)
+        execute([FFMPEG,'-hide_banner','-loglevel','error','-i',e02_webm,'-f','null','-'])
     (DOWN/'E03_diagnostics.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
     print('Notebook real PNG outputs:',images)
 
@@ -335,10 +348,12 @@ def package():
             for _,fn in frames:z.write(IMAGES/fn,'images/'+fn)
         for scene in CLIPS:
             z.write(VIDEOS/f'E03_{scene}_input.mp4',f'videos/E03_{scene}_input.mp4')
+            z.write(VIDEOS/f'E03_{scene}_input.webm',f'videos/E03_{scene}_input.webm')
             z.write(DOWN/f'E03_{scene}_compare.mp4',f'outputs/E03_{scene}_compare.mp4')
         z.write(DOWN/'E03_diagnostics.json','outputs/E03_diagnostics.json')
         z.write(DOWN/'E03_tracks.json','outputs/E03_tracks.json')
         for scene in CLIPS:z.write(DOWN/f'E03_{scene}_e02.mp4',f'outputs/E03_{scene}_e02.mp4')
+        for scene in CLIPS:z.write(DOWN/f'E03_{scene}_e02.webm',f'outputs/E03_{scene}_e02.webm')
     print('E03 ZIP:',target.stat().st_size)
 
 if __name__=='__main__':
