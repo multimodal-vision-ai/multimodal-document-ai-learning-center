@@ -5,7 +5,7 @@ uploads can be supplied with MVAI_E03_VIDEO_SOURCE_DIR (same source hashes).
 Run AFTER the existing E01/E02 resource stage in CI; does not touch their assets.
 """
 from pathlib import Path
-import os,hashlib,subprocess,tempfile,shutil,json,sys
+import os,hashlib,subprocess,tempfile,shutil,json,sys,base64
 from urllib.request import urlopen,Request
 from zipfile import ZipFile,ZIP_DEFLATED
 import cv2
@@ -80,6 +80,25 @@ def capture_clips():
                      '-c:v','libvpx','-pix_fmt','yuv420p','-b:v','450k',
                      '-deadline','realtime','-cpu-used','5','-auto-alt-ref','0',browser_video])
             if browser_video.stat().st_size<5000:raise RuntimeError('E03 browser WebM is empty: '+scene)
+
+def build_browser_image_bundle():
+    """Embed the five teaching JPEGs as data URLs so Canvas can read pixels
+    even when raw.githack redirects image requests across origins."""
+    assets={}
+    for frames in FRAME_NAMES.values():
+        for _,filename in frames:
+            source=IMAGES/filename
+            if not source.is_file() or source.stat().st_size<3000:
+                raise RuntimeError(f'Missing E03 browser image asset: {source}')
+            encoded=base64.b64encode(source.read_bytes()).decode('ascii')
+            assets[filename]='data:image/jpeg;base64,'+encoded
+    target=BASE/'interactive'/'e03-image-assets.js'
+    target.parent.mkdir(parents=True,exist_ok=True)
+    target.write_text(
+        'window.E03_IMAGE_DATA = Object.freeze('+json.dumps(assets,separators=(',',':'))+');\\n',
+        encoding='utf-8'
+    )
+    print(f'E03 browser image bundle: {len(assets)} origin-clean JPEGs, {target.stat().st_size} bytes')
 
 def m(txt):return nbformat.v4.new_markdown_cell(txt)
 def c(code):return nbformat.v4.new_code_cell(code)
@@ -357,4 +376,4 @@ def package():
     print('E03 ZIP:',target.stat().st_size)
 
 if __name__=='__main__':
-    capture_clips();execute_notebook();package()
+    capture_clips();build_browser_image_bundle();execute_notebook();package()
