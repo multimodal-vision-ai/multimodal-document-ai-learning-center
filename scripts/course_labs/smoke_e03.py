@@ -59,6 +59,11 @@ try:
                 populated=frame.locator(f'canvas#{canvas_id}').evaluate(
                     '(c)=>{const d=c.getContext("2d").getImageData(0,0,c.width,c.height).data;return d.some((v,i)=>i%4===3&&v>0)}')
                 assert populated,f'{kind}: canvas {canvas_id} is blank'
+            if kind=='curve':
+                assert frame.locator('#model-picker').is_visible(),'Curve model selector should be visible'
+                for model in ('cubic','spline'):
+                    frame.locator('#curveModel').select_option(model)
+                    page.wait_for_function("(m)=>document.querySelector('iframe')?.contentDocument?.querySelector('#status')?.textContent?.includes('模型 '+m)",arg=model,timeout=30000)
             target_canvas={'warp':'b','curve':'b','light':'a'}[kind]
             before=frame.locator(f'#{target_canvas}').evaluate('(c)=>c.toDataURL()')
             frame.locator('input[type="range"]').first.evaluate(
