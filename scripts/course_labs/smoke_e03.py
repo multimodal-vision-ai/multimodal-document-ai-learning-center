@@ -33,10 +33,11 @@ try:
                 populated=frame.locator(f'canvas#{canvas_id}').evaluate(
                     '(c)=>{const d=c.getContext("2d").getImageData(0,0,c.width,c.height).data;return d.some((v,i)=>i%4!==3&&v>0)}')
                 assert populated,f'{kind}: canvas {canvas_id} is blank'
-            before=frame.locator('#c').evaluate('(c)=>c.toDataURL()')
+            target_canvas={'warp':'b','curve':'b','light':'a'}[kind]
+            before=frame.locator(f'#{target_canvas}').evaluate('(c)=>c.toDataURL()')
             frame.locator('input[type="range"]').first.evaluate(
                 '(e)=>{e.value=String(Math.max(Number(e.min),Number(e.value)-7));e.dispatchEvent(new Event("input",{bubbles:true}))}')
-            after=frame.locator('#c').evaluate('(c)=>c.toDataURL()')
+            after=frame.locator(f'#{target_canvas}').evaluate('(c)=>c.toDataURL()')
             assert before!=after,f'{kind}: parameter change did not update final output canvas'
         frame.locator('button[data-exp="time"]').click()
         frame.locator('#rawVideo').wait_for()
@@ -71,11 +72,13 @@ try:
                 if delta>best_delta:best_index,best_delta=i,delta
         assert best_index>=1 and best_delta>1.5,'No changing valid curve pair available to test EMA effect'
         fps=debug['data']['fps']
-        frame.locator('#rawVideo').evaluate('(v,t)=>{v.pause();v.currentTime=t}',best_index/fps)
-        frame.locator('#rawVideo').evaluate("""v=>new Promise(resolve=>{
-            if(!v.seeking&&v.readyState>=2)return requestAnimationFrame(()=>resolve());
-            v.addEventListener('seeked',()=>requestAnimationFrame(()=>resolve()),{once:true});
-        })""")
+        frame.locator('#rawVideo').evaluate("""(v,t)=>new Promise(resolve=>{
+            v.pause();
+            const done=()=>requestAnimationFrame(()=>resolve());
+            if(!v.seeking&&Math.abs(v.currentTime-t)<.02&&v.readyState>=2)return done();
+            v.addEventListener('seeked',done,{once:true});
+            v.currentTime=t;
+        })""",best_index/fps)
         frame.locator('input[type="range"]').first.evaluate(
             '(e)=>{e.value="25";e.dispatchEvent(new Event("input",{bubbles:true}))}')
         low=frame.locator('#e03Canvas').evaluate('(c)=>c.toDataURL()')
