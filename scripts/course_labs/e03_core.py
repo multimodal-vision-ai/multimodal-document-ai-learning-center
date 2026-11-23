@@ -161,4 +161,4 @@ def e03_detect(frame,scene='curve',tracker=None,top_shift=0.,width_shift=0.,
     fit=fit_lanes(binary,nwindows,margin_frac)
     overlay,status,bottom=draw_curve(frame,Minv,fit,tracker)
     fit['status']=status;fit['bottom_x']=bottom
-    return overlay,fit,{'bird':bird,'mask':binary,'white':wm,'yellow':ym,'grad':gm,'src':src}
+    return overlay,fit,{'bird':bird,'mask':binary,'white':wm,'yellow':ym,'grad':gm,'src':src,'Minv':Minv.astype(float).tolist(),'probes':fit.get('probes',np.array([.38,.62,.91])).astype(float).tolist()}
