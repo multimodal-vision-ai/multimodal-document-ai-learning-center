@@ -45,7 +45,7 @@ try:
         frame.locator('#rawVideo').wait_for()
         frame.locator('#video-note').wait_for()
         frame.locator('#rawVideo').evaluate("""v=>new Promise((resolve,reject)=>{
-            const timer=setTimeout(()=>reject(new Error('raw video metadata timeout; src='+v.currentSrc)),20000);
+            const timer=setTimeout(()=>reject(new Error('raw video metadata timeout; src='+v.currentSrc+' error='+(v.error?.code||'none')+' networkState='+v.networkState+' readyState='+v.readyState)),20000);
             const done=()=>{clearTimeout(timer);resolve()};
             if(v.readyState>=1){done();return}
             v.addEventListener('loadedmetadata',done,{once:true});
@@ -57,20 +57,20 @@ try:
             frame.locator(f'button[data-clip="{scene}"]').click()
             frame.locator('#rawVideo').evaluate("""(v,expected)=>new Promise((resolve,reject)=>{
                 const cleanup=()=>{v.removeEventListener('loadedmetadata',check);v.removeEventListener('loadeddata',check);v.removeEventListener('error',fail)};
-                const check=()=>{if(v.readyState>=1&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_input.mp4')){cleanup();resolve()}};
+                const check=()=>{if(v.readyState>=1&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_input.webm')){cleanup();resolve()}};
                 const fail=()=>{cleanup();reject(new Error('scene video failed to load: '+expected))};
                 v.addEventListener('loadedmetadata',check);v.addEventListener('loadeddata',check);v.addEventListener('error',fail);
                 check();
             })""",scene)
-            assert f'E03_{scene}_input.mp4' in frame.locator('#rawVideo').get_attribute('src')
+            assert f'E03_{scene}_input.webm' in frame.locator('#rawVideo').get_attribute('src')
             frame.locator('#e02Video').evaluate("""(v,expected)=>new Promise((resolve,reject)=>{
                 const timer=setTimeout(()=>{cleanup();reject(new Error('E02 reference metadata timeout: '+expected+' src='+v.currentSrc))},20000);
-                const check=()=>{if(v.readyState>=1&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_e02.mp4')){cleanup();resolve()}};
+                const check=()=>{if(v.readyState>=1&&v.videoWidth>0&&v.currentSrc.includes('E03_'+expected+'_e02.webm')){cleanup();resolve()}};
                 const cleanup=()=>{clearTimeout(timer);v.removeEventListener('loadedmetadata',check);v.removeEventListener('loadeddata',check);v.removeEventListener('error',fail)};
                 const fail=()=>{cleanup();reject(new Error('E02 reference video failed to load: '+expected))};
                 v.addEventListener('loadedmetadata',check);v.addEventListener('loadeddata',check);v.addEventListener('error',fail);check();
             })""",scene)
-            assert f'E03_{scene}_e02.mp4' in frame.locator('#e02Video').get_attribute('src')
+            assert f'E03_{scene}_e02.webm' in frame.locator('#e02Video').get_attribute('src')
         debug=frame.locator('body').evaluate("""()=>({
             data:window.__e03Debug.getTracks().scenes.complex,
             alpha:window.__e03Debug.getAlpha()
