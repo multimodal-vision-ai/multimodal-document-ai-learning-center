@@ -274,8 +274,6 @@ document.getElementById("toggle-codes").onclick=function(){
   const list=[...document.querySelectorAll("details.code-cell")],expand=list.some(d=>!d.open);
   list.forEach(d=>d.open=expand);this.textContent=expand?"收起全部代码":"展开全部代码";
 };
-fetch("downloads/"+name+"?online_reader=v2-20261122",{cache:"no-store"})
-.then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()})
 
 function appendVideoOutput(){
   const chapter=[...document.querySelectorAll(".chapter")].find(el=>{
@@ -308,6 +306,9 @@ function appendVideoOutput(){
   section.append(title,description,video,download,warning);
   chapter.append(section);
 }
+
+fetch("downloads/"+name+"?online_reader=v2-20261122",{cache:"no-store"})
+.then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()})
 
 .then(nb=>{
   if(!Array.isArray(nb.cells))throw Error("Notebook 文件格式不正确");
