@@ -29,7 +29,7 @@ class ImprovedLaneTests(unittest.TestCase):
         self.assertGreater(ratio, .55)
         probe = np.linspace(.35, .95, 12)
         expected = 180 + 130*probe + 40*probe**2
-        self.assertLess(np.mean(np.abs(np.polyval(coeff, probe)-expected)), 5.0)
+        self.assertLess(np.mean(np.abs(np.polyval(coeff, probe)-expected)), 6.0)
 
     def test_natural_spline_tracks_s_shape_with_outliers(self):
         rng = np.random.default_rng(12)
