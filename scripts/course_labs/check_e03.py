@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Validate isolated E03 student assets without changing E01/E02 checks."""
 from pathlib import Path
-import ast,json,re,subprocess,tempfile
+import ast,json,re,subprocess,tempfile,base64
 from zipfile import ZipFile
 import nbformat
 ROOT=Path(__file__).resolve().parents[2]
 BASE=ROOT/'docs/resources/course-labs/intelligent-perception'
 DOWN=BASE/'downloads'
-files=[BASE/'e03-notebook.html',BASE/'e03.md',BASE/'interactive/e03.html',
+files=[BASE/'e03-notebook.html',BASE/'e03.md',BASE/'interactive/e03.html',BASE/'interactive/e03-image-assets.js',
        DOWN/'E03_Complex_Lane_Detection_V1.0.ipynb',DOWN/'MVAI_E03_Lab.zip',DOWN/'E03_diagnostics.json',DOWN/'E03_tracks.json',
        *(DOWN/f'E03_{s}_compare.mp4' for s in ('straight','curve','complex')),
        *(DOWN/f'E03_{s}_e02.mp4' for s in ('straight','curve','complex')),
@@ -43,6 +43,26 @@ with ZipFile(DOWN/'MVAI_E03_Lab.zip') as z:
     assert len([n for n in names if n.startswith('videos/') and n.endswith('input.webm')])==3
     assert len([n for n in names if n.startswith('outputs/') and n.endswith('_e02.webm')])==3
     assert 'outputs/E03_tracks.json' in names
+# The interactive page must use embedded JPEG data, not cross-origin image pixels.
+interactive=(BASE/'interactive/e03.html').read_text(encoding='utf-8')
+assert '<script src="e03-image-assets.js"></script>' in interactive
+bundle=(BASE/'interactive/e03-image-assets.js').read_text(encoding='utf-8')
+match=re.fullmatch(r'window\\.E03_IMAGE_DATA = Object\\.freeze\\((.*)\\);\\s*',bundle,re.S)
+assert match, 'E03 embedded image bundle has an invalid wrapper'
+image_assets=json.loads(match.group(1))
+expected_images={
+    '01_solidWhiteRight_straight_white.jpg',
+    '03_project_curve_intro.jpg',
+    '07_harder_curve_motorcycle.jpg',
+    '08_harder_shadow_glare.jpg',
+    '09_harder_curve_shadow.jpg',
+}
+assert set(image_assets)==expected_images, 'E03 embedded image bundle is incomplete'
+for filename,data_url in image_assets.items():
+    assert data_url.startswith('data:image/jpeg;base64,'), f'Unexpected image data URL: {filename}'
+    decoded=base64.b64decode(data_url.split(',',1)[1],validate=True)
+    assert decoded==(BASE/'images'/filename).read_bytes(), f'Embedded image differs from staged JPEG: {filename}'
+subprocess.run(['node','--check',str(BASE/'interactive/e03-image-assets.js')],check=True)
 for p in (BASE/'e03-notebook.html',BASE/'interactive/e03.html'):
     src=p.read_text(encoding='utf-8')
     script=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',src,flags=re.S)
