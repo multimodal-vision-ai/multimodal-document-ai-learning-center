@@ -99,15 +99,45 @@ main{max-width:1380px;margin:0 auto;padding:26px clamp(18px,3vw,46px) 65px}
 .lab-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}
 .lab-actions h2{margin:0;font-size:19px}.lab-actions p{font-size:12px;color:#688097;margin:6px 0 0}
 @media(max-width:900px){.waycards{grid-template-columns:1fr}}@media(max-width:600px){.way{padding:18px 14px}.lab-frame{height:780px}}
+
+/* Optional technical metadata: a single small information control. */
+.meta-info{position:relative;flex:0 0 auto}
+.meta-btn{border:1px solid #d4e0e9;border-radius:50%;width:29px;height:29px;
+ display:grid;place-items:center;background:#fff;color:#557a9b;font-size:14px;
+ font-weight:800;cursor:pointer;line-height:1}
+.meta-btn:hover,.meta-btn:focus-visible{background:#edf5fc;border-color:#9fbfda;color:#195d91}
+.meta-pop{position:absolute;left:0;top:35px;z-index:70;width:min(440px,80vw);padding:16px 18px;
+ background:#fff;border:1px solid #d8e5ed;border-radius:10px;
+ box-shadow:0 14px 35px rgba(22,52,81,.12);font-size:12px;color:#55738b;line-height:1.8}
+.meta-pop[hidden]{display:none}
+.meta-pop p{margin:0 0 8px}.meta-pop p:last-child{margin-bottom:0}
+.meta-pop .small-title{font-weight:800;color:#234e72}
+.bar{align-items:center}
+.hero .pillrow{display:none}
+.video-result{margin:18px 0 5px;background:#f8fbfd;border:1px solid #d9e6ee;border-radius:11px;padding:18px}
+.video-result h3{font-size:15px;color:#2d536f;margin:0 0 8px}
+.video-result p{font-size:12px;color:#658098;line-height:1.7}
+.video-result video{display:block;width:100%;max-width:1040px;aspect-ratio:32/9;border-radius:8px;background:#111}
+.video-result a{font-size:12px;font-weight:700}
+@media(max-width:600px){.meta-pop{width:min(350px,84vw)}}
 </style></head>
 <body><div role="note" style="position:relative;z-index:10;padding:.4rem 1rem;text-align:center;background:#fef3c7;color:#713f12;font:600 14px/1.5 system-ui,sans-serif">DEV 预览版 · 来自 dev 分支 · 非正式发布站点</div>
 <header><strong>MVAI Learning Center / 智能感知与自动驾驶技术</strong><a href="./index.html">返回课程首页</a></header>
-<section class="hero"><div class="hero-inner"><div><div class="eyebrow">ONE NOTEBOOK · THREE LEARNING WAYS</div><h1 id="title">Notebook 在线学习</h1><p id="hero-desc">阅读实验讲解、Python 源码和真实运行结果；修改参数时可使用浏览器演示，也可下载同一份 Notebook 在本地或 Kaggle 运行。</p><div class="pillrow"><span class="pill">5 项探索实验</span><span class="pill">9 张真实道路图片</span><span class="pill">Python + OpenCV</span><span class="pill">浏览器端交互</span><span class="pill">可下载 / Kaggle</span></div></div><img class="hero-img" id="hero-img" src="images/01_solidWhiteRight_straight_white.jpg" alt="真实道路视频截图"></div></section>
+<section class="hero"><div class="hero-inner"><div><div class="eyebrow">ONE NOTEBOOK · THREE LEARNING WAYS</div><h1 id="title">Notebook 在线学习</h1><p id="hero-desc">阅读实验讲解、Python 源码和真实运行结果；修改参数时可使用浏览器演示，也可下载同一份 Notebook 在本地或 Kaggle 运行。</p></div><img class="hero-img" id="hero-img" src="images/01_solidWhiteRight_straight_white.jpg" alt="真实道路视频截图"></div></section>
 <nav class="tabs" aria-label="三种学习方式"><a class="active" href="#notebook">01 · 在线学习 Notebook</a><a id="interactTab" href="interactive/index.html?lab=e02">02 · 浏览器交互实验</a><a id="downloadTab" href="downloads/MVAI_E01_E02_Labs.zip">03 · 本地 / Kaggle 运行</a></nav>
 <main id="notebook">
 <section class="mode-section active" id="mode-study">
-<div class="bar"><span id="status">读取 Notebook 中…</span><div><button type="button" class="button light" id="toggle-codes">展开全部代码</button> <a class="button light" id="interact" href="interactive/index.html?lab=e02">在线交互</a> <a class="button" id="download" href="downloads/E01_Image_Processing_V2.0.ipynb" download>下载 .ipynb</a></div></div>
-<div class="intro">以下图像由对应 Python/OpenCV Notebook 的代码真实执行后生成；本页不执行 Python。单击代码单元可展开源码，对照运行结果学习。</div>
+<div class="bar">
+<div class="meta-info" id="meta-info">
+  <button type="button" class="meta-btn" id="meta-toggle" aria-label="查看 Notebook 信息" aria-haspopup="true" aria-expanded="false" title="查看实验说明与运行统计">i</button>
+  <div class="meta-pop" id="meta-pop" hidden role="tooltip">
+    <p class="small-title">Notebook 运行信息</p>
+    <p id="status">读取 Notebook 中…</p>
+    <p>图像由 Python/OpenCV Notebook 实际执行后生成。本网页用于阅读和观看结果，不在浏览器执行 Python；点击代码标题可展开源码。</p>
+    <p>5 项探索实验 · 9 张道路图片 · 可下载至本地或 Kaggle 运行。</p>
+  </div>
+</div><div><button type="button" class="button light" id="toggle-codes">展开全部代码</button> <a class="button light" id="interact" href="interactive/index.html?lab=e02">在线交互</a> <a class="button" id="download" href="downloads/E01_Image_Processing_V2.0.ipynb" download>下载 .ipynb</a></div></div>
+
 <div class="book-layout"><aside class="book-toc"><h3>NOTEBOOK 章节</h3><div id="toc"></div></aside><div id="cells"></div></div>
 </section>
 <section class="mode-section" id="mode-interactive">
@@ -189,6 +219,19 @@ function markdown(s){
 
 let codeCount=0,imageCount=0,chapterCount=0,current=null,chapterName="导读";
 const target=document.getElementById("cells"),toc=document.getElementById("toc");
+
+const infoBtn=document.getElementById("meta-toggle");
+const infoPop=document.getElementById("meta-pop");
+const infoBox=document.getElementById("meta-info");
+let metaPinned=false;
+function displayMeta(show){infoPop.hidden=!show;infoBtn.setAttribute("aria-expanded",String(show))}
+infoBtn.addEventListener("click",()=>{metaPinned=!metaPinned;displayMeta(metaPinned)});
+infoBox.addEventListener("mouseenter",()=>displayMeta(true));
+infoBox.addEventListener("mouseleave",()=>{if(!metaPinned)displayMeta(false)});
+infoBox.addEventListener("focusout",()=>{if(!metaPinned)setTimeout(()=>{if(!infoBox.contains(document.activeElement))displayMeta(false)},0)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){metaPinned=false;displayMeta(false)}});
+document.addEventListener("click",e=>{if(!infoBox.contains(e.target)){metaPinned=false;displayMeta(false)}});
+
 function createChapter(source,label){
   chapterName=label;const a=document.createElement("article");a.className="chapter";a.id="chapter-"+(++chapterCount);
   const md=document.createElement("div");md.className="md";md.innerHTML=markdown(source);a.append(md);target.append(a);
