@@ -23,6 +23,7 @@ try:
         page.goto(url,wait_until='domcontentloaded')
         page.locator('.code-output img').first.wait_for(timeout=60000)
         assert page.locator('.code-output img').count()>=8,'Notebook real output images missing'
+        assert page.get_by_text('V1.1 Improved Solution',exact=False).count()>=1,'V1.1 Notebook should be the default online lesson'
         assert page.locator('details.code-cell[open]').count()==0,'Notebook source must default folded'
         page.locator('button[data-tab="interact"]').click()
         frame=page.frame_locator('iframe')
@@ -66,6 +67,7 @@ try:
             assert before!=after,f'{kind}: parameter change did not update final output canvas'
         frame.locator('button[data-exp="time"]').click()
         frame.locator('#rawVideo').wait_for()
+        frame.locator('#e03ImprovedCanvas').wait_for()
         frame.locator('#video-note').wait_for()
         frame.locator('#rawVideo').evaluate("""v=>new Promise((resolve,reject)=>{
             const timer=setTimeout(()=>reject(new Error('raw video metadata timeout; src='+v.currentSrc+' error='+(v.error?.code||'none')+' networkState='+v.networkState+' readyState='+v.readyState)),20000);
@@ -75,7 +77,7 @@ try:
             v.addEventListener('error',()=>{clearTimeout(timer);reject(new Error('raw video failed to load: '+v.currentSrc))},{once:true});
         })""")
         frame.locator('#video-note').wait_for()
-        page.wait_for_function("""()=>!!document.querySelector('iframe')?.contentWindow?.__e03Debug?.getTracks()?.scenes?.curve?.frames?.length""",timeout=60000)
+        page.wait_for_function("""()=>{const t=document.querySelector('iframe')?.contentWindow?.__e03Debug?.getTracks()?.scenes?.curve;return !!t?.frames?.length&&!!t?.improved_frames?.length}""",timeout=60000)
         for scene in ('straight','curve','complex'):
             frame.locator(f'button[data-clip="{scene}"]').click()
             frame.locator('#rawVideo').evaluate("""(v,expected)=>new Promise((resolve,reject)=>{
@@ -99,6 +101,9 @@ try:
             alpha:window.__e03Debug.getAlpha()
         })""")
         frames=debug['data']['frames']
+        improved_frames=debug['data']['improved_frames']
+        assert len(improved_frames)==len(frames),'V1.1 per-frame tracks do not align with V1.0'
+        assert any(f.get('valid') and f.get('left_curve_x') and f.get('right_curve_x') for f in improved_frames),'V1.1 has no real fitted curve samples'
         best_index,best_delta=-1,0
         for i in range(1,len(frames)):
             a,b=frames[i-1],frames[i]
@@ -115,6 +120,10 @@ try:
             v.addEventListener('seeked',done,{once:true});
             v.currentTime=t;
         })""",best_index/fps)
+        page.wait_for_function("""()=>{const c=document.querySelector('iframe')?.contentDocument?.querySelector('#e03ImprovedCanvas');return !!c&&c.getContext('2d').getImageData(0,0,c.width,c.height).data.some((v,i)=>i%4===3&&v>0)}""",timeout=30000)
+        baseline_before=frame.locator('#e03Canvas').evaluate('(c)=>c.toDataURL()')
+        improved_before=frame.locator('#e03ImprovedCanvas').evaluate('(c)=>c.toDataURL()')
+        assert baseline_before!=improved_before,'V1.0 and V1.1 canvases should show separate overlays'
         frame.locator('input[type="range"]').first.evaluate(
             '(e)=>{e.value="25";e.dispatchEvent(new Event("input",{bubbles:true}))}')
         low=frame.locator('#e03Canvas').evaluate('(c)=>c.toDataURL()')
