@@ -45,6 +45,9 @@ jobs:
       - name: Build MkDocs strictly
         run: |
           pip install -r requirements-docs.txt
+          python -m pip install imageio-ffmpeg==0.6.0 nbclient==0.10.2 nbformat==5.10.4 ipykernel matplotlib opencv-python-headless
+          python scripts/course_labs/stage_resources.py
+          python scripts/course_labs/check_student.py
           python -m unittest discover -s tests/radar -p 'test_publication*.py' -v
           mkdocs build --strict
           python scripts/radar/verify_publication.py --site-dir site

@@ -9,6 +9,7 @@ on:
     paths:
       - ".github/workflows/dev-preview.yml"
       - "docs/**"
+      - "scripts/course_labs/**"
       - "mkdocs.yml"
       - "requirements-docs.txt"
       - "scripts/radar/**"
@@ -24,7 +25,7 @@ concurrency:
 jobs:
   build:
     name: Build isolated DEV website
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       PREVIEW_BRANCH: ${{ github.event_name == 'pull_request' && format('dev-preview-pr-{0}', github.event.pull_request.number) || 'dev-preview' }}
     permissions:
@@ -109,10 +110,23 @@ jobs:
           path.write_text(new, encoding="utf-8")
           PY
 
+      - name: Install student video frame tool
+        run: python -m pip install imageio-ffmpeg==0.6.0 nbclient==0.10.2 nbformat==5.10.4 ipykernel matplotlib opencv-python-headless
+      - name: Stage E01/E02 public student learning assets
+        run: |
+          python scripts/course_labs/stage_resources.py
+          python scripts/course_labs/check_student.py
+
       - name: Strict build with explicit HTML links
         run: |
           mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
           python scripts/radar/verify_publication.py --site-dir "$RUNNER_TEMP/dev-site"
+
+      - name: Verify real student pages in Chromium
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install chromium
+          python scripts/course_labs/smoke_browser.py
 
       - name: Add visible DEV environment marking
         run: |

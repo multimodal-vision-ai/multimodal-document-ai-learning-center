@@ -58,7 +58,7 @@
 ## 谭国平教授承担的课程
 
 - [未来媒体互联网](https://github.com/multimodal-vision-ai/courses/tree/main/future-media-internet) — 多媒体通信与互联网技术基础
-- [智能感知与自动驾驶技术](https://github.com/multimodal-vision-ai/courses/tree/main/intelligent-perception) — 视觉感知、目标检测与自动驾驶决策
+- [智能感知与自动驾驶技术](course-labs/intelligent-perception/index.md) — 视觉感知、目标检测与自动驾驶决策；现已提供 E01/E02 Notebook 在线学习、交互实验和完整下载
 - 更多课程：[multimodal-vision-ai/courses](https://github.com/multimodal-vision-ai/courses)
 
-链接核对日期：2026-08-07
+课程资源更新：2026-11-22
