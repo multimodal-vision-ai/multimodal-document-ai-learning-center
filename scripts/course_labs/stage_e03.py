@@ -81,6 +81,7 @@ def build_notebook():
     core=(ROOT/'scripts/course_labs/e03_core.py').read_text(encoding='utf-8')
     env='''from pathlib import Path
 import cv2, numpy as np, matplotlib.pyplot as plt
+from matplotlib import font_manager
 from IPython.display import display, Video
 from zipfile import ZipFile
 # Local WSL/Jupyter/VS Code and Kaggle dataset layout.
@@ -96,17 +97,51 @@ def locate_e03():
     raise FileNotFoundError('请完整解压 MVAI_E03_Lab.zip，确保 images/ 与 videos/ 位于 Notebook 同级')
 DATA=locate_e03()
 OUTPUT=Path.cwd()/'e03_outputs';OUTPUT.mkdir(exist_ok=True)
+# Prefer actual installed CJK glyph fonts. Never suppress missing-glyph warnings:
+# if no suitable font is installed (for example on Kaggle), use readable
+# English captions while keeping the Notebook instructions in Chinese.
+_candidates=('Noto Sans CJK SC','Source Han Sans SC','Microsoft YaHei',
+             'SimHei','PingFang SC','WenQuanYi Micro Hei','Noto Sans CJK JP',
+             'Noto Serif CJK JP')
+_found={f.name for f in font_manager.fontManager.ttflist}
+PLOT_CJK_FONT=next((f for f in _candidates if f in _found),None)
+if PLOT_CJK_FONT:
+    plt.rcParams['font.sans-serif']=[PLOT_CJK_FONT,'DejaVu Sans']
+    plt.rcParams['axes.unicode_minus']=False
+else:
+    print('No CJK Matplotlib font: using readable English chart captions.')
+def safe_caption(text):
+    if PLOT_CJK_FONT:return text
+    captions={
+        '复杂连续弯道':'Complex curves','复杂弯道原图':'Complex curve input',
+        '普通弯道':'Curved road','直道':'Straight road',
+        '真实道路':'Original road','顶边宽度倍率':'Top-width scale',
+        '顶边':'Top edge','鸟瞰掩膜':'Bird-eye mask','鸟瞰':'Bird-eye view',
+        '原图':'Original','滑动窗口':'Sliding windows','候选':'candidates',
+        '曲线':'curve','窗口数':'Windows',
+        '强光/树影原图':'Glare/shadow input','组合掩膜':'Combined mask',
+        '白线':'White line','黄线':'Yellow line','梯度':'gradient',
+        '树影复杂场景':'Tree shadows','未增强':'Original mask',
+        '拟合有效':'Fit valid', '无效':'Invalid',
+    }
+    for zh,en in captions.items():text=text.replace(zh,en)
+    import re
+    return re.sub(r'[\u3400-\u9fff]+','',text).strip() or 'Road scene'
 def read_image(name):
     img=cv2.imread(str(DATA/'images'/name))
     if img is None:raise FileNotFoundError(name)
     return cv2.resize(img,(640,360))
-def panels(items,cols=3,size=(5,3)):
+def panels(items,cols=3,size=(5.0,3.6)):
+    # Four panels work better as a 2x2 grid on the student reading page.
+    cols=2 if len(items)==4 else min(cols,3)
     rows=(len(items)+cols-1)//cols
     fig,axes=plt.subplots(rows,cols,figsize=(cols*size[0],rows*size[1]))
     for ax in np.atleast_1d(axes).ravel():ax.axis('off')
     for ax,(title,img) in zip(np.atleast_1d(axes).ravel(),items):
-        ax.imshow(img if img.ndim==2 else cv2.cvtColor(img,cv2.COLOR_BGR2RGB));ax.set_title(title,fontsize=11);ax.axis('off')
-    plt.tight_layout();plt.show()
+        ax.imshow(img if img.ndim==2 else cv2.cvtColor(img,cv2.COLOR_BGR2RGB))
+        ax.set_title(safe_caption(title),fontsize=12,pad=9)
+        ax.axis('off')
+    plt.tight_layout(pad=1.5);plt.show()
 print('E03 DATA:',DATA,'OpenCV',cv2.__version__)'''
     cells=[m('''# E03 · 复杂道路车道检测（探索式 Notebook V1.0）
 **学生实验：四项核心探索 + 三段真实道路视频。** 先预测、每次只改变一个变量、观察真实图像、解释失败。  
