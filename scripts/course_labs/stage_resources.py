@@ -419,6 +419,17 @@ def main():
  # Notebook outputs are computed with the same Python/OpenCV code students download.
  execute_notebook(DOWNLOADS/"E01_Image_Processing_V2.0.ipynb")
  execute_notebook(DOWNLOADS/"E02_Lane_Detection_V2.0.ipynb")
+ raw_video=DOWNLOADS/"E02_lane_video_cv2.mp4"
+ processed_video=DOWNLOADS/"E02_lane_video_processed.mp4"
+ if not raw_video.is_file() or raw_video.stat().st_size<10000:
+  raise RuntimeError("E02 notebook did not generate the video result")
+ command("ffmpeg","-hide_banner","-loglevel","error","-y","-i",str(raw_video),"-an",
+         "-c:v","libx264","-preset","veryfast","-crf","27","-pix_fmt","yuv420p",
+         "-movflags","+faststart",str(processed_video))
+ if not processed_video.is_file() or processed_video.stat().st_size<10000:
+  raise RuntimeError("E02 browser video H264 conversion failed")
+ raw_video.unlink()
+ print("E02 verified H264 processed video:",processed_video.stat().st_size)
  embed_student_images()
  (DOWNLOADS/"README.md").write_text(
   "E01/E02 探索式教学素材\n\n将完整 ZIP 解压。使用 Python+OpenCV+NumPy+Matplotlib 的 Jupyter/VS Code 打开 Notebook。Kaggle 请将 ZIP 解压后添加为 Dataset。\n"
@@ -431,6 +442,7 @@ def main():
    z.write(p,p.name)
   for p in sorted(IMAGES.glob("*.jpg")):z.write(p,"images/"+p.name)
   z.write(clip,"videos/"+clip.name)
+  z.write(processed_video,"videos/"+processed_video.name)
  for label,filename in (
   ("E01","E01_Image_Processing_V2.0.ipynb"),
   ("E02","E02_Lane_Detection_V2.0.ipynb")
@@ -440,7 +452,9 @@ def main():
    z.write(DOWNLOADS/filename,filename)
    for doc in ("README.md","ASSET_LICENSE.txt"):z.write(DOWNLOADS/doc,doc)
    for frame in sorted(IMAGES.glob("*.jpg")):z.write(frame,"images/"+frame.name)
-   if label=="E02":z.write(clip,"videos/"+clip.name)
+   if label=="E02":
+    z.write(clip,"videos/"+clip.name)
+    z.write(processed_video,"videos/"+processed_video.name)
   print("Standalone",label,archive.stat().st_size)
  print("Verified",len(list(IMAGES.glob("*.jpg"))),"frames, explicit exploration cells and individual E01/E02 ZIPs")
 
