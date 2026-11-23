@@ -119,6 +119,10 @@ jobs:
 
       - name: Stage and validate E03 only (isolated DEV)
         run: |
+          # Font is required for Matplotlib plot titles, not for E01/E02.
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          fc-cache -f
           python scripts/course_labs/stage_e03.py
           python scripts/course_labs/check_e03.py
 
