@@ -25,7 +25,7 @@ label .value{float:right;color:#3662c3;font-variant-numeric:tabular-nums}
 .pictures canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#f1f4f7;border-radius:7px}
 .pictures figcaption{color:#506986;text-align:center;font-size:12px;font-weight:650;padding-top:5px}
 .messages{color:#58708b;border-top:1px solid var(--line);margin-top:14px;padding-top:8px;min-height:42px}
-.video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.video-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
 .video-grid figure{margin:0;min-width:0}
 .video-grid video,.video-grid canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#152438;border-radius:7px}
 .video-grid figcaption{text-align:center;color:#506986;font-size:12px;font-weight:700;padding-top:5px}
@@ -35,7 +35,7 @@ body.embed header{display:none}
 header{padding:12px 18px;background:white}
 header a{color:#3b5fc4;text-decoration:none}
 .alpha-note{background:#f2f6ff;border:1px solid #dce6fb;border-radius:8px;padding:9px 11px;margin:10px 0;color:#385579;font-size:12px}
-@media(max-width:900px){.grid{grid-template-columns:1fr}.video-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.pictures,.video-grid{grid-template-columns:1fr}.panel{padding:12px}}
 </style>
 </head>
@@ -63,6 +63,15 @@ header a{color:#3b5fc4;text-decoration:none}
 </select>
 </label>
 </div>
+<div id="model-picker" hidden>
+<label>曲线拟合模型
+<select id="curveModel">
+<option value="quadratic">二次曲线（V1.0）</option>
+<option value="cubic">三次曲线</option>
+<option value="spline">自然三次样条（V1.1）</option>
+</select>
+</label>
+</div>
 <div id="controls"></div>
 <p class="messages" id="status" aria-live="polite">准备加载真实道路图片…</p>
 <p class="muted">本页面采用 JavaScript/Canvas 教学实现，与 Python/OpenCV 不保证逐像素一致。无 Ground Truth，勿把像素数当准确率。</p>
@@ -75,7 +84,7 @@ header a{color:#3b5fc4;text-decoration:none}
 <figure><canvas id="c" width="480" height="270"></canvas><figcaption id="c-title">输出</figcaption></figure>
 </div>
 <div id="timing" hidden>
-<p class="muted">三列画面来自同一段真实视频：原始视频、E02 Canny/Hough 参考结果、E03 动态车道曲线。E03 的逐帧候选曲线由 Python/OpenCV 预先计算；调整 α 时，浏览器会对这些真实逐帧结果重新执行 EMA，并重新绘制右侧车道区域。原始帧和 E02 参考保持不变。</p>
+<p class="muted">四列画面来自同一段真实视频和相同源帧：原始视频、E02 Canny/Hough、V1.0 Baseline（二次曲线 + EMA）、V1.1 Improved（RANSAC + 自然样条 + 动态搜索 + Kalman）。V1.1 逐帧结果由 Python/OpenCV 预先计算；左侧 α 只控制 V1.0，V1.1 使用 Kalman 跟踪结果。</p>
 <div class="scene">
 <button data-clip="straight">直道</button>
 <button data-clip="curve" class="active">普通弯道</button>
@@ -83,10 +92,11 @@ header a{color:#3b5fc4;text-decoration:none}
 </div>
 <div class="video-grid">
 <figure><video id="rawVideo" controls playsinline preload="metadata" muted></video><figcaption>原始道路视频</figcaption></figure>
-<figure><video id="e02Video" playsinline preload="metadata" muted></video><figcaption>E02 · Canny + Hough（参考）</figcaption></figure>
-<figure><canvas id="e03Canvas" width="640" height="360"></canvas><figcaption>E03 · 曲线拟合 + 当前 α</figcaption></figure>
+<figure><video id="e02Video" playsinline preload="metadata" muted></video><figcaption>E02 · Canny + Hough</figcaption></figure>
+<figure><canvas id="e03Canvas" width="640" height="360"></canvas><figcaption>V1.0 · 二次曲线 + EMA</figcaption></figure>
+<figure><canvas id="e03ImprovedCanvas" width="640" height="360"></canvas><figcaption>V1.1 · 样条 + Kalman</figcaption></figure>
 </div>
-<p class="alpha-note">调整左侧 α，右侧 E03 画面中的车道线与填充区域会随之变化。α 越小，平滑越强，但转弯响应可能越慢。</p>
+<p class="alpha-note">左侧 α 只调整 V1.0 Baseline 的 EMA。V1.1 Improved 使用 Kalman 位置/速度状态；检测失败时最多短暂预测，之后明确报告失效，不无限沿用历史曲线。</p>
 <p class="muted" id="video-note" aria-live="polite">正在准备逐帧轨迹数据…</p>
 <canvas width="900" height="175" id="chart" title="点击曲线定位视频时间"></canvas>
 <p class="muted">下方曲线为未标定的图像横坐标；用于观察平滑与滞后，不代表检测准确率。</p>
@@ -101,9 +111,9 @@ if(P.get('embed')==='1')document.body.classList.add('embed');
 const W=480,H=270,VIDEO_W=640,VIDEO_H=360;
 const specs={
  warp:{name:'01 · 透视与鸟瞰',question:'透视梯形顶部位置改变，哪一部分的道路会被裁剪？',scene:'03_project_curve_intro.jpg',params:[['顶边高度 (%)',45,70,1,61],['顶边宽度 (%)',13,35,1,23]]},
- curve:{name:'02 · 曲线拟合',question:'滑动窗口更宽，候选像素增加是否意味着检测更正确？',scene:'03_project_curve_intro.jpg',params:[['窗口数量',5,13,1,9],['窗口半宽 (px)',18,85,1,48],['白线亮度下限',150,245,5,190]]},
+ curve:{name:'02 · 曲线拟合',question:'二次曲线为什么难以表达连续 S 形道路？',scene:'03_project_curve_intro.jpg',params:[['窗口数量',5,13,1,9],['窗口半宽 (px)',18,85,1,48],['白线亮度下限',150,245,5,190]]},
  light:{name:'03 · 光照与标线',question:'降低白线阈值可以找回阴影中的标线，但会产生什么新问题？',scene:'08_harder_shadow_glare.jpg',params:[['白线亮度下限',120,245,5,190],['黄线饱和度下限',35,180,5,90]]},
- time:{name:'04 · 连续视频',question:'较强平滑为什么可能使转弯响应滞后？',params:[['轨迹平滑系数 α',10,100,5,60]]}
+ time:{name:'04 · 连续视频',question:'比较 V1.0 EMA 与 V1.1 Kalman：稳定性、滞后和失效恢复有什么不同？',params:[['轨迹平滑系数 α',10,100,5,60]]}
 };
 let exp='warp',img=null,loadedImageName=null,clip='curve',trackData=null,smoothed=[],alpha=.60,animationStarted=false;
 const el=id=>document.getElementById(id);
