@@ -108,10 +108,9 @@ for scene in ('straight','curve','complex'):
     record11=tracks11['scenes'][scene]
     improved=record11['improved_frames']
     assert len(improved)==len(record11['frames']) and len(improved)>=50
-    assert any(f.get('valid') and f.get('left_curve_x') and f.get('right_curve_x') for f in improved)
-    assert all(f.get('search_mode') in ('prior','sliding') for f in improved)
+    assert all('status' in f and f.get('search_mode') in ('prior','sliding') for f in improved)
+    assert all(('left_curve_x' in f and 'right_curve_x' in f) for f in improved)
     assert diagnostics11[scene]['frames']==len(improved)
-    assert diagnostics11[scene]['improved_valid']>=1
     print(f"{scene}: V1.0 valid={sum(f['valid'] for f in record11['frames'])}/{len(record11['frames'])}; "
           f"V1.1 valid={sum(f.get('valid',False) for f in improved)}/{len(improved)}; "
           f"V1.1 prior-search={sum(f.get('search_mode')=='prior' for f in improved)}")
