@@ -164,25 +164,40 @@ def ransac_polynomial(points, degree=3, threshold=15.0, iterations=70,
         return None, None, 0.0
     return coeff, full_inliers, float(np.count_nonzero(full_inliers) / len(all_points))
 
-def natural_spline_fit(points, bins=12):
-    """Build a natural cubic spline from median x in occupied y-bins."""
+def natural_spline_fit(points, bins=14):
+    """Robust natural cubic spline from the dominant x-cluster in each y band."""
     pts = np.asarray(points, dtype=np.float64).reshape(-1, 2)
     if pts.shape[0] < 30:
         return None
     y = pts[:, 1] / max(1.0, float(np.max(pts[:, 1]) + 1))
     x = pts[:, 0]
-    edges = np.linspace(.28, .99, bins+1)
+    edges = np.linspace(.27, .995, bins+1)
     nodes_y, nodes_x = [], []
+    x_edges = np.arange(0, 649, 8)
     for lo, hi in zip(edges[:-1], edges[1:]):
-        selected = (y >= lo) & (y < hi)
-        if np.count_nonzero(selected) >= 3:
-            nodes_y.append(float(np.median(y[selected])))
-            nodes_x.append(float(np.median(x[selected])))
+        band = (y >= lo) & (y < hi)
+        if np.count_nonzero(band) < 8:
+            continue
+        values = x[band]
+        hist, bins_x = np.histogram(values, bins=x_edges)
+        if hist.size == 0 or int(hist.max()) < 3:
+            continue
+        peak = int(np.argmax(hist))
+        center = (bins_x[peak] + bins_x[peak+1]) / 2.0
+        cluster = band & (np.abs(x-center) <= 14.0)
+        if np.count_nonzero(cluster) >= 5:
+            nodes_y.append(float(np.median(y[cluster])))
+            nodes_x.append(float(np.median(x[cluster])))
     if len(nodes_y) < 5:
         return None
     order = np.argsort(nodes_y)
     nodes_y = np.asarray(nodes_y, dtype=np.float64)[order]
     nodes_x = np.asarray(nodes_x, dtype=np.float64)[order]
+    # Merge duplicate/near-duplicate y nodes to keep the spline system stable.
+    keep = np.r_[True, np.diff(nodes_y) > 1e-4]
+    nodes_y, nodes_x = nodes_y[keep], nodes_x[keep]
+    if len(nodes_y) < 5:
+        return None
     h = np.diff(nodes_y)
     n = len(nodes_y)
     matrix = np.zeros((n, n), dtype=np.float64)
@@ -200,7 +215,6 @@ def natural_spline_fit(points, bins=12):
         return None
     return {"y": nodes_y, "x": nodes_x, "second": second}
 
-
 def evaluate_spline(model, query):
     q = np.asarray(query, dtype=np.float64)
     y, x, second = model["y"], model["x"], model["second"]
@@ -214,6 +228,20 @@ def evaluate_spline(model, query):
 
 
 def fit_curve_model(points, model="spline", seed=17):
+    if model == "spline":
+        pts = np.asarray(points, dtype=np.float64).reshape(-1, 2)
+        spline = natural_spline_fit(pts)
+        if spline is None:
+            return None, 0.0
+        y_all = pts[:, 1] / max(1.0, float(np.max(pts[:, 1]) + 1))
+        residual = np.abs(pts[:, 0] - evaluate_spline(spline, y_all))
+        inliers = residual <= 18.0
+        if np.count_nonzero(inliers) < 65:
+            return None, 0.0
+        refined = natural_spline_fit(pts[inliers])
+        if refined is None:
+            return None, 0.0
+        return ("spline", refined), float(np.count_nonzero(inliers)/len(pts))
     degree = 2 if model == "quadratic" else 3
     coeff, inliers, ratio = ransac_polynomial(
         points, degree=degree, threshold=15.0, iterations=75,
@@ -221,14 +249,7 @@ def fit_curve_model(points, model="spline", seed=17):
     )
     if coeff is None:
         return None, 0.0
-    inlier_points = np.asarray(points, dtype=np.float64).reshape(-1, 2)[inliers]
-    if model == "spline":
-        spline = natural_spline_fit(inlier_points)
-        if spline is None:
-            return None, ratio
-        return ("spline", spline), ratio
     return ("poly", coeff), ratio
-
 
 def evaluate_model(fitted, y_values):
     kind, payload = fitted
