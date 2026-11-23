@@ -29,6 +29,7 @@ try:
         for kind in ('warp','curve','light'):
             frame.locator(f'button[data-exp="{kind}"]').click()
             frame.locator('#original').wait_for()
+            page.wait_for_function("""()=>{const f=document.querySelector('iframe');const t=f?.contentDocument?.querySelector('#status')?.textContent||'';return !!t&&!t.startsWith('正在读取')}""",timeout=30000)
             for canvas_id in ('original','a','b','c'):
                 populated=frame.locator(f'canvas#{canvas_id}').evaluate(
                     '(c)=>{const d=c.getContext("2d").getImageData(0,0,c.width,c.height).data;return d.some((v,i)=>i%4!==3&&v>0)}')
@@ -36,7 +37,7 @@ try:
             target_canvas={'warp':'b','curve':'b','light':'a'}[kind]
             before=frame.locator(f'#{target_canvas}').evaluate('(c)=>c.toDataURL()')
             frame.locator('input[type="range"]').first.evaluate(
-                '(e)=>{e.value=String(Math.max(Number(e.min),Number(e.value)-7));e.dispatchEvent(new Event("input",{bubbles:true}))}')
+                '(e,kind)=>{e.value=kind==="light"?e.max:String(Math.max(Number(e.min),Number(e.value)-7));e.dispatchEvent(new Event("input",{bubbles:true}))}',kind)
             after=frame.locator(f'#{target_canvas}').evaluate('(c)=>c.toDataURL()')
             assert before!=after,f'{kind}: parameter change did not update final output canvas'
         frame.locator('button[data-exp="time"]').click()
@@ -55,7 +56,7 @@ try:
                 if(v.readyState>=1&&v.videoWidth>0)return resolve();
                 v.addEventListener('loadedmetadata',resolve,{once:true});
                 v.addEventListener('error',()=>reject(new Error('scene video failed to load')),{once:true});
-            })""")
+            })""",scene)
             assert f'E03_{scene}_input.mp4' in frame.locator('#rawVideo').get_attribute('src')
             assert f'E03_{scene}_e02.mp4' in frame.locator('#e02Video').get_attribute('src')
         frame.locator('button[data-clip="complex"]').click()
@@ -68,7 +69,7 @@ try:
         for i in range(1,len(frames)):
             a,b=frames[i-1],frames[i]
             if a['valid'] and b['valid'] and a['left_x'] and b['left_x']:
-                delta=max(abs(a['left_x'][j]-b['left_x'][j]) for j in range(3))
+                delta=max(max(abs(a['left_x'][j]-b['left_x'][j]),abs(a['right_x'][j]-b['right_x'][j])) for j in range(3))
                 if delta>best_delta:best_index,best_delta=i,delta
         assert best_index>=1 and best_delta>1.5,'No changing valid curve pair available to test EMA effect'
         fps=debug['data']['fps']
