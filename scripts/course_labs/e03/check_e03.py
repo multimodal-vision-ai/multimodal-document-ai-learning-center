@@ -3,7 +3,7 @@
 import ast,json
 from pathlib import Path
 from zipfile import ZipFile
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 BASE=ROOT/"docs/resources/course-labs/intelligent-perception"
 nbpath=BASE/"downloads/E03_Advanced_Lane_Finding_V2.0.ipynb"
 zip_path=BASE/"downloads/MVAI_E03_Advanced_Lane_Finding_V2.0.zip"
