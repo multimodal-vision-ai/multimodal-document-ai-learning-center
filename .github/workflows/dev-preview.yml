@@ -193,7 +193,8 @@ jobs:
        github.event.pull_request.base.ref == 'dev' &&
        github.event.pull_request.head.repo.full_name == github.repository) ||
       (github.event_name != 'pull_request' && github.ref == 'refs/heads/dev')
-    runs-on: ubuntu-latest
+    # Match the tested build runner; Playwright 1.56 does not support Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     env:
       PREVIEW_BRANCH: ${{ github.event_name == 'pull_request' && format('dev-preview-pr-{0}', github.event.pull_request.number) || 'dev-preview' }}
     permissions:
