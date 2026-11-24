@@ -117,6 +117,9 @@ jobs:
           python scripts/course_labs/stage_resources.py
           python scripts/course_labs/check_student.py
 
+      - name: Stage E03 V2.0 teaching assets for DEV preview
+        run: python scripts/course_labs/e03/stage_e03_dev.py
+
       - name: Strict build with explicit HTML links
         run: |
           mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
