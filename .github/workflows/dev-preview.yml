@@ -21,7 +21,7 @@ on:
 concurrency:
   # Keep each PR preview independent; dev pushes share their own preview lane.
   group: dev-preview-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -216,6 +216,15 @@ jobs:
         run: |
           set -euo pipefail
           test -f "$RUNNER_TEMP/dev-site/index.html"
+          # Reject a late PR build before it can overwrite a newer review snapshot.
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            expected="${{ github.event.pull_request.head.sha }}"
+            actual="$(git ls-remote origin "refs/pull/${{ github.event.pull_request.number }}/head" | cut -f1)"
+            if [ "$actual" != "$expected" ]; then
+              echo "::error::Stale PR preview: built $expected, current head $actual. Refusing to publish."
+              exit 1
+            fi
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git ls-remote --exit-code --heads origin "refs/heads/$PREVIEW_BRANCH" > /dev/null 2>&1; then
@@ -233,9 +242,14 @@ jobs:
             echo "DEV preview is already up to date."
           else
             git commit -m "docs(preview): refresh generated DEV site [skip ci]"
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              actual="$(git ls-remote origin "refs/pull/${{ github.event.pull_request.number }}/head" | cut -f1)"
+              test "$actual" = "${{ github.event.pull_request.head.sha }}" || { echo "::error::PR changed during publish"; exit 1; }
+            fi
             git push origin "HEAD:refs/heads/$PREVIEW_BRANCH"
           fi
           echo "DEV preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$PREVIEW_BRANCH/index.html"
+          echo "Immutable preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$(git rev-parse HEAD)/index.html"
 
       - name: Checkout persistent Radar data branch
         if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))

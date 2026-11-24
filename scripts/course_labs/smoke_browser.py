@@ -201,6 +201,7 @@ try:
   after=frame.locator("#windowCanvas").evaluate("(c)=>c.toDataURL()")
   assert before!=after,"E03 sliding-window control did not change visualization"
   frame.locator("#scene").select_option("complex")
+  frame.locator('#loadStats[data-state="ready"][data-scene="complex"]').wait_for(timeout=45000)
   frame.locator('[data-tab="video"]').click()
   assert frame.locator("#compare").get_attribute("src").split("?")[0].endswith("complex-compare.mp4")
   # Stronger E03 visual checks: reject blank canvases and static-looking outputs.

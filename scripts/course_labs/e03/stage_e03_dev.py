@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the E03 V2.0 teaching assets for an isolated DEV preview."""
 from pathlib import Path
-import argparse, hashlib, json, shutil, subprocess, sys, urllib.request, zipfile
+import argparse, base64, hashlib, json, re, shutil, subprocess, sys, urllib.request, zipfile
 import cv2, numpy as np
 
 COMMIT="91b080357290da37f533e2d0832f601c3e770d51"
@@ -82,6 +82,23 @@ def main():
   stem=Path(name).stem
   shutil.copy2(out/"videos"/f"{stem}_compare.mp4",media/"videos"/f"{key}-compare.mp4")
   shutil.copy2(out/"videos"/f"{stem}_processed.mp4",media/"videos"/f"{key}-processed.mp4")
+ # Embed the actual reviewed scene frames into the browser lesson at build time.
+ # JPEG bytes are local to the HTML document, so Canvas never reads a remote image.
+ payload={}
+ for key,_,_ in scenes:
+  image=cv2.imread(str(media/f"scene-{key}-original.jpg"))
+  if image is None:raise RuntimeError(f"Missing embedded source: {key}")
+  image=cv2.resize(image,(640,360),interpolation=cv2.INTER_AREA)
+  ok,encoded=cv2.imencode(".jpg",image,[cv2.IMWRITE_JPEG_QUALITY,92])
+  if not ok:raise RuntimeError(f"Cannot embed source: {key}")
+  payload[key]=base64.b64encode(encoded.tobytes()).decode("ascii")
+ interactive=media.parent/"interactive/e03.html"
+ html=interactive.read_text(encoding="utf-8")
+ marker=r'(<script type="application/json" id="e03-embedded-scenes">).*?(</script>)'
+ html,count=re.subn(marker,lambda m:m.group(1)+json.dumps(payload,separators=(",",":"))+m.group(2),html,count=1,flags=re.S)
+ if count!=1:raise RuntimeError("Embedded E03 image slot missing")
+ interactive.write_text(html,encoding="utf-8")
+ print("E03 embedded scene JPEGs:",{k:len(v) for k,v in payload.items()})
  downloads=root/"docs/resources/course-labs/intelligent-perception/downloads";downloads.mkdir(parents=True,exist_ok=True)
  shutil.copy2(base/"E03_Advanced_Lane_Finding_V2.0.ipynb",downloads/"E03_Advanced_Lane_Finding_V2.0.ipynb")
  zip_path=downloads/"MVAI_E03_Advanced_Lane_Finding_V2.0.zip"
