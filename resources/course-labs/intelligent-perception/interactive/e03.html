@@ -63,7 +63,7 @@ video{width:100%;display:block;background:#111;border-radius:8px}
 <div class="control"><label>顶部宽度 <output id="widthval">24%</output></label><input id="topwidth" type="range" min="12" max="42" value="24"></div>
 <div class="control"><label>底部宽度 <output id="bottomval">90%</output></label><input id="bottom" type="range" min="65" max="99" value="90"></div>
 </div>
-<div class="grid" style="margin-top:14px"><figure><canvas id="quad" width="640" height="360"></canvas><figcaption>原图与可调源区域</figcaption></figure><figure><img id="bird" src="../e03-media/perspective-bird-eye.png" alt="俯视变换参考图"><figcaption>Python/OpenCV 俯视变换参考结果</figcaption></figure></div>
+<div class="grid" style="margin-top:14px"><figure><canvas id="quad" width="640" height="360"></canvas><figcaption>原图与可调源区域</figcaption></figure><figure><canvas id="bird" width="640" height="360"></canvas><figcaption>浏览器端实时透视变换结果</figcaption></figure></div>
 <div class="note">源点过高或过低、顶部过宽或过窄，都会改变俯视图中的道路几何形状。请比较不同场景下同一组透视参数的适用性。</div>
 </section>
 <section class="panel hidden" id="windows">
@@ -95,8 +95,8 @@ function loadImage(path,done){const im=new Image();im.onload=()=>done(im);im.one
 function drawScaled(canvas,im){const c=$(canvas),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(im,0,0,c.width,c.height);}
 function getScenePath(suffix){return "../e03-media/scene-"+scene.value+"-"+suffix;}
 function loadScene(){
- loadImage(getScenePath("original.jpg"),im=>{img=im;drawScaled("source",im);drawQuad();recomputeBinary();});
- $("bird").src=getScenePath("bird-eye.png");
+ loadImage(getScenePath("original.jpg"),im=>{img=im;drawScaled("source",im);drawQuad();drawWarp();recomputeBinary();});
+ 
  $("binaryRef").src=getScenePath("binary.png");loadImage(getScenePath("binary.png"),im=>{drawScaled("windowCanvas",im);binaryData=$("windowCanvas").getContext("2d").getImageData(0,0,640,360);drawWindows();});
  const stem=scene.value==="straight"?"straight":scene.value==="curve"?"curve":"complex";
  $("compare").pause();$("processed").pause();
@@ -112,6 +112,34 @@ function recomputeBinary(){
  for(let y=1;y<359;y++)for(let x=1;x<639;x++){const i=y*640+x,j=i*4,[h,s,l]=hsl(src.data[j],src.data[j+1],src.data[j+2]);const yellow=h>15&&h<75&&s>.22&&l>45;const white=l>light&&s<.35;
  const gx=-gray[i-641]+gray[i-639]-2*gray[i-1]+2*gray[i+1]-gray[i+641]+gray[i+643];const keep=yellow||white||Math.abs(gx)>grad*2.5;const v=keep?255:0;out.data[j]=out.data[j+1]=out.data[j+2]=v;out.data[j+3]=255;mask[i]=v;}
  $("binary").getContext("2d").putImageData(out,0,0);binaryData=out;drawWindows();
+}
+function solveLinear(A,b){
+ const n=b.length, m=A.map((r,i)=>r.concat([b[i]]));
+ for(let c=0;c<n;c++){
+  let pivot=c;for(let r=c+1;r<n;r++)if(Math.abs(m[r][c])>Math.abs(m[pivot][c]))pivot=r;
+  if(Math.abs(m[pivot][c])<1e-9)return null;
+  [m[c],m[pivot]]=[m[pivot],m[c]];
+  const d=m[c][c];for(let j=c;j<=n;j++)m[c][j]/=d;
+  for(let r=0;r<n;r++)if(r!==c){const q=m[r][c];for(let j=c;j<=n;j++)m[r][j]-=q*m[c][j];}
+ }
+ return m.map(r=>r[n]);
+}
+function drawWarp(){
+ if(!img)return;
+ const top=+$("top").value/100,tw=+$("topwidth").value/100,bw=+$("bottom").value/100;
+ const src=[[320-320*tw,360*top],[320+320*tw,360*top],[320+320*bw,350],[320-320*bw,350]];
+ const dst=[[0,0],[639,0],[639,359],[0,359]],A=[],b=[];
+ for(let i=0;i<4;i++){const [u,v]=dst[i],[x,y]=src[i];A.push([u,v,1,0,0,0,-x*u,-x*v]);b.push(x);A.push([0,0,0,u,v,1,-y*u,-y*v]);b.push(y);}
+ const H=solveLinear(A,b);if(!H)return;
+ const input=document.createElement("canvas");input.width=640;input.height=360;const ictx=input.getContext("2d");ictx.drawImage(img,0,0,640,360);const pixels=ictx.getImageData(0,0,640,360).data;
+ const outctx=$("bird").getContext("2d"),out=outctx.createImageData(640,360),o=out.data;
+ for(let y=0;y<360;y++)for(let x=0;x<640;x++){
+  const den=H[6]*x+H[7]*y+1;if(Math.abs(den)<1e-8)continue;
+  const sx=Math.round((H[0]*x+H[1]*y+H[2])/den),sy=Math.round((H[3]*x+H[4]*y+H[5])/den);
+  if(sx<0||sx>=640||sy<0||sy>=360)continue;
+  const si=(sy*640+sx)*4,di=(y*640+x)*4;o[di]=pixels[si];o[di+1]=pixels[si+1];o[di+2]=pixels[si+2];o[di+3]=255;
+ }
+ outctx.putImageData(out,0,0);
 }
 function drawQuad(){
  if(!img)return;const c=$("quad"),ctx=c.getContext("2d");ctx.clearRect(0,0,640,360);ctx.drawImage(img,0,0,640,360);
@@ -131,7 +159,7 @@ function bindRange(id,output,fn,suffix=""){const el=$(id);el.addEventListener("i
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));panels.forEach(p=>$(p).classList.toggle("hidden",p!==active));}));
 scene.addEventListener("change",loadScene);
 bindRange("light","lval",recomputeBinary);bindRange("grad","gval",recomputeBinary);
-bindRange("top","topval",drawQuad,"%");bindRange("topwidth","widthval",drawQuad,"%");bindRange("bottom","bottomval",drawQuad,"%");
+bindRange("top","topval",()=>{drawQuad();drawWarp();},"%");bindRange("topwidth","widthval",()=>{drawQuad();drawWarp();},"%");bindRange("bottom","bottomval",()=>{drawQuad();drawWarp();},"%");
 bindRange("nwin","nval",drawWindows);bindRange("margin","mval",drawWindows);
 loadScene();
 </script></body></html>
