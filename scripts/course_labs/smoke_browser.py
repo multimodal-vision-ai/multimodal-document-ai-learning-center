@@ -179,6 +179,10 @@ try:
   frame.locator("#top").evaluate("(el)=>{el.value=\"68\";el.dispatchEvent(new Event(\"input\",{bubbles:true}))}")
   after=frame.locator("#quad").evaluate("(c)=>c.toDataURL()")
   assert before!=after,"E03 perspective source-region control did not change overlay"
+  warped_before=frame.locator("#bird").evaluate("(c)=>c.toDataURL()")
+  frame.locator("#topwidth").evaluate("(el)=>{el.value=\"34\";el.dispatchEvent(new Event(\"input\",{bubbles:true}))}")
+  warped_after=frame.locator("#bird").evaluate("(c)=>c.toDataURL()")
+  assert warped_before!=warped_after,"E03 homography output did not respond to perspective controls"
   frame.locator('[data-tab="windows"]').click()
   before=frame.locator("#windowCanvas").evaluate("(c)=>c.toDataURL()")
   frame.locator("#nwin").evaluate("(el)=>{el.value=\"14\";el.dispatchEvent(new Event(\"input\",{bubbles:true}))}")
