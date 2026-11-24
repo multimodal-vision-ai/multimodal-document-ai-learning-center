@@ -57,7 +57,7 @@
   C("nval").textContent=n;C("mval").textContent=m;status("windowStats","窗口选中像素：左 "+nl+"、右 "+nr+"；"+(lf&&rf?"已绘制左右二次拟合曲线":"候选像素不足，无法稳定拟合"));
  }
  async function loadScene(){
-  try{const p=paths[scene.value];img=await loadImage(base+p.image);imageData=getPixels();["source","calibSrc","quad"].forEach(id=>draw(id,img));threshold();quad();perspective();radial();C("binaryRef").src=base+p.binary+"?v=3";status("loadStats",labels[scene.value]+"素材已加载");
+  try{const p=paths[scene.value];img=await loadImage(base+p.image);imageData=getPixels();["source","calibSrc","quad"].forEach(id=>draw(id,img));threshold();quad();perspective();radial();status("loadStats",labels[scene.value]+"素材已加载");
    [C("compare"),C("processed"),C("liveVideo")].forEach(v=>{v.pause();});C("compare").src=base+"videos/"+p.compare;C("processed").src=base+"videos/"+p.processed;C("compare").load();C("processed").load();C("liveVideo").src=base+"videos/"+p.compare;C("liveVideo").load();status("videoScene",labels[scene.value]+"：原始与处理结果已加载");
   }catch(e){status("loadStats",e.message);console.error(e);}
  }
