@@ -6,7 +6,7 @@
     "calibration1.jpg",
     "calibration5.jpg"
   ],
-  "calibration_rms_px": 0.8494878233878795,
+  "calibration_rms_px": 0.8494878233878799,
   "manual_video_review": "Teacher approved all three videos; harder-challenge drift/false lane selection is intentionally retained for after-class exploration.",
   "video_hashes": {
     "solidWhiteRight.mp4": "2d8e14b46fe89afbc8ad1f718685cf09b83e85a324095031c38186a9f0535417",
