@@ -4,7 +4,7 @@
 <style>
 :root{--ink:#1c3043;--sub:#647d93;--line:#dce6ef;--blue:#1767ac;--bg:#f5f8fa}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Microsoft Yahei",sans-serif;color:var(--ink)}
-header{padding:15px 22px;background:#fff;border-bottom:1px solid var(--line);font-weight:800}
+header{padding:15px 22px;background:#fff;border-bottom:1px solid var(--line);font-weight:800}body.embedded header{display:none}body.embedded main{padding-top:10px}
 main{max-width:1250px;margin:auto;padding:20px 18px 40px}
 .intro{background:#eef5fb;border:1px solid #dbe8f1;padding:14px 17px;border-radius:10px;color:#506e87;font-size:13px;line-height:1.8;margin-bottom:16px}
 .toolbar,.tabs,.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -85,7 +85,7 @@ video{width:100%;display:block;background:#111;border-radius:8px}
 </main>
 <script>
 "use strict";
-const scene=document.getElementById("scene");
+const scene=document.getElementById("scene");\ndocument.body.classList.toggle("embedded",new URLSearchParams(location.search).get("embed")==="1");
 const names={straight:"直道",curve:"普通弯道",complex:"复杂弯道"};
 const panels=["calibration","threshold","perspective","windows","video"];
 let active="calibration",img=null,binaryData=null;
@@ -95,8 +95,8 @@ function drawScaled(canvas,im){const c=$(canvas),ctx=c.getContext("2d");ctx.clea
 function getScenePath(suffix){return "../e03-media/scene-"+scene.value+"-"+suffix;}
 function loadScene(){
  loadImage(getScenePath("original.jpg"),im=>{img=im;drawScaled("source",im);drawQuad();recomputeBinary();});
- loadImage(getScenePath("bird-eye.png"),im=>drawScaled("bird",im));
- loadImage(getScenePath("binary.png"),im=>{drawScaled("binaryRef",im);drawScaled("windowCanvas",im);binaryData=$("windowCanvas").getContext("2d").getImageData(0,0,640,360);drawWindows();});
+ $("bird").src=getScenePath("bird-eye.png");
+ $("binaryRef").src=getScenePath("binary.png");loadImage(getScenePath("binary.png"),im=>{drawScaled("windowCanvas",im);binaryData=$("windowCanvas").getContext("2d").getImageData(0,0,640,360);drawWindows();});
  const stem=scene.value==="straight"?"straight":scene.value==="curve"?"curve":"complex";
  $("compare").pause();$("processed").pause();
  $("compare").src="../e03-media/videos/"+stem+"-compare.mp4";$("processed").src="../e03-media/videos/"+stem+"-processed.mp4";
