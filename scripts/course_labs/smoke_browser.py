@@ -191,14 +191,6 @@ try:
   frame.locator("#scene").select_option("complex")
   frame.locator('[data-tab="video"]').click()
   assert frame.locator("#compare").get_attribute("src").endswith("complex-compare.mp4")
-  page.locator('.learning-tabs a[data-mode="practice"]').click()
-  assert page.locator("#mode-practice").is_visible(),"E03 local/Kaggle mode missing"
-  assert page.locator('#mode-practice a[href="downloads/E03_Advanced_Lane_Finding_V2.0.ipynb"]').count()==1
-  assert page.locator('#mode-practice a[href="downloads/MVAI_E03_Advanced_Lane_Finding_V2.0.zip"]').count()==1
-  page.locator('.learning-tabs a[data-mode="study"]').click()
-  assert page.locator("#mode-study").is_visible(),"E03 return to Notebook mode failed"
-  page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/"e03-v2-three-scenes.png"))
-  print("E03 browser QA passed: image assets, three scene MP4s, Notebook and ZIP downloads")
   # Stronger E03 visual checks: reject blank canvases and static-looking outputs.
   frame.locator('[data-tab="calibration"]').click()
   c0=frame.locator("#calibOut").evaluate("(c)=>c.toDataURL()")
@@ -222,6 +214,14 @@ try:
   frame.locator("#seek").evaluate('(e)=>{e.value="250";e.dispatchEvent(new Event("input",{bubbles:true}))}')
   assert 2.2<=frame.locator("#compare").evaluate("(v)=>v.currentTime")<=2.8,"Video synchronized seek did not work"
   assert abs(frame.locator("#compare").evaluate("(v)=>v.playbackRate")-1)<.01
+  page.locator('.learning-tabs a[data-mode="practice"]').click()
+  assert page.locator("#mode-practice").is_visible(),"E03 local/Kaggle mode missing"
+  assert page.locator('#mode-practice a[href="downloads/E03_Advanced_Lane_Finding_V2.0.ipynb"]').count()==1
+  assert page.locator('#mode-practice a[href="downloads/MVAI_E03_Advanced_Lane_Finding_V2.0.zip"]').count()==1
+  page.locator('.learning-tabs a[data-mode="study"]').click()
+  assert page.locator("#mode-study").is_visible(),"E03 return to Notebook mode failed"
+  page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/"e03-v2-three-scenes.png"))
+  print("E03 browser QA passed: image assets, three scene MP4s, Notebook and ZIP downloads")
   if errors: raise AssertionError("Page errors: "+repr(errors))
   browser.close()
 finally:
