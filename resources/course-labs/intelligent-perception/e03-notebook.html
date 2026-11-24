@@ -79,6 +79,15 @@ fetch("downloads/"+nbName,{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTT
  }
  document.getElementById("notebook-status").textContent="E03 标准 Notebook · "+nb.cells.length+" 个单元格 · "+n+" 个 Python 代码单元";
 }).catch(err=>document.getElementById("notebook-status").textContent="Notebook 加载失败："+err.message);
+const labFrame=document.getElementById("e03-lab-frame");
+labFrame.addEventListener("load",()=>{
+ try{
+  const doc=labFrame.contentDocument;
+  const resize=()=>{if(doc&&doc.body){const h=Math.max(720,doc.body.scrollHeight+18);if(Math.abs(labFrame.clientHeight-h)>20)labFrame.style.height=h+"px";}};
+  resize();
+  if(typeof ResizeObserver!=="undefined"&&doc.body)new ResizeObserver(resize).observe(doc.body);
+ }catch(err){console.warn("E03 interactive frame auto-resize unavailable",err);}
+});
 document.getElementById("toggle-code").addEventListener("click",e=>{
  const all=[...document.querySelectorAll(".code-fold")],open=all.some(x=>!x.open);all.forEach(x=>x.open=open);e.currentTarget.textContent=open?"收起全部代码":"展开全部代码";
 });
