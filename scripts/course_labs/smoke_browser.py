@@ -170,17 +170,17 @@ try:
   frame.locator('[data-tab="threshold"]').click()
   frame.locator("#light").wait_for(state="visible")
   before=frame.locator("#binary").evaluate("(c)=>c.toDataURL()")
-  frame.locator("#light").fill("220")
+  frame.locator("#light").evaluate("(el)=>{el.value=\"220\";el.dispatchEvent(new Event(\"input\",{bubbles:true}))}")
   after=frame.locator("#binary").evaluate("(c)=>c.toDataURL()")
   assert before!=after,"E03 threshold slider did not change browser output"
   frame.locator('[data-tab="perspective"]').click()
   before=frame.locator("#quad").evaluate("(c)=>c.toDataURL()")
-  frame.locator("#top").fill("68")
+  frame.locator("#top").evaluate("(el)=>{el.value=\"68\";el.dispatchEvent(new Event(\"input\",{bubbles:true}))}")
   after=frame.locator("#quad").evaluate("(c)=>c.toDataURL()")
   assert before!=after,"E03 perspective source-region control did not change overlay"
   frame.locator('[data-tab="windows"]').click()
   before=frame.locator("#windowCanvas").evaluate("(c)=>c.toDataURL()")
-  frame.locator("#nwin").fill("14")
+  frame.locator("#nwin").evaluate("(el)=>{el.value=\"14\";el.dispatchEvent(new Event(\"input\",{bubbles:true}))}")
   after=frame.locator("#windowCanvas").evaluate("(c)=>c.toDataURL()")
   assert before!=after,"E03 sliding-window control did not change visualization"
   frame.locator("#scene").select_option("complex")
