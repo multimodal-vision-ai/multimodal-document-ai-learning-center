@@ -85,7 +85,8 @@ video{width:100%;display:block;background:#111;border-radius:8px}
 </main>
 <script>
 "use strict";
-const scene=document.getElementById("scene");\ndocument.body.classList.toggle("embedded",new URLSearchParams(location.search).get("embed")==="1");
+const scene=document.getElementById("scene");
+document.body.classList.toggle("embedded",new URLSearchParams(location.search).get("embed")==="1");
 const names={straight:"直道",curve:"普通弯道",complex:"复杂弯道"};
 const panels=["calibration","threshold","perspective","windows","video"];
 let active="calibration",img=null,binaryData=null;
