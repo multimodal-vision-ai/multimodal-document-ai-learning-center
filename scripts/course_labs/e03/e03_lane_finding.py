@@ -125,6 +125,7 @@ class LaneTracker:
 
 
 def encode_h264(input_path,output_path):
+    import subprocess
     import imageio_ffmpeg
     subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),"-y","-i",str(input_path),"-an","-c:v","libx264","-preset","ultrafast","-crf","27","-pix_fmt","yuv420p","-movflags","+faststart",str(output_path)],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     Path(input_path).unlink(missing_ok=True)
