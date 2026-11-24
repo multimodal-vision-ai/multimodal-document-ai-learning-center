@@ -275,6 +275,25 @@ jobs:
               page=browser.new_page(viewport={"width":1440,"height":1050})
               errors=[]
               page.on("pageerror",lambda err:errors.append(str(err)))
+              def open_review_page(url, marker_selector):
+                  # The proxy now presents a user-facing external-content notice.
+                  # Follow its ordinary Open the page control, never fabricate the DOM
+                  # or replace the fetched content with local HTML.
+                  current=page
+                  resp=current.goto(url,wait_until="domcontentloaded",timeout=45000)
+                  assert resp and resp.ok,(url,resp.status if resp else None)
+                  if "External Content Notice" in current.title():
+                      assert urlparse(current.url).hostname in ("raw.githack.com","rawcdn.githack.com")
+                      assert "/"+path+"/" in current.url
+                      previous=set(current.context.pages)
+                      current.get_by_text("Open the page",exact=True).click(timeout=10000)
+                      current.wait_for_timeout(1000)
+                      added=[p for p in current.context.pages if p not in previous]
+                      if added:
+                          current=added[-1]
+                      print("PUBLIC E03 NOTICE ACCEPTED",current.url,flush=True)
+                  current.locator(marker_selector).wait_for(state="attached",timeout=25000)
+                  return current
               # A freshly published GitHub snapshot may take time to become available
               # through third-party HTML proxies. Verify actual DOM, not HTTP 200 alone.
               base=None
@@ -283,9 +302,9 @@ jobs:
                       candidate="https://"+host+"/"+path
                       url=candidate+"/interactive/e03.html"
                       try:
-                          resp=page.goto(url,wait_until="domcontentloaded",timeout=45000)
+                          page=open_review_page(url,'meta[name="e03-build"]')
                           marker=page.locator('meta[name="e03-build"]').get_attribute("content",timeout=5000)
-                          assert resp and resp.ok and marker=="E03-SELFCONTAINED-20261124C"
+                          assert marker=="E03-SELFCONTAINED-20261124C"
                           assert page.locator("#e03-embedded-scenes").count()==1
                           base=candidate
                           print("PUBLIC E03 VERIFIED BASE",base,flush=True)
@@ -304,11 +323,17 @@ jobs:
               errors.clear()
               for mode in ("direct","embedded"):
                   url=base+("/interactive/e03.html" if mode=="direct" else "/e03-notebook.html")
-                  resp=page.goto(url,wait_until="domcontentloaded",timeout=90000)
-                  assert resp and resp.ok,(url,resp.status if resp else None)
+                  page=open_review_page(url,'.learning-tabs' if mode=="embedded" else 'meta[name="e03-build"]')
+                  page.on("pageerror",lambda err:errors.append(str(err)))
                   if mode=="embedded":
                       page.locator('.learning-tabs a[data-mode="interactive"]').click()
                       lab=page.frame_locator("#e03-lab-frame")
+                      # If the frame itself is served the same notice, test the
+                      # ordinary confirmation control in the actual frame.
+                      try:
+                          lab.locator('meta[name="e03-build"]').wait_for(state="attached",timeout=8000)
+                      except Exception:
+                          lab.get_by_text("Open the page",exact=True).click(timeout=10000)
                   else:
                       lab=page
                   expect(lab.locator('meta[name="e03-build"]')).to_have_attribute("content","E03-SELFCONTAINED-20261124C",timeout=60000)
