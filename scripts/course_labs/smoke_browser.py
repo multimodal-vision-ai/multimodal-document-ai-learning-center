@@ -166,6 +166,18 @@ try:
   assert page.locator("#mode-interactive").is_visible(),"E03 browser interaction mode missing"
   frame=page.frame_locator("#e03-lab-frame")
   frame.locator("#scene").wait_for(state="visible",timeout=30000)
+  frame.locator("#loadStats").wait_for(state="visible",timeout=30000)
+  page.wait_for_function("""() => {
+   const f=document.querySelector("#e03-lab-frame");if(!f||!f.contentDocument)return false;
+   const d=f.contentDocument,s=d.querySelector("#loadStats"),cs=Array.from(d.querySelectorAll("canvas"));
+   return !!s&&s.textContent.includes("8 个图像区域已完成渲染")&&cs.length===8&&cs.every(c=>c.dataset.ready==="true");
+  }""",timeout=45000)
+  initial_canvases=frame.locator("canvas").evaluate_all("""cs=>cs.map(c=>{
+   const a=c.getContext("2d").getImageData(0,0,c.width,c.height).data;let visible=0;
+   for(let i=3;i<a.length;i+=4)if(a[i]>0)visible++;
+   return {id:c.id,visible};
+  })""")
+  assert all(x["visible"]>1000 for x in initial_canvases),("One or more E03 image canvases are blank",initial_canvases)
   page.wait_for_function("""() => { const f=document.querySelector("#e03-lab-frame"); if(!f||!f.contentDocument)return false; const c=f.contentDocument.querySelector("#source"); if(!c)return false; const a=c.getContext("2d").getImageData(0,0,c.width,c.height).data; let n=0; for(let i=0;i<a.length;i+=160)if(a[i]||a[i+1]||a[i+2])n++; return n>500; }""",timeout=40000)
   assert not frame.locator("header").is_visible(),"Repeated E03 interactive header inside iframe"
   frame.locator('[data-tab="threshold"]').click()
@@ -222,7 +234,7 @@ try:
   page.locator('.learning-tabs a[data-mode="study"]').click()
   assert page.locator("#mode-study").is_visible(),"E03 return to Notebook mode failed"
   page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/"e03-v2-three-scenes.png"))
-  print("E03 browser QA passed: image assets, three scene MP4s, Notebook and ZIP downloads")
+  print("E03 browser QA passed: all 8 canvases rendered, parameter controls respond, three scene MP4s and downloads verified")
   if errors: raise AssertionError("Page errors: "+repr(errors))
   browser.close()
 finally:
