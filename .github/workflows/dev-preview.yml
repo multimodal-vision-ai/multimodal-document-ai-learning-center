@@ -19,7 +19,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: dev-preview
+  # Keep each PR preview independent; dev pushes share their own preview lane.
+  group: dev-preview-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
