@@ -202,7 +202,7 @@ try:
   assert before!=after,"E03 sliding-window control did not change visualization"
   frame.locator("#scene").select_option("complex")
   frame.locator('[data-tab="video"]').click()
-  assert frame.locator("#compare").get_attribute("src").endswith("complex-compare.mp4")
+  assert frame.locator("#compare").get_attribute("src").split("?")[0].endswith("complex-compare.mp4")
   # Stronger E03 visual checks: reject blank canvases and static-looking outputs.
   frame.locator('[data-tab="calibration"]').click()
   c0=frame.locator("#calibOut").evaluate("(c)=>c.toDataURL()")
