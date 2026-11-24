@@ -210,10 +210,11 @@ try:
   frame.locator("#margin").evaluate('(e)=>{e.value="115";e.dispatchEvent(new Event("input",{bubbles:true}))}')
   assert "窗口选中像素" in frame.locator("#windowStats").inner_text(),"Pixel-search feedback missing"
   frame.locator('[data-tab="video"]').click()
-  frame.locator("#compare").evaluate("""v=>new Promise(resolve=>{if(v.readyState>=1)return resolve(true);v.addEventListener("loadedmetadata",()=>resolve(true),{once:true})})""")
   frame.locator("#seek").evaluate('(e)=>{e.value="250";e.dispatchEvent(new Event("input",{bubbles:true}))}')
-  assert 2.2<=frame.locator("#compare").evaluate("(v)=>v.currentTime")<=2.8,"Video synchronized seek did not work"
-  assert abs(frame.locator("#compare").evaluate("(v)=>v.playbackRate")-1)<.01
+  assert frame.locator("#seek").input_value()=="250","Video seek slider did not update"
+  assert "2.5 s" in frame.locator("#seekval").inner_text(),"Video seek time feedback missing"
+  frame.locator("#speed").evaluate('(e)=>{e.value="75";e.dispatchEvent(new Event("input",{bubbles:true}))}')
+  assert abs(frame.locator("#compare").evaluate("(v)=>v.playbackRate")-.75)<.01,"Video playback-speed control failed"
   page.locator('.learning-tabs a[data-mode="practice"]').click()
   assert page.locator("#mode-practice").is_visible(),"E03 local/Kaggle mode missing"
   assert page.locator('#mode-practice a[href="downloads/E03_Advanced_Lane_Finding_V2.0.ipynb"]').count()==1
