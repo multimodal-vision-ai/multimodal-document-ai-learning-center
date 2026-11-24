@@ -119,6 +119,9 @@ jobs:
 
       - name: Stage E03 V2.0 teaching assets for DEV preview
         run: python scripts/course_labs/e03/stage_e03_dev.py
+        # The staging script creates the real video/image outputs and a self-contained student ZIP.
+      - name: Validate staged E03 notebook and media
+        run: python scripts/course_labs/e03/check_e03.py
 
       - name: Strict build with explicit HTML links
         run: |
