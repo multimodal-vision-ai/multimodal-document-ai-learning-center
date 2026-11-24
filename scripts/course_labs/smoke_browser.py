@@ -136,6 +136,30 @@ try:
 
    page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/f"{lab}-three-modes.png"))
    print("Independent approved notebook:",lab,"real plots",count,"exploratory Cells",task_count,"03 local/Kaggle OK")
+  # E03 V2.0: verify the real teaching page, all image/video assets and downloads.
+  page.goto(f"{base}/e03-notebook.html",wait_until="domcontentloaded",timeout=30000)
+  page.wait_for_selector("#video-lab",timeout=30000)
+  imgs=page.locator(".figure img")
+  assert imgs.count()>=8,("E03 teaching images missing",imgs.count())
+  page.wait_for_function('Array.from(document.querySelectorAll(".figure img")).every(i=>i.complete&&i.naturalWidth>100)',timeout=60000)
+  assert page.locator(".chapter").count()>=7,"E03 needs five experiments, video lab and limits"
+  assert "课后思考" in page.locator("#limits").inner_text(),"Complex-road after-class reflection missing"
+  for scene in ("straight","curve","complex"):
+   btn=page.locator(f'.scene-btn[data-scene="{scene}"]')
+   btn.click()
+   expected=f"e03-media/videos/{scene}-compare.mp4"
+   assert page.locator("#compare").get_attribute("src")==expected,(scene,"wrong comparison video")
+   assert page.locator("#processed").get_attribute("src")==f"e03-media/videos/{scene}-processed.mp4"
+   video=page.locator("#compare").evaluate("""async (v)=>{
+    const r=await fetch(v.src,{cache:"no-store"});if(!r.ok)return {ok:false,status:r.status};
+    const b=new Uint8Array(await r.arrayBuffer());return {ok:true,size:b.length,signature:String.fromCharCode(...b.slice(4,8))};
+   }""")
+   assert video.get("ok") and video.get("size",0)>10000 and video.get("signature")=="ftyp",(scene,"invalid MP4",video)
+  for href in ("downloads/E03_Advanced_Lane_Finding_V2.0.ipynb","downloads/MVAI_E03_Advanced_Lane_Finding_V2.0.zip"):
+   result=page.evaluate("""async (url)=>{const r=await fetch(url);if(!r.ok)return {ok:false,status:r.status};const b=await r.arrayBuffer();return {ok:true,size:b.byteLength};}""",href)
+   assert result.get("ok") and result.get("size",0)>10000,(href,result)
+  page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/"e03-v2-three-scenes.png"))
+  print("E03 browser QA passed: image assets, three scene MP4s, Notebook and ZIP downloads")
   if errors: raise AssertionError("Page errors: "+repr(errors))
   browser.close()
 finally:
