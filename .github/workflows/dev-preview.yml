@@ -259,13 +259,15 @@ jobs:
           set -euo pipefail
           python -m pip install playwright==1.56.0
           python -m playwright install chromium
-          export E03_PUBLIC_BASE="https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$(git rev-parse HEAD)/resources/course-labs/intelligent-perception"
-          echo "Checking immutable public preview: $E03_PUBLIC_BASE"
+          export E03_PUBLIC_PATH="multimodal-vision-ai/multimodal-document-ai-learning-center/$(git rev-parse HEAD)/resources/course-labs/intelligent-perception"
+          echo "Checking immutable public preview: $E03_PUBLIC_PATH"
           python - <<'PY'
           import os
           from pathlib import Path
           from playwright.sync_api import sync_playwright, expect
-          base=os.environ["E03_PUBLIC_BASE"]
+          import time
+          from urllib.parse import urlparse
+          path=os.environ["E03_PUBLIC_PATH"]
           out=Path(os.environ["RUNNER_TEMP"])/"e03-public-review"
           out.mkdir(exist_ok=True)
           with sync_playwright() as pw:
@@ -273,6 +275,33 @@ jobs:
               page=browser.new_page(viewport={"width":1440,"height":1050})
               errors=[]
               page.on("pageerror",lambda err:errors.append(str(err)))
+              # A freshly published GitHub snapshot may take time to become available
+              # through third-party HTML proxies. Verify actual DOM, not HTTP 200 alone.
+              base=None
+              for attempt in range(1,5):
+                  for host in ("rawcdn.githack.com","raw.githack.com"):
+                      candidate="https://"+host+"/"+path
+                      url=candidate+"/interactive/e03.html"
+                      try:
+                          resp=page.goto(url,wait_until="domcontentloaded",timeout=45000)
+                          marker=page.locator('meta[name="e03-build"]').get_attribute("content",timeout=5000)
+                          assert resp and resp.ok and marker=="E03-SELFCONTAINED-20261124C"
+                          assert page.locator("#e03-embedded-scenes").count()==1
+                          base=candidate
+                          print("PUBLIC E03 VERIFIED BASE",base,flush=True)
+                          break
+                      except Exception as err:
+                          print("PUBLIC E03 PROBE",attempt,host,str(err)[:500],flush=True)
+                          try:
+                              print("RESPONSE",page.url,page.title(),page.locator("body").inner_text(timeout=3000)[:500],flush=True)
+                              page.screenshot(path=str(out/(host+"-probe.png")),timeout=5000)
+                          except Exception:
+                              pass
+                  if base:
+                      break
+                  time.sleep(12)
+              assert base,"Neither public proxy returned the exact E03 HTML snapshot"
+              errors.clear()
               for mode in ("direct","embedded"):
                   url=base+("/interactive/e03.html" if mode=="direct" else "/e03-notebook.html")
                   resp=page.goto(url,wait_until="domcontentloaded",timeout=90000)
@@ -331,6 +360,8 @@ jobs:
               assert not errors,errors
               browser.close()
           print("PUBLIC E03 PASS: immutable HTTPS page, embedded lesson, all 3 scenes, 8 computed canvases and 8 controls.")
+          print("PUBLIC E03 REVIEW URL",base+"/e03-notebook.html",flush=True)
+          (out/"review-url.txt").write_text(base+"/e03-notebook.html\n",encoding="utf-8")
           PY
       - name: Upload public E03 review screenshots
         if: always() && github.event_name == 'pull_request'
