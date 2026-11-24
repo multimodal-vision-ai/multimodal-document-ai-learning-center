@@ -152,7 +152,7 @@ def process_video(video_path,output_dir,calibration,max_seconds=8,process_fps=10
                 cv2.putText(canvas,"ORIGINAL VIDEO",(20,27),cv2.FONT_HERSHEY_SIMPLEX,.65,(235,235,235),2);cv2.putText(canvas,"ADVANCED LANE FINDING",(980,27),cv2.FONT_HERSHEY_SIMPLEX,.65,(235,235,235),2);cmp.write(canvas);next_t+=1/fps
             idx+=1
     finally:
-        cap.release();writer.release();cmp.release();cv2.destroyAllWindows();del tracker;gc.collect()
+        cap.release();writer.release();cmp.release();del tracker;gc.collect()
     if count==0:raise RuntimeError(f"No frames processed: {video_path}")
     encode_h264(raw,processed);encode_h264(rawc,compare)
     summary={"video":video_path.name,"source_duration_s":round(total/source_fps,2),"processed_frames":count,"processed_duration_s":round(count/fps,2),"valid_frames":valid,"valid_frame_coverage_percent":round(100*valid/max(count,1),1),"search_modes":modes,"processed_path":str(processed),"compare_path":str(compare),"fps":fps}
