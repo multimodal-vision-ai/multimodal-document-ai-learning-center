@@ -208,7 +208,7 @@ try:
   frame.locator('[data-tab="windows"]').click()
   assert frame.locator("#fitCanvas").evaluate("""c=>{const a=c.getContext("2d").getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<a.length;i+=4)if(a[i]||a[i+1]||a[i+2])n++;return n>30000}"""),"Pixel search / curve fit output is blank"
   frame.locator("#margin").evaluate('(e)=>{e.value="115";e.dispatchEvent(new Event("input",{bubbles:true}))}')
-  assert "搜索结果" in frame.locator("#windowStats").inner_text(),"Pixel-search feedback missing"
+  assert "窗口选中像素" in frame.locator("#windowStats").inner_text(),"Pixel-search feedback missing"
   frame.locator('[data-tab="video"]').click()
   frame.locator("#compare").evaluate("""v=>new Promise(resolve=>{if(v.readyState>=1)return resolve(true);v.addEventListener("loadedmetadata",()=>resolve(true),{once:true})})""")
   frame.locator("#seek").evaluate('(e)=>{e.value="250";e.dispatchEvent(new Event("input",{bubbles:true}))}')
