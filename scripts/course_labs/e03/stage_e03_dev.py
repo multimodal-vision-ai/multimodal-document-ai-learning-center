@@ -75,6 +75,7 @@ def main():
   sf=fit_lane_pixels(sliding_window_search(bw),bw.shape);fv=cv2.cvtColor(bw,cv2.COLOR_GRAY2BGR)
   if sf["valid"]:
    cv2.polylines(fv,[np.column_stack((sf["left_fitx"],sf["ploty"])).astype(np.int32)],False,(0,255,255),4);cv2.polylines(fv,[np.column_stack((sf["right_fitx"],sf["ploty"])).astype(np.int32)],False,(0,255,255),4)
+  save(media/f"scene-{key}-original.jpg",frame)
   save(media/f"scene-{key}-binary.png",ss["binary"]);save(media/f"scene-{key}-bird-eye.png",bw);save(media/f"scene-{key}-sliding-fit.png",fv)
   save(media/f"scene-{key}-result.jpg",LaneTracker().process(frame,calibration)["output"])
   subprocess.run([sys.executable,str(base/"process_e03_video.py"),"--video",str(videos/name),"--output-dir",str(out/"videos"),"--calibration",str(out/"calibration/calibration_params.npz"),"--max-seconds","8","--process-fps","10"],check=True,cwd=root)
