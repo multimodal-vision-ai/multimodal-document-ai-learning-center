@@ -158,6 +158,40 @@ try:
   for href in ("downloads/E03_Advanced_Lane_Finding_V2.0.ipynb","downloads/MVAI_E03_Advanced_Lane_Finding_V2.0.zip"):
    result=page.evaluate("""async (url)=>{const r=await fetch(url);if(!r.ok)return {ok:false,status:r.status};const b=await r.arrayBuffer();return {ok:true,size:b.byteLength};}""",href)
    assert result.get("ok") and result.get("size",0)>10000,(href,result)
+  # E03 follows the same three-mode learning structure as E01/E02.
+  assert page.locator(".learning-tabs a").count()==3,"E03 must use the shared three-mode tabs"
+  assert page.locator("#mode-study").is_visible(),"E03 Notebook mode should be default"
+  assert page.locator("#notebook-status").inner_text().startswith("E03 标准 Notebook"),"E03 Notebook metadata missing"
+  page.locator('.learning-tabs a[data-mode="interactive"]').click()
+  assert page.locator("#mode-interactive").is_visible(),"E03 browser interaction mode missing"
+  frame=page.frame_locator("#e03-lab-frame")
+  frame.locator("#scene").wait_for(state="visible",timeout=30000)
+  assert not frame.locator("header").is_visible(),"Repeated E03 interactive header inside iframe"
+  frame.locator('[data-tab="threshold"]').click()
+  frame.locator("#light").wait_for(state="visible")
+  before=frame.locator("#binary").evaluate("(c)=>c.toDataURL()")
+  frame.locator("#light").fill("220")
+  after=frame.locator("#binary").evaluate("(c)=>c.toDataURL()")
+  assert before!=after,"E03 threshold slider did not change browser output"
+  frame.locator('[data-tab="perspective"]').click()
+  before=frame.locator("#quad").evaluate("(c)=>c.toDataURL()")
+  frame.locator("#top").fill("68")
+  after=frame.locator("#quad").evaluate("(c)=>c.toDataURL()")
+  assert before!=after,"E03 perspective source-region control did not change overlay"
+  frame.locator('[data-tab="windows"]').click()
+  before=frame.locator("#windowCanvas").evaluate("(c)=>c.toDataURL()")
+  frame.locator("#nwin").fill("14")
+  after=frame.locator("#windowCanvas").evaluate("(c)=>c.toDataURL()")
+  assert before!=after,"E03 sliding-window control did not change visualization"
+  frame.locator("#scene").select_option("complex")
+  frame.locator('[data-tab="video"]').click()
+  assert frame.locator("#compare").get_attribute("src").endswith("complex-compare.mp4")
+  page.locator('.learning-tabs a[data-mode="practice"]').click()
+  assert page.locator("#mode-practice").is_visible(),"E03 local/Kaggle mode missing"
+  assert page.locator('#mode-practice a[href="downloads/E03_Advanced_Lane_Finding_V2.0.ipynb"]').count()==1
+  assert page.locator('#mode-practice a[href="downloads/MVAI_E03_Advanced_Lane_Finding_V2.0.zip"]').count()==1
+  page.locator('.learning-tabs a[data-mode="study"]').click()
+  assert page.locator("#mode-study").is_visible(),"E03 return to Notebook mode failed"
   page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/"e03-v2-three-scenes.png"))
   print("E03 browser QA passed: image assets, three scene MP4s, Notebook and ZIP downloads")
   if errors: raise AssertionError("Page errors: "+repr(errors))
