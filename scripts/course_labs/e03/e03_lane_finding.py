@@ -122,3 +122,38 @@ class LaneTracker:
         cv2.polylines(out,[lo],False,(255,210,30),7,cv2.LINE_AA);cv2.polylines(out,[ro],False,(255,210,30),7,cv2.LINE_AA)
         cv2.putText(out,f"Radius: {metrics['mean_curvature_m']:,.0f} m",(28,42),cv2.FONT_HERSHEY_SIMPLEX,.72,(20,60,30),2,cv2.LINE_AA);cv2.putText(out,f"Offset: {metrics['vehicle_offset_m']:+.2f} m",(28,74),cv2.FONT_HERSHEY_SIMPLEX,.62,(20,60,30),2,cv2.LINE_AA)
         return out
+
+
+def encode_h264(input_path,output_path):
+    import imageio_ffmpeg
+    subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),"-y","-i",str(input_path),"-an","-c:v","libx264","-preset","ultrafast","-crf","27","-pix_fmt","yuv420p","-movflags","+faststart",str(output_path)],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+    Path(input_path).unlink(missing_ok=True)
+
+def process_video(video_path,output_dir,calibration,max_seconds=8,process_fps=10):
+    import subprocess,gc,json
+    video_path=Path(video_path);out=Path(output_dir);out.mkdir(parents=True,exist_ok=True)
+    cap=cv2.VideoCapture(str(video_path))
+    if not cap.isOpened():raise FileNotFoundError(video_path)
+    source_fps=cap.get(cv2.CAP_PROP_FPS) or 25.;total=int(cap.get(cv2.CAP_PROP_FRAME_COUNT));w=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH));h=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    limit=total if max_seconds is None else min(total,int(max_seconds*source_fps));fps=float(process_fps or source_fps);next_t=0.;stem=video_path.stem
+    raw=out/f"{stem}_processed_raw.mp4";rawc=out/f"{stem}_compare_raw.mp4";processed=out/f"{stem}_processed.mp4";compare=out/f"{stem}_compare.mp4"
+    writer=cv2.VideoWriter(str(raw),cv2.VideoWriter_fourcc(*"mp4v"),fps,(w,h));cmp=cv2.VideoWriter(str(rawc),cv2.VideoWriter_fourcc(*"mp4v"),fps,(1920,580))
+    tracker=LaneTracker(use_ema=True,ema_alpha=.25);valid=count=idx=0;modes={}
+    try:
+        while idx<limit:
+            ok,frame=cap.read()
+            if not ok:break
+            t=idx/source_fps
+            if t+1e-9>=next_t:
+                result=tracker.process(frame,calibration);writer.write(result["output"]);valid+=int(result["valid"]);count+=1
+                modes[result["search_mode"]]=modes.get(result["search_mode"],0)+1
+                canvas=np.zeros((580,1920,3),np.uint8);canvas[40:580,:960]=cv2.resize(frame,(960,540));canvas[40:580,960:]=cv2.resize(result["output"],(960,540))
+                cv2.putText(canvas,"ORIGINAL VIDEO",(20,27),cv2.FONT_HERSHEY_SIMPLEX,.65,(235,235,235),2);cv2.putText(canvas,"ADVANCED LANE FINDING",(980,27),cv2.FONT_HERSHEY_SIMPLEX,.65,(235,235,235),2);cmp.write(canvas);next_t+=1/fps
+            idx+=1
+    finally:
+        cap.release();writer.release();cmp.release();cv2.destroyAllWindows();del tracker;gc.collect()
+    if count==0:raise RuntimeError(f"No frames processed: {video_path}")
+    encode_h264(raw,processed);encode_h264(rawc,compare)
+    summary={"video":video_path.name,"source_duration_s":round(total/source_fps,2),"processed_frames":count,"processed_duration_s":round(count/fps,2),"valid_frames":valid,"valid_frame_coverage_percent":round(100*valid/max(count,1),1),"search_modes":modes,"processed_path":str(processed),"compare_path":str(compare),"fps":fps}
+    (out/f"{stem}_summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf-8")
+    return summary
