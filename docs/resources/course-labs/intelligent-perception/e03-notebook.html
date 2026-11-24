@@ -8,25 +8,78 @@ header{background:#fff;border-bottom:1px solid var(--line);padding:14px clamp(18
 header a{text-decoration:none;font-size:13px;font-weight:700}.hero{padding:30px clamp(18px,4vw,56px);background:linear-gradient(110deg,#eaf3fb,#fbfdff);border-bottom:1px solid var(--line)}.hero-inner{max-width:1320px;margin:auto}.eyebrow{font-size:11px;letter-spacing:1.5px;color:#2a6da9;font-weight:850}.hero h1{font-size:clamp(26px,3vw,36px);margin:8px 0}.hero p{max-width:900px;color:var(--sub);font-size:14px;line-height:1.9;margin:8px 0 0}.chips,.downloads,.video-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.chip{border:1px solid #d5e2ee;border-radius:7px;background:#fff;padding:6px 10px;font-size:12px;font-weight:750;color:#496985}
 main{max-width:1320px;margin:24px auto;padding:0 18px 60px}.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px;align-items:start}.toc,.chapter{background:var(--panel);border:1px solid var(--line);border-radius:12px}.toc{padding:16px;position:sticky;top:14px}.toc h3{font-size:12px;color:var(--sub);margin:0 0 10px}.toc a{display:block;text-decoration:none;padding:9px 8px;border-radius:7px;color:#476580;font-size:13px;font-weight:700}.toc a:hover{background:var(--soft)}.chapter{padding:24px clamp(18px,2.5vw,36px);margin-bottom:16px;scroll-margin-top:18px}.chapter h2{font-size:21px;margin:0 0 10px}.chapter h3{font-size:15px;margin:20px 0 8px}.chapter p,.chapter li{font-size:14px;line-height:1.85;color:#45617c}.chapter ul{padding-left:22px}.muted{color:var(--sub);font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.figure{margin:0;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}.figure img{width:100%;height:auto;display:block}.figure figcaption{font-size:12px;padding:9px 11px;color:var(--sub);font-weight:700}.scene-btn,.btn{border:1px solid #d6e2ed;border-radius:8px;background:#fff;padding:9px 14px;color:#42627e;font-weight:750;cursor:pointer;text-decoration:none;font-size:13px}.scene-btn.active,.btn.primary{background:var(--blue);color:white;border-color:var(--blue)}.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.video-grid video{width:100%;display:block;background:#101820;border-radius:8px;aspect-ratio:16/9}.video-label{font-size:12px;font-weight:800;color:#526e88;margin:8px 0}.note{background:#f0f5fa;border-left:3px solid #6e95bf;border-radius:5px;padding:12px 14px;font-size:13px;line-height:1.8;color:#49657f;margin:14px 0}.status{font-size:12px;color:var(--sub);margin-top:10px}
 @media(max-width:850px){.layout{grid-template-columns:1fr}.toc{position:static}.video-grid,.grid{grid-template-columns:1fr}.chapter{padding:18px}}
+
+.learning-tabs{background:#fff;border-bottom:1px solid var(--line);padding:0 max(18px,calc((100% - 1280px)/2));display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:50}
+.learning-tabs a{text-decoration:none;color:#59728b;font-size:13px;font-weight:800;padding:18px 20px;border-bottom:3px solid transparent}
+.learning-tabs a.active{color:#1769ac;border-color:#1769ac;background:#f6fafe}
+.hero-inner{max-width:1280px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:35px;align-items:center}
+.hero-img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid #dce5ee;border-radius:12px;box-shadow:0 6px 15px #233e5b13}
+.mode-section{display:none}.mode-section.active{display:block}
+main{max-width:1380px;margin:0 auto;padding:26px clamp(18px,3vw,46px) 65px}
+.study-toolbar{display:flex;justify-content:flex-end;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.study-toolbar button,.study-toolbar a,.practice-btn{border:1px solid #d6e2ed;border-radius:8px;background:#fff;padding:10px 14px;color:#315e84;font-weight:750;text-decoration:none;font-size:13px;cursor:pointer}
+#notebook-status{margin-right:auto;font-size:12px;color:var(--sub)}
+.chapter pre{white-space:pre;overflow:auto;max-height:620px;background:#f8fafc;border:1px solid #e3eaf0;border-radius:8px;padding:14px;font-size:12px;line-height:1.7}
+.code-fold{margin:14px 0;border:1px solid #dce6ef;border-radius:9px;overflow:hidden}
+.code-fold summary{padding:11px 14px;background:#f4f7fa;cursor:pointer;font-size:12px;font-weight:750;color:#355b78}
+.code-fold pre{margin:0}
+#mode-interactive .lab-frame{width:100%;height:1200px;border:1px solid var(--line);border-radius:13px;background:#fff}
+.practice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.practice-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:24px}
+.practice-card h2{font-size:19px;margin-top:0}.practice-card p,.practice-card li{font-size:13px;line-height:1.85;color:#526f88}
+.practice-card pre{background:#f4f7fa;border-radius:8px;padding:14px;white-space:pre-wrap;font-size:12px}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr}.hero-img{max-width:560px}.practice-grid{grid-template-columns:1fr}}
 </style></head><body>
-<header><strong>MVAI · 智能感知与自动驾驶技术</strong><nav><a href="index.html">课程首页</a>　·　<a href="e03.html">E03 实验说明</a></nav></header>
-<section class="hero"><div class="hero-inner"><div class="eyebrow">E03 · ADVANCED LANE FINDING V2.0</div><h1>基于传统计算机视觉的道路车道线检测与分析</h1><p>一份 Notebook，五个连续实验。通过相机标定、颜色与梯度提取、透视变换、滑动窗口和二次曲线拟合，逐步完成道路车道线检测，并在三段真实视频中观察算法表现与局限。</p><div class="chips"><span class="chip">Python + OpenCV</span><span class="chip">CPU 即可运行</span><span class="chip">5 个实验</span><span class="chip">18 项探索任务</span><span class="chip">本地 / Kaggle</span></div><div class="downloads"><a class="btn primary" href="downloads/E03_Advanced_Lane_Finding_V2.0.ipynb">下载完整 Notebook</a><a class="btn" href="downloads/MVAI_E03_Advanced_Lane_Finding_V2.0.zip">下载完整实验包 ZIP</a></div></div></section>
-<main><div class="layout"><aside class="toc"><h3>实验导航</h3><a href="#e031">01 相机标定</a><a href="#e032">02 颜色与梯度</a><a href="#e033">03 透视变换</a><a href="#e034">04 像素搜索与拟合</a><a href="#e035">05 曲率与视频</a><a href="#video-lab">三段真实视频</a><a href="#limits">算法局限与课后探索</a></aside><div>
+<header><strong>MVAI Learning Center / 智能感知与自动驾驶技术</strong><a href="index.html">返回课程首页</a></header>
+<section class="hero"><div class="hero-inner"><div><div class="eyebrow">ONE NOTEBOOK · THREE LEARNING WAYS</div><h1>E03 · Advanced Lane Finding V2.0</h1><p>从真实道路视频出发，学习相机标定、HLS / Sobel、透视变换、滑动窗口与二次曲线拟合。沿用 E01、E02 的统一学习界面：先读 Notebook，再进入浏览器交互实验，最后下载到本地或 Kaggle。</p><div class="chips"><span class="chip">5 个实验</span><span class="chip">18 项探索任务</span><span class="chip">3 段真实视频</span><span class="chip">CPU 即可运行</span></div></div><img class="hero-img" src="e03-media/scene-straight-original.jpg" alt="E03 直道车道线检测结果"></div></section>
+<nav class="learning-tabs" aria-label="三种学习方式"><a class="active" href="#notebook" data-mode="study">01 · 在线学习 Notebook</a><a href="#interactive" data-mode="interactive">02 · 浏览器交互实验</a><a href="#practice" data-mode="practice">03 · 本地 / Kaggle 运行</a></nav>
+<main><section class="mode-section active" id="mode-study"><div class="study-toolbar"><span id="notebook-status">读取 E03 标准 Notebook 中…</span><button id="toggle-code" type="button">展开全部代码</button><a href="downloads/E03_Advanced_Lane_Finding_V2.0.ipynb" download>下载 .ipynb</a></div><div class="layout"><aside class="toc"><h3>实验导航</h3><a href="#e031">01 相机标定</a><a href="#e032">02 颜色与梯度</a><a href="#e033">03 透视变换</a><a href="#e034">04 像素搜索与拟合</a><a href="#e035">05 曲率与视频</a><a href="#video-lab">三段真实视频</a><a href="#limits">算法局限与课后探索</a></aside><div>
 <section class="chapter" id="e031"><h2>实验 E03-01 · 相机标定与图像畸变校正</h2><p>使用 20 张棋盘格图片，检测 9×6 内角点并计算相机内参与畸变系数。Notebook 会逐张报告检测状态。</p><div class="grid"><figure class="figure"><img src="e03-media/calibration-corners.jpg" alt="棋盘格角点检测"><figcaption>实际角点检测结果</figcaption></figure><figure class="figure"><img src="e03-media/final-single-image.jpg" alt="道路车道线处理"><figcaption>后续道路处理结果</figcaption></figure></div><h3>探索任务（3项）</h3><ul><li>改变参与标定的图片数量，比较重投影 RMS。</li><li>比较传统角点检测与 SB 角点检测。</li><li>改变 alpha，观察有效视野和图像边缘。</li></ul></section>
 <section class="chapter" id="e032"><h2>实验 E03-02 · 颜色空间与梯度阈值提取</h2><p>将道路像素转换到 HLS 颜色空间，并计算 Sobel X 梯度。通过颜色和梯度阈值融合，形成车道线候选二值图。</p><div class="grid"><figure class="figure"><img src="e03-media/threshold-binary.png" alt="车道线二值候选图"><figcaption>颜色与梯度融合后的二值候选图</figcaption></figure><figure class="figure"><img src="e03-media/scene-complex-binary.png" alt="复杂弯道二值提取"><figcaption>复杂弯道中的候选像素</figcaption></figure></div><h3>探索任务（4项）</h3><ul><li>调整黄色车道线 HLS 阈值。</li><li>调整 Sobel X 梯度阈值。</li><li>比较 AND / OR 融合策略。</li><li>使用同一组阈值观察三种光照与道路场景。</li></ul></section>
 <section class="chapter" id="e033"><h2>实验 E03-03 · 透视变换与道路俯视图构建</h2><p>利用源点和目标点计算单应性矩阵，将驾驶视角转换为近似俯视视角。</p><div class="grid"><figure class="figure"><img src="e03-media/perspective-bird-eye.png" alt="道路俯视图"><figcaption>实际透视变换结果</figcaption></figure><figure class="figure"><img src="e03-media/scene-curve-bird-eye.png" alt="弯道俯视图"><figcaption>弯道视频帧的俯视变换</figcaption></figure></div><h3>探索任务（3项）</h3><ul><li>改变源点顶部位置。</li><li>改变目标区域宽度。</li><li>比较同一组透视坐标在三段视频中的表现。</li></ul></section>
 <section class="chapter" id="e034"><h2>实验 E03-04 · 车道线像素搜索与二次曲线拟合</h2><p>先对俯视二值图进行直方图统计，再通过滑动窗口逐层搜索左右车道线像素，最后使用二次多项式拟合。</p><div class="grid"><figure class="figure"><img src="e03-media/sliding-window-fit.png" alt="滑动窗口与曲线拟合"><figcaption>滑动窗口搜索与拟合</figcaption></figure><figure class="figure"><img src="e03-media/scene-straight-sliding-fit.png" alt="直道像素搜索"><figcaption>直道场景的候选像素</figcaption></figure></div><p>拟合模型：<code>x(y) = Ay² + By + C</code></p><h3>探索任务（4项）</h3><ul><li>调整滑动窗口数量。</li><li>调整搜索窗口宽度。</li><li>调整每个窗口的最少像素数。</li><li>比较全图滑动窗口搜索与上一帧曲线附近搜索。</li></ul></section>
 <section class="chapter" id="e035"><h2>实验 E03-05 · 道路曲率、车辆偏移与连续视频检测</h2><p>将前四个实验连接为完整处理流程，计算近似道路曲率和车辆横向偏移，并观察连续视频中的逐帧检测与简单 EMA 平滑。</p><div class="grid"><figure class="figure"><img src="e03-media/final-single-image.jpg" alt="完整单帧检测"><figcaption>单帧车道区域、曲率和车辆偏移估计</figcaption></figure><figure class="figure"><img src="e03-media/scene-complex-result.jpg" alt="复杂弯道检测"><figcaption>复杂弯道的实际检测结果</figcaption></figure></div><h3>探索任务（4项）</h3><ul><li>改变车道宽度假设，观察米制结果。</li><li>改变二次曲线系数，观察曲率变化。</li><li>比较不同 EMA 参数的时序平滑效果。</li><li>切换三段视频，比较检测表现和失败案例。</li></ul></section>
-<section class="chapter" id="video-lab"><h2>三段真实道路视频 · 原始画面与检测结果</h2><p>视频由 Notebook 中的 OpenCV 算法实际处理生成。每个场景提供原始画面与检测结果同步对比，以及单独的处理结果视频。</p><div class="video-tabs"><button class="scene-btn active" data-scene="straight">直道 · solidWhiteRight</button><button class="scene-btn" data-scene="curve">弯道 · project_video</button><button class="scene-btn" data-scene="complex">复杂弯道 · harder_challenge</button></div><div class="video-grid"><div><div class="video-label">原始画面 / 检测结果同步对比</div><video id="compare" controls playsinline preload="metadata"><source src="e03-media/videos/straight-compare.mp4" type="video/mp4"></video></div><div><div class="video-label">单独检测结果</div><video id="processed" controls playsinline preload="metadata"><source src="e03-media/videos/straight-processed.mp4" type="video/mp4"></video></div></div><p class="status" id="status">当前：直道场景；每段默认展示约 8 秒。Notebook 可切换完整视频处理。</p><div class="note">视频没有人工车道线 Ground Truth。几何检查通过率不等于识别准确率。请同时观察误检、漏检和曲线不合理的情况。</div></section>
+<section class="chapter" id="video-lab"><h2>05 · 三段真实道路视频 · 原始画面与检测结果</h2><p>视频由 Notebook 中的 OpenCV 算法实际处理生成。每个场景提供原始画面与检测结果同步对比，以及单独的处理结果视频。</p><div class="video-tabs"><button class="scene-btn active" data-scene="straight">直道 · solidWhiteRight</button><button class="scene-btn" data-scene="curve">弯道 · project_video</button><button class="scene-btn" data-scene="complex">复杂弯道 · harder_challenge</button></div><div class="video-grid"><div><div class="video-label">原始画面 / 检测结果同步对比</div><video id="compare" controls playsinline preload="metadata"><source src="e03-media/videos/straight-compare.mp4" type="video/mp4"></video></div><div><div class="video-label">单独检测结果</div><video id="processed" controls playsinline preload="metadata"><source src="e03-media/videos/straight-processed.mp4" type="video/mp4"></video></div></div><p class="status" id="status">当前：直道场景；每段默认展示约 8 秒。Notebook 可切换完整视频处理。</p><div class="note">视频没有人工车道线 Ground Truth。几何检查通过率不等于识别准确率。请同时观察误检、漏检和曲线不合理的情况。</div></section>
 <section class="chapter" id="limits"><h2>算法局限与课后思考探索</h2><ul><li>固定颜色阈值可能受到阴影、强光和路面颜色影响。</li><li>透视变换参数与摄像机视角和安装位置有关。</li><li>滑动窗口可能把护栏、道路接缝和其他标线当成车道线。</li><li>二次曲线不能表达所有道路几何形状。</li><li>连续视频需要考虑时间信息，但历史结果也可能造成错误延续。</li></ul><div class="note"><strong>课后思考：复杂道路为什么检测失败？</strong> harder_challenge 场景中的车道边界漂移和误选现象是本课程有意保留的真实失败案例。请学生选取失败时间点，结合原图、二值图、俯视图和拟合曲线，分析阴影干扰、候选像素污染、透视参数和二次曲线模型，并提出一种可验证的改进思路。</div><div class="note">曲率与车辆偏移采用车道宽度 3.7 m、纵向观察范围 30 m 的教学尺度假设，不是道路实测值。本实验仅用于理解经典计算机视觉方法，不用于自动驾驶安全决策。</div></section>
-</div></div></main>
+</div></div></section>
+<section class="mode-section" id="mode-interactive"><div class="chapter"><h2>02 · 浏览器交互实验</h2><p>修改阈值、透视区域和滑动窗口参数，立即观察候选像素与搜索区域变化。所有处理在浏览器本地执行，不需要 Python。</p><iframe class="lab-frame" id="e03-lab-frame" title="E03 浏览器交互实验" loading="lazy" src="interactive/e03.html?embed=1"></iframe></div></section>
+<section class="mode-section" id="mode-practice"><div class="chapter"><h2>03 · 本地 / Kaggle 运行</h2><p>下载同一份标准 Notebook 和完整素材包。学生可以在本地 Jupyter / VS Code 或 Kaggle 中重复运行五个实验。</p><div class="practice-grid"><article class="practice-card"><h2>方式 A · 本地 Python / VS Code</h2><p>解压实验包，保持 Notebook、代码和 data/e03 目录结构不变，然后在已有 Python 环境中打开 Notebook。</p><a class="practice-btn" href="downloads/E03_Advanced_Lane_Finding_V2.0.ipynb" download>下载标准 Notebook</a><pre>unzip MVAI_E03_Advanced_Lane_Finding_V2.0.zip
+cd MVAI_E03_Advanced_Lane_Finding_V2.0
+pip install -r requirements.txt
+jupyter lab</pre></article><article class="practice-card"><h2>方式 B · Kaggle Notebook</h2><p>上传完整实验包作为 Kaggle Dataset，导入同一份 Notebook 并添加数据集。默认处理三段视频的短片段；需要完整处理时再修改配置。</p><a class="practice-btn" href="downloads/MVAI_E03_Advanced_Lane_Finding_V2.0.zip" download>下载完整素材包 ZIP</a><ol><li>在 Kaggle 创建 Dataset 并上传实验包。</li><li>新建 Notebook，导入 E03 标准 ipynb。</li><li>添加数据集后运行全部单元格。</li><li>观察三段视频结果，完成探索任务。</li></ol></article></div><div class="note"><strong>运行说明：</strong>CPU 即可运行，不要求 GPU。浏览器交互版用于直观理解算法原理，与 Python/OpenCV 结果不保证逐像素一致。</div></div></section>
+</main>
 <script>
 const map={straight:["solidWhiteRight","直道"],curve:["project_video","弯道"],complex:["harder_challenge_video","复杂弯道"]};
 const compare=document.getElementById("compare"),processed=document.getElementById("processed"),status=document.getElementById("status");
 document.querySelectorAll(".scene-btn").forEach(btn=>btn.addEventListener("click",()=>{
- const key=btn.dataset.scene,stem=map[key][0];compare.pause();processed.pause();
+ const key=btn.dataset.scene;compare.pause();processed.pause();
  compare.src="e03-media/videos/"+key+"-compare.mp4";processed.src="e03-media/videos/"+key+"-processed.mp4";compare.load();processed.load();
  document.querySelectorAll(".scene-btn").forEach(x=>x.classList.toggle("active",x===btn));
- status.textContent="当前："+map[key][1]+"场景；每段默认展示约 8 秒。Notebook 可切换完整视频处理。";
+ status.textContent="当前："+map[key][1]+"场景；每段默认展示约 8 秒。复杂弯道失败现象保留为课后探索。";
 }));
+const tabs=[...document.querySelectorAll(".learning-tabs a")];
+const modes={study:"mode-study",interactive:"mode-interactive",practice:"mode-practice"};
+function selectMode(mode){Object.entries(modes).forEach(([k,id])=>document.getElementById(id).classList.toggle("active",k===mode));tabs.forEach(t=>t.classList.toggle("active",t.dataset.mode===mode));}
+tabs.forEach(t=>t.addEventListener("click",e=>{e.preventDefault();selectMode(t.dataset.mode);}));
+const nbName="E03_Advanced_Lane_Finding_V2.0.ipynb";
+const chapterMap=[["E03-01","e031"],["E03-02","e032"],["E03-03","e033"],["E03-04","e034"],["E03-05","e035"]];
+fetch("downloads/"+nbName,{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()}).then(nb=>{
+ let current="e031",n=0;
+ for(const cell of nb.cells||[]){
+  if(cell.cell_type==="markdown"){
+   const source=(cell.source||[]).join("");
+   for(const [marker,id] of chapterMap)if(source.includes("实验 "+marker))current=id;
+  }else if(cell.cell_type==="code"){
+   n++;const section=document.getElementById(current);if(!section)continue;
+   const details=document.createElement("details");details.className="code-fold";
+   const summary=document.createElement("summary");summary.textContent="Python 代码单元 "+n+" · 点击展开源码";
+   const pre=document.createElement("pre");pre.textContent=(cell.source||[]).join("");
+   details.append(summary,pre);section.append(details);
+  }
+ }
+ document.getElementById("notebook-status").textContent="E03 标准 Notebook · "+nb.cells.length+" 个单元格 · "+n+" 个 Python 代码单元";
+}).catch(err=>document.getElementById("notebook-status").textContent="Notebook 加载失败："+err.message);
+document.getElementById("toggle-code").addEventListener("click",e=>{
+ const all=[...document.querySelectorAll(".code-fold")],open=all.some(x=>!x.open);all.forEach(x=>x.open=open);e.currentTarget.textContent=open?"收起全部代码":"展开全部代码";
+});
 </script></body></html>
