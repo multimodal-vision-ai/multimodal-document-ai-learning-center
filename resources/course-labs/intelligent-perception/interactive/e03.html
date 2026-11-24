@@ -149,11 +149,25 @@ function drawQuad(){
  pts.forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],6,0,Math.PI*2);ctx.fillStyle="#f59e0b";ctx.fill();});
 }
 function drawWindows(){
- if(!binaryData)return;const c=$("windowCanvas"),ctx=c.getContext("2d"),w=640,h=360,n=+$("nwin").value,margin=+$("margin").value,band=Math.floor(h/n),d=binaryData.data;
- const hist=new Int32Array(w);for(let y=Math.floor(h*.5);y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4]>180)hist[x]++;
- let left=0,right=0;for(let x=0;x<w/2;x++)if(hist[x]>hist[left])left=x;for(let x=Math.floor(w/2);x<w;x++)if(hist[x]>hist[right])right=x;
+ if(!binaryData)return;
+ const c=$("windowCanvas"),ctx=c.getContext("2d"),w=640,h=360,n=+$("nwin").value,margin=+$("margin").value,band=Math.floor(h/n),d=binaryData.data;
+ const hist=new Int32Array(w);
+ for(let y=Math.floor(h*.5);y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4]>180)hist[x]++;
+ let left=0,right=0;
+ for(let x=0;x<w/2;x++)if(hist[x]>hist[left])left=x;
+ for(let x=Math.floor(w/2);x<w;x++)if(hist[x]>hist[right])right=x;
  ctx.putImageData(binaryData,0,0);ctx.lineWidth=2;
- for(let k=0;k<n;k++){const y0=h-(k+1)*band,y1=h-k*band;ctx.strokeStyle="#16a36a";ctx.strokeRect(Math.max(0,left-margin),y0,Math.min(w,left+margin)-Math.max(0,left-margin),band);ctx.strokeStyle="#2378d0";ctx.strokeRect(Math.max(0,right-margin),y0,Math.min(w,right+margin)-Math.max(0,right-margin),band);}
+ for(let k=0;k<n;k++){
+  const y1=h-k*band,y0=Math.max(0,y1-band);
+  const lx0=Math.max(0,left-margin),lx1=Math.min(w,left+margin),rx0=Math.max(0,right-margin),rx1=Math.min(w,right+margin);
+  let lsum=0,ln=0,rsum=0,rn=0;
+  for(let y=y0;y<y1;y++)for(let x=lx0;x<lx1;x++)if(d[(y*w+x)*4]>180){lsum+=x;ln++;}
+  for(let y=y0;y<y1;y++)for(let x=rx0;x<rx1;x++)if(d[(y*w+x)*4]>180){rsum+=x;rn++;}
+  ctx.strokeStyle="#16a36a";ctx.strokeRect(lx0,y0,lx1-lx0,y1-y0);
+  ctx.strokeStyle="#2378d0";ctx.strokeRect(rx0,y0,rx1-rx0,y1-y0);
+  if(ln>8)left=Math.round(lsum/ln);
+  if(rn>8)right=Math.round(rsum/rn);
+ }
 }
 function bindRange(id,output,fn,suffix=""){const el=$(id);el.addEventListener("input",()=>{$(output).textContent=el.value+suffix;fn();});}
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));panels.forEach(p=>$(p).classList.toggle("hidden",p!==active));}));
