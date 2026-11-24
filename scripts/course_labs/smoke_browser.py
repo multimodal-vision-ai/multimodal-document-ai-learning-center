@@ -199,6 +199,29 @@ try:
   assert page.locator("#mode-study").is_visible(),"E03 return to Notebook mode failed"
   page.screenshot(path=str(Path(os.environ.get("RUNNER_TEMP","/tmp"))/"e03-v2-three-scenes.png"))
   print("E03 browser QA passed: image assets, three scene MP4s, Notebook and ZIP downloads")
+  # Stronger E03 visual checks: reject blank canvases and static-looking outputs.
+  frame.locator('[data-tab="calibration"]').click()
+  c0=frame.locator("#calibOut").evaluate("(c)=>c.toDataURL()")
+  frame.locator("#k1").evaluate('(e)=>{e.value="29";e.dispatchEvent(new Event("input",{bubbles:true}))}')
+  c1=frame.locator("#calibOut").evaluate("(c)=>c.toDataURL()")
+  assert c0!=c1,"Calibration distortion slider did not alter the image"
+  frame.locator('[data-tab="threshold"]').click()
+  stats0=frame.locator("#binary").evaluate("""c=>{const a=c.getContext("2d").getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<a.length;i+=4)if(a[i]>240)n++;return n}""")
+  assert stats0>100,"Threshold output canvas is blank"
+  frame.locator("#light").evaluate('(e)=>{e.value="235";e.dispatchEvent(new Event("input",{bubbles:true}))}')
+  stats1=frame.locator("#binary").evaluate("""c=>{const a=c.getContext("2d").getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<a.length;i+=4)if(a[i]>240)n++;return n}""")
+  assert abs(stats0-stats1)>100,"Threshold slider changed no meaningful candidate pixels"
+  frame.locator('[data-tab="perspective"]').click()
+  assert frame.locator("#bird").evaluate("""c=>{const a=c.getContext("2d").getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<a.length;i+=4)if(a[i]||a[i+1]||a[i+2])n++;return n>30000}"""),"Perspective output is blank"
+  frame.locator('[data-tab="windows"]').click()
+  assert frame.locator("#fitCanvas").evaluate("""c=>{const a=c.getContext("2d").getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<a.length;i+=4)if(a[i]||a[i+1]||a[i+2])n++;return n>30000}"""),"Pixel search / curve fit output is blank"
+  frame.locator("#margin").evaluate('(e)=>{e.value="115";e.dispatchEvent(new Event("input",{bubbles:true}))}')
+  assert "搜索结果" in frame.locator("#windowStats").inner_text(),"Pixel-search feedback missing"
+  frame.locator('[data-tab="video"]').click()
+  frame.locator("#compare").evaluate("""v=>new Promise(resolve=>{if(v.readyState>=1)return resolve(true);v.addEventListener("loadedmetadata",()=>resolve(true),{once:true})})""")
+  frame.locator("#seek").evaluate('(e)=>{e.value="250";e.dispatchEvent(new Event("input",{bubbles:true}))}')
+  assert 2.2<=frame.locator("#compare").evaluate("(v)=>v.currentTime")<=2.8,"Video synchronized seek did not work"
+  assert abs(frame.locator("#compare").evaluate("(v)=>v.playbackRate")-1)<.01
   if errors: raise AssertionError("Page errors: "+repr(errors))
   browser.close()
 finally:
