@@ -166,6 +166,7 @@ try:
   assert page.locator("#mode-interactive").is_visible(),"E03 browser interaction mode missing"
   frame=page.frame_locator("#e03-lab-frame")
   frame.locator("#scene").wait_for(state="visible",timeout=30000)
+  page.wait_for_function("""() => { const f=document.querySelector("#e03-lab-frame"); if(!f||!f.contentDocument)return false; const c=f.contentDocument.querySelector("#source"); if(!c)return false; const a=c.getContext("2d").getImageData(0,0,c.width,c.height).data; let n=0; for(let i=0;i<a.length;i+=160)if(a[i]||a[i+1]||a[i+2])n++; return n>500; }""",timeout=40000)
   assert not frame.locator("header").is_visible(),"Repeated E03 interactive header inside iframe"
   frame.locator('[data-tab="threshold"]').click()
   frame.locator("#light").wait_for(state="visible")
