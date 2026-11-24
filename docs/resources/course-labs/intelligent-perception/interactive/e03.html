@@ -41,8 +41,10 @@ video{width:100%;display:block;background:#111;border-radius:8px}
 </div>
 <section class="panel" id="calibration">
 <h2>实验 01 · 相机标定与畸变校正</h2>
-<p>观察棋盘格角点检测，以及标定后道路图像的处理效果。标定参数由 Python/OpenCV 在 Notebook 中实际计算；这里展示真实输出，便于理解标定输入与输出的关系。</p>
-<div class="grid"><figure><img src="../e03-media/calibration-corners.jpg" alt="棋盘格角点检测"><figcaption>棋盘格角点检测 · 18 张有效标定视图</figcaption></figure><figure><img src="../e03-media/final-single-image.jpg" alt="畸变校正后道路检测"><figcaption>标定参数用于后续道路图像处理</figcaption></figure></div>
+<p>先观察真实棋盘格角点检测结果，再通过径向畸变模拟滑块观察镜头畸变对道路图像几何形状的影响。真实相机内参与畸变系数仍由 Notebook 中的 Python/OpenCV 使用 18 张有效标定视图计算。</p>
+<div class="control"><label>径向畸变模拟系数 k1 <output id="kval">15</output></label><input id="k1" type="range" min="-30" max="30" value="15"><div class="muted">这是用于理解畸变方向和强度的教学模拟值，不是本相机实测标定参数。</div></div>
+<div class="grid" style="margin-top:14px"><figure><img src="../e03-media/calibration-corners.jpg" alt="棋盘格角点检测"><figcaption>棋盘格角点检测 · 18 张有效标定视图</figcaption></figure><figure><canvas id="calibSrc" width="640" height="360"></canvas><figcaption>道路原图</figcaption></figure><figure><canvas id="calibOut" width="640" height="360"></canvas><figcaption>径向畸变模拟结果（随 k1 实时变化）</figcaption></figure></div>
+<div class="note" id="calibStats">调整 k1，观察图像边缘与中心区域的几何变化。</div>
 <div class="note">思考：为什么不能只用一张棋盘格图片？相机位置、角度和棋盘格覆盖范围会怎样影响内参估计？</div>
 </section>
 <section class="panel hidden" id="threshold">
@@ -52,7 +54,7 @@ video{width:100%;display:block;background:#111;border-radius:8px}
 <div class="control"><label>亮度阈值 L <output id="lval">175</output></label><input id="light" type="range" min="80" max="245" value="175"></div>
 <div class="control"><label>梯度阈值 <output id="gval">35</output></label><input id="grad" type="range" min="5" max="120" value="35"></div>
 </div>
-<div class="grid" style="margin-top:14px"><figure><canvas id="source" width="640" height="360"></canvas><figcaption>原始道路图像</figcaption></figure><figure><canvas id="binary" width="640" height="360"></canvas><figcaption>浏览器端候选二值图（动态计算）</figcaption></figure></div>
+<div class="grid" style="margin-top:14px"><figure><canvas id="source" width="640" height="360"></canvas><figcaption>原始道路图像</figcaption></figure><figure><canvas id="binary" width="640" height="360"></canvas><figcaption>浏览器端候选二值图（动态计算）</figcaption></figure></div><div class="note" id="thresholdStats">调整阈值后，候选像素数量和二值图将同步更新。</div>
 <div class="note">浏览器版以 HSL 亮度 / 饱和度与 Sobel X 梯度构造教学候选图，算法实现与 Python/OpenCV 版存在差异。请观察阴影、天空、车辆边缘是否也被选中。</div>
 </section>
 <section class="panel hidden" id="perspective">
@@ -64,7 +66,7 @@ video{width:100%;display:block;background:#111;border-radius:8px}
 <div class="control"><label>底部宽度 <output id="bottomval">90%</output></label><input id="bottom" type="range" min="65" max="99" value="90"></div>
 </div>
 <div class="grid" style="margin-top:14px"><figure><canvas id="quad" width="640" height="360"></canvas><figcaption>原图与可调源区域</figcaption></figure><figure><canvas id="bird" width="640" height="360"></canvas><figcaption>浏览器端实时透视变换结果</figcaption></figure></div>
-<div class="note">源点过高或过低、顶部过宽或过窄，都会改变俯视图中的道路几何形状。请比较不同场景下同一组透视参数的适用性。</div>
+<div class="note" id="perspectiveStats">源点过高或过低、顶部过宽或过窄，都会改变实时俯视图中的道路几何形状。请比较不同场景下同一组透视参数的适用性。</div>
 </section>
 <section class="panel hidden" id="windows">
 <h2>实验 04 · 滑动窗口与车道线像素搜索</h2>
@@ -73,107 +75,14 @@ video{width:100%;display:block;background:#111;border-radius:8px}
 <div class="control"><label>窗口层数 <output id="nval">9</output></label><input id="nwin" type="range" min="4" max="18" value="9"></div>
 <div class="control"><label>窗口半宽（像素） <output id="mval">55</output></label><input id="margin" type="range" min="20" max="120" value="55"></div>
 </div>
-<div class="grid" style="margin-top:14px"><figure><canvas id="windowCanvas" width="640" height="360"></canvas><figcaption>滑动窗口搜索可视化</figcaption></figure><figure><img id="binaryRef" src="../e03-media/scene-straight-binary.png" alt="Python候选二值图"><figcaption>Python/OpenCV 候选二值图参考</figcaption></figure></div>
+<div class="grid" style="margin-top:14px"><figure><canvas id="windowCanvas" width="640" height="360"></canvas><figcaption>动态滑动窗口与搜索区域（绿色 / 蓝色）</figcaption></figure><figure><canvas id="fitCanvas" width="640" height="360"></canvas><figcaption>被选中左右候选像素及二次拟合曲线</figcaption></figure></div><div class="note" id="windowStats">调整窗口层数和半宽，观察搜索区域、选中像素及拟合曲线变化。</div>
 <div class="note">窗口可以跟随高密度像素移动，但也可能被护栏、阴影边缘或路面接缝吸引。复杂弯道中的漂移现象保留为课后探索案例。</div>
 </section>
 <section class="panel hidden" id="video">
 <h2>实验 05 · 连续视频观察</h2>
 <p>选择三段道路视频，比较原始画面与算法处理结果。每段默认展示约 8 秒短片，完整视频可在 Notebook 中运行。</p>
 <div class="video-grid"><div><strong>原始视频 / 对比输出</strong><video id="compare" controls playsinline preload="metadata" src="../e03-media/videos/straight-compare.mp4"></video></div><div><strong>检测结果</strong><video id="processed" controls playsinline preload="metadata" src="../e03-media/videos/straight-processed.mp4"></video></div></div>
-<div class="note" id="video-note">直道场景。复杂弯道的边界漂移和误选是真实失败现象，作为课后探索保留。</div>
+<div class="controls" style="margin-top:12px"><div class="control"><label>同步播放速度 <output id="speedval">1.00×</output></label><input id="speed" type="range" min="50" max="150" value="100"></div><div class="control"><label>同步定位 <output id="seekval">0.0 s</output></label><input id="seek" type="range" min="0" max="800" value="0"></div></div><div class="note" id="videoScene">选择场景后，两段视频可以同步定位、同步比较。</div><div class="note" id="video-note">复杂弯道的边界漂移和误选是真实失败现象，作为课后探索保留。</div><video id="liveVideo" class="hidden" muted playsinline preload="metadata"></video>
 </section>
 </main>
-<script>
-"use strict";
-const scene=document.getElementById("scene");
-document.body.classList.toggle("embedded",new URLSearchParams(location.search).get("embed")==="1");
-const names={straight:"直道",curve:"普通弯道",complex:"复杂弯道"};
-const panels=["calibration","threshold","perspective","windows","video"];
-let active="calibration",img=null,binaryData=null;
-const $=id=>document.getElementById(id);
-function loadImage(path,done){const im=new Image();im.onload=()=>done(im);im.onerror=()=>{};im.src=path;}
-function drawScaled(canvas,im){const c=$(canvas),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(im,0,0,c.width,c.height);}
-function getScenePath(suffix){return "../e03-media/scene-"+scene.value+"-"+suffix;}
-function loadScene(){
- loadImage(getScenePath("original.jpg"),im=>{img=im;drawScaled("source",im);drawQuad();drawWarp();recomputeBinary();});
- 
- $("binaryRef").src=getScenePath("binary.png");loadImage(getScenePath("binary.png"),im=>{drawScaled("windowCanvas",im);binaryData=$("windowCanvas").getContext("2d").getImageData(0,0,640,360);drawWindows();});
- const stem=scene.value==="straight"?"straight":scene.value==="curve"?"curve":"complex";
- $("compare").pause();$("processed").pause();
- $("compare").src="../e03-media/videos/"+stem+"-compare.mp4";$("processed").src="../e03-media/videos/"+stem+"-processed.mp4";
- $("compare").load();$("processed").load();
- $("video-note").textContent=names[scene.value]+"场景。复杂弯道的边界漂移和误选是真实失败现象，作为课后探索保留。";
-}
-function hsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;let h=0,s=0,l=(max+min)/2;if(d){s=d/(1-Math.abs(2*l-1));switch(max){case r:h=((g-b)/d)%6;break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}h*=60;if(h<0)h+=360;}return [h,s,l*255];}
-function recomputeBinary(){
- if(!img)return;const c=$("source"),ctx=c.getContext("2d");drawScaled("source",img);const src=ctx.getImageData(0,0,640,360),out=$("binary").getContext("2d").createImageData(640,360),light=+$("light").value,grad=+$("grad").value;
- const gray=new Float32Array(640*360),mask=new Uint8Array(640*360);
- for(let i=0;i<gray.length;i++){const j=i*4;gray[i]=.299*src.data[j]+.587*src.data[j+1]+.114*src.data[j+2];}
- for(let y=1;y<359;y++)for(let x=1;x<639;x++){const i=y*640+x,j=i*4,[h,s,l]=hsl(src.data[j],src.data[j+1],src.data[j+2]);const yellow=h>15&&h<75&&s>.22&&l>45;const white=l>light&&s<.35;
- const gx=-gray[i-641]+gray[i-639]-2*gray[i-1]+2*gray[i+1]-gray[i+641]+gray[i+643];const keep=yellow||white||Math.abs(gx)>grad*2.5;const v=keep?255:0;out.data[j]=out.data[j+1]=out.data[j+2]=v;out.data[j+3]=255;mask[i]=v;}
- $("binary").getContext("2d").putImageData(out,0,0);binaryData=out;drawWindows();
-}
-function solveLinear(A,b){
- const n=b.length, m=A.map((r,i)=>r.concat([b[i]]));
- for(let c=0;c<n;c++){
-  let pivot=c;for(let r=c+1;r<n;r++)if(Math.abs(m[r][c])>Math.abs(m[pivot][c]))pivot=r;
-  if(Math.abs(m[pivot][c])<1e-9)return null;
-  [m[c],m[pivot]]=[m[pivot],m[c]];
-  const d=m[c][c];for(let j=c;j<=n;j++)m[c][j]/=d;
-  for(let r=0;r<n;r++)if(r!==c){const q=m[r][c];for(let j=c;j<=n;j++)m[r][j]-=q*m[c][j];}
- }
- return m.map(r=>r[n]);
-}
-function drawWarp(){
- if(!img)return;
- const top=+$("top").value/100,tw=+$("topwidth").value/100,bw=+$("bottom").value/100;
- const src=[[320-320*tw,360*top],[320+320*tw,360*top],[320+320*bw,350],[320-320*bw,350]];
- const dst=[[0,0],[639,0],[639,359],[0,359]],A=[],b=[];
- for(let i=0;i<4;i++){const [u,v]=dst[i],[x,y]=src[i];A.push([u,v,1,0,0,0,-x*u,-x*v]);b.push(x);A.push([0,0,0,u,v,1,-y*u,-y*v]);b.push(y);}
- const H=solveLinear(A,b);if(!H)return;
- const input=document.createElement("canvas");input.width=640;input.height=360;const ictx=input.getContext("2d");ictx.drawImage(img,0,0,640,360);const pixels=ictx.getImageData(0,0,640,360).data;
- const outctx=$("bird").getContext("2d"),out=outctx.createImageData(640,360),o=out.data;
- for(let y=0;y<360;y++)for(let x=0;x<640;x++){
-  const den=H[6]*x+H[7]*y+1;if(Math.abs(den)<1e-8)continue;
-  const sx=Math.round((H[0]*x+H[1]*y+H[2])/den),sy=Math.round((H[3]*x+H[4]*y+H[5])/den);
-  if(sx<0||sx>=640||sy<0||sy>=360)continue;
-  const si=(sy*640+sx)*4,di=(y*640+x)*4;o[di]=pixels[si];o[di+1]=pixels[si+1];o[di+2]=pixels[si+2];o[di+3]=255;
- }
- outctx.putImageData(out,0,0);
-}
-function drawQuad(){
- if(!img)return;const c=$("quad"),ctx=c.getContext("2d");ctx.clearRect(0,0,640,360);ctx.drawImage(img,0,0,640,360);
- const top=+$("top").value/100,tw=+$("topwidth").value/100,bw=+$("bottom").value/100;
- const pts=[[320-320*tw,360*top],[320+320*tw,360*top],[320+320*bw,350],[320-320*bw,350]];
- ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle="rgba(23,103,172,.16)";ctx.fill();ctx.strokeStyle="#1c8bce";ctx.lineWidth=3;ctx.stroke();
- pts.forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],6,0,Math.PI*2);ctx.fillStyle="#f59e0b";ctx.fill();});
-}
-function drawWindows(){
- if(!binaryData)return;
- const c=$("windowCanvas"),ctx=c.getContext("2d"),w=640,h=360,n=+$("nwin").value,margin=+$("margin").value,band=Math.floor(h/n),d=binaryData.data;
- const hist=new Int32Array(w);
- for(let y=Math.floor(h*.5);y<h;y++)for(let x=0;x<w;x++)if(d[(y*w+x)*4]>180)hist[x]++;
- let left=0,right=0;
- for(let x=0;x<w/2;x++)if(hist[x]>hist[left])left=x;
- for(let x=Math.floor(w/2);x<w;x++)if(hist[x]>hist[right])right=x;
- ctx.putImageData(binaryData,0,0);ctx.lineWidth=2;
- for(let k=0;k<n;k++){
-  const y1=h-k*band,y0=Math.max(0,y1-band);
-  const lx0=Math.max(0,left-margin),lx1=Math.min(w,left+margin),rx0=Math.max(0,right-margin),rx1=Math.min(w,right+margin);
-  let lsum=0,ln=0,rsum=0,rn=0;
-  for(let y=y0;y<y1;y++)for(let x=lx0;x<lx1;x++)if(d[(y*w+x)*4]>180){lsum+=x;ln++;}
-  for(let y=y0;y<y1;y++)for(let x=rx0;x<rx1;x++)if(d[(y*w+x)*4]>180){rsum+=x;rn++;}
-  ctx.strokeStyle="#16a36a";ctx.strokeRect(lx0,y0,lx1-lx0,y1-y0);
-  ctx.strokeStyle="#2378d0";ctx.strokeRect(rx0,y0,rx1-rx0,y1-y0);
-  if(ln>8)left=Math.round(lsum/ln);
-  if(rn>8)right=Math.round(rsum/rn);
- }
-}
-function bindRange(id,output,fn,suffix=""){const el=$(id);el.addEventListener("input",()=>{$(output).textContent=el.value+suffix;fn();});}
-document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{active=b.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));panels.forEach(p=>$(p).classList.toggle("hidden",p!==active));}));
-scene.addEventListener("change",loadScene);
-bindRange("light","lval",recomputeBinary);bindRange("grad","gval",recomputeBinary);
-bindRange("top","topval",()=>{drawQuad();drawWarp();},"%");bindRange("topwidth","widthval",()=>{drawQuad();drawWarp();},"%");bindRange("bottom","bottomval",()=>{drawQuad();drawWarp();},"%");
-bindRange("nwin","nval",drawWindows);bindRange("margin","mval",drawWindows);
-loadScene();
-</script></body></html>
+<script src="e03-v2.js"></script></body></html>
