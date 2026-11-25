@@ -36,9 +36,15 @@
 
     [进入 E02 完整实验](e02-notebook.html){ .md-button .md-button--primary }
 
+-   **E03 · Advanced Lane Finding V2.0**
+
+    通过相机标定、HLS/Sobel 阈值、透视变换、滑动窗口和二次曲线拟合，完成道路车道线检测；包含直道、普通弯道和复杂弯道三段真实视频，以及 18 项探索任务。
+
+    [进入 E03 完整实验](e03-notebook.html){ .md-button .md-button--primary }
+
 </div>
 
-后续 E03—E08、A01—A02、P01 仍按课程研发路线逐步建设。本页仅开放已经完成教学审核的 E01 和 E02。
+E01、E02 与 E03 V2.0 已完成教师人工验收，正式开放教学使用。E04—E08、A01—A02、P01 仍按课程研发路线逐步建设。
 
 ## 一份标准 Notebook，三种学习方式
 

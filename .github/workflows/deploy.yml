@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     environment:
       name: github-pages
@@ -70,8 +70,20 @@ jobs:
           python scripts/course_labs/stage_resources.py
           python scripts/course_labs/check_student.py
 
+      - name: Generate approved E03 V2.0 resources and validate outputs
+        run: |
+          python scripts/course_labs/e03/stage_e03_dev.py
+          python scripts/course_labs/e03/check_e03.py
+
       - name: Build site (strict)
         run: mkdocs build --strict
+
+      - name: Verify approved student pages in Chromium
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install chromium
+          ln -s "$PWD/site" "$RUNNER_TEMP/dev-site"
+          python scripts/course_labs/smoke_browser.py
 
       - name: Verify current publication content and four-dimensional gate
         run: python scripts/radar/verify_publication.py --site-dir site --data-dir research-radar/data
