@@ -203,7 +203,9 @@ try:
   frame.locator("#scene").select_option("complex")
   frame.locator('#loadStats[data-state="ready"][data-scene="complex"]').wait_for(timeout=45000)
   frame.locator('[data-tab="video"]').click()
-  assert frame.locator("#compare").get_attribute("src").split("?")[0].endswith("complex-compare.mp4")
+  assert frame.locator("#compare").get_attribute("src").split("?")[0].endswith("complex-original.mp4")
+  dims=frame.locator(".video-grid video").evaluate_all("vs=>vs.map(v=>({w:v.getBoundingClientRect().width,h:v.getBoundingClientRect().height}))")
+  assert len(dims)==2 and abs(dims[0]["h"]-dims[1]["h"])<2 and abs(dims[0]["w"]-dims[1]["w"])<2,("E03 video panes must be aligned",dims)
   # Stronger E03 visual checks: reject blank canvases and static-looking outputs.
   frame.locator('[data-tab="calibration"]').click()
   c0=frame.locator("#calibOut").evaluate("(c)=>c.toDataURL()")

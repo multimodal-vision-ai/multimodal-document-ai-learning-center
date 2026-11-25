@@ -380,7 +380,11 @@ jobs:
                               lab.locator("#"+tab).screenshot(path=str(out/(tab+".png")),timeout=20000)
                           print("PUBLIC E03 PASS",mode,scene,tab,flush=True)
                       lab.locator('[data-tab="video"]').click()
-                      assert lab.locator("#compare").get_attribute("src").endswith(scene+"-compare.mp4")
+                      assert lab.locator("#compare").get_attribute("src").endswith(scene+"-original.mp4")
+                      dims=lab.locator(".video-grid video").evaluate_all("vs=>vs.map(v=>({w:v.getBoundingClientRect().width,h:v.getBoundingClientRect().height}))")
+                      assert len(dims)==2 and abs(dims[0]["h"]-dims[1]["h"])<2 and abs(dims[0]["w"]-dims[1]["w"])<2,(mode,scene,dims)
+                      if mode=="embedded" and scene=="straight":
+                          lab.locator("#video").screenshot(path=str(out/"video.png"),timeout=20000)
                       assert lab.locator("#processed").get_attribute("src").endswith(scene+"-processed.mp4")
               assert not errors,errors
               browser.close()
