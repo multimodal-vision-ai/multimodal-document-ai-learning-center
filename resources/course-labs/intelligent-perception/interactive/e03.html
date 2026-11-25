@@ -22,7 +22,7 @@ figcaption{padding:9px 12px;font-size:12px;color:#55718a;font-weight:750}
 input[type=range]{width:100%;accent-color:#1767ac}
 .note{padding:12px 14px;background:#f0f5fa;border-left:3px solid #7da2c3;border-radius:5px;color:#526e86;font-size:12px;line-height:1.8;margin-top:13px}
 .scene-select{margin:12px 0}
-.video-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.video-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;align-items:start}.video-grid>div{min-width:0}.video-grid strong{display:block;margin-bottom:7px}.video-grid video{aspect-ratio:16/9;object-fit:contain}
 video{width:100%;display:block;background:#111;border-radius:8px}
 .hidden{display:none!important}
 @media(max-width:760px){.grid,.video-grid{grid-template-columns:1fr}main{padding:14px 10px}}
@@ -82,8 +82,8 @@ video{width:100%;display:block;background:#111;border-radius:8px}
 </section>
 <section class="panel hidden" id="video">
 <h2>实验 05 · 连续视频观察</h2>
-<p>选择三段道路视频，比较原始画面与算法处理结果。每段默认展示约 8 秒短片，完整视频可在 Notebook 中运行。</p>
-<div class="video-grid"><div><strong>原始视频 / 对比输出</strong><video id="compare" controls playsinline preload="metadata" src="../e03-media/videos/straight-compare.mp4"></video></div><div><strong>检测结果</strong><video id="processed" controls playsinline preload="metadata" src="../e03-media/videos/straight-processed.mp4"></video></div></div>
+<p>选择三段道路视频，左右等尺寸比较同源原始画面与算法处理结果。每段默认展示约 8 秒短片，完整视频可在 Notebook 中运行。视频为预计算输出；下方滑块只控制播放速度与定位。</p>
+<div class="video-grid"><div><strong>原始视频</strong><video id="compare" controls playsinline preload="metadata" src="../e03-media/videos/straight-original.mp4"></video></div><div><strong>车道线检测结果</strong><video id="processed" controls playsinline preload="metadata" src="../e03-media/videos/straight-processed.mp4"></video></div></div>
 <div class="controls" style="margin-top:12px"><div class="control"><label>同步播放速度 <output id="speedval">1.00×</output></label><input id="speed" type="range" min="50" max="150" value="100"></div><div class="control"><label>同步定位 <output id="seekval">0.0 s</output></label><input id="seek" type="range" min="0" max="800" value="0"></div></div><div class="note" id="videoScene">选择场景后，两段视频可以同步定位、同步比较。</div><div class="note" id="video-note">复杂弯道的边界漂移和误选是真实失败现象，作为课后探索保留。</div><video id="liveVideo" class="hidden" muted playsinline preload="metadata"></video>
 </section>
 </main>
@@ -194,7 +194,7 @@ video{width:100%;display:block;background:#111;border-radius:8px}
    if(!canvasIds.every(id=>C(id).dataset.ready==="true"))throw Error("存在未完成的图像区域");
    for(const id of ["k1","light","grad","top","topwidth","bottom","nwin","margin"])C(id).disabled=false;
    [C("compare"),C("processed"),C("liveVideo")].forEach(v=>v.pause());
-   C("compare").src=base+"videos/"+p.compare;
+   C("compare").src=base+"videos/"+key+"-original.mp4";
    C("processed").src=base+"videos/"+p.processed;
    C("compare").load();C("processed").load();
    C("liveVideo").src=base+"videos/"+p.compare;C("liveVideo").load();
