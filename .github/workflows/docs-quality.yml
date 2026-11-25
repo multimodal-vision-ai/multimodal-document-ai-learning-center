@@ -61,6 +61,11 @@ jobs:
           python scripts/course_labs/stage_resources.py
           python scripts/course_labs/check_student.py
 
+      - name: Generate approved E03 V2.0 resources and validate outputs
+        run: |
+          python scripts/course_labs/e03/stage_e03_dev.py
+          python scripts/course_labs/e03/check_e03.py
+
       - name: Validate navigation and internal links
         run: mkdocs build --strict
       - name: Simulate production Pages radar snapshot validation
