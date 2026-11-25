@@ -19,8 +19,9 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: dev-preview
-  cancel-in-progress: false
+  # Keep each PR preview independent; dev pushes share their own preview lane.
+  group: dev-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -117,6 +118,12 @@ jobs:
           python scripts/course_labs/stage_resources.py
           python scripts/course_labs/check_student.py
 
+      - name: Stage E03 V2.0 teaching assets for DEV preview
+        run: python scripts/course_labs/e03/stage_e03_dev.py
+        # The staging script creates the real video/image outputs and a self-contained student ZIP.
+      - name: Validate staged E03 notebook and media
+        run: python scripts/course_labs/e03/check_e03.py
+
       - name: Strict build with explicit HTML links
         run: |
           mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
@@ -186,7 +193,8 @@ jobs:
        github.event.pull_request.base.ref == 'dev' &&
        github.event.pull_request.head.repo.full_name == github.repository) ||
       (github.event_name != 'pull_request' && github.ref == 'refs/heads/dev')
-    runs-on: ubuntu-latest
+    # Match the tested build runner; Playwright 1.56 does not support Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     env:
       PREVIEW_BRANCH: ${{ github.event_name == 'pull_request' && format('dev-preview-pr-{0}', github.event.pull_request.number) || 'dev-preview' }}
     permissions:
@@ -209,6 +217,15 @@ jobs:
         run: |
           set -euo pipefail
           test -f "$RUNNER_TEMP/dev-site/index.html"
+          # Reject a late PR build before it can overwrite a newer review snapshot.
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            expected="${{ github.event.pull_request.head.sha }}"
+            actual="$(git ls-remote origin "refs/pull/${{ github.event.pull_request.number }}/head" | cut -f1)"
+            if [ "$actual" != "$expected" ]; then
+              echo "::error::Stale PR preview: built $expected, current head $actual. Refusing to publish."
+              exit 1
+            fi
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git ls-remote --exit-code --heads origin "refs/heads/$PREVIEW_BRANCH" > /dev/null 2>&1; then
@@ -226,9 +243,163 @@ jobs:
             echo "DEV preview is already up to date."
           else
             git commit -m "docs(preview): refresh generated DEV site [skip ci]"
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              actual="$(git ls-remote origin "refs/pull/${{ github.event.pull_request.number }}/head" | cut -f1)"
+              test "$actual" = "${{ github.event.pull_request.head.sha }}" || { echo "::error::PR changed during publish"; exit 1; }
+            fi
             git push origin "HEAD:refs/heads/$PREVIEW_BRANCH"
           fi
           echo "DEV preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$PREVIEW_BRANCH/index.html"
+          echo "Immutable preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$(git rev-parse HEAD)/index.html"
+
+      - name: Verify deployed E03 interactive images in public Chromium
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install playwright==1.56.0
+          python -m playwright install chromium
+          export E03_PUBLIC_PATH="multimodal-vision-ai/multimodal-document-ai-learning-center/$(git rev-parse HEAD)/resources/course-labs/intelligent-perception"
+          echo "Checking immutable public preview: $E03_PUBLIC_PATH"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright, expect
+          import time
+          from urllib.parse import urlparse
+          path=os.environ["E03_PUBLIC_PATH"]
+          out=Path(os.environ["RUNNER_TEMP"])/"e03-public-review"
+          out.mkdir(exist_ok=True)
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(headless=True)
+              page=browser.new_page(viewport={"width":1440,"height":1050})
+              errors=[]
+              page.on("pageerror",lambda err:errors.append(str(err)))
+              def open_review_page(url, marker_selector):
+                  # The proxy now presents a user-facing external-content notice.
+                  # Follow its ordinary Open the page control, never fabricate the DOM
+                  # or replace the fetched content with local HTML.
+                  current=page
+                  resp=current.goto(url,wait_until="domcontentloaded",timeout=45000)
+                  assert resp and resp.ok,(url,resp.status if resp else None)
+                  if "External Content Notice" in current.title():
+                      assert urlparse(current.url).hostname in ("raw.githack.com","rawcdn.githack.com")
+                      assert "/"+path+"/" in current.url
+                      previous=set(current.context.pages)
+                      current.get_by_text("Open the page",exact=True).click(timeout=10000)
+                      current.wait_for_timeout(1000)
+                      added=[p for p in current.context.pages if p not in previous]
+                      if added:
+                          current=added[-1]
+                      print("PUBLIC E03 NOTICE ACCEPTED",current.url,flush=True)
+                  current.locator(marker_selector).wait_for(state="attached",timeout=25000)
+                  return current
+              # A freshly published GitHub snapshot may take time to become available
+              # through third-party HTML proxies. Verify actual DOM, not HTTP 200 alone.
+              base=None
+              for attempt in range(1,5):
+                  for host in ("rawcdn.githack.com","raw.githack.com"):
+                      candidate="https://"+host+"/"+path
+                      url=candidate+"/interactive/e03.html"
+                      try:
+                          page=open_review_page(url,'meta[name="e03-build"]')
+                          marker=page.locator('meta[name="e03-build"]').get_attribute("content",timeout=5000)
+                          assert marker=="E03-SELFCONTAINED-20261124C"
+                          assert page.locator("#e03-embedded-scenes").count()==1
+                          base=candidate
+                          print("PUBLIC E03 VERIFIED BASE",base,flush=True)
+                          break
+                      except Exception as err:
+                          print("PUBLIC E03 PROBE",attempt,host,str(err)[:500],flush=True)
+                          try:
+                              print("RESPONSE",page.url,page.title(),page.locator("body").inner_text(timeout=3000)[:500],flush=True)
+                              page.screenshot(path=str(out/(host+"-probe.png")),timeout=5000)
+                          except Exception:
+                              pass
+                  if base:
+                      break
+                  time.sleep(12)
+              assert base,"Neither public proxy returned the exact E03 HTML snapshot"
+              errors.clear()
+              for mode in ("direct","embedded"):
+                  url=base+("/interactive/e03.html" if mode=="direct" else "/e03-notebook.html")
+                  page=open_review_page(url,'.learning-tabs' if mode=="embedded" else 'meta[name="e03-build"]')
+                  page.on("pageerror",lambda err:errors.append(str(err)))
+                  if mode=="embedded":
+                      page.locator('.learning-tabs a[data-mode="interactive"]').click()
+                      lab=page.frame_locator("#e03-lab-frame")
+                      # If the frame itself is served the same notice, test the
+                      # ordinary confirmation control in the actual frame.
+                      try:
+                          lab.locator('meta[name="e03-build"]').wait_for(state="attached",timeout=8000)
+                      except Exception:
+                          lab.get_by_text("Open the page",exact=True).click(timeout=10000)
+                  else:
+                      lab=page
+                  expect(lab.locator('meta[name="e03-build"]')).to_have_attribute("content","E03-SELFCONTAINED-20261124C",timeout=60000)
+                  source_payload=lab.locator("#e03-embedded-scenes").evaluate("s=>Object.fromEntries(Object.entries(JSON.parse(s.textContent)).map(([k,v])=>[k,v.length]))")
+                  assert set(source_payload)=={"straight","curve","complex"} and min(source_payload.values())>1000,source_payload
+                  for scene in ("straight","curve","complex"):
+                      lab.locator("#scene").select_option(scene)
+                      expect(lab.locator('#loadStats[data-state="ready"][data-scene="'+scene+'"]')).to_be_visible(timeout=60000)
+                      def canvas(id):
+                          return lab.locator("#"+id)
+                      def stats(id):
+                          return canvas(id).evaluate("""c=>{
+                            const d=c.getContext("2d").getImageData(0,0,c.width,c.height).data;
+                            let opaque=0,nonblack=0,colors=new Set();
+                            for(let i=0;i<d.length;i+=16){if(d[i+3])opaque++;if(d[i+3]&&(d[i]||d[i+1]||d[i+2]))nonblack++;colors.add((d[i]<<16)|(d[i+1]<<8)|d[i+2]);}
+                            return {opaque,nonblack,colors:colors.size};
+                          }""")
+                      def changed(control,target,lo,hi):
+                          el=lab.locator("#"+control)
+                          old=el.input_value()
+                          expect(el).to_be_enabled()
+                          def setv(v):
+                              el.evaluate("(el,v)=>{el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}))}",str(v))
+                          setv(lo)
+                          a=canvas(target).evaluate("c=>c.toDataURL()")
+                          setv(hi)
+                          b=canvas(target).evaluate("c=>c.toDataURL()")
+                          setv(old)
+                          assert a!=b,(mode,scene,control,target,"identical computed output")
+                      for tab,ids,controls in [
+                          ("calibration",("calibSrc","calibOut"),[("k1","calibOut",-30,30)]),
+                          ("threshold",("source","binary"),[("light","binary",80,245),("grad","binary",5,120)]),
+                          ("perspective",("quad","bird"),[("top","bird",38,76),("topwidth","bird",12,42),("bottom","bird",65,99)]),
+                          ("windows",("windowCanvas","fitCanvas"),[("nwin","windowCanvas",4,18),("margin","windowCanvas",20,120)])
+                      ]:
+                          lab.locator('[data-tab="'+tab+'"]').click()
+                          for id in ids:
+                              expect(canvas(id)).to_be_visible(timeout=10000)
+                              q=stats(id)
+                              assert q["opaque"]>1000 and q["nonblack"]>30 and q["colors"]>1,(mode,scene,id,q)
+                          for args in controls:
+                              changed(*args)
+                          if mode=="embedded" and scene=="straight":
+                              lab.locator("#"+tab).screenshot(path=str(out/(tab+".png")),timeout=20000)
+                          print("PUBLIC E03 PASS",mode,scene,tab,flush=True)
+                      lab.locator('[data-tab="video"]').click()
+                      assert lab.locator("#compare").get_attribute("src").endswith(scene+"-original.mp4")
+                      dims=lab.locator(".video-grid video").evaluate_all("vs=>vs.map(v=>({w:v.getBoundingClientRect().width,h:v.getBoundingClientRect().height}))")
+                      assert len(dims)==2 and abs(dims[0]["h"]-dims[1]["h"])<2 and abs(dims[0]["w"]-dims[1]["w"])<2,(mode,scene,dims)
+                      if mode=="embedded" and scene=="straight":
+                          lab.locator("#video").screenshot(path=str(out/"video.png"),timeout=20000)
+                      assert lab.locator("#processed").get_attribute("src").endswith(scene+"-processed.mp4")
+              assert not errors,errors
+              browser.close()
+          print("PUBLIC E03 PASS: immutable HTTPS page, embedded lesson, all 3 scenes, 8 computed canvases and 8 controls.")
+          print("PUBLIC E03 REVIEW URL",base+"/e03-notebook.html",flush=True)
+          (out/"review-url.txt").write_text(base+"/e03-notebook.html\n",encoding="utf-8")
+          PY
+      - name: Upload public E03 review screenshots
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e03-public-review
+          path: ${{ runner.temp }}/e03-public-review
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Checkout persistent Radar data branch
         if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/dev' && contains(github.event.head_commit.message, '[radar-weekly-scan]'))
