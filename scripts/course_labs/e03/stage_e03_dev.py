@@ -83,9 +83,9 @@ def main():
   shutil.copy2(out/"videos"/f"{stem}_compare.mp4",media/"videos"/f"{key}-compare.mp4")
   shutil.copy2(out/"videos"/f"{stem}_processed.mp4",media/"videos"/f"{key}-processed.mp4")
   # Recover the exact sampled original frames from the reviewed comparison clip.
-  # Its left 960x540 image begins below the 40px title band.
+  # The comparison encoder may scale the 1920x580 layout; crop proportionally.
   import imageio_ffmpeg
-  subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),"-y","-loglevel","error","-i",str(media/"videos"/f"{key}-compare.mp4"),"-vf","crop=960:540:0:40","-an","-c:v","libx264","-pix_fmt","yuv420p","-movflags","+faststart",str(media/"videos"/f"{key}-original.mp4")],check=True)
+  subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),"-y","-loglevel","error","-i",str(media/"videos"/f"{key}-compare.mp4"),"-vf","crop=iw/2:ih-iw/48:0:iw/48,scale=960:540","-an","-c:v","libx264","-pix_fmt","yuv420p","-movflags","+faststart",str(media/"videos"/f"{key}-original.mp4")],check=True)
  # Embed the actual reviewed scene frames into the browser lesson at build time.
  # JPEG bytes are local to the HTML document, so Canvas never reads a remote image.
  payload={}

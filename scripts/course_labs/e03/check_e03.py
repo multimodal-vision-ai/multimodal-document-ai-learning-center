@@ -20,7 +20,7 @@ html=(BASE/"e03-notebook.html").read_text(encoding="utf-8")
 for rel in ["e03-media/calibration-corners.jpg","e03-media/final-single-image.jpg","e03-media/threshold-binary.png","e03-media/perspective-bird-eye.png","e03-media/sliding-window-fit.png"]:
  assert rel in html,("page missing image reference",rel)
 for scene in ("straight","curve","complex"):
- for kind in ("compare","processed"):
+ for kind in ("compare","processed","original"):
   f=BASE/f"e03-media/videos/{scene}-{kind}.mp4"
   assert f.is_file() and f.stat().st_size>10000,("missing video",str(f))
 assert (BASE/"e03-media/scene-complex-result.jpg").is_file()
