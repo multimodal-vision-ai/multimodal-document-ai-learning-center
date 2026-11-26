@@ -5,7 +5,7 @@ Run in an isolated env: python stage_e04_preview.py OUTPUT WORK SOURCE_REF
 import hashlib, json, os, shutil, subprocess, sys, zipfile
 from pathlib import Path
 from importlib.metadata import distribution
-from stage_media import stage
+from stage_media import stage, embed_frames
 from export_raw_onnx import export, EXPECTED
 
 HERE=Path(__file__).resolve().parent
@@ -47,6 +47,7 @@ def main(out,work,ref):
     shutil.copy2(npm/'package-lock.json',out/'source/onnxruntime-package-lock.json')
     for name in ('e04.html','e04-core.mjs','e04-lab.mjs'):
         shutil.copy2(COURSE/'interactive'/name,out/'interactive'/name)
+    embed_frames(media,out/'interactive/e04.html')
     shutil.copy2(HERE/'e04-app.html',out/'index.html')
     shutil.copy2(HERE/'e04-teacher.html',out/'teacher.html')
     nb=HERE/'E04_YOLO_Object_Detection_V1.0.ipynb'
