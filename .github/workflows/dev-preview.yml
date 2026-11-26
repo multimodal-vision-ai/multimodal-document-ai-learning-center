@@ -129,6 +129,63 @@ jobs:
           mkdocs build --strict --no-directory-urls --site-dir "$RUNNER_TEMP/dev-site"
           python scripts/radar/verify_publication.py --site-dir "$RUNNER_TEMP/dev-site"
 
+      - name: Stage isolated E04 application and test reviewed road media
+        if: ${{ hashFiles('scripts/course_labs/e04/E04-material-review.zip') != '' }}
+        shell: bash
+        env:
+          YOLO_AUTOINSTALL: 'False'
+          OMP_NUM_THREADS: '2'
+          E04_SOURCE_REF: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/e04-env"
+          P="$RUNNER_TEMP/e04-env/bin/python"
+          "$P" -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          "$P" -m pip install ultralytics==8.4.219 onnx onnxruntime playwright==1.65.2 pillow nbclient nbformat ipykernel
+          "$P" -m playwright install chromium
+          E04="$RUNNER_TEMP/dev-site/resources/course-labs/intelligent-perception/e04-app"
+          "$P" scripts/course_labs/e04/stage_e04_preview.py "$E04" "$RUNNER_TEMP/e04-stage" "$E04_SOURCE_REF"
+          "$P" scripts/course_labs/e04/browser_real_media.py "$E04"
+          # Reproduce the downloadable Notebook in its own extracted student directory.
+          mkdir -p "$RUNNER_TEMP/e04-student"
+          "$P" -m zipfile -e "$E04/downloads/MVAI_E04_V1.0_student.zip" "$RUNNER_TEMP/e04-student"
+          "$P" -m ipykernel install --user --name e04-dev
+          export E04_STUDENT="$RUNNER_TEMP/e04-student"
+          "$P" - <<'PY'
+          import os, nbformat
+          from pathlib import Path
+          from nbclient import NotebookClient
+          p=Path(os.environ['E04_STUDENT'])
+          nb=nbformat.read(p/'E04_YOLO_Object_Detection_V1.0.ipynb',as_version=4)
+          NotebookClient(nb,timeout=300,kernel_name='e04-dev',resources={'metadata':{'path':str(p)}}).execute()
+          print('E04 complete student Notebook CPU execution: PASS')
+          PY
+          # Print the independent HTML teacher guide after real-video results exist.
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          export E04_APP="$E04"
+          "$P" - <<'PY'
+          import os, pathlib, threading, functools, http.server
+          from playwright.sync_api import sync_playwright
+          root=pathlib.Path(os.environ['E04_APP'])
+          server=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(http.server.SimpleHTTPRequestHandler,directory=str(root)))
+          threading.Thread(target=server.serve_forever,daemon=True).start()
+          try:
+              with sync_playwright() as p:
+                  b=p.chromium.launch(headless=True,args=['--no-sandbox'])
+                  page=b.new_page()
+                  page.goto(f'http://127.0.0.1:{server.server_port}/teacher.html',wait_until='networkidle')
+                  page.evaluate('document.fonts.ready')
+                  page.locator('#videoReport[data-state="ready"]').wait_for(timeout=15000)
+                  assert page.locator('img').evaluate_all('(xs)=>xs.every(x=>x.complete&&x.naturalWidth>0)')
+                  page.pdf(path=str(root/'downloads/E04_teacher_guide.pdf'),format='A4',margin={'top':'15mm','bottom':'15mm','left':'15mm','right':'15mm'},print_background=True)
+                  b.close()
+          finally:
+              server.shutdown()
+          PY
+          test -s "$E04/downloads/E04_teacher_guide.pdf"
+          test -s "$E04/e04-media/data/browser-video-validation.json"
+
       - name: Verify real student pages in Chromium
         run: |
           python -m pip install playwright==1.56.0
@@ -251,6 +308,107 @@ jobs:
           fi
           echo "DEV preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$PREVIEW_BRANCH/index.html"
           echo "Immutable preview URL: https://raw.githack.com/multimodal-vision-ai/multimodal-document-ai-learning-center/$(git rev-parse HEAD)/index.html"
+
+      - name: Verify deployed E04 actual inference in public Chromium
+        if: ${{ hashFiles('resources/course-labs/intelligent-perception/e04-app/e04-models/manifest.json') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/e04-public-env"
+          P="$RUNNER_TEMP/e04-public-env/bin/python"
+          "$P" -m pip install playwright==1.65.2
+          "$P" -m playwright install chromium
+          export E04_PUBLIC_PATH="multimodal-vision-ai/multimodal-document-ai-learning-center/$(git rev-parse HEAD)/resources/course-labs/intelligent-perception/e04-app"
+          "$P" - <<'PY'
+          import os,time
+          from playwright.sync_api import sync_playwright
+          path=os.environ['E04_PUBLIC_PATH']
+          with sync_playwright() as p:
+              b=p.chromium.launch(headless=True)
+              last=None
+              for attempt in range(3):
+                  for host in ('raw.githack.com','rawcdn.githack.com'):
+                      page=b.new_page(viewport={'width':1440,'height':1000})
+                      page.on('console',lambda m: print('E04 console',m.type,m.text[:800],flush=True) if m.type in ('error','warning') else None)
+                      page.on('pageerror',lambda e: print('E04 pageerror',str(e)[:800],flush=True))
+                      page.on('requestfailed',lambda q: print('E04 requestfailed',q.url,q.failure,flush=True))
+                      page.on('response',lambda q: print('E04 asset',q.status,q.url,q.headers.get('content-type',''),flush=True) if any(t in q.url for t in ('e04-runtime/','e04-models/')) else None)
+                      try:
+                          base='https://'+host+'/'+path
+                          resp=page.goto(base+'/index.html',wait_until='domcontentloaded',timeout=45000)
+                          assert resp and resp.ok
+                          if 'External Content Notice' in page.title():
+                              before=set(page.context.pages)
+                              page.get_by_text('Open the page',exact=True).click(timeout=10000)
+                              page.wait_for_timeout(1000)
+                              added=[x for x in page.context.pages if x not in before]
+                              if added:page=added[-1]
+                          page.locator('meta[name="e04-build"]').wait_for(state='attached',timeout=25000)
+                          assert page.locator('a[href*="teacher"],a[href*="E04_teacher_guide"]').count()==0
+                          assert '教师手册' not in page.locator('body').inner_text()
+                          assert '教师课堂讲解' not in page.locator('body').inner_text()
+                          page.locator('button[data-mode="interactive"]').click()
+                          lab=page.frame_locator('#lab')
+                          lab.locator('#e04-embedded-frames').wait_for(state='attached',timeout=30000)
+                          lab.locator('#leftFig[data-ready="1"]').wait_for(timeout=30000)
+                          assert lab.locator('#left').evaluate('(c)=>c.getContext("2d").getImageData(0,0,1,1).data.length===4')
+                          print('PUBLIC E04 CANVAS PIXEL ACCESS PASS',flush=True)
+                          lab.locator('#backend').select_option('wasm')
+                          lab.locator('#size').select_option('320')
+                          lab.locator('#run').click()
+                          lab.locator('body[data-completed]:not([data-completed=""])').wait_for(timeout=180000)
+                          print('E04 public lab status:',lab.locator('#status').inner_text(),flush=True)
+                          assert '真实模型推理完成' in lab.locator('#status').inner_text()
+                          lab.locator('#rightFig[data-ready="1"]').wait_for(timeout=180000)
+                          assert 'wasm' in lab.locator('#rightCaption').inner_text()
+                          lab.locator('body[data-completed]:not([data-completed=""])').wait_for(timeout=180000)
+                          assert '真实模型推理完成' in lab.locator('#status').inner_text()
+                          print('PUBLIC E04 A1 REAL INFERENCE PASS',flush=True)
+                          lab.locator('[data-tab="2"]').click()
+                          lab.locator('#leftFig[data-ready="1"]').wait_for(timeout=30000)
+                          assert lab.locator('#left').evaluate('(c)=>c.getContext("2d").getImageData(0,0,1,1).data.length===4')
+                          lab.locator('#run').click()
+                          lab.locator('body[data-completed]:not([data-completed=""])').wait_for(timeout=180000)
+                          assert '真实模型推理完成' in lab.locator('#status').inner_text(),lab.locator('#status').inner_text()
+                          lab.locator('[data-tab="5"]').click()
+                          lab.locator('#video[data-scene="A"]').wait_for(state='attached',timeout=60000)
+                          for _ in range(60):
+                              if lab.locator('#video').evaluate('(v)=>v.readyState>=2'):break
+                              time.sleep(1)
+                          assert lab.locator('#video').evaluate('(v)=>v.readyState>=2'),'public video did not decode'
+                          lab.locator('#frameRun').click()
+                          lab.locator('body[data-completed]:not([data-completed=""])').wait_for(timeout=180000)
+                          assert '真实模型推理完成' in lab.locator('#status').inner_text(),lab.locator('#status').inner_text()
+                          assert lab.locator('#rightFig').get_attribute('data-ready')=='1'
+                          lab.locator('#videoRate').select_option('5')
+                          lab.locator('#continuous').click()
+                          lab.locator('#timeline tr').nth(3).wait_for(state='attached',timeout=60000)
+                          assert lab.locator('#left').is_visible() and lab.locator('#right').is_visible()
+                          assert lab.locator('#videoPanel').evaluate("""(p)=>{const l=p.querySelector('#leftFig'),r=p.querySelector('#rightFig');return l.dataset.time===r.dataset.time&&Number(r.dataset.time)>=.2&&Number(r.querySelector('canvas').dataset.boxes)>0}""")
+                          lab.locator('#pauseContinuous').click()
+                          lab.locator('#videoPanel[data-sequence-state="paused"]').wait_for(timeout=20000)
+                          n=lab.locator('#timeline tr').count()
+                          time.sleep(.4)
+                          assert lab.locator('#timeline tr').count()==n
+                          lab.locator('#pauseContinuous').click()
+                          lab.locator('#videoPanel[data-sequence-state="complete"]').wait_for(timeout=240000)
+                          assert lab.locator('#timeline tr').count()==60
+                          assert lab.locator('#leftFig').get_attribute('data-time')==lab.locator('#rightFig').get_attribute('data-time')
+                          assert abs(float(lab.locator('#rightFig').get_attribute('data-time'))-11.8)<.025
+                          assert lab.locator('#right').is_visible()
+                          print('PUBLIC E04 CONTINUOUS DETECTION PASS: 60 actual frames, paired canvases, pause/resume; no teacher links',flush=True)
+                          print('PUBLIC E04 ACTUAL MODEL INFERENCE PASS',base+'/index.html',flush=True)
+                          b.close()
+                          raise SystemExit(0)
+                      except Exception as e:
+                          last=e
+                          print('PUBLIC E04 attempt',attempt,host,str(e)[:500],flush=True)
+                          try: print(page.url,page.title(),page.locator('body').inner_text(timeout=3000)[:500])
+                          except Exception: pass
+                          page.close()
+                  time.sleep(10)
+              raise RuntimeError(f'Public E04 verification failed: {last}')
+          PY
 
       - name: Verify deployed E03 interactive images in public Chromium
         if: github.event_name == 'pull_request'
