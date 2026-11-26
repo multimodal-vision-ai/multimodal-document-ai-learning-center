@@ -141,7 +141,7 @@ jobs:
           python -m venv "$RUNNER_TEMP/e04-env"
           P="$RUNNER_TEMP/e04-env/bin/python"
           "$P" -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          "$P" -m pip install ultralytics==8.4.219 onnx onnxruntime playwright==1.56.0 pillow nbclient nbformat ipykernel
+          "$P" -m pip install ultralytics==8.4.219 onnx onnxruntime playwright==1.65.2 pillow nbclient nbformat ipykernel
           "$P" -m playwright install chromium
           E04="$RUNNER_TEMP/dev-site/resources/course-labs/intelligent-perception/e04-app"
           "$P" scripts/course_labs/e04/stage_e04_preview.py "$E04" "$RUNNER_TEMP/e04-stage" "$E04_SOURCE_REF"
@@ -314,10 +314,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m pip install playwright==1.56.0
-          python -m playwright install chromium
+          python -m venv "$RUNNER_TEMP/e04-public-env"
+          P="$RUNNER_TEMP/e04-public-env/bin/python"
+          "$P" -m pip install playwright==1.65.2
+          "$P" -m playwright install chromium
           export E04_PUBLIC_PATH="multimodal-vision-ai/multimodal-document-ai-learning-center/$(git rev-parse HEAD)/resources/course-labs/intelligent-perception/e04-app"
-          python - <<'PY'
+          "$P" - <<'PY'
           import os,time
           from playwright.sync_api import sync_playwright
           path=os.environ['E04_PUBLIC_PATH']
