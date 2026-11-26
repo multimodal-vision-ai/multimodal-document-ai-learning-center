@@ -344,6 +344,9 @@ jobs:
                               added=[x for x in page.context.pages if x not in before]
                               if added:page=added[-1]
                           page.locator('meta[name="e04-build"]').wait_for(state='attached',timeout=25000)
+                          assert page.locator('a[href*="teacher"],a[href*="E04_teacher_guide"]').count()==0
+                          assert '教师手册' not in page.locator('body').inner_text()
+                          assert '教师课堂讲解' not in page.locator('body').inner_text()
                           page.locator('button[data-mode="interactive"]').click()
                           lab=page.frame_locator('#lab')
                           lab.locator('#e04-embedded-frames').wait_for(state='attached',timeout=30000)
@@ -377,6 +380,23 @@ jobs:
                           lab.locator('body[data-completed]:not([data-completed=""])').wait_for(timeout=180000)
                           assert '真实模型推理完成' in lab.locator('#status').inner_text(),lab.locator('#status').inner_text()
                           assert lab.locator('#rightFig').get_attribute('data-ready')=='1'
+                          lab.locator('#videoRate').select_option('5')
+                          lab.locator('#continuous').click()
+                          lab.locator('#timeline tr').nth(3).wait_for(state='attached',timeout=60000)
+                          assert lab.locator('#left').is_visible() and lab.locator('#right').is_visible()
+                          assert lab.locator('#videoPanel').evaluate("""(p)=>{const l=p.querySelector('#leftFig'),r=p.querySelector('#rightFig');return l.dataset.time===r.dataset.time&&Number(r.dataset.time)>=.2&&Number(r.querySelector('canvas').dataset.boxes)>0}""")
+                          lab.locator('#pauseContinuous').click()
+                          lab.locator('#videoPanel[data-sequence-state="paused"]').wait_for(timeout=20000)
+                          n=lab.locator('#timeline tr').count()
+                          time.sleep(.4)
+                          assert lab.locator('#timeline tr').count()==n
+                          lab.locator('#pauseContinuous').click()
+                          lab.locator('#videoPanel[data-sequence-state="complete"]').wait_for(timeout=240000)
+                          assert lab.locator('#timeline tr').count()==60
+                          assert lab.locator('#leftFig').get_attribute('data-time')==lab.locator('#rightFig').get_attribute('data-time')
+                          assert abs(float(lab.locator('#rightFig').get_attribute('data-time'))-11.8)<.025
+                          assert lab.locator('#right').is_visible()
+                          print('PUBLIC E04 CONTINUOUS DETECTION PASS: 60 actual frames, paired canvases, pause/resume; no teacher links',flush=True)
                           print('PUBLIC E04 ACTUAL MODEL INFERENCE PASS',base+'/index.html',flush=True)
                           b.close()
                           raise SystemExit(0)
