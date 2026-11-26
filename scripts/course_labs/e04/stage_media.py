@@ -15,6 +15,8 @@ def stage(source,dest):
         for k,v in EXPECTED.items():
             assert sha(z.read(f'dist/videos/{k}.mp4'))==v, f'{k}: approved clip hash mismatch'
         checks=json.loads(z.read('dist/data/file-checksums.json'))
+        for name, expected in checks.items():
+            assert sha(z.read('dist/'+name)) == expected, f'Corrupt review asset: {name}'
         # The video hashes above are independent of the manifest supplied in the ZIP.
         keep=[f'dist/videos/{k}.mp4' for k in EXPECTED]
         keep += [f'dist/frames/{k}{i}.jpg' for k in EXPECTED for i in range(1,4)]
