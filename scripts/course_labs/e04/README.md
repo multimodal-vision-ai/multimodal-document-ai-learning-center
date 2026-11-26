@@ -11,3 +11,7 @@ Teacher-approved baseline: E04-material-review.zip (2026-11-26). A/B/C clips 12 
 - Deliver executable Python notebook (CPU/CUDA), local/Kaggle smoke tests, teacher PDF following E03 V2.1, full DEV web preview with real assets and browser tests. Do not merge dev or main before teacher approval.
 
 Technical references: https://docs.ultralytics.com/integrations/onnx and https://onnxruntime.ai/docs/tutorials/web/ep-webgpu.html
+
+## Technical milestone — 2026-11-26
+
+GitHub Actions run 45740994673 succeeded: all six raw ONNX outputs (1×84×2100, 8400, 18900), Node WASM real forwards and Chromium WASM actual dual-model comparison/canvas smoke. The smoke used a synthetic QA image, not reviewed road media. WebGPU hardware and real video not verified. The new gate requires the exact 21.9 MB uploaded archive at `scripts/course_labs/e04/E04-material-review.zip` (SHA256 dbb6440700eda37e8b2e908eb24991c65ffc9385e865794ab1a3fe124fe5e60e). All 76 embedded checks plus clip hashes are verified; no substitutions. The binary cannot be transferred via current text-only file connector. Upload on feature branch only. CI stages the archive in a temporary directory, performs real C1/B1, A3 and A/B/C frame tests, and does not distribute ONNX files publicly. Public licensing review remains separate: preserve root Apache-2.0; consider independently hosted AGPL-compliant E04 app after explicit approval. Never enable public export by default.
