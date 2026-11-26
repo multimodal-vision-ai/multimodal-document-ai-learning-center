@@ -4,7 +4,7 @@ const names='person,bicycle,car,motorcycle,airplane,bus,train,truck,boat,traffic
 const topics={1:['基础目标检测','先数画面中的车辆和行人，再比较机器的类别、位置与数量。','A1'],2:['置信度探索','像录取分数线：提高阈值时，哪些真实目标消失？降低时又出现了哪些干扰？','C1'],3:['IoU 与 NMS','像删除重复照片：重叠多的框可能指向同一个物体，也可能是两辆相邻汽车。','B1'],4:['分辨率与模型规模','像望远镜和识别经验：固定一个条件，比较另一条件的实际效果。','A3'],5:['连续视频检测','观察视频中运动目标的检测框与类别随画面连续变化，再利用时间轴定位漏检。','B3']};
 let tab=1,source=null,cache=null,comparison=null,detector=null,detectorKey='',runtime=null,busy=false,cancel=false,imageURL=null,videoURL=null,version=0,videoVersion=0,operation=0,continuousActive=false,paused=false;
 function status(s,error=false){$('status').textContent=s;$('status').classList.toggle('error',error);}
-function clear(){cache=null;comparison=null;for(const id of ['leftFig','rightFig'])$(id).dataset.ready='0';$('results').replaceChildren();$('stats').textContent='待推理。';$('timing').textContent='尚无推理耗时';}
+function clear(){cache=null;comparison=null;for(const id of ['leftFig','rightFig']){$(id).dataset.ready='0';delete $(id).dataset.time;}$('results').replaceChildren();$('stats').textContent='待推理。';$('timing').textContent='尚无推理耗时';}
 function mark(id){$(id+'Fig').dataset.ready='1';}
 function copy(im){const c=document.createElement('canvas');c.width=im.videoWidth||im.naturalWidth||im.width;c.height=im.videoHeight||im.naturalHeight||im.height;if(!c.width||!c.height)throw Error('图像未就绪');c.getContext('2d').drawImage(im,0,0);return c;}
 function paint(id,im,boxes=[],meta=null){const c=$(id),x=c.getContext('2d');c.width=im.width;c.height=im.height;x.drawImage(im,0,0);x.font='bold '+Math.max(12,Math.round(c.width/76))+'px sans-serif';x.lineWidth=Math.max(2,c.width/500);
@@ -95,12 +95,13 @@ const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function sequence(rate,continuous){
  const v=$('video');if(!Number.isFinite(v.duration)||v.readyState<2)throw Error('视频未加载');
  v.pause();const controls=v.controls;v.controls=false;const locked=['conf','iou','nms','road'];for(const id of locked)$(id).disabled=true;
- continuousActive=continuous;paused=false;$('pauseContinuous').disabled=!continuous;$('pauseContinuous').textContent='暂停';resetTimeline();clear();
+ continuousActive=continuous;paused=false;$('videoPanel').dataset.sequenceState='running';$('pauseContinuous').disabled=!continuous;$('pauseContinuous').textContent='暂停';resetTimeline();clear();
  $('leftFig').dataset.videoMode='pair';$('videoProgress').max=v.duration;
  const history=[];let activeMs=0;
  try{
   for(let i=0;i/rate<v.duration-1e-6&&!cancel;i++){
-   while(paused&&!cancel)await sleep(60);
+   if(paused&&!cancel){$('videoPanel').dataset.sequenceState='paused';while(paused&&!cancel)await sleep(60);}
+   if(!cancel)$('videoPanel').dataset.sequenceState='running';
    if(cancel)break;
    const start=performance.now(),t=i/rate;await seek(t);if(cancel)break;
    const a=await frame(true);if(Math.abs(a.time-t)>=.025)throw Error('检测画面时间与请求时间不符');
@@ -116,8 +117,8 @@ async function sequence(rate,continuous){
    $('videoSummary').textContent='已实际检测 '+history.length+' 帧 · 平均模型前向 '+(history.reduce((sum,x)=>sum+x.ms,0)/history.length).toFixed(1)+' ms · '+rate+' 次/秒'+(continuous?' 连续检测（按实际算力播放）':' 抽样分析');
    if(!paused&&!cancel)status((continuous?'正在连续检测：':'正在抽样分析：')+a.label+' · '+history.length+' 帧');
   }
-  $('stats').textContent=cancel?'已停止检测；保留已完成的真实帧及时间轴。':'检测完成；所有记录使用同一组参数。';
- }finally{continuousActive=false;paused=false;v.controls=controls;$('pauseContinuous').disabled=true;$('pauseContinuous').textContent='暂停';for(const id of locked)$(id).disabled=false;}
+  $('videoPanel').dataset.sequenceState=cancel?'stopped':'complete';$('stats').textContent=cancel?'已停止检测；保留已完成的真实帧及时间轴。':'检测完成；所有记录使用同一组参数。';
+ }catch(e){$('videoPanel').dataset.sequenceState='error';throw e;}finally{continuousActive=false;paused=false;v.controls=controls;$('pauseContinuous').disabled=true;$('pauseContinuous').textContent='暂停';for(const id of locked)$(id).disabled=false;}
 }
 function scan(){return sequence(2,false);}
 function continuous(){return sequence(+$('videoRate').value,true);}
@@ -131,3 +132,5 @@ for(const id of ['model','size','backend','modelFile','modelB','sizeB','modelFil
 $('run').onclick=()=>execute(()=>runImage());$('compare').onclick=()=>execute(()=>runImage(true));$('frameRun').onclick=()=>execute(()=>frame());$('scan').onclick=()=>execute(scan);$('continuous').onclick=()=>execute(continuous);$('stop').onclick=()=>{cancel=true;paused=false;};$('pauseContinuous').onclick=()=>{if(!continuousActive)return;paused=!paused;$('pauseContinuous').textContent=paused?'继续检测':'暂停';status(paused?'已暂停（当前帧完成后停止更新）':'继续连续检测…');};$('previewRaw').onclick=()=>{const v=$('video');if(v.readyState<2){status('视频尚未加载',true);return;}clear();$('leftFig').dataset.videoMode='source';$('leftCaption').textContent='原始视频 · 可播放或定位';status('原始视频预览；可定位后检测当前帧，或重新连续检测。');};
 $('videoChoice').onchange=()=>{$('videoFile').value='';loadVideo();};$('videoFile').onchange=loadVideo;$('video').addEventListener('error',()=>status('视频尚未部署或读取失败；可上传本地 MP4。',true));
 geometry();setTab(1);
+// Report only layout height to the containing course page; direct standalone view also works.
+if(window.parent!==window&&typeof ResizeObserver!=='undefined'){const main=document.querySelector('main');const report=()=>window.parent.postMessage({type:'mvai-e04-height',height:Math.ceil(main.getBoundingClientRect().bottom+window.scrollY+12)},'*');new ResizeObserver(report).observe(main);report();}
