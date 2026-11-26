@@ -23,15 +23,41 @@ function render(){ $('confVal').value=(+$('conf').value).toFixed(2);$('iouVal').
  const rows=a.after.slice(0,300).map(v=>{const tr=document.createElement('tr');for(const s of [names[v.cls]||v.cls,v.score.toFixed(3),'保留']){const td=document.createElement('td');td.textContent=s;tr.append(td)}return tr;});$('results').replaceChildren(...rows);
 }
 function geometry(){const o=+$('offset').value;$('boxB').setAttribute('x',25+o);$('intersection').setAttribute('x',25+o);$('intersection').setAttribute('width',140-o);$('geoIou').value='IoU = '+iou([25,15,165,99],[25+o,15,165+o,99]).toFixed(3);}
-async function loadImage(){const n=++version;clear();source=null;if(imageURL){URL.revokeObjectURL(imageURL);imageURL=null;}const file=$('imageFile').files[0],url=file?(imageURL=URL.createObjectURL(file)):'../e04-media/frames/'+$('frame').value+'.jpg';
- const im=new Image();im.src=url;try{await im.decode();if(n!==version)return;source=copy(im);paint('left',source);$('leftCaption').textContent='原始输入';status('图片已加载；等待真实模型推理。');}catch(e){if(n===version)status('教学图片尚未部署或读取失败；可选择本地图片。',true);}
+// The approved frames are embedded by the deployment build. Decode exact JPEG bytes
+// as an origin-local Blob; never draw a network Image that can taint Canvas.
+const embeddedFrames=JSON.parse($('e04-embedded-frames')?.textContent||'{}');
+function fromBase64(s,type){const bytes=Uint8Array.from(atob(s),c=>c.charCodeAt(0));return new Blob([bytes],{type});}
+async function fetchMedia(relative,type){
+ const url=new URL(relative,location.href),urls=[url.href];
+ if(['raw.githack.com','rawcdn.githack.com'].includes(url.hostname)){
+  const raw=new URL(url.href);raw.hostname='raw.githubusercontent.com';urls.push(raw.href);
+ }
+ let last;
+ for(const address of urls){
+  try{const res=await fetch(address,{mode:'cors',credentials:'omit'});if(!res.ok)throw Error('HTTP '+res.status);
+   const blob=await res.blob(),head=new Uint8Array(await blob.slice(0,16).arrayBuffer());
+   if(type==='image/jpeg'&&!(head[0]===255&&head[1]===216&&head[2]===255))throw Error('响应不是 JPEG');
+   if(type==='video/mp4'&&String.fromCharCode(...head.slice(4,8))!=='ftyp')throw Error('响应不是 MP4');
+   return new Blob([blob],{type});
+  }catch(e){last=e;}
+ }
+ throw Error('资源下载失败：'+String(last?.message||last));
+}
+function readableCanvas(c){try{c.getContext('2d').getImageData(0,0,1,1);}catch(e){throw Error('图像像素不可读取，已阻止推理。'+e.message);}}
+async function loadImage(){
+ const n=++version;clear();source=null;if(imageURL){URL.revokeObjectURL(imageURL);imageURL=null;}
+ const file=$('imageFile').files[0],key=$('frame').value;status('正在读取教学图片…');
+ try{const blob=file||(embeddedFrames[key]?fromBase64(embeddedFrames[key],'image/jpeg'):await fetchMedia('../e04-media/frames/'+key+'.jpg','image/jpeg'));
+ if(n!==version)return;const url=URL.createObjectURL(blob);imageURL=url;const im=new Image();im.src=url;await im.decode();
+ if(n!==version){URL.revokeObjectURL(url);return;}const canvas=copy(im);readableCanvas(canvas);source=canvas;paint('left',source);$('leftCaption').textContent='原始输入';status('图片像素读取通过；等待真实模型推理。');
+ }catch(e){if(n===version)status('图片加载失败：'+String(e.message||e),true);}
 }
 function resetTimeline(){$('timeline').replaceChildren();$('chart').replaceChildren();$('videoSummary').textContent='尚未完成抽样。';}
 async function loadVideo(){
  const v=$('video'),token=++videoVersion;cancel=true;resetTimeline();clear();v.pause();v.removeAttribute('src');v.load();if(videoURL)URL.revokeObjectURL(videoURL);videoURL=null;
  const file=$('videoFile').files[0],scene=$('videoChoice').value;
  status('正在读取完整视频，以便准确定位每一帧…');v.dataset.scene='';
- try{let blob=file;if(!blob){const res=await fetch('../e04-media/videos/'+scene+'.mp4');if(!res.ok)throw Error('视频下载失败 HTTP '+res.status);blob=await res.blob();}
+ try{let blob=file;if(!blob)blob=await fetchMedia('../e04-media/videos/'+scene+'.mp4','video/mp4');
  if(token!==videoVersion)return;if(!blob.size)throw Error('视频内容为空');
  videoURL=URL.createObjectURL(blob);v.src=videoURL;v.dataset.scene=file?'local':scene;v.load();
  }catch(e){if(token===videoVersion)status(String(e.message||e),true);}
@@ -50,8 +76,8 @@ async function forward(im,model,size,file){let det=await getDetector(model,size,
 function lock(on){busy=on;for(const el of document.querySelectorAll('button,select,input'))if(!['conf','iou','nms','road','stop','offset'].includes(el.id))el.disabled=on;$('stop').disabled=!on;}
 async function execute(job){if(busy)return;cancel=false;lock(true);const seq=++operation;document.body.dataset.operation=String(seq);document.body.dataset.completed='';try{await job();if(cache)status('真实模型推理完成：'+cache.label);}catch(e){status(String(e.message||e),true);}finally{lock(false);document.body.dataset.completed=String(seq);}}
 function current(){return [$('model').value,+$('size').value,$('modelFile').files[0]]}
-async function runImage(both=false){if(!source)throw Error('请先加载图片');const im=source;clear();paint('left',im);cache=await forward(im,...current());if(both){render();comparison=await forward(im,$('modelB').value,+$('sizeB').value,$('modelFileB').files[0]);}render();$('timing').textContent='预处理 '+cache.preprocessMs.toFixed(1)+' ms；模型前向 '+cache.forwardMs.toFixed(1)+' ms';}
-async function frame(){const v=$('video');v.pause();if(v.readyState<2)throw Error('视频未加载');const actual=v.currentTime,im=copy(v);clear();paint('left',im);cache=await forward(im,...current());cache.time=actual;render();$('rightFig').dataset.time=actual.toFixed(4);$('rightCaption').textContent+=' · '+actual.toFixed(2)+' s';$('timing').textContent='模型前向 '+cache.forwardMs.toFixed(1)+' ms';return cache;}
+async function runImage(both=false){if(!source)throw Error('请先加载图片并确认像素读取成功');const im=source;clear();paint('left',im);cache=await forward(im,...current());if(both){render();comparison=await forward(im,$('modelB').value,+$('sizeB').value,$('modelFileB').files[0]);}render();$('timing').textContent='预处理 '+cache.preprocessMs.toFixed(1)+' ms；模型前向 '+cache.forwardMs.toFixed(1)+' ms';}
+async function frame(){const v=$('video');v.pause();if(v.readyState<2)throw Error('视频未加载');const actual=v.currentTime,im=copy(v);readableCanvas(im);clear();paint('left',im);cache=await forward(im,...current());cache.time=actual;render();$('rightFig').dataset.time=actual.toFixed(4);$('rightCaption').textContent+=' · '+actual.toFixed(2)+' s';$('timing').textContent='模型前向 '+cache.forwardMs.toFixed(1)+' ms';return cache;}
 async function seek(t){
  const v=$('video');v.pause();if(v.readyState<2)throw Error('视频未加载');
  if(Math.abs(v.currentTime-t)<.02&&!v.seeking)return;
