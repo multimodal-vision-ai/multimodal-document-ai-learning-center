@@ -33,7 +33,7 @@ def main(out,work,ref):
         p=weights/(name+'.pt');assert sha(p)==EXPECTED[name]
         shutil.copy2(p,models/p.name)
     npm=work/'web';npm.mkdir(exist_ok=True)
-    run('npm','install','--no-audit','--no-fund','--save-exact','onnxruntime-web',cwd=npm)
+    run('npm','install','--no-audit','--no-fund','--save-exact','onnxruntime-web@1.31.1',cwd=npm)
     pkg=npm/'node_modules/onnxruntime-web'
     # Ship the exact installed dist, not cross-origin scripts. No maps/debug builds.
     for p in (pkg/'dist').iterdir():
