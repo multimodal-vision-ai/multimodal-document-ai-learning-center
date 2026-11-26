@@ -176,6 +176,7 @@ jobs:
                   page=b.new_page()
                   page.goto(f'http://127.0.0.1:{server.server_port}/teacher.html',wait_until='networkidle')
                   page.evaluate('document.fonts.ready')
+                  page.locator('#videoReport[data-state="ready"]').wait_for(timeout=15000)
                   assert page.locator('img').evaluate_all('(xs)=>xs.every(x=>x.complete&&x.naturalWidth>0)')
                   page.pdf(path=str(root/'downloads/E04_teacher_guide.pdf'),format='A4',margin={'top':'15mm','bottom':'15mm','left':'15mm','right':'15mm'},print_background=True)
                   b.close()
