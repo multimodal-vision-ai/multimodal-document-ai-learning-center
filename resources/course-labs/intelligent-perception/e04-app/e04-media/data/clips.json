@@ -1,0 +1,50 @@
+[
+  {
+    "id": "A",
+    "start": 30,
+    "duration": 12,
+    "metadata": {
+      "width": 1280,
+      "height": 720,
+      "fps": 25.0,
+      "frames": 300,
+      "duration": 12.0
+    },
+    "bytes": 5233846,
+    "sha256": "2dfa0a07dc5792f81f9b5356f2a53423e9d873313a3b2bb10300de7897adf0b8",
+    "changes": "12-second excerpt; scaled to 1280x720; H.264/yuv420p; 25fps; audio removed; detection overlays on derived stills only",
+    "source_file": "A.mp4"
+  },
+  {
+    "id": "B",
+    "start": 60,
+    "duration": 12,
+    "metadata": {
+      "width": 1280,
+      "height": 720,
+      "fps": 25.0,
+      "frames": 300,
+      "duration": 12.0
+    },
+    "bytes": 7725644,
+    "sha256": "45b020254916ce80cd729a3089126d774752c01108e9ecef6399ed08c03706b2",
+    "changes": "12-second excerpt; scaled to 1280x720; H.264/yuv420p; 25fps; audio removed; detection overlays on derived stills only",
+    "source_file": "B.webm"
+  },
+  {
+    "id": "C",
+    "start": 175,
+    "duration": 12,
+    "metadata": {
+      "width": 1280,
+      "height": 720,
+      "fps": 25.0,
+      "frames": 300,
+      "duration": 12.0
+    },
+    "bytes": 2244727,
+    "sha256": "ce18ea1da3508931b563982b05c81ff5d8c296176ac0176db0fec38d4547a411",
+    "changes": "12-second excerpt; scaled to 1280x720; H.264/yuv420p; 25fps; audio removed; detection overlays on derived stills only",
+    "source_file": "C.webm"
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "grid_records": 1296,
+  "unique_parameter_keys": 1296,
+  "original_frames": 9,
+  "comparison_plates": 36,
+  "videos": [
+    {
+      "file": "A.mp4",
+      "decoded_frames": 300,
+      "codec": "H.264",
+      "pixel_format": "yuv420p",
+      "faststart": true,
+      "bytes": 5233846
+    },
+    {
+      "file": "B.mp4",
+      "decoded_frames": 300,
+      "codec": "H.264",
+      "pixel_format": "yuv420p",
+      "faststart": true,
+      "bytes": 7725644
+    },
+    {
+      "file": "C.mp4",
+      "decoded_frames": 300,
+      "codec": "H.264",
+      "pixel_format": "yuv420p",
+      "faststart": true,
+      "bytes": 2244727
+    }
+  ],
+  "independent_predict_checks": [
+    {
+      "model": "yolo26n",
+      "mode": "traditional_nms",
+      "frame": "C1",
+      "imgsz": 640,
+      "conf": 0.5,
+      "iou": 0.3,
+      "matched": true
+    },
+    {
+      "model": "yolo26n",
+      "mode": "traditional_nms",
+      "frame": "B1",
+      "imgsz": 960,
+      "conf": 0.05,
+      "iou": 0.7,
+      "matched": true
+    },
+    {
+      "model": "yolo26s",
+      "mode": "traditional_nms",
+      "frame": "B3",
+      "imgsz": 320,
+      "conf": 0.25,
+      "iou": 0.5,
+      "matched": true
+    },
+    {
+      "model": "yolo26s",
+      "mode": "nms_free",
+      "frame": "C3",
+      "imgsz": 640,
+      "conf": 0.25,
+      "iou": 0.7,
+      "matched": true
+    }
+  ],
+  "browser_qa": "2026-11-26: IAB localhost page; all 3 videos duration=12, readyState=4, playback currentTime>0, no media error; C1 n/640/conf .25=1 and conf .5=0; NMS-free disables IoU; mobile-width layout checked."
+}

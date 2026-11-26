@@ -1,0 +1,20 @@
+[
+  {
+    "frame": "C1",
+    "type": "高阈值漏检",
+    "evidence": "YOLO26n / 640 / NMS IoU 0.5：前方车辆 conf=0.2917005；conf=0.25 保留，0.5 与 0.8 消失。",
+    "image": "C1-confidence.jpg"
+  },
+  {
+    "frame": "C3",
+    "type": "车内物体误检",
+    "evidence": "YOLO26n / 640 / conf=0.25 / NMS IoU 0.5：左上车内支架被标为 person 0.4821418；导航屏幕被标为 tv 0.3513848。画面中这两个框不代表道路目标。",
+    "image": "C3-models.jpg"
+  },
+  {
+    "frame": "B3",
+    "type": "类别混淆候选",
+    "evidence": "YOLO26n / 640 / conf=0.25 / NMS IoU 0.5：右侧行人脚下附近输出 skateboard 0.4567129。需要教师放大原图核实；未将此候选计作已确认误检。",
+    "image": "B3-models.jpg"
+  }
+]

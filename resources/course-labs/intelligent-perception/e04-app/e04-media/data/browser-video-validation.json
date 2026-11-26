@@ -1,0 +1,611 @@
+{
+  "model": "yolo26n",
+  "size": 320,
+  "backend": "wasm",
+  "conf": 0.25,
+  "iou": 0.5,
+  "nms": true,
+  "road_only": false,
+  "sample_hz": 2,
+  "frames": {
+    "A": [
+      {
+        "time_s": 0.0,
+        "actual_time_s": 0,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.0
+      },
+      {
+        "time_s": 0.5,
+        "actual_time_s": 0.5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.6
+      },
+      {
+        "time_s": 1.0,
+        "actual_time_s": 1,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 47.0
+      },
+      {
+        "time_s": 1.5,
+        "actual_time_s": 1.5,
+        "car": 1,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.8
+      },
+      {
+        "time_s": 2.0,
+        "actual_time_s": 2,
+        "car": 1,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.9
+      },
+      {
+        "time_s": 2.5,
+        "actual_time_s": 2.5,
+        "car": 1,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.0
+      },
+      {
+        "time_s": 3.0,
+        "actual_time_s": 3,
+        "car": 1,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.2
+      },
+      {
+        "time_s": 3.5,
+        "actual_time_s": 3.5,
+        "car": 1,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.9
+      },
+      {
+        "time_s": 4.0,
+        "actual_time_s": 4,
+        "car": 1,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.3
+      },
+      {
+        "time_s": 4.5,
+        "actual_time_s": 4.5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.9
+      },
+      {
+        "time_s": 5.0,
+        "actual_time_s": 5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.6
+      },
+      {
+        "time_s": 5.5,
+        "actual_time_s": 5.5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 49.9
+      },
+      {
+        "time_s": 6.0,
+        "actual_time_s": 6,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.4
+      },
+      {
+        "time_s": 6.5,
+        "actual_time_s": 6.5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.5
+      },
+      {
+        "time_s": 7.0,
+        "actual_time_s": 7,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 53.3
+      },
+      {
+        "time_s": 7.5,
+        "actual_time_s": 7.5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 49.6
+      },
+      {
+        "time_s": 8.0,
+        "actual_time_s": 8,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.7
+      },
+      {
+        "time_s": 8.5,
+        "actual_time_s": 8.5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 49.8
+      },
+      {
+        "time_s": 9.0,
+        "actual_time_s": 9,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.7
+      },
+      {
+        "time_s": 9.5,
+        "actual_time_s": 9.5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 49.1
+      },
+      {
+        "time_s": 10.0,
+        "actual_time_s": 10,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 49.9
+      },
+      {
+        "time_s": 10.5,
+        "actual_time_s": 10.5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 49.0
+      },
+      {
+        "time_s": 11.0,
+        "actual_time_s": 11,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 49.5
+      },
+      {
+        "time_s": 11.5,
+        "actual_time_s": 11.5,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.8
+      }
+    ],
+    "B": [
+      {
+        "time_s": 0.0,
+        "actual_time_s": 0,
+        "car": 4,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.9
+      },
+      {
+        "time_s": 0.5,
+        "actual_time_s": 0.5,
+        "car": 1,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.7
+      },
+      {
+        "time_s": 1.0,
+        "actual_time_s": 1,
+        "car": 2,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.6
+      },
+      {
+        "time_s": 1.5,
+        "actual_time_s": 1.5,
+        "car": 3,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 53.2
+      },
+      {
+        "time_s": 2.0,
+        "actual_time_s": 2,
+        "car": 4,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.7
+      },
+      {
+        "time_s": 2.5,
+        "actual_time_s": 2.5,
+        "car": 6,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.2
+      },
+      {
+        "time_s": 3.0,
+        "actual_time_s": 3,
+        "car": 4,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.0
+      },
+      {
+        "time_s": 3.5,
+        "actual_time_s": 3.5,
+        "car": 3,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.5
+      },
+      {
+        "time_s": 4.0,
+        "actual_time_s": 4,
+        "car": 4,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 47.7
+      },
+      {
+        "time_s": 4.5,
+        "actual_time_s": 4.5,
+        "car": 5,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.6
+      },
+      {
+        "time_s": 5.0,
+        "actual_time_s": 5,
+        "car": 6,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.5
+      },
+      {
+        "time_s": 5.5,
+        "actual_time_s": 5.5,
+        "car": 6,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.7
+      },
+      {
+        "time_s": 6.0,
+        "actual_time_s": 6,
+        "car": 5,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.7
+      },
+      {
+        "time_s": 6.5,
+        "actual_time_s": 6.5,
+        "car": 4,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.9
+      },
+      {
+        "time_s": 7.0,
+        "actual_time_s": 7,
+        "car": 4,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.8
+      },
+      {
+        "time_s": 7.5,
+        "actual_time_s": 7.5,
+        "car": 4,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.4
+      },
+      {
+        "time_s": 8.0,
+        "actual_time_s": 8,
+        "car": 4,
+        "person": 1,
+        "bicycle": 0,
+        "forward_ms": 46.8
+      },
+      {
+        "time_s": 8.5,
+        "actual_time_s": 8.5,
+        "car": 1,
+        "person": 1,
+        "bicycle": 0,
+        "forward_ms": 46.6
+      },
+      {
+        "time_s": 9.0,
+        "actual_time_s": 9,
+        "car": 3,
+        "person": 2,
+        "bicycle": 0,
+        "forward_ms": 47.7
+      },
+      {
+        "time_s": 9.5,
+        "actual_time_s": 9.5,
+        "car": 2,
+        "person": 2,
+        "bicycle": 0,
+        "forward_ms": 46.8
+      },
+      {
+        "time_s": 10.0,
+        "actual_time_s": 10,
+        "car": 2,
+        "person": 4,
+        "bicycle": 0,
+        "forward_ms": 48.8
+      },
+      {
+        "time_s": 10.5,
+        "actual_time_s": 10.5,
+        "car": 2,
+        "person": 3,
+        "bicycle": 0,
+        "forward_ms": 47.5
+      },
+      {
+        "time_s": 11.0,
+        "actual_time_s": 11,
+        "car": 3,
+        "person": 4,
+        "bicycle": 0,
+        "forward_ms": 48.5
+      },
+      {
+        "time_s": 11.5,
+        "actual_time_s": 11.5,
+        "car": 2,
+        "person": 5,
+        "bicycle": 0,
+        "forward_ms": 46.8
+      }
+    ],
+    "C": [
+      {
+        "time_s": 0.0,
+        "actual_time_s": 0,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.6
+      },
+      {
+        "time_s": 0.5,
+        "actual_time_s": 0.5,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 47.9
+      },
+      {
+        "time_s": 1.0,
+        "actual_time_s": 1,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.0
+      },
+      {
+        "time_s": 1.5,
+        "actual_time_s": 1.5,
+        "car": 1,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.9
+      },
+      {
+        "time_s": 2.0,
+        "actual_time_s": 2,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 47.0
+      },
+      {
+        "time_s": 2.5,
+        "actual_time_s": 2.5,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 47.4
+      },
+      {
+        "time_s": 3.0,
+        "actual_time_s": 3,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.5
+      },
+      {
+        "time_s": 3.5,
+        "actual_time_s": 3.5,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.9
+      },
+      {
+        "time_s": 4.0,
+        "actual_time_s": 4,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 49.0
+      },
+      {
+        "time_s": 4.5,
+        "actual_time_s": 4.5,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 47.2
+      },
+      {
+        "time_s": 5.0,
+        "actual_time_s": 5,
+        "car": 0,
+        "person": 1,
+        "bicycle": 0,
+        "forward_ms": 46.7
+      },
+      {
+        "time_s": 5.5,
+        "actual_time_s": 5.5,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 49.1
+      },
+      {
+        "time_s": 6.0,
+        "actual_time_s": 6,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.8
+      },
+      {
+        "time_s": 6.5,
+        "actual_time_s": 6.5,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.6
+      },
+      {
+        "time_s": 7.0,
+        "actual_time_s": 7,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.5
+      },
+      {
+        "time_s": 7.5,
+        "actual_time_s": 7.5,
+        "car": 0,
+        "person": 1,
+        "bicycle": 0,
+        "forward_ms": 46.5
+      },
+      {
+        "time_s": 8.0,
+        "actual_time_s": 8,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.3
+      },
+      {
+        "time_s": 8.5,
+        "actual_time_s": 8.5,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.8
+      },
+      {
+        "time_s": 9.0,
+        "actual_time_s": 9,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 47.0
+      },
+      {
+        "time_s": 9.5,
+        "actual_time_s": 9.5,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 48.6
+      },
+      {
+        "time_s": 10.0,
+        "actual_time_s": 10,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 47.4
+      },
+      {
+        "time_s": 10.5,
+        "actual_time_s": 10.5,
+        "car": 0,
+        "person": 1,
+        "bicycle": 0,
+        "forward_ms": 46.7
+      },
+      {
+        "time_s": 11.0,
+        "actual_time_s": 11,
+        "car": 0,
+        "person": 0,
+        "bicycle": 0,
+        "forward_ms": 46.5
+      },
+      {
+        "time_s": 11.5,
+        "actual_time_s": 11.5,
+        "car": 0,
+        "person": 1,
+        "bicycle": 0,
+        "forward_ms": 48.2
+      }
+    ]
+  },
+  "continuous": {
+    "A": {
+      "frames": 120,
+      "rate_hz": 10,
+      "last_time_s": 11.9
+    },
+    "B": {
+      "frames": 120,
+      "rate_hz": 10,
+      "last_time_s": 11.9
+    },
+    "C": {
+      "frames": 120,
+      "rate_hz": 10,
+      "last_time_s": 11.9
+    }
+  }
+}

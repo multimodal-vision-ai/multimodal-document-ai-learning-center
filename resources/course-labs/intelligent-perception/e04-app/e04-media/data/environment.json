@@ -1,0 +1,14 @@
+{
+  "python": "3.11.15",
+  "platform": "Windows-10-10.0.22631-SP0",
+  "torch": "2.15.0+cpu",
+  "ultralytics": "8.4.219",
+  "device": "cpu",
+  "threads": 4,
+  "seed": 0,
+  "weights": {
+    "yolo26n.pt": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+    "yolo26s.pt": "646f8bc3fe0a656803d95c294f7852321748cb29d13466a1af8862e2db384a1b"
+  },
+  "protocol": "108 raw image forwards + 4 warmup calls; 1296 official postprocess results. Full 648-setting traditional NMS grid plus 648 NMS-free controls. Each raw forward reused for 12 conf/IoU combinations; no interpolation or fabricated predictions. Times are forward+preprocess, not end-to-end FPS. nms=True selects one-to-many head; nms=False selects end-to-end one-to-one head in ultralytics 8.4.219. All 80 COCO classes; class-aware NMS; max_det=300; rect=False; no ground truth, no mAP/precision/recall claims."
+}
