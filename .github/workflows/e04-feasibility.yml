@@ -50,6 +50,15 @@ jobs:
           cp "$GITHUB_WORKSPACE/scripts/course_labs/e04/wasm_smoke.mjs" .
           cp "$GITHUB_WORKSPACE/docs/resources/course-labs/intelligent-perception/interactive/e04-core.mjs" .
           node wasm_smoke.mjs "$RUNNER_TEMP/e04/onnx"
+      - name: Actual Chromium browser WASM verification
+        run: |
+          python -m pip install playwright pillow
+          python -m playwright install --with-deps chromium
+          mkdir -p "$RUNNER_TEMP/e04/site/interactive" "$RUNNER_TEMP/e04/site/e04-runtime"
+          cp docs/resources/course-labs/intelligent-perception/interactive/e04* "$RUNNER_TEMP/e04/site/interactive/"
+          cp "$RUNNER_TEMP/e04/webtest/node_modules/onnxruntime-web/dist/"* "$RUNNER_TEMP/e04/site/e04-runtime/"
+          ln -s "$RUNNER_TEMP/e04/onnx" "$RUNNER_TEMP/e04/site/e04-models"
+          python scripts/course_labs/e04/browser_smoke.py "$RUNNER_TEMP/e04/site"
       - name: Remove temporary weights and exports
         if: always()
         run: rm -rf "$RUNNER_TEMP/e04"
