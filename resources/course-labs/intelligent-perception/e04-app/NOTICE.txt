@@ -1,0 +1,8 @@
+E04 standalone educational application: AGPL-3.0. Other Learning Center projects retain their own licenses.
+YOLO26n/s pretrained checkpoints and ONNX exports: Ultralytics, AGPL-3.0.
+Upstream exact source: https://github.com/ultralytics/ultralytics/tree/v8.4.219
+Original checkpoints: e04-models/yolo26n.pt and yolo26s.pt; conversion source in source/E04-source.zip.
+E04 corresponding source revision: https://github.com/multimodal-vision-ai/multimodal-document-ai-learning-center/tree/aacaa0e31fcc18ba797dadb955fbc96871e83377
+ONNX Runtime Web: MIT; runtime license/notice and exact dependency lock included.
+Reviewed media retains its separate MIT / CC BY 3.0 terms; attribution and changes in e04-media/data/sources.json.
+No training or fine-tuning performed.

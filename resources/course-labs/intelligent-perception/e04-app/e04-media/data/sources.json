@@ -1,0 +1,50 @@
+[
+  {
+    "id": "A",
+    "title": "Udacity project_video",
+    "url": "https://raw.githubusercontent.com/udacity/CarND-Vehicle-Detection/master/project_video.mp4",
+    "page": "https://github.com/udacity/CarND-Vehicle-Detection",
+    "filename": "A.mp4",
+    "author": "Udacity (repository copyright holder); individual camera operator not identified",
+    "license": "MIT (repository-level; no separate video attribution found)",
+    "license_url": "https://github.com/udacity/CarND-Vehicle-Detection/blob/master/LICENSE",
+    "clip_start": 30,
+    "clip_end": 42,
+    "changes": "12-second excerpt; scaled to 1280x720; H.264/yuv420p; 25fps; audio removed; detection overlays on derived stills only",
+    "clip_sha256": "2dfa0a07dc5792f81f9b5356f2a53423e9d873313a3b2bb10300de7897adf0b8",
+    "individual_camera_operator_verified": false,
+    "video_authorization_note": "2026-11-26：用户确认 A 的视频专项授权可以用于 E04。公开来源列出 Udacity 仓库 MIT 许可，未单列摄影者署名。"
+  },
+  {
+    "id": "B",
+    "title": "City Driving 4K: Kraków Poland 2024",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/98/City_Driving_4K-_Krak%C3%B3w_Poland_2024.webm",
+    "page": "https://commons.wikimedia.org/wiki/File:City_Driving_4K-_Krak%C3%B3w_Poland_2024.webm",
+    "filename": "B.webm",
+    "author": "Relaxing Roads 4K",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "clip_start": 60,
+    "clip_end": 72,
+    "changes": "12-second excerpt; scaled to 1280x720; H.264/yuv420p; 25fps; audio removed; detection overlays on derived stills only",
+    "clip_sha256": "45b020254916ce80cd729a3089126d774752c01108e9ecef6399ed08c03706b2",
+    "individual_camera_operator_verified": true,
+    "video_authorization_note": "Wikimedia Commons 文件页列出作者及 CC BY 3.0 许可。"
+  },
+  {
+    "id": "C",
+    "title": "On the Road: Foggy Ljubljana",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/3d/On_the_Road-_Foggy_Ljubljana.webm",
+    "page": "https://commons.wikimedia.org/wiki/File:On_the_Road-_Foggy_Ljubljana.webm",
+    "filename": "C.webm",
+    "author": "Renato Lozinšek",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "clip_start": 175,
+    "clip_end": 187,
+    "changes": "12-second excerpt; scaled to 1280x720; H.264/yuv420p; 25fps; audio removed; detection overlays on derived stills only",
+    "clip_sha256": "ce18ea1da3508931b563982b05c81ff5d8c296176ac0176db0fec38d4547a411",
+    "individual_camera_operator_verified": true,
+    "video_authorization_note": "Wikimedia Commons 文件页列出作者及 CC BY 3.0 许可。"
+  }
+]

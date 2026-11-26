@@ -1,0 +1,1406 @@
+[
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "A1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 135.97800000570714
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "A2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 45.79929984174669
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "A3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 115.56580010801554
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "B1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 34.27670011296868
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "B2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 34.79150007478893
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "B3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 101.6667999792844
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "C1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 28.299199882894754
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "C2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 29.90480000153184
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "C3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 39.85930001363158
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "A1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 160.41130013763905
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "A2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 178.58710000291467
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "A3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 69.54779988154769
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "B1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 75.42239991016686
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "B2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 89.94830003939569
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "B3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 64.66199993155897
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "C1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 136.6332999896258
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "C2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 62.149199889972806
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "C3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 139.4766999874264
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "A1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 302.73639992810786
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "A2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 222.35330007970333
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "A3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 199.18849994428456
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "B1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 266.3998999632895
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "B2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 246.2428999133408
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "B3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 223.0303999967873
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "C1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 216.46789996884763
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "C2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 349.9822001904249
+  },
+  {
+    "model": "yolo26n",
+    "mode": "traditional_nms",
+    "frame": "C3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 137.52750004641712
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "A1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 30.952100176364183
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "A2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 90.13479994609952
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "A3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 67.09849997423589
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "B1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 44.59469998255372
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "B2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 82.92729989625514
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "B3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 27.478500036522746
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "C1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 27.009099954739213
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "C2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 32.899599988013506
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "C3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 88.46490015275776
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "A1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 62.23600008524954
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "A2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 306.3880999106914
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "A3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 167.49510006047785
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "B1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 177.44029988534749
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "B2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 97.09689998999238
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "B3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 160.92950012534857
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "C1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 101.86129994690418
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "C2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 131.8308999761939
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "C3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 68.98119999095798
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "A1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 164.25429983064532
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "A2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 240.2451999951154
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "A3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 199.97270009480417
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "B1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 220.09080019779503
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "B2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 231.83210007846355
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "B3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 224.754799855873
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "C1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 335.1138997823
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "C2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 295.119599904865
+  },
+  {
+    "model": "yolo26n",
+    "mode": "nms_free",
+    "frame": "C3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 291.84420011006296
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "A1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 75.05049998871982
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "A2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 166.3619999308139
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "A3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 88.66579993627965
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "B1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 214.29789997637272
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "B2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 224.7931999154389
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "B3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 59.81390015222132
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "C1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 150.9577000979334
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "C2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 54.89489994943142
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "C3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 61.325399903580546
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "A1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 353.6580998916179
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "A2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 339.1897000838071
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "A3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 341.12840006127954
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "B1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 560.4375000111759
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "B2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 397.1596001647413
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "B3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 350.28199991211295
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "C1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 413.95489987917244
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "C2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 407.4061999563128
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "C3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 291.7104000225663
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "A1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 1223.6257998738438
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "A2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 1099.2576000280678
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "A3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 891.1695000715554
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "B1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 803.717500064522
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "B2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 871.751899830997
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "B3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 564.1150001902133
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "C1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 539.1637000720948
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "C2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 589.3391000572592
+  },
+  {
+    "model": "yolo26s",
+    "mode": "traditional_nms",
+    "frame": "C3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 684.2044000513852
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "A1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 183.32409998402
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "A2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 202.08230009302497
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "A3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 91.82690014131367
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "B1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 205.93840000219643
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "B2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 136.62779983133078
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "B3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 167.25099994800985
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "C1",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 61.870599864050746
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "C2",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 152.45639998465776
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "C3",
+    "imgsz": 320,
+    "shape": [
+      1,
+      3,
+      320,
+      320
+    ],
+    "forward_preprocess_ms": 86.10860002227128
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "A1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 260.0810998119414
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "A2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 292.9640000220388
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "A3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 210.14710003510118
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "B1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 261.2909998279065
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "B2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 330.1658001728356
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "B3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 264.58129985257983
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "C1",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 258.49070004187524
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "C2",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 256.63769990205765
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "C3",
+    "imgsz": 640,
+    "shape": [
+      1,
+      3,
+      640,
+      640
+    ],
+    "forward_preprocess_ms": 316.2491999100894
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "A1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 504.93950000964105
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "A2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 504.5996999833733
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "A3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 525.5330000072718
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "B1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 530.6832999922335
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "B2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 689.8703000042588
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "B3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 1110.2984000463039
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "C1",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 832.7840000856668
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "C2",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 876.7850999720395
+  },
+  {
+    "model": "yolo26s",
+    "mode": "nms_free",
+    "frame": "C3",
+    "imgsz": 960,
+    "shape": [
+      1,
+      3,
+      960,
+      960
+    ],
+    "forward_preprocess_ms": 851.9089000765234
+  }
+]
