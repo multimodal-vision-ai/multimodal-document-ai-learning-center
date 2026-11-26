@@ -46,13 +46,13 @@ jobs:
           node --test scripts/course_labs/e04/core.test.mjs
           mkdir -p "$RUNNER_TEMP/e04/webtest"
           cd "$RUNNER_TEMP/e04/webtest"
-          npm install --no-audit --no-fund onnxruntime-web
+          npm install --no-audit --no-fund onnxruntime-web@1.31.1
           cp "$GITHUB_WORKSPACE/scripts/course_labs/e04/wasm_smoke.mjs" .
           cp "$GITHUB_WORKSPACE/docs/resources/course-labs/intelligent-perception/interactive/e04-core.mjs" .
           node wasm_smoke.mjs "$RUNNER_TEMP/e04/onnx"
       - name: Actual Chromium browser WASM verification
         run: |
-          python -m pip install playwright pillow
+          python -m pip install playwright==1.65.2 pillow
           python -m playwright install --with-deps chromium
           mkdir -p "$RUNNER_TEMP/e04/site/interactive" "$RUNNER_TEMP/e04/site/e04-runtime"
           cp docs/resources/course-labs/intelligent-perception/interactive/e04* "$RUNNER_TEMP/e04/site/interactive/"
