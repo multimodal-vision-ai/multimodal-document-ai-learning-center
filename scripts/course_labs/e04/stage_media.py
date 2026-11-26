@@ -10,6 +10,7 @@ EXPECTED={
 'C':'ce18ea1da3508931b563982b05c81ff5d8c296176ac0176db0fec38d4547a411'}
 def sha(data): return hashlib.sha256(data).hexdigest()
 def stage(source,dest):
+    assert sha(Path(source).read_bytes())=='dbb6440700eda37e8b2e908eb24991c65ffc9385e865794ab1a3fe124fe5e60e', 'Not the exact teacher-approved ZIP'
     dest=Path(dest)
     with zipfile.ZipFile(source) as z:
         for k,v in EXPECTED.items():
@@ -21,7 +22,7 @@ def stage(source,dest):
         keep=[f'dist/videos/{k}.mp4' for k in EXPECTED]
         keep += [f'dist/frames/{k}{i}.jpg' for k in EXPECTED for i in range(1,4)]
         keep += [f'dist/data/{n}' for n in ['sources.json','clips.json','environment.json','detections.json','forward-log.json','parameter-statistics.csv','failure-cases.json','file-checksums.json']]
-        keep += ['dist/licenses/A-LICENSE.txt','dist/licenses/B-imageinfo.json','dist/licenses/C-imageinfo.json','dist/REVIEW.md']
+        keep += ['dist/licenses/A-LICENSE.txt','dist/licenses/B-imageinfo.json','dist/licenses/C-imageinfo.json','dist/REVIEW.md','dist/data/validation.json']
         for name in keep:
             data=z.read(name)
             p=dest/name.removeprefix('dist/')
