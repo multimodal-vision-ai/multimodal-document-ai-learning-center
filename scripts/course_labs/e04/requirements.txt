@@ -1,0 +1,7 @@
+ultralytics==8.4.219
+numpy
+matplotlib
+opencv-python
+nbformat
+ipykernel
+jupyter

@@ -78,6 +78,40 @@ jobs:
       - name: Build site (strict)
         run: mkdocs build --strict
 
+      - name: Stage approved E04 V1.0 application and verify genuine student inference
+        shell: bash
+        env:
+          YOLO_AUTOINSTALL: 'False'
+          OMP_NUM_THREADS: '2'
+          E04_SOURCE_REF: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/e04-env"
+          P="$RUNNER_TEMP/e04-env/bin/python"
+          "$P" -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          "$P" -m pip install ultralytics==8.4.219 onnx onnxruntime playwright==1.65.2 pillow nbclient nbformat ipykernel
+          "$P" -m playwright install chromium
+          E04="$PWD/site/resources/course-labs/intelligent-perception/e04-app"
+          "$P" scripts/course_labs/e04/stage_e04_preview.py "$E04" "$RUNNER_TEMP/e04-stage" "$E04_SOURCE_REF"
+          "$P" scripts/course_labs/e04/browser_real_media.py "$E04"
+          # Reproduce the downloadable Notebook in its own extracted student directory.
+          mkdir -p "$RUNNER_TEMP/e04-student"
+          "$P" -m zipfile -e "$E04/downloads/MVAI_E04_V1.0_student.zip" "$RUNNER_TEMP/e04-student"
+          "$P" -m ipykernel install --user --name e04-release
+          export E04_STUDENT="$RUNNER_TEMP/e04-student"
+          "$P" - <<'PY'
+          import os, nbformat
+          from pathlib import Path
+          from nbclient import NotebookClient
+          p=Path(os.environ['E04_STUDENT'])
+          nb=nbformat.read(p/'E04_YOLO_Object_Detection_V1.0.ipynb',as_version=4)
+          NotebookClient(nb,timeout=300,kernel_name='e04-release',resources={'metadata':{'path':str(p)}}).execute()
+          print('E04 complete student Notebook CPU execution: PASS')
+          PY
+          test -s "$E04/e04-media/data/browser-video-validation.json"
+          test ! -e "$E04/teacher.html"
+          test ! -e "$E04/downloads/E04_teacher_guide.pdf"
+
       - name: Verify approved student pages in Chromium
         run: |
           python -m pip install playwright==1.56.0
