@@ -329,6 +329,10 @@ jobs:
               for attempt in range(3):
                   for host in ('raw.githack.com','rawcdn.githack.com'):
                       page=b.new_page(viewport={'width':1440,'height':1000})
+                      page.on('console',lambda m: print('E04 console',m.type,m.text[:800],flush=True) if m.type in ('error','warning') else None)
+                      page.on('pageerror',lambda e: print('E04 pageerror',str(e)[:800],flush=True))
+                      page.on('requestfailed',lambda q: print('E04 requestfailed',q.url,q.failure,flush=True))
+                      page.on('response',lambda q: print('E04 asset',q.status,q.url,q.headers.get('content-type',''),flush=True) if any(t in q.url for t in ('e04-runtime/','e04-models/')) else None)
                       try:
                           base='https://'+host+'/'+path
                           resp=page.goto(base+'/index.html',wait_until='domcontentloaded',timeout=45000)
@@ -346,6 +350,9 @@ jobs:
                           lab.locator('#backend').select_option('wasm')
                           lab.locator('#size').select_option('320')
                           lab.locator('#run').click()
+                          lab.locator('body[data-completed]:not([data-completed=""])').wait_for(timeout=180000)
+                          print('E04 public lab status:',lab.locator('#status').inner_text(),flush=True)
+                          assert '真实模型推理完成' in lab.locator('#status').inner_text()
                           lab.locator('#rightFig[data-ready="1"]').wait_for(timeout=180000)
                           assert 'wasm' in lab.locator('#rightCaption').inner_text()
                           lab.locator('body[data-completed]:not([data-completed=""])').wait_for(timeout=180000)
