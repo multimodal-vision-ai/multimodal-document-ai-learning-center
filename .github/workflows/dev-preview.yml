@@ -340,7 +340,7 @@ jobs:
                               added=[x for x in page.context.pages if x not in before]
                               if added:page=added[-1]
                           page.locator('meta[name="e04-build"]').wait_for(state='attached',timeout=25000)
-                          page.get_by_text('02 · 浏览器交互实验',exact=True).click()
+                          page.locator('button[data-mode="interactive"]').click()
                           lab=page.frame_locator('#lab')
                           lab.locator('#leftFig[data-ready="1"]').wait_for(timeout=30000)
                           lab.locator('#backend').select_option('wasm')
@@ -348,6 +348,7 @@ jobs:
                           lab.locator('#run').click()
                           lab.locator('#rightFig[data-ready="1"]').wait_for(timeout=180000)
                           assert 'wasm' in lab.locator('#rightCaption').inner_text()
+                          lab.locator('body[data-completed]:not([data-completed=""])').wait_for(timeout=180000)
                           assert '真实模型推理完成' in lab.locator('#status').inner_text()
                           print('PUBLIC E04 ACTUAL MODEL INFERENCE PASS',base+'/index.html',flush=True)
                           b.close()
