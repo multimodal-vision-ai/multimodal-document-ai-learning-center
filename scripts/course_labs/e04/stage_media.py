@@ -2,7 +2,7 @@
 Model/runtime staging is deliberately separate pending AGPL/weights distribution review.
 Usage: python scripts/course_labs/e04/stage_media.py E04-material-review.zip DEST
 """
-import argparse, hashlib, json, zipfile
+import argparse, base64, hashlib, json, zipfile
 from pathlib import Path
 EXPECTED={
 'A':'2dfa0a07dc5792f81f9b5356f2a53423e9d873313a3b2bb10300de7897adf0b8',
@@ -29,5 +29,19 @@ def stage(source,dest):
             p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
         assert len(json.loads((dest/'data/detections.json').read_text(encoding='utf-8')))==1296
     print('Approved clips verified; staged',len(keep),'files to',dest)
+def embed_frames(media,html):
+    """Keep reviewed JPEG bytes exactly; prevent proxy redirects tainting Canvas."""
+    media,html=Path(media),Path(html)
+    frames={f'{k}{i}':base64.b64encode((media/'frames'/f'{k}{i}.jpg').read_bytes()).decode('ascii') for k in EXPECTED for i in range(1,4)}
+    for key,value in frames.items():
+        assert base64.b64decode(value)==(media/'frames'/f'{key}.jpg').read_bytes()
+    raw=html.read_text(encoding='utf-8')
+    marker='<script id="e04-embedded-frames" type="application/json">'
+    assert marker not in raw and '</head>' in raw
+    raw=raw.replace('</head>',marker+json.dumps(frames,separators=(',',':'))+'</script></head>',1)
+    html.write_text(raw,encoding='utf-8')
+    print('E04 embedded nine exact reviewed JPEG frames:',sum(len(x) for x in frames.values()),'base64 bytes')
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('zip');p.add_argument('dest');a=p.parse_args();stage(a.zip,a.dest)
+    p=argparse.ArgumentParser();p.add_argument('zip');p.add_argument('dest');p.add_argument('--embed-html');a=p.parse_args();stage(a.zip,a.dest)
+    if a.embed_html:embed_frames(a.dest,a.embed_html)
+
