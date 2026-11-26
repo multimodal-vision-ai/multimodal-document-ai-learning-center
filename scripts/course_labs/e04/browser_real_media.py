@@ -42,12 +42,29 @@ try:
         assert 'yolo26s' in page.locator('#rightCaption').inner_text()
         print('A3 actual dual configuration:',page.locator('#leftCaption').inner_text(),page.locator('#rightCaption').inner_text())
         page.click('[data-tab="5"]');page.select_option('#size','320')
+        video_report={}
         for scene in 'ABC':
             page.select_option('#videoChoice',scene)
             page.wait_for_function("document.getElementById('video').readyState>=2",timeout=30000)
             assert abs(page.locator('#video').evaluate('(v)=>v.duration')-12)<.1
             page.click('#frameRun');wait(page)
             print(scene,'first-frame real inference',page.locator('#rightCaption').inner_text())
+            page.click('#scan');wait(page)
+            rows=page.locator('#timeline tr').all_inner_texts()
+            assert len(rows)==24,(scene,len(rows),page.locator('#status').inner_text())
+            parsed=[]
+            for row in rows:
+                t,car,person,bike,ms=row.split('\t') if '\t' in row else row.splitlines()
+                parsed.append({'time_s':float(t.rstrip('s')),'car':int(car),'person':int(person),'bicycle':int(bike),'forward_ms':float(ms.replace(' ms',''))})
+            assert [x['time_s'] for x in parsed]==[i*.5 for i in range(24)]
+            assert page.locator('#chart polyline').count()==3
+            video_report[scene]=parsed
+            page.locator('#timeline tr').nth(10).locator('button').click();wait(page)
+            assert abs(page.locator('#video').evaluate('(v)=>v.currentTime')-5)<.08
+            print(scene,'24 actual frames, time-point seek passed',flush=True)
+        report=root/'e04-media/data/browser-video-validation.json'
+        report.write_text(json.dumps({'model':'yolo26n','size':320,'backend':'wasm','conf':.25,'iou':.5,'nms':True,'road_only':False,'sample_hz':2,'frames':video_report},indent=2),encoding='utf-8')
+        print('E04 real video verification: 72 actual model forwards, 3 timelines, seek passed',flush=True)
         assert not errors,errors
         browser.close()
 finally:
