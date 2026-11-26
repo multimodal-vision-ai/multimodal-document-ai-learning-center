@@ -1,0 +1,16 @@
+{
+  "status": "staged",
+  "source_commit": "91b080357290da37f533e2d0832f601c3e770d51",
+  "calibration_views": 18,
+  "calibration_failed": [
+    "calibration1.jpg",
+    "calibration5.jpg"
+  ],
+  "calibration_rms_px": 0.8494878233878799,
+  "manual_video_review": "Teacher approved all three videos; harder-challenge drift/false lane selection is intentionally retained for after-class exploration.",
+  "video_hashes": {
+    "solidWhiteRight.mp4": "2d8e14b46fe89afbc8ad1f718685cf09b83e85a324095031c38186a9f0535417",
+    "project_video.mp4": "651949922042c223375d40bf8929def97dbb62c6ade651d1f5b08eea47127d5f",
+    "harder_challenge_video.mp4": "45879f48cdc43e40771317a7d03c973cb4c45db47f145e28837d9610d121732c"
+  }
+}
