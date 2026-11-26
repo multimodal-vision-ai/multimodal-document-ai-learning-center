@@ -42,9 +42,15 @@
 
     [进入 E03 完整实验](e03-notebook.html){ .md-button .md-button--primary }
 
+-   **E04 · YOLO 道路目标检测与视觉感知探索**
+
+    YOLO26n/s 五个核心实验：基础检测、置信度、IoU/NMS、分辨率与模型、三段真实道路视频。浏览器真实模型推理；支持本地与 Kaggle Notebook。
+
+    [进入 E04 DEV 教学实验](e04-notebook.html){ .md-button .md-button--primary }
+
 </div>
 
-E03 V2.0 已进入独立 DEV 预览审核阶段。E04—E08、A01—A02、P01 仍按课程研发路线逐步建设；E03 未经教师人工验收通过，不进入正式学生版本。
+E03 V2.0 已进入独立 DEV 预览审核阶段。E04 V1.0 处于 DEV 人工审核阶段；E05—E08、A01—A02、P01 仍按课程研发路线逐步建设。未经教师人工验收通过的版本不进入正式学生版本。
 
 ## 一份标准 Notebook，三种学习方式
 
