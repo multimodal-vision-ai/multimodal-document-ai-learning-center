@@ -19,6 +19,12 @@ try:
         browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
         page=browser.new_page(viewport={'width':1280,'height':900})
         errors=[]; page.on('pageerror',lambda e:errors.append(str(e)))
+        if (root/'index.html').is_file():
+            page.goto(f'http://127.0.0.1:{server.server_port}/index.html')
+            assert page.locator('a[href*="teacher"],a[href*="E04_teacher_guide"]').count()==0
+            assert '教师手册' not in page.locator('body').inner_text()
+            assert '教师课堂讲解' not in page.locator('body').inner_text()
+            print('Student-facing page has no teacher guide links',flush=True)
         page.goto(f'http://127.0.0.1:{server.server_port}/interactive/e04.html')
         assert page.locator('#e04-embedded-frames').count()==1, 'approved frames must be embedded'
         # Simulate an inaccessible external image host. Inference must use the original embedded JPEG bytes.
@@ -51,6 +57,7 @@ try:
         print('A3 actual dual configuration:',page.locator('#leftCaption').inner_text(),page.locator('#rightCaption').inner_text())
         page.click('[data-tab="5"]');page.select_option('#size','320')
         video_report={}
+        continuous_report={}
         for scene in 'ABC':
             page.select_option('#videoChoice',scene)
             page.wait_for_function("s=>document.getElementById('video').dataset.scene===s && document.getElementById('video').readyState>=2",arg=scene,timeout=30000)
@@ -77,9 +84,41 @@ try:
             captured=float(page.locator('#rightFig').get_attribute('data-time'))
             assert abs(position-5)<.08 and abs(captured-5)<.08, (scene,position,captured)
             print(scene,'24 actual frames, time-point seek passed',flush=True)
+            page.select_option('#videoRate','10')
+            page.click('#continuous')
+            page.wait_for_function("document.querySelectorAll('#timeline tr').length>=4",timeout=60000)
+            paired=page.evaluate("""()=>{const l=document.getElementById('leftFig'),r=document.getElementById('rightFig'),a=document.getElementById('left'),b=document.getElementById('right');return {same:l.dataset.time===r.dataset.time,time:Number(r.dataset.time),left:a.getBoundingClientRect().x,right:b.getBoundingClientRect().x,visible:getComputedStyle(a).display!=='none'&&getComputedStyle(b).display!=='none',boxes:Number(b.dataset.boxes)}}""")
+            assert paired['same'] and paired['visible'] and paired['right']>paired['left'] and paired['time']>=.2,paired
+            if scene=='A':
+                assert paired['boxes']>0,paired
+                assert page.evaluate("""()=>{const a=document.getElementById('left'),b=document.getElementById('right'),x=a.getContext('2d').getImageData(0,0,a.width,a.height).data,y=b.getContext('2d').getImageData(0,0,b.width,b.height).data;return x.some((v,i)=>v!==y[i])}"""),'annotated pixels must differ from raw'
+                page.click('#pauseContinuous')
+                page.locator('#videoPanel[data-sequence-state="paused"]').wait_for(timeout=15000)
+                n=page.locator('#timeline tr').count()
+                page.wait_for_timeout(350)
+                assert page.locator('#timeline tr').count()==n,'paused sequence advanced'
+                page.click('#pauseContinuous')
+            page.locator('#videoPanel[data-sequence-state="complete"]').wait_for(timeout=240000)
+            wait(page)
+            times=page.locator('#timeline tr').evaluate_all('(rows)=>rows.map(r=>Number(r.dataset.actualTime))')
+            assert len(times)==120,(scene,len(times))
+            assert all(abs(t-i/10)<.025 for i,t in enumerate(times)),(scene,times)
+            assert abs(float(page.locator('#rightFig').get_attribute('data-time'))-11.9)<.025
+            assert page.locator('#leftFig').get_attribute('data-time')==page.locator('#rightFig').get_attribute('data-time')
+            assert page.locator('#videoProgress').evaluate('(p)=>p.value>=p.max-.01')
+            continuous_report[scene]={'frames':len(times),'rate_hz':10,'last_time_s':times[-1]}
+            print(scene,'120 continuous real frames, synchronized visible paired canvases',flush=True)
+        page.select_option('#videoChoice','A')
+        page.wait_for_function("document.getElementById('video').dataset.scene==='A' && document.getElementById('video').readyState>=2",timeout=30000)
+        page.select_option('#videoRate','25');page.click('#continuous')
+        page.wait_for_function("document.querySelectorAll('#timeline tr').length>=15",timeout=60000)
+        page.click('#stop');page.locator('#videoPanel[data-sequence-state="stopped"]').wait_for(timeout=15000);wait(page)
+        times=page.locator('#timeline tr').evaluate_all('(rows)=>rows.map(r=>Number(r.dataset.actualTime))')
+        assert 15<=len(times)<300 and all(abs(t-i/25)<.025 for i,t in enumerate(times)),times
+        print('High-density 25 Hz timestamps and stop: PASS',flush=True)
         report=root/'e04-media/data/browser-video-validation.json'
-        report.write_text(json.dumps({'model':'yolo26n','size':320,'backend':'wasm','conf':.25,'iou':.5,'nms':True,'road_only':False,'sample_hz':2,'frames':video_report},indent=2),encoding='utf-8')
-        print('E04 real video verification: 72 actual model forwards, 3 timelines, seek passed',flush=True)
+        report.write_text(json.dumps({'model':'yolo26n','size':320,'backend':'wasm','conf':.25,'iou':.5,'nms':True,'road_only':False,'sample_hz':2,'frames':video_report,'continuous':continuous_report},indent=2),encoding='utf-8')
+        print('E04 real video verification: 72 actual sampled forwards, 360 continuous forwards, 3 timelines, pause/resume/stop/seek passed',flush=True)
         assert not errors,errors
         browser.close()
 finally:
