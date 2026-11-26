@@ -7,7 +7,7 @@ assert (root/'e04-media/data/detections.json').is_file()
 server=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(http.server.SimpleHTTPRequestHandler,directory=str(root)))
 threading.Thread(target=server.serve_forever,daemon=True).start()
 def wait(page):
-    page.wait_for_function("!document.getElementById('run').disabled",timeout=180000)
+    page.wait_for_function("document.body.dataset.operation && document.body.dataset.operation === document.body.dataset.completed",timeout=180000)
     assert '真实模型推理完成' in page.locator('#status').inner_text(),page.locator('#status').inner_text()
     assert page.locator('#rightFig').get_attribute('data-ready')=='1'
 def slide(page,id,v):
@@ -45,22 +45,29 @@ try:
         video_report={}
         for scene in 'ABC':
             page.select_option('#videoChoice',scene)
-            page.wait_for_function("document.getElementById('video').readyState>=2",timeout=30000)
+            page.wait_for_function("s=>document.getElementById('video').dataset.scene===s && document.getElementById('video').readyState>=2",arg=scene,timeout=30000)
             assert abs(page.locator('#video').evaluate('(v)=>v.duration')-12)<.1
             page.click('#frameRun');wait(page)
             print(scene,'first-frame real inference',page.locator('#rightCaption').inner_text())
             page.click('#scan');wait(page)
             rows=page.locator('#timeline tr').all_inner_texts()
             assert len(rows)==24,(scene,len(rows),page.locator('#status').inner_text())
+            actual=page.locator('#timeline tr').evaluate_all('(rows)=>rows.map(r=>Number(r.dataset.actualTime))')
+            assert all(abs(t-i*.5)<.08 for i,t in enumerate(actual)), (scene,actual)
             parsed=[]
             for row in rows:
                 t,car,person,bike,ms=row.split('\t') if '\t' in row else row.splitlines()
-                parsed.append({'time_s':float(t.rstrip('s')),'car':int(car),'person':int(person),'bicycle':int(bike),'forward_ms':float(ms.replace(' ms',''))})
+                parsed.append({'time_s':float(t.rstrip('s')),'actual_time_s':actual[len(parsed)],'car':int(car),'person':int(person),'bicycle':int(bike),'forward_ms':float(ms.replace(' ms',''))})
             assert [x['time_s'] for x in parsed]==[i*.5 for i in range(24)]
             assert page.locator('#chart polyline').count()==3
             video_report[scene]=parsed
-            page.locator('#timeline tr').nth(10).locator('button').click();wait(page)
-            assert abs(page.locator('#video').evaluate('(v)=>v.currentTime')-5)<.08
+            previous=page.locator('body').get_attribute('data-operation')
+            page.locator('#timeline tr').nth(10).locator('button').click()
+            page.wait_for_function('prev=>document.body.dataset.operation!==prev && document.body.dataset.completed===document.body.dataset.operation',arg=previous,timeout=180000)
+            wait(page)
+            position=page.locator('#video').evaluate('(v)=>v.currentTime')
+            captured=float(page.locator('#rightFig').get_attribute('data-time'))
+            assert abs(position-5)<.08 and abs(captured-5)<.08, (scene,position,captured)
             print(scene,'24 actual frames, time-point seek passed',flush=True)
         report=root/'e04-media/data/browser-video-validation.json'
         report.write_text(json.dumps({'model':'yolo26n','size':320,'backend':'wasm','conf':.25,'iou':.5,'nms':True,'road_only':False,'sample_hz':2,'frames':video_report},indent=2),encoding='utf-8')
