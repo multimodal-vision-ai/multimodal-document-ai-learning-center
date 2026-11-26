@@ -1,0 +1,55 @@
+name: E04 model feasibility
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'scripts/course_labs/e04/**'
+      - 'docs/resources/course-labs/intelligent-perception/interactive/e04*'
+      - '.github/workflows/e04-feasibility.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  raw-onnx:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      YOLO_AUTOINSTALL: 'False'
+      OMP_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install isolated CPU dependencies
+        run: |
+          python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install ultralytics==8.4.219 onnx onnxruntime
+      - name: Obtain official checkpoints (ephemeral runner only)
+        run: |
+          mkdir -p "$RUNNER_TEMP/e04/weights"
+          cd "$RUNNER_TEMP/e04/weights"
+          python - <<'PY'
+          from ultralytics import YOLO
+          for name in ('yolo26n.pt','yolo26s.pt'):
+              YOLO(name)
+          PY
+          sha256sum *.pt
+      - name: Export and verify all six raw ONNX shapes
+        run: python scripts/course_labs/e04/export_raw_onnx.py "$RUNNER_TEMP/e04/weights" "$RUNNER_TEMP/e04/onnx"
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test JS NMS and actual ONNX WASM execution
+        run: |
+          node --test scripts/course_labs/e04/core.test.mjs
+          mkdir -p "$RUNNER_TEMP/e04/webtest"
+          cd "$RUNNER_TEMP/e04/webtest"
+          npm install --no-audit --no-fund onnxruntime-web
+          cp "$GITHUB_WORKSPACE/scripts/course_labs/e04/wasm_smoke.mjs" .
+          cp "$GITHUB_WORKSPACE/docs/resources/course-labs/intelligent-perception/interactive/e04-core.mjs" .
+          node wasm_smoke.mjs "$RUNNER_TEMP/e04/onnx"
+      - name: Remove temporary weights and exports
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/e04"
