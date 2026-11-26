@@ -20,7 +20,15 @@ try:
         page=browser.new_page(viewport={'width':1280,'height':900})
         errors=[]; page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(f'http://127.0.0.1:{server.server_port}/interactive/e04.html')
+        assert page.locator('#e04-embedded-frames').count()==1, 'approved frames must be embedded'
+        # Simulate an inaccessible external image host. Inference must use the original embedded JPEG bytes.
+        page.route('**/e04-media/frames/*.jpg',lambda route:route.abort())
         page.select_option('#backend','wasm')
+        for key in ['A1','A2','A3','B1','B2','B3','C1','C2','C3']:
+            page.select_option('#frame',key)
+            page.locator('#leftFig[data-ready="1"]').wait_for(timeout=15000)
+            assert page.locator('#left').evaluate('(c)=>c.getContext("2d").getImageData(0,0,1,1).data.length===4')
+        print('All nine reviewed embedded JPEGs remain pixel-readable with external image requests blocked',flush=True)
         page.click('[data-tab="2"]');page.locator('#leftFig[data-ready="1"]').wait_for()
         page.click('#run');wait(page)
         page.locator('#road').uncheck()
