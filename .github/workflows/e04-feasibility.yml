@@ -62,7 +62,7 @@ jobs:
       - name: Verify teacher-approved real road images and videos
         if: ${{ hashFiles('scripts/course_labs/e04/E04-material-review.zip') != '' }}
         run: |
-          python scripts/course_labs/e04/stage_media.py scripts/course_labs/e04/E04-material-review.zip "$RUNNER_TEMP/e04/site/e04-media"
+          python scripts/course_labs/e04/stage_media.py scripts/course_labs/e04/E04-material-review.zip "$RUNNER_TEMP/e04/site/e04-media" --embed-html "$RUNNER_TEMP/e04/site/interactive/e04.html"
           python scripts/course_labs/e04/browser_real_media.py "$RUNNER_TEMP/e04/site"
       - name: Require reviewed media for end-to-end acceptance
         if: ${{ hashFiles('scripts/course_labs/e04/E04-material-review.zip') == '' }}
