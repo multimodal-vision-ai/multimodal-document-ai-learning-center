@@ -15,7 +15,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 55.6
+        "forward_ms": 83.2
       },
       {
         "time_s": 0.5,
@@ -23,7 +23,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 54.7
+        "forward_ms": 83.3
       },
       {
         "time_s": 1.0,
@@ -31,7 +31,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 58.2
+        "forward_ms": 83.2
       },
       {
         "time_s": 1.5,
@@ -39,7 +39,7 @@
         "car": 1,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 54.3
+        "forward_ms": 82.7
       },
       {
         "time_s": 2.0,
@@ -47,7 +47,7 @@
         "car": 1,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 56.0
+        "forward_ms": 83.0
       },
       {
         "time_s": 2.5,
@@ -55,7 +55,7 @@
         "car": 1,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.7
+        "forward_ms": 82.2
       },
       {
         "time_s": 3.0,
@@ -63,7 +63,7 @@
         "car": 1,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 57.4
+        "forward_ms": 85.6
       },
       {
         "time_s": 3.5,
@@ -71,7 +71,7 @@
         "car": 1,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 54.0
+        "forward_ms": 82.5
       },
       {
         "time_s": 4.0,
@@ -79,7 +79,7 @@
         "car": 1,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 83.0
       },
       {
         "time_s": 4.5,
@@ -87,7 +87,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.7
+        "forward_ms": 83.4
       },
       {
         "time_s": 5.0,
@@ -95,7 +95,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 83.8
       },
       {
         "time_s": 5.5,
@@ -103,7 +103,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.7
+        "forward_ms": 82.8
       },
       {
         "time_s": 6.0,
@@ -111,7 +111,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 62.4
+        "forward_ms": 82.9
       },
       {
         "time_s": 6.5,
@@ -119,7 +119,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.9
+        "forward_ms": 82.4
       },
       {
         "time_s": 7.0,
@@ -127,7 +127,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 54.2
+        "forward_ms": 164.2
       },
       {
         "time_s": 7.5,
@@ -135,7 +135,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.8
+        "forward_ms": 164.1
       },
       {
         "time_s": 8.0,
@@ -143,7 +143,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 164.1
       },
       {
         "time_s": 8.5,
@@ -151,7 +151,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.5
+        "forward_ms": 166.2
       },
       {
         "time_s": 9.0,
@@ -159,7 +159,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.3
+        "forward_ms": 164.5
       },
       {
         "time_s": 9.5,
@@ -167,7 +167,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 62.8
+        "forward_ms": 166.0
       },
       {
         "time_s": 10.0,
@@ -175,7 +175,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.9
+        "forward_ms": 166.6
       },
       {
         "time_s": 10.5,
@@ -183,7 +183,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.5
+        "forward_ms": 164.7
       },
       {
         "time_s": 11.0,
@@ -191,7 +191,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.9
+        "forward_ms": 170.6
       },
       {
         "time_s": 11.5,
@@ -199,7 +199,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 165.7
       }
     ],
     "B": [
@@ -209,7 +209,7 @@
         "car": 4,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 55.1
+        "forward_ms": 86.9
       },
       {
         "time_s": 0.5,
@@ -217,7 +217,7 @@
         "car": 1,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.3
+        "forward_ms": 167.3
       },
       {
         "time_s": 1.0,
@@ -225,7 +225,7 @@
         "car": 2,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 167.3
       },
       {
         "time_s": 1.5,
@@ -233,7 +233,7 @@
         "car": 3,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 58.1
+        "forward_ms": 166.7
       },
       {
         "time_s": 2.0,
@@ -241,7 +241,7 @@
         "car": 4,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 55.8
+        "forward_ms": 166.0
       },
       {
         "time_s": 2.5,
@@ -249,7 +249,7 @@
         "car": 6,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.8
+        "forward_ms": 166.9
       },
       {
         "time_s": 3.0,
@@ -257,7 +257,7 @@
         "car": 4,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 58.4
+        "forward_ms": 166.2
       },
       {
         "time_s": 3.5,
@@ -265,7 +265,7 @@
         "car": 3,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 58.0
+        "forward_ms": 166.0
       },
       {
         "time_s": 4.0,
@@ -273,7 +273,7 @@
         "car": 4,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.9
+        "forward_ms": 166.1
       },
       {
         "time_s": 4.5,
@@ -281,7 +281,7 @@
         "car": 5,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.5
+        "forward_ms": 165.9
       },
       {
         "time_s": 5.0,
@@ -289,7 +289,7 @@
         "car": 6,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.3
+        "forward_ms": 166.7
       },
       {
         "time_s": 5.5,
@@ -297,7 +297,7 @@
         "car": 6,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.3
+        "forward_ms": 165.8
       },
       {
         "time_s": 6.0,
@@ -305,7 +305,7 @@
         "car": 5,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 166.7
       },
       {
         "time_s": 6.5,
@@ -313,7 +313,7 @@
         "car": 4,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.4
+        "forward_ms": 165.5
       },
       {
         "time_s": 7.0,
@@ -321,7 +321,7 @@
         "car": 4,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.2
+        "forward_ms": 166.1
       },
       {
         "time_s": 7.5,
@@ -329,7 +329,7 @@
         "car": 4,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 169.2
       },
       {
         "time_s": 8.0,
@@ -337,7 +337,7 @@
         "car": 4,
         "person": 1,
         "bicycle": 0,
-        "forward_ms": 54.1
+        "forward_ms": 165.9
       },
       {
         "time_s": 8.5,
@@ -345,7 +345,7 @@
         "car": 1,
         "person": 1,
         "bicycle": 0,
-        "forward_ms": 53.0
+        "forward_ms": 166.4
       },
       {
         "time_s": 9.0,
@@ -353,7 +353,7 @@
         "car": 3,
         "person": 2,
         "bicycle": 0,
-        "forward_ms": 53.4
+        "forward_ms": 166.2
       },
       {
         "time_s": 9.5,
@@ -361,7 +361,7 @@
         "car": 2,
         "person": 2,
         "bicycle": 0,
-        "forward_ms": 53.2
+        "forward_ms": 170.3
       },
       {
         "time_s": 10.0,
@@ -369,7 +369,7 @@
         "car": 2,
         "person": 4,
         "bicycle": 0,
-        "forward_ms": 53.0
+        "forward_ms": 166.2
       },
       {
         "time_s": 10.5,
@@ -377,7 +377,7 @@
         "car": 2,
         "person": 3,
         "bicycle": 0,
-        "forward_ms": 53.5
+        "forward_ms": 165.6
       },
       {
         "time_s": 11.0,
@@ -385,7 +385,7 @@
         "car": 3,
         "person": 4,
         "bicycle": 0,
-        "forward_ms": 53.7
+        "forward_ms": 166.0
       },
       {
         "time_s": 11.5,
@@ -393,7 +393,7 @@
         "car": 2,
         "person": 5,
         "bicycle": 0,
-        "forward_ms": 53.9
+        "forward_ms": 167.3
       }
     ],
     "C": [
@@ -403,7 +403,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 57.2
+        "forward_ms": 84.9
       },
       {
         "time_s": 0.5,
@@ -411,7 +411,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 54.9
+        "forward_ms": 164.0
       },
       {
         "time_s": 1.0,
@@ -419,7 +419,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 54.0
+        "forward_ms": 164.2
       },
       {
         "time_s": 1.5,
@@ -427,7 +427,7 @@
         "car": 1,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.2
+        "forward_ms": 164.6
       },
       {
         "time_s": 2.0,
@@ -435,7 +435,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.4
+        "forward_ms": 163.9
       },
       {
         "time_s": 2.5,
@@ -443,7 +443,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.8
+        "forward_ms": 164.4
       },
       {
         "time_s": 3.0,
@@ -451,7 +451,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 163.8
       },
       {
         "time_s": 3.5,
@@ -459,7 +459,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.5
+        "forward_ms": 163.9
       },
       {
         "time_s": 4.0,
@@ -467,7 +467,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 54.0
+        "forward_ms": 165.4
       },
       {
         "time_s": 4.5,
@@ -475,7 +475,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 163.9
       },
       {
         "time_s": 5.0,
@@ -483,7 +483,7 @@
         "car": 0,
         "person": 1,
         "bicycle": 0,
-        "forward_ms": 54.1
+        "forward_ms": 165.5
       },
       {
         "time_s": 5.5,
@@ -491,7 +491,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.5
+        "forward_ms": 163.6
       },
       {
         "time_s": 6.0,
@@ -499,7 +499,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.5
+        "forward_ms": 163.6
       },
       {
         "time_s": 6.5,
@@ -507,7 +507,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.8
+        "forward_ms": 164.1
       },
       {
         "time_s": 7.0,
@@ -515,7 +515,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.5
+        "forward_ms": 164.0
       },
       {
         "time_s": 7.5,
@@ -523,7 +523,7 @@
         "car": 0,
         "person": 1,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 164.0
       },
       {
         "time_s": 8.0,
@@ -531,7 +531,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.7
+        "forward_ms": 164.6
       },
       {
         "time_s": 8.5,
@@ -539,7 +539,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 164.0
       },
       {
         "time_s": 9.0,
@@ -547,7 +547,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.5
+        "forward_ms": 164.2
       },
       {
         "time_s": 9.5,
@@ -555,7 +555,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.4
+        "forward_ms": 164.3
       },
       {
         "time_s": 10.0,
@@ -563,7 +563,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 54.5
+        "forward_ms": 163.8
       },
       {
         "time_s": 10.5,
@@ -571,7 +571,7 @@
         "car": 0,
         "person": 1,
         "bicycle": 0,
-        "forward_ms": 53.1
+        "forward_ms": 163.9
       },
       {
         "time_s": 11.0,
@@ -579,7 +579,7 @@
         "car": 0,
         "person": 0,
         "bicycle": 0,
-        "forward_ms": 53.4
+        "forward_ms": 164.2
       },
       {
         "time_s": 11.5,
@@ -587,7 +587,7 @@
         "car": 0,
         "person": 1,
         "bicycle": 0,
-        "forward_ms": 53.6
+        "forward_ms": 167.4
       }
     ]
   }

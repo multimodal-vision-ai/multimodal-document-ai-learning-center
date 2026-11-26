@@ -1,14 +1,14 @@
 {
   "e04-models/yolo26n-320-raw.onnx": {
-    "sha256": "d554787af5f0364cee4ac58cb68abb53738e81a4077df432c84359987f14cafd",
+    "sha256": "955ab8037ea9c89b89317dd34b4c9ea31e6ad9fc166da51c0542cb9607c9e23b",
     "bytes": 9758238
   },
   "e04-models/yolo26n-640-raw.onnx": {
-    "sha256": "907eeeec2fbfe4da7f534f15a4e5c128c884cc0c3c896edb5b1f0819fe5a6a8c",
+    "sha256": "88fc8eb8d3d3abd8b728083f08fe9fa281a6e934bf0eb231770cd4855f985b01",
     "bytes": 9884242
   },
   "e04-models/yolo26n-960-raw.onnx": {
-    "sha256": "b2d5a23c5cec06ebd26539807787ffa2c89a097df086ed42bbc5562b9cc7002c",
+    "sha256": "46626bce7c76612aad6ca9eab16ee3c727ee4d9df330c2e428919409d2fb938c",
     "bytes": 10094246
   },
   "e04-models/yolo26n.pt": {
@@ -16,15 +16,15 @@
     "bytes": 5544453
   },
   "e04-models/yolo26s-320-raw.onnx": {
-    "sha256": "854e5de88dce46c8e2e781358e50c24323be12898edd46f0dced8e0ddafe9642",
+    "sha256": "742fbcbf4751e864eed171bafa043d37c022fa045ae5582fc74fa00df3f6c63e",
     "bytes": 38107229
   },
   "e04-models/yolo26s-640-raw.onnx": {
-    "sha256": "270920270c101ae503dc5462eec27dde5c1a798be5428920d550db5f3f4fda36",
+    "sha256": "77da7c6b0f34d51cb0c70aa615447e45ca38214b46ba26d3797de963423b0d08",
     "bytes": 38233233
   },
   "e04-models/yolo26s-960-raw.onnx": {
-    "sha256": "c3d82639ccee9914d780ce3688c108b1987e1056a60a42c5afbfd12a59d105af",
+    "sha256": "7ae6c748e21589f6b10c65c647e5bb60a9f2ce72fe4a4faaa977611bbc0e5038",
     "bytes": 38443237
   },
   "e04-models/yolo26s.pt": {
